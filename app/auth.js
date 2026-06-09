@@ -155,7 +155,13 @@ const AuthModule = {
 
   async syncToDrive() {
     if (!gAccessToken) return false;
-    const data = localStorage.getItem('fitpro_data');
+    let data = localStorage.getItem('fitpro_data');
+    if (!data) {
+      if (typeof appData !== 'undefined') {
+        localStorage.setItem('fitpro_data', JSON.stringify(appData));
+        data = localStorage.getItem('fitpro_data');
+      }
+    }
     if (!data) return false;
     
     try {
@@ -166,28 +172,34 @@ const AuthModule = {
       const list = await listRes.json();
       if (list.error) { this.handleAuthError(); return false; }
 
+      let fileId = null;
       if (list.files && list.files.length > 0) {
-        // Update existing
-        const fileId = list.files[0].id;
-        const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
-          method: 'PATCH',
-          headers: { Authorization: `Bearer ${gAccessToken}`, 'Content-Type': 'application/json' },
-          body: data
-        });
-        if (!res.ok) { this.handleAuthError(); return false; }
+        fileId = list.files[0].id;
       } else {
-        // Create new
-        const metadata = { name: 'fitpro_backup.json', mimeType: 'application/json', parents: ['appDataFolder'] };
-        const body = new FormData();
-        body.append('metadata', new Blob([JSON.stringify(metadata)], {type:'application/json'}));
-        body.append('file', new Blob([data], {type:'application/json'}));
-        const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        // Create new empty file metadata in appDataFolder
+        const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
           method: 'POST',
-          headers: { Authorization: `Bearer ${gAccessToken}` },
-          body
+          headers: { 
+            Authorization: `Bearer ${gAccessToken}`, 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({
+            name: 'fitpro_backup.json',
+            parents: ['appDataFolder']
+          })
         });
-        if (!res.ok) { this.handleAuthError(); return false; }
+        if (!createRes.ok) { this.handleAuthError(); return false; }
+        const createdFile = await createRes.json();
+        fileId = createdFile.id;
       }
+
+      // Upload/Update file content
+      const res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${gAccessToken}`, 'Content-Type': 'application/json' },
+        body: data
+      });
+      if (!res.ok) { this.handleAuthError(); return false; }
 
       // Clear dirty flag
       const appState = JSON.parse(data);

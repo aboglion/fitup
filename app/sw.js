@@ -12,6 +12,11 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Only handle same-origin GET requests to avoid caching external APIs like Google Drive
+  if (e.request.method !== 'GET' || !e.request.url.startsWith(self.location.origin)) {
+    return;
+  }
+  
   e.respondWith(
     caches.match(e.request).then(cached => {
       const fetched = fetch(e.request).then(res => {
