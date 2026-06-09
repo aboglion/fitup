@@ -169,8 +169,14 @@ const AuthModule = {
       const listRes = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27fitpro_backup.json%27', {
         headers: { Authorization: `Bearer ${gAccessToken}` }
       });
+      if (!listRes.ok) {
+        const errData = await listRes.json().catch(() => ({}));
+        console.error('List files error:', errData);
+        toast('❌ שגיאה בקריאת קובצי ענן: ' + (errData.error?.message || listRes.statusText));
+        this.handleAuthError();
+        return false;
+      }
       const list = await listRes.json();
-      if (list.error) { this.handleAuthError(); return false; }
 
       let fileId = null;
       if (list.files && list.files.length > 0) {
@@ -188,7 +194,13 @@ const AuthModule = {
             parents: ['appDataFolder']
           })
         });
-        if (!createRes.ok) { this.handleAuthError(); return false; }
+        if (!createRes.ok) {
+          const errData = await createRes.json().catch(() => ({}));
+          console.error('Create metadata error:', errData);
+          toast('❌ שגיאה ביצירת קובץ בענן: ' + (errData.error?.message || createRes.statusText));
+          this.handleAuthError();
+          return false;
+        }
         const createdFile = await createRes.json();
         fileId = createdFile.id;
       }
@@ -199,7 +211,13 @@ const AuthModule = {
         headers: { Authorization: `Bearer ${gAccessToken}`, 'Content-Type': 'application/json' },
         body: data
       });
-      if (!res.ok) { this.handleAuthError(); return false; }
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        console.error('Upload content error:', errData);
+        toast('❌ שגיאה בהעלאת נתונים לענן: ' + (errData.error?.message || res.statusText));
+        this.handleAuthError();
+        return false;
+      }
 
       // Clear dirty flag
       const appState = JSON.parse(data);
@@ -217,6 +235,7 @@ const AuthModule = {
       return true;
     } catch(e) { 
       console.error('Sync to Drive error:', e); 
+      toast('❌ שגיאת רשת בסנכרון');
       return false;
     }
   },
@@ -227,14 +246,23 @@ const AuthModule = {
       const listRes = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27fitpro_backup.json%27', {
         headers: { Authorization: `Bearer ${gAccessToken}` }
       });
+      if (!listRes.ok) {
+        const errData = await listRes.json().catch(() => ({}));
+        console.error('SyncFromDrive list error:', errData);
+        return false;
+      }
       const list = await listRes.json();
-      if (list.error || !list.files || list.files.length === 0) return false;
+      if (!list.files || list.files.length === 0) return false;
 
       const fileId = list.files[0].id;
       const dataRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
         headers: { Authorization: `Bearer ${gAccessToken}` }
       });
-      if (!dataRes.ok) return false;
+      if (!dataRes.ok) {
+        const errData = await dataRes.json().catch(() => ({}));
+        console.error('SyncFromDrive get content error:', errData);
+        return false;
+      }
       const cloudData = await dataRes.json();
 
       // Compare timestamps - cloud wins if newer AND local is not dirty
