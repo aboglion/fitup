@@ -9,11 +9,11 @@
   "rewrites": [
     {
       "source": "/app/(?<file>.*\\..*)",
-      "destination": "/$file"
+      "destination": "/app/$file"
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/app/index.html"
     }
   ]
 }
