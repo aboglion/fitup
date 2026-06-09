@@ -5,15 +5,27 @@ const AIModule = {
 
   async init() {
     try {
-      if (typeof window !== 'undefined' && window.ai && window.ai.languageModel) {
-        const caps = await window.ai.languageModel.capabilities();
-        if (caps.available === 'readily' || caps.available === 'after-download') {
-          this.available = true;
-          this.session = await window.ai.languageModel.create({
-            systemPrompt: 'אתה מאמן כושר מנוסה שמדבר בעברית. אתה נותן משפטי מוטיבציה קצרים, תובנות אימון, וסיכומים מקצועיים. ענה תמיד בעברית, בקצרה ובאנרגיה חיובית. השתמש באימוג\'ים.'
-          });
-          console.log('✅ Chrome AI (Gemini Nano) is available');
-          return true;
+      if (typeof window !== 'undefined' && window.ai) {
+        if (window.ai.languageModel) {
+          const caps = await window.ai.languageModel.capabilities();
+          if (caps.available === 'readily' || caps.available === 'after-download') {
+            this.available = true;
+            this.session = await window.ai.languageModel.create({
+              systemPrompt: 'אתה מאמן כושר מנוסה שמדבר בעברית. אתה נותן משפטי מוטיבציה קצרים, תובנות אימון, וסיכומים מקצועיים. ענה תמיד בעברית, בקצרה ובאנרגיה חיובית. השתמש באימוג\'ים.'
+            });
+            console.log('✅ Chrome AI (Gemini Nano via languageModel) is available');
+            return true;
+          }
+        } else if (window.ai.assistant) {
+          const caps = await window.ai.assistant.capabilities();
+          if (caps.available === 'readily' || caps.available === 'after-download') {
+            this.available = true;
+            this.session = await window.ai.assistant.create({
+              systemPrompt: 'אתה מאמן כושר מנוסה שמדבר בעברית. אתה נותן משפטי מוטיבציה קצרים, תובנות אימון, וסיכומים מקצועיים. ענה תמיד בעברית, בקצרה ובאנרגיה חיובית. השתמש באימוג\'ים.'
+            });
+            console.log('✅ Chrome AI (Gemini Nano via assistant) is available');
+            return true;
+          }
         }
       }
     } catch(e) { console.log('Chrome AI not available:', e.message); }
@@ -225,5 +237,109 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
       const result = await this.session.prompt(`תן טיפ טכניקה קצר אחד (שורה אחת, עד 15 מילים, בעברית) לתרגיל: ${exerciseName}`);
       return '💡 ' + (result?.trim() || fallback);
     } catch(e) { return fallback; }
+  },
+
+  // Moderate username input for leaderboard
+  async moderateName(name) {
+    if (name.length < 2 || name.length > 15) {
+      return { valid: false, reason: 'השם חייב להיות בין 2 ל-15 תווים' };
+    }
+    
+    // Whitelist allowed characters to prevent HTML/script injection
+    const allowedRegex = /^[a-zA-Z0-9\u0590-\u05fe\s\-_]+$/;
+    if (!allowedRegex.test(name)) {
+      return { valid: false, reason: 'השם יכול להכיל אותיות, מספרים, רווחים, מקף או קו תחתון בלבד' };
+    }
+
+    // Simple static blocklist for common bad words (Hebrew & English)
+    const blocklist = [
+      'זונה', 'בן זונה', 'קוקסינל', 'מניאק', 'שרמוטה', 'נאצי', 'היטלר', 'זין', 'כוס', 'תחת', 'כלב', 'חרא',
+      'fuck', 'shit', 'bitch', 'asshole', 'bastard', 'nigger', 'nazi', 'hitler', 'cunt', 'dick', 'pussy'
+    ];
+    const lowerName = name.toLowerCase();
+    for (const badWord of blocklist) {
+      if (lowerName.includes(badWord)) {
+        return { valid: false, reason: 'השם מכיל מילים לא ראויות' };
+      }
+    }
+
+    if (this.available && this.session) {
+      try {
+        const prompt = `האם השם הבא מתאים לשימוש כשם משתמש ציבורי ראוי ומכבד באפליקציית כושר? 
+אם הוא פוגעני, גס, שטותי לחלוטין או מיועד להעמסה/ספאם, ענה בדיוק במילה אחת: "לא".
+אם השם תקין ומכבד, ענה בדיוק במילה אחת: "כן".
+השם לבדיקה: "${name}"`;
+        const result = await this.session.prompt(prompt);
+        const cleanedResult = result.trim().toLowerCase();
+        if (cleanedResult.includes('לא')) {
+          return { valid: false, reason: 'שם לא מתאים או פוגעני לפי מערכת ה-AI' };
+        }
+      } catch(e) {
+        console.log('AI moderation failed, relying on static rules:', e.message);
+      }
+    }
+
+    return { valid: true };
+  },
+
+  // Generate global status summary for home screen
+  async getGlobalStatusSummary(prog, todayPlan, daysData) {
+    const totalWorkouts = prog.totalWorkouts || 0;
+    const streak = prog.streak || 0;
+    const xp = prog.xp || 0;
+    const rank = prog.rank || 'מתחיל';
+    
+    let recentWorkoutsSummary = 'אין אימונים מתועדים עדיין.';
+    if (prog.workoutHistory && prog.workoutHistory.length > 0) {
+      const lastThree = prog.workoutHistory.slice(-3);
+      recentWorkoutsSummary = lastThree.map(w => `${w.date}: ${w.dayName || w.dayId}`).join(', ');
+    }
+    
+    const muscleLevels = [];
+    if (daysData && daysData.days) {
+      daysData.days.forEach(d => {
+        d.muscles.forEach(m => {
+          const levelIdx = prog.muscleLevels ? (prog.muscleLevels[m.id] || 0) : 0;
+          const ex = m.exercises[levelIdx] || m.exercises[m.exercises.length - 1];
+          if (ex) {
+            muscleLevels.push(`${m.nameHe}: רמת ${ex.level === 'green' ? 'ירוק' : ex.level === 'blue' ? 'כחול' : ex.level === 'orange' ? 'כתום' : 'אדום'} (${ex.name})`);
+          }
+        });
+      });
+    }
+    const levelsStr = muscleLevels.slice(0, 4).join(', ');
+
+    let nextStep = '';
+    if (todayPlan.type === 'workout') {
+      const day = daysData.days.find(d => d.id === todayPlan.dayId);
+      nextStep = `היום מתוכנן אימון: ${day ? day.name : todayPlan.dayId}.`;
+    } else {
+      nextStep = `היום הוא יום מנוחה.`;
+    }
+
+    const fallbackSummary = `👋 שלום אלוף! אתה כרגע בדרגת **${rank}** עם **${xp} XP**. צברת רצף של ${streak} ימים וסיימת ${totalWorkouts} אימונים סך הכל. האימונים האחרונים שלך היו: ${recentWorkoutsSummary}. הרמות הנוכחיות שלך: ${levelsStr}. ${nextStep} המשך להתקדם ולהתמיד בתוכנית! 💪`;
+
+    if (!this.available || !this.session) return { text: fallbackSummary, isAI: false };
+
+    try {
+      const prompt = `נתח את מצב המתאמן הבא בצורה חכמה ומקצועית מאוד וכתוב סיכום בעברית:
+- דרגה: ${rank} (${xp} XP)
+- רצף נוכחי: ${streak} ימים
+- סה"כ אימונים שבוצעו: ${totalWorkouts}
+- אימונים אחרונים: ${recentWorkoutsSummary}
+- רמות נוכחיות של תרגילים: ${levelsStr}
+- מה מתוכנן להיום: ${nextStep}
+
+דרישות הניסוח:
+- כתוב פסקה אחת קצרה ומגובשת מאוד (עד 60 מילים).
+- הניסוח צריך להיות אישי, מנוסח טוב, מעודד ומעצים.
+- הסיכום צריך לשקף תמונה כוללת: מה שקרה (האימונים האחרונים), מה קורה עכשיו (הדרגה והרמה) ומה שצריך לקרות (האימון להיום).
+- שלב מספר אימוג'ים מתאימים.`;
+
+      const result = await this.session.prompt(prompt);
+      return result?.trim() ? { text: result.trim(), isAI: true } : { text: fallbackSummary, isAI: false };
+    } catch(e) {
+      return { text: fallbackSummary, isAI: false };
+    }
   }
 };

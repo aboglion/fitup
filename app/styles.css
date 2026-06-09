@@ -1221,3 +1221,101 @@ input:checked + .slider:before {
   background: var(--bg-surface);
 }
 
+/* ===== AI Status Summary Card ===== */
+.ai-status-summary-card {
+  background: linear-gradient(135deg, rgba(108, 92, 231, 0.12), rgba(34, 197, 94, 0.08));
+  border: 1px solid rgba(108, 92, 231, 0.25);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.5s ease;
+  text-align: right;
+}
+.ai-status-summary-card::before {
+  content: '✨';
+  position: absolute;
+  top: 1rem;
+  left: 1.25rem;
+  font-size: 1.5rem;
+  opacity: 0.85;
+}
+.ai-status-summary-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.65rem;
+  color: var(--accent-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.ai-status-summary-card p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  margin-bottom: 0.85rem;
+  padding-left: 1.5rem; /* make room for the emoji */
+}
+.ai-status-summary-card .summary-stats-inline {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+.ai-status-summary-card .summary-stats-inline span {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+}
+
+/* ===== AI Source Badges ===== */
+.ai-source-badge {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+.ai-source-badge.ai-live {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--green);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.15);
+}
+.ai-source-badge.ai-fallback {
+  background: rgba(153, 153, 187, 0.15);
+  color: var(--text-secondary);
+  border: 1px solid rgba(153, 153, 187, 0.3);
+}
+
+.ai-source-badge .badge-dot {
+  margin-left: 5px;
+  font-size: 0.55rem;
+  line-height: 1;
+  display: inline-block;
+}
+.ai-source-badge.ai-live .badge-dot {
+  color: #22c55e;
+  animation: pulse-dot-badge 1.5s infinite;
+}
+.ai-source-badge.ai-fallback .badge-dot {
+  color: #9ca3af;
+}
+@keyframes pulse-dot-badge {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+
+
+

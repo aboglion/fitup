@@ -176,6 +176,37 @@ function renderHome() {
   if (typeof updateSyncNav === 'function') {
     updateSyncNav(AuthModule.isConnected());
   }
+
+  // AI Global Status Summary Card
+  const summaryCard = document.getElementById('ai-status-summary-card');
+  if (summaryCard) {
+    summaryCard.innerHTML = `
+      <h3>🤖 עוזר אימונים חכם</h3>
+      <p style="opacity: 0.7; font-size: 0.85rem;">טוען ניתוח מצב אישי...</p>
+    `;
+    summaryCard.classList.remove('hidden');
+    
+    AIModule.getGlobalStatusSummary(prog, plan, appData).then(res => {
+      const cardIcon = res.isAI ? '🤖' : '👔';
+      const badgeHtml = res.isAI 
+        ? `<span class="ai-source-badge ai-live" title="נוצר על ידי AI מקומי"><span class="badge-dot">●</span>🤖</span>`
+        : `<span class="ai-source-badge ai-fallback" title="תבנית מערכת מוגדרת מראש"><span class="badge-dot">●</span>👔</span>`;
+
+      summaryCard.innerHTML = `
+        <h3>${cardIcon} עוזר אימונים חכם ${badgeHtml}</h3>
+        <p>${res.text}</p>
+        <div class="summary-stats-inline">
+          <span>🔥 רצף: ${prog.streak || 0} ימים</span>
+          <span>💪 סה"כ אימונים: ${prog.totalWorkouts || 0}</span>
+          <span>🏆 XP: ${prog.xp || 0}</span>
+        </div>
+      `;
+    }).catch(err => {
+      console.error('Error generating status summary:', err);
+      summaryCard.classList.add('hidden');
+    });
+  }
+
   showScreen('screen-home', 'FitPro');
 }
 
@@ -1358,6 +1389,15 @@ async function saveLeaderboardName() {
     toast('⚠️ השם לא יכול להיות ריק');
     return;
   }
+  
+  // Moderate name to prevent abuse/malicious input
+  toast('🔍 בודק תקינות שם...');
+  const check = await AIModule.moderateName(name);
+  if (!check.valid) {
+    toast(`⚠️ ${check.reason}`);
+    return;
+  }
+
   localStorage.setItem('fitpro_leaderboard_name', name);
   toast('✅ שם התצוגה עודכן!');
   await syncMyLeaderboardScore();
