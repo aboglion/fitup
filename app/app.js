@@ -26,6 +26,14 @@ function saveData() {
 }
 
 // Navigation
+let isGoingBack = false;
+
+function pushNav(callback) {
+  if (isGoingBack) return;
+  navStack.push(callback);
+  history.pushState({ depth: navStack.length }, '');
+}
+
 function showScreen(id, title) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -37,39 +45,137 @@ function showScreen(id, title) {
 
 function goBack() {
   if (navStack.length === 0) return;
-  const prev = navStack.pop();
-  prev();
+  history.back();
 }
 
-// Home
+// Intercept popstate for browser back/forward buttons
+window.addEventListener('popstate', (event) => {
+  const targetDepth = (event.state && typeof event.state.depth === 'number') ? event.state.depth : 0;
+  
+  isGoingBack = true;
+  while (navStack.length > targetDepth) {
+    const prev = navStack.pop();
+    if (prev) prev();
+  }
+  isGoingBack = false;
+  
+  const b = document.getElementById('btn-back');
+  if (b) b.classList.toggle('hidden', navStack.length === 0);
+});
+
+// Home - Smart Today View
 function renderHome() {
   navStack = [];
+  if (!isGoingBack) {
+    history.replaceState({ depth: 0 }, '');
+  }
   const h = new Date().getHours();
   const g = h < 12 ? 'בוקר טוב ☀️' : h < 18 ? 'צהריים טובים 🌤️' : 'ערב טוב 🌙';
   document.getElementById('greeting-text').textContent = g;
   document.getElementById('current-date').textContent = new Date().toLocaleDateString('he-IL', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
 
-  const grid = document.getElementById('days-grid');
-  grid.innerHTML = appData.days.map(d => `
-    <div class="day-card" onclick="openDay('${d.id}')">
-      <div class="day-card-top">
-        <span class="day-card-emoji">${d.emoji}</span>
-        <div class="day-card-info">
-          <h3>${d.name}</h3>
-          <p>${d.subtitle}</p>
-        </div>
+  // XP Bar
+  const prog = TrainingEngine.getProgress();
+  const nextXP = TrainingEngine.getNextRankXP();
+  const pct = Math.min((prog.xp / nextXP) * 100, 100);
+  const xpContainer = document.getElementById('xp-bar-container');
+  if (xpContainer) {
+    xpContainer.innerHTML = `
+      <div class="xp-header">
+        <span class="xp-rank">${TrainingEngine.getRankEmoji()} ${prog.rank}</span>
+        <span class="xp-points">${prog.xp} XP</span>
       </div>
-      <div class="day-card-muscles">
-        ${d.muscles.map(m => `<span class="muscle-tag">${m.nameHe}</span>`).join('')}
+      <div class="xp-bar"><div class="xp-fill" style="width:${pct}%"></div></div>
+      <div class="xp-stats-row">
+        <span>🔥 רצף: ${prog.streak || 0} ימים</span>
+        <span>💪 אימונים: ${prog.totalWorkouts || 0}</span>
+      </div>`;
+  }
+
+  // Smart Today Card
+  const plan = TrainingEngine.getTodayPlan();
+  const todayCard = document.getElementById('today-card');
+  if (plan.type === 'rest' || plan.type === 'done') {
+    todayCard.innerHTML = `
+      <div class="today-rest-card">
+        <div class="rest-icon">${plan.type === 'done' ? '✅' : '😴'}</div>
+        <h3>${plan.message}</h3>
+        <p class="rest-tip">המנוחה בונה את השרירים. חזור מחר חזק יותר!</p>
+      </div>`;
+  } else {
+    const day = appData.days.find(d => d.id === plan.dayId);
+    if (day) {
+      const muscleCount = day.muscles.length;
+      todayCard.innerHTML = `
+        <div class="today-workout-card" onclick="openDay('${day.id}')">
+          <div class="today-badge">האימון שלך להיום</div>
+          <div class="today-main">
+            <span class="today-emoji">${day.emoji}</span>
+            <div class="today-info">
+              <h3>${day.name}</h3>
+              <p>${day.subtitle}</p>
+            </div>
+          </div>
+          <div class="today-muscles">
+            ${day.muscles.map(m => {
+              const cur = TrainingEngine.getCurrentExercise(m);
+              const lc = appData.levelColors[cur.exercise.level] || {};
+              return `<div class="today-muscle-chip">${lc.emoji||'🟢'} ${m.nameHe}</div>`;
+            }).join('')}
+          </div>
+          <button class="today-start-btn">▶ התחל אימון</button>
+        </div>`;
+    }
+  }
+
+  // Weekly Progress
+  const week = TrainingEngine.getWeekStatus();
+  const weekEl = document.getElementById('weekly-progress');
+  if (weekEl) {
+    weekEl.innerHTML = `
+      <h4 class="section-title">📅 השבוע שלי</h4>
+      <div class="week-dots">
+        ${week.map(d => `
+          <div class="week-day ${d.isToday ? 'today' : ''} ${d.completed ? 'done' : ''}">
+            <span class="week-dot">${d.completed ? '✅' : d.isToday ? '🔵' : '⚪'}</span>
+            <span class="week-name">${d.name}</span>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  // Stats overview
+  const statsEl = document.getElementById('stats-overview');
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <h4 class="section-title">📊 סטטיסטיקות</h4>
+      <div class="stats-grid">
+        <div class="stat-mini"><span class="stat-mini-num">${prog.totalWorkouts || 0}</span><span class="stat-mini-label">אימונים</span></div>
+        <div class="stat-mini"><span class="stat-mini-num">${prog.streak || 0}</span><span class="stat-mini-label">רצף ימים</span></div>
+        <div class="stat-mini"><span class="stat-mini-num">${prog.xp || 0}</span><span class="stat-mini-label">XP</span></div>
+        <div class="stat-mini"><span class="stat-mini-num">${Object.values(prog.muscleLevels || {}).filter(v=>v>0).length}</span><span class="stat-mini-label">שדרוגים</span></div>
       </div>
-    </div>
-  `).join('');
-  
+      <div class="all-days-link" onclick="showAllDays()">📋 כל ימי האימון →</div>`;
+  }
+
   if (typeof updateSyncNav === 'function') {
     updateSyncNav(AuthModule.isConnected());
   }
-  
   showScreen('screen-home', 'FitPro');
+}
+
+// Show all days (fallback grid)
+function showAllDays() {
+  pushNav(() => renderHome());
+  const container = document.getElementById('today-card');
+  container.innerHTML = appData.days.map(d => `
+    <div class="day-card" onclick="openDay('${d.id}')">
+      <div class="day-card-top">
+        <span class="day-card-emoji">${d.emoji}</span>
+        <div class="day-card-info"><h3>${d.name}</h3><p>${d.subtitle}</p></div>
+      </div>
+    </div>`).join('');
+  document.getElementById('weekly-progress').innerHTML = '';
+  document.getElementById('stats-overview').innerHTML = '';
 }
 
 function updateSyncNav(connected) {
@@ -167,75 +273,70 @@ window.addEventListener('click', () => {
   if (dropdown) dropdown.classList.add('hidden');
 });
 
-// Day View
+// Day View - Show current level exercises only
 function openDay(dayId) {
-  navStack.push(() => renderHome());
+  pushNav(() => renderHome());
   currentDay = appData.days.find(d => d.id === dayId);
   if (!currentDay) return;
   document.getElementById('day-emoji').textContent = currentDay.emoji;
   document.getElementById('day-title').textContent = currentDay.name;
   document.getElementById('day-subtitle').textContent = currentDay.subtitle;
 
+  // Day progress bar
+  const progBar = document.getElementById('day-progress-bar');
+  if (progBar) {
+    const totalMuscles = currentDay.muscles.length;
+    const upgraded = currentDay.muscles.filter(m => TrainingEngine.getMuscleLevel(m.id) > 0).length;
+    const pct = totalMuscles > 0 ? (upgraded / totalMuscles) * 100 : 0;
+    progBar.innerHTML = `<div class="day-prog-fill" style="width:${pct}%"></div><span class="day-prog-text">${upgraded}/${totalMuscles} שדרוגים</span>`;
+  }
+
   const list = document.getElementById('muscles-list');
-  list.innerHTML = currentDay.muscles.map(m => `
-    <div class="muscle-card" onclick="openMuscle('${m.id}')">
+  list.innerHTML = currentDay.muscles.map(m => {
+    const cur = TrainingEngine.getCurrentExercise(m);
+    const e = cur.exercise;
+    const lc = appData.levelColors[e.level] || {};
+    const levelIdx = cur.levelIndex;
+    const totalLevels = m.exercises.length;
+    const imgSrc = e.imageData || `../${currentDay.folder}/${e.image}`;
+    
+    return `
+    <div class="muscle-card-game" onclick="openMuscle('${m.id}')">
       <div class="muscle-card-inner">
-        <img class="muscle-card-img" src="${m.imageData || `../${currentDay.folder}/${m.image}`}" alt="${m.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2270%22 height=%2270%22><rect fill=%22%231a1a3e%22 width=%2270%22 height=%2270%22/><text x=%2235%22 y=%2240%22 text-anchor=%22middle%22 fill=%22%23666%22 font-size=%2220%22>💪</text></svg>'">
+        <img class="muscle-card-img" src="${imgSrc}" alt="${m.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2270%22 height=%2270%22><rect fill=%22%231a1a3e%22 width=%2270%22 height=%2270%22/><text x=%2235%22 y=%2240%22 text-anchor=%22middle%22 fill=%22%23666%22 font-size=%2220%22>💪</text></svg>'">
         <div class="muscle-card-info">
-          <h3>${m.name}</h3>
-          <span class="muscle-name-he">${m.nameHe}</span>
-          <div class="muscle-card-levels">
-            ${m.exercises.map(e => `<span class="muscle-card-level">${appData.levelColors[e.level]?.emoji||''}</span>`).join('')}
+          <h3>${m.nameHe}</h3>
+          <span class="current-exercise-name">${e.name}</span>
+          <div class="level-progress-dots">
+            ${m.exercises.map((ex, i) => {
+              const elc = appData.levelColors[ex.level] || {};
+              const state = i < levelIdx ? 'done' : i === levelIdx ? 'current' : 'locked';
+              return `<span class="level-dot ${state}" style="--dot-color:${elc.hex || '#666'}" title="${elc.name || ''}">${state === 'done' ? '✓' : state === 'locked' ? '🔒' : elc.emoji || '●'}</span>`;
+            }).join('')}
           </div>
         </div>
+        <div class="muscle-level-badge" style="background:${lc.hex}22;border-color:${lc.hex};color:${lc.hex}">
+          ${lc.emoji || ''} ${levelIdx + 1}/${totalLevels}
+        </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
   showScreen('screen-day', currentDay.name);
 }
 
-// Muscle View
+// Muscle View - Show current exercise detail + level map
 function openMuscle(muscleId) {
-  navStack.push(() => openDay(currentDay.id));
+  pushNav(() => openDay(currentDay.id));
   currentMuscle = currentDay.muscles.find(m => m.id === muscleId);
   if (!currentMuscle) return;
 
-  document.getElementById('muscle-img').src = currentMuscle.imageData || `../${currentDay.folder}/${currentMuscle.image}`;
-  document.getElementById('muscle-name').textContent = `${currentMuscle.name} - ${currentMuscle.nameHe}`;
-
-  const badges = document.getElementById('level-badges');
-  const levels = [...new Set(currentMuscle.exercises.map(e => e.level))];
-  badges.innerHTML = levels.map(l => `<span class="level-badge">${appData.levelColors[l]?.emoji||''}</span>`).join('');
-
-  const list = document.getElementById('exercises-list');
-  list.innerHTML = currentMuscle.exercises.map((e, i) => `
-    <div class="exercise-card" data-level="${e.level}" onclick="openExercise(${i})">
-      <div class="exercise-card-inner">
-        <img class="exercise-card-img" src="${e.imageData || `../${currentDay.folder}/${e.image}`}" alt="${e.name}" onerror="this.style.display='none'">
-        <div class="exercise-card-info">
-          <h4>${e.name}</h4>
-          <div class="exercise-card-meta">
-            <span class="exercise-level-dot">${appData.levelColors[e.level]?.emoji||''}</span>
-            <span class="exercise-type-tag">${appData.exerciseTypes[e.type]?.name||e.type}</span>
-            ${e.equipment ? `<span class="exercise-equip">${e.equipment}</span>` : ''}
-          </div>
-        </div>
-        <span class="exercise-arrow">◀</span>
-      </div>
-    </div>
-  `).join('');
-  showScreen('screen-muscle', currentMuscle.nameHe);
-}
-
-// Exercise Detail
-function openExercise(idx) {
-  navStack.push(() => openMuscle(currentMuscle.id));
-  currentExercise = currentMuscle.exercises[idx];
-  if (!currentExercise) return;
-  const e = currentExercise;
+  const cur = TrainingEngine.getCurrentExercise(currentMuscle);
+  const e = cur.exercise;
   const lc = appData.levelColors[e.level] || {};
 
-  document.getElementById('exercise-detail').innerHTML = `
+  // Show exercise detail directly (no separate screen needed)
+  const detail = document.getElementById('exercise-detail');
+  detail.innerHTML = `
     <div class="ex-detail-img-wrap">
       <img class="ex-detail-img" src="${e.imageData || `../${currentDay.folder}/${e.image}`}" alt="${e.name}" onerror="this.style.display='none'">
     </div>
@@ -253,25 +354,35 @@ function openExercise(idx) {
       <h4>🎯 תנאי מעבר לרמה הבאה</h4>
       <p>${e.progression}</p>
     </div>
-    ${e.video ? `<button class="ex-video-btn" onclick="playVideo('${e.video}')">▶ צפה בסרטון הדגמה</button>` : '<button class="ex-video-btn" disabled>אין סרטון זמין</button>'}
+    
+    <!-- Level Map -->
+    <div class="level-map">
+      <h4>🗺️ מפת רמות</h4>
+      ${currentMuscle.exercises.map((ex, i) => {
+        const elc = appData.levelColors[ex.level] || {};
+        const state = i < cur.levelIndex ? 'completed' : i === cur.levelIndex ? 'current' : 'locked';
+        return `
+        <div class="level-map-item ${state}">
+          <div class="level-map-connector"></div>
+          <div class="level-map-dot" style="--level-color:${elc.hex}">${state === 'completed' ? '✅' : state === 'current' ? elc.emoji : '🔒'}</div>
+          <div class="level-map-info">
+            <span class="level-map-name">${state === 'locked' ? '???' : ex.name}</span>
+            <span class="level-map-badge" style="color:${elc.hex}">${elc.name || ''}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    
+    ${e.video ? `<button class="ex-video-btn" onclick="playVideo('${e.video}')">ℹ️ הסבר מפורט</button>` : '<button class="ex-video-btn" disabled>אין הסבר זמין</button>'}
   `;
-  showScreen('screen-exercise', e.name);
+  showScreen('screen-exercise', currentMuscle.nameHe);
 }
 
 // Video
 function playVideo(url) {
-  const container = document.getElementById('video-container');
-  let embedUrl = url;
-  // YouTube
-  const ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-  if (ytMatch) {
-    embedUrl = `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`;
-    container.innerHTML = `<iframe src="${embedUrl}" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-  } else {
+  if (url) {
     window.open(url, '_blank');
-    return;
   }
-  document.getElementById('video-modal').classList.remove('hidden');
 }
 
 function closeVideoModal() {
@@ -281,7 +392,7 @@ function closeVideoModal() {
 
 // Admin
 function showAdminPanel() {
-  navStack.push(() => renderHome());
+  pushNav(() => renderHome());
   showScreen('screen-admin', 'ניהול');
   switchAdminTab('days');
 }
@@ -338,6 +449,24 @@ function switchAdminTab(tab) {
         <button class="admin-btn-add" onclick="addExercise('${d.id}','${m.id}')">+ הוסף תרגיל</button>
       `).join('')
     ).join('');
+  } else if (tab === 'history') {
+    const prog = TrainingEngine.getProgress();
+    const history = (prog.workoutHistory || []).slice().reverse();
+    c.innerHTML = `
+      <div class="admin-item" style="text-align:center">
+        <h4>📊 סה"כ ${prog.totalWorkouts || 0} אימונים | ${prog.xp || 0} XP | רצף ${prog.streak || 0} ימים</h4>
+      </div>
+      ${history.length === 0 ? '<div class="admin-item"><p style="color:var(--text-secondary);text-align:center">אין היסטוריית אימונים עדיין</p></div>' :
+      history.map(h => `
+        <div class="admin-item">
+          <div class="admin-item-header">
+            <h4>${h.dayName || h.dayId}</h4>
+            <span style="color:var(--text-muted);font-size:0.8rem">${h.date}</span>
+          </div>
+          <p style="color:var(--text-secondary);font-size:0.82rem">⏱️ ${Math.floor((h.duration||0)/60)} דקות${h.logs ? ` • ${h.logs.length} תרגילים` : ''}</p>
+        </div>
+      `).join('')}
+      ${history.length > 0 ? '<button class="admin-btn-sm danger" onclick="clearHistory()" style="width:100%;padding:0.6rem;margin-top:0.5rem">🗑️ נקה היסטוריה</button>' : ''}`;
   } else if (tab === 'cloud') {
     const connected = AuthModule.isConnected();
     const profile = AuthModule.getProfile();
@@ -590,6 +719,19 @@ function resetData() {
   switchAdminTab('settings'); toast('המערכת אופסה');
 }
 
+function clearHistory() {
+  if (!confirm('למחוק את כל היסטוריית האימונים?')) return;
+  const p = TrainingEngine.getProgress();
+  p.workoutHistory = [];
+  p.totalWorkouts = 0;
+  p.streak = 0;
+  p.xp = 0;
+  p.rank = 'מתחיל';
+  TrainingEngine.saveProgress(p);
+  switchAdminTab('history');
+  toast('ההיסטוריה נמחקה');
+}
+
 // Modal
 function openModal(title, bodyHtml) {
   document.getElementById('modal-title').textContent = title;
@@ -630,18 +772,27 @@ function getImgSrc(item, folder) {
   return `../${folder}/${item.image}`;
 }
 
-// Start Workout
+// Start Workout - Only current-level exercises
 let workoutLog = [];
 let workoutStartTime = null;
 let restTimerId = null;
+let workoutExercises = []; // flat list of current-level exercises
 
 function startWorkout() {
   if (!currentDay) return;
   workoutLog = [];
   workoutStartTime = Date.now();
+  
+  // Build exercise list with ONLY current level per muscle
+  workoutExercises = [];
+  currentDay.muscles.forEach(m => {
+    const cur = TrainingEngine.getCurrentExercise(m);
+    workoutExercises.push({ muscle: m.nameHe, muscleId: m.id, exercise: cur.exercise, levelIndex: cur.levelIndex, isMaxLevel: cur.isMaxLevel, setsData: [] });
+  });
+  
   renderWorkoutScreen();
   showScreen('screen-workout', currentDay.name + ' - אימון');
-  navStack.push(() => openDay(currentDay.id));
+  pushNav(() => openDay(currentDay.id));
   AIModule.getMotivation('workoutStart').then(msg => {
     const el = document.getElementById('workout-motivation');
     if (el) { el.textContent = msg; el.classList.remove('hidden'); }
@@ -649,32 +800,31 @@ function startWorkout() {
 }
 
 function renderWorkoutScreen() {
-  const exercises = [];
-  currentDay.muscles.forEach(m => {
-    m.exercises.forEach(e => {
-      exercises.push({ muscle: m.nameHe, exercise: e, muscleId: m.id });
-    });
-  });
-  
   const content = document.getElementById('workout-content');
   content.innerHTML = `
     <div class="workout-header-card">
       <h2>${currentDay.emoji} ${currentDay.name}</h2>
       <p id="workout-motivation" class="workout-motivation hidden"></p>
       <p class="workout-timer" id="workout-timer">00:00</p>
+      <div class="workout-progress-bar">
+        <div class="workout-prog-fill" id="workout-prog-fill" style="width:0%"></div>
+      </div>
+      <span class="workout-prog-label" id="workout-prog-label">0/${workoutExercises.length} תרגילים</span>
     </div>
     <div class="workout-exercises">
-      ${exercises.map((item, idx) => {
+      ${workoutExercises.map((item, idx) => {
         const e = item.exercise;
         const lc = appData.levelColors[e.level] || {};
         const imgSrc = getImgSrc(e, currentDay.folder);
+        const setsNum = parseInt(e.sets) || 3;
+        const targetReps = e.reps;
         return `
         <div class="workout-exercise-card" id="wex-${idx}">
           <div class="wex-header" onclick="toggleWorkoutExercise(${idx})">
             <img class="wex-thumb" src="${imgSrc}" alt="" onerror="this.style.display='none'">
             <div class="wex-info">
               <h4>${lc.emoji||''} ${e.name}</h4>
-              <span class="wex-meta">${item.muscle} • ${e.sets} סטים • ${e.reps}</span>
+              <span class="wex-meta">${item.muscle} • ${setsNum} סטים • ${targetReps}</span>
             </div>
             <span class="wex-check" id="wex-check-${idx}">○</span>
           </div>
@@ -684,11 +834,11 @@ function renderWorkoutScreen() {
         </div>`;
       }).join('')}
     </div>
-    <button class="admin-save-btn" onclick="finishWorkout()" style="margin-top:1rem">🏁 סיים אימון</button>
+    <button class="finish-workout-btn" onclick="finishWorkout()">🏁 סיים אימון</button>
   `;
-  
-  // Start timer
   updateWorkoutTimer();
+  // Auto-open first exercise
+  if (workoutExercises.length > 0) toggleWorkoutExercise(0);
 }
 
 function updateWorkoutTimer() {
@@ -711,49 +861,173 @@ function toggleWorkoutExercise(idx) {
 }
 
 function renderExerciseSets(idx) {
-  const exercises = [];
-  currentDay.muscles.forEach(m => m.exercises.forEach(e => exercises.push(e)));
-  const e = exercises[idx];
-  if (!e) return;
+  const item = workoutExercises[idx];
+  if (!item) return;
+  const e = item.exercise;
   const setsNum = parseInt(e.sets) || 3;
+  const repsRange = e.reps;
   const container = document.getElementById(`wex-sets-${idx}`);
   let html = '';
   for (let s = 0; s < setsNum; s++) {
     html += `
       <div class="wex-set-row" id="wex-set-${idx}-${s}">
         <span class="wex-set-num">סט ${s+1}</span>
-        <input type="number" class="wex-set-input" id="wex-reps-${idx}-${s}" placeholder="חזרות" min="0">
+        <div class="wex-set-inputs">
+          <div class="wex-input-group">
+            <label>חזרות</label>
+            <div class="wex-counter">
+              <button class="wex-counter-btn" onclick="adjustReps(${idx},${s},-1)">−</button>
+              <input type="number" class="wex-set-input" id="wex-reps-${idx}-${s}" value="0" min="0">
+              <button class="wex-counter-btn" onclick="adjustReps(${idx},${s},1)">+</button>
+            </div>
+          </div>
+          <div class="wex-input-group">
+            <label>RIR</label>
+            <input type="range" class="wex-rir-slider" id="wex-rir-${idx}-${s}" min="0" max="5" value="2" oninput="updateRIRLabel(${idx},${s})">
+            <span class="wex-rir-val" id="wex-rir-val-${idx}-${s}">2</span>
+          </div>
+          <label class="wex-strict-label">
+            <input type="checkbox" id="wex-strict-${idx}-${s}" checked> טכניקה מושלמת
+          </label>
+        </div>
         <button class="wex-set-done" onclick="markSet(${idx},${s})">✓</button>
       </div>`;
   }
   container.innerHTML = html;
 }
 
-function markSet(exIdx, setIdx) {
+function adjustReps(exIdx, setIdx, delta) {
   const input = document.getElementById(`wex-reps-${exIdx}-${setIdx}`);
-  const row = document.getElementById(`wex-set-${exIdx}-${setIdx}`);
-  const reps = parseInt(input?.value) || 0;
-  row.classList.add('completed');
-  input.disabled = true;
-  
-  // Check if all sets for this exercise are done
-  const exercises = [];
-  currentDay.muscles.forEach(m => m.exercises.forEach(e => exercises.push(e)));
-  const e = exercises[exIdx];
-  const setsNum = parseInt(e?.sets) || 3;
-  let allDone = true;
-  let totalReps = 0;
-  for (let s = 0; s < setsNum; s++) {
-    const r = document.getElementById(`wex-set-${exIdx}-${s}`);
-    if (!r || !r.classList.contains('completed')) { allDone = false; break; }
-    totalReps += parseInt(document.getElementById(`wex-reps-${exIdx}-${s}`)?.value) || 0;
+  if (input && !input.disabled) {
+    input.value = Math.max(0, (parseInt(input.value) || 0) + delta);
   }
-  if (allDone) {
+}
+
+function updateRIRLabel(exIdx, setIdx) {
+  const slider = document.getElementById(`wex-rir-${exIdx}-${setIdx}`);
+  const label = document.getElementById(`wex-rir-val-${exIdx}-${setIdx}`);
+  if (slider && label) label.textContent = slider.value;
+}
+
+function markSet(exIdx, setIdx) {
+  const repsInput = document.getElementById(`wex-reps-${exIdx}-${setIdx}`);
+  const rirSlider = document.getElementById(`wex-rir-${exIdx}-${setIdx}`);
+  const strictCheck = document.getElementById(`wex-strict-${exIdx}-${setIdx}`);
+  const row = document.getElementById(`wex-set-${exIdx}-${setIdx}`);
+  
+  const reps = parseInt(repsInput?.value) || 0;
+  const rir = parseInt(rirSlider?.value) || 0;
+  const strict = strictCheck?.checked || false;
+
+  if (reps === 0) { toast('⚠️ הכנס מספר חזרות'); return; }
+
+  row.classList.add('completed');
+  repsInput.disabled = true;
+  rirSlider.disabled = true;
+  strictCheck.disabled = true;
+  
+  // Store set data
+  const item = workoutExercises[exIdx];
+  item.setsData.push({ reps, rir, strict });
+  
+  // Award XP for this set
+  const targetMax = parseInt(item.exercise.reps.split('-').pop()) || 10;
+  const xp = TrainingEngine.calcSetXP(reps, targetMax, strict, rir);
+  TrainingEngine.addXP(xp, 'set');
+  toast(`+${xp} XP ⚡`);
+
+  // Check if all sets done
+  const setsNum = parseInt(item.exercise.sets) || 3;
+  if (item.setsData.length >= setsNum) {
     document.getElementById(`wex-check-${exIdx}`).textContent = '✅';
-    workoutLog.push({ exercise: e.name, setsCompleted: setsNum, totalReps, duration: 0 });
+    document.getElementById(`wex-${exIdx}`).classList.add('exercise-done');
+    
+    // Check level up
+    if (!item.isMaxLevel && TrainingEngine.checkLevelUp(item.muscleId, item.exercise, item.setsData)) {
+      const newLevel = TrainingEngine.levelUp(item.muscleId);
+      const nextEx = currentDay.muscles.find(m => m.id === item.muscleId)?.exercises[newLevel];
+      showLevelUp(item.muscle, nextEx);
+    }
+    
+    // Update progress bar
+    const done = workoutExercises.filter(w => w.setsData.length >= (parseInt(w.exercise.sets) || 3)).length;
+    const fill = document.getElementById('workout-prog-fill');
+    const label = document.getElementById('workout-prog-label');
+    if (fill) fill.style.width = `${(done / workoutExercises.length) * 100}%`;
+    if (label) label.textContent = `${done}/${workoutExercises.length} תרגילים`;
+    
+    // Auto-open next exercise
+    const nextIdx = exIdx + 1;
+    if (nextIdx < workoutExercises.length) {
+      setTimeout(() => toggleWorkoutExercise(nextIdx), 300);
+    }
+    
+    workoutLog.push({ exercise: item.exercise.name, muscle: item.muscle, setsCompleted: setsNum, setsData: item.setsData });
     AIModule.getMotivation('setComplete').then(msg => toast(msg));
+  } else {
+    // Start rest timer
+    startRestTimer(item.exercise.type === 'compound' ? 120 : 60);
   }
   saveData();
+}
+
+// Rest Timer
+function startRestTimer(seconds) {
+  const overlay = document.getElementById('rest-timer-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('hidden');
+  
+  let remaining = seconds;
+  const total = seconds;
+  const circle = document.getElementById('rest-timer-progress');
+  const text = document.getElementById('rest-timer-text');
+  const circumference = 2 * Math.PI * 54;
+  if (circle) { circle.style.strokeDasharray = circumference; circle.style.strokeDashoffset = 0; }
+  
+  AIModule.getMotivation('rest').then(msg => {
+    const el = document.getElementById('rest-timer-motivation');
+    if (el) el.textContent = msg;
+  });
+  
+  clearInterval(restTimerId);
+  restTimerId = setInterval(() => {
+    remaining--;
+    const min = Math.floor(remaining / 60);
+    const sec = remaining % 60;
+    if (text) text.textContent = `${min}:${String(sec).padStart(2, '0')}`;
+    if (circle) circle.style.strokeDashoffset = circumference * (1 - remaining / total);
+    
+    if (remaining <= 0) {
+      clearInterval(restTimerId);
+      overlay.classList.add('hidden');
+      toast('⏰ סיום מנוחה – קדימה לסט הבא!');
+      try { navigator.vibrate?.(300); } catch(e) {}
+    }
+  }, 1000);
+}
+
+function skipRestTimer() {
+  clearInterval(restTimerId);
+  document.getElementById('rest-timer-overlay')?.classList.add('hidden');
+}
+
+// Level Up Animation
+function showLevelUp(muscleName, nextExercise) {
+  const overlay = document.getElementById('levelup-overlay');
+  if (!overlay) return;
+  document.getElementById('levelup-title').textContent = `🎉 עלית רמה!`;
+  document.getElementById('levelup-detail').textContent = `${muscleName} – נפתח תרגיל חדש!`;
+  const badge = document.getElementById('levelup-badge');
+  if (badge && nextExercise) {
+    const lc = appData.levelColors[nextExercise.level] || {};
+    badge.innerHTML = `<span style="color:${lc.hex}">${lc.emoji} ${nextExercise.name}</span>`;
+  }
+  overlay.classList.remove('hidden');
+  TrainingEngine.addXP(50, 'level_up');
+}
+
+function closeLevelUp() {
+  document.getElementById('levelup-overlay')?.classList.add('hidden');
 }
 
 async function finishWorkout() {
@@ -761,27 +1035,23 @@ async function finishWorkout() {
   const duration = Math.floor((Date.now() - workoutStartTime) / 1000);
   workoutStartTime = null;
   
+  // Record in engine
+  TrainingEngine.recordWorkout(currentDay.id, currentDay.name, duration, workoutLog);
+  
   // Get AI summary
   const summary = await AIModule.getWorkoutSummary(workoutLog);
   
-  // Save to history
+  // Save to appData too
   if (!appData.workoutHistory) appData.workoutHistory = [];
-  appData.workoutHistory.push({
-    date: new Date().toISOString(),
-    day: currentDay.id,
-    dayName: currentDay.name,
-    duration,
-    log: workoutLog,
-    summary
-  });
+  appData.workoutHistory.push({ date: new Date().toISOString(), day: currentDay.id, dayName: currentDay.name, duration, log: workoutLog, summary });
   saveData();
   
-  // Show summary screen
   renderSummaryScreen(summary, duration);
 }
 
 function renderSummaryScreen(summary, duration) {
   const min = Math.floor(duration / 60);
+  const prog = TrainingEngine.getProgress();
   const content = document.getElementById('summary-content');
   content.innerHTML = `
     <div class="summary-card">
@@ -789,31 +1059,28 @@ function renderSummaryScreen(summary, duration) {
       <h2 class="summary-headline">${summary.headline}</h2>
       <p class="summary-time">⏱️ זמן אימון: ${min} דקות</p>
       
+      <div class="summary-xp-award">
+        <span class="xp-award-icon">⚡</span>
+        <span class="xp-award-text">${prog.xp} XP כולל</span>
+      </div>
+      
       <div class="summary-stats-grid">
         <div class="summary-stat"><span class="summary-stat-num">${summary.stats.exercises}</span><span class="summary-stat-label">תרגילים</span></div>
         <div class="summary-stat"><span class="summary-stat-num">${summary.stats.sets}</span><span class="summary-stat-label">סטים</span></div>
         ${summary.stats.promotions > 0 ? `<div class="summary-stat highlight"><span class="summary-stat-num">${summary.stats.promotions}</span><span class="summary-stat-label">קידומים!</span></div>` : ''}
       </div>
       
-      <div class="summary-section insight">
-        <h4>💡 תובנה</h4>
-        <p>${summary.insight}</p>
-      </div>
-      
-      <div class="summary-section tip">
-        <h4>🎯 טיפ</h4>
-        <p>${summary.tip}</p>
-      </div>
-      
-      <div class="summary-section reinforcement">
-        <h4>💪 חיזוק</h4>
-        <p>${summary.reinforcement}</p>
-      </div>
+      <div class="summary-section insight"><h4>💡 תובנה</h4><p>${summary.insight}</p></div>
+      <div class="summary-section tip"><h4>🎯 טיפ</h4><p>${summary.tip}</p></div>
+      <div class="summary-section reinforcement"><h4>💪 חיזוק</h4><p>${summary.reinforcement}</p></div>
       
       <button class="admin-save-btn" onclick="renderHome()" style="margin-top:1.5rem">🏠 חזרה לדף הבית</button>
     </div>
   `;
   navStack = [];
+  if (!isGoingBack) {
+    history.replaceState({ depth: 0 }, '');
+  }
   showScreen('screen-summary', 'סיכום אימון');
 }
 
@@ -828,3 +1095,4 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+

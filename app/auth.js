@@ -8,6 +8,12 @@ let gUserProfile = null;
 
 const AuthModule = {
   init() {
+    // Load saved profile first so it's available for updateUI
+    const profile = localStorage.getItem('fitpro_gprofile');
+    if (profile) {
+      try { gUserProfile = JSON.parse(profile); } catch(e) {}
+    }
+    
     // Load saved token
     const saved = localStorage.getItem('fitpro_gtoken');
     if (saved) {
@@ -15,11 +21,6 @@ const AuthModule = {
       this.updateUI(true);
     } else {
       this.updateUI(false);
-    }
-    // Load saved profile
-    const profile = localStorage.getItem('fitpro_gprofile');
-    if (profile) {
-      try { gUserProfile = JSON.parse(profile); } catch(e) {}
     }
     
     if (!GOOGLE_CLIENT_ID) {

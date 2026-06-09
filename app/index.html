@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="אפליקציית אימונים חכמה - תוכנית אימוני משקל גוף עם מערכת התקדמות אוטומטית">
+    <meta name="description" content="אפליקציית אימונים חכמה - תוכנית אימוני משקל גוף עם מערכת התקדמות אוטומטית כמו משחק">
     <meta name="theme-color" content="#0f0f23">
     <title>FitPro - אימון חכם</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,52 +45,40 @@
             </div>
         </nav>
 
-        <!-- Home -->
+        <!-- Home Screen: Smart Today View -->
         <section id="screen-home" class="screen active">
             <div class="home-header">
                 <div class="home-greeting">
                     <h2 id="greeting-text"></h2>
                     <p class="home-date" id="current-date"></p>
                 </div>
+                <div id="xp-bar-container" class="xp-bar-container"></div>
                 <div id="ai-motivation" class="ai-motivation-card hidden"></div>
             </div>
-            <div class="days-grid" id="days-grid"></div>
-            <div class="info-card">
-                <div class="info-card-header"><span class="info-icon">📋</span><h3>מודל התקדמות כפולה</h3></div>
-                <div class="info-card-body">
-                    <div class="rule-item"><span class="rule-num">1</span><span>השלם את הרף העליון של החזרות בכל הסטים</span></div>
-                    <div class="rule-item"><span class="rule-num">2</span><span>שליטה טכנית מוחלטת (Full ROM)</span></div>
-                    <div class="rule-item"><span class="rule-num">3</span><span>רזרבה שרירית (RIR ≥ 1)</span></div>
-                </div>
-            </div>
+            
+            <!-- Today's Smart Card -->
+            <div id="today-card" class="today-card"></div>
+            
+            <!-- Weekly Progress -->
+            <div id="weekly-progress" class="weekly-progress"></div>
+            
+            <!-- Stats Overview -->
+            <div id="stats-overview" class="stats-overview"></div>
         </section>
 
-        <!-- Day View -->
+        <!-- Day View: Show exercises at current level -->
         <section id="screen-day" class="screen">
             <div class="day-header" id="day-header">
                 <div class="day-emoji" id="day-emoji"></div>
                 <h2 id="day-title"></h2>
                 <p id="day-subtitle"></p>
+                <div id="day-progress-bar" class="day-progress-bar"></div>
                 <button class="start-workout-btn" id="start-workout-btn" onclick="startWorkout()">▶ התחל אימון</button>
             </div>
             <div class="muscles-list" id="muscles-list"></div>
         </section>
 
-        <!-- Muscle View -->
-        <section id="screen-muscle" class="screen">
-            <div class="muscle-header" id="muscle-header-section">
-                <img id="muscle-img" class="muscle-hero-img" src="" alt="">
-                <div class="muscle-info"><h2 id="muscle-name"></h2><div class="level-badges" id="level-badges"></div></div>
-            </div>
-            <div class="exercises-list" id="exercises-list"></div>
-        </section>
-
-        <!-- Exercise Detail -->
-        <section id="screen-exercise" class="screen">
-            <div class="exercise-detail" id="exercise-detail"></div>
-        </section>
-
-        <!-- Active Workout -->
+        <!-- Active Workout: Professional Set Tracking -->
         <section id="screen-workout" class="screen">
             <div id="workout-content"></div>
         </section>
@@ -98,6 +86,11 @@
         <!-- Workout Summary -->
         <section id="screen-summary" class="screen">
             <div id="summary-content"></div>
+        </section>
+
+        <!-- Exercise Detail (kept for viewing) -->
+        <section id="screen-exercise" class="screen">
+            <div class="exercise-detail" id="exercise-detail"></div>
         </section>
 
         <!-- Admin -->
@@ -108,6 +101,7 @@
                     <button class="admin-tab active" data-tab="days" onclick="switchAdminTab('days')">ימים</button>
                     <button class="admin-tab" data-tab="muscles" onclick="switchAdminTab('muscles')">שרירים</button>
                     <button class="admin-tab" data-tab="exercises" onclick="switchAdminTab('exercises')">תרגילים</button>
+                    <button class="admin-tab" data-tab="history" onclick="switchAdminTab('history')">היסטוריה</button>
                     <button class="admin-tab" data-tab="cloud" onclick="switchAdminTab('cloud')">ענן</button>
                     <button class="admin-tab" data-tab="settings" onclick="switchAdminTab('settings')">הגדרות</button>
                 </div>
@@ -132,9 +126,37 @@
         </div>
     </div>
 
+    <!-- Rest Timer Overlay -->
+    <div id="rest-timer-overlay" class="rest-timer-overlay hidden">
+        <div class="rest-timer-content">
+            <div class="rest-timer-circle" id="rest-timer-circle">
+                <svg viewBox="0 0 120 120">
+                    <circle class="rest-timer-bg" cx="60" cy="60" r="54"/>
+                    <circle class="rest-timer-progress" id="rest-timer-progress" cx="60" cy="60" r="54"/>
+                </svg>
+                <span class="rest-timer-text" id="rest-timer-text">0:00</span>
+            </div>
+            <p class="rest-timer-label">מנוחה</p>
+            <div id="rest-timer-motivation" class="rest-timer-motivation"></div>
+            <button class="rest-timer-skip" onclick="skipRestTimer()">דלג ▶</button>
+        </div>
+    </div>
+
+    <!-- Level Up Animation -->
+    <div id="levelup-overlay" class="levelup-overlay hidden">
+        <div class="levelup-content">
+            <div class="levelup-stars">⭐</div>
+            <h2 class="levelup-title" id="levelup-title">עלית רמה!</h2>
+            <p class="levelup-detail" id="levelup-detail"></p>
+            <div class="levelup-badge" id="levelup-badge"></div>
+            <button class="levelup-btn" onclick="closeLevelUp()">🔥 המשך</button>
+        </div>
+    </div>
+
     <div id="toast" class="toast hidden"><span id="toast-message"></span></div>
 
     <script src="data.js"></script>
+    <script src="engine.js"></script>
     <script src="auth.js"></script>
     <script src="ai.js"></script>
     <script src="app.js"></script>
