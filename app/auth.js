@@ -1,5 +1,5 @@
 // Google Auth + Drive Sync Module (Offline-First)
-const DEFAULT_GOOGLE_CLIENT_ID = ''; // Set your default Client ID here for hosted users
+const DEFAULT_GOOGLE_CLIENT_ID = '210071068493-dg8f374ctpbriq30f4lapbdcqbfnguom.apps.googleusercontent.com'; // Set your default Client ID here for hosted users
 const GOOGLE_CLIENT_ID = localStorage.getItem('fitpro_google_client_id') || DEFAULT_GOOGLE_CLIENT_ID;
 const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
 let gTokenClient = null;
