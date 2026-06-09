@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="אפליקציית אימונים חכמה - תוכנית אימוני משקל גוף עם מערכת התקדמות אוטומטית">
+    <meta name="theme-color" content="#0f0f23">
+    <title>FitPro - אימון חכם</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <!-- Splash -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-icon">💪</div>
+            <h1 class="splash-title">FitPro</h1>
+            <p class="splash-subtitle">אימון חכם</p>
+            <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+        </div>
+    </div>
+
+    <div id="app" class="app hidden">
+        <!-- Nav -->
+        <nav id="top-nav" class="top-nav">
+            <div class="nav-right">
+                <button id="btn-back" class="nav-btn hidden" onclick="goBack()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+                <h1 id="nav-title" class="nav-title">FitPro</h1>
+            </div>
+            
+            <div class="nav-sync-wrapper" id="nav-sync-wrapper">
+                <div id="sync-status-indicator" class="sync-status-indicator" onclick="toggleSyncDropdown(event)"></div>
+                <div id="sync-dropdown" class="sync-dropdown hidden" onclick="event.stopPropagation()"></div>
+            </div>
+            
+            <div class="nav-left">
+                <button id="btn-admin" class="nav-btn admin-btn" onclick="showAdminPanel()">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Home -->
+        <section id="screen-home" class="screen active">
+            <div class="home-header">
+                <div class="home-greeting">
+                    <h2 id="greeting-text"></h2>
+                    <p class="home-date" id="current-date"></p>
+                </div>
+                <div id="ai-motivation" class="ai-motivation-card hidden"></div>
+            </div>
+            <div class="days-grid" id="days-grid"></div>
+            <div class="info-card">
+                <div class="info-card-header"><span class="info-icon">📋</span><h3>מודל התקדמות כפולה</h3></div>
+                <div class="info-card-body">
+                    <div class="rule-item"><span class="rule-num">1</span><span>השלם את הרף העליון של החזרות בכל הסטים</span></div>
+                    <div class="rule-item"><span class="rule-num">2</span><span>שליטה טכנית מוחלטת (Full ROM)</span></div>
+                    <div class="rule-item"><span class="rule-num">3</span><span>רזרבה שרירית (RIR ≥ 1)</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day View -->
+        <section id="screen-day" class="screen">
+            <div class="day-header" id="day-header">
+                <div class="day-emoji" id="day-emoji"></div>
+                <h2 id="day-title"></h2>
+                <p id="day-subtitle"></p>
+                <button class="start-workout-btn" id="start-workout-btn" onclick="startWorkout()">▶ התחל אימון</button>
+            </div>
+            <div class="muscles-list" id="muscles-list"></div>
+        </section>
+
+        <!-- Muscle View -->
+        <section id="screen-muscle" class="screen">
+            <div class="muscle-header" id="muscle-header-section">
+                <img id="muscle-img" class="muscle-hero-img" src="" alt="">
+                <div class="muscle-info"><h2 id="muscle-name"></h2><div class="level-badges" id="level-badges"></div></div>
+            </div>
+            <div class="exercises-list" id="exercises-list"></div>
+        </section>
+
+        <!-- Exercise Detail -->
+        <section id="screen-exercise" class="screen">
+            <div class="exercise-detail" id="exercise-detail"></div>
+        </section>
+
+        <!-- Active Workout -->
+        <section id="screen-workout" class="screen">
+            <div id="workout-content"></div>
+        </section>
+
+        <!-- Workout Summary -->
+        <section id="screen-summary" class="screen">
+            <div id="summary-content"></div>
+        </section>
+
+        <!-- Admin -->
+        <section id="screen-admin" class="screen">
+            <div class="admin-panel" id="admin-panel">
+                <div class="admin-header"><h2>⚙️ ניהול מערכת</h2></div>
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-tab="days" onclick="switchAdminTab('days')">ימים</button>
+                    <button class="admin-tab" data-tab="muscles" onclick="switchAdminTab('muscles')">שרירים</button>
+                    <button class="admin-tab" data-tab="exercises" onclick="switchAdminTab('exercises')">תרגילים</button>
+                    <button class="admin-tab" data-tab="cloud" onclick="switchAdminTab('cloud')">ענן</button>
+                    <button class="admin-tab" data-tab="settings" onclick="switchAdminTab('settings')">הגדרות</button>
+                </div>
+                <div class="admin-content" id="admin-content"></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header"><h3 id="modal-title"></h3><button class="modal-close" onclick="closeModal()">✕</button></div>
+            <div class="modal-body" id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="video-modal" class="video-modal hidden" onclick="closeVideoModal()">
+        <div class="video-modal-content" onclick="event.stopPropagation()">
+            <button class="video-close" onclick="closeVideoModal()">✕</button>
+            <div id="video-container" class="video-container"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast hidden"><span id="toast-message"></span></div>
+
+    <script src="data.js"></script>
+    <script src="auth.js"></script>
+    <script src="ai.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

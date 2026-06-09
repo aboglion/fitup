@@ -1,0 +1,15 @@
+# Ignore large documents and drafts
+*.pdf
+*.docx
+*.doc
+*.zip
+
+# OS and Editor temp files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local env files
+.env
+.env.local
