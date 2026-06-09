@@ -179,9 +179,8 @@ const AuthModule = {
       });
       if (!listRes.ok) {
         const errData = await listRes.json().catch(() => ({}));
-        console.error('List files error:', errData);
-        toast('❌ שגיאה בקריאת קובצי ענן: ' + (errData.error?.message || listRes.statusText));
-        this.handleAuthError();
+        this.handleApiError(errData, 'שגיאה בקריאת קובצי ענן', listRes.status);
+        if (listRes.status === 401) this.handleAuthError();
         return false;
       }
       const list = await listRes.json();
@@ -204,9 +203,8 @@ const AuthModule = {
         });
         if (!createRes.ok) {
           const errData = await createRes.json().catch(() => ({}));
-          console.error('Create metadata error:', errData);
-          toast('❌ שגיאה ביצירת קובץ בענן: ' + (errData.error?.message || createRes.statusText));
-          this.handleAuthError();
+          this.handleApiError(errData, 'שגיאה ביצירת קובץ בענן', createRes.status);
+          if (createRes.status === 401) this.handleAuthError();
           return false;
         }
         const createdFile = await createRes.json();
@@ -221,9 +219,8 @@ const AuthModule = {
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        console.error('Upload content error:', errData);
-        toast('❌ שגיאה בהעלאת נתונים לענן: ' + (errData.error?.message || res.statusText));
-        this.handleAuthError();
+        this.handleApiError(errData, 'שגיאה בהעלאת נתונים לענן', res.status);
+        if (res.status === 401) this.handleAuthError();
         return false;
       }
 
@@ -256,7 +253,8 @@ const AuthModule = {
       });
       if (!listRes.ok) {
         const errData = await listRes.json().catch(() => ({}));
-        console.error('SyncFromDrive list error:', errData);
+        this.handleApiError(errData, 'שגיאה בקריאת קובצי ענן', listRes.status);
+        if (listRes.status === 401) this.handleAuthError();
         return false;
       }
       const list = await listRes.json();
@@ -268,7 +266,8 @@ const AuthModule = {
       });
       if (!dataRes.ok) {
         const errData = await dataRes.json().catch(() => ({}));
-        console.error('SyncFromDrive get content error:', errData);
+        this.handleApiError(errData, 'שגיאה בקריאת נתוני ענן', dataRes.status);
+        if (dataRes.status === 401) this.handleAuthError();
         return false;
       }
       const cloudData = await dataRes.json();
@@ -317,8 +316,7 @@ const AuthModule = {
       
       if (!listRes.ok) {
         const errData = await listRes.json().catch(() => ({}));
-        console.error('List files error:', errData);
-        toast('❌ שגיאה בקריאת קובצי ענן: ' + (errData.error?.message || listRes.statusText));
+        this.handleApiError(errData, 'שגיאה בקריאת קובצי ענן', listRes.status);
         if (listRes.status === 401) this.handleAuthError();
         return false;
       }
@@ -341,8 +339,7 @@ const AuthModule = {
       
       if (!dataRes.ok) {
         const errData = await dataRes.json().catch(() => ({}));
-        console.error('Download content error:', errData);
-        toast('❌ שגיאה בקריאת נתוני ענן: ' + (errData.error?.message || dataRes.statusText));
+        this.handleApiError(errData, 'שגיאה בקריאת נתוני ענן', dataRes.status);
         if (dataRes.status === 401) this.handleAuthError();
         return false;
       }
@@ -375,6 +372,56 @@ const AuthModule = {
       console.error('Two-way sync error:', e);
       toast('❌ שגיאת רשת בסנכרון הדו-כיווני');
       return false;
+    }
+  },
+
+  handleApiError(errorObj, defaultMsg, status) {
+    console.error(defaultMsg, errorObj);
+    const msg = errorObj.error?.message || '';
+    
+    if (status === 403 || errorObj.error?.status === 'PERMISSION_DENIED') {
+      if (msg.includes('disabled') || msg.includes('not been used')) {
+        if (typeof openModal === 'function') {
+          openModal('⚙️ שירות ענן לא מופעל', `
+            <div style="text-align:center; padding:1rem 0;">
+              <div style="font-size:3rem; margin-bottom:1rem;">⚠️</div>
+              <p style="font-size:1.05rem; line-height:1.6; margin-bottom:1.5rem; color:var(--text-primary);">
+                שירות Google Drive API אינו מופעל בפרויקט גוגל של האפליקציה.
+              </p>
+              <div style="background:var(--bg-secondary); padding:0.75rem; border-radius:8px; border:1px solid var(--border-color); margin-bottom:1.5rem; text-align:right; font-size:0.9rem; color:var(--text-secondary); line-height:1.5;">
+                מנהל המערכת (מפתח האפליקציה) צריך להיכנס ל-Google Cloud Console ולהפעיל את ה-Drive API עבור פרויקט זה.
+              </div>
+              <button class="btn btn-primary" onclick="closeModal();" style="width:100%; padding:0.8rem; background:var(--accent-primary); border:none; border-radius:6px; color:white; font-weight:bold; cursor:pointer;">
+                הבנתי
+              </button>
+            </div>
+          `);
+        } else {
+          toast('❌ שירות Google Drive לא מופעל בפרויקט זה. אנא פנה למנהל.');
+        }
+      } else {
+        // This is a user permission denial
+        if (typeof openModal === 'function') {
+          openModal('🔑 נדרשת הרשאת גיבוי', `
+            <div style="text-align:center; padding:1rem 0;">
+              <div style="font-size:3rem; margin-bottom:1rem;">💾</div>
+              <p style="font-size:1.05rem; line-height:1.6; margin-bottom:1.5rem; color:var(--text-primary);">
+                כדי שנוכל לגבות ולסנכרן את תוכניות האימון וההתקדמות שלך, האפליקציה צריכה אישור לשמור קובץ גיבוי מאובטח ב-Google Drive שלך.
+              </p>
+              <div style="background:var(--bg-secondary); padding:0.75rem; border-radius:8px; border:1px dashed var(--accent-secondary); margin-bottom:1.5rem; text-align:right; font-size:0.9rem; color:var(--text-secondary); line-height:1.5;">
+                💡 <strong>כיצד לאשר?</strong> במסך ההתחברות הבא של גוגל, ודא שאתה מסמן ב-<strong>V</strong> את התיבה המאשרת לאפליקציה לגשת לתיקיית נתוני האפליקציות בדרייב.
+              </div>
+              <button class="btn btn-primary" onclick="AuthModule.signOut(); AuthModule.signIn(); closeModal();" style="width:100%; padding:0.8rem; background:var(--accent-primary); border:none; border-radius:6px; color:white; font-weight:bold; cursor:pointer;">
+                🔄 התחבר מחדש ואשר גישה
+              </button>
+            </div>
+          `);
+        } else {
+          toast('⚠️ לא אושרה גישה ל-Google Drive. אנא התנתק והתחבר מחדש עם מתן אישור.');
+        }
+      }
+    } else {
+      toast('❌ ' + defaultMsg + ': ' + (msg || 'שגיאת תקשורת'));
     }
   },
 
