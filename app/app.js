@@ -559,8 +559,10 @@ function importData(event) {
 }
 async function manualSync() {
   toast('☁️ מסנכרן...');
-  const ok = await AuthModule.syncToDrive();
-  toast(ok ? '✅ סנכרון הצליח!' : '❌ שגיאה בסנכרון');
+  const ok = await AuthModule.syncBothDirections();
+  if (ok) {
+    toast('✅ הסנכרון הושלם בהצלחה!');
+  }
   if (document.getElementById('screen-admin').classList.contains('active')) {
     switchAdminTab('cloud');
   }

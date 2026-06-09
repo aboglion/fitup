@@ -55,13 +55,17 @@ const AuthModule = {
         toast('✅ מחובר לגוגל בהצלחה');
         
         // Initial sync from Drive
-        await this.syncFromDrive();
+        await this.syncBothDirections();
       }
     });
     
     // If we have a saved token, verify it
     if (gAccessToken) {
-      this.verifyToken();
+      this.verifyToken().then(isValid => {
+        if (isValid) {
+          this.syncBothDirections();
+        }
+      });
     }
   },
 
@@ -79,14 +83,18 @@ const AuthModule = {
   },
 
   async verifyToken() {
-    if (!gAccessToken) return;
+    if (!gAccessToken) return false;
     try {
       const res = await fetch('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + gAccessToken);
-      if (!res.ok) {
+      if (res.ok) {
+        return true;
+      } else {
         this.handleAuthError();
+        return false;
       }
     } catch(e) {
       // Offline - keep token, will verify later
+      return true;
     }
   },
 
@@ -283,6 +291,89 @@ const AuthModule = {
       return false;
     } catch(e) { 
       console.error('Restore error:', e); 
+      return false;
+    }
+  },
+
+  async syncBothDirections() {
+    if (!gAccessToken) return false;
+    
+    // Ensure we have local data
+    let localData = localStorage.getItem('fitpro_data');
+    if (!localData) {
+      if (typeof appData !== 'undefined') {
+        localStorage.setItem('fitpro_data', JSON.stringify(appData));
+        localData = localStorage.getItem('fitpro_data');
+      }
+    }
+    const local = JSON.parse(localData || '{}');
+    const localChangeTime = local.sync?.last_local_change || '1970-01-01';
+
+    try {
+      // 1. Fetch file list from Drive
+      const listRes = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27fitpro_backup.json%27', {
+        headers: { Authorization: `Bearer ${gAccessToken}` }
+      });
+      
+      if (!listRes.ok) {
+        const errData = await listRes.json().catch(() => ({}));
+        console.error('List files error:', errData);
+        toast('❌ שגיאה בקריאת קובצי ענן: ' + (errData.error?.message || listRes.statusText));
+        if (listRes.status === 401) this.handleAuthError();
+        return false;
+      }
+      
+      const list = await listRes.json();
+      
+      // 2. If file doesn't exist in Drive, upload local
+      if (!list.files || list.files.length === 0) {
+        console.log('No cloud backup found. Creating new backup...');
+        const ok = await this.syncToDrive();
+        if (ok) toast('☁️ גיבוי ראשוני נוצר בענן');
+        return ok;
+      }
+
+      // 3. File exists, download cloud data
+      const fileId = list.files[0].id;
+      const dataRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+        headers: { Authorization: `Bearer ${gAccessToken}` }
+      });
+      
+      if (!dataRes.ok) {
+        const errData = await dataRes.json().catch(() => ({}));
+        console.error('Download content error:', errData);
+        toast('❌ שגיאה בקריאת נתוני ענן: ' + (errData.error?.message || dataRes.statusText));
+        if (dataRes.status === 401) this.handleAuthError();
+        return false;
+      }
+      
+      const cloudData = await dataRes.json();
+      const cloudChangeTime = cloudData.sync?.last_local_change || '1970-01-01';
+
+      // 4. Compare timestamps
+      if (cloudChangeTime > localChangeTime) {
+        // Cloud is newer -> Restore to local
+        localStorage.setItem('fitpro_data', JSON.stringify(cloudData));
+        if (typeof appData !== 'undefined') {
+          Object.assign(appData, cloudData);
+        }
+        this.updateUI(true);
+        if (typeof renderHome === 'function') renderHome();
+        toast('🔄 הנתונים עודכנו מהענן (גרסה חדשה יותר)');
+        return true;
+      } else if (localChangeTime > cloudChangeTime || local.sync?.is_dirty) {
+        // Local is newer or dirty -> Push to cloud
+        const ok = await this.syncToDrive();
+        if (ok) toast('☁️ הגיבוי בענן עודכן (גרסה מקומית חדשה יותר)');
+        return ok;
+      } else {
+        // Timestamps are equal and local is not dirty -> Fully synced
+        console.log('Local and cloud are in sync.');
+        return true;
+      }
+    } catch(e) {
+      console.error('Two-way sync error:', e);
+      toast('❌ שגיאת רשת בסנכרון הדו-כיווני');
       return false;
     }
   },
