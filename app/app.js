@@ -79,10 +79,21 @@ function renderHome() {
   const nextXP = TrainingEngine.getNextRankXP();
   const pct = Math.min((prog.xp / nextXP) * 100, 100);
   const xpContainer = document.getElementById('xp-bar-container');
+  
+  const isOptedIn = typeof isLeaderboardOptedIn === 'function' && isLeaderboardOptedIn();
+  const cachedRank = localStorage.getItem('fitpro_my_cached_rank') || '-';
+
   if (xpContainer) {
     xpContainer.innerHTML = `
-      <div class="xp-header">
-        <span class="xp-rank">${TrainingEngine.getRankEmoji()} ${prog.rank}</span>
+      <div class="xp-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="xp-rank" style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+          <span>${TrainingEngine.getRankEmoji()} ${prog.rank}</span>
+          ${isOptedIn ? `
+            <span class="xp-leaderboard-badge" onclick="showLeaderboard(); event.stopPropagation();" title="צפה במיקום בטבלה" style="cursor:pointer; background:rgba(251,191,36,0.15); border:1px solid rgba(251,191,36,0.3); color:#fbbf24; border-radius:12px; padding:0.1rem 0.5rem; font-size:0.75rem; font-weight:600; display:inline-flex; align-items:center; gap:0.2rem; margin-right:0.5rem; transition: all 0.2s;">
+              🏆 מקום <span id="xp-leaderboard-rank-val">${cachedRank}</span>
+            </span>
+          ` : ''}
+        </span>
         <span class="xp-points">${prog.xp} XP</span>
       </div>
       <div class="xp-bar"><div class="xp-fill" style="width:${pct}%"></div></div>
@@ -90,6 +101,10 @@ function renderHome() {
         <span>🔥 רצף: ${prog.streak || 0} ימים</span>
         <span>💪 אימונים: ${prog.totalWorkouts || 0}</span>
       </div>`;
+  }
+
+  if (isOptedIn && typeof fetchLeaderboardRankAndUpdateUI === 'function') {
+    fetchLeaderboardRankAndUpdateUI();
   }
 
   // Smart Today Card
@@ -183,6 +198,12 @@ function updateSyncNav(connected) {
   const indicator = document.getElementById('sync-status-indicator');
   const dropdown = document.getElementById('sync-dropdown');
   if (!indicator || !dropdown) return;
+
+  try {
+    if (typeof isLeaderboardOptedIn === 'function' && isLeaderboardOptedIn()) {
+      syncMyLeaderboardScore();
+    }
+  } catch(e) {}
 
   const syncInfo = AuthModule.getSyncInfo();
   const isDirty = syncInfo.is_dirty;
@@ -1384,6 +1405,26 @@ function getTimeAgo(dateString) {
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
+// Fetch leaderboard rank dynamically for the home page badge
+async function fetchLeaderboardRankAndUpdateUI() {
+  try {
+    const response = await fetch(`https://kvdb.io/${LEADERBOARD_BUCKET}/?values=true&format=json`);
+    if (!response.ok) return;
+    const rawData = await response.json();
+    const players = rawData.map(item => item[1]).filter(p => p && typeof p === 'object' && typeof p.xp === 'number');
+    players.sort((a, b) => b.xp - a.xp);
+    const myId = getLeaderboardUserId();
+    const myRank = players.findIndex(p => p.id === myId) + 1;
+    if (myRank > 0) {
+      localStorage.setItem('fitpro_my_cached_rank', myRank);
+      const el = document.getElementById('xp-leaderboard-rank-val');
+      if (el) el.textContent = myRank;
+    }
+  } catch (e) {
+    console.error('Failed to fetch rank on home:', e);
+  }
 }
 
 
