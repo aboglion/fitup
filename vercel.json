@@ -8,8 +8,8 @@
   ],
   "rewrites": [
     {
-      "source": "/(?<file>.*\\..*)",
-      "destination": "/app/$file"
+      "source": "/:file(.*\\..*)",
+      "destination": "/app/:file"
     },
     {
       "source": "/(.*)",
