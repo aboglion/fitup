@@ -1,98 +1,36 @@
-// Chrome Built-in AI Module (Gemini Nano via window.ai) & Cloud Gemini API Fallback
+// Chrome Built-in AI Module (Gemini Nano via window.ai)
 const AIModule = {
   session: null,
   available: false,
-  isLocal: false,
-  isCloud: false,
-  systemPrompt: 'אתה מאמן כושר מנוסה שמדבר בעברית. אתה נותן משפטי מוטיבציה קצרים, תובנות אימון, וסיכומים מקצועיים. ענה תמיד בעברית, בקצרה ובאנרגיה חיובית. השתמש באימוג\'ים.',
 
   async init() {
     try {
-      // 1. First, check for local Chrome AI
       if (typeof window !== 'undefined' && window.ai) {
         if (window.ai.languageModel) {
           const caps = await window.ai.languageModel.capabilities();
           if (caps.available === 'readily' || caps.available === 'after-download') {
-            this.session = await window.ai.languageModel.create({
-              systemPrompt: this.systemPrompt
-            });
             this.available = true;
-            this.isLocal = true;
-            this.isCloud = false;
+            this.session = await window.ai.languageModel.create({
+              systemPrompt: 'אתה מאמן כושר מנוסה שמדבר בעברית. אתה נותן משפטי מוטיבציה קצרים, תובנות אימון, וסיכומים מקצועיים. ענה תמיד בעברית, בקצרה ובאנרגיה חיובית. השתמש באימוג\'ים.'
+            });
             console.log('✅ Chrome AI (Gemini Nano via languageModel) is available');
             return true;
           }
         } else if (window.ai.assistant) {
           const caps = await window.ai.assistant.capabilities();
           if (caps.available === 'readily' || caps.available === 'after-download') {
-            this.session = await window.ai.assistant.create({
-              systemPrompt: this.systemPrompt
-            });
             this.available = true;
-            this.isLocal = true;
-            this.isCloud = false;
+            this.session = await window.ai.assistant.create({
+              systemPrompt: 'אתה מאמן כושר מנוסה שמדבר בעברית. אתה נותן משפטי מוטיבציה קצרים, תובנות אימון, וסיכומים מקצועיים. ענה תמיד בעברית, בקצרה ובאנרגיה חיובית. השתמש באימוג\'ים.'
+            });
             console.log('✅ Chrome AI (Gemini Nano via assistant) is available');
             return true;
           }
         }
       }
-    } catch(e) { console.log('Local Chrome AI not available:', e.message); }
-
-    // 2. Fall back to checking for Gemini API Key in localStorage
-    const apiKey = localStorage.getItem('fitpro_gemini_api_key');
-    if (apiKey && apiKey.trim()) {
-      this.available = true;
-      this.isLocal = false;
-      this.isCloud = true;
-      console.log('✅ Cloud Gemini API is configured and available');
-      return true;
-    }
-
+    } catch(e) { console.log('Chrome AI not available:', e.message); }
     this.available = false;
-    this.isLocal = false;
-    this.isCloud = false;
     return false;
-  },
-
-  async runPrompt(promptText) {
-    if (!this.available) return null;
-
-    if (this.isLocal && this.session) {
-      try {
-        return await this.session.prompt(promptText);
-      } catch (e) {
-        console.error('Local prompt error:', e);
-        return null;
-      }
-    }
-
-    if (this.isCloud) {
-      const apiKey = localStorage.getItem('fitpro_gemini_api_key');
-      if (!apiKey) return null;
-      try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: this.systemPrompt }] },
-            contents: [{ parts: [{ text: promptText }] }],
-            generationConfig: {
-              maxOutputTokens: 180,
-              temperature: 0.7
-            }
-          })
-        });
-        const data = await response.json();
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-        return text || null;
-      } catch (e) {
-        console.error('Cloud Gemini API error:', e);
-        return null;
-      }
-    }
-
-    return null;
   },
 
   // Motivational messages for home screen & during workout
@@ -132,7 +70,7 @@ const AIModule = {
     const pool = fallbacks[context] || fallbacks.general;
     const fallback = pool[Math.floor(Math.random() * pool.length)];
 
-    if (!this.available) return fallback;
+    if (!this.available || !this.session) return fallback;
 
     try {
       const prompts = {
@@ -141,7 +79,7 @@ const AIModule = {
         setComplete: 'תן משפט חיזוק קצר אחרי סיום סט מוצלח באימון, עד 12 מילים, בעברית, עם אימוג\'י',
         workoutStart: 'תן משפט מוטיבציה קצר לתחילת אימון, עד 12 מילים, בעברית, עם אימוג\'י'
       };
-      const result = await this.runPrompt(prompts[context] || prompts.general);
+      const result = await this.session.prompt(prompts[context] || prompts.general);
       return result?.trim() || fallback;
     } catch(e) {
       return fallback;
@@ -212,7 +150,7 @@ const AIModule = {
     basicSummary.reinforcement = reinforcements[Math.floor(Math.random() * reinforcements.length)];
 
     // If AI available, enhance the summary
-    if (this.available) {
+    if (this.available && this.session) {
       try {
         const prompt = `נתוני אימון כושר שהושלם עכשיו:
 - ${totalExercises} תרגילים, ${totalSets} סטים, ${timeStr}
@@ -225,17 +163,16 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
 2. טיפ: [טיפ מקצועי אחד]
 3. חיזוק: [משפט חיזוק אישי חזק]`;
         
-        const result = await this.runPrompt(prompt);
-        if (result) {
-          const lines = result.split('\n').filter(l => l.trim());
-          const insightLine = lines.find(l => l.includes('תובנה'));
-          const tipLine = lines.find(l => l.includes('טיפ'));
-          const reinforceLine = lines.find(l => l.includes('חיזוק'));
-          
-          if (insightLine) basicSummary.insight = insightLine.replace(/^\d+\.\s*תובנה:\s*/i, '').trim();
-          if (tipLine) basicSummary.tip = tipLine.replace(/^\d+\.\s*טיפ:\s*/i, '').trim();
-          if (reinforceLine) basicSummary.reinforcement = reinforceLine.replace(/^\d+\.\s*חיזוק:\s*/i, '').trim();
-        }
+        const result = await this.session.prompt(prompt);
+        const lines = result.split('\n').filter(l => l.trim());
+        
+        const insightLine = lines.find(l => l.includes('תובנה'));
+        const tipLine = lines.find(l => l.includes('טיפ'));
+        const reinforceLine = lines.find(l => l.includes('חיזוק'));
+        
+        if (insightLine) basicSummary.insight = insightLine.replace(/^\d+\.\s*תובנה:\s*/i, '').trim();
+        if (tipLine) basicSummary.tip = tipLine.replace(/^\d+\.\s*טיפ:\s*/i, '').trim();
+        if (reinforceLine) basicSummary.reinforcement = reinforceLine.replace(/^\d+\.\s*חיזוק:\s*/i, '').trim();
       } catch(e) { /* fallback already set */ }
     }
 
@@ -266,17 +203,15 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
                        'נסה להוסיף חזרה אחת בסט הבא'
     };
 
-    if (this.available) {
+    if (this.available && this.session) {
       try {
         const prompt = `נתח בקצרה (2 שורות בעברית) התקדמות בתרגיל "${exerciseName}". נתונים אחרונים: ${JSON.stringify(history.slice(-5))}. 
 שורה 1: מגמה: [תיאור המגמה]
 שורה 2: המלצה: [המלצה אחת]`;
-        const result = await this.runPrompt(prompt);
-        if (result) {
-          const lines = result.split('\n').filter(l => l.trim());
-          if (lines[0]) basic.message = lines[0].replace(/^מגמה:\s*/i, '').trim();
-          if (lines[1]) basic.recommendation = lines[1].replace(/^המלצה:\s*/i, '').trim();
-        }
+        const result = await this.session.prompt(prompt);
+        const lines = result.split('\n').filter(l => l.trim());
+        if (lines[0]) basic.message = lines[0].replace(/^מגמה:\s*/i, '').trim();
+        if (lines[1]) basic.recommendation = lines[1].replace(/^המלצה:\s*/i, '').trim();
       } catch(e) {}
     }
 
@@ -296,11 +231,11 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
     const matchKey = Object.keys(tips).find(k => exerciseName.includes(k));
     const fallback = matchKey ? tips[matchKey] : '💡 התמקד בטכניקה נכונה ובתנועה מבוקרת';
 
-    if (!this.available) return fallback;
+    if (!this.available || !this.session) return fallback;
 
     try {
-      const result = await this.runPrompt(`תן טיפ טכניקה קצר אחד (שורה אחת, עד 15 מילים, בעברית) לתרגיל: ${exerciseName}`);
-      return result?.trim() ? '💡 ' + result.trim() : fallback;
+      const result = await this.session.prompt(`תן טיפ טכניקה קצר אחד (שורה אחת, עד 15 מילים, בעברית) לתרגיל: ${exerciseName}`);
+      return '💡 ' + (result?.trim() || fallback);
     } catch(e) { return fallback; }
   },
 
@@ -328,18 +263,16 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
       }
     }
 
-    if (this.available) {
+    if (this.available && this.session) {
       try {
         const prompt = `האם השם הבא מתאים לשימוש כשם משתמש ציבורי ראוי ומכבד באפליקציית כושר? 
 אם הוא פוגעני, גס, שטותי לחלוטין או מיועד להעמסה/ספאם, ענה בדיוק במילה אחת: "לא".
 אם השם תקין ומכבד, ענה בדיוק במילה אחת: "כן".
 השם לבדיקה: "${name}"`;
-        const result = await this.runPrompt(prompt);
-        if (result) {
-          const cleanedResult = result.trim().toLowerCase();
-          if (cleanedResult.includes('לא')) {
-            return { valid: false, reason: 'שם לא מתאים או פוגעני לפי מערכת ה-AI' };
-          }
+        const result = await this.session.prompt(prompt);
+        const cleanedResult = result.trim().toLowerCase();
+        if (cleanedResult.includes('לא')) {
+          return { valid: false, reason: 'שם לא מתאים או פוגעני לפי מערכת ה-AI' };
         }
       } catch(e) {
         console.log('AI moderation failed, relying on static rules:', e.message);
@@ -386,7 +319,7 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
 
     const fallbackSummary = `👋 שלום אלוף! אתה כרגע בדרגת **${rank}** עם **${xp} XP**. צברת רצף של ${streak} ימים וסיימת ${totalWorkouts} אימונים סך הכל. האימונים האחרונים שלך היו: ${recentWorkoutsSummary}. הרמות הנוכחיות שלך: ${levelsStr}. ${nextStep} המשך להתקדם ולהתמיד בתוכנית! 💪`;
 
-    if (!this.available) return { text: fallbackSummary, isAI: false, type: 'fallback' };
+    if (!this.available || !this.session) return { text: fallbackSummary, isAI: false };
 
     try {
       const prompt = `נתח את מצב המתאמן הבא בצורה חכמה ומקצועית מאוד וכתוב סיכום בעברית:
@@ -403,12 +336,10 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
 - הסיכום צריך לשקף תמונה כוללת: מה שקרה (האימונים האחרונים), מה קורה עכשיו (הדרגה והרמה) ומה שצריך לקרות (האימון להיום).
 - שלב מספר אימוג'ים מתאימים.`;
 
-      const result = await this.runPrompt(prompt);
-      return result?.trim() 
-        ? { text: result.trim(), isAI: true, type: this.isLocal ? 'local' : 'cloud' } 
-        : { text: fallbackSummary, isAI: false, type: 'fallback' };
+      const result = await this.session.prompt(prompt);
+      return result?.trim() ? { text: result.trim(), isAI: true } : { text: fallbackSummary, isAI: false };
     } catch(e) {
-      return { text: fallbackSummary, isAI: false, type: 'fallback' };
+      return { text: fallbackSummary, isAI: false };
     }
   }
 };

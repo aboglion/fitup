@@ -188,16 +188,9 @@ function renderHome() {
     
     AIModule.getGlobalStatusSummary(prog, plan, appData).then(res => {
       const cardIcon = res.isAI ? '🤖' : '👔';
-      let badgeHtml = '';
-      if (res.isAI) {
-        if (res.type === 'local') {
-          badgeHtml = `<span class="ai-source-badge ai-live" title="נוצר על ידי AI מקומי בדפדפן (Gemini Nano)"><span class="badge-dot">●</span>🤖 AI מקומי</span>`;
-        } else {
-          badgeHtml = `<span class="ai-source-badge ai-cloud" title="נוצר על ידי AI בענן (Gemini Cloud API)" style="background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:#60a5fa; border-radius:12px; padding:0.1rem 0.5rem; font-size:0.75rem; font-weight:600; display:inline-flex; align-items:center; gap:0.2rem; margin-right:0.5rem;"><span class="badge-dot" style="background:#60a5fa; width:6px; height:6px; border-radius:50%; display:inline-block;">●</span>☁️ AI בענן</span>`;
-        }
-      } else {
-        badgeHtml = `<span class="ai-source-badge ai-fallback" title="תבנית מערכת מוגדרת מראש"><span class="badge-dot">●</span>👔 תבנית מערכת</span>`;
-      }
+      const badgeHtml = res.isAI 
+        ? `<span class="ai-source-badge ai-live" title="נוצר על ידי AI מקומי"><span class="badge-dot">●</span>🤖</span>`
+        : `<span class="ai-source-badge ai-fallback" title="תבנית מערכת מוגדרת מראש"><span class="badge-dot">●</span>👔</span>`;
 
       summaryCard.innerHTML = `
         <h3>${cardIcon} עוזר אימונים חכם ${badgeHtml}</h3>
@@ -565,7 +558,6 @@ function switchAdminTab(tab) {
     `;
   } else if (tab === 'settings') {
     const currentClientId = localStorage.getItem('fitpro_google_client_id') || '';
-    const currentApiKey = localStorage.getItem('fitpro_gemini_api_key') || '';
     c.innerHTML = `
       <div class="admin-item">
         <h4 style="margin-bottom:0.75rem">⏱️ הגדרות טיימרים</h4>
@@ -580,17 +572,6 @@ function switchAdminTab(tab) {
           <input class="admin-input" type="text" id="set-google-client-id" value="${currentClientId}" placeholder="הכנס Client ID מותאם אישית (אופציונלי)">
         </div>
         <button class="admin-btn-sm" onclick="saveGoogleSettings()" style="width:100%;padding:0.6rem;margin-top:0.5rem">💾 שמור הגדרות סנכרון</button>
-      </div>
-      <div class="admin-item">
-        <h4 style="margin-bottom:0.75rem">🤖 מנוע בינה מלאכותית (Gemini API)</h4>
-        <p style="color:var(--text-secondary);font-size:0.8rem;line-height:1.4;margin-bottom:0.5rem">
-          במידה והמכשיר שלך אינו תומך ב-AI מקומי (כמו בטלפונים ניידים או דפדפנים מסוימים), באפשרותך להזין מפתח Gemini API אישי כדי להפעיל את העוזר החכם בענן.
-        </p>
-        <div class="admin-form-group">
-          <label>Gemini API Key</label>
-          <input class="admin-input" type="password" id="set-gemini-api-key" value="${currentApiKey}" placeholder="הכנס את מפתח ה-API שלך (AIzaSy...)">
-        </div>
-        <button class="admin-btn-sm" onclick="saveAISettings()" style="width:100%;padding:0.6rem;margin-top:0.5rem">💾 שמור הגדרות AI</button>
       </div>
       <div class="admin-item">
         <h4 style="margin-bottom:0.75rem">📦 ייצוא / ייבוא</h4>
@@ -737,25 +718,6 @@ function saveGoogleSettings() {
     localStorage.removeItem('fitpro_google_client_id');
   }
   toast('💾 הגדרות סנכרון נשמרו. יש לרענן את העמוד.');
-}
-
-function saveAISettings() {
-  const val = document.getElementById('set-gemini-api-key').value.trim();
-  if (val) {
-    localStorage.setItem('fitpro_gemini_api_key', val);
-  } else {
-    localStorage.removeItem('fitpro_gemini_api_key');
-  }
-  
-  // Re-initialize AIModule immediately
-  AIModule.init().then(available => {
-    if (available) {
-      toast('💾 מפתח Gemini API נשמר בהצלחה! ה-AI בענן פעיל.');
-    } else {
-      toast('💾 הגדרות AI עודכנו. עוזר ה-AI כבוי.');
-    }
-    renderHome();
-  });
 }
 
 // Export/Import
