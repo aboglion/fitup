@@ -39,6 +39,15 @@
             </div>
             
             <div class="nav-left">
+                <button id="btn-leaderboard" class="nav-btn leaderboard-btn" onclick="showLeaderboard()" title="טבלת תחרות">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+                        <path d="M4 22h16"/>
+                        <path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/>
+                        <path d="M12 2a6 6 0 0 1 6 6v5a6 6 0 0 1-6 6 6 6 0 0 1-6-6V8a6 6 0 0 1 6-6z"/>
+                    </svg>
+                </button>
                 <button id="btn-admin" class="nav-btn admin-btn" onclick="showAdminPanel()">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
                 </button>
@@ -106,6 +115,49 @@
                     <button class="admin-tab" data-tab="settings" onclick="switchAdminTab('settings')">הגדרות</button>
                 </div>
                 <div class="admin-content" id="admin-content"></div>
+            </div>
+        </section>
+
+        <!-- Leaderboard -->
+        <section id="screen-leaderboard" class="screen">
+            <div class="leaderboard-panel">
+                <div class="leaderboard-header">
+                    <h2>🏆 טבלת מובילים ותחרות</h2>
+                    <p class="leaderboard-subtitle">התחרו עם מתאמנים אחרים והגיעו לפסגה!</p>
+                </div>
+                
+                <!-- Opt-in / Configuration Card -->
+                <div class="leaderboard-optin-card card" id="leaderboard-optin-card">
+                    <div class="optin-status-row">
+                        <span class="optin-label">שתף את ה-XP שלי בתחרות הציבורית:</span>
+                        <label class="switch">
+                            <input type="checkbox" id="leaderboard-optin-toggle" onchange="toggleLeaderboardOptIn()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div class="optin-name-row hidden" id="optin-name-row">
+                        <label for="leaderboard-display-name">שם תצוגה בתחרות:</label>
+                        <div class="name-input-group">
+                            <input type="text" id="leaderboard-display-name" class="admin-input" placeholder="שם תצוגה...">
+                            <button class="admin-btn-sm" onclick="saveLeaderboardName()">עדכן שם</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-my-rank-card card hidden" id="leaderboard-my-rank-card">
+                    <!-- Dynamic personal stats -->
+                </div>
+                
+                <div class="leaderboard-actions">
+                    <button class="admin-btn-sm" id="btn-refresh-leaderboard" onclick="syncLeaderboard(true)">🔄 רענן טבלה</button>
+                </div>
+                
+                <div class="leaderboard-content" id="leaderboard-content">
+                    <div class="leaderboard-loading">
+                        <div class="spinner"></div>
+                        <p>טוען טבלת מובילים...</p>
+                    </div>
+                </div>
             </div>
         </section>
     </div>

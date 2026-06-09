@@ -154,7 +154,8 @@ function renderHome() {
         <div class="stat-mini"><span class="stat-mini-num">${prog.xp || 0}</span><span class="stat-mini-label">XP</span></div>
         <div class="stat-mini"><span class="stat-mini-num">${Object.values(prog.muscleLevels || {}).filter(v=>v>0).length}</span><span class="stat-mini-label">שדרוגים</span></div>
       </div>
-      <div class="all-days-link" onclick="showAllDays()">📋 כל ימי האימון →</div>`;
+      <div class="all-days-link" onclick="showAllDays()">📋 כל ימי האימון →</div>
+      <div class="leaderboard-link" onclick="showLeaderboard()">🏆 טבלת תחרות ומובילים →</div>`;
   }
 
   if (typeof updateSyncNav === 'function') {
@@ -1024,6 +1025,7 @@ function showLevelUp(muscleName, nextExercise) {
   }
   overlay.classList.remove('hidden');
   TrainingEngine.addXP(50, 'level_up');
+  try { syncMyLeaderboardScore(); } catch(e) {}
 }
 
 function closeLevelUp() {
@@ -1045,6 +1047,7 @@ async function finishWorkout() {
   if (!appData.workoutHistory) appData.workoutHistory = [];
   appData.workoutHistory.push({ date: new Date().toISOString(), day: currentDay.id, dayName: currentDay.name, duration, log: workoutLog, summary });
   saveData();
+  try { syncMyLeaderboardScore(); } catch(e) {}
   
   renderSummaryScreen(summary, duration);
 }
@@ -1094,5 +1097,293 @@ window.addEventListener('DOMContentLoaded', () => {
       if (el) { el.textContent = msg; el.classList.remove('hidden'); }
     });
   });
+  // Auto-sync leaderboard if opted in at startup
+  setTimeout(() => {
+    if (isLeaderboardOptedIn()) {
+      syncMyLeaderboardScore();
+    }
+  }, 3000);
 });
+
+// ===== Global XP Leaderboard Logic =====
+const LEADERBOARD_BUCKET = 'PiptH5Np4qkXcEqumcesZZ';
+
+// Generate/get a persistent user ID for leaderboard (unique per user)
+function getLeaderboardUserId() {
+  const profile = AuthModule.getProfile();
+  if (profile && profile.email) {
+    // Generate a consistent ID from email to link guest accounts to signed-in accounts
+    return `user_${btoa(profile.email).replace(/=/g, '').substring(0, 15)}`;
+  }
+  let localId = localStorage.getItem('fitpro_local_user_id');
+  if (!localId) {
+    localId = `local_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    localStorage.setItem('fitpro_local_user_id', localId);
+  }
+  return localId;
+}
+
+// Get user display name
+function getLeaderboardDisplayName() {
+  const savedName = localStorage.getItem('fitpro_leaderboard_name');
+  if (savedName) return savedName;
+  
+  const profile = AuthModule.getProfile();
+  if (profile && profile.name) return profile.name;
+  
+  return `מתאמן_אנונימי_${Math.floor(100 + Math.random() * 900)}`;
+}
+
+// Check if user has opted in
+function isLeaderboardOptedIn() {
+  const val = localStorage.getItem('fitpro_leaderboard_optin');
+  return val !== 'false'; // default is true
+}
+
+// Sync current user score to the leaderboard
+async function syncMyLeaderboardScore() {
+  if (!isLeaderboardOptedIn()) return;
+  
+  try {
+    const userId = getLeaderboardUserId();
+    const displayName = getLeaderboardDisplayName();
+    const profile = AuthModule.getProfile();
+    const picture = profile ? profile.picture : '';
+    const prog = TrainingEngine.getProgress();
+    
+    const payload = {
+      id: userId,
+      name: displayName,
+      picture: picture,
+      xp: prog.xp || 0,
+      rank: prog.rank || 'מתחיל',
+      streak: prog.streak || 0,
+      totalWorkouts: prog.totalWorkouts || 0,
+      updatedAt: new Date().toISOString()
+    };
+    
+    await fetch(`https://kvdb.io/${LEADERBOARD_BUCKET}/${userId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+  } catch (e) {
+    console.error('Failed to sync leaderboard score:', e);
+  }
+}
+
+// Delete user from leaderboard
+async function deleteMyLeaderboardScore() {
+  try {
+    const userId = getLeaderboardUserId();
+    await fetch(`https://kvdb.io/${LEADERBOARD_BUCKET}/${userId}`, {
+      method: 'DELETE'
+    });
+  } catch (e) {
+    console.error('Failed to delete leaderboard score:', e);
+  }
+}
+
+// Render Leaderboard screen contents
+async function renderLeaderboard() {
+  const container = document.getElementById('leaderboard-content');
+  if (!container) return;
+  
+  // Show loading
+  container.innerHTML = `
+    <div class="leaderboard-loading">
+      <div class="spinner"></div>
+      <p>טוען נתונים מהענן...</p>
+    </div>
+  `;
+  
+  // Update UI components for opt-in
+  const optInToggle = document.getElementById('leaderboard-optin-toggle');
+  const nameRow = document.getElementById('optin-name-row');
+  const displayNameInput = document.getElementById('leaderboard-display-name');
+  
+  if (optInToggle) {
+    optInToggle.checked = isLeaderboardOptedIn();
+  }
+  if (nameRow) {
+    nameRow.classList.toggle('hidden', !isLeaderboardOptedIn());
+  }
+  if (displayNameInput) {
+    displayNameInput.value = getLeaderboardDisplayName();
+  }
+  
+  try {
+    // If opted in, push current score first so it is up-to-date
+    if (isLeaderboardOptedIn()) {
+      await syncMyLeaderboardScore();
+    }
+    
+    // Fetch all entries
+    const response = await fetch(`https://kvdb.io/${LEADERBOARD_BUCKET}/?values=true&format=json`);
+    if (!response.ok) throw new Error('Network response was not ok');
+    
+    const rawData = await response.json();
+    // rawData is an array of [key, value] pairs
+    const players = rawData.map(item => item[1]).filter(p => p && typeof p === 'object' && typeof p.xp === 'number');
+    
+    // Sort players by XP descending
+    players.sort((a, b) => b.xp - a.xp);
+    
+    if (players.length === 0) {
+      container.innerHTML = `<div class="leaderboard-empty">אין עדיין משתתפים בתחרות. הובילו בראש! 🏆</div>`;
+      document.getElementById('leaderboard-my-rank-card').classList.add('hidden');
+      return;
+    }
+    
+    // Render list
+    let html = '<div class="leaderboard-list">';
+    const myId = getLeaderboardUserId();
+    let myRank = -1;
+    
+    players.forEach((player, index) => {
+      const rank = index + 1;
+      const isMe = player.id === myId;
+      if (isMe) myRank = rank;
+      
+      let rankEmoji = '';
+      if (rank === 1) rankEmoji = '🥇';
+      else if (rank === 2) rankEmoji = '🥈';
+      else if (rank === 3) rankEmoji = '🥉';
+      else rankEmoji = `<span class="rank-num">${rank}</span>`;
+      
+      // Initials for avatar fallback
+      const initials = (player.name || 'U').charAt(0);
+      const avatarHtml = player.picture 
+        ? `<img src="${player.picture}" class="player-avatar" onerror="this.outerHTML='<div class=\'player-avatar fallback\'>${initials}</div>'">`
+        : `<div class="player-avatar fallback">${initials}</div>`;
+        
+      const timeAgo = getTimeAgo(player.updatedAt);
+      
+      html += `
+        <div class="leaderboard-item ${isMe ? 'is-me' : ''} rank-${rank}">
+          <div class="player-rank">${rankEmoji}</div>
+          ${avatarHtml}
+          <div class="player-info">
+            <div class="player-name">${escapeHtml(player.name)} ${isMe ? '<span class="me-tag">(אני)</span>' : ''}</div>
+            <div class="player-meta">
+              <span class="player-title">${player.rank || 'מתחיל'}</span>
+              ${player.streak > 0 ? `<span class="player-streak">🔥 ${player.streak} ימים</span>` : ''}
+              <span class="player-updated" title="${player.updatedAt}">לפני ${timeAgo}</span>
+            </div>
+          </div>
+          <div class="player-score">${player.xp.toLocaleString()} XP</div>
+        </div>
+      `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+    
+    // Render my rank card
+    const myRankCard = document.getElementById('leaderboard-my-rank-card');
+    if (myRankCard) {
+      if (isLeaderboardOptedIn() && myRank !== -1) {
+        myRankCard.classList.remove('hidden');
+        myRankCard.innerHTML = `
+          <div class="my-rank-info">
+            <span class="my-rank-emoji">🏆</span>
+            <div class="my-rank-text">
+              <h3>המיקום שלך: מקום <strong>${myRank}</strong> מתוך <strong>${players.length}</strong></h3>
+              <p>המשיכו להתאמן כדי לעלות בדירוג!</p>
+            </div>
+          </div>
+        `;
+      } else {
+        myRankCard.classList.add('hidden');
+      }
+    }
+    
+  } catch (e) {
+    console.error('Failed to load leaderboard:', e);
+    container.innerHTML = `
+      <div class="leaderboard-error">
+        <p>⚠️ שגיאה בטעינת טבלת המובילים. אנא ודאו שאתם מחוברים לאינטרנט ונסו שוב.</p>
+        <button class="admin-btn-sm" onclick="renderLeaderboard()">🔄 נסה שוב</button>
+      </div>
+    `;
+  }
+}
+
+// Toggle opt-in state
+async function toggleLeaderboardOptIn() {
+  const toggle = document.getElementById('leaderboard-optin-toggle');
+  const nameRow = document.getElementById('optin-name-row');
+  const optIn = toggle.checked;
+  
+  localStorage.setItem('fitpro_leaderboard_optin', optIn ? 'true' : 'false');
+  nameRow.classList.toggle('hidden', !optIn);
+  
+  if (optIn) {
+    toast('📢 הצטרפת לתחרות הציבורית!');
+    await syncMyLeaderboardScore();
+  } else {
+    toast('🔕 הסרת את עצמך מהתחרות הציבורית');
+    await deleteMyLeaderboardScore();
+  }
+  
+  renderLeaderboard();
+}
+
+// Save custom display name
+async function saveLeaderboardName() {
+  const input = document.getElementById('leaderboard-display-name');
+  const name = input.value.trim();
+  if (!name) {
+    toast('⚠️ השם לא יכול להיות ריק');
+    return;
+  }
+  localStorage.setItem('fitpro_leaderboard_name', name);
+  toast('✅ שם התצוגה עודכן!');
+  await syncMyLeaderboardScore();
+  renderLeaderboard();
+}
+
+// Show leaderboard screen
+function showLeaderboard() {
+  pushNav(() => renderHome());
+  showScreen('screen-leaderboard', 'טבלת תחרות');
+  renderLeaderboard();
+}
+
+// Refresh leaderboard manually
+async function syncLeaderboard(manual = false) {
+  const btn = document.getElementById('btn-refresh-leaderboard');
+  if (btn) btn.classList.add('loading');
+  
+  await renderLeaderboard();
+  
+  if (btn) btn.classList.remove('loading');
+  if (manual) toast('🔄 טבלת התחרות עודכנה!');
+}
+
+// Helper: format relative time
+function getTimeAgo(dateString) {
+  try {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+    
+    if (diffMins < 1) return 'כמה שניות';
+    if (diffMins < 60) return `${diffMins} דקות`;
+    if (diffHours < 24) return `${diffHours} שעות`;
+    return `${diffDays} ימים`;
+  } catch (e) {
+    return 'זמן קצר';
+  }
+}
+
+// Helper: Escape HTML
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+
 
