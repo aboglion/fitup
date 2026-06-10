@@ -5,6 +5,20 @@ let currentDay = null, currentMuscle = null, currentExercise = null;
 
 // Init
 window.addEventListener('DOMContentLoaded', () => {
+  // Dynamically load manifest if not on file:// protocol to avoid CORS error
+  if (window.location.protocol !== 'file:') {
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = 'manifest.json';
+    document.head.appendChild(link);
+  }
+
+  // Auto-detect and cache the last known Vercel deployment URL
+  const origin = window.location.origin;
+  if (origin && origin.includes('vercel.app')) {
+    localStorage.setItem('fitpro_last_known_origin', origin);
+  }
+
   loadSaved();
   setTimeout(() => {
     document.getElementById('splash-screen').classList.add('fade-out');
@@ -564,6 +578,7 @@ function switchAdminTab(tab) {
     `;
   } else if (tab === 'settings') {
     const currentClientId = localStorage.getItem('fitpro_google_client_id') || '';
+    const currentApiUrl = localStorage.getItem('fitpro_ai_api_url') || '';
     c.innerHTML = `
       <div class="admin-item">
         <h4 style="margin-bottom:0.75rem">⏱️ הגדרות טיימרים</h4>
@@ -578,6 +593,15 @@ function switchAdminTab(tab) {
           <input class="admin-input" type="text" id="set-google-client-id" value="${currentClientId}" placeholder="הכנס Client ID מותאם אישית (אופציונלי)">
         </div>
         <button class="admin-btn-sm" onclick="saveGoogleSettings()" style="width:100%;padding:0.6rem;margin-top:0.5rem">💾 שמור הגדרות סנכרון</button>
+      </div>
+      <div class="admin-item">
+        <h4 style="margin-bottom:0.75rem">🤖 הגדרות בינה מלאכותית (AI)</h4>
+        <div class="admin-form-group">
+          <label>כתובת שרת Vercel API (אופציונלי)</label>
+          <input class="admin-input" type="text" id="set-ai-api-url" value="${currentApiUrl}" placeholder="למשל: https://fitup-aboglion.vercel.app">
+          <p style="color:var(--text-muted);font-size:0.75rem;margin-top:0.25rem;">אם אתה מריץ מקומית (file:// או localhost), הזן את כתובת האתר שלך ב-Vercel כדי שה-AI יעבוד באמצעות ה-Proxy.</p>
+        </div>
+        <button class="admin-btn-sm" onclick="saveAISettings()" style="width:100%;padding:0.6rem;margin-top:0.5rem">💾 שמור הגדרות AI</button>
       </div>
       <div class="admin-item">
         <h4 style="margin-bottom:0.75rem">📦 ייצוא / ייבוא</h4>
@@ -724,6 +748,16 @@ function saveGoogleSettings() {
     localStorage.removeItem('fitpro_google_client_id');
   }
   toast('💾 הגדרות סנכרון נשמרו. יש לרענן את העמוד.');
+}
+
+function saveAISettings() {
+  const val = document.getElementById('set-ai-api-url').value.trim();
+  if (val) {
+    localStorage.setItem('fitpro_ai_api_url', val);
+  } else {
+    localStorage.removeItem('fitpro_ai_api_url');
+  }
+  toast('💾 הגדרות AI נשמרו.');
 }
 
 // Export/Import

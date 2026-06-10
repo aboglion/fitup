@@ -23,7 +23,22 @@ const AIModule = {
 
   async callAPI(prompt, systemPrompt = '') {
     try {
-      const response = await fetch('/api/ai', {
+      let baseUrl = localStorage.getItem('fitpro_ai_api_url') || '';
+      if (!baseUrl) {
+        baseUrl = localStorage.getItem('fitpro_last_known_origin') || '';
+      }
+
+      let fetchUrl = '/api/ai';
+      if (baseUrl) {
+        const cleanedBase = baseUrl.replace(/\/$/, '');
+        fetchUrl = cleanedBase.includes('/api/ai') ? cleanedBase : `${cleanedBase}/api/ai`;
+      } else if (window.location.protocol === 'file:') {
+        throw new Error('Running locally via file:// without a configured Vercel API URL. Please configure your Vercel URL in Admin -> Settings -> AI Settings.');
+      } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        throw new Error('Running locally via localhost without a Vercel dev server. Please configure your Vercel URL in Admin -> Settings -> AI Settings.');
+      }
+
+      const response = await fetch(fetchUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
