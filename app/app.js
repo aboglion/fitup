@@ -96,8 +96,10 @@ function showScreen(id, title) {
   document.getElementById(id).classList.add('active');
   const t = document.getElementById('nav-title');
   const b = document.getElementById('btn-back');
+  const h = document.getElementById('btn-home');
   if (title) t.textContent = title;
   b.classList.toggle('hidden', navStack.length === 0);
+  if (h) h.classList.toggle('hidden', id === 'screen-home');
   
   if (id !== 'screen-workout') {
     if (typeof closeVoiceTrainer === 'function') {
@@ -1314,6 +1316,11 @@ async function renderLeaderboard() {
   const nameRow = document.getElementById('optin-name-row');
   const displayNameInput = document.getElementById('leaderboard-display-name');
   
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const lastChangeDate = localStorage.getItem('fitpro_last_name_change_date');
+  const alreadyAttempted = lastChangeDate === today;
+
   if (optInToggle) {
     optInToggle.checked = isLeaderboardOptedIn();
   }
@@ -1322,6 +1329,27 @@ async function renderLeaderboard() {
   }
   if (displayNameInput) {
     displayNameInput.value = getLeaderboardDisplayName();
+    displayNameInput.disabled = alreadyAttempted;
+    if (alreadyAttempted) {
+      displayNameInput.title = 'ניתן לשנות שם פעם אחת ביום בלבד';
+    } else {
+      displayNameInput.title = '';
+    }
+  }
+  const saveBtn = document.getElementById('btn-save-leaderboard-name');
+  if (saveBtn) {
+    saveBtn.disabled = alreadyAttempted;
+    if (alreadyAttempted) {
+      saveBtn.title = 'ניתן לשנות שם פעם אחת ביום בלבד';
+      saveBtn.textContent = 'כבר עודכן/נוסה היום';
+      saveBtn.style.opacity = '0.5';
+      saveBtn.style.cursor = 'not-allowed';
+    } else {
+      saveBtn.title = '';
+      saveBtn.textContent = 'עדכן שם';
+      saveBtn.style.opacity = '1';
+      saveBtn.style.cursor = 'pointer';
+    }
   }
   
   try {
@@ -1444,12 +1472,31 @@ async function toggleLeaderboardOptIn() {
 // Save custom display name
 async function saveLeaderboardName() {
   const input = document.getElementById('leaderboard-display-name');
+  if (!input) return;
   const name = input.value.trim();
   if (!name) {
     toast('⚠️ השם לא יכול להיות ריק');
     return;
   }
   
+  const currentDisplayName = getLeaderboardDisplayName();
+  if (name === currentDisplayName) {
+    toast('⚠️ השם שהזנת הוא כבר שם התצוגה הנוכחי שלך');
+    return;
+  }
+
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const lastChangeDate = localStorage.getItem('fitpro_last_name_change_date');
+  if (lastChangeDate === today) {
+    toast('⚠️ ניתן לשנות שם או לנסות לשנות שם רק פעם אחת ביום');
+    return;
+  }
+
+  // Consume attempt immediately (includes failed attempts)
+  localStorage.setItem('fitpro_last_name_change_date', today);
+  renderLeaderboard(); // Update UI immediately to disable button/input
+
   // Moderate name to prevent abuse/malicious input
   toast('🔍 בודק תקינות שם...');
   const check = await AIModule.moderateName(name);
