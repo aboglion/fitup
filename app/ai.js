@@ -1,36 +1,45 @@
-// Chrome Built-in AI Module (Gemini Nano via window.ai)
+// Gemini Flash AI via Vercel Proxy (with fallback to local rules)
 const AIModule = {
   session: null,
   available: false,
+  systemPrompt: 'אתה מאמן כושר מנוסה שמדבר בעברית. אתה נותן משפטי מוטיבציה קצרים, תובנות אימון, וסיכומים מקצועיים. ענה תמיד בעברית, בקצרה ובאנרגיה חיובית. השתמש באימוג\'ים.',
 
   async init() {
     try {
-      if (typeof window !== 'undefined' && window.ai) {
-        if (window.ai.languageModel) {
-          const caps = await window.ai.languageModel.capabilities();
-          if (caps.available === 'readily' || caps.available === 'after-download') {
-            this.available = true;
-            this.session = await window.ai.languageModel.create({
-              systemPrompt: 'אתה מאמן כושר מנוסה שמדבר בעברית. אתה נותן משפטי מוטיבציה קצרים, תובנות אימון, וסיכומים מקצועיים. ענה תמיד בעברית, בקצרה ובאנרגיה חיובית. השתמש באימוג\'ים.'
-            });
-            console.log('✅ Chrome AI (Gemini Nano via languageModel) is available');
-            return true;
-          }
-        } else if (window.ai.assistant) {
-          const caps = await window.ai.assistant.capabilities();
-          if (caps.available === 'readily' || caps.available === 'after-download') {
-            this.available = true;
-            this.session = await window.ai.assistant.create({
-              systemPrompt: 'אתה מאמן כושר מנוסה שמדבר בעברית. אתה נותן משפטי מוטיבציה קצרים, תובנות אימון, וסיכומים מקצועיים. ענה תמיד בעברית, בקצרה ובאנרגיה חיובית. השתמש באימוג\'ים.'
-            });
-            console.log('✅ Chrome AI (Gemini Nano via assistant) is available');
-            return true;
-          }
+      this.available = true;
+      this.session = {
+        prompt: async (promptText) => {
+          return await this.callAPI(promptText, this.systemPrompt);
         }
+      };
+      console.log('✅ Gemini Flash AI via Vercel is ready');
+      return true;
+    } catch(e) {
+      console.log('Gemini Flash AI Proxy init failed:', e.message);
+      this.available = false;
+      return false;
+    }
+  },
+
+  async callAPI(prompt, systemPrompt = '') {
+    try {
+      const response = await fetch('/api/ai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt, systemPrompt })
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${response.status}`);
       }
-    } catch(e) { console.log('Chrome AI not available:', e.message); }
-    this.available = false;
-    return false;
+      const data = await response.json();
+      return data.text || '';
+    } catch (e) {
+      console.warn('API Call failed, falling back:', e.message);
+      throw e;
+    }
   },
 
   // Motivational messages for home screen & during workout
