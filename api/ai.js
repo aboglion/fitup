@@ -32,7 +32,7 @@ module.exports = async function handler(req, res) {
   }
 
   // Use the cheapest and newest Gemini Flash model
-  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash-lite';
+  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
   try {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
