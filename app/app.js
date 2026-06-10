@@ -1,3 +1,29 @@
+// Migrate local storage keys from fitpro to fitup
+(function() {
+  const keysToMigrate = [
+    'google_client_id',
+    'gprofile',
+    'gtoken',
+    'data',
+    'last_known_origin',
+    'my_cached_rank',
+    'ai_api_url',
+    'local_user_id',
+    'leaderboard_name',
+    'leaderboard_optin',
+    'last_name_change_date',
+    'progress',
+    'vt_seconds_per_rep'
+  ];
+  keysToMigrate.forEach(keySuffix => {
+    const oldKey = 'fitpro_' + keySuffix;
+    const newKey = 'fitup_' + keySuffix;
+    if (localStorage.getItem(oldKey) !== null && localStorage.getItem(newKey) === null) {
+      localStorage.setItem(newKey, localStorage.getItem(oldKey));
+    }
+  });
+})();
+
 // State
 let appData = JSON.parse(JSON.stringify(WORKOUT_DATA));
 let navStack = [];
@@ -59,7 +85,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Auto-detect and cache the last known Vercel deployment URL
   const origin = window.location.origin;
   if (origin && origin.includes('vercel.app')) {
-    localStorage.setItem('fitpro_last_known_origin', origin);
+    localStorage.setItem('fitup_last_known_origin', origin);
   }
 
   loadSaved();
@@ -73,12 +99,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function loadSaved() {
   try {
-    const s = localStorage.getItem('fitpro_data');
+    const s = localStorage.getItem('fitup_data');
     if (s) appData = JSON.parse(s);
   } catch(e) {}
 }
 function saveData() {
-  localStorage.setItem('fitpro_data', JSON.stringify(appData));
+  localStorage.setItem('fitup_data', JSON.stringify(appData));
   try { AuthModule.markDirty(); } catch(e) {}
 }
 
@@ -146,7 +172,7 @@ function renderHome() {
   const xpContainer = document.getElementById('xp-bar-container');
   
   const isOptedIn = typeof isLeaderboardOptedIn === 'function' && isLeaderboardOptedIn();
-  const cachedRank = localStorage.getItem('fitpro_my_cached_rank') || '-';
+  const cachedRank = localStorage.getItem('fitup_my_cached_rank') || '-';
 
   if (xpContainer) {
     xpContainer.innerHTML = `
@@ -245,7 +271,7 @@ function renderHome() {
   // AI Global Status Summary Card
   updateAISummaryCard();
 
-  showScreen('screen-home', 'FitPro');
+  showScreen('screen-home', 'FitUp');
 }
 
 // Show all days (fallback grid)
@@ -595,8 +621,8 @@ function switchAdminTab(tab) {
       </div>
     `;
   } else if (tab === 'settings') {
-    const currentClientId = localStorage.getItem('fitpro_google_client_id') || '';
-    const currentApiUrl = localStorage.getItem('fitpro_ai_api_url') || '';
+    const currentClientId = localStorage.getItem('fitup_google_client_id') || '';
+    const currentApiUrl = localStorage.getItem('fitup_ai_api_url') || '';
     c.innerHTML = `
       <div class="admin-item">
         <h4 style="margin-bottom:0.75rem">⏱️ הגדרות טיימרים</h4>
@@ -761,9 +787,9 @@ function deleteExercise(dayId, muscleId, ei) {
 function saveGoogleSettings() {
   const val = document.getElementById('set-google-client-id').value.trim();
   if (val) {
-    localStorage.setItem('fitpro_google_client_id', val);
+    localStorage.setItem('fitup_google_client_id', val);
   } else {
-    localStorage.removeItem('fitpro_google_client_id');
+    localStorage.removeItem('fitup_google_client_id');
   }
   toast('💾 הגדרות סנכרון נשמרו. יש לרענן את העמוד.');
 }
@@ -771,9 +797,9 @@ function saveGoogleSettings() {
 function saveAISettings() {
   const val = document.getElementById('set-ai-api-url').value.trim();
   if (val) {
-    localStorage.setItem('fitpro_ai_api_url', val);
+    localStorage.setItem('fitup_ai_api_url', val);
   } else {
-    localStorage.removeItem('fitpro_ai_api_url');
+    localStorage.removeItem('fitup_ai_api_url');
   }
   toast('💾 הגדרות AI נשמרו.');
 }
@@ -782,7 +808,7 @@ function saveAISettings() {
 function exportData() {
   const blob = new Blob([JSON.stringify(appData, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = 'fitpro_backup.json'; a.click();
+  a.href = URL.createObjectURL(blob); a.download = 'fitup_backup.json'; a.click();
   toast('הנתונים יוצאו בהצלחה');
 }
 function importData(event) {
@@ -826,7 +852,7 @@ async function manualRestore() {
 function resetData() {
   if (!confirm('האם אתה בטוח? כל השינויים יאבדו!')) return;
   appData = JSON.parse(JSON.stringify(WORKOUT_DATA));
-  localStorage.removeItem('fitpro_data');
+  localStorage.removeItem('fitup_data');
   switchAdminTab('settings'); toast('המערכת אופסה');
 }
 
@@ -1229,17 +1255,17 @@ function getLeaderboardUserId() {
     // Generate a consistent ID from email to link guest accounts to signed-in accounts
     return `user_${btoa(profile.email).replace(/=/g, '').substring(0, 15)}`;
   }
-  let localId = localStorage.getItem('fitpro_local_user_id');
+  let localId = localStorage.getItem('fitup_local_user_id');
   if (!localId) {
     localId = `local_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-    localStorage.setItem('fitpro_local_user_id', localId);
+    localStorage.setItem('fitup_local_user_id', localId);
   }
   return localId;
 }
 
 // Get user display name
 function getLeaderboardDisplayName() {
-  const savedName = localStorage.getItem('fitpro_leaderboard_name');
+  const savedName = localStorage.getItem('fitup_leaderboard_name');
   if (savedName) return savedName;
   
   const profile = AuthModule.getProfile();
@@ -1250,7 +1276,7 @@ function getLeaderboardDisplayName() {
 
 // Check if user has opted in
 function isLeaderboardOptedIn() {
-  const val = localStorage.getItem('fitpro_leaderboard_optin');
+  const val = localStorage.getItem('fitup_leaderboard_optin');
   return val !== 'false'; // default is true
 }
 
@@ -1318,7 +1344,7 @@ async function renderLeaderboard() {
   
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  const lastChangeDate = localStorage.getItem('fitpro_last_name_change_date');
+  const lastChangeDate = localStorage.getItem('fitup_last_name_change_date');
   const alreadyAttempted = lastChangeDate === today;
 
   if (optInToggle) {
@@ -1455,7 +1481,7 @@ async function toggleLeaderboardOptIn() {
   const nameRow = document.getElementById('optin-name-row');
   const optIn = toggle.checked;
   
-  localStorage.setItem('fitpro_leaderboard_optin', optIn ? 'true' : 'false');
+  localStorage.setItem('fitup_leaderboard_optin', optIn ? 'true' : 'false');
   nameRow.classList.toggle('hidden', !optIn);
   
   if (optIn) {
@@ -1487,14 +1513,14 @@ async function saveLeaderboardName() {
 
   const now = new Date();
   const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-  const lastChangeDate = localStorage.getItem('fitpro_last_name_change_date');
+  const lastChangeDate = localStorage.getItem('fitup_last_name_change_date');
   if (lastChangeDate === today) {
     toast('⚠️ ניתן לשנות שם או לנסות לשנות שם רק פעם אחת ביום');
     return;
   }
 
   // Consume attempt immediately (includes failed attempts)
-  localStorage.setItem('fitpro_last_name_change_date', today);
+  localStorage.setItem('fitup_last_name_change_date', today);
   renderLeaderboard(); // Update UI immediately to disable button/input
 
   // Moderate name to prevent abuse/malicious input
@@ -1505,7 +1531,7 @@ async function saveLeaderboardName() {
     return;
   }
 
-  localStorage.setItem('fitpro_leaderboard_name', name);
+  localStorage.setItem('fitup_leaderboard_name', name);
   toast('✅ שם התצוגה עודכן!');
   await syncMyLeaderboardScore();
   renderLeaderboard();
@@ -1565,7 +1591,7 @@ async function fetchLeaderboardRankAndUpdateUI() {
     const myId = getLeaderboardUserId();
     const myRank = players.findIndex(p => p.id === myId) + 1;
     if (myRank > 0) {
-      localStorage.setItem('fitpro_my_cached_rank', myRank);
+      localStorage.setItem('fitup_my_cached_rank', myRank);
       const el = document.getElementById('xp-leaderboard-rank-val');
       if (el) el.textContent = myRank;
     }
@@ -1628,7 +1654,7 @@ function startVoiceTrainer(exIdx, setIdx) {
   }
 
   // Load user preference for tempo (default 4 seconds)
-  const savedTempo = localStorage.getItem('fitpro_vt_seconds_per_rep');
+  const savedTempo = localStorage.getItem('fitup_vt_seconds_per_rep');
   vtSecondsPerRep = savedTempo ? parseInt(savedTempo) : 4;
   
   const item = workoutExercises[exIdx];
@@ -1685,7 +1711,7 @@ function startVoiceTrainer(exIdx, setIdx) {
 function adjustVtTempo(delta) {
   vtSecondsPerRep = Math.max(2, Math.min(10, vtSecondsPerRep + delta));
   document.getElementById('vt-tempo-val').textContent = vtSecondsPerRep;
-  localStorage.setItem('fitpro_vt_seconds_per_rep', vtSecondsPerRep);
+  localStorage.setItem('fitup_vt_seconds_per_rep', vtSecondsPerRep);
   
   if (vtIsPlaying) {
     vtRepStartTime = Date.now() - vtRepElapsedTime; // adjust timer start time to match new duration

@@ -1,6 +1,6 @@
 // Google Auth + Drive Sync Module (Offline-First)
 const DEFAULT_GOOGLE_CLIENT_ID = '210071068493-dg8f374ctpbriq30f4lapbdcqbfnguom.apps.googleusercontent.com'; // Set your default Client ID here for hosted users
-const GOOGLE_CLIENT_ID = localStorage.getItem('fitpro_google_client_id') || DEFAULT_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_ID = localStorage.getItem('fitup_google_client_id') || DEFAULT_GOOGLE_CLIENT_ID;
 const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
 let gTokenClient = null;
 let gAccessToken = null;
@@ -9,13 +9,13 @@ let gUserProfile = null;
 const AuthModule = {
   init() {
     // Load saved profile first so it's available for updateUI
-    const profile = localStorage.getItem('fitpro_gprofile');
+    const profile = localStorage.getItem('fitup_gprofile');
     if (profile) {
       try { gUserProfile = JSON.parse(profile); } catch(e) {}
     }
     
     // Load saved token
-    const saved = localStorage.getItem('fitpro_gtoken');
+    const saved = localStorage.getItem('fitup_gtoken');
     if (saved) {
       gAccessToken = saved;
       this.updateUI(true);
@@ -47,7 +47,7 @@ const AuthModule = {
           return; 
         }
         gAccessToken = resp.access_token;
-        localStorage.setItem('fitpro_gtoken', gAccessToken);
+        localStorage.setItem('fitup_gtoken', gAccessToken);
         
         // Fetch user profile
         await this.fetchUserProfile();
@@ -78,7 +78,7 @@ const AuthModule = {
       });
       if (res.ok) {
         gUserProfile = await res.json();
-        localStorage.setItem('fitpro_gprofile', JSON.stringify(gUserProfile));
+        localStorage.setItem('fitup_gprofile', JSON.stringify(gUserProfile));
       }
     } catch(e) { console.log('Profile fetch failed:', e); }
   },
@@ -117,8 +117,8 @@ const AuthModule = {
     }
     gAccessToken = null;
     gUserProfile = null;
-    localStorage.removeItem('fitpro_gtoken');
-    localStorage.removeItem('fitpro_gprofile');
+    localStorage.removeItem('fitup_gtoken');
+    localStorage.removeItem('fitup_gprofile');
     this.updateUI(false);
     toast('👋 יצאת מהחשבון');
   },
@@ -139,18 +139,18 @@ const AuthModule = {
 
   isDirty() {
     try {
-      const data = JSON.parse(localStorage.getItem('fitpro_data') || '{}');
+      const data = JSON.parse(localStorage.getItem('fitup_data') || '{}');
       return data.sync?.is_dirty || false;
     } catch(e) { return false; }
   },
 
   markDirty() {
     try {
-      const data = JSON.parse(localStorage.getItem('fitpro_data') || '{}');
+      const data = JSON.parse(localStorage.getItem('fitup_data') || '{}');
       if (!data.sync) data.sync = {};
       data.sync.is_dirty = true;
       data.sync.last_local_change = new Date().toISOString();
-      localStorage.setItem('fitpro_data', JSON.stringify(data));
+      localStorage.setItem('fitup_data', JSON.stringify(data));
       this.updateUI(true);
       // Try background sync
       this.trySyncInBackground();
@@ -162,34 +162,62 @@ const AuthModule = {
     await this.syncToDrive();
   },
 
+  async findBackupFile() {
+    try {
+      // 1. Search for fitup_backup.json
+      let res = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27fitup_backup.json%27', {
+        headers: { Authorization: `Bearer ${gAccessToken}` }
+      });
+      if (res.ok) {
+        let list = await res.json();
+        if (list.files && list.files.length > 0) {
+          return list.files[0].id;
+        }
+      }
+      
+      // 2. Search for legacy fitpro_backup.json
+      res = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27fitpro_backup.json%27', {
+        headers: { Authorization: `Bearer ${gAccessToken}` }
+      });
+      if (res.ok) {
+        let list = await res.json();
+        if (list.files && list.files.length > 0) {
+          const fileId = list.files[0].id;
+          // Try to rename it to fitup_backup.json
+          try {
+            await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+              method: 'PATCH',
+              headers: { 
+                Authorization: `Bearer ${gAccessToken}`, 
+                'Content-Type': 'application/json' 
+              },
+              body: JSON.stringify({ name: 'fitup_backup.json' })
+            });
+            console.log('Successfully migrated legacy backup file to fitup_backup.json');
+          } catch(e) { console.log('Failed to rename legacy backup file:', e); }
+          return fileId;
+        }
+      }
+    } catch(e) {
+      console.error('Error finding backup file:', e);
+    }
+    return null;
+  },
+
   async syncToDrive() {
     if (!gAccessToken) return false;
-    let data = localStorage.getItem('fitpro_data');
+    let data = localStorage.getItem('fitup_data');
     if (!data) {
       if (typeof appData !== 'undefined') {
-        localStorage.setItem('fitpro_data', JSON.stringify(appData));
-        data = localStorage.getItem('fitpro_data');
+        localStorage.setItem('fitup_data', JSON.stringify(appData));
+        data = localStorage.getItem('fitup_data');
       }
     }
     if (!data) return false;
     
     try {
-      // Find existing file
-      const listRes = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27fitpro_backup.json%27', {
-        headers: { Authorization: `Bearer ${gAccessToken}` }
-      });
-      if (!listRes.ok) {
-        const errData = await listRes.json().catch(() => ({}));
-        this.handleApiError(errData, 'שגיאה בקריאת קובצי ענן', listRes.status);
-        if (listRes.status === 401) this.handleAuthError();
-        return false;
-      }
-      const list = await listRes.json();
-
-      let fileId = null;
-      if (list.files && list.files.length > 0) {
-        fileId = list.files[0].id;
-      } else {
+      let fileId = await this.findBackupFile();
+      if (!fileId) {
         // Create new empty file metadata in appDataFolder
         const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
           method: 'POST',
@@ -198,7 +226,7 @@ const AuthModule = {
             'Content-Type': 'application/json' 
           },
           body: JSON.stringify({
-            name: 'fitpro_backup.json',
+            name: 'fitup_backup.json',
             parents: ['appDataFolder']
           })
         });
@@ -230,7 +258,7 @@ const AuthModule = {
       if (!appState.sync) appState.sync = {};
       appState.sync.is_dirty = false;
       appState.sync.last_cloud_sync = new Date().toISOString();
-      localStorage.setItem('fitpro_data', JSON.stringify(appState));
+      localStorage.setItem('fitup_data', JSON.stringify(appState));
       
       // Update global state
       if (typeof appData !== 'undefined') {
@@ -249,19 +277,9 @@ const AuthModule = {
   async syncFromDrive() {
     if (!gAccessToken) return false;
     try {
-      const listRes = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27fitpro_backup.json%27', {
-        headers: { Authorization: `Bearer ${gAccessToken}` }
-      });
-      if (!listRes.ok) {
-        const errData = await listRes.json().catch(() => ({}));
-        this.handleApiError(errData, 'שגיאה בקריאת קובצי ענן', listRes.status);
-        if (listRes.status === 401) this.handleAuthError();
-        return false;
-      }
-      const list = await listRes.json();
-      if (!list.files || list.files.length === 0) return false;
+      const fileId = await this.findBackupFile();
+      if (!fileId) return false;
 
-      const fileId = list.files[0].id;
       const dataRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
         headers: { Authorization: `Bearer ${gAccessToken}` }
       });
@@ -274,12 +292,12 @@ const AuthModule = {
       const cloudData = await dataRes.json();
 
       // Compare timestamps - cloud wins if newer AND local is not dirty
-      const local = JSON.parse(localStorage.getItem('fitpro_data') || '{}');
+      const local = JSON.parse(localStorage.getItem('fitup_data') || '{}');
       const localSync = local.sync?.last_cloud_sync || '1970-01-01';
       const cloudSync = cloudData.sync?.last_cloud_sync || '1970-01-01';
 
       if (cloudSync > localSync && !local.sync?.is_dirty) {
-        localStorage.setItem('fitpro_data', JSON.stringify(cloudData));
+        localStorage.setItem('fitup_data', JSON.stringify(cloudData));
         if (typeof appData !== 'undefined') {
           Object.assign(appData, cloudData);
         }
@@ -299,41 +317,28 @@ const AuthModule = {
     if (!gAccessToken) return false;
     
     // Ensure we have local data
-    let localData = localStorage.getItem('fitpro_data');
+    let localData = localStorage.getItem('fitup_data');
     if (!localData) {
       if (typeof appData !== 'undefined') {
-        localStorage.setItem('fitpro_data', JSON.stringify(appData));
-        localData = localStorage.getItem('fitpro_data');
+        localStorage.setItem('fitup_data', JSON.stringify(appData));
+        localData = localStorage.getItem('fitup_data');
       }
     }
     const local = JSON.parse(localData || '{}');
     const localChangeTime = local.sync?.last_local_change || '1970-01-01';
 
     try {
-      // 1. Fetch file list from Drive
-      const listRes = await fetch('https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27fitpro_backup.json%27', {
-        headers: { Authorization: `Bearer ${gAccessToken}` }
-      });
+      const fileId = await this.findBackupFile();
       
-      if (!listRes.ok) {
-        const errData = await listRes.json().catch(() => ({}));
-        this.handleApiError(errData, 'שגיאה בקריאת קובצי ענן', listRes.status);
-        if (listRes.status === 401) this.handleAuthError();
-        return false;
-      }
-      
-      const list = await listRes.json();
-      
-      // 2. If file doesn't exist in Drive, upload local
-      if (!list.files || list.files.length === 0) {
+      // If file doesn't exist in Drive, upload local
+      if (!fileId) {
         console.log('No cloud backup found. Creating new backup...');
         const ok = await this.syncToDrive();
         if (ok) toast('☁️ גיבוי ראשוני נוצר בענן');
         return ok;
       }
 
-      // 3. File exists, download cloud data
-      const fileId = list.files[0].id;
+      // File exists, download cloud data
       const dataRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
         headers: { Authorization: `Bearer ${gAccessToken}` }
       });
@@ -348,10 +353,10 @@ const AuthModule = {
       const cloudData = await dataRes.json();
       const cloudChangeTime = cloudData.sync?.last_local_change || '1970-01-01';
 
-      // 4. Compare timestamps
+      // Compare timestamps
       if (cloudChangeTime > localChangeTime) {
         // Cloud is newer -> Restore to local
-        localStorage.setItem('fitpro_data', JSON.stringify(cloudData));
+        localStorage.setItem('fitup_data', JSON.stringify(cloudData));
         if (typeof appData !== 'undefined') {
           Object.assign(appData, cloudData);
         }
@@ -428,14 +433,14 @@ const AuthModule = {
 
   handleAuthError() {
     gAccessToken = null;
-    localStorage.removeItem('fitpro_gtoken');
+    localStorage.removeItem('fitup_gtoken');
     this.updateUI(false);
     console.log('Auth token expired - need re-authentication');
   },
 
   getSyncInfo() {
     try {
-      const data = JSON.parse(localStorage.getItem('fitpro_data') || '{}');
+      const data = JSON.parse(localStorage.getItem('fitup_data') || '{}');
       return {
         is_dirty: data.sync?.is_dirty || false,
         last_cloud_sync: data.sync?.last_cloud_sync || null,

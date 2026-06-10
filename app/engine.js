@@ -3,11 +3,11 @@ const TrainingEngine = {
   CYCLE: ['day1','day2','day3','rest','day5','rest'],
   
   getProgress() {
-    const p = JSON.parse(localStorage.getItem('fitpro_progress') || 'null');
+    const p = JSON.parse(localStorage.getItem('fitup_progress') || 'null');
     return p || { xp: 0, rank: 'מתחיל', streak: 0, totalWorkouts: 0, muscleLevels: {}, workoutHistory: [], lastWorkoutDate: null };
   },
   
-  saveProgress(p) { localStorage.setItem('fitpro_progress', JSON.stringify(p)); },
+  saveProgress(p) { localStorage.setItem('fitup_progress', JSON.stringify(p)); },
 
   // Determine today's training day based on history
   getTodayPlan() {

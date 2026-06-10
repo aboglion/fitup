@@ -1,6 +1,6 @@
 {
-  "name": "FitPro - אימון חכם",
-  "short_name": "FitPro",
+  "name": "FitUp - אימון חכם",
+  "short_name": "FitUp",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0a1a",

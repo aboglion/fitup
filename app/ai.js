@@ -51,8 +51,8 @@ const AIModule = {
 
     try {
       // Priority: user-configured > last cached from Vercel visit > default
-      let baseUrl = localStorage.getItem('fitpro_ai_api_url') ||
-                    localStorage.getItem('fitpro_last_known_origin') ||
+      let baseUrl = localStorage.getItem('fitup_ai_api_url') ||
+                    localStorage.getItem('fitup_last_known_origin') ||
                     DEFAULT_VERCEL_URL;
 
       const cleanedBase = baseUrl.replace(/\/$/, '');
