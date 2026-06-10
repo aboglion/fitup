@@ -3,6 +3,12 @@ let appData = JSON.parse(JSON.stringify(WORKOUT_DATA));
 let navStack = [];
 let currentDay = null, currentMuscle = null, currentExercise = null;
 
+// Helpers
+function formatMarkdown(text) {
+  if (!text) return '';
+  return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+}
+
 // Init
 window.addEventListener('DOMContentLoaded', () => {
   // Dynamically load manifest if not on file:// protocol to avoid CORS error
@@ -214,7 +220,7 @@ function renderHome() {
 
       summaryCard.innerHTML = `
         <h3>${cardIcon} עוזר אימונים חכם ${badgeHtml}</h3>
-        <p>${res.text}</p>
+        <p>${formatMarkdown(res.text)}</p>
         <div class="summary-stats-inline">
           <span>🔥 רצף: ${prog.streak || 0} ימים</span>
           <span>💪 סה"כ אימונים: ${prog.totalWorkouts || 0}</span>
@@ -1166,9 +1172,9 @@ function renderSummaryScreen(summary, duration) {
         ${summary.stats.promotions > 0 ? `<div class="summary-stat highlight"><span class="summary-stat-num">${summary.stats.promotions}</span><span class="summary-stat-label">קידומים!</span></div>` : ''}
       </div>
       
-      <div class="summary-section insight"><h4>💡 תובנה</h4><p>${summary.insight}</p></div>
-      <div class="summary-section tip"><h4>🎯 טיפ</h4><p>${summary.tip}</p></div>
-      <div class="summary-section reinforcement"><h4>💪 חיזוק</h4><p>${summary.reinforcement}</p></div>
+      <div class="summary-section insight"><h4>💡 תובנה</h4><p>${formatMarkdown(summary.insight)}</p></div>
+      <div class="summary-section tip"><h4>🎯 טיפ</h4><p>${formatMarkdown(summary.tip)}</p></div>
+      <div class="summary-section reinforcement"><h4>💪 חיזוק</h4><p>${formatMarkdown(summary.reinforcement)}</p></div>
       
       <button class="admin-save-btn" onclick="renderHome()" style="margin-top:1.5rem">🏠 חזרה לדף הבית</button>
     </div>
