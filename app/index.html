@@ -181,6 +181,92 @@
         </div>
     </div>
 
+    <!-- Voice Trainer Overlay (Active Set Rep Assistant) -->
+    <div id="voice-trainer-overlay" class="voice-trainer-overlay hidden">
+        <div class="vt-container">
+            <div class="vt-header">
+                <div class="vt-title-row">
+                    <span id="vt-ex-badge" class="vt-ex-badge">רמה</span>
+                    <h3 id="vt-ex-name">שם התרגיל</h3>
+                </div>
+                <div class="vt-subtitle-row">
+                    <span id="vt-set-num">סט 1 מתוך 3</span> • 
+                    <span id="vt-target-reps">מטרה: 6-10 חזרות</span>
+                </div>
+            </div>
+
+            <!-- Large Exercise Image so user can see form while doing it -->
+            <div class="vt-image-container">
+                <img id="vt-ex-img" class="vt-ex-img" src="" alt="תרגיל" onerror="this.style.display='none'">
+            </div>
+
+            <!-- Rep Counter Circle -->
+            <div class="vt-counter-section">
+                <div class="vt-circle-wrap">
+                    <svg viewBox="0 0 140 140" class="vt-svg">
+                        <circle class="vt-circle-bg" cx="70" cy="70" r="64"/>
+                        <circle id="vt-circle-progress" class="vt-circle-progress" cx="70" cy="70" r="64"/>
+                    </svg>
+                    <div class="vt-counter-numbers">
+                        <span id="vt-rep-count" class="vt-rep-count">0</span>
+                        <span class="vt-rep-label">חזרות</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings: Tempo / Seconds per Rep -->
+            <div class="vt-settings-row">
+                <label>שניות לחזרה:</label>
+                <div class="vt-tempo-control">
+                    <button class="vt-tempo-btn" onclick="adjustVtTempo(-1)">−</button>
+                    <span id="vt-tempo-val" class="vt-tempo-val">4</span>
+                    <button class="vt-tempo-btn" onclick="adjustVtTempo(1)">+</button>
+                </div>
+            </div>
+
+            <!-- Controls Panel -->
+            <div class="vt-controls" id="vt-controls-active">
+                <button id="vt-play-btn" class="vt-btn vt-btn-play" onclick="toggleVtPlay()">▶️ התחל סט</button>
+                <div class="vt-adjust-row">
+                    <button class="vt-btn vt-btn-adjust" onclick="adjustVtReps(-1)">- חזרה</button>
+                    <button class="vt-btn vt-btn-adjust" onclick="adjustVtReps(1)">+ חזרה</button>
+                </div>
+                <button class="vt-btn vt-btn-finish" onclick="showVtRatingPanel()">🏁 סיים סט</button>
+                <button class="vt-btn vt-btn-cancel" onclick="confirmCancelVt()">❌ ביטול סט</button>
+            </div>
+
+            <!-- Rating Panel (shown when finishing set) -->
+            <div class="vt-rating-panel hidden" id="vt-rating-panel">
+                <h4>איך היה הסט?</h4>
+                <div class="vt-rating-summary">
+                    <span id="vt-rating-reps-summary">סיימת 8 חזרות</span>
+                </div>
+                
+                <div class="vt-form-group">
+                    <label>חזרות במלאי (RIR): <span id="vt-rir-val">2</span></label>
+                    <input type="range" class="vt-slider" id="vt-rir-slider" min="0" max="5" value="2" oninput="updateVtRirLabel()">
+                    <div class="vt-slider-labels">
+                        <span>כשל (0)</span>
+                        <span>מצוין (1-2)</span>
+                        <span>קל (3+)</span>
+                    </div>
+                </div>
+
+                <div class="vt-form-group-checkbox">
+                    <label class="vt-checkbox-label">
+                        <input type="checkbox" id="vt-strict-checkbox" checked>
+                        <span>טכניקה מושלמת 💪</span>
+                    </label>
+                </div>
+
+                <div class="vt-rating-actions">
+                    <button class="vt-btn vt-btn-save" onclick="saveVtSet()">💾 שמור סט והמשך</button>
+                    <button class="vt-btn vt-btn-back-to-set" onclick="backToVtActive()">חזור לספירה</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Rest Timer Overlay -->
     <div id="rest-timer-overlay" class="rest-timer-overlay hidden">
         <div class="rest-timer-content">

@@ -41,6 +41,12 @@ function showScreen(id, title) {
   const b = document.getElementById('btn-back');
   if (title) t.textContent = title;
   b.classList.toggle('hidden', navStack.length === 0);
+  
+  if (id !== 'screen-workout') {
+    if (typeof closeVoiceTrainer === 'function') {
+      closeVoiceTrainer();
+    }
+  }
 }
 
 function goBack() {
@@ -943,6 +949,7 @@ function renderExerciseSets(idx) {
             <input type="checkbox" id="wex-strict-${idx}-${s}" checked> טכניקה מושלמת
           </label>
         </div>
+        <button class="wex-set-voice" onclick="startVoiceTrainer(${idx},${s})" title="התחל סט קולי">🔊</button>
         <button class="wex-set-done" onclick="markSet(${idx},${s})">✓</button>
       </div>`;
   }
@@ -1464,6 +1471,297 @@ async function fetchLeaderboardRankAndUpdateUI() {
     }
   } catch (e) {
     console.error('Failed to fetch rank on home:', e);
+  }
+}
+
+// ===== Voice Trainer (Rep Assistant with Cadence Counting & TTS) =====
+let vtExIdx = null;
+let vtSetIdx = null;
+let vtReps = 0;
+let vtSecondsPerRep = 4;
+let vtTimerId = null;
+let vtRepStartTime = null;
+let vtRepElapsedTime = 0;
+let vtIsPlaying = false;
+let vtCountdownSeconds = 3;
+let vtCountdownTimerId = null;
+
+// Speech synthesis helper for Hebrew counting
+function vtSpeak(text) {
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'he-IL';
+    utterance.rate = 1.1; // slightly speed up for a more energetic beat
+    window.speechSynthesis.speak(utterance);
+  }
+}
+
+// Hebrew number word mapping for natural counting pronunciation
+const HEBREW_NUMBERS = {
+  1: 'אחת', 2: 'שתיים', 3: 'שלוש', 4: 'ארבע', 5: 'חמש',
+  6: 'שש', 7: 'שבע', 8: 'שמונה', 9: 'תשע', 10: 'עשר',
+  11: 'אחת עשרה', 12: 'שתים עשרה', 13: 'שלוש עשרה', 14: 'ארבע עשרה', 15: 'חמש עשרה',
+  16: 'שש עשרה', 17: 'שבע עשרה', 18: 'שמונה עשרה', 19: 'תשע עשרה', 20: 'עשרים',
+  21: 'עשרים ואחת', 22: 'עשרים ושתיים', 23: 'עשרים ושלוש', 24: 'עשרים וארבע', 25: 'עשרים וחמש',
+  26: 'עשרים ושש', 27: 'עשרים ושבע', 28: 'עשרים ושמונה', 29: 'עשרים ותשע', 30: 'שלושים'
+};
+
+function getHebrewNumber(num) {
+  return HEBREW_NUMBERS[num] || String(num);
+}
+
+// Start the Voice Trainer overlay with countdown and exercises details
+function startVoiceTrainer(exIdx, setIdx) {
+  vtExIdx = exIdx;
+  vtSetIdx = setIdx;
+  vtReps = 0;
+  vtRepElapsedTime = 0;
+  vtRepStartTime = null;
+  vtIsPlaying = false;
+  
+  // Make sure the main exercise card body is initialized (safety checks)
+  const body = document.getElementById(`wex-body-${exIdx}`);
+  if (body && !body.dataset.init) {
+    body.dataset.init = '1';
+    renderExerciseSets(exIdx);
+  }
+
+  // Load user preference for tempo (default 4 seconds)
+  const savedTempo = localStorage.getItem('fitpro_vt_seconds_per_rep');
+  vtSecondsPerRep = savedTempo ? parseInt(savedTempo) : 4;
+  
+  const item = workoutExercises[exIdx];
+  if (!item) return;
+  const e = item.exercise;
+  
+  // Update Overlay texts
+  document.getElementById('vt-ex-name').textContent = e.name;
+  document.getElementById('vt-set-num').textContent = `סט ${setIdx + 1} מתוך ${e.sets}`;
+  document.getElementById('vt-target-reps').textContent = `מטרה: ${e.reps} חזרות`;
+  document.getElementById('vt-rep-count').textContent = '0';
+  document.getElementById('vt-tempo-val').textContent = vtSecondsPerRep;
+  
+  // Style level badge
+  const badge = document.getElementById('vt-ex-badge');
+  const lc = appData.levelColors[e.level] || {};
+  badge.textContent = lc.name || e.level;
+  badge.style.borderColor = lc.hex || '#666';
+  badge.style.color = lc.hex || '#666';
+  badge.style.background = `${lc.hex}15`;
+
+  // Set exercise visual instruction
+  const img = document.getElementById('vt-ex-img');
+  img.src = getImgSrc(e, currentDay.folder);
+  img.style.display = 'block';
+
+  // Reset SVG circular progress
+  const circle = document.getElementById('vt-circle-progress');
+  const circumference = 2 * Math.PI * 64;
+  if (circle) {
+    circle.style.strokeDasharray = circumference;
+    circle.style.strokeDashoffset = circumference;
+  }
+
+  // Display Overlay
+  document.getElementById('voice-trainer-overlay').classList.remove('hidden');
+  
+  // Reset active/rating panel display
+  document.getElementById('vt-controls-active').classList.remove('hidden');
+  document.getElementById('vt-rating-panel').classList.add('hidden');
+  
+  // Reset Play button text & class
+  const playBtn = document.getElementById('vt-play-btn');
+  playBtn.textContent = '▶️ התחל סט';
+  playBtn.className = 'vt-btn vt-btn-play';
+  
+  clearInterval(vtTimerId);
+  clearTimeout(vtCountdownTimerId);
+  
+  // Greeting voice alert
+  vtSpeak("סט מספר " + getHebrewNumber(setIdx + 1) + ". לחץ התחל כשאתה מוכן.");
+}
+
+function adjustVtTempo(delta) {
+  vtSecondsPerRep = Math.max(2, Math.min(10, vtSecondsPerRep + delta));
+  document.getElementById('vt-tempo-val').textContent = vtSecondsPerRep;
+  localStorage.setItem('fitpro_vt_seconds_per_rep', vtSecondsPerRep);
+  
+  if (vtIsPlaying) {
+    vtRepStartTime = Date.now() - vtRepElapsedTime; // adjust timer start time to match new duration
+  }
+}
+
+function toggleVtPlay() {
+  const playBtn = document.getElementById('vt-play-btn');
+  
+  if (vtIsPlaying) {
+    // Pause
+    vtIsPlaying = false;
+    clearInterval(vtTimerId);
+    playBtn.textContent = '▶️ המשך';
+    playBtn.classList.remove('playing');
+    vtSpeak("השהייה");
+  } else {
+    // Play / Resume
+    vtIsPlaying = true;
+    playBtn.textContent = '⏸️ השהה';
+    playBtn.classList.add('playing');
+    
+    // Start countdown if beginning of the set
+    if (vtReps === 0 && !vtRepStartTime) {
+      runVtCountdown();
+    } else {
+      // Resume from paused
+      vtRepStartTime = Date.now() - vtRepElapsedTime;
+      startVtTimer();
+      vtSpeak("ממשיכים");
+    }
+  }
+}
+
+function runVtCountdown() {
+  vtCountdownSeconds = 3;
+  const repCountEl = document.getElementById('vt-rep-count');
+  repCountEl.textContent = 'הכן...';
+  
+  vtSpeak("הכן את עצמך. שלוש. שתיים. אחת. צא!");
+  
+  const tickCountdown = () => {
+    if (!vtIsPlaying) return; // if user paused during countdown
+    if (vtCountdownSeconds > 0) {
+      repCountEl.textContent = vtCountdownSeconds;
+      vtCountdownSeconds--;
+      vtCountdownTimerId = setTimeout(tickCountdown, 1000);
+    } else {
+      repCountEl.textContent = '0';
+      vtReps = 0;
+      vtRepStartTime = Date.now();
+      vtRepElapsedTime = 0;
+      startVtTimer();
+    }
+  };
+  
+  tickCountdown();
+}
+
+function startVtTimer() {
+  clearInterval(vtTimerId);
+  
+  const circumference = 2 * Math.PI * 64;
+  const circle = document.getElementById('vt-circle-progress');
+  
+  vtTimerId = setInterval(() => {
+    if (!vtIsPlaying) return;
+    
+    const now = Date.now();
+    vtRepElapsedTime = now - vtRepStartTime;
+    const targetMs = vtSecondsPerRep * 1000;
+    
+    // Update SVG progress circle
+    const progress = Math.min(1, vtRepElapsedTime / targetMs);
+    if (circle) {
+      circle.style.strokeDashoffset = circumference * (1 - progress);
+    }
+    
+    if (vtRepElapsedTime >= targetMs) {
+      // Rep complete!
+      vtReps++;
+      document.getElementById('vt-rep-count').textContent = vtReps;
+      
+      // Reset timer variables for next rep
+      vtRepStartTime = Date.now();
+      vtRepElapsedTime = 0;
+      
+      // Speak the rep count
+      vtSpeak(getHebrewNumber(vtReps));
+      
+      // Trigger a pop/pulse visual effect on the number
+      const countEl = document.getElementById('vt-rep-count');
+      countEl.classList.add('pulse');
+      setTimeout(() => countEl.classList.remove('pulse'), 300);
+    }
+  }, 50);
+}
+
+function adjustVtReps(delta) {
+  vtReps = Math.max(0, vtReps + delta);
+  document.getElementById('vt-rep-count').textContent = vtReps;
+  vtSpeak(getHebrewNumber(vtReps));
+}
+
+function showVtRatingPanel() {
+  // Pause the count timer
+  if (vtIsPlaying) {
+    toggleVtPlay();
+  }
+  
+  // Show rating panel, hide active counting panel
+  document.getElementById('vt-controls-active').classList.add('hidden');
+  document.getElementById('vt-rating-panel').classList.remove('hidden');
+  
+  // Pre-fill rating details
+  document.getElementById('vt-rating-reps-summary').textContent = `ביצעת ${vtReps} חזרות בסט זה`;
+  document.getElementById('vt-rir-slider').value = 2;
+  document.getElementById('vt-rir-val').textContent = '2';
+  document.getElementById('vt-strict-checkbox').checked = true;
+}
+
+function backToVtActive() {
+  document.getElementById('vt-controls-active').classList.remove('hidden');
+  document.getElementById('vt-rating-panel').classList.add('hidden');
+}
+
+function updateVtRirLabel() {
+  const val = document.getElementById('vt-rir-slider').value;
+  document.getElementById('vt-rir-val').textContent = val;
+}
+
+function saveVtSet() {
+  const reps = vtReps;
+  const rir = parseInt(document.getElementById('vt-rir-slider').value) || 0;
+  const strict = document.getElementById('vt-strict-checkbox').checked;
+  
+  if (reps === 0) {
+    toast('⚠️ לא ניתן לשמור סט עם 0 חזרות');
+    return;
+  }
+
+  // Populate inputs in the workout screen
+  const repsInput = document.getElementById(`wex-reps-${vtExIdx}-${vtSetIdx}`);
+  const rirSlider = document.getElementById(`wex-rir-${vtExIdx}-${vtSetIdx}`);
+  const strictCheck = document.getElementById(`wex-strict-${vtExIdx}-${vtSetIdx}`);
+  const rirVal = document.getElementById(`wex-rir-val-${vtExIdx}-${vtSetIdx}`);
+  
+  if (repsInput) repsInput.value = reps;
+  if (rirSlider) rirSlider.value = rir;
+  if (rirVal) rirVal.textContent = rir;
+  if (strictCheck) strictCheck.checked = strict;
+
+  // Close trainer overlay
+  closeVoiceTrainer();
+  
+  // Call original markSet to execute logging, check level up, add XP and run rest timer
+  markSet(vtExIdx, vtSetIdx);
+}
+
+function closeVoiceTrainer() {
+  clearInterval(vtTimerId);
+  clearTimeout(vtCountdownTimerId);
+  vtIsPlaying = false;
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  document.getElementById('voice-trainer-overlay').classList.add('hidden');
+}
+
+function confirmCancelVt() {
+  if (vtReps > 0) {
+    if (confirm('לבטל את הסט הנוכחי? ההתקדמות לא תישמר.')) {
+      closeVoiceTrainer();
+    }
+  } else {
+    closeVoiceTrainer();
   }
 }
 
