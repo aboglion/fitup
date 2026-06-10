@@ -31,45 +31,67 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // Use the cheapest and newest Gemini Flash model
-  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+  // Define candidate models in priority order
+  const models = process.env.GEMINI_MODEL 
+    ? [process.env.GEMINI_MODEL] 
+    : ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
 
-  try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+  let lastError = null;
 
-    const body = {
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: {
-        temperature: 0.7
-      }
-    };
+  for (const model of models) {
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
-    if (systemPrompt) {
-      body.systemInstruction = {
-        parts: [{ text: systemPrompt }]
+      const body = {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.7
+        }
       };
-    }
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    });
+      if (systemPrompt) {
+        body.systemInstruction = {
+          parts: [{ text: systemPrompt }]
+        };
+      }
 
-    if (!response.ok) {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        return res.status(200).json({ text });
+      }
+
       const errorText = await response.text();
-      console.error('Gemini API Error:', errorText);
-      return res.status(response.status).json({ error: `Gemini API error: ${errorText}` });
-    }
+      console.warn(`Gemini API Error for model ${model}:`, errorText);
+      
+      let isTemporary = true;
+      try {
+        const parsed = JSON.parse(errorText);
+        const code = parsed.error?.code;
+        if (code === 400 || code === 403) {
+          isTemporary = false;
+        }
+      } catch(e) {}
 
-    const data = await response.json();
-    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    
-    return res.status(200).json({ text });
-  } catch (error) {
-    console.error('Error calling Gemini API:', error);
-    return res.status(500).json({ error: error.message });
+      lastError = { status: response.status, text: errorText };
+      if (!isTemporary) {
+        break;
+      }
+    } catch (error) {
+      console.error(`Error calling model ${model}:`, error);
+      lastError = { status: 500, text: error.message };
+    }
   }
+
+  return res.status(lastError?.status || 500).json({ 
+    error: `Gemini API error: ${lastError?.text || 'Unknown error'}` 
+  });
 };
