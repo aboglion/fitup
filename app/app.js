@@ -9,6 +9,43 @@ function formatMarkdown(text) {
   return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 }
 
+function updateAISummaryCard() {
+  const summaryCard = document.getElementById('ai-status-summary-card');
+  if (!summaryCard) return;
+
+  const prog = TrainingEngine.getProgress();
+  const plan = TrainingEngine.getTodayPlan();
+
+  if (!AIModule.available) {
+    summaryCard.innerHTML = `
+      <h3>🤖 עוזר אימונים חכם</h3>
+      <p style="opacity: 0.7; font-size: 0.85rem;">טוען ניתוח מצב אישי...</p>
+    `;
+    summaryCard.classList.remove('hidden');
+    return;
+  }
+
+  AIModule.getGlobalStatusSummary(prog, plan, appData).then(res => {
+    const cardIcon = res.isAI ? '🤖' : '👔';
+    const badgeHtml = res.isAI 
+      ? `<span class="ai-source-badge ai-live" title="נוצר על ידי AI מקומי"><span class="badge-dot">●</span>🤖</span>`
+      : `<span class="ai-source-badge ai-fallback" title="תבנית מערכת מוגדרת מראש"><span class="badge-dot">●</span>👔</span>`;
+
+    summaryCard.innerHTML = `
+      <h3>${cardIcon} עוזר אימונים חכם ${badgeHtml}</h3>
+      <p>${formatMarkdown(res.text)}</p>
+      <div class="summary-stats-inline">
+        <span>🔥 רצף: ${prog.streak || 0} ימים</span>
+        <span>💪 סה"כ אימונים: ${prog.totalWorkouts || 0}</span>
+        <span>🏆 XP: ${prog.xp || 0}</span>
+      </div>
+    `;
+  }).catch(err => {
+    console.error('Error generating status summary:', err);
+    summaryCard.classList.add('hidden');
+  });
+}
+
 // Init
 window.addEventListener('DOMContentLoaded', () => {
   // Dynamically load manifest if not on file:// protocol to avoid CORS error
@@ -204,34 +241,7 @@ function renderHome() {
   }
 
   // AI Global Status Summary Card
-  const summaryCard = document.getElementById('ai-status-summary-card');
-  if (summaryCard) {
-    summaryCard.innerHTML = `
-      <h3>🤖 עוזר אימונים חכם</h3>
-      <p style="opacity: 0.7; font-size: 0.85rem;">טוען ניתוח מצב אישי...</p>
-    `;
-    summaryCard.classList.remove('hidden');
-    
-    AIModule.getGlobalStatusSummary(prog, plan, appData).then(res => {
-      const cardIcon = res.isAI ? '🤖' : '👔';
-      const badgeHtml = res.isAI 
-        ? `<span class="ai-source-badge ai-live" title="נוצר על ידי AI מקומי"><span class="badge-dot">●</span>🤖</span>`
-        : `<span class="ai-source-badge ai-fallback" title="תבנית מערכת מוגדרת מראש"><span class="badge-dot">●</span>👔</span>`;
-
-      summaryCard.innerHTML = `
-        <h3>${cardIcon} עוזר אימונים חכם ${badgeHtml}</h3>
-        <p>${formatMarkdown(res.text)}</p>
-        <div class="summary-stats-inline">
-          <span>🔥 רצף: ${prog.streak || 0} ימים</span>
-          <span>💪 סה"כ אימונים: ${prog.totalWorkouts || 0}</span>
-          <span>🏆 XP: ${prog.xp || 0}</span>
-        </div>
-      `;
-    }).catch(err => {
-      console.error('Error generating status summary:', err);
-      summaryCard.classList.add('hidden');
-    });
-  }
+  updateAISummaryCard();
 
   showScreen('screen-home', 'FitPro');
 }
@@ -1190,7 +1200,10 @@ function renderSummaryScreen(summary, duration) {
 window.addEventListener('DOMContentLoaded', () => {
   AuthModule.init();
   AIModule.init().then(available => {
-    if (available) console.log('AI ready');
+    if (available) {
+      console.log('AI ready');
+      updateAISummaryCard();
+    }
     AIModule.getMotivation('general').then(msg => {
       const el = document.getElementById('ai-motivation');
       if (el) { el.textContent = msg; el.classList.remove('hidden'); }
