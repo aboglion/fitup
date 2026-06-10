@@ -22,21 +22,17 @@ const AIModule = {
   },
 
   async callAPI(prompt, systemPrompt = '') {
-    try {
-      let baseUrl = localStorage.getItem('fitpro_ai_api_url') || '';
-      if (!baseUrl) {
-        baseUrl = localStorage.getItem('fitpro_last_known_origin') || '';
-      }
+    // Default production URL — hardcoded so localhost / file:// work out of the box
+    const DEFAULT_VERCEL_URL = 'https://fitupapp-one.vercel.app';
 
-      let fetchUrl = '/api/ai';
-      if (baseUrl) {
-        const cleanedBase = baseUrl.replace(/\/$/, '');
-        fetchUrl = cleanedBase.includes('/api/ai') ? cleanedBase : `${cleanedBase}/api/ai`;
-      } else if (window.location.protocol === 'file:') {
-        throw new Error('Running locally via file:// without a configured Vercel API URL. Please configure your Vercel URL in Admin -> Settings -> AI Settings.');
-      } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        throw new Error('Running locally via localhost without a Vercel dev server. Please configure your Vercel URL in Admin -> Settings -> AI Settings.');
-      }
+    try {
+      // Priority: user-configured > last cached from Vercel visit > default
+      let baseUrl = localStorage.getItem('fitpro_ai_api_url') ||
+                    localStorage.getItem('fitpro_last_known_origin') ||
+                    DEFAULT_VERCEL_URL;
+
+      const cleanedBase = baseUrl.replace(/\/$/, '');
+      const fetchUrl = cleanedBase.includes('/api/ai') ? cleanedBase : `${cleanedBase}/api/ai`;
 
       const response = await fetch(fetchUrl, {
         method: 'POST',
