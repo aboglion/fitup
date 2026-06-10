@@ -42,34 +42,51 @@ function updateAISummaryCard() {
   const prog = TrainingEngine.getProgress();
   const plan = TrainingEngine.getTodayPlan();
 
-  if (!AIModule.available) {
-    summaryCard.innerHTML = `
-      <h3>🤖 עוזר אימונים חכם</h3>
-      <p style="opacity: 0.7; font-size: 0.85rem;">טוען ניתוח מצב אישי...</p>
-    `;
-    summaryCard.classList.remove('hidden');
-    return;
+  const fallbackText = AIModule.getFallbackStatusSummary(prog, plan, appData);
+  const stateKey = AIModule.getStateKey(prog, plan, appData);
+  const cachedText = AIModule.getPersistedAISummary(stateKey);
+
+  if (cachedText) {
+    renderCard(cachedText, true, false);
+  } else {
+    const isFetchable = AIModule.available && !AIModule._isRateLimited();
+    renderCard(fallbackText, false, isFetchable);
+
+    if (isFetchable) {
+      AIModule.getGlobalStatusSummary(prog, plan, appData).then(res => {
+        renderCard(res.text, res.isAI, false);
+      }).catch(err => {
+        console.error('Error generating status summary:', err);
+        renderCard(fallbackText, false, false);
+      });
+    }
   }
 
-  AIModule.getGlobalStatusSummary(prog, plan, appData).then(res => {
-    const cardIcon = res.isAI ? '🤖' : '👔';
-    const badgeHtml = res.isAI 
-      ? `<span class="ai-source-badge ai-live" title="נוצר על ידי AI מקומי"><span class="badge-dot">●</span>🤖</span>`
+  function renderCard(text, isAI, isLoading) {
+    const cardIcon = isAI ? '🤖' : '👔';
+    const badgeHtml = isAI 
+      ? `<span class="ai-source-badge ai-live" title="נוצר על ידי AI"><span class="badge-dot">●</span>🤖</span>`
       : `<span class="ai-source-badge ai-fallback" title="תבנית מערכת מוגדרת מראש"><span class="badge-dot">●</span>👔</span>`;
 
+    const loadingDots = isLoading
+      ? `<span class="ai-loading-dots" title="טוען סיכום AI אישי...">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+         </span>`
+      : '';
+
     summaryCard.innerHTML = `
-      <h3>${cardIcon} עוזר אימונים חכם ${badgeHtml}</h3>
-      <p>${formatMarkdown(res.text)}</p>
+      <h3>${cardIcon} עוזר אימונים חכם ${badgeHtml} ${loadingDots}</h3>
+      <p>${formatMarkdown(text)}</p>
       <div class="summary-stats-inline">
         <span>🔥 רצף: ${prog.streak || 0} ימים</span>
         <span>💪 סה"כ אימונים: ${prog.totalWorkouts || 0}</span>
         <span>🏆 XP: ${prog.xp || 0}</span>
       </div>
     `;
-  }).catch(err => {
-    console.error('Error generating status summary:', err);
-    summaryCard.classList.add('hidden');
-  });
+    summaryCard.classList.remove('hidden');
+  }
 }
 
 // Init
@@ -100,7 +117,10 @@ window.addEventListener('DOMContentLoaded', () => {
 function loadSaved() {
   try {
     const s = localStorage.getItem('fitup_data');
-    if (s) appData = JSON.parse(s);
+    if (s) {
+      appData = JSON.parse(s);
+      runDefaultsMigration();
+    }
   } catch(e) {}
 }
 function saveData() {
@@ -623,12 +643,16 @@ function switchAdminTab(tab) {
   } else if (tab === 'settings') {
     const currentClientId = localStorage.getItem('fitup_google_client_id') || '';
     const currentApiUrl = localStorage.getItem('fitup_ai_api_url') || '';
+    const compoundRest = localStorage.getItem('fitup_timer_compound_rest') || '180';
+    const isolationRest = localStorage.getItem('fitup_timer_isolation_rest') || '90';
+    const supersetTrans = localStorage.getItem('fitup_timer_superset_trans') || '10';
     c.innerHTML = `
       <div class="admin-item">
         <h4 style="margin-bottom:0.75rem">⏱️ הגדרות טיימרים</h4>
-        <div class="admin-form-group"><label>מנוחה תרגיל מורכב (שניות)</label><input class="admin-input" type="number" value="180" id="set-compound-rest"></div>
-        <div class="admin-form-group"><label>מנוחה תרגיל בידוד (שניות)</label><input class="admin-input" type="number" value="90" id="set-isolation-rest"></div>
-        <div class="admin-form-group"><label>מעבר סופר-סט (שניות)</label><input class="admin-input" type="number" value="10" id="set-superset-trans"></div>
+        <div class="admin-form-group"><label>מנוחה תרגיל מורכב (שניות)</label><input class="admin-input" type="number" value="${compoundRest}" id="set-compound-rest"></div>
+        <div class="admin-form-group"><label>מנוחה תרגיל בידוד (שניות)</label><input class="admin-input" type="number" value="${isolationRest}" id="set-isolation-rest"></div>
+        <div class="admin-form-group"><label>מעבר סופר-סט (שניות)</label><input class="admin-input" type="number" value="${supersetTrans}" id="set-superset-trans"></div>
+        <button class="admin-btn-sm" onclick="saveTimerSettings()" style="width:100%;padding:0.6rem;margin-top:0.5rem">💾 שמור הגדרות טיימרים</button>
       </div>
       <div class="admin-item">
         <h4 style="margin-bottom:0.75rem">☁️ סנכרון גוגל (Google Drive)</h4>
@@ -732,7 +756,7 @@ function editExercise(dayId, muscleId, ei) {
   openModal('עריכת תרגיל', `
     <div class="admin-form-group"><label>שם</label><input class="admin-input" id="ee-name" value="${e.name}"></div>
     <div class="admin-form-group"><label>רמה</label><select class="admin-select" id="ee-level">${lvlOpts}</select></div>
-    <div class="admin-form-group"><label>סוג</label><select class="admin-select" id="ee-type">${typeOpts}</select></div>
+    <div class="admin-form-group"><label>סוג</label><select class="admin-select" id="ee-type" onchange="applyExerciseTypeDefaults()">${typeOpts}</select></div>
     <div class="admin-form-group"><label>📷 תמונת התרגיל</label>
       <div class="img-upload-area" id="ee-img-area" onclick="document.getElementById('ee-img-input').click()">
         <img id="ee-img-preview" src="${imgSrc}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
@@ -773,7 +797,7 @@ function saveExercise(dayId, muscleId, ei) {
 function addExercise(dayId, muscleId) {
   const d = appData.days.find(x=>x.id===dayId);
   const m = d.muscles.find(x=>x.id===muscleId);
-  m.exercises.push({ id:'e'+Date.now(), name:'תרגיל חדש', level:'green', image:'m1_1.png', video:'', sets:'3', reps:'6-10', rest:'2-3 דקות', tempo:'3-1-X-1', type:'compound', progression:'תנאי מעבר' });
+  m.exercises.push({ id:'e'+Date.now(), name:'תרגיל חדש', level:'green', image:'m1_1.png', video:'', sets:'3-4', reps:'6-10', rest:'2-3 דקות', tempo:'3-1-X-1', type:'compound', progression:'3×10 בטכניקה מושלמת + RIR≥1' });
   saveData(); switchAdminTab('exercises'); toast('תרגיל חדש נוסף');
 }
 function deleteExercise(dayId, muscleId, ei) {
@@ -1103,8 +1127,9 @@ function markSet(exIdx, setIdx) {
     workoutLog.push({ exercise: item.exercise.name, muscle: item.muscle, setsCompleted: setsNum, setsData: item.setsData });
     AIModule.getMotivation('setComplete').then(msg => toast(msg));
   } else {
-    // Start rest timer
-    startRestTimer(item.exercise.type === 'compound' ? 120 : 60);
+    // Start rest timer using parsed seconds from exercise settings
+    const restSecs = parseRestSeconds(item.exercise.rest, item.exercise.type);
+    startRestTimer(restSecs);
   }
   saveData();
 }
@@ -1888,6 +1913,107 @@ function confirmCancelVt() {
     }
   } else {
     closeVoiceTrainer();
+  }
+}
+
+// Default Exercise Settings / Timers Helpers
+function parseRestSeconds(restStr, type) {
+  if (!restStr) {
+    if (type === 'compound') {
+      return parseInt(localStorage.getItem('fitup_timer_compound_rest')) || 180;
+    } else if (type === 'isolation') {
+      return parseInt(localStorage.getItem('fitup_timer_isolation_rest')) || 90;
+    } else if (type === 'isometric') {
+      return 60;
+    }
+    return 60;
+  }
+  
+  const str = restStr.trim();
+  
+  if (str.includes('שני') || str.includes('sec')) {
+    const matches = str.match(/\d+/g);
+    if (matches && matches.length > 0) {
+      return parseInt(matches[matches.length - 1]);
+    }
+  }
+  
+  if (str.includes('דק') || str.includes('min')) {
+    const matches = str.match(/\d+/g);
+    if (matches && matches.length > 0) {
+      return parseInt(matches[matches.length - 1]) * 60;
+    }
+  }
+  
+  const matches = str.match(/\d+/g);
+  if (matches && matches.length > 0) {
+    const val = parseInt(matches[matches.length - 1]);
+    return val <= 10 ? val * 60 : val;
+  }
+  
+  if (type === 'compound') {
+    return parseInt(localStorage.getItem('fitup_timer_compound_rest')) || 180;
+  } else if (type === 'isolation') {
+    return parseInt(localStorage.getItem('fitup_timer_isolation_rest')) || 90;
+  }
+  return 60;
+}
+
+function saveTimerSettings() {
+  const compoundRest = document.getElementById('set-compound-rest').value;
+  const isolationRest = document.getElementById('set-isolation-rest').value;
+  const supersetTrans = document.getElementById('set-superset-trans').value;
+  
+  localStorage.setItem('fitup_timer_compound_rest', compoundRest);
+  localStorage.setItem('fitup_timer_isolation_rest', isolationRest);
+  localStorage.setItem('fitup_timer_superset_trans', supersetTrans);
+  
+  toast('💾 הגדרות טיימרים נשמרו.');
+}
+
+function applyExerciseTypeDefaults() {
+  const type = document.getElementById('ee-type').value;
+  const defaults = appData.exerciseTypes[type];
+  if (!defaults) return;
+  
+  document.getElementById('ee-sets').value = defaults.sets;
+  document.getElementById('ee-reps').value = defaults.reps;
+  document.getElementById('ee-rest').value = defaults.rest;
+  document.getElementById('ee-tempo').value = defaults.tempo;
+  
+  // Also provide a default progression rule based on type
+  const progTextarea = document.getElementById('ee-prog');
+  if (type === 'compound') {
+    progTextarea.value = "3×10 בטכניקה מושלמת + RIR≥1";
+  } else if (type === 'isolation') {
+    progTextarea.value = "3×15 בטכניקה מושלמת + RIR≥1";
+  } else if (type === 'isometric') {
+    progTextarea.value = "60 שניות החזקה יציבה";
+  }
+}
+
+function runDefaultsMigration() {
+  let migrated = false;
+  if (appData && appData.days) {
+    appData.days.forEach(d => {
+      if (d.muscles) {
+        d.muscles.forEach(m => {
+          if (m.exercises) {
+            m.exercises.forEach(e => {
+              if ((e.id === "d2m5e1" || e.id === "d5m5e1") && e.sets === "3" && e.rest === "60 שניות") {
+                e.sets = "2-3";
+                e.rest = "60-90 שניות";
+                e.progression = "3×15 בטכניקה מושלמת + RIR≥1";
+                migrated = true;
+              }
+            });
+          }
+        });
+      }
+    });
+  }
+  if (migrated) {
+    saveData();
   }
 }
 

@@ -343,7 +343,52 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
   },
 
   // Generate global status summary for home screen
-  async getGlobalStatusSummary(prog, todayPlan, daysData) {
+  getStateKey(prog, todayPlan, daysData) {
+    const totalWorkouts = prog.totalWorkouts || 0;
+    const streak = prog.streak || 0;
+    const xp = prog.xp || 0;
+    const rank = prog.rank || 'מתחיל';
+    
+    let recentWorkoutsSummary = 'אין אימונים מתועדים עדיין.';
+    if (prog.workoutHistory && prog.workoutHistory.length > 0) {
+      const lastThree = prog.workoutHistory.slice(-3);
+      recentWorkoutsSummary = lastThree.map(w => `${w.date}: ${w.dayName || w.dayId}`).join(', ');
+    }
+    
+    const muscleLevels = [];
+    if (daysData && daysData.days) {
+      daysData.days.forEach(d => {
+        d.muscles.forEach(m => {
+          const levelIdx = prog.muscleLevels ? (prog.muscleLevels[m.id] || 0) : 0;
+          const ex = m.exercises[levelIdx] || m.exercises[m.exercises.length - 1];
+          if (ex) {
+            muscleLevels.push(`${m.id}:${levelIdx}`);
+          }
+        });
+      });
+    }
+    const levelsStr = muscleLevels.join(',');
+
+    let nextStep = todayPlan.type === 'workout' ? todayPlan.dayId : 'rest';
+    
+    return `status_${xp}_${totalWorkouts}_${streak}_${rank}_${recentWorkoutsSummary}_${levelsStr}_${nextStep}`;
+  },
+
+  getPersistedAISummary(stateKey) {
+    const cachedKey = localStorage.getItem('fitup_cached_ai_status_state_key');
+    const cachedText = localStorage.getItem('fitup_cached_ai_status_text');
+    if (cachedKey === stateKey && cachedText) {
+      return cachedText;
+    }
+    return null;
+  },
+
+  setPersistedAISummary(stateKey, text) {
+    localStorage.setItem('fitup_cached_ai_status_state_key', stateKey);
+    localStorage.setItem('fitup_cached_ai_status_text', text);
+  },
+
+  getFallbackStatusSummary(prog, todayPlan, daysData) {
     const totalWorkouts = prog.totalWorkouts || 0;
     const streak = prog.streak || 0;
     const xp = prog.xp || 0;
@@ -377,16 +422,58 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
       nextStep = `היום הוא יום מנוחה.`;
     }
 
-    const fallbackSummary = `👋 שלום אלוף! אתה כרגע בדרגת **${rank}** עם **${xp} XP**. צברת רצף של ${streak} ימים וסיימת ${totalWorkouts} אימונים סך הכל. האימונים האחרונים שלך היו: ${recentWorkoutsSummary}. הרמות הנוכחיות שלך: ${levelsStr}. ${nextStep} המשך להתקדם ולהתמיד בתוכנית! 💪`;
+    return `👋 שלום אלוף! אתה כרגע בדרגת **${rank}** עם **${xp} XP**. צברת רצף של ${streak} ימים וסיימת ${totalWorkouts} אימונים סך הכל. האימונים האחרונים שלך היו: ${recentWorkoutsSummary}. הרמות הנוכחיות שלך: ${levelsStr}. ${nextStep} המשך להתקדם ולהתמיד בתוכנית! 💪`;
+  },
 
-    if (!this.available || !this.session || this._isRateLimited()) return { text: fallbackSummary, isAI: false };
+  async getGlobalStatusSummary(prog, todayPlan, daysData) {
+    const stateKey = this.getStateKey(prog, todayPlan, daysData);
+    const cachedText = this.getPersistedAISummary(stateKey);
+    if (cachedText) {
+      return { text: cachedText, isAI: true };
+    }
 
-    // Cache for 30 min keyed by current progress snapshot
-    const cacheKey = `status_${xp}_${totalWorkouts}_${streak}`;
-    const cached = this._getCached(cacheKey);
-    if (cached) return { text: cached, isAI: true };
+    const fallbackSummary = this.getFallbackStatusSummary(prog, todayPlan, daysData);
+    if (!this.available || !this.session || this._isRateLimited()) {
+      return { text: fallbackSummary, isAI: false };
+    }
+
+    const cachedMemory = this._getCached(stateKey);
+    if (cachedMemory) return { text: cachedMemory, isAI: true };
 
     try {
+      const totalWorkouts = prog.totalWorkouts || 0;
+      const streak = prog.streak || 0;
+      const xp = prog.xp || 0;
+      const rank = prog.rank || 'מתחיל';
+      
+      let recentWorkoutsSummary = 'אין אימונים מתועדים עדיין.';
+      if (prog.workoutHistory && prog.workoutHistory.length > 0) {
+        const lastThree = prog.workoutHistory.slice(-3);
+        recentWorkoutsSummary = lastThree.map(w => `${w.date}: ${w.dayName || w.dayId}`).join(', ');
+      }
+      
+      const muscleLevels = [];
+      if (daysData && daysData.days) {
+        daysData.days.forEach(d => {
+          d.muscles.forEach(m => {
+            const levelIdx = prog.muscleLevels ? (prog.muscleLevels[m.id] || 0) : 0;
+            const ex = m.exercises[levelIdx] || m.exercises[m.exercises.length - 1];
+            if (ex) {
+              muscleLevels.push(`${m.nameHe}: רמת ${ex.level === 'green' ? 'ירוק' : ex.level === 'blue' ? 'כחול' : ex.level === 'orange' ? 'כתום' : 'אדום'} (${ex.name})`);
+            }
+          });
+        });
+      }
+      const levelsStr = muscleLevels.slice(0, 4).join(', ');
+
+      let nextStep = '';
+      if (todayPlan.type === 'workout') {
+        const day = daysData.days.find(d => d.id === todayPlan.dayId);
+        nextStep = `היום מתוכנן אימון: ${day ? day.name : todayPlan.dayId}.`;
+      } else {
+        nextStep = `היום הוא יום מנוחה.`;
+      }
+
       const prompt = `נתח את מצב המתאמן הבא בצורה חכמה ומקצועית מאוד וכתוב סיכום בעברית:
 - דרגה: ${rank} (${xp} XP)
 - רצף נוכחי: ${streak} ימים
@@ -403,7 +490,8 @@ ${personalRecords > 0 ? `- ${personalRecords} שיאים אישיים!` : ''}
 
       const result = await this.session.prompt(prompt);
       if (result?.trim()) {
-        this._setCached(cacheKey, result.trim(), 30 * 60 * 1000); // Cache 30 min
+        this.setPersistedAISummary(stateKey, result.trim());
+        this._setCached(stateKey, result.trim(), 30 * 60 * 1000); // cache in memory too
         return { text: result.trim(), isAI: true };
       }
       return { text: fallbackSummary, isAI: false };

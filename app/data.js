@@ -78,7 +78,7 @@ const WORKOUT_DATA = {
         {
           id: "d2m5", name: "Scapular Health", nameHe: "בריאות שכמה", image: "m5.png",
           exercises: [
-            { id:"d2m5e1", name:"Scapular Pull-Up", level:"green", image:"m5_1.png", video:"https://www.youtube.com/shorts/K3NHuFdO5Zs", sets:"3", reps:"10-15", rest:"60 שניות", tempo:"2-0-2-0", type:"isolation", equipment:"🧗", progression:"3×15 בטכניקה מושלמת" }
+            { id:"d2m5e1", name:"Scapular Pull-Up", level:"green", image:"m5_1.png", video:"https://www.youtube.com/shorts/K3NHuFdO5Zs", sets:"2-3", reps:"10-15", rest:"60-90 שניות", tempo:"2-0-2-0", type:"isolation", equipment:"🧗", progression:"3×15 בטכניקה מושלמת + RIR≥1" }
           ]
         }
       ]
@@ -166,7 +166,7 @@ const WORKOUT_DATA = {
         {
           id: "d5m5", name: "Scapular Push-Up", nameHe: "שכמה", image: "m5.png",
           exercises: [
-            { id:"d5m5e1", name:"Scapular Push-Up", level:"green", image:"m5_1.png", video:"https://www.youtube.com/watch?v=huGj4aBk9C4", sets:"3", reps:"10-15", rest:"60 שניות", tempo:"2-0-2-0", type:"isolation", progression:"3×15 בטכניקה מושלמת" }
+            { id:"d5m5e1", name:"Scapular Push-Up", level:"green", image:"m5_1.png", video:"https://www.youtube.com/watch?v=huGj4aBk9C4", sets:"2-3", reps:"10-15", rest:"60-90 שניות", tempo:"2-0-2-0", type:"isolation", progression:"3×15 בטכניקה מושלמת + RIR≥1" }
           ]
         },
         {
