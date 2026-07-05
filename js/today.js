@@ -1,0 +1,518 @@
+/**
+ * Today Page Module - Daily workout view with tracking
+ */
+const TodayPage = (() => {
+  let currentDayIndex = 0;
+  let allPlanDays = [];
+  let currentTracking = null;
+  let allExercises = [];
+
+  /**
+   * Initialize the today page
+   */
+  async function init(planDays) {
+    allPlanDays = planDays;
+    currentDayIndex = UI.findTodayIndex(planDays);
+    allExercises = await DB.getExerciseGuide();
+
+    // Navigation buttons
+    document.getElementById('prev-day-btn').addEventListener('click', () => navigate(-1));
+    document.getElementById('next-day-btn').addEventListener('click', () => navigate(1));
+    document.getElementById('today-btn').addEventListener('click', goToToday);
+    
+    const skipDayBtn = document.getElementById('skip-day-btn');
+    if (skipDayBtn) skipDayBtn.addEventListener('click', skipDay);
+
+    const toggleNotesBtn = document.getElementById('toggle-notes-btn');
+    if (toggleNotesBtn) {
+      toggleNotesBtn.addEventListener('click', () => {
+        const content = document.getElementById('notes-accordion-content');
+        if (content.style.display === 'none') {
+          content.style.display = 'grid';
+        } else {
+          content.style.display = 'none';
+        }
+      });
+    }
+
+    // Auto-save inputs on change
+    document.getElementById('actual-rpe').addEventListener('change', autoSave);
+    document.getElementById('body-weight').addEventListener('change', autoSave);
+    document.getElementById('day-notes').addEventListener('change', autoSave);
+
+    await render();
+  }
+
+  /**
+   * Navigate to a specific day
+   */
+  function navigate(offset) {
+    const newIndex = currentDayIndex + offset;
+    if (newIndex >= 0 && newIndex < allPlanDays.length) {
+      currentDayIndex = newIndex;
+      render();
+    }
+  }
+
+  /**
+   * Go to today
+   */
+  function goToToday() {
+    currentDayIndex = UI.findTodayIndex(allPlanDays);
+    render();
+  }
+
+  /**
+   * Go to a specific day index
+   */
+  function goToDay(dayIndex) {
+    if (dayIndex >= 0 && dayIndex < allPlanDays.length) {
+      currentDayIndex = dayIndex;
+      render();
+    }
+  }
+
+  /**
+   * Render the today page
+   */
+  async function render() {
+    const day = allPlanDays[currentDayIndex];
+    if (!day) return;
+    if (!day.exercises) day.exercises = [];
+
+    // Load tracking data
+    currentTracking = await DB.getDayTracking(currentDayIndex) || {
+      exerciseStatus: {},
+      setData: {},
+      exerciseNotes: {},
+      actualRPE: null,
+      bodyWeight: null,
+      notes: '',
+      completed: false
+    };
+
+    // Update header
+    const typeInfo = UI.getDayTypeInfo(day.dayType);
+    document.getElementById('today-title').textContent = `${typeInfo.icon} ${day.dayNum}`;
+    document.getElementById('today-date').textContent = `${day.dayOfWeek}`;
+
+    // Update summary card
+    document.getElementById('day-number').textContent = day.dayNum;
+    document.getElementById('day-week').textContent = day.week;
+
+    const typeBadge = document.getElementById('day-type');
+    typeBadge.textContent = typeInfo.label;
+    typeBadge.className = `type-badge ${typeInfo.class}`;
+
+    const rpeBadge = document.getElementById('day-rpe');
+    if (day.plannedRPE && day.plannedRPE !== '—') {
+      rpeBadge.textContent = `RPE ${day.plannedRPE}`;
+      rpeBadge.style.display = '';
+    } else {
+      rpeBadge.style.display = 'none';
+    }
+
+    // Update progress
+    updateProgress(day);
+
+    // Render exercises
+    renderExercises(day);
+
+    // Update inputs
+    document.getElementById('actual-rpe').value = currentTracking.actualRPE || '';
+    document.getElementById('body-weight').value = currentTracking.bodyWeight || '';
+    document.getElementById('day-notes').value = currentTracking.notes || '';
+  }
+
+  /**
+   * Update progress ring
+   */
+  function updateProgress(day) {
+    const total = day.exercises.length;
+    if (total === 0) {
+      setProgressCircle(day.dayType === 'מנוחה' && currentTracking.completed ? 100 : 0);
+      return;
+    }
+
+    let completed = 0;
+    day.exercises.forEach((ex, idx) => {
+      if (currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx]) {
+        completed++;
+      }
+    });
+
+    const percent = Math.round((completed / total) * 100);
+    setProgressCircle(percent);
+  }
+
+  /**
+   * Set progress circle value
+   */
+  function setProgressCircle(percent) {
+    const circle = document.getElementById('progress-circle');
+    const text = document.getElementById('progress-text');
+    const circumference = 2 * Math.PI * 42; // r=42
+    const offset = circumference - (percent / 100) * circumference;
+
+    circle.style.strokeDasharray = circumference;
+    circle.style.strokeDashoffset = offset;
+    text.textContent = `${percent}%`;
+
+    // Add gradient definition if not exists
+    const svg = circle.closest('svg');
+    if (!svg.querySelector('defs')) {
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+      gradient.id = 'progress-gradient';
+      gradient.innerHTML = `
+        <stop offset="0%" stop-color="#3b82f6"/>
+        <stop offset="100%" stop-color="#8b5cf6"/>
+      `;
+      defs.appendChild(gradient);
+      svg.insertBefore(defs, svg.firstChild);
+    }
+  }
+
+  /**
+   * Look up video URL from exercise guide by name
+   */
+  function findVideoUrl(exerciseName) {
+    if (!exerciseName) return null;
+    const nameLower = exerciseName.toLowerCase().trim();
+    // Try exact match first
+    for (const guide of allExercises) {
+      if (guide.name && guide.name.toLowerCase().trim() === nameLower && guide.videoUrl) {
+        return guide.videoUrl;
+      }
+    }
+    // Try partial match (exercise name contains or is contained in guide name)
+    for (const guide of allExercises) {
+      if (guide.name && guide.videoUrl) {
+        const guideLower = guide.name.toLowerCase().trim();
+        if (nameLower.includes(guideLower) || guideLower.includes(nameLower)) {
+          return guide.videoUrl;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Render exercise cards
+   */
+  function renderExercises(day) {
+    const container = document.getElementById('exercises-list');
+
+    if (day.exercises.length === 0) {
+      // Rest day
+      container.innerHTML = `
+        <div class="exercise-card" style="text-align: center; padding: 40px;">
+          <div style="font-size: 48px; margin-bottom: 16px;">😴</div>
+          <h3 style="font-size: 18px; margin-bottom: 8px;">יום מנוחה</h3>
+          <p style="color: var(--text-secondary); font-size: 14px;">
+            הגוף שלך צריך מנוחה כדי להתחזק. שינה טובה, תזונה נכונה, ומים!
+          </p>
+          <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            <button class="btn-primary" style="width: auto; padding: 12px 32px;" 
+                    onclick="TodayPage.markRestComplete()">
+              ✓ סימון יום מנוחה כהושלם
+            </button>
+            <button class="btn-secondary" style="width: auto; padding: 12px 32px;" 
+                    onclick="TodayPage.skipDay()">
+              ⏭️ דלג על יום המנוחה
+            </button>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = day.exercises.map((ex, idx) => {
+      const isCompleted = currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx];
+      const color = UI.getCategoryColor(ex.slot);
+      const setsCount = UI.parseSetsCount(ex.sets);
+      const reps = UI.parseReps(ex.sets);
+      const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
+      const exNote = (currentTracking.exerciseNotes && currentTracking.exerciseNotes[idx]) || '';
+
+      // Check if exercise has weight data
+      const hasWeight = ex.weight && ex.weight !== '—' && ex.weight !== 'משקל גוף';
+
+      // Determine if this is a time-based exercise
+      const isTime = ex.sets && (ex.sets.includes('דקות') || ex.sets.includes('שניות'));
+
+      let setsHTML = '';
+      if (!isTime && setsCount > 0) {
+        setsHTML = '<div class="set-tracker">';
+        for (let s = 0; s < setsCount; s++) {
+          const setDone = setData[`set_${s}_done`] || false;
+          const setReps = setData[`set_${s}_reps`] || '';
+          const setWeight = setData[`set_${s}_weight`] || '';
+
+          // Weight input - only show if exercise has weight data
+          const weightInput = hasWeight ? `
+              <input type="number" class="set-input" placeholder="${ex.weight}" 
+                     value="${setWeight}"
+                     data-ex="${idx}" data-set="${s}" data-field="weight"
+                     onchange="TodayPage.updateSetData(${idx}, ${s}, 'weight', this.value)">
+              <span class="set-unit">ק"ג</span>
+          ` : '';
+
+          setsHTML += `
+            <div class="set-row">
+              <span class="set-label">סט ${s + 1}</span>
+              <input type="number" class="set-input" placeholder="${reps}" 
+                     value="${setReps}"
+                     data-ex="${idx}" data-set="${s}" data-field="reps"
+                     onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
+              <span class="set-unit">חזרות</span>
+              ${weightInput}
+              <button class="set-check ${setDone ? 'checked' : ''}" 
+                      onclick="TodayPage.toggleSet(${idx}, ${s}, this)">✓</button>
+            </div>
+          `;
+        }
+        setsHTML += '</div>';
+      }
+
+      // Video URL - use exercise's own URL, or fall back to guide lookup
+      const videoUrl = ex.videoUrl || findVideoUrl(ex.name);
+      const videoBtn = videoUrl
+        ? `<button class="exercise-video-btn" onclick="event.stopPropagation(); window.open('${videoUrl}', '_blank')" title="צפה בסרטון">▶</button>`
+        : '';
+
+      // Detail line - only show weight if it exists
+      const detailParts = [UI.getCategoryLabel(ex.slot)];
+      if (ex.sets) detailParts.push(ex.sets);
+      if (hasWeight) detailParts.push(ex.weight);
+
+      return `
+        <div class="exercise-card ${isCompleted ? 'completed' : ''}" id="ex-card-${idx}">
+          <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
+            <div class="exercise-card-info">
+              <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-thumbnail-small" alt="${ex.name}" onerror="this.style.display='none'">
+              <div class="exercise-category-dot" style="background: ${color}"></div>
+              <div>
+                <div class="exercise-card-name">${ex.name}</div>
+                <div class="exercise-card-detail">
+                  ${detailParts.join(' • ')}
+                </div>
+              </div>
+            </div>
+            <div class="exercise-card-actions">
+              ${videoBtn}
+              <button class="exercise-check ${isCompleted ? 'checked' : ''}" 
+                      onclick="event.stopPropagation(); TodayPage.toggleExercise(${idx}, this)">✓</button>
+            </div>
+          </div>
+          <div class="exercise-card-body">
+            <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onerror="this.style.display='none'">
+            ${setsHTML}
+            <div class="exercise-note">
+              <textarea placeholder="הערות לתרגיל..." rows="2"
+                        onchange="TodayPage.updateExerciseNote(${idx}, this.value)">${exNote}</textarea>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /**
+   * Toggle exercise card expand
+   */
+  function toggleExpand(idx) {
+    const card = document.getElementById(`ex-card-${idx}`);
+    card.classList.toggle('expanded');
+  }
+
+  /**
+   * Toggle exercise completion
+   */
+  async function toggleExercise(idx, btn) {
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    const isNowCompleted = !currentTracking.exerciseStatus[idx];
+    currentTracking.exerciseStatus[idx] = isNowCompleted;
+
+    btn.classList.toggle('checked');
+    const card = document.getElementById(`ex-card-${idx}`);
+    card.classList.toggle('completed');
+
+    // Update progress
+    const day = allPlanDays[currentDayIndex];
+    updateProgress(day);
+
+    // Check if all exercises are done
+    const total = day.exercises.length;
+    let completed = 0;
+    day.exercises.forEach((_, i) => {
+      if (currentTracking.exerciseStatus[i]) completed++;
+    });
+    currentTracking.completed = completed === total;
+
+    await autoSave();
+
+    if (isNowCompleted && !currentTracking.completed) {
+      handleExerciseCompleted(idx, day);
+    }
+  }
+
+  function handleExerciseCompleted(idx, day) {
+    // Find next incomplete exercise
+    let nextIdx = -1;
+    for (let i = idx + 1; i < day.exercises.length; i++) {
+        if (!currentTracking.exerciseStatus[i]) {
+            nextIdx = i;
+            break;
+        }
+    }
+
+    if (nextIdx !== -1) {
+        // Start a 90 second timer for exercise transition
+        UI.startTimer(90, () => {
+            // Expand next exercise when timer finishes
+            document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('expanded'));
+            const nextCard = document.getElementById(`ex-card-${nextIdx}`);
+            if (nextCard) {
+                nextCard.classList.add('expanded');
+                nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        });
+    }
+  }
+
+  /**
+   * Toggle set completion
+   */
+  async function toggleSet(exIdx, setIdx, btn) {
+    if (!currentTracking.setData) currentTracking.setData = {};
+    if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+
+    const key = `set_${setIdx}_done`;
+    const isNowDone = !currentTracking.setData[exIdx][key];
+    currentTracking.setData[exIdx][key] = isNowDone;
+    btn.classList.toggle('checked');
+
+    // Check if all sets are done → auto-complete exercise
+    const day = allPlanDays[currentDayIndex];
+    const ex = day.exercises[exIdx];
+    const setsCount = UI.parseSetsCount(ex.sets);
+    let allSetsDone = true;
+    for (let s = 0; s < setsCount; s++) {
+      if (!currentTracking.setData[exIdx][`set_${s}_done`]) {
+        allSetsDone = false;
+        break;
+      }
+    }
+
+    if (allSetsDone && !currentTracking.exerciseStatus[exIdx]) {
+      if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+      currentTracking.exerciseStatus[exIdx] = true;
+      const card = document.getElementById(`ex-card-${exIdx}`);
+      card.classList.add('completed');
+      const checkBtn = card.querySelector('.exercise-check');
+      if (checkBtn) checkBtn.classList.add('checked');
+      updateProgress(day);
+
+      const total = day.exercises.length;
+      let completed = 0;
+      day.exercises.forEach((_, i) => {
+        if (currentTracking.exerciseStatus[i]) completed++;
+      });
+      currentTracking.completed = completed === total;
+      
+      await autoSave();
+      
+      if (!currentTracking.completed) {
+        handleExerciseCompleted(exIdx, day);
+      }
+    } else {
+      await autoSave();
+      
+      // If we just marked a set as done (and not all sets are done), start a 60s rest timer
+      if (isNowDone) {
+        UI.startTimer(60, null);
+      }
+    }
+  }
+
+  /**
+   * Update set data
+   */
+  async function updateSetData(exIdx, setIdx, field, value) {
+    if (!currentTracking.setData) currentTracking.setData = {};
+    if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+    currentTracking.setData[exIdx][`set_${setIdx}_${field}`] = value;
+    await autoSave();
+  }
+
+  /**
+   * Update exercise note
+   */
+  async function updateExerciseNote(exIdx, value) {
+    if (!currentTracking.exerciseNotes) currentTracking.exerciseNotes = {};
+    currentTracking.exerciseNotes[exIdx] = value;
+    await autoSave();
+  }
+
+  /**
+   * Mark rest day as complete
+   */
+  async function markRestComplete() {
+    currentTracking.completed = !currentTracking.completed;
+    updateProgress(allPlanDays[currentDayIndex]);
+    await autoSave();
+    render();
+    UI.toast(currentTracking.completed ? 'יום מנוחה סומן כהושלם ✓' : 'בוטל סימון', 'success');
+  }
+
+  /**
+   * Auto-save tracking data
+   */
+  async function autoSave() {
+    const rpe = document.getElementById('actual-rpe').value;
+    const weight = document.getElementById('body-weight').value;
+    const notes = document.getElementById('day-notes').value;
+
+    currentTracking.actualRPE = rpe ? parseFloat(rpe) : null;
+    currentTracking.bodyWeight = weight ? parseFloat(weight) : null;
+    currentTracking.notes = notes;
+    currentTracking.lastUpdated = new Date().toISOString();
+    currentTracking.date = currentTracking.date || new Date().toISOString().slice(0, 10);
+
+    await DB.saveDayTracking(currentDayIndex, currentTracking);
+  }
+
+
+  /**
+   * Skip current day and advance the plan
+   */
+  async function skipDay() {
+    if (confirm('האם אתה בטוח שברצונך לדלג על יום זה? התוכנית תתקדם ליום הבא.')) {
+      window.appCurrentPlanIndex++;
+      if (window.appCurrentPlanIndex >= allPlanDays.length) {
+        window.appCurrentPlanIndex = allPlanDays.length - 1;
+      }
+      await DB.setSetting('currentPlanIndex', window.appCurrentPlanIndex);
+      
+      goToToday();
+      UI.toast('התוכנית קודמה ביום אחד ⏭️', 'info');
+    }
+  }
+
+  return {
+    init,
+    render,
+    navigate,
+    goToDay,
+    goToToday,
+    toggleExpand,
+    toggleExercise,
+    toggleSet,
+    updateSetData,
+    updateExerciseNote,
+    markRestComplete,
+    skipDay,
+    getCurrentDayIndex: () => currentDayIndex
+  };
+})();

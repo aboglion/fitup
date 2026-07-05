@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitUp - מעקב אימונים</title>
+  <meta name="description" content="אפליקציית מעקב אימונים מקצועית - ניהול תוכנית אימונים שנתית">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="manifest" href="manifest.json">
+  <script>
+    if (localStorage.getItem('theme') === 'light') {
+      document.documentElement.classList.add('light-theme');
+    }
+  </script>
+</head>
+<body>
+  <!-- Splash Screen -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-content">
+      <div class="splash-icon">💪</div>
+      <h1 class="splash-title">FitUp</h1>
+      <p class="splash-subtitle">מעקב אימונים מקצועי</p>
+      <div class="splash-loader">
+        <div class="splash-loader-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app" class="app hidden">
+    <!-- Navigation -->
+    <nav id="main-nav" class="main-nav">
+      <div class="nav-brand">
+        <span class="nav-icon">💪</span>
+        <span class="nav-title">FitUp</span>
+      </div>
+      <div class="nav-links">
+        <button class="nav-link active" data-page="today" id="nav-today">
+          <span class="nav-link-icon">📅</span>
+          <span class="nav-link-text">היום</span>
+        </button>
+        <button class="nav-link" data-page="calendar" id="nav-calendar">
+          <span class="nav-link-icon">📆</span>
+          <span class="nav-link-text">לוח שנה</span>
+        </button>
+        <button class="nav-link" data-page="exercises" id="nav-exercises">
+          <span class="nav-link-icon">🏋️</span>
+          <span class="nav-link-text">תרגילים</span>
+        </button>
+        <button class="nav-link" data-page="stats" id="nav-stats">
+          <span class="nav-link-icon">📊</span>
+          <span class="nav-link-text">סטטיסטיקות</span>
+        </button>
+        <button class="nav-link" data-page="settings" id="nav-settings">
+          <span class="nav-link-icon">⚙️</span>
+          <span class="nav-link-text">הגדרות</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Bottom Mobile Nav -->
+    <nav id="bottom-nav" class="bottom-nav">
+      <button class="bottom-nav-link active" data-page="today" id="bnav-today">
+        <span class="bottom-nav-icon">📅</span>
+        <span class="bottom-nav-text">היום</span>
+      </button>
+      <button class="bottom-nav-link" data-page="calendar" id="bnav-calendar">
+        <span class="bottom-nav-icon">📆</span>
+        <span class="bottom-nav-text">לוח</span>
+      </button>
+      <button class="bottom-nav-link" data-page="exercises" id="bnav-exercises">
+        <span class="bottom-nav-icon">🏋️</span>
+        <span class="bottom-nav-text">תרגילים</span>
+      </button>
+      <button class="bottom-nav-link" data-page="stats" id="bnav-stats">
+        <span class="bottom-nav-icon">📊</span>
+        <span class="bottom-nav-text">סטטיסטיקות</span>
+      </button>
+      <button class="bottom-nav-link" data-page="settings" id="bnav-settings">
+        <span class="bottom-nav-icon">⚙️</span>
+        <span class="bottom-nav-text">הגדרות</span>
+      </button>
+    </nav>
+
+    <!-- Page Container -->
+    <main id="page-container" class="page-container">
+      <!-- Today Page -->
+      <section id="page-today" class="page active">
+        <div class="page-header">
+          <div class="page-header-content">
+            <h1 id="today-title" class="page-title">אימון היום</h1>
+            <p id="today-date" class="page-subtitle"></p>
+          </div>
+          <div class="page-header-actions">
+            <button id="prev-day-btn" class="icon-btn" title="יום קודם">▶</button>
+            <button id="today-btn" class="icon-btn highlight" title="חזור להיום">היום</button>
+            <button id="next-day-btn" class="icon-btn" title="יום הבא">◀</button>
+          </div>
+        </div>
+
+        <!-- Day Summary Card -->
+        <div id="day-summary" class="day-summary-card">
+          <div class="day-meta">
+            <span id="day-number" class="day-badge"></span>
+            <span id="day-week" class="week-badge"></span>
+            <span id="day-type" class="type-badge"></span>
+            <span id="day-rpe" class="rpe-badge"></span>
+          </div>
+          <div id="day-progress" class="day-progress">
+            <div class="progress-ring">
+              <svg viewBox="0 0 100 100">
+                <circle class="progress-ring-bg" cx="50" cy="50" r="42"/>
+                <circle id="progress-circle" class="progress-ring-fill" cx="50" cy="50" r="42"/>
+              </svg>
+              <span id="progress-text" class="progress-text">0%</span>
+            </div>
+            <span class="progress-label">השלמה</span>
+          </div>
+        </div>
+
+        <!-- Top Actions -->
+        <div class="top-day-actions" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+          <div style="display: flex; gap: 12px;">
+            <button id="skip-day-btn" class="btn-secondary" style="flex: 1;" title="דלג על יום זה (למשל אם פספסת)">
+              <span>⏭️</span> דלג יום
+            </button>
+            <button id="toggle-notes-btn" class="btn-secondary" style="flex: 1;">
+              <span>📝</span> הערות ומדדים
+            </button>
+          </div>
+          
+          <!-- Day Actions (Accordion Content) -->
+          <div id="notes-accordion-content" class="day-actions" style="display: none; margin-top: 0;">
+            <div class="day-input-group">
+              <label for="actual-rpe">RPE בפועל</label>
+              <input type="number" id="actual-rpe" min="1" max="10" step="0.5" placeholder="1-10">
+            </div>
+            <div class="day-input-group">
+              <label for="body-weight">משקל גוף (ק"ג)</label>
+              <input type="number" id="body-weight" min="30" max="200" step="0.1" placeholder="ק״ג">
+            </div>
+            <div class="day-input-group full-width">
+              <label for="day-notes">הערות</label>
+              <textarea id="day-notes" rows="3" placeholder="איך הרגשת? מה היה קשה?"></textarea>
+            </div>
+            <div style="text-align: center; width: 100%; font-size: 12px; color: var(--text-secondary); margin-top: 8px; grid-column: 1 / -1;">
+              ✨ הנתונים נשמרים אוטומטית בעת הקלדה
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercises List -->
+        <div id="exercises-list" class="exercises-list"></div>
+      </section>
+
+      <!-- Calendar Page -->
+      <section id="page-calendar" class="page">
+        <div class="page-header">
+          <h1 class="page-title">לוח שנה</h1>
+          <div class="page-header-actions">
+            <button id="cal-prev-week" class="icon-btn">▶</button>
+            <span id="cal-week-label" class="week-label"></span>
+            <button id="cal-next-week" class="icon-btn">◀</button>
+          </div>
+        </div>
+        <div id="calendar-grid" class="calendar-grid"></div>
+        <div id="week-stats" class="week-stats-card"></div>
+      </section>
+
+      <!-- Exercises Guide Page -->
+      <section id="page-exercises" class="page">
+        <div class="page-header">
+          <h1 class="page-title">מדריך תרגילים</h1>
+          <div class="search-box">
+            <input type="text" id="exercise-search" placeholder="חפש תרגיל..." class="search-input">
+          </div>
+        </div>
+        <div id="exercise-filters" class="exercise-filters">
+          <button class="filter-btn active" data-filter="all">הכל</button>
+        </div>
+        <div id="exercise-guide" class="exercise-guide"></div>
+      </section>
+
+      <!-- Stats Page -->
+      <section id="page-stats" class="page">
+        <div class="page-header">
+          <h1 class="page-title">סטטיסטיקות</h1>
+        </div>
+        <div id="stats-overview" class="stats-overview"></div>
+        <div id="stats-charts" class="stats-charts"></div>
+      </section>
+
+      <!-- Settings Page -->
+      <section id="page-settings" class="page">
+        <div class="page-header">
+          <h1 class="page-title">הגדרות</h1>
+        </div>
+        <div class="settings-content">
+          <div class="settings-card">
+            <h3>💾 גיבוי ושחזור</h3>
+            <p>ייצא את כל הנתונים שלך לקובץ, או שחזר מגיבוי קודם</p>
+            <div class="settings-actions">
+              <button id="export-data-btn" class="btn-secondary">📤 ייצוא נתונים</button>
+              <label class="btn-secondary" for="import-data-input">📥 ייבוא נתונים</label>
+              <input type="file" id="import-data-input" accept=".json" style="display:none">
+            </div>
+          </div>
+          <div class="settings-card">
+            <h3>🔄 איפוס תוכנית</h3>
+            <p>טען מחדש את תוכנית האימונים מהנתונים המקוריים</p>
+            <div class="settings-actions">
+              <button id="reload-plan-btn" class="btn-warning">🔄 טען תוכנית מחדש</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <h3>🗑️ מחיקת כל הנתונים</h3>
+            <p>מחק את כל המידע כולל מעקב ותוכנית. פעולה זו בלתי הפיכה!</p>
+            <div class="settings-actions">
+              <button id="clear-all-btn" class="btn-danger">🗑️ מחק הכל</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <h3>🌓 מראה ותצוגה</h3>
+            <p>החלף בין מצב תצוגה בהיר לכהה</p>
+            <div class="settings-actions">
+              <button id="theme-toggle-btn" class="btn-secondary">החלף מצב תצוגה</button>
+            </div>
+          </div>
+          <div class="settings-card about-card">
+            <h3>ℹ️ אודות</h3>
+            <p>FitUp v1.0 - אפליקציית מעקב אימונים</p>
+            <p>תוכנית 52 שבועות • 365 ימים</p>
+            <p class="muted">כל הנתונים נשמרים מקומית בדפדפן שלך</p>
+            
+            <div class="philosophy-box" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+              <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: var(--accent-primary);">
+                <span>🧭</span> נוקשות שנתית
+              </h4>
+              <p style="margin-bottom: 0;">תכנון של 365 ימים מראש עלול לייצר תחושת כישלון במידה ומפספסים שבוע בגלל מחלה, נסיעה או עומס בלתי צפוי. <strong>חובה להתייחס למערכת הזו כאל מצפן (סדר האימונים) ולא כאל לוח שנה קשיח שלא ניתן להזזה.</strong></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Floating Rest Timer -->
+  <div id="rest-timer" class="rest-timer hidden">
+    <div class="rest-timer-header">
+      <span class="rest-timer-title">⏱️ טיימר מנוחה</span>
+      <button id="rest-timer-close" class="icon-btn" style="width: 24px; height: 24px; font-size: 12px; min-height: 24px; padding: 0;">✕</button>
+    </div>
+    <div class="rest-timer-display" id="rest-timer-display">00:00</div>
+    <div class="rest-timer-controls">
+      <button class="timer-btn" data-time="60">+60ש</button>
+      <button class="timer-btn" data-time="90">+90ש</button>
+      <button class="timer-btn" data-time="120">+120ש</button>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Modal -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div id="modal" class="modal">
+      <div id="modal-header" class="modal-header">
+        <h2 id="modal-title"></h2>
+        <button id="modal-close" class="modal-close">✕</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/today.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/exercises.js"></script>
+  <script src="js/stats.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
