@@ -276,7 +276,12 @@ const TodayPage = (() => {
       }
 
       // Video URL - use exercise's own URL, or fall back to guide lookup
-      const videoUrl = ex.videoUrl || findVideoUrl(ex.name);
+      let videoUrl = ex.videoUrl;
+      if (videoUrl && !videoUrl.startsWith('http')) {
+        videoUrl = null;
+      }
+      videoUrl = videoUrl || findVideoUrl(ex.name);
+      
       const videoBtn = videoUrl
         ? `<button class="exercise-video-btn" onclick="event.stopPropagation(); window.open('${videoUrl}', '_blank')" title="צפה בסרטון">▶</button>`
         : '';
