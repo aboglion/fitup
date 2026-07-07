@@ -121,31 +121,33 @@ window.ExporterGuide = (() => {
 
         <h3>⚙️ כיצד מחולקים הימים?</h3>
         <ul>
-          <li><strong>💪 ימי כוח (א׳/ג׳/ה׳):</strong> תרגילי התנגדות לבניית שריר וכוח. מכילים פרוגרסיית Pull-up מובנית ואיזון שרשרת אחורית (Hip Thrust/Banded GM לסירוגין).</li>
-          <li><strong>🚶 ימי הליכה (ב׳/ד׳):</strong> התאוששות פעילה + ליבה, יציבה ובריאות כתפיים. כוללים Face Pull, Dead Bug ו-Reverse Snow Angel.</li>
+          <li><strong>💪 ימי כוח (א׳/ג׳/ה׳):</strong> תרגילי התנגדות לבניית שריר וכוח. מכילים סופרסטים מאוזנים Push/Pull ועלייה הדרגתית בסטים ובתרגיל לאורך השנה.</li>
+          <li><strong>🚶 ימי הליכה (ב׳/ד׳):</strong> התאוששות פעילה — הליכה בהתקדמות של 25 דקות עד 50 דקות, בתוספת תרגילי ליבה ויציבה (Bird-Dog, Hollow Body, Calf Raise).</li>
           <li><strong>🧘 ימי מנוחה (ו׳/ש׳):</strong> מנוחה מלאה, מתיחות ו-Foam Roll. תזונה ושינה — חלק קריטי בבניית השריר.</li>
         </ul>
 
         <h3>📈 פרוגרסיות מובנות בתוכנית</h3>
         <table>
-          <tr><th>תחום</th><th>שלב 1 (שבועות 1-12)</th><th>שלב 2 (שבועות 13-24)</th><th>שלב 3 (שבועות 25+)</th></tr>
-          <tr><td><strong>לחיצה</strong></td><td>Incline Push-up 2-3×6-12</td><td>Push-up רגיל / Diamond 3-4×8-12</td><td>Diamond Push-up 4-5×8-12</td></tr>
-          <tr><td><strong>משיכה אנכית</strong></td><td>Active Hang + Scapular + Negative</td><td>Negative Pull-up → Pull-up 3-5×5-8</td><td>Chin-up 3-5×5-8</td></tr>
-          <tr><td><strong>משיכה אופקית</strong></td><td>Band Row 3×8-12 | 30-40kg</td><td>Inverted Row 4×8-12 | 40kg</td><td>Inverted Row 5×מקס | 50kg</td></tr>
-          <tr><td><strong>רגליים</strong></td><td>Squat איטי 3×8-12</td><td>Split Squat 3×8-10</td><td>Bulgarian Split Squat 5×8</td></tr>
-          <tr><td><strong>שרשרת אחורית</strong></td><td>Hip Thrust/GM 3×10-12 | 30kg</td><td>Hip Thrust/GM 3×10-12 | 40kg</td><td>Hip Thrust/GM 4-5×8-12 | 50kg</td></tr>
-          <tr><td><strong>ליבה</strong></td><td>Hollow Hold 2-3×20-30s</td><td>Hollow Hold 3×30-45s</td><td>Hanging Leg Raise 5×10-15</td></tr>
-          <tr><td><strong>כתפיים</strong></td><td>Banded OHP 3×8-10 | 30kg</td><td>Banded OHP 3-4×8 | 40kg</td><td>Banded OHP 4-5×6-8 | 50kg</td></tr>
+          <tr><th>תחום</th><th>שלב 1 (שבועות 1-12)</th><th>שלב 2 (שבועות 13-33)</th><th>שלב 3 (שבועות 34-52)</th></tr>
+          <tr><td><strong>לחיצה (A1)</strong></td><td>Incline Push-up 2-3×6-12</td><td>Push-up / Diamond Push-up 3-4×8-12</td><td>Diamond Push-up 4-5×8-12</td></tr>
+          <tr><td><strong>משיכה אנכית (B1)</strong></td><td>Scapular Pull-up 2-3×8-12</td><td>Pull-up 3-5×5-8</td><td>Chin-up 5×8</td></tr>
+          <tr><td><strong>משיכה אופקית (A2)</strong></td><td>Band Row 3×8-12</td><td>Inverted Row 4-5×8-12</td><td>Inverted Row 5×10-15</td></tr>
+          <tr><td><strong>רגליים (C1)</strong></td><td>Squat איטי 3×8-10</td><td>Split Squat / Bulgarian 3-4×8-10</td><td>Bulgarian Split Squat 5×8</td></tr>
+          <tr><td><strong>גלוטאוס (C2)</strong></td><td>Banded Hip Thrust 3×10-12</td><td>Banded Hip Thrust 3-4×8-12</td><td>Single-leg Hip Thrust 4-5×8-10 לכל רגל</td></tr>
+          <tr><td><strong>ליבה (D1)</strong></td><td>Hollow Body Hold 2-3×20-30s</td><td>Hanging Leg Raise 3-5×8-10</td><td>Hanging Leg Raise 5×10-15</td></tr>
+          <tr><td><strong>כתפיים (B2)</strong></td><td>Banded OHP 3×8-10</td><td>Banded OHP 3-4×8</td><td>Pike Push-up 4-5×8-10</td></tr>
+          <tr><td><strong>Anti-Rotation (D2)</strong></td><td>Pallof Press 3×10-12</td><td>Pallof Press 3-4×8-10 לכל צד</td><td>Copenhagen Plank 3×20-30 שניות</td></tr>
+          <tr><td><strong>הליכה</strong></td><td>25-30 דקות</td><td>30-40 דקות</td><td>45-50 דקות</td></tr>
         </table>
 
         <h3>🔄 Deload — שבועות התאוששות (25, 33, 41, 49)</h3>
-        <p>כל 8 שבועות יש <strong>שבוע Deload</strong> — נפח מופחת (3×5 חזרות) ועומס שלב אחד מתחת לשיא. מטרתו: מניעת אוברטריינינג, איפוס מערכת העצבים ושמירה על מומנטום ארוך טווח. לאחריו מגיע שיא כוח חדש.</p>
+        <p>כל 8 שבועות יש <strong>שבוע Deload</strong>. שבוע 25 חוזר לתרגיל בסיסי כ-Push-up רגיל לאיפוס. שבועות 33, 41, 49 שומרים על <strong>אותו תרגיל מתקדם</strong> (Diamond Push-up, Chin-up, Bulgarian Squat) אך מורידים ל-<strong>3 סטים בלבד</strong> — כ-60% מהנפח הרגיל. מטרתו: מניעת אוברטריינינג, איפוס מערכת העצבים ושמירה על מומנטום ארוך טווח.</p>
 
-        <h3>⚖️ איזון שרשרת אחורית — Hip Thrust מול Banded GM</h3>
-        <p><strong>שבועות אי-זוגיים:</strong> Banded Hip Thrust (גלוטאוס מקסימום) | <strong>שבועות זוגיים:</strong> Banded GM (Hamstrings + erector spinae). שילוב זה מונע חוסר איזון בין הגלוטאוס לירך האחורית ומפחית ריסק פציעות ברך ועמ"ש.</p>
+        <h3>🦵 שדרוג גלוטאוס — מעבר ל-Single-leg Hip Thrust</h3>
+        <p>מ-<strong>שבוע 34</strong> ואילך, Hip Thrust הופך ל-<strong>Single-leg Hip Thrust</strong> — גרסה חד-צדדית המגייסת יציבות ורגל עצמאית. העומס גדול יותר לגלוטאוס בכל חזרה ומונע פיצוי בין הרגליים.</p>
 
-        <h3>🛡️ בריאות כתפיים — Face Pull בכל יום הליכה</h3>
-        <p>Face Pull מחזק את ה-Rotator Cuff וה-rear deltoid — הגנה קריטית מפני פציעות כתף לאחר כמות גדולה של Push-ups, Pull-ups ו-OHP. מופיע בכל 104 ימי ההליכה לאורך השנה.</p>
+        <h3>🤸 שדרוג כתפיים — מ-OHP ל-Pike Push-up</h3>
+        <p>מ-<strong>שבוע 34</strong> ואילך, Banded OHP מוחלף ב-<strong>Pike Push-up</strong> — תרגיל מסת גוף המחקה דחיפה אנכית ומהווה שלב ביניים לכיוון Handstand Push-up. אין צורך בציוד ועומס על המפרק נמוך יותר.</p>
       </div>
 
       <div class="section">
