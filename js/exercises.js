@@ -8,15 +8,15 @@ const ExercisesPage = (() => {
 
   const SKILL_PATHS = [
     {
-      title: 'דחיפה (Push)',
+      title: 'דחיפה חזה (Chest)',
       exercises: [
         { name: 'Incline Push-up', unlockWeek: 1 },
-        { name: 'Push-up רגיל', unlockWeek: 13 },
-        { name: 'Offset Push-up', unlockWeek: 13 },
+        { name: 'Push-up רגיל', unlockWeek: 13, note: 'ימי שלישי וחמישי' },
+        { name: 'Offset Push-up', unlockWeek: 13, note: 'ימי ראשון (שלב 2)' },
         { name: 'Diamond Push-up', unlockWeek: 17 },
-        { name: 'Decline Push-up', unlockWeek: 34 },
-        { name: 'Pike Push-up', unlockWeek: 34 },
-        { name: 'Banded Push-up', unlockWeek: 34 }
+        { name: 'Banded Push-up', unlockWeek: 34, note: 'ימי ראשון' },
+        { name: 'Offset Push-up', unlockWeek: 34, note: 'ימי שלישי' },
+        { name: 'Decline Push-up', unlockWeek: 34, note: 'ימי חמישי' }
       ]
     },
     {
@@ -64,7 +64,8 @@ const ExercisesPage = (() => {
       exercises: [
         { name: 'Banded RDL', unlockWeek: 1 },
         { name: 'Banded Hip Thrust', unlockWeek: 17 },
-        { name: 'Single-leg Hip Thrust', unlockWeek: 34 }
+        { name: 'Single-leg Hip Thrust', unlockWeek: 34, note: 'ראשון וחמישי' },
+        { name: 'Banded RDL', unlockWeek: 34, note: 'ימי שלישי' }
       ]
     },
     {
@@ -78,7 +79,8 @@ const ExercisesPage = (() => {
       title: 'כתפיים ושיקום (Shoulders & Rehab)',
       exercises: [
         { name: 'Band External Rotation', unlockWeek: 1 },
-        { name: 'Banded OHP', unlockWeek: 1 }
+        { name: 'Banded OHP', unlockWeek: 1 },
+        { name: 'Pike Push-up', unlockWeek: 34 }
       ]
     }
   ];
@@ -167,6 +169,7 @@ const ExercisesPage = (() => {
   /**
    * Render skill tree
    */
+  
   function renderSkillTree() {
     const container = document.getElementById('skill-tree-container');
     const currentWeek = Math.floor((window.appCurrentPlanIndex || 0) / 7) + 1;
@@ -180,25 +183,41 @@ const ExercisesPage = (() => {
           <div class="skill-nodes-list">
       `;
 
+      // Group exercises by unlockWeek
+      const grouped = {};
       path.exercises.forEach(node => {
-        const exData = allExercises.find(e => e.name === node.name);
-        const isUnlocked = currentWeek >= node.unlockWeek;
-        const stateClass = isUnlocked ? 'unlocked' : 'locked';
-        
-        // Use default fallback if not found
-        const diffClass = exData ? UI.getDifficultyClass(exData.difficulty) : 'beginner';
-        const diffLabel = exData ? exData.difficulty : '';
-        const equip = exData ? UI.getEquipment(exData.name) : null;
-        const imgSrc = `images/exercises/${node.name.replace(/\//g, '-').toUpperCase()}.png`;
-        
-        let videoBtn = '';
-        if (exData && exData.videoUrl) {
-          videoBtn = `<a href="${exData.videoUrl}" target="_blank" class="skill-video-btn" title="צפה בסרטון" onclick="event.stopPropagation()">▶</a>`;
-        }
+        if (!grouped[node.unlockWeek]) grouped[node.unlockWeek] = [];
+        grouped[node.unlockWeek].push(node);
+      });
 
-        html += `
-          <div class="skill-node-wrapper ${stateClass}">
-            <div class="skill-node ${stateClass}" onclick="ExercisesPage.showExerciseDetails('${node.name.replace(/'/g, "\\'")}')" style="cursor: pointer;">
+      const sortedWeeks = Object.keys(grouped).map(Number).sort((a,b) => a - b);
+
+      sortedWeeks.forEach(week => {
+        const nodes = grouped[week];
+        const isLevelUnlocked = currentWeek >= week;
+        const levelStateClass = isLevelUnlocked ? 'unlocked' : 'locked';
+
+        html += `<div class="skill-level-wrapper ${levelStateClass}" style="position: relative; display: flex; flex-direction: column; align-items: center; width: 100%;">`;
+        html += `<div class="skill-nodes-row" style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; width: 100%;">`;
+
+        nodes.forEach(node => {
+          const exData = allExercises.find(e => e.name === node.name);
+          // If the exercise unlocks earlier globally but is listed here for rotation, we still check the node's specific requirement.
+          const isUnlocked = currentWeek >= node.unlockWeek;
+          const stateClass = isUnlocked ? 'unlocked' : 'locked';
+          
+          const diffClass = exData ? UI.getDifficultyClass(exData.difficulty) : 'beginner';
+          const diffLabel = exData ? exData.difficulty : '';
+          const equip = exData ? UI.getEquipment(exData.name) : null;
+          const imgSrc = `images/exercises/${node.name.replace(/\//g, '-').toUpperCase()}.png`;
+          
+          let videoBtn = '';
+          if (exData && exData.videoUrl) {
+            videoBtn = `<a href="${exData.videoUrl}" target="_blank" class="skill-video-btn" title="צפה בסרטון" onclick="event.stopPropagation()">▶</a>`;
+          }
+
+          html += `
+            <div class="skill-node ${stateClass}" onclick="ExercisesPage.showExerciseDetails('${node.name.replace(/'/g, "\'")}')" style="cursor: pointer; flex: 1; min-width: 250px; max-width: 400px;">
               ${videoBtn}
               <img src="${imgSrc}" class="skill-node-image" alt="${node.name}" onerror="this.style.display='none'">
               <div class="skill-node-content">
@@ -208,10 +227,13 @@ const ExercisesPage = (() => {
                   ${diffLabel ? `<span class="guide-difficulty ${diffClass}">${diffLabel}</span>` : ''}
                   ${equip ? `<span class="guide-equipment">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
+                ${node.note ? `<div style="font-size: 11px; color: var(--accent-primary); font-weight: 600; margin-top: 6px; padding: 2px 6px; background: rgba(56, 189, 248, 0.1); border-radius: 4px; display: inline-block;">🗓️ ${node.note}</div>` : ''}
               </div>
             </div>
-          </div>
-        `;
+          `;
+        });
+
+        html += `</div></div>`;
       });
 
       html += `

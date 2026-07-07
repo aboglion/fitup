@@ -129,22 +129,25 @@ window.ExporterGuide = (() => {
         <h3>📈 פרוגרסיות מובנות בתוכנית</h3>
         <table>
           <tr><th>תחום</th><th>שלב 1 (שבועות 1-12)</th><th>שלב 2 (שבועות 13-33)</th><th>שלב 3 (שבועות 34-52)</th></tr>
-          <tr><td><strong>לחיצה (A1)</strong></td><td>Incline Push-up 2-3×6-12</td><td>Push-up / Diamond Push-up 3-4×8-12</td><td>Banded Push-up 4-5×8-12</td></tr>
-          <tr><td><strong>משיכה אנכית (B1)</strong></td><td>Scapular Pull-up / Band-assisted 2-3×8-12</td><td>Chin-up 3-5×5-8</td><td>Pull-up 3-5×5-8</td></tr>
-          <tr><td><strong>משיכה אופקית (A2)</strong></td><td>Band Row 3×8-12</td><td>Single-arm Band Row 3-4×8-10</td><td>Single-arm Band Row 4-5×10-12</td></tr>
-          <tr><td><strong>רגליים (C1)</strong></td><td>Squat איטי 3×8-10</td><td>Split Squat / Bulgarian 3-4×8-10</td><td>Banded Bulgarian Split Squat 4-5×6-8</td></tr>
-          <tr><td><strong>גלוטאוס (C2)</strong></td><td>Banded RDL 3×10-12</td><td>Banded Hip Thrust 3-4×8-12</td><td>Single-leg Hip Thrust 4-5×8-10 לכל רגל</td></tr>
-          <tr><td><strong>ליבה (D1)</strong></td><td>Hollow Body Hold 2-3×20-30s</td><td>Hanging Leg Raise 3-5×8-10</td><td>Hanging Leg Raise 5×10-15</td></tr>
-          <tr><td><strong>כתפיים (B2)</strong></td><td>Banded OHP 3×8-10</td><td>Banded OHP 3-4×8</td><td>Pike Push-up 4-5×8-10</td></tr>
-          <tr><td><strong>Anti-Rotation (D2)</strong></td><td>Pallof Press 3×10-12</td><td>Pallof Press 3-4×8-10 לכל צד</td><td>Copenhagen Plank 3×20-30 שניות</td></tr>
-          <tr><td><strong>הליכה</strong></td><td>25-30 דקות</td><td>30-40 דקות</td><td>45-50 דקות</td></tr>
+          <tr><td><strong>לחיצה (A1)</strong></td><td>Incline Push-up</td><td>Offset Push-up / Diamond</td><td>Banded / Offset / Decline Push-up (רוטציה)</td></tr>
+          <tr><td><strong>משיכה אנכית (B1)</strong></td><td>Scapular Pull-up / Band-assisted</td><td>Chin-up</td><td>Pull-up</td></tr>
+          <tr><td><strong>משיכה אופקית (A2)</strong></td><td>Band Row</td><td>Single-arm Band Row</td><td>Single-arm Band Row</td></tr>
+          <tr><td><strong>רגליים (C1)</strong></td><td>Squat איטי</td><td>Split Squat / Bulgarian</td><td>Banded Bulgarian Split Squat</td></tr>
+          <tr><td><strong>גלוטאוס (C2)</strong></td><td>Banded RDL</td><td>Banded Hip Thrust</td><td>Single-leg Hip / Banded RDL (רוטציה)</td></tr>
+          <tr><td><strong>ליבה (D1)</strong></td><td>Hollow Body Hold</td><td>Hanging Leg Raise</td><td>Hanging Leg Raise</td></tr>
+          <tr><td><strong>כתפיים (B2)</strong></td><td>Banded OHP</td><td>Banded OHP</td><td>Pike Push-up</td></tr>
+          <tr><td><strong>ידיים ושיקום (תוספות)</strong></td><td>Band Curl, Triceps Ext, Face Pull, Band Ext Rot.</td><td>עלייה בנפח (סטים)</td><td>עלייה בהתנגדות (משקל)</td></tr>
+          <tr><td><strong>Anti-Rotation (D2)</strong></td><td>Pallof Press</td><td>Pallof Press</td><td>Copenhagen Plank</td></tr>
+          <tr><td><strong>הליכה</strong></td><td>25-30 דקות</td><td>30-35 דקות</td><td>40-45 דקות</td></tr>
         </table>
 
         <h3>🔄 Deload — שבועות התאוששות (25, 33, 41, 49)</h3>
         <p>כל 8 שבועות יש <strong>שבוע Deload</strong>. שבוע 25 חוזר לתרגיל בסיסי כ-Push-up רגיל לאיפוס. שבועות 33, 41, 49 שומרים על <strong>אותו תרגיל מתקדם</strong> (Diamond Push-up, Chin-up, Bulgarian Squat) אך מורידים ל-<strong>3 סטים בלבד</strong> — כ-60% מהנפח הרגיל. מטרתו: מניעת אוברטריינינג, איפוס מערכת העצבים ושמירה על מומנטום ארוך טווח.</p>
 
-        <h3>🦵 שדרוג גלוטאוס — מעבר ל-Single-leg Hip Thrust</h3>
-        <p>מ-<strong>שבוע 34</strong> ואילך, Hip Thrust הופך ל-<strong>Single-leg Hip Thrust</strong> — גרסה חד-צדדית המגייסת יציבות ורגל עצמאית. העומס גדול יותר לגלוטאוס בכל חזרה ומונע פיצוי בין הרגליים.</p>
+        <h3>🔄 חימום, תוספות ורוטציות מתקדמות</h3>
+        <p><strong>חימום קבוע:</strong> לפני כל אימון כוח יש לבצע <em>Band External Rotation</em> (2 סטים, 15 חזרות לכל יד) לשמירה על בריאות הכתף.</p>
+        <p><strong>תוספות ידיים ושיקום:</strong> בסיום אימון כוח 1 (ראשון) מבוצעים <em>Band Curl</em> ו-<em>Face Pull</em>. בסיום אימון כוח 2 (שלישי) מבוצע <em>Triceps Extension</em>. תרגילים אלו עוברים אדפטציה בנפח ובהתנגדות לאורך השלבים.</p>
+        <p><strong>רוטציות בשלב 3:</strong> כדי לספק גירוי משתנה לשריר ולמנוע שחיקה, אימוני הלחיצה והשרשרת האחורית מתבצעים ברוטציה שבועית. לחיצה: Banded -> Offset -> Decline. גלוטאוס: Single-leg Hip Thrust -> Banded RDL -> Single-leg Hip Thrust.</p>
 
         <h3>🤸 שדרוג כתפיים — מ-OHP ל-Pike Push-up</h3>
         <p>מ-<strong>שבוע 34</strong> ואילך, Banded OHP מוחלף ב-<strong>Pike Push-up</strong> — תרגיל מסת גוף המחקה דחיפה אנכית ומהווה שלב ביניים לכיוון Handstand Push-up. אין צורך בציוד ועומס על המפרק נמוך יותר.</p>

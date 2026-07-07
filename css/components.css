@@ -1372,7 +1372,7 @@ html.light-theme .exercise-hero-container::after {
 }
 
 /* Connector line */
-.skill-node-wrapper:not(:last-child)::after {
+.skill-level-wrapper:not(:last-child)::after {
   content: '';
   position: absolute;
   top: 100%;
@@ -1384,7 +1384,7 @@ html.light-theme .exercise-hero-container::after {
   z-index: 1;
 }
 
-.skill-node.unlocked.skill-node-wrapper:not(:last-child)::after {
+.skill-level-wrapper.unlocked:not(:last-child)::after {
   background: var(--accent-primary);
   box-shadow: 0 0 8px var(--accent-primary);
 }
