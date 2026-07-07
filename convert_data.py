@@ -42,7 +42,7 @@ for row in data.get('daily', []):
     }
     
     # Extract exercises
-    slots = ["A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "E1", "תוספות"]
+    slots = ["W1", "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "E1", "E2", "E3", "F1", "F2", "תוספות", "תוספות 2", "תוספות 3", "תוספות 4", "תוספות 5"]
     for slot in slots:
         ex_name = row.get(f"{slot} - תרגיל")
         if ex_name and str(ex_name).strip() and str(ex_name).strip() != "None" and str(ex_name).strip() != "—":

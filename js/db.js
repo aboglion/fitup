@@ -4,7 +4,7 @@
  */
 const DB = (() => {
   const DB_NAME = 'FitUpDB';
-  const DB_VERSION = 1;
+  const DB_VERSION = 2;
   let db = null;
 
   // Store names
@@ -12,7 +12,8 @@ const DB = (() => {
     PLAN: 'trainingPlan',        // The full training plan (365 days)
     TRACKING: 'dayTracking',     // User's daily tracking data
     EXERCISES: 'exerciseGuide',  // Exercise guide reference
-    SETTINGS: 'settings'         // App settings
+    SETTINGS: 'settings',        // App settings
+    PHOTOS: 'progressPhotos'     // Progress photos
   };
 
   /**
@@ -51,6 +52,12 @@ const DB = (() => {
         // Settings store
         if (!database.objectStoreNames.contains(STORES.SETTINGS)) {
           database.createObjectStore(STORES.SETTINGS, { keyPath: 'key' });
+        }
+
+        // Photos store
+        if (!database.objectStoreNames.contains(STORES.PHOTOS)) {
+          const photoStore = database.createObjectStore(STORES.PHOTOS, { keyPath: 'id' });
+          photoStore.createIndex('date', 'date', { unique: false });
         }
       };
 
@@ -208,6 +215,13 @@ const DB = (() => {
       ]
     };
 
+    let planStartDateStr = await getSetting('planStartDate');
+    if (!planStartDateStr) {
+      planStartDateStr = new Date().toISOString().slice(0, 10);
+      await setSetting('planStartDate', planStartDateStr);
+    }
+    const startDate = new Date(planStartDateStr + 'T12:00:00');
+
     const newPlanData = [];
     let globalDayIndex = 0;
 
@@ -226,7 +240,11 @@ const DB = (() => {
       let restIdx = 0;
 
       for (let i = 0; i < 7; i++) {
-        const isRest = restDays.includes(i);
+        const currentDate = new Date(startDate);
+        currentDate.setDate(currentDate.getDate() + globalDayIndex);
+        const realDayOfWeekNum = currentDate.getDay(); // 0-6
+        const isRest = restDays.includes(realDayOfWeekNum);
+        
         let dayObj;
 
         if (isRest || workoutIdx >= workouts.length) {
@@ -234,7 +252,7 @@ const DB = (() => {
           dayObj = {
             ...tpl,
             week: weekName,
-            dayOfWeek: dayNames[i],
+            dayOfWeek: dayNames[realDayOfWeekNum],
             exercises: JSON.parse(JSON.stringify(tpl.exercises))
           };
           restIdx++;
@@ -242,7 +260,7 @@ const DB = (() => {
           dayObj = {
             ...workouts[workoutIdx],
             week: weekName,
-            dayOfWeek: dayNames[i],
+            dayOfWeek: dayNames[realDayOfWeekNum],
             exercises: JSON.parse(JSON.stringify(workouts[workoutIdx].exercises || []))
           };
           workoutIdx++;
@@ -250,7 +268,7 @@ const DB = (() => {
         
         dayObj.dayIndex = globalDayIndex;
         dayObj.dayNum = globalDayIndex + 1;
-        dayObj.date = null; // Removed hardcoded dates as they are dynamic now
+        dayObj.date = currentDate.toISOString().slice(0, 10).split('-').reverse().join('/');
         
         newPlanData.push(dayObj);
         globalDayIndex++;
@@ -359,6 +377,27 @@ const DB = (() => {
     return put(STORES.SETTINGS, { key, value });
   }
 
+  /**
+   * Photo Management
+   */
+  async function savePhoto(id, date, dataUrl) {
+    return put(STORES.PHOTOS, { id, date, dataUrl });
+  }
+
+  async function getAllPhotos() {
+    const photos = await getAll(STORES.PHOTOS);
+    return photos.sort((a, b) => new Date(a.date) - new Date(b.date));
+  }
+
+  async function deletePhoto(id) {
+    return new Promise((resolve, reject) => {
+      const store = transaction(STORES.PHOTOS, 'readwrite');
+      const request = store.delete(id);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   return {
     init,
     loadTrainingPlan,
@@ -373,6 +412,9 @@ const DB = (() => {
     importData,
     getSetting,
     setSetting,
+    savePhoto,
+    getAllPhotos,
+    deletePhoto,
     deleteDatabase,
     count,
     STORES

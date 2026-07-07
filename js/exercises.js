@@ -12,7 +12,9 @@ const ExercisesPage = (() => {
       exercises: [
         { name: 'Incline Push-up', unlockWeek: 1 },
         { name: 'Push-up רגיל', unlockWeek: 13 },
+        { name: 'Offset Push-up', unlockWeek: 13 },
         { name: 'Diamond Push-up', unlockWeek: 17 },
+        { name: 'Decline Push-up', unlockWeek: 34 },
         { name: 'Pike Push-up', unlockWeek: 34 },
         { name: 'Banded Push-up', unlockWeek: 34 }
       ]
@@ -21,6 +23,7 @@ const ExercisesPage = (() => {
       title: 'משיכה אופקית (Horizontal Pull)',
       exercises: [
         { name: 'Band Row', unlockWeek: 1 },
+        { name: 'Face Pull', unlockWeek: 1 },
         { name: 'Single-arm Band Row', unlockWeek: 5 }
       ]
     },
@@ -62,6 +65,20 @@ const ExercisesPage = (() => {
         { name: 'Banded RDL', unlockWeek: 1 },
         { name: 'Banded Hip Thrust', unlockWeek: 17 },
         { name: 'Single-leg Hip Thrust', unlockWeek: 34 }
+      ]
+    },
+    {
+      title: 'ידיים (Arms)',
+      exercises: [
+        { name: 'Band Curl', unlockWeek: 1 },
+        { name: 'Triceps Extension', unlockWeek: 1 }
+      ]
+    },
+    {
+      title: 'כתפיים ושיקום (Shoulders & Rehab)',
+      exercises: [
+        { name: 'Band External Rotation', unlockWeek: 1 },
+        { name: 'Banded OHP', unlockWeek: 1 }
       ]
     }
   ];

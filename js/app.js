@@ -21,8 +21,16 @@ const App = (() => {
       await DB.init();
 
       // Check if plan is loaded or needs update
-      const currentDataVersion = 13; // Bumped to force Smart Scheduling rebuild
+      const currentDataVersion = 15; // Bumped to force real calendar alignment
       const savedDataVersion = await DB.getSetting('dataVersion');
+      
+      let planStartDate = await DB.getSetting('planStartDate');
+      if (!planStartDate) {
+        // First run or upgrading to Smart Scheduling
+        // We set the plan start date to today
+        planStartDate = new Date().toISOString().slice(0, 10);
+        await DB.setSetting('planStartDate', planStartDate);
+      }
       
       const planCount = await DB.count(DB.STORES.PLAN);
       const exCount = await DB.count(DB.STORES.EXERCISES);
@@ -37,18 +45,22 @@ const App = (() => {
       allPlanDays = await DB.getAllPlan();
       allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
 
-      // --- Sequence Progression Logic ---
+      // --- Strict Calendar Alignment ---
+      // Instead of sequential progression, align the planIndex perfectly with the real calendar
+      // so that chosen rest days always match the real days of the week.
       const todayStr = new Date().toISOString().slice(0, 10);
-      let lastDate = await DB.getSetting('lastActiveDate');
-      let planIndex = await DB.getSetting('currentPlanIndex');
-
-      if (planIndex === null || planIndex === undefined) {
-        planIndex = 0;
-      } else if (lastDate && lastDate !== todayStr) {
-        planIndex++;
-        if (planIndex >= allPlanDays.length) {
-          planIndex = allPlanDays.length - 1;
-        }
+      let planStartDateStr = await DB.getSetting('planStartDate');
+      
+      const todayDateObj = new Date(todayStr + 'T12:00:00');
+      const startDateObj = new Date(planStartDateStr + 'T12:00:00');
+      
+      const diffTime = todayDateObj - startDateObj;
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      let planIndex = diffDays;
+      if (planIndex < 0) planIndex = 0;
+      if (planIndex >= allPlanDays.length) {
+        planIndex = allPlanDays.length - 1;
       }
 
       await DB.setSetting('lastActiveDate', todayStr);
@@ -93,6 +105,7 @@ const App = (() => {
       setTimeout(() => {
         document.getElementById('splash-screen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
+        checkPhotoReminder();
       }, 1600);
 
     } catch (error) {
@@ -123,6 +136,70 @@ const App = (() => {
     document.querySelectorAll('.bottom-nav-link').forEach(link => {
       link.addEventListener('click', () => navigateTo(link.dataset.page));
     });
+  }
+
+  /**
+   * Check if user needs to be reminded to take a progress photo
+   */
+  async function checkPhotoReminder() {
+    const photos = await DB.getAllPhotos();
+    const lastPhotoDate = photos.length > 0 ? new Date(photos[photos.length - 1].date) : null;
+    
+    let planStartDateStr = await DB.getSetting('planStartDate');
+    const startDateObj = new Date(planStartDateStr + 'T12:00:00');
+    const now = new Date();
+    const daysSinceStart = Math.floor((now - startDateObj) / (1000 * 60 * 60 * 24));
+    
+    let shouldRemind = false;
+    
+    const snoozeUntil = await DB.getSetting('photoSnoozeUntil');
+    if (snoozeUntil && new Date(snoozeUntil) > now) {
+      return; // Snoozed
+    }
+
+    // Best frequency for a 52-week plan is 1 month (28 days / 4 weeks)
+    // It perfectly aligns with a typical mesocycle.
+    const REMINDER_DAYS = 28;
+
+    let modalText = '';
+
+    if (!lastPhotoDate) {
+      shouldRemind = true;
+      if (daysSinceStart < 14) {
+        modalText = "ברוך הבא לתוכנית! 🚀 כדי שתוכל לראות את ההתקדמות שלך בצורה הטובה ביותר בעתיד, מומלץ מאוד לצלם תמונת 'לפני' עכשיו (ביום הראשון).";
+      } else {
+        modalText = "עוד לא צילמת תמונת מצב! כדי שתוכל לעקוב אחר השינויים בגוף לאורך התוכנית, מומלץ לצלם ולהעלות תמונה עכשיו.";
+      }
+    } else {
+      const daysSinceLastPhoto = Math.floor((now - lastPhotoDate) / (1000 * 60 * 60 * 24));
+      if (daysSinceLastPhoto >= REMINDER_DAYS) {
+        shouldRemind = true;
+        modalText = "עברו 4 שבועות מהתמונה האחרונה שלך. הגיע הזמן לתעד את השינוי! מומלץ לצלם ולהעלות תמונה עדכנית עכשיו.";
+      }
+    }
+
+    if (shouldRemind) {
+      setTimeout(() => {
+        UI.showModal('זמן לתמונת התקדמות! 📸', `
+          <div style="text-align: center;">
+            <p style="margin-bottom: 16px; font-size: 15px; color: var(--text-secondary);">${modalText}</p>
+            <button id="remind-go-btn" class="btn-primary" style="width: 100%; margin-bottom: 8px;">למעבר לעמוד התקדמות</button>
+            <button id="remind-later-btn" class="btn-secondary" style="width: 100%;">הזכר לי מחר (נודניק)</button>
+          </div>
+        `);
+        document.getElementById('remind-go-btn').onclick = () => {
+          UI.hideModal();
+          navigateTo('stats');
+        };
+        document.getElementById('remind-later-btn').onclick = async () => {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          await DB.setSetting('photoSnoozeUntil', tomorrow.toISOString());
+          UI.hideModal();
+          UI.toast('נזכיר לך מחר! ⏰', 'info');
+        };
+      }, 1000); // 1s after splash closes
+    }
   }
 
   /**
@@ -254,41 +331,22 @@ const App = (() => {
     // Smart Scheduling Rest Days
     DB.getSetting('restDays').then(restDays => {
       const selected = restDays || [5, 6];
-      const checkboxes = document.querySelectorAll('.rest-day-cb');
-      
-      const updateCheckboxes = () => {
-        const checkedCount = document.querySelectorAll('.rest-day-cb:checked').length;
-        checkboxes.forEach(cb => {
-          if (!cb.checked) {
-            cb.disabled = checkedCount >= 2;
-          }
-        });
-      };
-
-      checkboxes.forEach(cb => {
-        if (selected.includes(parseInt(cb.value))) {
-          cb.checked = true;
-        }
-        cb.addEventListener('change', updateCheckboxes);
-      });
-      
-      updateCheckboxes();
+      const selectElement = document.getElementById('rest-days-select');
+      if (selectElement) {
+        selectElement.value = selected[0].toString();
+      }
     });
 
     document.getElementById('save-rest-days-btn').addEventListener('click', async () => {
-      const selectedBoxes = Array.from(document.querySelectorAll('.rest-day-cb:checked'));
-      if (selectedBoxes.length !== 2) {
-        UI.toast('יש לבחור בדיוק 2 ימי מנוחה', 'warning');
-        return;
-      }
+      const selectElement = document.getElementById('rest-days-select');
+      const firstRestDay = parseInt(selectElement.value);
+      const secondRestDay = (firstRestDay + 1) % 7;
       
-      const newRestDays = selectedBoxes.map(cb => parseInt(cb.value));
+      const newRestDays = [firstRestDay, secondRestDay];
       try {
         await DB.setSetting('restDays', newRestDays);
         // Force rebuild of training plan
-        const count = await DB.loadTrainingPlan();
-        allPlanDays = await DB.getAllPlan();
-        allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
+        await DB.loadTrainingPlan();
         
         UI.toast('ימי המנוחה נשמרו! התוכנית חושבה מחדש 🗓️', 'success');
         setTimeout(() => location.reload(), 1500);

@@ -42,19 +42,41 @@ const CalendarPage = (() => {
     const weekLabel = `שבוע ${currentWeekNum}`;
     document.getElementById('cal-week-label').textContent = weekLabel;
 
-    // Get days for this week
-    const weekDays = allPlanDays.filter(d => d.week === weekLabel);
+    // Build standard Sunday-Saturday calendar weeks
+    // First, we need to know the dayOfWeek of the very first day (dayIndex 0)
+    const firstDay = allPlanDays[0];
+    const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    const startOffset = dayNames.indexOf(firstDay.dayOfWeek);
+    
+    // Calculate which days belong to the requested currentWeekNum (1-indexed)
+    // Week 1 starts with up to `startOffset` empty padding days.
+    const weekDays = [];
+    for (let i = 0; i < 7; i++) {
+      const globalIdx = ((currentWeekNum - 1) * 7) + i - startOffset;
+      if (globalIdx < 0 || globalIdx >= allPlanDays.length) {
+        weekDays.push(null); // Empty pad
+      } else {
+        weekDays.push(allPlanDays[globalIdx]);
+      }
+    }
 
-    // Get tracking data
-    const trackingPromises = weekDays.map(d => DB.getDayTracking(d.dayIndex));
+    // Get tracking data only for valid days
+    const trackingPromises = weekDays.map(d => d ? DB.getDayTracking(d.dayIndex) : Promise.resolve(null));
     const trackingData = await Promise.all(trackingPromises);
-
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
 
     // Render calendar grid
     const grid = document.getElementById('calendar-grid');
     grid.innerHTML = weekDays.map((day, idx) => {
+      if (!day) {
+        // Empty placeholder for padding
+        return `
+          <div class="calendar-day empty" style="opacity: 0.3; cursor: default; background: transparent; border: 1px dashed var(--border-color);">
+            <div class="calendar-day-name">${dayNames[idx]}</div>
+            <div class="calendar-day-date">-</div>
+          </div>
+        `;
+      }
+      
       const tracking = trackingData[idx];
       const isCompleted = tracking && tracking.completed;
       const typeInfo = UI.getDayTypeInfo(day.dayType);

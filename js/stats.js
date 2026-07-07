@@ -87,6 +87,9 @@ const StatsPage = (() => {
 
     // Render charts
     renderCharts(trackingMap, weightValues);
+
+    // Render photos
+    await renderPhotos();
   }
 
   /**
@@ -272,6 +275,168 @@ const StatsPage = (() => {
       ${heatmapHtml}
       ${weightChart}
     `;
+  }
+
+  /**
+   * Photo Management
+   */
+  async function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    img.onload = async () => {
+      const canvas = document.createElement('canvas');
+      const MAX_WIDTH = 600;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > MAX_WIDTH) {
+        height = Math.round((height * MAX_WIDTH) / width);
+        width = MAX_WIDTH;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Compress image
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+      await DB.savePhoto(Date.now().toString(), new Date().toISOString(), dataUrl);
+      UI.toast('התמונה נשמרה בהצלחה!', 'success');
+      
+      // Redirect to the "today" page after uploading
+      if (typeof App !== 'undefined') {
+        App.navigateTo('today');
+      } else {
+        render(); // Fallback just in case
+      }
+    };
+    img.src = URL.createObjectURL(file);
+  }
+
+  async function renderPhotos() {
+    const container = document.getElementById('stats-charts');
+    const photos = await DB.getAllPhotos();
+    
+    let photosHtml = `
+      <div class="chart-card" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
+        <div class="chart-title" style="display: flex; justify-content: space-between; align-items: center;">
+          <span>📸 מעקב תמונות מצב</span>
+          <button id="add-photo-btn" class="btn-primary" style="padding: 6px 12px; font-size: 14px;">+ צלם/העלה</button>
+          <input type="file" id="photo-upload-input" accept="image/*" capture="environment" style="display: none;">
+        </div>
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
+          מומלץ לצלם תמונה פעם ב-4 שבועות. התמונות נשמרות מקומית במכשיר שלך באופן מוקטן וחיסכוני.
+        </p>
+    `;
+
+    if (photos.length > 0) {
+      const photoCards = photos.map((p) => `
+        <div class="photo-card" style="position: relative; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: #000;">
+          <img src="${p.dataUrl}" style="width: 100%; height: 150px; object-fit: cover; display: block; opacity: 0.9;">
+          <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); color: white; padding: 4px 8px; font-size: 12px; text-align: center;">
+            ${UI.formatShortDate(p.date)}
+          </div>
+          <button class="delete-photo-btn" data-id="${p.id}" style="position: absolute; top: 4px; right: 4px; background: rgba(220,38,38,0.9); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">✕</button>
+        </div>
+      `).join('');
+
+      photosHtml += `
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-bottom: 16px;">
+          ${photoCards}
+        </div>
+        ${photos.length > 1 ? '<button id="play-timelapse-btn" class="btn-secondary" style="width: 100%;">▶️ נגן סרטון התקדמות</button>' : ''}
+      `;
+    } else {
+      photosHtml += `<div style="text-align: center; padding: 24px; background: var(--bg-input); border-radius: 8px; color: var(--text-secondary);">עדיין אין תמונות. העלה תמונה ראשונה כדי להתחיל לעקוב!</div>`;
+    }
+
+    photosHtml += `</div>`;
+
+    // Prepend photos before the charts
+    container.innerHTML = photosHtml + container.innerHTML;
+
+    // Attach listeners
+    const addBtn = document.getElementById('add-photo-btn');
+    const fileInput = document.getElementById('photo-upload-input');
+    if (addBtn && fileInput) {
+      addBtn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', handlePhotoUpload);
+    }
+
+    document.querySelectorAll('.delete-photo-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        if (confirm('האם אתה בטוח שברצונך למחוק תמונה זו?')) {
+          await DB.deletePhoto(e.target.dataset.id);
+          render();
+        }
+      });
+    });
+
+    const playBtn = document.getElementById('play-timelapse-btn');
+    if (playBtn) {
+      playBtn.addEventListener('click', () => playTimelapse(photos));
+    }
+  }
+
+  function playTimelapse(photos) {
+    if (!photos || photos.length < 2) return;
+    
+    let currentIndex = 0;
+    const modalContent = `
+      <div style="text-align: center; padding-bottom: 16px;">
+        <h3 style="margin-bottom: 16px; color: var(--text-primary);">סרטון התקדמות</h3>
+        <div style="position: relative; width: 100%; max-width: 400px; margin: 0 auto; border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+          <img id="timelapse-img" src="${photos[0].dataUrl}" style="width: 100%; height: auto; max-height: 60vh; object-fit: contain; display: block; transition: opacity 0.4s ease;">
+          <div id="timelapse-date" style="position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; color: white; font-weight: bold; font-size: 20px; text-shadow: 0 2px 6px rgba(0,0,0,0.9); background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 20px 0 10px 0;">
+            ${UI.formatShortDate(photos[0].date)}
+          </div>
+        </div>
+        <div style="margin-top: 16px; color: var(--text-secondary); font-size: 14px;">
+          מנגן...
+        </div>
+      </div>
+    `;
+
+    UI.showModal('', modalContent);
+    // Remove the default modal header title to keep it clean
+    const titleEl = document.getElementById('modal-title');
+    if (titleEl) titleEl.textContent = '';
+
+    const imgEl = document.getElementById('timelapse-img');
+    const dateEl = document.getElementById('timelapse-date');
+
+    const interval = setInterval(() => {
+      currentIndex++;
+      if (currentIndex >= photos.length) {
+        clearInterval(interval);
+        return;
+      }
+      
+      imgEl.style.opacity = 0.3;
+      setTimeout(() => {
+        imgEl.src = photos[currentIndex].dataUrl;
+        dateEl.textContent = UI.formatShortDate(photos[currentIndex].date);
+        imgEl.style.opacity = 1;
+      }, 200);
+      
+    }, 1500);
+
+    // Stop interval if modal closed
+    const modalClose = document.getElementById('modal-close');
+    const oldClose = modalClose.onclick;
+    modalClose.onclick = () => {
+      clearInterval(interval);
+      if (oldClose) {
+        // Find existing listener or just hide modal
+        UI.hideModal();
+      } else {
+        UI.hideModal();
+      }
+    };
   }
 
   return {

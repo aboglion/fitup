@@ -129,11 +129,11 @@ window.ExporterGuide = (() => {
         <h3>📈 פרוגרסיות מובנות בתוכנית</h3>
         <table>
           <tr><th>תחום</th><th>שלב 1 (שבועות 1-12)</th><th>שלב 2 (שבועות 13-33)</th><th>שלב 3 (שבועות 34-52)</th></tr>
-          <tr><td><strong>לחיצה (A1)</strong></td><td>Incline Push-up 2-3×6-12</td><td>Push-up / Diamond Push-up 3-4×8-12</td><td>Diamond Push-up 4-5×8-12</td></tr>
-          <tr><td><strong>משיכה אנכית (B1)</strong></td><td>Scapular Pull-up 2-3×8-12</td><td>Pull-up 3-5×5-8</td><td>Chin-up 5×8</td></tr>
-          <tr><td><strong>משיכה אופקית (A2)</strong></td><td>Band Row 3×8-12</td><td>Inverted Row 4-5×8-12</td><td>Inverted Row 5×10-15</td></tr>
-          <tr><td><strong>רגליים (C1)</strong></td><td>Squat איטי 3×8-10</td><td>Split Squat / Bulgarian 3-4×8-10</td><td>Bulgarian Split Squat 5×8</td></tr>
-          <tr><td><strong>גלוטאוס (C2)</strong></td><td>Banded Hip Thrust 3×10-12</td><td>Banded Hip Thrust 3-4×8-12</td><td>Single-leg Hip Thrust 4-5×8-10 לכל רגל</td></tr>
+          <tr><td><strong>לחיצה (A1)</strong></td><td>Incline Push-up 2-3×6-12</td><td>Push-up / Diamond Push-up 3-4×8-12</td><td>Banded Push-up 4-5×8-12</td></tr>
+          <tr><td><strong>משיכה אנכית (B1)</strong></td><td>Scapular Pull-up / Band-assisted 2-3×8-12</td><td>Chin-up 3-5×5-8</td><td>Pull-up 3-5×5-8</td></tr>
+          <tr><td><strong>משיכה אופקית (A2)</strong></td><td>Band Row 3×8-12</td><td>Single-arm Band Row 3-4×8-10</td><td>Single-arm Band Row 4-5×10-12</td></tr>
+          <tr><td><strong>רגליים (C1)</strong></td><td>Squat איטי 3×8-10</td><td>Split Squat / Bulgarian 3-4×8-10</td><td>Banded Bulgarian Split Squat 4-5×6-8</td></tr>
+          <tr><td><strong>גלוטאוס (C2)</strong></td><td>Banded RDL 3×10-12</td><td>Banded Hip Thrust 3-4×8-12</td><td>Single-leg Hip Thrust 4-5×8-10 לכל רגל</td></tr>
           <tr><td><strong>ליבה (D1)</strong></td><td>Hollow Body Hold 2-3×20-30s</td><td>Hanging Leg Raise 3-5×8-10</td><td>Hanging Leg Raise 5×10-15</td></tr>
           <tr><td><strong>כתפיים (B2)</strong></td><td>Banded OHP 3×8-10</td><td>Banded OHP 3-4×8</td><td>Pike Push-up 4-5×8-10</td></tr>
           <tr><td><strong>Anti-Rotation (D2)</strong></td><td>Pallof Press 3×10-12</td><td>Pallof Press 3-4×8-10 לכל צד</td><td>Copenhagen Plank 3×20-30 שניות</td></tr>

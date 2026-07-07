@@ -49,8 +49,8 @@
           <span class="nav-link-text">תרגילים</span>
         </button>
         <button class="nav-link" data-page="stats" id="nav-stats">
-          <span class="nav-link-icon">📊</span>
-          <span class="nav-link-text">סטטיסטיקות</span>
+          <span class="nav-link-icon">📈</span>
+          <span class="nav-link-text">התקדמות</span>
         </button>
         <button class="nav-link" data-page="settings" id="nav-settings">
           <span class="nav-link-icon">⚙️</span>
@@ -70,8 +70,8 @@
         <span class="bottom-nav-text">תרגילים</span>
       </button>
       <button class="bottom-nav-link" data-page="stats" id="bnav-stats">
-        <span class="bottom-nav-icon">📊</span>
-        <span class="bottom-nav-text">סטטיסטיקות</span>
+        <span class="bottom-nav-icon">📈</span>
+        <span class="bottom-nav-text">התקדמות</span>
       </button>
       <button class="bottom-nav-link" data-page="settings" id="bnav-settings">
         <span class="bottom-nav-icon">⚙️</span>
@@ -183,7 +183,7 @@
       <!-- Stats Page -->
       <section id="page-stats" class="page">
         <div class="page-header">
-          <h1 class="page-title">סטטיסטיקות</h1>
+          <h1 class="page-title">התקדמות</h1>
         </div>
         <div id="stats-overview" class="stats-overview"></div>
         <div id="stats-charts" class="stats-charts"></div>
@@ -226,16 +226,18 @@
             </div>
           </div>
           <div class="settings-card">
-            <h3>📅 ימי מנוחה (Smart Scheduling)</h3>
-            <p>בחר 2 ימי מנוחה קבועים, והמערכת תשבץ את האימונים שלך באופן חכם מסביבם:</p>
-            <div class="rest-days-selector" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; margin: 12px 0;">
-              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="0"> ראשון</label>
-              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="1"> שני</label>
-              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="2"> שלישי</label>
-              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="3"> רביעי</label>
-              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="4"> חמישי</label>
-              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="5"> שישי</label>
-              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="6"> שבת</label>
+            <h3>📅 ימי מנוחה קבועים</h3>
+            <p>בחר את סוף השבוע שלך (יומיים ברצף). האפליקציה תשבץ את האימונים אוטומטית בימים הנותרים:</p>
+            <div style="margin: 12px 0;">
+              <select id="rest-days-select" style="width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); font-family: inherit; font-size: 15px;">
+                <option value="5">שישי ושבת (ברירת מחדל)</option>
+                <option value="6">שבת וראשון</option>
+                <option value="0">ראשון ושני</option>
+                <option value="1">שני ושלישי</option>
+                <option value="2">שלישי ורביעי</option>
+                <option value="3">רביעי וחמישי</option>
+                <option value="4">חמישי ושישי</option>
+              </select>
             </div>
             <div class="settings-actions">
               <button id="save-rest-days-btn" class="btn-primary">💾 שמור ובנה תוכנית מחדש</button>
