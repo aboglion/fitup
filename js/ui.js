@@ -164,8 +164,8 @@ const UI = (() => {
     
     if (n.includes('band') || n.includes('pallof') || n.includes('face pull')) return { label: 'גומיה', icon: '➰' };
     if (n.includes('wall')) return { label: 'קיר', icon: '🧱' };
-    if (n.includes('box') || n.includes('bulgarian') || n.includes('incline')) return { label: 'כיסא', icon: '🪑' };
-    if (n.includes('hang') || n.includes('pull-up') || n.includes('inverted row')) return { label: 'מוט', icon: '🧗‍♂️' };
+    if (n.includes('box') || n.includes('bulgarian') || n.includes('incline') || n.includes('hip thrust') || n.includes('copenhagen')) return { label: 'כיסא', icon: '🪑' };
+    if (n.includes('hang') || n.includes('pull-up') || n.includes('inverted row') || n.includes('chin-up')) return { label: 'מוט', icon: '🧗‍♂️' };
     if (n.includes('foam roll')) return { label: 'גליל עיסוי', icon: '🪵' };
     
     // Default or bodyweight exercises
