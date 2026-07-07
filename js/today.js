@@ -305,8 +305,8 @@ const TodayPage = (() => {
       }
 
       return `
-        <div class="exercise-card ${isCompleted ? 'completed' : ''}" id="ex-card-${idx}">
-          <div class="exercise-hero-container" onclick="TodayPage.toggleExpand(${idx})" style="--glow-color: ${color};">
+        <div class="exercise-card ${isCompleted ? 'completed' : ''}" id="ex-card-${idx}" style="--glow-color: ${color};">
+          <div class="exercise-hero-container" onclick="TodayPage.toggleExpand(${idx})">
             <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
                  class="exercise-hero-image"
                  alt="${ex.name}" onerror="this.parentElement.style.display='none'">

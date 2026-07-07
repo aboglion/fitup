@@ -174,14 +174,16 @@
 
       <!-- Exercises Guide Page -->
       <section id="page-exercises" class="page">
-        <div class="page-header">
-          <h1 class="page-title">מדריך תרגילים</h1>
-          <div class="search-box">
-            <input type="text" id="exercise-search" placeholder="חפש תרגיל..." class="search-input">
+        <div id="exercises-sticky-header" class="sticky-header">
+          <div class="page-header" style="margin-bottom: 12px;">
+            <h1 class="page-title">מדריך תרגילים</h1>
+            <div class="search-box">
+              <input type="search" id="exercise-search" placeholder="חפש תרגיל..." class="search-input">
+            </div>
           </div>
-        </div>
-        <div id="exercise-filters" class="exercise-filters">
-          <button class="filter-btn active" data-filter="all">הכל</button>
+          <div id="exercise-filters" class="exercise-filters">
+            <button class="filter-btn active" data-filter="all">הכל</button>
+          </div>
         </div>
         <div id="exercise-guide" class="exercise-guide"></div>
       </section>
@@ -208,6 +210,13 @@
               <button id="export-data-btn" class="btn-secondary">📤 ייצוא נתונים</button>
               <label class="btn-secondary" for="import-data-input">📥 ייבוא נתונים</label>
               <input type="file" id="import-data-input" accept=".json" style="display:none">
+            </div>
+          </div>
+          <div class="settings-card">
+            <h3>📖 מדריך התוכנית המלא</h3>
+            <p>הפק מדריך מפורט של התוכנית השנתית, הכולל הסברים על מבנה התוכנית, חלוקת הימים, התרגילים ושלבי ההתקדמות</p>
+            <div class="settings-actions">
+              <button id="export-guide-btn" class="btn-primary" style="width:100%">📄 צפה והורד מדריך מלא</button>
             </div>
           </div>
           <div class="settings-card">
@@ -284,6 +293,7 @@
   <script src="js/calendar.js"></script>
   <script src="js/exercises.js"></script>
   <script src="js/stats.js"></script>
+  <script src="js/export-guide.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

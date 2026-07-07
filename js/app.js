@@ -182,6 +182,11 @@ const App = (() => {
       }
     });
 
+    // Export Program Guide
+    if (window.ExporterGuide) {
+      window.ExporterGuide.init();
+    }
+
     // Import data
     document.getElementById('import-data-input').addEventListener('change', async (e) => {
       const file = e.target.files[0];

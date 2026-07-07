@@ -260,6 +260,7 @@ body {
 /* ===== Page Container ===== */
 .page-container {
   flex: 1;
+  min-width: 0; /* Prevents horizontal scroll blowout from inner containers */
   margin-right: var(--nav-width);
   padding: var(--space-xl) var(--space-xl) var(--space-2xl);
   max-width: 960px;
