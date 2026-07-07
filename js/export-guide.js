@@ -120,32 +120,32 @@ window.ExporterGuide = (() => {
         <p>תוכנית אימונים זו תוכננה למשך 365 ימים (52 שבועות) במטרה לבנות כוח, מסת שריר, תנועתיות, ולהקנות הרגלים בריאים ארוכי טווח. הפילוסופיה של התוכנית היא <strong>התקדמות הדרגתית (Progressive Overload)</strong> תוך מתן דגש שווה להתאוששות ולאיזון שרירי מלא.</p>
 
         <h3>⚙️ כיצד מחולקים הימים?</h3>
-        <p>התוכנית בנויה ממחזורים המשלבים עבודה מאומצת יחד עם התאוששות פעילה ופאסיבית:</p>
         <ul>
-          <li><strong>💪 ימי כוח:</strong> תרגילי התנגדות לבניית שריר וכוח. משלב פרוגרסיית Pull-up מובנית (Active Hang → Negative → Pull-up מלא) ואיזון שרשרת אחורית (Hip Thrust לגלוטאוס בשבועות אי-זוגיים, Banded GM ל-Hamstrings בשבועות זוגיים).</li>
-          <li><strong>🚶‍♂️ ימי הליכה:</strong> התאוששות פעילה + עבודת ליבה, יציבה ובריאות כתפיים. ימי שני כוללים Face Pull ו-Dead Bug. ימי רביעי כוללים Reverse Snow Angel ו-Face Pull.</li>
-          <li><strong>🧘‍♂️ ימי מנוחה:</strong> מנוחה מלאה, מתיחות ו-Foam Roll. תזונה ושינה — חלק קריטי בבניית השריר.</li>
+          <li><strong>💪 ימי כוח (א׳/ג׳/ה׳):</strong> תרגילי התנגדות לבניית שריר וכוח. מכילים פרוגרסיית Pull-up מובנית ואיזון שרשרת אחורית (Hip Thrust/Banded GM לסירוגין).</li>
+          <li><strong>🚶 ימי הליכה (ב׳/ד׳):</strong> התאוששות פעילה + ליבה, יציבה ובריאות כתפיים. כוללים Face Pull, Dead Bug ו-Reverse Snow Angel.</li>
+          <li><strong>🧘 ימי מנוחה (ו׳/ש׳):</strong> מנוחה מלאה, מתיחות ו-Foam Roll. תזונה ושינה — חלק קריטי בבניית השריר.</li>
         </ul>
 
-        <h3>📈 כיצד מתקדמים בתוכנית?</h3>
-        <ol>
-          <li><strong>Progressive Overload:</strong> העלאת התנגדות, הגדלת סטים/חזרות, או מעבר לוריאציות קשות יותר.</li>
-          <li><strong>RPE (Rate of Perceived Exertion):</strong> RPE 7-8 = עוד 2-3 חזרות לפני כשל. מאפשר התאמה למצב יומי.</li>
-          <li><strong>פרוגרסיית Pull-up:</strong> שבועות 1-4: Active Hang → שבועות 5-12: Negative Pull-up → שבועות 17+: Pull-up מלא.</li>
-          <li><strong>איזון שרשרת אחורית:</strong> שבועות זוגיים = Banded GM (Hamstrings) | אי-זוגיים = Hip Thrust (Glutes).</li>
-        </ol>
+        <h3>📈 פרוגרסיות מובנות בתוכנית</h3>
+        <table>
+          <tr><th>תחום</th><th>שלב 1 (שבועות 1-12)</th><th>שלב 2 (שבועות 13-24)</th><th>שלב 3 (שבועות 25+)</th></tr>
+          <tr><td><strong>לחיצה</strong></td><td>Incline Push-up 2-3×6-12</td><td>Push-up רגיל / Diamond 3-4×8-12</td><td>Diamond Push-up 4-5×8-12</td></tr>
+          <tr><td><strong>משיכה אנכית</strong></td><td>Active Hang + Scapular + Negative</td><td>Negative Pull-up → Pull-up 3-5×5-8</td><td>Chin-up 3-5×5-8</td></tr>
+          <tr><td><strong>משיכה אופקית</strong></td><td>Band Row 3×8-12 | 30-40kg</td><td>Inverted Row 4×8-12 | 40kg</td><td>Inverted Row 5×מקס | 50kg</td></tr>
+          <tr><td><strong>רגליים</strong></td><td>Squat איטי 3×8-12</td><td>Split Squat 3×8-10</td><td>Bulgarian Split Squat 5×8</td></tr>
+          <tr><td><strong>שרשרת אחורית</strong></td><td>Hip Thrust/GM 3×10-12 | 30kg</td><td>Hip Thrust/GM 3×10-12 | 40kg</td><td>Hip Thrust/GM 4-5×8-12 | 50kg</td></tr>
+          <tr><td><strong>ליבה</strong></td><td>Hollow Hold 2-3×20-30s</td><td>Hollow Hold 3×30-45s</td><td>Hanging Leg Raise 5×10-15</td></tr>
+          <tr><td><strong>כתפיים</strong></td><td>Banded OHP 3×8-10 | 30kg</td><td>Banded OHP 3-4×8 | 40kg</td><td>Banded OHP 4-5×6-8 | 50kg</td></tr>
+        </table>
 
-        <h3>🧠 על מה התרגילים עובדים ולמה נבחרו?</h3>
-        <ul>
-          <li><strong>לחיצות (Push-ups, OHP):</strong> חזה, כתפיים, טריצפס. פרוגרסיה: Incline → רגיל → Diamond.</li>
-          <li><strong>משיכות (Rows, Pull-ups):</strong> גב, ביצפס, יציבה. מאזנות את עומס הלחיצות.</li>
-          <li><strong>בריאות כתפיים (Face Pull):</strong> Rotator Cuff + rear deltoid. מונע פציעות כתף לאחר Push-ups ו-Pull-ups רבים.</li>
-          <li><strong>רגליים (Squats, Split Squats, Bulgarian):</strong> ארבע-ראשי. פרוגרסיה מלאה לאורך 52 שבועות.</li>
-          <li><strong>שרשרת אחורית (Hip Thrust, Banded GM):</strong> גלוטאוס + Hamstrings — מאוזן ומלא.</li>
-          <li><strong>ליבה (Hollow Hold, Dead Bug, Pallof Press):</strong> סטטי, דינמי ואנטי-רוטציה — 3 וקטורים שונים.</li>
-          <li><strong>יציבה (Reverse Snow Angel, Bird-Dog):</strong> Trapezius תחתון + rhomboids — מונע כתפיים קדמיות.</li>
-          <li><strong>שוקיים (Calf Raise, Tibialis Raise):</strong> שוק קדמי ואחורי — בריאות קרסול וברך.</li>
-        </ul>
+        <h3>🔄 Deload — שבועות התאוששות (25, 33, 41, 49)</h3>
+        <p>כל 8 שבועות יש <strong>שבוע Deload</strong> — נפח מופחת (3×5 חזרות) ועומס שלב אחד מתחת לשיא. מטרתו: מניעת אוברטריינינג, איפוס מערכת העצבים ושמירה על מומנטום ארוך טווח. לאחריו מגיע שיא כוח חדש.</p>
+
+        <h3>⚖️ איזון שרשרת אחורית — Hip Thrust מול Banded GM</h3>
+        <p><strong>שבועות אי-זוגיים:</strong> Banded Hip Thrust (גלוטאוס מקסימום) | <strong>שבועות זוגיים:</strong> Banded GM (Hamstrings + erector spinae). שילוב זה מונע חוסר איזון בין הגלוטאוס לירך האחורית ומפחית ריסק פציעות ברך ועמ"ש.</p>
+
+        <h3>🛡️ בריאות כתפיים — Face Pull בכל יום הליכה</h3>
+        <p>Face Pull מחזק את ה-Rotator Cuff וה-rear deltoid — הגנה קריטית מפני פציעות כתף לאחר כמות גדולה של Push-ups, Pull-ups ו-OHP. מופיע בכל 104 ימי ההליכה לאורך השנה.</p>
       </div>
 
       <div class="section">
