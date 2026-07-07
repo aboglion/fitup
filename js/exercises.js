@@ -4,7 +4,7 @@
 const ExercisesPage = (() => {
   let allExercises = [];
   let categories = [];
-  let isTreeView = false;
+  let isTreeView = true;
 
   const SKILL_PATHS = [
     {
@@ -97,7 +97,7 @@ const ExercisesPage = (() => {
       filters.style.display = 'none';
       treeContainer.style.display = 'flex';
       btn.classList.add('active');
-      titleText.textContent = 'חזור למדריך';
+      btn.innerHTML = '<span>📚</span><span class="tree-btn-text">לכל התרגילים</span>';
       renderSkillTree();
     } else {
       treeContainer.style.display = 'none';
@@ -105,7 +105,7 @@ const ExercisesPage = (() => {
       searchBox.style.display = 'block';
       filters.style.display = 'flex';
       btn.classList.remove('active');
-      titleText.textContent = 'עץ התקדמות';
+      btn.innerHTML = '<span>🌳</span><span class="tree-btn-text">עץ התקדמות</span>';
       render(document.getElementById('exercise-search').value, getActiveFilter());
     }
   }
@@ -204,7 +204,10 @@ const ExercisesPage = (() => {
    * Render exercises guide
    */
   function render(searchTerm = '', filterCategory = 'all') {
-    if(isTreeView) return;
+    if(isTreeView) {
+      renderSkillTree();
+      return;
+    }
     
     let filtered = allExercises;
 

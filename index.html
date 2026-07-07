@@ -177,20 +177,20 @@
         <div id="exercises-sticky-header" class="sticky-header">
           <div class="page-header" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
             <h1 class="page-title">מדריך תרגילים</h1>
-            <button id="toggle-tree-btn" class="btn-secondary" style="padding: 8px 12px; gap: 6px; display: flex; align-items: center; border-radius: 8px;">
-              <span>🌳</span>
-              <span class="tree-btn-text">עץ התקדמות</span>
+            <button id="toggle-tree-btn" class="btn-secondary active" style="padding: 8px 12px; gap: 6px; display: flex; align-items: center; border-radius: 8px;">
+              <span>📚</span>
+              <span class="tree-btn-text">לכל התרגילים</span>
             </button>
           </div>
-          <div class="search-box" id="exercise-search-box">
+          <div class="search-box" id="exercise-search-box" style="display: none;">
             <input type="search" id="exercise-search" placeholder="חפש תרגיל..." class="search-input">
           </div>
-          <div id="exercise-filters" class="exercise-filters">
+          <div id="exercise-filters" class="exercise-filters" style="display: none;">
             <button class="filter-btn active" data-filter="all">הכל</button>
           </div>
         </div>
-        <div id="exercise-guide" class="exercise-guide"></div>
-        <div id="skill-tree-container" class="skill-tree-container" style="display: none; padding: 16px 0;"></div>
+        <div id="exercise-guide" class="exercise-guide" style="display: none;"></div>
+        <div id="skill-tree-container" class="skill-tree-container" style="padding: 16px 0;"></div>
       </section>
 
       <!-- Stats Page -->
