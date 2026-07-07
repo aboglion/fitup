@@ -20,12 +20,17 @@ const App = (() => {
       // Initialize IndexedDB
       await DB.init();
 
-      // Check if plan is loaded
+      // Check if plan is loaded or needs update
+      const currentDataVersion = 5; // Bumped to force reload for user
+      const savedDataVersion = await DB.getSetting('dataVersion');
+      
       const planCount = await DB.count(DB.STORES.PLAN);
       const exCount = await DB.count(DB.STORES.EXERCISES);
-      if (planCount === 0 || exCount === 0) {
-        // First load or partial load - import training data
+      
+      if (planCount === 0 || exCount === 0 || savedDataVersion !== currentDataVersion) {
+        console.log("Reloading training plan due to data version change or empty DB.");
         await DB.loadTrainingPlan();
+        await DB.setSetting('dataVersion', currentDataVersion);
       }
 
       // Load all plan data
