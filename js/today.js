@@ -290,22 +290,38 @@ const TodayPage = (() => {
         ? `<a href="${videoUrl}" target="_blank" class="exercise-video-btn" title="צפה בסרטון" style="text-decoration: none; color: var(--danger);" onclick="event.stopPropagation();">▶</a>`
         : '';
 
+      // Find previous occurrence
+      let prevEx = null;
+      for (let i = currentDayIndex - 1; i >= 0; i--) {
+        const pastDay = allPlanDays[i];
+        if (pastDay && pastDay.exercises) {
+          prevEx = pastDay.exercises.find(e => e.name === ex.name);
+          if (prevEx) break;
+        }
+      }
+
+      const isNewExercise = !prevEx && currentDayIndex > 0;
+      const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
+      const isWeightChanged = prevEx && ex.weight !== prevEx.weight && ex.weight !== null && ex.weight !== '—' && ex.weight !== 'משקל גוף';
+
       // Detail line - only show weight if it exists
       const detailParts = [UI.getCategoryLabel(ex.slot)];
-      if (ex.sets) detailParts.push(ex.sets);
+      if (ex.sets) {
+        detailParts.push(isSetsChanged ? `<span class="alert-pulse-text" title="שינוי בסטים/חזרות!">${ex.sets}</span>` : ex.sets);
+      }
       
       const equip = UI.getEquipment(ex.name);
       
       if (hasWeight) {
+        let weightText = ex.weight;
         if (equip && equip.label === 'גומיה') {
-          detailParts.push(`משקל גומיה: ${ex.weight}`);
-        } else {
-          detailParts.push(ex.weight);
+          weightText = `משקל גומיה: ${ex.weight}`;
         }
+        detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="שינוי במשקל!">${weightText}</span>` : weightText);
       }
 
       return `
-        <div class="exercise-card ${isCompleted ? 'completed' : ''}" id="ex-card-${idx}" style="--glow-color: ${color};">
+        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="ex-card-${idx}" style="--glow-color: ${color};">
           <div class="exercise-hero-container" onclick="TodayPage.toggleExpand(${idx})">
             <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
                  class="exercise-hero-image"
