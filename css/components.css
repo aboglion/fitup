@@ -1434,11 +1434,10 @@ html.light-theme .exercise-hero-container::after {
   border: 1px solid var(--border-color);
 }
 :root:not(.light-theme) .skill-node-image {
-  background: radial-gradient(circle at center, #d1d5db 0%, #9ca3af 100%);
+  background: radial-gradient(circle at center, #ffffff 0%, #d1d5db 100%);
 }
 
 .skill-node.unlocked .skill-node-image {
-  mix-blend-mode: multiply;
   border-color: rgba(56, 189, 248, 0.3);
 }
 
