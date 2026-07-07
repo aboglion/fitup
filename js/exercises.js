@@ -170,12 +170,12 @@ const ExercisesPage = (() => {
         
         let videoBtn = '';
         if (exData && exData.videoUrl) {
-          videoBtn = `<a href="${exData.videoUrl}" target="_blank" class="skill-video-btn" title="צפה בסרטון">▶</a>`;
+          videoBtn = `<a href="${exData.videoUrl}" target="_blank" class="skill-video-btn" title="צפה בסרטון" onclick="event.stopPropagation()">▶</a>`;
         }
 
         html += `
           <div class="skill-node-wrapper ${stateClass}">
-            <div class="skill-node ${stateClass}">
+            <div class="skill-node ${stateClass}" onclick="ExercisesPage.showExerciseDetails('${node.name.replace(/'/g, "\\'")}')" style="cursor: pointer;">
               ${videoBtn}
               <img src="${imgSrc}" class="skill-node-image" alt="${node.name}" onerror="this.style.display='none'">
               <div class="skill-node-content">
@@ -238,44 +238,63 @@ const ExercisesPage = (() => {
     }
 
     container.innerHTML = filtered.map(ex => {
-      const diffClass = UI.getDifficultyClass(ex.difficulty);
-      const videoLink = ex.videoUrl
-        ? `<a href="${ex.videoUrl}" target="_blank" class="exercise-video-btn" title="צפה בסרטון" style="text-decoration: none; color: var(--danger);">▶</a>`
-        : '';
+      return generateGuideCardHTML(ex);
+    }).join('');
+  }
 
-      const equip = UI.getEquipment(ex.name);
-      let weightDisplay = ex.weight || '';
-      if (weightDisplay && equip && equip.label === 'גומיה' && weightDisplay !== '—' && weightDisplay !== 'משקל גוף') {
-        weightDisplay = `משקל גומיה: ${weightDisplay}`;
-      }
+  /**
+   * Generate HTML for a guide card
+   */
+  function generateGuideCardHTML(ex) {
+    const diffClass = UI.getDifficultyClass(ex.difficulty);
+    const videoLink = ex.videoUrl
+      ? `<a href="${ex.videoUrl}" target="_blank" class="exercise-video-btn" title="צפה בסרטון" style="text-decoration: none; color: var(--danger);">▶</a>`
+      : '';
 
-      return `
-        <div class="guide-card">
-          <div class="guide-card-image-container diff-${diffClass}">
-            <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onerror="this.parentElement.style.display='none'">
+    const equip = UI.getEquipment(ex.name);
+    let weightDisplay = ex.weight || '';
+    if (weightDisplay && equip && equip.label === 'גומיה' && weightDisplay !== '—' && weightDisplay !== 'משקל גוף') {
+      weightDisplay = `משקל גומיה: ${weightDisplay}`;
+    }
+
+    return `
+      <div class="guide-card">
+        <div class="guide-card-image-container diff-${diffClass}">
+          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onerror="this.parentElement.style.display='none'">
+        </div>
+        <div class="guide-card-content">
+          <div class="guide-card-title">
+            ${ex.name}
+            ${equip ? `<span class="guide-equipment">${equip.icon} ${equip.label}</span>` : ''}
           </div>
-          <div class="guide-card-content">
-            <div class="guide-card-title">
-              ${ex.name}
-              ${equip ? `<span class="guide-equipment">${equip.icon} ${equip.label}</span>` : ''}
-            </div>
-            <span class="guide-card-category">${ex.category || ''}</span>
-            <div class="guide-card-sets">${ex.setsProgression || ''}</div>
-            <div class="guide-card-meta">
-              <span class="guide-difficulty ${diffClass}">${ex.difficulty || ''}</span>
-              ${weightDisplay ? `<span class="guide-weight">${weightDisplay}</span>` : ''}
-              ${videoLink}
-            </div>
+          <span class="guide-card-category">${ex.category || ''}</span>
+          <div class="guide-card-sets">${ex.setsProgression || ''}</div>
+          <div class="guide-card-meta">
+            <span class="guide-difficulty ${diffClass}">${ex.difficulty || ''}</span>
+            ${weightDisplay ? `<span class="guide-weight">${weightDisplay}</span>` : ''}
+            ${videoLink}
           </div>
         </div>
-      `;
-    }).join('');
+      </div>
+    `;
+  }
+
+  /**
+   * Show exercise details in modal
+   */
+  function showExerciseDetails(name) {
+    const ex = allExercises.find(e => e.name === name);
+    if(!ex) return;
+
+    const html = generateGuideCardHTML(ex);
+    UI.showModal('פרטי תרגיל', html);
   }
 
   return {
     init,
     render,
-    setFilter
+    setFilter,
+    showExerciseDetails
   };
 })();
 
