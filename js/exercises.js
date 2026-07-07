@@ -10,35 +10,31 @@ const ExercisesPage = (() => {
     {
       title: 'דחיפה (Push)',
       exercises: [
-        { name: 'Wall Push-up', unlockWeek: 1 },
         { name: 'Incline Push-up', unlockWeek: 1 },
         { name: 'Push-up רגיל', unlockWeek: 13 },
         { name: 'Diamond Push-up', unlockWeek: 17 },
-        { name: 'Pike Push-up', unlockWeek: 25 }
+        { name: 'Pike Push-up', unlockWeek: 34 }
       ]
     },
     {
       title: 'משיכה אופקית (Horizontal Pull)',
       exercises: [
         { name: 'Band Row', unlockWeek: 1 },
-        { name: 'Inverted Row', unlockWeek: 13 }
+        { name: 'Inverted Row', unlockWeek: 5 }
       ]
     },
     {
       title: 'משיכה אנכית (Vertical Pull)',
       exercises: [
-        { name: 'Active Hang', unlockWeek: 1 },
-        { name: 'Scapular Pull-up', unlockWeek: 3 },
-        { name: 'Negative Pull-up', unlockWeek: 5 },
+        { name: 'Scapular Pull-up', unlockWeek: 1 },
         { name: 'Pull-up', unlockWeek: 17 },
-        { name: 'Chin-up', unlockWeek: 21 }
+        { name: 'Chin-up', unlockWeek: 25 }
       ]
     },
     {
       title: 'רגליים (Legs)',
       exercises: [
-        { name: 'Box Squat', unlockWeek: 1 },
-        { name: 'Squat איטי', unlockWeek: 9 },
+        { name: 'Squat איטי', unlockWeek: 1 },
         { name: 'Split Squat', unlockWeek: 13 },
         { name: 'Bulgarian Split Squat', unlockWeek: 17 }
       ]
@@ -46,16 +42,22 @@ const ExercisesPage = (() => {
     {
       title: 'ליבה (Core)',
       exercises: [
-        { name: 'Dead Bug', unlockWeek: 1 },
         { name: 'Hollow Body Hold', unlockWeek: 1 },
         { name: 'Hanging Leg Raise', unlockWeek: 17 }
       ]
     },
     {
+      title: 'ליבה צידית (Side Core)',
+      exercises: [
+        { name: 'Pallof Press', unlockWeek: 1 },
+        { name: 'Copenhagen Plank', unlockWeek: 42 }
+      ]
+    },
+    {
       title: 'ישבן וגב תחתון',
       exercises: [
-        { name: 'Banded GM', unlockWeek: 1 },
-        { name: 'Banded Hip Thrust', unlockWeek: 5 }
+        { name: 'Banded Hip Thrust', unlockWeek: 1 },
+        { name: 'Single-leg Hip Thrust', unlockWeek: 34 }
       ]
     }
   ];
