@@ -21,7 +21,7 @@ const App = (() => {
       await DB.init();
 
       // Check if plan is loaded or needs update
-      const currentDataVersion = 5; // Bumped to force reload for user
+      const currentDataVersion = 6; // Bumped to force reload for user
       const savedDataVersion = await DB.getSetting('dataVersion');
       
       const planCount = await DB.count(DB.STORES.PLAN);
