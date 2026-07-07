@@ -254,11 +254,25 @@ const App = (() => {
     // Smart Scheduling Rest Days
     DB.getSetting('restDays').then(restDays => {
       const selected = restDays || [5, 6];
-      document.querySelectorAll('.rest-day-cb').forEach(cb => {
+      const checkboxes = document.querySelectorAll('.rest-day-cb');
+      
+      const updateCheckboxes = () => {
+        const checkedCount = document.querySelectorAll('.rest-day-cb:checked').length;
+        checkboxes.forEach(cb => {
+          if (!cb.checked) {
+            cb.disabled = checkedCount >= 2;
+          }
+        });
+      };
+
+      checkboxes.forEach(cb => {
         if (selected.includes(parseInt(cb.value))) {
           cb.checked = true;
         }
+        cb.addEventListener('change', updateCheckboxes);
       });
+      
+      updateCheckboxes();
     });
 
     document.getElementById('save-rest-days-btn').addEventListener('click', async () => {

@@ -264,7 +264,7 @@ const DB = (() => {
     await clear(STORES.EXERCISES);
     await putBulk(STORES.EXERCISES, exerciseData);
 
-    return planData.length;
+    return newPlanData.length;
   }
 
   /**
