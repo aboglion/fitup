@@ -28,8 +28,9 @@ const ExercisesPage = (() => {
       title: 'משיכה אנכית (Vertical Pull)',
       exercises: [
         { name: 'Scapular Pull-up', unlockWeek: 1 },
-        { name: 'Pull-up', unlockWeek: 17 },
-        { name: 'Chin-up', unlockWeek: 25 }
+        { name: 'Band-assisted Pull-up', unlockWeek: 9 },
+        { name: 'Chin-up', unlockWeek: 17 },
+        { name: 'Pull-up', unlockWeek: 34 }
       ]
     },
     {
@@ -58,7 +59,8 @@ const ExercisesPage = (() => {
     {
       title: 'ישבן וגב תחתון',
       exercises: [
-        { name: 'Banded Hip Thrust', unlockWeek: 1 },
+        { name: 'Banded RDL', unlockWeek: 1 },
+        { name: 'Banded Hip Thrust', unlockWeek: 17 },
         { name: 'Single-leg Hip Thrust', unlockWeek: 34 }
       ]
     }

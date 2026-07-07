@@ -10,8 +10,8 @@ new_exercises = [
       "קטגוריה": "A2 - משיכה",
       "סטים×חזרות לפי שלב": "שבועות 1-12: 3×8-12 | שבועות 13+: 4×8-12",
       "משקל/התנגדות": "30→40→50kg",
-      "קישור יוטיוב": "https://www.youtube.com/results?search_query=Single+Arm+Band+Row",
-      "קישור יוטיוב_link": "https://www.youtube.com/results?search_query=Single+Arm+Band+Row",
+      "קישור יוטיוב": "https://www.youtube.com/watch?v=vwf_-q-r1EA",
+      "קישור יוטיוב_link": "https://www.youtube.com/watch?v=vwf_-q-r1EA",
       "רמת קושי": "בינוני-מתקדם"
     },
     {
@@ -19,8 +19,8 @@ new_exercises = [
       "קטגוריה": "A1 - דחיפה",
       "סטים×חזרות לפי שלב": "שבועות 34-53: 4×8-12",
       "משקל/התנגדות": "30→40→50kg",
-      "קישור יוטיוב": "https://www.youtube.com/results?search_query=Banded+Push-up",
-      "קישור יוטיוב_link": "https://www.youtube.com/results?search_query=Banded+Push-up",
+      "קישור יוטיוב": "https://www.youtube.com/watch?v=dGYUa6Ekwqs",
+      "קישור יוטיוב_link": "https://www.youtube.com/watch?v=dGYUa6Ekwqs",
       "רמת קושי": "מתקדם"
     },
     {
@@ -28,8 +28,8 @@ new_exercises = [
       "קטגוריה": "C1 - רגליים",
       "סטים×חזרות לפי שלב": "שבועות 34-53: 4×8 לכל רגל",
       "משקל/התנגדות": "30→40→50kg",
-      "קישור יוטיוב": "https://www.youtube.com/results?search_query=Banded+Bulgarian+Split+Squat",
-      "קישור יוטיוב_link": "https://www.youtube.com/results?search_query=Banded+Bulgarian+Split+Squat",
+      "קישור יוטיוב": "https://www.youtube.com/watch?v=-Rkf9lW-3U0",
+      "קישור יוטיוב_link": "https://www.youtube.com/watch?v=-Rkf9lW-3U0",
       "רמת קושי": "מתקדם+"
     }
 ]
