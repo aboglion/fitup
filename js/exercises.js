@@ -13,14 +13,15 @@ const ExercisesPage = (() => {
         { name: 'Incline Push-up', unlockWeek: 1 },
         { name: 'Push-up רגיל', unlockWeek: 13 },
         { name: 'Diamond Push-up', unlockWeek: 17 },
-        { name: 'Pike Push-up', unlockWeek: 34 }
+        { name: 'Pike Push-up', unlockWeek: 34 },
+        { name: 'Banded Push-up', unlockWeek: 34 }
       ]
     },
     {
       title: 'משיכה אופקית (Horizontal Pull)',
       exercises: [
         { name: 'Band Row', unlockWeek: 1 },
-        { name: 'Inverted Row', unlockWeek: 5 }
+        { name: 'Single-arm Band Row', unlockWeek: 5 }
       ]
     },
     {
@@ -36,7 +37,8 @@ const ExercisesPage = (() => {
       exercises: [
         { name: 'Squat איטי', unlockWeek: 1 },
         { name: 'Split Squat', unlockWeek: 13 },
-        { name: 'Bulgarian Split Squat', unlockWeek: 17 }
+        { name: 'Bulgarian Split Squat', unlockWeek: 17 },
+        { name: 'Banded Bulgarian Split Squat', unlockWeek: 34 }
       ]
     },
     {
