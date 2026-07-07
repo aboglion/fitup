@@ -222,6 +222,7 @@
   align-items: center;
   gap: var(--space-md);
   flex: 1;
+  min-width: 0;
 }
 
 .exercise-category-dot {
@@ -232,13 +233,66 @@
 }
 
 .exercise-thumbnail-small {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-sm);
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-md);
   object-fit: cover;
   background: var(--bg-elevated);
   border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
   flex-shrink: 0;
+}
+
+.exercise-hero-container {
+  /* Soft light background for the images so multiply works and red muscles show */
+  background: radial-gradient(ellipse at center, #ffffff 0%, #d1d5db 100%);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Blur the boundary between the image and the dark card background */
+  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+}
+
+/* Delicate color-coded inner glow at the top and sides */
+.exercise-hero-container::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  box-shadow: inset 0 20px 40px -10px var(--glow-color, rgba(0,0,0,0.2)),
+              inset 0 0 10px var(--glow-color, rgba(0,0,0,0.2));
+  opacity: 0.6; /* delicate but visible on sides */
+  pointer-events: none;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+html.light-theme .exercise-hero-container {
+  background: radial-gradient(circle at center, #ffffff 0%, #f0f0f0 100%);
+}
+
+html.light-theme .exercise-hero-container::after {
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.08);
+}
+
+.exercise-hero-image {
+  width: 100%;
+  height: 170px;
+  object-fit: contain;
+  display: block;
+  padding: 15px;
+  mix-blend-mode: multiply;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* Feather the image boundaries so no solid square is ever visible */
+  -webkit-mask-image: radial-gradient(ellipse 95% 95% at center, black 50%, transparent 100%);
+  mask-image: radial-gradient(ellipse 95% 95% at center, black 50%, transparent 100%);
+}
+
+.exercise-card:hover .exercise-hero-image {
+  transform: scale(1.08);
 }
 
 .exercise-card-name {
@@ -319,8 +373,8 @@
 .set-row {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
+  gap: 6px;
+  padding: var(--space-sm);
   background: var(--bg-input);
   border-radius: var(--radius-sm);
 }
@@ -329,15 +383,17 @@
   font-size: 13px;
   font-weight: 600;
   color: var(--text-secondary);
-  width: 50px;
+  min-width: 36px;
   flex-shrink: 0;
 }
 
 .set-input {
-  width: 70px !important;
-  padding: var(--space-sm) !important;
+  width: 55px !important;
+  padding: 6px !important;
   font-size: 13px !important;
   text-align: center;
+  flex: 1;
+  min-width: 45px;
 }
 
 .set-unit {
@@ -375,6 +431,8 @@
   font-size: 13px;
   padding: var(--space-sm) var(--space-md);
   resize: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* ===== Day Actions ===== */
@@ -573,11 +631,55 @@
 }
 
 .guide-card {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--space-md);
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  padding: 12px;
   transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.guide-card-image-container {
+  width: 120px;
+  min-width: 120px;
+  background: radial-gradient(circle at center, #ffffff 0%, #e5e7eb 100%);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+:root:not(.light-theme) .guide-card-image-container {
+  background: radial-gradient(circle at center, #d1d5db 0%, #9ca3af 100%);
+}
+
+.guide-card-image-container.diff-beginner {
+  box-shadow: 0 0 35px 8px var(--walk-bg), 0 0 15px 2px var(--walk-bg);
+  border: 1px solid var(--walk-color);
+}
+
+.guide-card-image-container.diff-intermediate {
+  box-shadow: 0 0 35px 8px var(--warning-bg), 0 0 15px 2px var(--warning-bg);
+  border: 1px solid var(--warning);
+}
+
+.guide-card-image-container.diff-advanced {
+  box-shadow: 0 0 35px 8px var(--danger-bg), 0 0 15px 2px var(--danger-bg);
+  border: 1px solid var(--danger);
+}
+
+.guide-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
 }
 
 .guide-card:hover {
@@ -589,10 +691,25 @@
 .guide-card-title {
   font-size: 16px;
   font-weight: 700;
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xs);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.guide-equipment {
+  background: var(--bg-hover, rgba(255,255,255,0.05));
+  border: 1px solid var(--border-color);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: normal;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .guide-card-category {
@@ -602,6 +719,7 @@
   border-radius: 20px;
   background: var(--bg-elevated);
   color: var(--text-accent);
+  align-self: flex-start;
 }
 
 .guide-card-sets {
@@ -1096,9 +1214,14 @@
 
 .exercise-image {
   width: 100%;
-  max-width: 150px;
-  height: auto;
-  border-radius: 8px;
-  margin: 0 auto 15px auto;
+  height: 100%;
+  object-fit: contain;
   display: block;
+  mix-blend-mode: multiply;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  padding: 8px;
+}
+
+.guide-card:hover .exercise-image {
+  transform: scale(1.1);
 }

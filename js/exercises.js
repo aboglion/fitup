@@ -89,21 +89,32 @@ const ExercisesPage = (() => {
     container.innerHTML = filtered.map(ex => {
       const diffClass = UI.getDifficultyClass(ex.difficulty);
       const videoLink = ex.videoUrl
-        ? `<a href="${ex.videoUrl}" target="_blank" class="guide-video-link">▶ צפה בסרטון</a>`
+        ? `<a href="${ex.videoUrl}" target="_blank" class="exercise-video-btn" title="צפה בסרטון" style="text-decoration: none; color: var(--danger);">▶</a>`
         : '';
+
+      const equip = UI.getEquipment(ex.name);
+      let weightDisplay = ex.weight || '';
+      if (weightDisplay && equip && equip.label === 'גומיה' && weightDisplay !== '—' && weightDisplay !== 'משקל גוף') {
+        weightDisplay = `משקל גומיה: ${weightDisplay}`;
+      }
 
       return `
         <div class="guide-card">
-          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onerror="this.style.display='none'">
-          <div class="guide-card-title">
-            ${ex.name}
+          <div class="guide-card-image-container diff-${diffClass}">
+            <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onerror="this.parentElement.style.display='none'">
           </div>
-          <span class="guide-card-category">${ex.category || ''}</span>
-          <div class="guide-card-sets">${ex.setsProgression || ''}</div>
-          <div class="guide-card-meta">
-            <span class="guide-difficulty ${diffClass}">${ex.difficulty || ''}</span>
-            <span class="guide-weight">${ex.weight || ''}</span>
-            ${videoLink}
+          <div class="guide-card-content">
+            <div class="guide-card-title">
+              ${ex.name}
+              ${equip ? `<span class="guide-equipment">${equip.icon} ${equip.label}</span>` : ''}
+            </div>
+            <span class="guide-card-category">${ex.category || ''}</span>
+            <div class="guide-card-sets">${ex.setsProgression || ''}</div>
+            <div class="guide-card-meta">
+              <span class="guide-difficulty ${diffClass}">${ex.difficulty || ''}</span>
+              ${weightDisplay ? `<span class="guide-weight">${weightDisplay}</span>` : ''}
+              ${videoLink}
+            </div>
           </div>
         </div>
       `;

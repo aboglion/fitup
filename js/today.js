@@ -287,22 +287,38 @@ const TodayPage = (() => {
       videoUrl = videoUrl || findVideoUrl(ex.name);
       
       const videoBtn = videoUrl
-        ? `<button class="exercise-video-btn" onclick="event.stopPropagation(); window.open('${videoUrl}', '_blank')" title="צפה בסרטון">▶</button>`
+        ? `<a href="${videoUrl}" target="_blank" class="exercise-video-btn" title="צפה בסרטון" style="text-decoration: none; color: var(--danger);" onclick="event.stopPropagation();">▶</a>`
         : '';
 
       // Detail line - only show weight if it exists
       const detailParts = [UI.getCategoryLabel(ex.slot)];
       if (ex.sets) detailParts.push(ex.sets);
-      if (hasWeight) detailParts.push(ex.weight);
+      
+      const equip = UI.getEquipment(ex.name);
+      
+      if (hasWeight) {
+        if (equip && equip.label === 'גומיה') {
+          detailParts.push(`משקל גומיה: ${ex.weight}`);
+        } else {
+          detailParts.push(ex.weight);
+        }
+      }
 
       return `
         <div class="exercise-card ${isCompleted ? 'completed' : ''}" id="ex-card-${idx}">
+          <div class="exercise-hero-container" onclick="TodayPage.toggleExpand(${idx})" style="--glow-color: ${color};">
+            <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
+                 class="exercise-hero-image"
+                 alt="${ex.name}" onerror="this.parentElement.style.display='none'">
+          </div>
           <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
             <div class="exercise-card-info">
-              <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-thumbnail-small" alt="${ex.name}" onerror="this.style.display='none'">
               <div class="exercise-category-dot" style="background: ${color}"></div>
               <div>
-                <div class="exercise-card-name">${ex.name}</div>
+                <div class="exercise-card-name" style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+                  ${ex.name}
+                  ${equip ? `<span style="background: var(--bg-hover, rgba(255,255,255,0.05)); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: normal; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px;">${equip.icon} ${equip.label}</span>` : ''}
+                </div>
                 <div class="exercise-card-detail">
                   ${detailParts.join(' • ')}
                 </div>
@@ -315,7 +331,6 @@ const TodayPage = (() => {
             </div>
           </div>
           <div class="exercise-card-body">
-            <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onerror="this.style.display='none'">
             ${setsHTML}
             <div class="exercise-note">
               <textarea placeholder="הערות לתרגיל..." rows="2"

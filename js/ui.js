@@ -155,6 +155,23 @@ const UI = (() => {
     return 'intermediate';
   }
 
+  /**
+   * Get required equipment based on exercise name
+   */
+  function getEquipment(name) {
+    if (!name) return null;
+    const n = name.toLowerCase();
+    
+    if (n.includes('band') || n.includes('pallof') || n.includes('face pull')) return { label: 'גומיה', icon: '➰' };
+    if (n.includes('wall')) return { label: 'קיר', icon: '🧱' };
+    if (n.includes('box') || n.includes('bulgarian') || n.includes('incline')) return { label: 'כיסא', icon: '🪑' };
+    if (n.includes('hang') || n.includes('pull-up') || n.includes('inverted row')) return { label: 'מוט', icon: '🧗‍♂️' };
+    if (n.includes('foam roll')) return { label: 'גליל עיסוי', icon: '🪵' };
+    
+    // Default or bodyweight exercises
+    return { label: 'ללא ציוד', icon: '💪' };
+  }
+
   // Rest Timer Logic
   let timerInterval;
   let timerEndTime;
@@ -260,6 +277,7 @@ const UI = (() => {
     parseSetsCount,
     parseReps,
     getDifficultyClass,
+    getEquipment,
     initTimer,
     startTimer
   };
