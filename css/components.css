@@ -1318,3 +1318,193 @@ html.light-theme .exercise-hero-container::after {
 .guide-card:hover .exercise-image {
   transform: scale(1.1);
 }
+
+/* ===== Skill Tree ===== */
+.skill-tree-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+  width: 100%;
+}
+
+.skill-path {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  box-shadow: var(--shadow-sm);
+}
+
+.skill-path-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 24px;
+  text-align: center;
+  background: var(--bg-elevated);
+  padding: 8px 24px;
+  border-radius: 20px;
+  border: 1px solid var(--border-light);
+  z-index: 2;
+  box-shadow: var(--shadow-sm);
+}
+
+.skill-nodes-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 32px;
+}
+
+.skill-node-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* Connector line */
+.skill-node-wrapper:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 32px;
+  background: var(--border-light);
+  z-index: 1;
+}
+
+.skill-node.unlocked.skill-node-wrapper:not(:last-child)::after {
+  background: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-primary);
+}
+
+/* Node card */
+.skill-node {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  width: 100%;
+  max-width: 400px;
+  z-index: 2;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-node.unlocked {
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(56, 189, 248, 0.1);
+  background: linear-gradient(to right, var(--bg-elevated), var(--bg-card));
+}
+
+.skill-node.unlocked:hover {
+  transform: scale(1.02);
+  border-color: var(--accent-light);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.2);
+}
+
+.skill-node.locked {
+  opacity: 0.6;
+  filter: grayscale(0.8);
+  border-style: dashed;
+}
+
+.skill-node-image {
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-md);
+  object-fit: contain;
+  background: radial-gradient(circle at center, #ffffff 0%, #e5e7eb 100%);
+  padding: 8px;
+  border: 1px solid var(--border-color);
+}
+:root:not(.light-theme) .skill-node-image {
+  background: radial-gradient(circle at center, #d1d5db 0%, #9ca3af 100%);
+}
+
+.skill-node.unlocked .skill-node-image {
+  mix-blend-mode: multiply;
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.skill-node-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.skill-node-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.skill-node-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+
+.skill-unlock-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--bg-input);
+  color: var(--text-muted);
+}
+
+.skill-node.unlocked .skill-unlock-badge {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--success);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.skill-video-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+  z-index: 3;
+}
+html[dir="rtl"] .skill-video-btn {
+  right: auto;
+  left: 12px;
+}
+
+.skill-video-btn:hover {
+  background: var(--danger);
+  color: white;
+  transform: scale(1.1);
+}
