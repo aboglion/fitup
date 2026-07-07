@@ -44,10 +44,6 @@
           <span class="nav-link-icon">📅</span>
           <span class="nav-link-text">היום</span>
         </button>
-        <button class="nav-link" data-page="calendar" id="nav-calendar">
-          <span class="nav-link-icon">📆</span>
-          <span class="nav-link-text">לוח שנה</span>
-        </button>
         <button class="nav-link" data-page="exercises" id="nav-exercises">
           <span class="nav-link-icon">🏋️</span>
           <span class="nav-link-text">תרגילים</span>
@@ -69,10 +65,6 @@
         <span class="bottom-nav-icon">📅</span>
         <span class="bottom-nav-text">היום</span>
       </button>
-      <button class="bottom-nav-link" data-page="calendar" id="bnav-calendar">
-        <span class="bottom-nav-icon">📆</span>
-        <span class="bottom-nav-text">לוח</span>
-      </button>
       <button class="bottom-nav-link" data-page="exercises" id="bnav-exercises">
         <span class="bottom-nav-icon">🏋️</span>
         <span class="bottom-nav-text">תרגילים</span>
@@ -91,46 +83,44 @@
     <main id="page-container" class="page-container">
       <!-- Today Page -->
       <section id="page-today" class="page active">
-        <div class="page-header">
-          <div class="page-header-content">
-            <h1 id="today-title" class="page-title">אימון היום</h1>
-            <p id="today-date" class="page-subtitle"></p>
-          </div>
-          <div class="page-header-actions">
-            <button id="prev-day-btn" class="icon-btn" title="יום קודם">▶</button>
-            <button id="today-btn" class="icon-btn highlight" title="חזור להיום">היום</button>
-            <button id="next-day-btn" class="icon-btn" title="יום הבא">◀</button>
-          </div>
-        </div>
+        
+        <button id="today-btn" class="btn-warning" style="display: none; width: 100%; margin-bottom: 16px; font-size: 15px; font-weight: bold; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);">
+          <span>🔙</span> חזור לאימון של היום
+        </button>
 
         <!-- Day Summary Card -->
-        <div id="day-summary" class="day-summary-card">
-          <div class="day-meta">
-            <span id="day-number" class="day-badge"></span>
-            <span id="day-week" class="week-badge"></span>
-            <span id="day-type" class="type-badge"></span>
-            <span id="day-rpe" class="rpe-badge"></span>
-          </div>
-          <div id="day-progress" class="day-progress">
-            <div class="progress-ring">
-              <svg viewBox="0 0 100 100">
-                <circle class="progress-ring-bg" cx="50" cy="50" r="42"/>
-                <circle id="progress-circle" class="progress-ring-fill" cx="50" cy="50" r="42"/>
-              </svg>
-              <span id="progress-text" class="progress-text">0%</span>
+        <div id="day-summary" class="day-summary-card" style="display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div class="day-meta" style="flex: 1;">
+              <span id="day-number" class="day-badge" style="font-size: 15px; background: var(--accent-gradient); color: white; box-shadow: var(--shadow-sm);"></span>
+              <span id="today-date-badge" class="day-badge" style="background: var(--bg-input); border: 1px solid var(--border-color);"></span>
+              <span id="day-week" class="week-badge"></span>
+              <span id="day-type" class="type-badge"></span>
+              <span id="day-rpe" class="rpe-badge"></span>
             </div>
-            <span class="progress-label">השלמה</span>
+            <div id="day-progress" class="day-progress" style="margin-right: 16px; flex-shrink: 0;">
+              <div class="progress-ring">
+                <svg viewBox="0 0 100 100">
+                  <circle class="progress-ring-bg" cx="50" cy="50" r="42"/>
+                  <circle id="progress-circle" class="progress-ring-fill" cx="50" cy="50" r="42"/>
+                </svg>
+                <span id="progress-text" class="progress-text">0%</span>
+              </div>
+              <span class="progress-label">השלמה</span>
+            </div>
           </div>
         </div>
 
-        <!-- Top Actions -->
         <div class="top-day-actions" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
-          <div style="display: flex; gap: 12px;">
-            <button id="skip-day-btn" class="btn-secondary" style="flex: 1;" title="דלג על יום זה (למשל אם פספסת)">
+          <div style="display: flex; gap: 8px;">
+            <button id="skip-day-btn" class="btn-secondary" style="flex: 1; padding: 12px 8px;" title="דלג על יום זה (למשל אם פספסת)">
               <span>⏭️</span> דלג יום
             </button>
-            <button id="toggle-notes-btn" class="btn-secondary" style="flex: 1;">
-              <span>📝</span> הערות ומדדים
+            <button id="toggle-notes-btn" class="btn-secondary" style="flex: 1; padding: 12px 8px;">
+              <span>📝</span> הערות
+            </button>
+            <button id="toggle-calendar-btn" class="btn-secondary" style="flex: 1; padding: 12px 8px;">
+              <span>📆</span> תאריכים
             </button>
           </div>
           
@@ -152,25 +142,22 @@
               ✨ הנתונים נשמרים אוטומטית בעת הקלדה
             </div>
           </div>
+          
+          <!-- Calendar Accordion Content -->
+          <div id="calendar-accordion-content" class="day-actions" style="display: none; margin-top: 0; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px;">
+            <div class="page-header" style="margin-bottom: 16px; margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+              <button id="cal-prev-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">▶</button>
+              <span id="cal-week-label" class="week-label" style="font-weight: 700; font-size: 16px; color: var(--text-primary);"></span>
+              <button id="cal-next-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">◀</button>
+            </div>
+            <div id="calendar-grid" class="calendar-grid"></div>
+          </div>
         </div>
 
         <!-- Exercises List -->
         <div id="exercises-list" class="exercises-list"></div>
       </section>
 
-      <!-- Calendar Page -->
-      <section id="page-calendar" class="page">
-        <div class="page-header">
-          <h1 class="page-title">לוח שנה</h1>
-          <div class="page-header-actions">
-            <button id="cal-prev-week" class="icon-btn">▶</button>
-            <span id="cal-week-label" class="week-label"></span>
-            <button id="cal-next-week" class="icon-btn">◀</button>
-          </div>
-        </div>
-        <div id="calendar-grid" class="calendar-grid"></div>
-        <div id="week-stats" class="week-stats-card"></div>
-      </section>
 
       <!-- Exercises Guide Page -->
       <section id="page-exercises" class="page">
@@ -236,6 +223,22 @@
             <p>מחק את כל המידע כולל מעקב ותוכנית. פעולה זו בלתי הפיכה!</p>
             <div class="settings-actions">
               <button id="clear-all-btn" class="btn-danger">🗑️ מחק הכל</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <h3>📅 ימי מנוחה (Smart Scheduling)</h3>
+            <p>בחר 2 ימי מנוחה קבועים, והמערכת תשבץ את האימונים שלך באופן חכם מסביבם:</p>
+            <div class="rest-days-selector" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; margin: 12px 0;">
+              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="0"> ראשון</label>
+              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="1"> שני</label>
+              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="2"> שלישי</label>
+              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="3"> רביעי</label>
+              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="4"> חמישי</label>
+              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="5"> שישי</label>
+              <label style="display: flex; align-items: center; gap: 4px;"><input type="checkbox" class="rest-day-cb" value="6"> שבת</label>
+            </div>
+            <div class="settings-actions">
+              <button id="save-rest-days-btn" class="btn-primary">💾 שמור ובנה תוכנית מחדש</button>
             </div>
           </div>
           <div class="settings-card">

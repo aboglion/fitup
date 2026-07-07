@@ -69,66 +69,20 @@ const CalendarPage = (() => {
         </div>
       `;
     }).join('');
-
-    // Render week stats
-    renderWeekStats(weekDays, trackingData);
   }
 
-  /**
-   * Render week statistics
-   */
-  function renderWeekStats(weekDays, trackingData) {
-    const container = document.getElementById('week-stats');
 
-    let completedDays = 0;
-    let strengthDays = 0;
-    let walkDays = 0;
-    let totalRPE = 0;
-    let rpeCount = 0;
-
-    weekDays.forEach((day, idx) => {
-      const tracking = trackingData[idx];
-      if (tracking && tracking.completed) completedDays++;
-      if (day.dayType === 'כוח') strengthDays++;
-      if (day.dayType === 'הליכה') walkDays++;
-      if (tracking && tracking.actualRPE) {
-        totalRPE += tracking.actualRPE;
-        rpeCount++;
-      }
-    });
-
-    const avgRPE = rpeCount > 0 ? (totalRPE / rpeCount).toFixed(1) : '—';
-
-    container.innerHTML = `
-      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">סיכום שבוע ${currentWeekNum}</h3>
-      <div class="week-stats-grid">
-        <div class="week-stat">
-          <div class="week-stat-value">${completedDays}/${weekDays.length}</div>
-          <div class="week-stat-label">ימים הושלמו</div>
-        </div>
-        <div class="week-stat">
-          <div class="week-stat-value">${strengthDays}</div>
-          <div class="week-stat-label">אימוני כוח 💪</div>
-        </div>
-        <div class="week-stat">
-          <div class="week-stat-value">${walkDays}</div>
-          <div class="week-stat-label">ימי הליכה 🚶</div>
-        </div>
-        <div class="week-stat">
-          <div class="week-stat-value">${avgRPE}</div>
-          <div class="week-stat-label">RPE ממוצע</div>
-        </div>
-      </div>
-    `;
-  }
 
   /**
    * Select a day from calendar
    */
   function selectDay(dayIndex) {
-    TodayPage.goToDay(dayIndex);
-    // Switch to today page
-    App.navigateTo('today');
+    if (window.TodayPage) {
+      TodayPage.goToDay(dayIndex);
+      
+      // Scroll to top of day view
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
   }
 
   return {
@@ -137,3 +91,6 @@ const CalendarPage = (() => {
     selectDay
   };
 })();
+
+// Expose to window for inline event handlers
+window.CalendarPage = CalendarPage;

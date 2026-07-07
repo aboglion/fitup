@@ -282,3 +282,5 @@ const UI = (() => {
     startTimer
   };
 })();
+
+window.UI = UI;

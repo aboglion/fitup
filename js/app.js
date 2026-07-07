@@ -21,7 +21,7 @@ const App = (() => {
       await DB.init();
 
       // Check if plan is loaded or needs update
-      const currentDataVersion = 12; // Bumped to force reload for user
+      const currentDataVersion = 13; // Bumped to force Smart Scheduling rebuild
       const savedDataVersion = await DB.getSetting('dataVersion');
       
       const planCount = await DB.count(DB.STORES.PLAN);
@@ -129,8 +129,12 @@ const App = (() => {
    * Navigate to a page
    */
   function navigateTo(pageName, pushState = true) {
+    if (pageName === 'calendar') pageName = 'today'; // Fallback for old cached URLs
     if (pageName === currentPage) return;
     
+    const pageEl = document.getElementById(`page-${pageName}`);
+    if (!pageEl) pageName = 'today'; // Safety fallback
+
     if (pushState) {
       window.history.pushState({ page: pageName }, '', `#${pageName}`);
     }
@@ -152,9 +156,6 @@ const App = (() => {
     switch (pageName) {
       case 'today':
         TodayPage.render();
-        break;
-      case 'calendar':
-        CalendarPage.render();
         break;
       case 'exercises':
         ExercisesPage.render();
@@ -248,6 +249,38 @@ const App = (() => {
       const newTheme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
       localStorage.setItem('theme', newTheme);
       UI.toast(`מצב תצוגה שונה ל${newTheme === 'light' ? 'בהיר ☀️' : 'כהה 🌙'}`, 'info');
+    });
+
+    // Smart Scheduling Rest Days
+    DB.getSetting('restDays').then(restDays => {
+      const selected = restDays || [5, 6];
+      document.querySelectorAll('.rest-day-cb').forEach(cb => {
+        if (selected.includes(parseInt(cb.value))) {
+          cb.checked = true;
+        }
+      });
+    });
+
+    document.getElementById('save-rest-days-btn').addEventListener('click', async () => {
+      const selectedBoxes = Array.from(document.querySelectorAll('.rest-day-cb:checked'));
+      if (selectedBoxes.length !== 2) {
+        UI.toast('יש לבחור בדיוק 2 ימי מנוחה', 'warning');
+        return;
+      }
+      
+      const newRestDays = selectedBoxes.map(cb => parseInt(cb.value));
+      try {
+        await DB.setSetting('restDays', newRestDays);
+        // Force rebuild of training plan
+        const count = await DB.loadTrainingPlan();
+        allPlanDays = await DB.getAllPlan();
+        allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
+        
+        UI.toast('ימי המנוחה נשמרו! התוכנית חושבה מחדש 🗓️', 'success');
+        setTimeout(() => location.reload(), 1500);
+      } catch (err) {
+        UI.toast('שגיאה: ' + err.message, 'error');
+      }
     });
   }
 

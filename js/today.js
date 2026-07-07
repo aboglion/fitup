@@ -15,11 +15,9 @@ const TodayPage = (() => {
     currentDayIndex = UI.findTodayIndex(planDays);
     allExercises = await DB.getExerciseGuide();
 
-    // Navigation buttons
-    document.getElementById('prev-day-btn').addEventListener('click', () => navigate(-1));
-    document.getElementById('next-day-btn').addEventListener('click', () => navigate(1));
-    document.getElementById('today-btn').addEventListener('click', goToToday);
-    
+    const todayBtn = document.getElementById('today-btn');
+    if (todayBtn) todayBtn.addEventListener('click', goToToday);
+
     const skipDayBtn = document.getElementById('skip-day-btn');
     if (skipDayBtn) skipDayBtn.addEventListener('click', skipDay);
 
@@ -29,6 +27,21 @@ const TodayPage = (() => {
         const content = document.getElementById('notes-accordion-content');
         if (content.style.display === 'none') {
           content.style.display = 'grid';
+          document.getElementById('calendar-accordion-content').style.display = 'none'; // Close calendar if open
+        } else {
+          content.style.display = 'none';
+        }
+      });
+    }
+
+    const toggleCalBtn = document.getElementById('toggle-calendar-btn');
+    if (toggleCalBtn) {
+      toggleCalBtn.addEventListener('click', () => {
+        const content = document.getElementById('calendar-accordion-content');
+        if (content.style.display === 'none') {
+          content.style.display = 'block';
+          document.getElementById('notes-accordion-content').style.display = 'none'; // Close notes if open
+          if (typeof CalendarPage !== 'undefined') CalendarPage.render(); // Make sure calendar is rendered
         } else {
           content.style.display = 'none';
         }
@@ -91,14 +104,25 @@ const TodayPage = (() => {
       completed: false
     };
 
-    // Update header
+    // Update header badges
     const typeInfo = UI.getDayTypeInfo(day.dayType);
-    document.getElementById('today-title').textContent = `${typeInfo.icon} ${day.dayNum}`;
-    document.getElementById('today-date').textContent = `${day.dayOfWeek}`;
-
+    
     // Update summary card
     document.getElementById('day-number').textContent = day.dayNum;
+    document.getElementById('today-date-badge').textContent = day.dayOfWeek;
     document.getElementById('day-week').textContent = day.week;
+
+    const realTodayIndex = UI.findTodayIndex(allPlanDays);
+    const isToday = currentDayIndex === realTodayIndex;
+    const todayBtn = document.getElementById('today-btn');
+    if (todayBtn) {
+      todayBtn.style.display = isToday ? 'none' : 'flex';
+    }
+    
+    const skipDayBtn = document.getElementById('skip-day-btn');
+    if (skipDayBtn) {
+      skipDayBtn.style.display = isToday ? 'flex' : 'none';
+    }
 
     const typeBadge = document.getElementById('day-type');
     typeBadge.textContent = typeInfo.label;
@@ -205,6 +229,10 @@ const TodayPage = (() => {
    * Render exercise cards
    */
   function renderExercises(day) {
+    const realTodayIndex = UI.findTodayIndex(allPlanDays);
+    const isToday = currentDayIndex === realTodayIndex;
+    const disabledAttr = isToday ? '' : 'disabled style="opacity: 0.5; cursor: not-allowed;"';
+
     const container = document.getElementById('exercises-list');
 
     if (day.exercises.length === 0) {
@@ -218,7 +246,7 @@ const TodayPage = (() => {
           </p>
           <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
             <button class="btn-primary" style="width: auto; padding: 12px 32px;" 
-                    onclick="TodayPage.markRestComplete()">
+                    onclick="TodayPage.markRestComplete()" ${disabledAttr}>
               ✓ סימון יום מנוחה כהושלם
             </button>
             <button class="btn-secondary" style="width: auto; padding: 12px 32px;" 
@@ -256,7 +284,7 @@ const TodayPage = (() => {
           // Weight input - only show if exercise has weight data
           const weightInput = hasWeight ? `
               <input type="number" class="set-input" placeholder="${ex.weight}" 
-                     value="${setWeight}"
+                     value="${setWeight}" ${disabledAttr}
                      data-ex="${idx}" data-set="${s}" data-field="weight"
                      onchange="TodayPage.updateSetData(${idx}, ${s}, 'weight', this.value)">
               <span class="set-unit">ק"ג</span>
@@ -266,13 +294,13 @@ const TodayPage = (() => {
             <div class="set-row">
               <span class="set-label">סט ${s + 1}</span>
               <input type="number" class="set-input" placeholder="${reps}" 
-                     value="${setReps}"
+                     value="${setReps}" ${disabledAttr}
                      data-ex="${idx}" data-set="${s}" data-field="reps"
                      onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
               <span class="set-unit">חזרות</span>
               ${weightInput}
               <button class="set-check ${setDone ? 'checked' : ''}" 
-                      onclick="TodayPage.toggleSet(${idx}, ${s}, this)">✓</button>
+                      onclick="TodayPage.toggleSet(${idx}, ${s}, this)" ${disabledAttr}>✓</button>
             </div>
           `;
         }
@@ -300,7 +328,7 @@ const TodayPage = (() => {
         }
       }
 
-      const isNewExercise = !prevEx && currentDayIndex > 0;
+      const isNewExercise = !prevEx && currentDayIndex > 0 && day.dayType !== 'מנוחה';
       const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
       const isWeightChanged = prevEx && ex.weight !== prevEx.weight && ex.weight !== null && ex.weight !== '—' && ex.weight !== 'משקל גוף';
 
@@ -343,13 +371,13 @@ const TodayPage = (() => {
             <div class="exercise-card-actions">
               ${videoBtn}
               <button class="exercise-check ${isCompleted ? 'checked' : ''}" 
-                      onclick="event.stopPropagation(); TodayPage.toggleExercise(${idx}, this)">✓</button>
+                      onclick="event.stopPropagation(); TodayPage.toggleExercise(${idx}, this)" ${disabledAttr}>✓</button>
             </div>
           </div>
           <div class="exercise-card-body">
             ${setsHTML}
             <div class="exercise-note">
-              <textarea placeholder="הערות לתרגיל..." rows="2"
+              <textarea placeholder="הערות לתרגיל..." rows="2" ${disabledAttr}
                         onchange="TodayPage.updateExerciseNote(${idx}, this.value)">${exNote}</textarea>
             </div>
           </div>
@@ -370,6 +398,8 @@ const TodayPage = (() => {
    * Toggle exercise completion
    */
   async function toggleExercise(idx, btn) {
+    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+    
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     const isNowCompleted = !currentTracking.exerciseStatus[idx];
     currentTracking.exerciseStatus[idx] = isNowCompleted;
@@ -425,6 +455,8 @@ const TodayPage = (() => {
    * Toggle set completion
    */
   async function toggleSet(exIdx, setIdx, btn) {
+    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
 
@@ -480,6 +512,7 @@ const TodayPage = (() => {
    * Update set data
    */
   async function updateSetData(exIdx, setIdx, field, value) {
+    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
     currentTracking.setData[exIdx][`set_${setIdx}_${field}`] = value;
@@ -490,6 +523,7 @@ const TodayPage = (() => {
    * Update exercise note
    */
   async function updateExerciseNote(exIdx, value) {
+    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
     if (!currentTracking.exerciseNotes) currentTracking.exerciseNotes = {};
     currentTracking.exerciseNotes[exIdx] = value;
     await autoSave();
@@ -499,6 +533,7 @@ const TodayPage = (() => {
    * Mark rest day as complete
    */
   async function markRestComplete() {
+    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
     currentTracking.completed = !currentTracking.completed;
     updateProgress(allPlanDays[currentDayIndex]);
     await autoSave();
@@ -528,16 +563,65 @@ const TodayPage = (() => {
    * Skip current day and advance the plan
    */
   async function skipDay() {
-    if (confirm('האם אתה בטוח שברצונך לדלג על יום זה? התוכנית תתקדם ליום הבא.')) {
-      window.appCurrentPlanIndex++;
-      if (window.appCurrentPlanIndex >= allPlanDays.length) {
-        window.appCurrentPlanIndex = allPlanDays.length - 1;
-      }
-      await DB.setSetting('currentPlanIndex', window.appCurrentPlanIndex);
-      
-      goToToday();
-      UI.toast('התוכנית קודמה ביום אחד ⏭️', 'info');
+    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) {
+      UI.toast('ניתן לדלג רק על היום הנוכחי', 'warning');
+      return;
     }
+    
+    const modalHTML = `
+      <div style="text-align: center; padding: 16px;">
+        <p style="margin-bottom: 24px; font-size: 16px; color: var(--text-primary); font-weight: bold;">
+          האם ביצעת את האימון ושכחת לעדכן, או שפספסת אותו?
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <button class="btn-primary" onclick="TodayPage.completeAndAdvance()" style="padding: 14px; background: var(--success); border: none; font-size: 15px;">
+            <span>✅</span> עשיתי, שכחתי לסמן!
+          </button>
+          <button class="btn-primary" onclick="TodayPage.confirmSkipDay()" style="padding: 14px; background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); font-size: 15px;">
+            <span>⏭️</span> לא עשיתי, דלג יום
+          </button>
+          <button class="btn-secondary" onclick="UI.hideModal()" style="padding: 12px; margin-top: 8px;">ביטול</button>
+        </div>
+      </div>
+    `;
+    UI.showModal('עדכון התקדמות', modalHTML);
+  }
+
+  async function completeAndAdvance() {
+    UI.hideModal();
+    
+    currentTracking.completed = true;
+    currentTracking.date = currentTracking.date || new Date().toISOString().slice(0, 10);
+    
+    const day = allPlanDays[currentDayIndex];
+    if (day && day.exercises) {
+      if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+      day.exercises.forEach((_, i) => {
+        currentTracking.exerciseStatus[i] = true;
+      });
+    }
+    await DB.saveDayTracking(currentDayIndex, currentTracking);
+    
+    window.appCurrentPlanIndex++;
+    if (window.appCurrentPlanIndex >= allPlanDays.length) {
+      window.appCurrentPlanIndex = allPlanDays.length - 1;
+    }
+    await DB.setSetting('currentPlanIndex', window.appCurrentPlanIndex);
+    
+    goToToday();
+    UI.toast('היום סומן כהושלם והתוכנית קודמה 🏆', 'success');
+  }
+
+  async function confirmSkipDay() {
+    UI.hideModal();
+    window.appCurrentPlanIndex++;
+    if (window.appCurrentPlanIndex >= allPlanDays.length) {
+      window.appCurrentPlanIndex = allPlanDays.length - 1;
+    }
+    await DB.setSetting('currentPlanIndex', window.appCurrentPlanIndex);
+    
+    goToToday();
+    UI.toast('התוכנית קודמה ביום אחד ⏭️', 'info');
   }
 
   return {
@@ -553,6 +637,11 @@ const TodayPage = (() => {
     updateExerciseNote,
     markRestComplete,
     skipDay,
+    confirmSkipDay,
+    completeAndAdvance,
     getCurrentDayIndex: () => currentDayIndex
   };
 })();
+
+// Expose to window for inline event handlers
+window.TodayPage = TodayPage;

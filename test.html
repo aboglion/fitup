@@ -1,19 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
-<style>
-  body { background: #1a2236; color: white; display: flex; gap: 20px; padding: 50px; }
-  .card { width: 300px; background: #1a2236; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; overflow: hidden; }
-  .hero { background: white; padding: 20px; text-align: center; }
-  .hero img { width: 100%; mask-image: radial-gradient(circle at center, black 40%, transparent 70%); -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%); }
-</style>
-</head>
 <body>
-  <div class="card">
-    <div class="hero" style="background: transparent;">
-      <img src="images/exercises/WALL PUSH-UP.png" />
-    </div>
-    <div style="padding: 20px;">TEXT HERE</div>
-  </div>
+  <button id="btn" onclick="try { alert(MyConst.foo()); } catch(e) { document.getElementById('res').innerText = e.message; }">Click me</button>
+  <div id="res"></div>
+  <script>
+    const MyConst = { foo: () => 'hello' };
+  </script>
 </body>
 </html>
