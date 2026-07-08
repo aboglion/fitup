@@ -615,25 +615,23 @@ const ExercisesPage = (() => {
                 ${(() => {
                   const tiers = BAND_WEIGHT_PROGRESSION[node.name];
                   if (!tiers || tiers.length === 0) return '';
+                  const wClass = (w) => 'evo-w' + parseInt(w);
                   if (tiers.length === 1) {
-                    // Single tier - just show weight badge inline
                     const t = tiers[0];
                     const tierActive = currentWeek >= t.fromWeek;
                     return `<div class="rpg-evo-single">
-                      <span class="rpg-evo-card ${tierActive ? 'active current' : 'locked'}">
+                      <span class="rpg-evo-card ${wClass(t.weight)} ${tierActive ? 'active current' : 'locked'}">
                         <span class="rpg-evo-weight">${t.weight}</span>
                         <span class="rpg-evo-week">${tierActive ? '✓' : '🔒'} ש׳${t.fromWeek}</span>
                       </span>
                     </div>`;
                   }
-                  // Multi-tier evolution chain
                   let evoHtml = '';
                   tiers.forEach((t, ti) => {
                     const tierActive = currentWeek >= t.fromWeek;
                     const tierLatest = tierActive && (ti === tiers.length - 1 || currentWeek < tiers[ti + 1].fromWeek);
                     const tierCompleted = tierActive && !tierLatest;
                     const stClass = tierCompleted ? 'completed' : tierLatest ? 'active current' : 'locked';
-                    // Connector arrow before each tier (except first)
                     if (ti > 0) {
                       const prevActive = currentWeek >= tiers[ti - 1].fromWeek;
                       evoHtml += `<div class="rpg-evo-connector ${prevActive && tierActive ? 'active' : ''}">
@@ -641,7 +639,7 @@ const ExercisesPage = (() => {
                         <div class="rpg-evo-arrow-head">▸</div>
                       </div>`;
                     }
-                    evoHtml += `<div class="rpg-evo-card ${stClass}">
+                    evoHtml += `<div class="rpg-evo-card ${wClass(t.weight)} ${stClass}">
                       <span class="rpg-evo-phase">Tier ${ti + 1}</span>
                       <span class="rpg-evo-weight">${t.weight}</span>
                       <span class="rpg-evo-week">${tierCompleted ? '✓' : tierLatest ? '◆' : '🔒'} שבוע ${t.fromWeek}</span>
