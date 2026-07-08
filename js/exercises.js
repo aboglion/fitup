@@ -23,9 +23,10 @@ const ExercisesPage = (() => {
     'Banded Glute Bridge': [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }, { weight: '50kg', fromWeek: 26 }],
     'Pallof Press':        [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }],
     'Band Curl':           [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }],
-    'Band Row':            [{ weight: '30kg', fromWeek: 1 }, { weight: '50kg', fromWeek: 26 }],
-    'Single-arm Band Row': [{ weight: '40kg', fromWeek: 13 }, { weight: '50kg', fromWeek: 34 }],
-    'Banded Push-up':      [{ weight: '50kg', fromWeek: 34 }],
+    'Band Row':            [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }, { weight: '50kg', fromWeek: 25 }],
+    'Single-arm Band Row': [{ weight: '30kg', fromWeek: 25 }, { weight: '40kg', fromWeek: 34 }],
+    'Banded Push-up':      [{ weight: '30kg', fromWeek: 34 }],
+    'Band-assisted Pull-up': [{ weight: '50kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }, { weight: '30kg', fromWeek: 25 }],
     'Face Pull':           [{ weight: '30kg', fromWeek: 1 }],
     'Triceps Extension':   [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }],
     'Band External Rotation': [{ weight: '30kg', fromWeek: 1 }],
@@ -60,8 +61,7 @@ const ExercisesPage = (() => {
         icon: '⬆️',
         exercises: [
           { name: 'Scapular Pull-up', unlockWeek: 1 },
-          { name: 'Band-assisted Pull-up', unlockWeek: 13 },
-          { name: 'Chin-up', unlockWeek: 26 },
+          { name: 'Band-assisted Pull-up', unlockWeek: 1 },
           { name: 'Pull-up', unlockWeek: 34 }
         ]
       },
@@ -70,7 +70,7 @@ const ExercisesPage = (() => {
         icon: '↔️',
         exercises: [
           { name: 'Band Row', unlockWeek: 1 },
-          { name: 'Single-arm Band Row', unlockWeek: 13 }
+          { name: 'Single-arm Band Row', unlockWeek: 25 }
         ]
       },
       {
@@ -126,8 +126,7 @@ const ExercisesPage = (() => {
         icon: '⬆️',
         exercises: [
           { name: 'Scapular Pull-up', unlockWeek: 1 },
-          { name: 'Band-assisted Pull-up', unlockWeek: 13 },
-          { name: 'Chin-up', unlockWeek: 26 },
+          { name: 'Band-assisted Pull-up', unlockWeek: 1 },
           { name: 'Pull-up', unlockWeek: 34 }
         ]
       },
@@ -136,7 +135,7 @@ const ExercisesPage = (() => {
         icon: '↔️',
         exercises: [
           { name: 'Band Row', unlockWeek: 1 },
-          { name: 'Single-arm Band Row', unlockWeek: 13 }
+          { name: 'Single-arm Band Row', unlockWeek: 25 }
         ]
       },
       {

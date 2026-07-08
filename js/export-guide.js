@@ -143,9 +143,9 @@ window.ExporterGuide = (() => {
         <p>כדי למנוע תקיעות (Plateau), הוספנו <strong>מיקרו-פריודיזציה</strong> בתוך הפאזות עצמן. לדחיפה ומשיכה יש העלאת סטים אחרי חצי פאזה (לדוגמה מעבר מ-3 ל-4 סטים).</p>
         <table>
           <tr><th>תחום</th><th>שלב 1 (1-12)</th><th>שלב 2 (13-24)</th><th>שלב 3 (25-33)</th><th>שלב 4 (34-52)</th></tr>
-          <tr><td><strong>דחיפה חזה</strong></td><td>Incline Push-up (3-4 סטים)</td><td>Push-up רגיל (3-4 סטים)</td><td>Offset / Diamond (רוטציה)</td><td>Banded / Offset / Decline (רוטציה 3-שבועית)</td></tr>
-          <tr><td><strong>משיכה אנכית</strong></td><td>Scapular Pull-up (3-4 סטים)</td><td>Band-assisted Pull-up</td><td>Chin-up</td><td>Pull-up</td></tr>
-          <tr><td><strong>משיכה אופקית</strong></td><td>Band Row (3-4 סטים)</td><td>Single-arm Band Row (3-4 סטים)</td><td>Single-arm Band Row</td><td>Single-arm Band Row / Band Row (50kg)</td></tr>
+          <tr><td><strong>דחיפה חזה</strong></td><td>Incline Push-up (3-4 סטים)</td><td>Push-up רגיל (3-4 סטים)</td><td>Offset / Diamond (רוטציה)</td><td>Banded / Offset / Decline (רוטציה 3-שבועית) - גומייה 30kg בחזה</td></tr>
+          <tr><td><strong>משיכה אנכית</strong></td><td>Band-assisted Pull-up (עזרה מקסימלית - 50kg) + חימום מתח שכמות</td><td>Band-assisted Pull-up (עזרה בינונית - 40kg)</td><td>Band-assisted Pull-up (עזרה מינימלית - 30kg)</td><td>Pull-up / Chin-up (משקל גוף)</td></tr>
+          <tr><td><strong>משיכה אופקית</strong></td><td>Band Row (3-4 סטים)</td><td>Band Row (3-4 סטים)</td><td>Single-arm Band Row 30kg / Band Row 50kg</td><td>Single-arm Band Row 40kg / Band Row 50kg</td></tr>
           <tr><td><strong>רגליים</strong></td><td>Squat איטי (3-4 סטים)</td><td>Split Squat (3-4 סטים)</td><td>Bulgarian Split Squat</td><td>Bulgarian Split Squat (4 סטים)</td></tr>
           <tr><td><strong>ישבן</strong></td><td>Banded Glute Bridge + RDL</td><td>Banded Glute Bridge + RDL (40kg)</td><td>Banded Glute Bridge + RDL (50kg)</td><td>Glute Bridge / RDL (רוטציה)</td></tr>
           <tr><td><strong>ליבה</strong></td><td>Hollow Body Hold</td><td>Hollow Body Hold</td><td>Hanging Leg Raise</td><td>Hanging Leg Raise</td></tr>

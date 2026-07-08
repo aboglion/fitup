@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 
 START_DATE = datetime(2026, 7, 5)  # Sunday
 
-# Video URLs
 VIDEOS = {
     "Band External Rotation": "https://www.youtube.com/watch?v=dLSytuFOCX8",
     "Incline Push-up": "https://www.youtube.com/watch?v=76TQU7iZlsI",
@@ -59,19 +58,20 @@ def is_deload(week):
 DAYS_HEB = ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"]
 
 def upper_a(week):
-    """Sunday - Upper A"""
     phase = get_phase(week)
     deload = is_deload(week)
     exercises = []
     # Warmup
     exercises.append(ex("W1","Band External Rotation","2×15 לכל יד","30kg"))
+    exercises.append(ex("W2","Scapular Pull-up","2×10-15","משקל גוף"))
 
     if phase == 1:
         v_sets = "4×6-10" if week > 6 else "3×6-10"
-        p_sets = "4×8-12" if week > 6 else "3×8-12"
+        p_sets = "4×5-8" if week > 6 else "3×5-8"
+        r_sets = "4×8-12" if week > 6 else "3×8-12"
         exercises.append(ex("A1","Incline Push-up",v_sets))
-        exercises.append(ex("A2","Scapular Pull-up",p_sets))
-        exercises.append(ex("B1","Band Row",p_sets,"30kg"))
+        exercises.append(ex("A2","Band-assisted Pull-up",p_sets,"50kg"))
+        exercises.append(ex("B1","Band Row",r_sets,"30kg"))
         exercises.append(ex("B2","Banded OHP","3×8-10","30kg"))
         exercises.append(ex("C1","Hollow Body Hold","2×20-30 שניות"))
         exercises.append(ex("C2","Pallof Press","3×10-12","30kg"))
@@ -79,9 +79,10 @@ def upper_a(week):
         exercises.append(ex("D2","Face Pull","2×15","30kg"))
     elif phase == 2:
         v_sets = "4×8-12" if week > 18 else "3×8-12"
+        r_sets = "4×8-12" if week > 18 else "3×8-12"
         exercises.append(ex("A1","Push-up רגיל",v_sets))
-        exercises.append(ex("A2","Band-assisted Pull-up","3×5-8"))
-        exercises.append(ex("B1","Single-arm Band Row","3×8-10 לכל יד","40kg"))
+        exercises.append(ex("A2","Band-assisted Pull-up","3×5-8","40kg"))
+        exercises.append(ex("B1","Band Row",r_sets,"40kg"))
         exercises.append(ex("B2","Banded OHP","3-4×8","40kg"))
         exercises.append(ex("C1","Hollow Body Hold","3×30 שניות"))
         exercises.append(ex("C2","Pallof Press","3×10-12","40kg"))
@@ -90,8 +91,8 @@ def upper_a(week):
     elif phase == 3:
         if week == 25:  # Deload
             exercises.append(ex("A1","Push-up רגיל","3×8"))
-            exercises.append(ex("A2","Band-assisted Pull-up","3×5"))
-            exercises.append(ex("B1","Single-arm Band Row","2×8-10 לכל יד","40kg"))
+            exercises.append(ex("A2","Band-assisted Pull-up","3×5","30kg"))
+            exercises.append(ex("B1","Single-arm Band Row","2×8-10 לכל יד","30kg"))
             exercises.append(ex("B2","Banded OHP","2×8","40kg"))
             exercises.append(ex("C1","Hollow Body Hold","2×20 שניות"))
             exercises.append(ex("C2","Pallof Press","2×10","30kg"))
@@ -99,20 +100,20 @@ def upper_a(week):
             exercises.append(ex("D2","Face Pull","2×12","30kg"))
         elif week == 33:  # Deload
             exercises.append(ex("A1","Push-up רגיל","3×8"))
-            exercises.append(ex("A2","Band-assisted Pull-up","3×5"))
-            exercises.append(ex("B1","Single-arm Band Row","3×8-10 לכל יד","40kg"))
+            exercises.append(ex("A2","Band-assisted Pull-up","3×5","30kg"))
+            exercises.append(ex("B1","Single-arm Band Row","3×8-10 לכל יד","30kg"))
             exercises.append(ex("B2","Banded OHP","3×8","40kg"))
             exercises.append(ex("C1","Hollow Body Hold","3×20 שניות"))
             exercises.append(ex("C2","Pallof Press","3×10","30kg"))
             exercises.append(ex("D1","Band Curl","2×12","30kg"))
             exercises.append(ex("D2","Face Pull","2×12","30kg"))
         else:  # 26-32
-            if week % 2 == 0:  # even = Diamond
+            if week % 2 == 0:
                 exercises.append(ex("A1","Diamond Push-up","4×8-12"))
-            else:  # odd = Offset
+            else:
                 exercises.append(ex("A1","Offset Push-up","3×8 לכל צד"))
-            exercises.append(ex("A2","Chin-up","3-4×5-8"))
-            exercises.append(ex("B1","Single-arm Band Row","4×8-10 לכל יד","40kg"))
+            exercises.append(ex("A2","Band-assisted Pull-up","3-4×5-8","30kg"))
+            exercises.append(ex("B1","Single-arm Band Row","4×8-10 לכל יד","30kg"))
             exercises.append(ex("B2","Banded OHP","3-4×8","50kg"))
             exercises.append(ex("C1","Hollow Body Hold","3×30-45 שניות"))
             exercises.append(ex("C2","Pallof Press","3-4×8-10","40kg"))
@@ -120,9 +121,9 @@ def upper_a(week):
             exercises.append(ex("D2","Face Pull","3×15","30kg"))
     else:  # phase 4
         if week == 41 or week == 49:  # Deload
-            exercises.append(ex("A1","Banded Push-up","3×8","50kg"))
-            exercises.append(ex("A2","Pull-up","3×5"))
-            exercises.append(ex("B1","Single-arm Band Row","3×8 לכל יד","50kg"))
+            exercises.append(ex("A1","Banded Push-up","3×8","30kg"))
+            exercises.append(ex("A2","Pull-up","3×5","משקל גוף"))
+            exercises.append(ex("B1","Single-arm Band Row","3×8 לכל יד","40kg"))
             exercises.append(ex("B2","Pike Push-up","3×6"))
             exercises.append(ex("C1","Hollow Body Hold","3×30 שניות"))
             exercises.append(ex("C2","Band Row","3×10","50kg"))
@@ -131,25 +132,23 @@ def upper_a(week):
         else:
             rot = (week - 34) % 3
             if rot == 0:
-                exercises.append(ex("A1","Banded Push-up","4×8-10","50kg"))
+                exercises.append(ex("A1","Banded Push-up","4×8-10","30kg"))
             elif rot == 1:
                 exercises.append(ex("A1","Offset Push-up","3×8 לכל צד"))
             else:
                 exercises.append(ex("A1","Decline Push-up","4×8-10"))
-            exercises.append(ex("A2","Pull-up","4×5-8"))
-            exercises.append(ex("B1","Single-arm Band Row","4×8-10 לכל יד","50kg"))
+            exercises.append(ex("A2","Pull-up","4×5-8","משקל גוף"))
+            exercises.append(ex("B1","Single-arm Band Row","4×8-10 לכל יד","40kg"))
             exercises.append(ex("B2","Pike Push-up","3×6-10"))
             exercises.append(ex("C1","Hollow Body Hold","3×30-45 שניות"))
-            exercises.append(ex("C2","Band Row","3×10-12","50kg"))  # Replaced Face Pull with Band Row
+            exercises.append(ex("C2","Band Row","3×10-12","50kg"))
             exercises.append(ex("D1","Band Curl","2×12-15","40kg"))
             exercises.append(ex("D2","Band Lateral Raise","3×12-15","30kg"))
     return exercises
 
 def lower_core(week):
-    """Tuesday - Lower + Core"""
     phase = get_phase(week)
     exercises = []
-
     if phase == 1:
         s_sets = "4×8-10" if week > 6 else "3×8-10"
         exercises.append(ex("A1","Squat איטי",s_sets))
@@ -197,8 +196,8 @@ def lower_core(week):
             exercises.append(ex("C1","Single-leg Calf Raise","3×12 לכל רגל"))
             exercises.append(ex("D1","Tibialis Raise","3×15"))
         else:
-            exercises.append(ex("A1","Bulgarian Split Squat","4×8-10 לכל רגל")) # Increased sets/reps
-            if week % 2 == 1:  # odd
+            exercises.append(ex("A1","Bulgarian Split Squat","4×8-10 לכל רגל")) 
+            if week % 2 == 1:
                 exercises.append(ex("A2","Banded Glute Bridge","3-4×12-15","50kg"))
                 exercises.append(ex("B1","Banded RDL","3×10-12","50kg"))
             else:
@@ -210,17 +209,18 @@ def lower_core(week):
     return exercises
 
 def upper_b(week):
-    """Thursday - Upper B"""
     phase = get_phase(week)
     exercises = []
     exercises.append(ex("W1","Band External Rotation","2×15 לכל יד","30kg"))
+    exercises.append(ex("W2","Scapular Pull-up","2×10-15","משקל גוף"))
 
     if phase == 1:
         v_sets = "4×6-10" if week > 6 else "3×6-10"
-        p_sets = "4×8-12" if week > 6 else "3×8-12"
+        p_sets = "4×5-8" if week > 6 else "3×5-8"
+        r_sets = "4×8-12" if week > 6 else "3×8-12"
         exercises.append(ex("A1","Incline Push-up",v_sets))
-        exercises.append(ex("A2","Scapular Pull-up",p_sets))
-        exercises.append(ex("B1","Band Row",p_sets,"30kg"))
+        exercises.append(ex("A2","Band-assisted Pull-up",p_sets,"50kg"))
+        exercises.append(ex("B1","Band Row",r_sets,"30kg"))
         exercises.append(ex("B2","Banded OHP","3×8-10","30kg"))
         exercises.append(ex("C1","Hollow Body Hold","2×20-30 שניות"))
         exercises.append(ex("C2","Pallof Press","3×10-12","30kg"))
@@ -228,9 +228,10 @@ def upper_b(week):
         exercises.append(ex("D2","Face Pull","2×15","30kg"))
     elif phase == 2:
         v_sets = "4×8-12" if week > 18 else "3×8-12"
+        r_sets = "4×8-12" if week > 18 else "3×8-12"
         exercises.append(ex("A1","Push-up רגיל",v_sets))
-        exercises.append(ex("A2","Band-assisted Pull-up","3×5-8"))
-        exercises.append(ex("B1","Single-arm Band Row","3×8-10 לכל יד","40kg"))
+        exercises.append(ex("A2","Band-assisted Pull-up","3×5-8","40kg"))
+        exercises.append(ex("B1","Band Row",r_sets,"40kg"))
         exercises.append(ex("B2","Banded OHP","3-4×8","40kg"))
         exercises.append(ex("C1","Hollow Body Hold","3×30 שניות"))
         exercises.append(ex("C2","Pallof Press","3×10-12","40kg"))
@@ -239,8 +240,8 @@ def upper_b(week):
     elif phase == 3:
         if week == 25:
             exercises.append(ex("A1","Push-up רגיל","3×8"))
-            exercises.append(ex("A2","Band-assisted Pull-up","3×5"))
-            exercises.append(ex("B1","Single-arm Band Row","2×8-10 לכל יד","40kg"))
+            exercises.append(ex("A2","Band-assisted Pull-up","3×5","30kg"))
+            exercises.append(ex("B1","Band Row","2×10","50kg"))
             exercises.append(ex("B2","Banded OHP","2×8","40kg"))
             exercises.append(ex("C1","Hollow Body Hold","2×20 שניות"))
             exercises.append(ex("C2","Pallof Press","2×10","30kg"))
@@ -248,8 +249,8 @@ def upper_b(week):
             exercises.append(ex("D2","Face Pull","2×12","30kg"))
         elif week == 33:
             exercises.append(ex("A1","Push-up רגיל","3×8"))
-            exercises.append(ex("A2","Band-assisted Pull-up","3×5"))
-            exercises.append(ex("B1","Single-arm Band Row","3×8-10 לכל יד","40kg"))
+            exercises.append(ex("A2","Band-assisted Pull-up","3×5","30kg"))
+            exercises.append(ex("B1","Band Row","3×10","50kg"))
             exercises.append(ex("B2","Banded OHP","3×8","40kg"))
             exercises.append(ex("C1","Hollow Body Hold","3×20 שניות"))
             exercises.append(ex("C2","Pallof Press","3×10","30kg"))
@@ -260,7 +261,7 @@ def upper_b(week):
                 exercises.append(ex("A1","Diamond Push-up","4×8-12"))
             else:
                 exercises.append(ex("A1","Offset Push-up","3×8 לכל צד"))
-            exercises.append(ex("A2","Chin-up","3-4×5-8"))
+            exercises.append(ex("A2","Band-assisted Pull-up","3-4×5-8","30kg"))
             exercises.append(ex("B1","Band Row","3×10-12","50kg"))
             exercises.append(ex("B2","Banded OHP","3×8-10","50kg"))
             exercises.append(ex("C1","Hanging Leg Raise","3×8-10"))
@@ -269,7 +270,7 @@ def upper_b(week):
     else:
         if week == 41 or week == 49:
             exercises.append(ex("A1","Diamond Push-up","3×8"))
-            exercises.append(ex("A2","Pull-up","3×5"))
+            exercises.append(ex("A2","Chin-up","3×5","משקל גוף"))
             exercises.append(ex("B1","Banded OHP","3×8","50kg"))
             exercises.append(ex("B2","Band Row","3×10","50kg"))
             exercises.append(ex("C1","Hanging Leg Raise","3×8"))
@@ -282,18 +283,17 @@ def upper_b(week):
             elif rot == 1:
                 exercises.append(ex("A1","Offset Push-up","3×8 לכל צד"))
             else:
-                exercises.append(ex("A1","Banded Push-up","4×8-10","50kg"))
-            exercises.append(ex("A2","Pull-up","4×5-8"))
+                exercises.append(ex("A1","Banded Push-up","4×8-10","30kg"))
+            exercises.append(ex("A2","Chin-up","4×5-8","משקל גוף"))
             exercises.append(ex("B1","Banded OHP","3×8-10","50kg"))
             exercises.append(ex("B2","Band Row","3×10-12","50kg"))
             exercises.append(ex("C1","Hanging Leg Raise","3×8-12"))
             exercises.append(ex("C2","Triceps Extension","3×12-15","40kg"))
             exercises.append(ex("D1","Band Lateral Raise","3×12-15","30kg"))
-            exercises.append(ex("D2","Face Pull","3×15","30kg")) # Added back Face Pull to Upper B to keep volume
+            exercises.append(ex("D2","Face Pull","3×15","30kg"))
     return exercises
 
 def walking_day(week, is_wednesday=False):
-    """Monday/Wednesday - Walking + Core + Calves"""
     phase = get_phase(week)
     exercises = []
     if phase <= 2:
@@ -309,7 +309,7 @@ def walking_day(week, is_wednesday=False):
     exercises.append(ex("C1","Tibialis Raise","3×15"))
     
     if phase >= 3 and not is_wednesday:
-        exercises.append(ex("C2","Pallof Press","3×10-12","30kg")) # Added core progression
+        exercises.append(ex("C2","Pallof Press","3×10-12","30kg"))
         
     if is_wednesday:
         exercises.append(ex("C2" if phase < 3 else "D1","מתיחות מלאות","10-15 דקות"))
@@ -328,41 +328,27 @@ def rest_saturday():
         {"slot":"B1","name":"מים 2.5-3 ליטר","sets":None,"weight":None,"videoUrl":None},
     ]
 
-# DAY TYPES per day-of-week index: Sun=Upper A, Mon=Walk, Tue=Lower, Wed=Walk, Thu=Upper B, Fri=Rest, Sat=Rest
 def get_day_exercises(day_of_week_idx, week):
-    if day_of_week_idx == 0:  # Sunday - Upper A
-        return "כוח עליון A", "7-8", upper_a(week)
-    elif day_of_week_idx == 1:  # Monday - Walking
-        return "הליכה", "5-6", walking_day(week, False)
-    elif day_of_week_idx == 2:  # Tuesday - Lower + Core
-        return "כוח תחתון", "7-8", lower_core(week)
-    elif day_of_week_idx == 3:  # Wednesday - Walking
-        return "הליכה", "5-6", walking_day(week, True)
-    elif day_of_week_idx == 4:  # Thursday - Upper B
-        return "כוח עליון B", "7-8", upper_b(week)
-    elif day_of_week_idx == 5:  # Friday - Rest
-        return "מנוחה", "—", rest_friday()
-    else:  # Saturday - Rest
-        return "מנוחה", "—", rest_saturday()
+    if day_of_week_idx == 0: return "כוח עליון A", "7-8", upper_a(week)
+    elif day_of_week_idx == 1: return "הליכה", "5-6", walking_day(week, False)
+    elif day_of_week_idx == 2: return "כוח תחתון", "7-8", lower_core(week)
+    elif day_of_week_idx == 3: return "הליכה", "5-6", walking_day(week, True)
+    elif day_of_week_idx == 4: return "כוח עליון B", "7-8", upper_b(week)
+    elif day_of_week_idx == 5: return "מנוחה", "—", rest_friday()
+    else: return "מנוחה", "—", rest_saturday()
 
 def generate_program():
     daily = []
     day_num = 0
-
     for week in range(1, 53):
         for dow in range(7):
             day_num += 1
             date = START_DATE + timedelta(days=day_num - 1)
             day_type, rpe, exercises = get_day_exercises(dow, week)
-
             daily.append({
-                "dayNum": day_num,
-                "week": f"שבוע {week}",
-                "dayOfWeek": DAYS_HEB[dow],
-                "date": date.strftime("%d/%m/%Y"),
-                "dayType": day_type,
-                "plannedRPE": rpe,
-                "exercises": exercises,
+                "dayNum": day_num, "week": f"שבוע {week}", "dayOfWeek": DAYS_HEB[dow],
+                "date": date.strftime("%d/%m/%Y"), "dayType": day_type,
+                "plannedRPE": rpe, "exercises": exercises,
             })
 
     exercises_guide = [
@@ -370,14 +356,14 @@ def generate_program():
         {"name":"Push-up רגיל","category":"דחיפה","difficulty":"מתחיל+","weight":"משקל גוף","videoUrl":VIDEOS["Push-up רגיל"],"setsProgression":"שלב 2: 3-4×8-12"},
         {"name":"Offset Push-up","category":"דחיפה","difficulty":"בינוני","weight":"משקל גוף","videoUrl":VIDEOS["Offset Push-up"],"setsProgression":"שלב 3: 3×8 לכל צד"},
         {"name":"Diamond Push-up","category":"דחיפה","difficulty":"בינוני+","weight":"משקל גוף","videoUrl":VIDEOS["Diamond Push-up"],"setsProgression":"שלב 3: 4×8-12"},
-        {"name":"Banded Push-up","category":"דחיפה","difficulty":"מתקדם","weight":"50kg","videoUrl":VIDEOS["Banded Push-up"],"setsProgression":"שלב 4: 4×8-10"},
+        {"name":"Banded Push-up","category":"דחיפה","difficulty":"מתקדם","weight":"30kg","videoUrl":VIDEOS["Banded Push-up"],"setsProgression":"שלב 4: 4×8-10"},
         {"name":"Decline Push-up","category":"דחיפה","difficulty":"מתקדם","weight":"משקל גוף","videoUrl":VIDEOS["Decline Push-up"],"setsProgression":"שלב 4: 4×8-10"},
-        {"name":"Scapular Pull-up","category":"משיכה","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Scapular Pull-up"],"setsProgression":"שלב 1: 3-4×8-12"},
-        {"name":"Band-assisted Pull-up","category":"משיכה","difficulty":"בינוני","weight":"משקל גוף","videoUrl":VIDEOS["Band-assisted Pull-up"],"setsProgression":"שלב 2: 3×5-8"},
-        {"name":"Chin-up","category":"משיכה","difficulty":"בינוני+","weight":"משקל גוף","videoUrl":VIDEOS["Chin-up"],"setsProgression":"שלב 3: 3-4×5-8"},
+        {"name":"Scapular Pull-up","category":"משיכה","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Scapular Pull-up"],"setsProgression":"חימום: 2×10-15"},
+        {"name":"Band-assisted Pull-up","category":"משיכה","difficulty":"בינוני","weight":"30-50kg","videoUrl":VIDEOS["Band-assisted Pull-up"],"setsProgression":"שלב 1-3 (הפחתת עזרה): 3-4×5-8"},
+        {"name":"Chin-up","category":"משיכה","difficulty":"מתקדם","weight":"משקל גוף","videoUrl":VIDEOS["Chin-up"],"setsProgression":"שלב 4: 4×5-8"},
         {"name":"Pull-up","category":"משיכה","difficulty":"מתקדם","weight":"משקל גוף","videoUrl":VIDEOS["Pull-up"],"setsProgression":"שלב 4: 4×5-8"},
-        {"name":"Band Row","category":"משיכה","difficulty":"מתחיל","weight":"30-50kg","videoUrl":VIDEOS["Band Row"],"setsProgression":"שלב 1: 3-4×8-12"},
-        {"name":"Single-arm Band Row","category":"משיכה","difficulty":"בינוני","weight":"40-50kg","videoUrl":VIDEOS["Single-arm Band Row"],"setsProgression":"שלב 2: 3-4×8-10 לכל יד"},
+        {"name":"Band Row","category":"משיכה","difficulty":"מתחיל","weight":"30-50kg","videoUrl":VIDEOS["Band Row"],"setsProgression":"שלב 1-2: 3-4×8-12"},
+        {"name":"Single-arm Band Row","category":"משיכה","difficulty":"בינוני","weight":"30-40kg","videoUrl":VIDEOS["Single-arm Band Row"],"setsProgression":"שלב 3-4: 3-4×8-10 לכל יד"},
         {"name":"Face Pull","category":"כתפיים","difficulty":"מתחיל","weight":"30kg","videoUrl":VIDEOS["Face Pull"],"setsProgression":"2-3×15"},
         {"name":"Banded OHP","category":"כתפיים","difficulty":"מתחיל+","weight":"30-50kg","videoUrl":VIDEOS["Banded OHP"],"setsProgression":"שלב 1-3: 3-4×8-10"},
         {"name":"Pike Push-up","category":"כתפיים","difficulty":"מתקדם","weight":"משקל גוף","videoUrl":VIDEOS["Pike Push-up"],"setsProgression":"שלב 4: 3×6-10"},
@@ -402,33 +388,25 @@ def generate_program():
         {"name":"מתיחות מלאות","category":"גמישות","difficulty":"מתחיל","weight":None,"videoUrl":VIDEOS["מתיחות מלאות"],"setsProgression":"10-15 דקות"},
         {"name":"הליכה קלה (אופציונלי)","category":"קרדיו","difficulty":"מתחיל","weight":None,"videoUrl":VIDEOS["הליכה קלה (אופציונלי)"],"setsProgression":"15-20 דקות"},
     ]
-
     return {"daily": daily, "exercises": exercises_guide}
 
 def to_training_data_json(program):
-    """Convert to the flat training_data.json format."""
     rows = []
-    slot_order = ["W1","A1","A2","B1","B2","C1","C2","D1","D2","E1","E2"]
+    slot_order = ["W1","W2","A1","A2","B1","B2","C1","C2","D1","D2","E1","E2"]
     for day in program["daily"]:
         row = {
-            "יום": f"יום {day['dayNum']}",
-            "שבוע": day["week"],
-            "יום בשבוע": day["dayOfWeek"],
-            "תאריך": day["date"],
-            "סוג יום": day["dayType"],
-            "RPE מתוכנן": day["plannedRPE"],
+            "יום": f"יום {day['dayNum']}", "שבוע": day["week"], "יום בשבוע": day["dayOfWeek"],
+            "תאריך": day["date"], "סוג יום": day["dayType"], "RPE מתוכנן": day["plannedRPE"],
         }
         ex_by_slot = {}
         for e in day["exercises"]:
             ex_by_slot[e["slot"]] = e
-
         for slot in slot_order:
             e = ex_by_slot.get(slot)
             row[f"{slot} - תרגיל"] = e["name"] if e else None
             row[f"{slot} - סטים×חזרות"] = e["sets"] if e else None
             row[f"{slot} - משקל/התנגדות"] = e.get("weight") if e else None
             row[f"{slot} - קישור"] = e.get("videoUrl") if e else None
-
         row["תוספות - תרגיל"] = None
         row["תוספות - סטים×חזרות"] = None
         row["תוספות - קישור"] = None
@@ -441,15 +419,9 @@ def to_training_data_json(program):
 
 if __name__ == "__main__":
     program = generate_program()
-
-    # Write data.js
-    js_content = "window.TRAINING_DATA = " + json.dumps(program, ensure_ascii=False) + ";\n"
     with open("js/data.js", "w", encoding="utf-8") as f:
-        f.write(js_content)
-    print(f"✅ js/data.js written ({len(program['daily'])} days)")
-
-    # Write training_data.json
+        f.write("window.TRAINING_DATA = " + json.dumps(program, ensure_ascii=False) + ";\n")
     td = to_training_data_json(program)
     with open("training_data.json", "w", encoding="utf-8") as f:
         json.dump(td, f, ensure_ascii=False, indent=2)
-    print(f"✅ training_data.json written ({len(td['daily'])} days)")
+    print("Done")
