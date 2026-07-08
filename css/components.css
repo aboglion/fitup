@@ -1968,6 +1968,14 @@ html.light-theme .exercise-hero-container::after {
   letter-spacing: -0.3px;
 }
 
+.rpg-band-tier-week {
+  font-size: 7px;
+  font-weight: 600;
+  opacity: 0.65;
+  letter-spacing: 0;
+  margin-right: 1px;
+}
+
 .rpg-band-tier-arrow {
   font-size: 10px;
   font-weight: 900;

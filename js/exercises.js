@@ -607,12 +607,14 @@ const ExercisesPage = (() => {
               <div class="rpg-node-info">
                 <div class="rpg-node-name">${node.name}</div>
                 <div class="rpg-node-badges">
-                  ${!isUnlocked ? `<span class="rpg-unlock-badge locked">🔒 שבוע ${node.unlockWeek}</span>` : ''}
+                  ${!isUnlocked 
+                    ? `<span class="rpg-unlock-badge locked">🔒 שבוע ${node.unlockWeek}</span>` 
+                    : `<span class="rpg-unlock-badge unlocked">✓ שבוע ${node.unlockWeek}</span>`}
                   ${equip ? `<span class="rpg-equip-badge">${equip.icon}</span>` : ''}
                 </div>
                 ${(() => {
                   const tiers = BAND_WEIGHT_PROGRESSION[node.name];
-                  if (!tiers || tiers.length < 2) return '';
+                  if (!tiers || tiers.length === 0) return '';
                   const tierHtml = tiers.map((t, ti) => {
                     const tierActive = currentWeek >= t.fromWeek;
                     const tierLatest = tierActive && (ti === tiers.length - 1 || currentWeek < tiers[ti + 1].fromWeek);
@@ -620,6 +622,7 @@ const ExercisesPage = (() => {
                                   title="שבוע ${t.fromWeek}">
                               <span class="rpg-band-tier-dot"></span>
                               <span class="rpg-band-tier-weight">${t.weight}</span>
+                              <span class="rpg-band-tier-week">ש׳${t.fromWeek}</span>
                             </span>`;
                   }).join('<span class="rpg-band-tier-arrow">›</span>');
                   return `<div class="rpg-band-tiers">${tierHtml}</div>`;
