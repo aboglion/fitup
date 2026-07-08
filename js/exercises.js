@@ -207,7 +207,8 @@ const ExercisesPage = (() => {
         title: '🚶 הליכה',
         icon: '🌳',
         exercises: [
-          { name: 'הליכה מהירה', unlockWeek: 1, noImage: true }
+          { name: 'הליכה מהירה', unlockWeek: 1, noImage: true },
+          { name: 'הליכה (Rucking/עליות)', unlockWeek: 25, noImage: true }
         ]
       },
       {

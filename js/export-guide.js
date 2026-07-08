@@ -139,19 +139,20 @@ window.ExporterGuide = (() => {
           <tr><td>ש׳</td><td>🧘 מנוחה או הליכה קלה</td><td>5</td></tr>
         </table>
 
-        <h3>📈 4 שלבי התקדמות</h3>
+        <h3>📈 4 שלבי התקדמות + מיקרו-פריודיזציה</h3>
+        <p>כדי למנוע תקיעות (Plateau), הוספנו <strong>מיקרו-פריודיזציה</strong> בתוך הפאזות עצמן. לדחיפה ומשיכה יש העלאת סטים אחרי חצי פאזה (לדוגמה מעבר מ-3 ל-4 סטים).</p>
         <table>
           <tr><th>תחום</th><th>שלב 1 (1-12)</th><th>שלב 2 (13-24)</th><th>שלב 3 (25-33)</th><th>שלב 4 (34-52)</th></tr>
-          <tr><td><strong>דחיפה חזה</strong></td><td>Incline Push-up</td><td>Push-up רגיל</td><td>Offset / Diamond (רוטציה)</td><td>Banded / Offset / Decline (רוטציה 3-שבועית)</td></tr>
-          <tr><td><strong>משיכה אנכית</strong></td><td>Scapular Pull-up</td><td>Band-assisted Pull-up</td><td>Chin-up</td><td>Pull-up</td></tr>
-          <tr><td><strong>משיכה אופקית</strong></td><td>Band Row</td><td>Single-arm Band Row</td><td>Single-arm Band Row</td><td>Single-arm Band Row (50kg)</td></tr>
-          <tr><td><strong>רגליים</strong></td><td>Squat איטי</td><td>Split Squat</td><td>Bulgarian Split Squat</td><td>Bulgarian Split Squat</td></tr>
+          <tr><td><strong>דחיפה חזה</strong></td><td>Incline Push-up (3-4 סטים)</td><td>Push-up רגיל (3-4 סטים)</td><td>Offset / Diamond (רוטציה)</td><td>Banded / Offset / Decline (רוטציה 3-שבועית)</td></tr>
+          <tr><td><strong>משיכה אנכית</strong></td><td>Scapular Pull-up (3-4 סטים)</td><td>Band-assisted Pull-up</td><td>Chin-up</td><td>Pull-up</td></tr>
+          <tr><td><strong>משיכה אופקית</strong></td><td>Band Row (3-4 סטים)</td><td>Single-arm Band Row (3-4 סטים)</td><td>Single-arm Band Row</td><td>Single-arm Band Row / Band Row (50kg)</td></tr>
+          <tr><td><strong>רגליים</strong></td><td>Squat איטי (3-4 סטים)</td><td>Split Squat (3-4 סטים)</td><td>Bulgarian Split Squat</td><td>Bulgarian Split Squat (4 סטים)</td></tr>
           <tr><td><strong>ישבן</strong></td><td>Banded Glute Bridge + RDL</td><td>Banded Glute Bridge + RDL (40kg)</td><td>Banded Glute Bridge + RDL (50kg)</td><td>Glute Bridge / RDL (רוטציה)</td></tr>
           <tr><td><strong>ליבה</strong></td><td>Hollow Body Hold</td><td>Hollow Body Hold</td><td>Hanging Leg Raise</td><td>Hanging Leg Raise</td></tr>
           <tr><td><strong>ליבה צידית</strong></td><td>Pallof Press</td><td>Pallof Press</td><td>Pallof Press</td><td>Copenhagen Plank</td></tr>
           <tr><td><strong>כתפיים</strong></td><td>Banded OHP (30kg)</td><td>Banded OHP (40kg)</td><td>Banded OHP (50kg)</td><td>Pike Push-up</td></tr>
-          <tr><td><strong>ידיים</strong></td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl + Band Lateral Raise</td></tr>
-          <tr><td><strong>הליכה</strong></td><td>25-30 דקות</td><td>30-35 דקות</td><td>30-35 דקות</td><td>35-40 דקות</td></tr>
+          <tr><td><strong>ידיים</strong></td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl + Band Lateral Raise / Face Pull</td></tr>
+          <tr><td><strong>הליכה</strong></td><td>25-30 דקות</td><td>30-35 דקות</td><td>30-35 דקות Rucking/עליות</td><td>35-40 דקות Rucking/עליות</td></tr>
         </table>
 
         <h3>🔄 Deload — שבועות התאוששות (25, 33, 41, 49)</h3>
@@ -162,8 +163,8 @@ window.ExporterGuide = (() => {
         <p><strong>רוטציות בשלב 3:</strong> תרגילי הדחיפה מתחלפים בין Offset Push-up ו-Diamond Push-up ברוטציה שבועית.</p>
         <p><strong>רוטציות בשלב 4:</strong> תרגילי הדחיפה מתחלפים בין Banded Push-up, Offset Push-up ו-Decline Push-up ברוטציה 3-שבועית. ביום כוח עליון B הרוטציה היא Diamond, Offset ו-Banded Push-up.</p>
         
-        <h3>🤸 שדרוג כתפיים — מ-OHP ל-Pike Push-up</h3>
-        <p>מ-<strong>שלב 4 (שבוע 34)</strong> ואילך, Banded OHP מוחלף ב-<strong>Pike Push-up</strong> — תרגיל מסת גוף המחקה דחיפה אנכית ומהווה שלב ביניים לכיוון Handstand Push-up.</p>
+        <h3>🤸 שדרוג הליכה - Rucking</h3>
+        <p>משלב 3, ימי ההליכה עוברים להליכה משולבת משקל (Rucking) או הליכה בעליות להעלאת עצימות האירובי והגברת חיזוק השוקיים והליבה תוך תנועה.</p>
       </div>
 
       <div class="section">
