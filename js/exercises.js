@@ -47,6 +47,7 @@ const ExercisesPage = (() => {
       title: 'ליבה (Core)',
       exercises: [
         { name: 'Hollow Body Hold', unlockWeek: 1 },
+        { name: 'Bird-Dog', unlockWeek: 1, note: 'ימי הליכה' },
         { name: 'Hanging Leg Raise', unlockWeek: 26 }
       ]
     },
@@ -62,6 +63,13 @@ const ExercisesPage = (() => {
       exercises: [
         { name: 'Banded Glute Bridge', unlockWeek: 1 },
         { name: 'Banded RDL', unlockWeek: 1 }
+      ]
+    },
+    {
+      title: 'שוקיים (Calves)',
+      exercises: [
+        { name: 'Single-leg Calf Raise', unlockWeek: 1 },
+        { name: 'Tibialis Raise', unlockWeek: 1 }
       ]
     },
     {
