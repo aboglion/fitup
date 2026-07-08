@@ -1906,101 +1906,170 @@ html.light-theme .exercise-hero-container::after {
   display: inline-block;
 }
 
-/* --- Band Weight Tier Progression --- */
-.rpg-band-tiers {
+/* --- Band Weight Evolution Chain --- */
+.rpg-evo-chain {
   display: flex;
   align-items: center;
-  gap: 2px;
-  margin-top: 5px;
-  flex-wrap: nowrap;
-  overflow: hidden;
+  gap: 0;
+  margin-top: 8px;
+  padding: 6px 0 2px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  direction: ltr;
 }
 
-.rpg-band-tier {
-  display: inline-flex;
+.rpg-evo-chain::-webkit-scrollbar {
+  display: none;
+}
+
+.rpg-evo-single {
+  margin-top: 6px;
+  direction: ltr;
+}
+
+/* Evolution Card (each weight tier) */
+.rpg-evo-card {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 3px;
-  padding: 1px 6px;
+  justify-content: center;
+  min-width: 58px;
+  padding: 5px 8px;
   border-radius: 8px;
-  font-size: 9px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  border: 1px solid var(--border-light);
+  border: 1.5px solid var(--border-light);
   background: var(--bg-input);
-  color: var(--text-muted);
+  gap: 1px;
+  position: relative;
   transition: all 0.35s ease;
-  white-space: nowrap;
-  line-height: 1.4;
-}
-
-.rpg-band-tier-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--border-light);
   flex-shrink: 0;
-  transition: all 0.35s ease;
 }
 
-.rpg-band-tier.active {
-  background: color-mix(in srgb, var(--path-color, var(--accent-primary)) 15%, var(--bg-elevated));
-  border-color: color-mix(in srgb, var(--path-color, var(--accent-primary)) 40%, transparent);
-  color: var(--path-color, var(--accent-primary));
-}
-
-.rpg-band-tier.active .rpg-band-tier-dot {
-  background: var(--path-color, var(--accent-primary));
-  box-shadow: 0 0 4px var(--path-color, var(--accent-primary));
-}
-
-.rpg-band-tier.current {
-  background: color-mix(in srgb, var(--path-color, var(--accent-primary)) 22%, var(--bg-elevated));
-  border-color: var(--path-color, var(--accent-primary));
-  box-shadow: 0 0 8px color-mix(in srgb, var(--path-color, var(--accent-primary)) 25%, transparent);
-  animation: rpgTierPulse 2.5s ease-in-out infinite;
-}
-
-.rpg-band-tier.current .rpg-band-tier-dot {
-  animation: rpgTierDotPulse 1.5s ease-in-out infinite alternate;
-}
-
-.rpg-band-tier-weight {
-  letter-spacing: -0.3px;
-}
-
-.rpg-band-tier-week {
+.rpg-evo-phase {
   font-size: 7px;
-  font-weight: 600;
-  opacity: 0.65;
-  letter-spacing: 0;
-  margin-right: 1px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  opacity: 0.6;
+  line-height: 1.2;
 }
 
-.rpg-band-tier-arrow {
-  font-size: 10px;
+.rpg-evo-weight {
+  font-size: 13px;
   font-weight: 900;
-  color: var(--border-light);
-  margin: 0 1px;
-  line-height: 1;
+  color: var(--text-muted);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+.rpg-evo-week {
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--text-muted);
+  opacity: 0.7;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* Completed tier (already passed) */
+.rpg-evo-card.completed {
+  border-color: color-mix(in srgb, var(--path-color, var(--accent-primary)) 50%, transparent);
+  background: color-mix(in srgb, var(--path-color, var(--accent-primary)) 8%, var(--bg-elevated));
+}
+
+.rpg-evo-card.completed .rpg-evo-weight {
+  color: var(--path-color, var(--accent-primary));
+  opacity: 0.7;
+}
+
+.rpg-evo-card.completed .rpg-evo-week {
+  color: var(--success, #22c55e);
+  opacity: 1;
+}
+
+.rpg-evo-card.completed .rpg-evo-phase {
+  color: var(--path-color, var(--accent-primary));
+  opacity: 0.5;
+}
+
+/* Active current tier */
+.rpg-evo-card.active.current {
+  border-color: var(--path-color, var(--accent-primary));
+  background: color-mix(in srgb, var(--path-color, var(--accent-primary)) 18%, var(--bg-elevated));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--path-color, var(--accent-primary)) 30%, transparent),
+              inset 0 0 8px color-mix(in srgb, var(--path-color, var(--accent-primary)) 8%, transparent);
+  animation: rpgEvoPulse 2.5s ease-in-out infinite;
+}
+
+.rpg-evo-card.active.current .rpg-evo-weight {
+  color: var(--path-color, var(--accent-primary));
+  text-shadow: 0 0 8px color-mix(in srgb, var(--path-color, var(--accent-primary)) 40%, transparent);
+}
+
+.rpg-evo-card.active.current .rpg-evo-week {
+  color: var(--path-color, var(--accent-primary));
+  opacity: 1;
+}
+
+.rpg-evo-card.active.current .rpg-evo-phase {
+  color: var(--path-color, var(--accent-primary));
+  opacity: 0.85;
+}
+
+/* Locked tier */
+.rpg-evo-card.locked {
+  border-style: dashed;
+  opacity: 0.45;
+  filter: grayscale(0.5);
+}
+
+/* Evolution connector line + arrow */
+.rpg-evo-connector {
+  display: flex;
+  align-items: center;
+  gap: 0;
   flex-shrink: 0;
+  min-width: 18px;
+  position: relative;
 }
 
-.rpg-band-tier.active + .rpg-band-tier-arrow {
-  color: color-mix(in srgb, var(--path-color, var(--accent-primary)) 50%, var(--text-muted));
+.rpg-evo-line {
+  width: 10px;
+  height: 2px;
+  background: var(--border-light);
+  transition: all 0.4s ease;
 }
 
-@keyframes rpgTierPulse {
+.rpg-evo-arrow-head {
+  font-size: 10px;
+  color: var(--border-light);
+  line-height: 1;
+  transition: all 0.4s ease;
+  margin-left: -2px;
+}
+
+.rpg-evo-connector.active .rpg-evo-line {
+  background: var(--path-color, var(--accent-primary));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--path-color, var(--accent-primary)) 40%, transparent);
+}
+
+.rpg-evo-connector.active .rpg-evo-arrow-head {
+  color: var(--path-color, var(--accent-primary));
+  text-shadow: 0 0 6px color-mix(in srgb, var(--path-color, var(--accent-primary)) 40%, transparent);
+}
+
+@keyframes rpgEvoPulse {
   0%, 100% {
-    box-shadow: 0 0 6px color-mix(in srgb, var(--path-color, var(--accent-primary)) 15%, transparent);
+    box-shadow: 0 0 8px color-mix(in srgb, var(--path-color, var(--accent-primary)) 20%, transparent),
+                inset 0 0 6px color-mix(in srgb, var(--path-color, var(--accent-primary)) 6%, transparent);
   }
   50% {
-    box-shadow: 0 0 12px color-mix(in srgb, var(--path-color, var(--accent-primary)) 35%, transparent);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--path-color, var(--accent-primary)) 40%, transparent),
+                inset 0 0 12px color-mix(in srgb, var(--path-color, var(--accent-primary)) 12%, transparent);
   }
-}
-
-@keyframes rpgTierDotPulse {
-  0% { transform: scale(1); opacity: 0.8; }
-  100% { transform: scale(1.4); opacity: 1; }
 }
 
 /* --- Video Button --- */
@@ -2207,19 +2276,29 @@ html[dir="rtl"] .rpg-video-btn {
     left: 6px;
   }
 
-  .rpg-band-tier {
-    font-size: 8px;
-    padding: 1px 5px;
-    gap: 2px;
+  .rpg-evo-card {
+    min-width: 52px;
+    padding: 4px 6px;
   }
 
-  .rpg-band-tier-dot {
-    width: 4px;
-    height: 4px;
+  .rpg-evo-weight {
+    font-size: 11px;
   }
 
-  .rpg-band-tier-arrow {
-    font-size: 8px;
+  .rpg-evo-phase {
+    font-size: 6px;
+  }
+
+  .rpg-evo-week {
+    font-size: 7px;
+  }
+
+  .rpg-evo-connector {
+    min-width: 14px;
+  }
+
+  .rpg-evo-line {
+    width: 7px;
   }
 }
 
@@ -2301,26 +2380,39 @@ html[dir="rtl"] .rpg-video-btn {
     font-size: 9px;
   }
 
-  .rpg-band-tier {
-    font-size: 7.5px;
-    padding: 0px 4px;
-    gap: 2px;
+  .rpg-evo-card {
+    min-width: 46px;
+    padding: 3px 5px;
     border-radius: 6px;
   }
 
-  .rpg-band-tier-dot {
-    width: 3px;
-    height: 3px;
+  .rpg-evo-weight {
+    font-size: 10px;
   }
 
-  .rpg-band-tier-arrow {
-    font-size: 7px;
-    margin: 0;
+  .rpg-evo-phase {
+    font-size: 5.5px;
   }
 
-  .rpg-band-tiers {
-    gap: 1px;
-    margin-top: 3px;
+  .rpg-evo-week {
+    font-size: 6.5px;
+  }
+
+  .rpg-evo-connector {
+    min-width: 12px;
+  }
+
+  .rpg-evo-line {
+    width: 5px;
+  }
+
+  .rpg-evo-arrow-head {
+    font-size: 8px;
+  }
+
+  .rpg-evo-chain {
+    margin-top: 5px;
+    padding: 4px 0 1px;
   }
 
   .rpg-path-title {
