@@ -11,12 +11,11 @@ const ExercisesPage = (() => {
       title: 'דחיפה חזה (Chest)',
       exercises: [
         { name: 'Incline Push-up', unlockWeek: 1 },
-        { name: 'Push-up רגיל', unlockWeek: 13, note: 'ימי שלישי וחמישי' },
-        { name: 'Offset Push-up', unlockWeek: 13, note: 'ימי ראשון (שלב 2)' },
-        { name: 'Diamond Push-up', unlockWeek: 17 },
-        { name: 'Banded Push-up', unlockWeek: 34, note: 'ימי ראשון' },
-        { name: 'Offset Push-up', unlockWeek: 34, note: 'ימי שלישי' },
-        { name: 'Decline Push-up', unlockWeek: 34, note: 'ימי חמישי' }
+        { name: 'Push-up רגיל', unlockWeek: 13 },
+        { name: 'Offset Push-up', unlockWeek: 26, note: 'רוטציה שבועית' },
+        { name: 'Diamond Push-up', unlockWeek: 26, note: 'רוטציה שבועית' },
+        { name: 'Banded Push-up', unlockWeek: 34, note: 'רוטציה 3-שבועית' },
+        { name: 'Decline Push-up', unlockWeek: 34, note: 'רוטציה 3-שבועית' }
       ]
     },
     {
@@ -24,15 +23,15 @@ const ExercisesPage = (() => {
       exercises: [
         { name: 'Band Row', unlockWeek: 1 },
         { name: 'Face Pull', unlockWeek: 1 },
-        { name: 'Single-arm Band Row', unlockWeek: 5 }
+        { name: 'Single-arm Band Row', unlockWeek: 13 }
       ]
     },
     {
       title: 'משיכה אנכית (Vertical Pull)',
       exercises: [
         { name: 'Scapular Pull-up', unlockWeek: 1 },
-        { name: 'Band-assisted Pull-up', unlockWeek: 9 },
-        { name: 'Chin-up', unlockWeek: 17 },
+        { name: 'Band-assisted Pull-up', unlockWeek: 13 },
+        { name: 'Chin-up', unlockWeek: 26 },
         { name: 'Pull-up', unlockWeek: 34 }
       ]
     },
@@ -41,31 +40,28 @@ const ExercisesPage = (() => {
       exercises: [
         { name: 'Squat איטי', unlockWeek: 1 },
         { name: 'Split Squat', unlockWeek: 13 },
-        { name: 'Bulgarian Split Squat', unlockWeek: 17 },
-        { name: 'Banded Bulgarian Split Squat', unlockWeek: 34 }
+        { name: 'Bulgarian Split Squat', unlockWeek: 26 }
       ]
     },
     {
       title: 'ליבה (Core)',
       exercises: [
         { name: 'Hollow Body Hold', unlockWeek: 1 },
-        { name: 'Hanging Leg Raise', unlockWeek: 17 }
+        { name: 'Hanging Leg Raise', unlockWeek: 26 }
       ]
     },
     {
       title: 'ליבה צידית (Side Core)',
       exercises: [
         { name: 'Pallof Press', unlockWeek: 1 },
-        { name: 'Copenhagen Plank', unlockWeek: 42 }
+        { name: 'Copenhagen Plank', unlockWeek: 34 }
       ]
     },
     {
       title: 'ישבן וגב תחתון',
       exercises: [
-        { name: 'Banded RDL', unlockWeek: 1 },
-        { name: 'Banded Hip Thrust', unlockWeek: 17 },
-        { name: 'Single-leg Hip Thrust', unlockWeek: 34, note: 'ראשון וחמישי' },
-        { name: 'Banded RDL', unlockWeek: 34, note: 'ימי שלישי' }
+        { name: 'Banded Glute Bridge', unlockWeek: 1 },
+        { name: 'Banded RDL', unlockWeek: 1 }
       ]
     },
     {
@@ -80,6 +76,7 @@ const ExercisesPage = (() => {
       exercises: [
         { name: 'Band External Rotation', unlockWeek: 1 },
         { name: 'Banded OHP', unlockWeek: 1 },
+        { name: 'Band Lateral Raise', unlockWeek: 26 },
         { name: 'Pike Push-up', unlockWeek: 34 }
       ]
     }
