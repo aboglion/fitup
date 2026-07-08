@@ -10,7 +10,7 @@ window.ExporterGuide = (() => {
     <html lang="he" dir="rtl">
     <head>
       <meta charset="UTF-8">
-      <title>מדריך תוכנית האימונים השנתית - FitUp</title>
+      <title>מדריך תוכנית האימונים השנתית - FitUp Pro</title>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap');
         :root {
@@ -111,58 +111,72 @@ window.ExporterGuide = (() => {
     </head>
     <body>
       <div class="header">
-        <h1>מדריך תוכנית האימונים המלא - 52 שבועות</h1>
-        <p><strong>אפיון, הסברים, מילון תרגילים ופריסת ימים מלאה של תוכנית FitUp</strong></p>
+        <h1>🏋️ FitUp Pro — מדריך תוכנית 52 שבועות</h1>
+        <p><strong>אפיון, הסברים, מילון תרגילים ופריסת ימים מלאה</strong></p>
       </div>
 
       <div class="section">
         <h2>📖 אפיון והסבר על התוכנית</h2>
-        <p>תוכנית אימונים זו תוכננה למשך 365 ימים (52 שבועות) במטרה לבנות כוח, מסת שריר, תנועתיות, ולהקנות הרגלים בריאים ארוכי טווח. הפילוסופיה של התוכנית היא <strong>התקדמות הדרגתית (Progressive Overload)</strong> תוך מתן דגש שווה להתאוששות ולאיזון שרירי מלא.</p>
+        <p>תוכנית אימונים זו תוכננה למשך 52 שבועות (364 ימים) במטרה לבנות כוח, מסת שריר, תנועתיות, ולהקנות הרגלים בריאים ארוכי טווח. הפילוסופיה של התוכנית היא <strong>התקדמות הדרגתית (Progressive Overload)</strong> עם 4 שלבי התקדמות ושבועות דילואד מובנים.</p>
 
-        <h3>⚙️ כיצד מחולקים הימים?</h3>
+        <h3>🔧 כלים נדרשים</h3>
         <ul>
-          <li><strong>💪 ימי כוח (א׳/ג׳/ה׳):</strong> תרגילי התנגדות לבניית שריר וכוח. מכילים סופרסטים מאוזנים Push/Pull ועלייה הדרגתית בסטים ובתרגיל לאורך השנה.</li>
-          <li><strong>🚶 ימי הליכה (ב׳/ד׳):</strong> התאוששות פעילה — הליכה בהתקדמות של 25 דקות עד 50 דקות, בתוספת תרגילי ליבה ויציבה (Bird-Dog, Hollow Body, Calf Raise).</li>
-          <li><strong>🧘 ימי מנוחה (ו׳/ש׳):</strong> מנוחה מלאה ומתיחות. תזונה ושינה — חלק קריטי בבניית השריר.</li>
+          <li>3 רצועות התנגדות: 30kg (כחול), 40kg (שחור), 50kg (אדום)</li>
+          <li>מוט תליה (Pull-up bar)</li>
+          <li>כיסא/קופסה פלסטיק</li>
+          <li>רצפה + קיר</li>
         </ul>
 
-        <h3>📈 פרוגרסיות מובנות בתוכנית</h3>
+        <h3>⚙️ מבנה שבועי</h3>
         <table>
-          <tr><th>תחום</th><th>שלב 1 (שבועות 1-12)</th><th>שלב 2 (שבועות 13-33)</th><th>שלב 3 (שבועות 34-52)</th></tr>
-          <tr><td><strong>לחיצה (A1)</strong></td><td>Incline Push-up</td><td>Offset Push-up / Diamond</td><td>Banded / Offset / Decline Push-up (רוטציה)</td></tr>
-          <tr><td><strong>משיכה אנכית (B1)</strong></td><td>Scapular Pull-up / Band-assisted</td><td>Chin-up</td><td>Pull-up</td></tr>
-          <tr><td><strong>משיכה אופקית (A2)</strong></td><td>Band Row</td><td>Single-arm Band Row</td><td>Single-arm Band Row</td></tr>
-          <tr><td><strong>רגליים (C1)</strong></td><td>Squat איטי</td><td>Split Squat / Bulgarian</td><td>Banded Bulgarian Split Squat</td></tr>
-          <tr><td><strong>גלוטאוס (C2)</strong></td><td>Banded RDL</td><td>Banded Hip Thrust</td><td>Single-leg Hip / Banded RDL (רוטציה)</td></tr>
-          <tr><td><strong>ליבה (D1)</strong></td><td>Hollow Body Hold</td><td>Hanging Leg Raise</td><td>Hanging Leg Raise</td></tr>
-          <tr><td><strong>כתפיים (B2)</strong></td><td>Banded OHP</td><td>Banded OHP</td><td>Pike Push-up</td></tr>
-          <tr><td><strong>ידיים ושיקום (תוספות)</strong></td><td>Band Curl, Triceps Ext, Face Pull, Band Ext Rot.</td><td>עלייה בנפח (סטים)</td><td>עלייה בהתנגדות (משקל)</td></tr>
-          <tr><td><strong>Anti-Rotation (D2)</strong></td><td>Pallof Press</td><td>Pallof Press</td><td>Copenhagen Plank</td></tr>
-          <tr><td><strong>הליכה</strong></td><td>25-30 דקות</td><td>30-35 דקות</td><td>40-45 דקות</td></tr>
+          <tr><th>יום</th><th>סוג</th><th>RPE</th></tr>
+          <tr><td>א׳</td><td>💪 כוח עליון A</td><td>7-8</td></tr>
+          <tr><td>ב׳</td><td>🚶 הליכה פעילה + ליבה + שוקיים</td><td>5-6</td></tr>
+          <tr><td>ג׳</td><td>🦵 כוח תחתון + ליבה</td><td>7-8</td></tr>
+          <tr><td>ד׳</td><td>🚶 הליכה פעילה + ליבה + שוקיים</td><td>5-6</td></tr>
+          <tr><td>ה׳</td><td>💪 כוח עליון B</td><td>7-8</td></tr>
+          <tr><td>ו׳</td><td>🧘 מנוחה</td><td>—</td></tr>
+          <tr><td>ש׳</td><td>🧘 מנוחה או הליכה קלה</td><td>5</td></tr>
+        </table>
+
+        <h3>📈 4 שלבי התקדמות</h3>
+        <table>
+          <tr><th>תחום</th><th>שלב 1 (1-12)</th><th>שלב 2 (13-24)</th><th>שלב 3 (25-33)</th><th>שלב 4 (34-52)</th></tr>
+          <tr><td><strong>דחיפה חזה</strong></td><td>Incline Push-up</td><td>Push-up רגיל</td><td>Offset / Diamond (רוטציה)</td><td>Banded / Offset / Decline (רוטציה 3-שבועית)</td></tr>
+          <tr><td><strong>משיכה אנכית</strong></td><td>Scapular Pull-up</td><td>Band-assisted Pull-up</td><td>Chin-up</td><td>Pull-up</td></tr>
+          <tr><td><strong>משיכה אופקית</strong></td><td>Band Row</td><td>Single-arm Band Row</td><td>Single-arm Band Row</td><td>Single-arm Band Row (50kg)</td></tr>
+          <tr><td><strong>רגליים</strong></td><td>Squat איטי</td><td>Split Squat</td><td>Bulgarian Split Squat</td><td>Bulgarian Split Squat</td></tr>
+          <tr><td><strong>ישבן</strong></td><td>Banded Glute Bridge + RDL</td><td>Banded Glute Bridge + RDL (40kg)</td><td>Banded Glute Bridge + RDL (50kg)</td><td>Glute Bridge / RDL (רוטציה)</td></tr>
+          <tr><td><strong>ליבה</strong></td><td>Hollow Body Hold</td><td>Hollow Body Hold</td><td>Hanging Leg Raise</td><td>Hanging Leg Raise</td></tr>
+          <tr><td><strong>ליבה צידית</strong></td><td>Pallof Press</td><td>Pallof Press</td><td>Pallof Press</td><td>Copenhagen Plank</td></tr>
+          <tr><td><strong>כתפיים</strong></td><td>Banded OHP (30kg)</td><td>Banded OHP (40kg)</td><td>Banded OHP (50kg)</td><td>Pike Push-up</td></tr>
+          <tr><td><strong>ידיים</strong></td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl + Band Lateral Raise</td></tr>
+          <tr><td><strong>הליכה</strong></td><td>25-30 דקות</td><td>30-35 דקות</td><td>30-35 דקות</td><td>35-40 דקות</td></tr>
         </table>
 
         <h3>🔄 Deload — שבועות התאוששות (25, 33, 41, 49)</h3>
-        <p>כל 8 שבועות יש <strong>שבוע Deload</strong>. שבוע 25 חוזר לתרגיל בסיסי כ-Push-up רגיל לאיפוס. שבועות 33, 41, 49 שומרים על <strong>אותו תרגיל מתקדם</strong> (Diamond Push-up, Chin-up, Bulgarian Squat) אך מורידים ל-<strong>3 סטים בלבד</strong> — כ-60% מהנפח הרגיל. מטרתו: מניעת אוברטריינינג, איפוס מערכת העצבים ושמירה על מומנטום ארוך טווח.</p>
+        <p>כל 8 שבועות יש <strong>שבוע Deload</strong>. בשבועות אלו, אותם תרגילים מתבצעים אך בנפח מופחת (כ-60% מהנפח הרגיל — בדרך כלל 3 סטים במקום 4, פחות חזרות, ומשקל קל יותר). המטרה: מניעת אוברטריינינג, איפוס מערכת העצבים ושמירה על מומנטום ארוך טווח.</p>
 
-        <h3>🔄 חימום, תוספות ורוטציות מתקדמות</h3>
-        <p><strong>חימום קבוע:</strong> לפני כל אימון כוח יש לבצע <em>Band External Rotation</em> (2 סטים, 15 חזרות לכל יד) לשמירה על בריאות הכתף.</p>
-        <p><strong>תוספות ידיים ושיקום:</strong> בסיום אימון כוח 1 (ראשון) מבוצעים <em>Band Curl</em> ו-<em>Face Pull</em>. בסיום אימון כוח 2 (שלישי) מבוצע <em>Triceps Extension</em>. תרגילים אלו עוברים אדפטציה בנפח ובהתנגדות לאורך השלבים.</p>
-        <p><strong>רוטציות בשלב 3:</strong> כדי לספק גירוי משתנה לשריר ולמנוע שחיקה, אימוני הלחיצה והשרשרת האחורית מתבצעים ברוטציה שבועית. לחיצה: Banded -> Offset -> Decline. גלוטאוס: Single-leg Hip Thrust -> Banded RDL -> Single-leg Hip Thrust.</p>
-
+        <h3>🔄 חימום ורוטציות</h3>
+        <p><strong>חימום קבוע:</strong> לפני כל אימון כוח עליון יש לבצע <em>Band External Rotation</em> (2 סטים, 15 חזרות לכל יד) לשמירה על בריאות הכתף.</p>
+        <p><strong>רוטציות בשלב 3:</strong> תרגילי הדחיפה מתחלפים בין Offset Push-up ו-Diamond Push-up ברוטציה שבועית.</p>
+        <p><strong>רוטציות בשלב 4:</strong> תרגילי הדחיפה מתחלפים בין Banded Push-up, Offset Push-up ו-Decline Push-up ברוטציה 3-שבועית. ביום כוח עליון B הרוטציה היא Diamond, Offset ו-Banded Push-up.</p>
+        
         <h3>🤸 שדרוג כתפיים — מ-OHP ל-Pike Push-up</h3>
-        <p>מ-<strong>שבוע 34</strong> ואילך, Banded OHP מוחלף ב-<strong>Pike Push-up</strong> — תרגיל מסת גוף המחקה דחיפה אנכית ומהווה שלב ביניים לכיוון Handstand Push-up. אין צורך בציוד ועומס על המפרק נמוך יותר.</p>
+        <p>מ-<strong>שלב 4 (שבוע 34)</strong> ואילך, Banded OHP מוחלף ב-<strong>Pike Push-up</strong> — תרגיל מסת גוף המחקה דחיפה אנכית ומהווה שלב ביניים לכיוון Handstand Push-up.</p>
       </div>
 
       <div class="section">
-        <h2>📚 מילון תרגילים ומטרות</h2>
-        <p>פירוט התרגילים המופיעים בתוכנית, קבוצות השרירים עליהן הם עובדים, ומטרתם הפונקציונלית.</p>
+        <h2>📚 מילון תרגילים</h2>
+        <p>פירוט כל התרגילים המופיעים בתוכנית.</p>
         <div class="grid-container">
           ${exercises.map(ex => `
             <div class="exercise-card">
               <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--primary);">${ex.name}</h4>
-              <p style="margin: 0 0 10px 0;"><span class="badge">${ex.category || 'כללי'}</span></p>
-              ${ex.description ? `<p style="font-size: 0.9em; margin-bottom: 5px;"><strong>הסבר:</strong> ${ex.description}</p>` : ''}
-              ${ex.musclesWorked ? `<p style="font-size: 0.9em; margin: 0;"><strong>שרירים פועלים:</strong> ${ex.musclesWorked.join(', ')}</p>` : ''}
+              <p style="margin: 0 0 6px 0;"><span class="badge">${ex.category || 'כללי'}</span> ${ex.difficulty ? `<span class="badge" style="background: #fef3c7; color: #92400e;">${ex.difficulty}</span>` : ''}</p>
+              ${ex.weight ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>התנגדות:</strong> ${ex.weight}</p>` : ''}
+              ${ex.setsProgression ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>התקדמות:</strong> ${ex.setsProgression}</p>` : ''}
+              ${ex.videoUrl ? `<p style="font-size: 0.9em; margin: 4px 0;"><a href="${ex.videoUrl}" target="_blank" style="color: var(--primary);">▶ צפה בסרטון</a></p>` : ''}
             </div>
           `).join('')}
         </div>
@@ -246,7 +260,7 @@ window.ExporterGuide = (() => {
       
       const a = document.createElement('a');
       a.href = url;
-      a.download = `FitUp-Program-Guide.html`;
+      a.download = `FitUp-Pro-Guide.html`;
       a.click();
       
       setTimeout(() => {
