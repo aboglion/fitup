@@ -25,18 +25,12 @@ const App = (() => {
       const savedDataVersion = await DB.getSetting('dataVersion');
       
       let planStartDate = await DB.getSetting('planStartDate');
-      if (!planStartDate) {
-        // First run or upgrading to Smart Scheduling
-        // We set the plan start date to today
-        planStartDate = new Date().toISOString().slice(0, 10);
-        await DB.setSetting('planStartDate', planStartDate);
-      }
       
       const planCount = await DB.count(DB.STORES.PLAN);
       const exCount = await DB.count(DB.STORES.EXERCISES);
       
-      if (planCount === 0 || exCount === 0 || savedDataVersion !== currentDataVersion) {
-        console.log("Reloading training plan due to data version change or empty DB.");
+      if (planCount === 0 || exCount === 0 || savedDataVersion !== currentDataVersion || !planStartDate) {
+        console.log("Reloading training plan due to data version change, empty DB, or missing start date.");
         await DB.loadTrainingPlan();
         await DB.setSetting('dataVersion', currentDataVersion);
       }
@@ -51,16 +45,20 @@ const App = (() => {
       const todayStr = new Date().toISOString().slice(0, 10);
       let planStartDateStr = await DB.getSetting('planStartDate');
       
-      const todayDateObj = new Date(todayStr + 'T12:00:00');
-      const startDateObj = new Date(planStartDateStr + 'T12:00:00');
+      let planIndex = 0; // Default to day 1
       
-      const diffTime = todayDateObj - startDateObj;
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      
-      let planIndex = diffDays;
-      if (planIndex < 0) planIndex = 0;
-      if (planIndex >= allPlanDays.length) {
-        planIndex = allPlanDays.length - 1;
+      if (planStartDateStr) {
+        const todayDateObj = new Date(todayStr + 'T12:00:00');
+        const startDateObj = new Date(planStartDateStr + 'T12:00:00');
+        
+        const diffTime = todayDateObj - startDateObj;
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        planIndex = diffDays;
+        if (planIndex < 0) planIndex = 0;
+        if (planIndex >= allPlanDays.length) {
+          planIndex = allPlanDays.length - 1;
+        }
       }
 
       await DB.setSetting('lastActiveDate', todayStr);
@@ -147,6 +145,8 @@ const App = (() => {
     const lastPhotoDate = photos.length > 0 ? new Date(photos[photos.length - 1].date) : null;
     
     let planStartDateStr = await DB.getSetting('planStartDate');
+    if (!planStartDateStr) return; // Do not remind if program hasn't started
+    
     const startDateObj = new Date(planStartDateStr + 'T12:00:00');
     const now = new Date();
     const daysSinceStart = Math.floor((now - startDateObj) / (1000 * 60 * 60 * 24));

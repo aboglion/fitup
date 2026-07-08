@@ -1332,13 +1332,13 @@ html.light-theme .exercise-hero-container::after {
 .rpg-progress-header {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
-  padding: 16px 20px;
+  padding: 12px 16px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .rpg-level-badge {
@@ -1414,7 +1414,7 @@ html.light-theme .exercise-hero-container::after {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -1570,7 +1570,7 @@ html.light-theme .exercise-hero-container::after {
 .rpg-tree-content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 16px;
   width: 100%;
   animation: fadeIn 0.3s ease;
 }
@@ -1580,7 +1580,7 @@ html.light-theme .exercise-hero-container::after {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: 16px;
   width: 100%;
   position: relative;
   overflow: hidden;
@@ -1602,7 +1602,7 @@ html.light-theme .exercise-hero-container::after {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 1px solid var(--border-color);
 }

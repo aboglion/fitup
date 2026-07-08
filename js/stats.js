@@ -201,9 +201,10 @@ const StatsPage = (() => {
   function renderCharts(trackingMap, weightValues) {
     const container = document.getElementById('stats-charts');
 
-    // 365-Day Heatmap
-    // Remove the last day (slice to 364) to make it a perfect multiple of 14, creating a symmetric table
-    const heatmapDays = allPlanDays.slice(0, 364);
+    // Progression Heatmap (up to current day)
+    const todayIdx = UI.findTodayIndex(allPlanDays);
+    const heatmapDays = allPlanDays.slice(0, todayIdx + 1);
+    
     const heatmapCells = heatmapDays.map(day => {
       const tracking = trackingMap[day.dayIndex];
       const isCompleted = tracking && tracking.completed;
@@ -215,19 +216,19 @@ const StatsPage = (() => {
         else if (day.dayType === 'מנוחה') colorClass = 'heat-rest';
       }
       
-      const tooltip = `יום ${day.dayIndex + 1} (${day.dayType}) - ${isCompleted ? 'הושלם' : 'לא הושלם'}`;
+      const tooltip = `יום ${day.dayIndex + 1} (${day.dayType}) - ${isCompleted ? 'הושלם' : 'לא בוצע/דולג'}`;
       return `<div class="heat-cell ${colorClass}" title="${tooltip}"></div>`;
     }).join('');
 
     const heatmapHtml = `
       <div class="chart-card" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
         <div class="chart-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <span>🗓️ מפת התמדה שנתית (365 ימים)</span>
+          <span>🗓️ מפת התמדה (ימים שעברו)</span>
           <div style="display: flex; gap: 12px; font-size: 11px; font-weight: normal; flex-wrap: wrap;">
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength" style="width: 12px; height: 12px; border-radius: 3px;"></div> כוח</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-walk" style="width: 12px; height: 12px; border-radius: 3px;"></div> הליכה</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-rest" style="width: 12px; height: 12px; border-radius: 3px;"></div> מנוחה</div>
-             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-empty" style="width: 12px; height: 12px; border-radius: 3px;"></div> ריק</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-empty" style="width: 12px; height: 12px; border-radius: 3px;"></div> לא בוצע/דולג</div>
           </div>
         </div>
         <div style="width: 100%; padding: var(--space-sm) 0; max-height: 80vh; overflow-y: auto;">
@@ -369,8 +370,11 @@ const StatsPage = (() => {
 
     document.querySelectorAll('.delete-photo-btn').forEach(btn => {
       btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
         if (confirm('האם אתה בטוח שברצונך למחוק תמונה זו?')) {
-          await DB.deletePhoto(e.target.dataset.id);
+          const id = btn.dataset.id;
+          const photo = photos.find(p => String(p.id) === id);
+          await DB.deletePhoto(photo ? photo.id : id);
           render();
         }
       });

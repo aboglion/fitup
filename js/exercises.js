@@ -6,7 +6,7 @@ const ExercisesPage = (() => {
   let allExercises = [];
   let categories = [];
   let isTreeView = true;
-  let activeTab = 'upper-a';
+  let activeTab = null;
 
   // Day type tabs configuration
   const DAY_TABS = [
@@ -456,6 +456,16 @@ const ExercisesPage = (() => {
     const headerEl = document.getElementById('rpg-xp-header');
     if (!headerEl) return;
 
+    if (!activeTab) {
+      headerEl.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+          <div style="font-size: 48px; margin-bottom: 16px;">🌳</div>
+          <p>בחר קטגוריה כדי לראות את עץ ההתקדמות</p>
+        </div>
+      `;
+      return;
+    }
+
     const tabConfig = DAY_TABS.find(t => t.id === activeTab);
     const tabColor = tabConfig ? tabConfig.color : '#3b82f6';
     const tabLabel = tabConfig ? tabConfig.label : '';
@@ -526,6 +536,11 @@ const ExercisesPage = (() => {
   function renderSkillTreeContent() {
     const contentEl = document.getElementById('rpg-tree-content');
     if (!contentEl) return;
+
+    if (!activeTab) {
+      contentEl.innerHTML = '';
+      return;
+    }
 
     const currentWeek = Math.floor((window.appCurrentPlanIndex || 0) / 7) + 1;
     const paths = SKILL_TREES[activeTab] || [];

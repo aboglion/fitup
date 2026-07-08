@@ -542,9 +542,23 @@ const TodayPage = (() => {
   }
 
   /**
+   * Check if program has started, if not, lock the start date to today
+   */
+  async function checkAndLockStartDate() {
+    let startDate = await DB.getSetting('planStartDate');
+    if (!startDate) {
+      startDate = new Date().toISOString().slice(0, 10);
+      await DB.setSetting('planStartDate', startDate);
+      UI.toast('תוכנית האימונים התחילה בהצלחה! 🚀', 'success');
+    }
+  }
+
+  /**
    * Auto-save tracking data
    */
   async function autoSave() {
+    await checkAndLockStartDate();
+    
     const rpe = document.getElementById('actual-rpe').value;
     const weight = document.getElementById('body-weight').value;
     const notes = document.getElementById('day-notes').value;
@@ -590,6 +604,8 @@ const TodayPage = (() => {
   async function completeAndAdvance() {
     UI.hideModal();
     
+    await checkAndLockStartDate();
+    
     currentTracking.completed = true;
     currentTracking.date = currentTracking.date || new Date().toISOString().slice(0, 10);
     
@@ -614,6 +630,16 @@ const TodayPage = (() => {
 
   async function confirmSkipDay() {
     UI.hideModal();
+    
+    let startDate = await DB.getSetting('planStartDate');
+    if (!startDate) {
+      // If they skip Day 1, set start date to yesterday so today is Day 2
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      await DB.setSetting('planStartDate', yesterday.toISOString().slice(0, 10));
+      UI.toast('התוכנית התחילה (דילגת על היום הראשון) ⏭️', 'info');
+    }
+    
     window.appCurrentPlanIndex++;
     if (window.appCurrentPlanIndex >= allPlanDays.length) {
       window.appCurrentPlanIndex = allPlanDays.length - 1;

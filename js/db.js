@@ -216,11 +216,11 @@ const DB = (() => {
     };
 
     let planStartDateStr = await getSetting('planStartDate');
-    if (!planStartDateStr) {
-      planStartDateStr = new Date().toISOString().slice(0, 10);
-      await setSetting('planStartDate', planStartDateStr);
+    let effectiveStartDateStr = planStartDateStr;
+    if (!effectiveStartDateStr) {
+      effectiveStartDateStr = new Date().toISOString().slice(0, 10);
     }
-    const startDate = new Date(planStartDateStr + 'T12:00:00');
+    const startDate = new Date(effectiveStartDateStr + 'T12:00:00');
 
     const newPlanData = [];
     let globalDayIndex = 0;
