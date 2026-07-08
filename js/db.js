@@ -224,6 +224,8 @@ const DB = (() => {
 
     const newPlanData = [];
     let globalDayIndex = 0;
+    let globalWorkoutSeq = 0;
+    let globalRestSeq = 0;
 
     const weeksMap = new Map();
     data.daily.forEach(day => {
@@ -256,6 +258,7 @@ const DB = (() => {
             exercises: JSON.parse(JSON.stringify(tpl.exercises))
           };
           restIdx++;
+
         } else {
           dayObj = {
             ...workouts[workoutIdx],
@@ -268,6 +271,14 @@ const DB = (() => {
         
         dayObj.dayIndex = globalDayIndex;
         dayObj.dayNum = globalDayIndex + 1;
+        
+        // Add a sequence ID for reliable migration
+        if (dayObj.dayType !== 'מנוחה') {
+          dayObj.workoutSeq = globalWorkoutSeq++;
+        } else {
+          dayObj.restSeq = globalRestSeq++;
+        }
+
         dayObj.date = currentDate.toISOString().slice(0, 10).split('-').reverse().join('/');
         
         newPlanData.push(dayObj);
@@ -398,6 +409,10 @@ const DB = (() => {
     });
   }
 
+  async function clearTracking() {
+    return clear(STORES.TRACKING);
+  }
+
   return {
     init,
     loadTrainingPlan,
@@ -405,6 +420,7 @@ const DB = (() => {
     getDayTracking,
     saveDayTracking,
     getAllTracking,
+    clearTracking,
     getAllPlan,
     getExerciseGuide,
     getWeekData,
