@@ -42,7 +42,7 @@ const ExercisesPage = (() => {
         title: '🔥 חימום',
         icon: '🛡️',
         exercises: [
-          { name: 'Finger Push-up', unlockWeek: 1, note: 'כוח כף יד' },
+          { name: 'Knee Finger Push-up', unlockWeek: 1, note: 'כוח כף יד - על הברכיים' },
           { name: 'Towel Grip Hang', unlockWeek: 25, note: 'כוח אחיזה מקסימלי' },
           { name: 'Band External Rotation', unlockWeek: 1 },
           { name: 'Side-Lying External Rotation', unlockWeek: 25 }
@@ -112,7 +112,7 @@ const ExercisesPage = (() => {
         title: '🔥 חימום',
         icon: '🛡️',
         exercises: [
-          { name: 'Finger Push-up', unlockWeek: 1, note: 'כוח כף יד' },
+          { name: 'Knee Finger Push-up', unlockWeek: 1, note: 'כוח כף יד - על הברכיים' },
           { name: 'Towel Grip Hang', unlockWeek: 25, note: 'כוח אחיזה מקסימלי' },
           { name: 'Band External Rotation', unlockWeek: 1 },
           { name: 'Side-Lying External Rotation', unlockWeek: 25 }

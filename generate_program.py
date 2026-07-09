@@ -39,29 +39,29 @@ VIDEOS = {
     "Bird-Dog": "https://www.youtube.com/watch?v=ZdAHe9_HeEw",
     "מתיחות מלאות": "https://www.youtube.com/watch?v=COO2S7lPBzA",
     "הליכה קלה (אופציונלי)": "https://www.youtube.com/watch?v=iesCUs8CQEQ",
-    "Step-ups": "https://www.youtube.com/watch?v=dQqApCGd5pw",
-    "Lateral Lunges": "https://www.youtube.com/watch?v=gwWv7aPcD88",
-    "Finger Push-up": "https://www.youtube.com/watch?v=db5TKbEVVSA",
-    "Towel Grip Hang": "https://www.youtube.com/watch?v=MSsfdWp3VEM",
-    "Superman": "https://www.youtube.com/watch?v=z6PJMT2y8GQ",
+    "Step-ups": "https://www.youtube.com/shorts/R8W8DA4jqvI",
+    "Lateral Lunges": "https://www.youtube.com/watch?v=vwK7vZNQwUI",
+    "Knee Finger Push-up": "https://www.youtube.com/watch?v=_DHM9Zg_0iY",
+    "Towel Grip Hang": "https://www.youtube.com/shorts/C5mHoOJ_Boc",
+    "Superman": "https://www.youtube.com/shorts/KTWWh3GsyYw",
     "Dead Bug": "https://www.youtube.com/watch?v=I5xbsA71v1A",
-    "Bench Dip": "https://www.youtube.com/watch?v=6kALZikXxLc",
-    "Band Pull-apart": "https://www.youtube.com/watch?v=JObYtU7Y7ag",
-    "Band Woodchop": "https://www.youtube.com/watch?v=nDAtilRq2sQ",
-    "Couch Stretch": "https://www.youtube.com/watch?v=UZk6YHKsmzU",
-    "Toe Yoga": "https://www.youtube.com/watch?v=gDfYMxPJqv0",
-    "Reverse Lunges איטיים": "https://www.youtube.com/watch?v=xrPteyQLGAo",
-    "Single-leg RDL": "https://www.youtube.com/watch?v=BvLiRxOjEGY",
-    "Floor Hamstring Curl": "https://www.youtube.com/watch?v=BVEQ-QLqIEA",
-    "Hollow Body Rock": "https://www.youtube.com/watch?v=AnGelSOiVwI",
-    "Side Plank": "https://www.youtube.com/watch?v=K2VljzCC16g",
+    "Bench Dip": "https://www.youtube.com/shorts/KiGQugpY67o",
+    "Band Pull-apart": "https://www.youtube.com/shorts/SuvO4TBwSu4",
+    "Band Woodchop": "https://www.youtube.com/watch?v=Yp2DmHk3KnY",
+    "Couch Stretch": "https://www.youtube.com/shorts/udfy75H_WBc",
+    "Toe Yoga": "https://www.youtube.com/shorts/RblzFPLHhwU",
+    "Reverse Lunges איטיים": "https://www.youtube.com/watch?v=jgeI_ZqAxWs",
+    "Single-leg RDL": "https://www.youtube.com/shorts/U4sOY8Gyc-s",
+    "Floor Hamstring Curl": "https://www.youtube.com/shorts/X3oyDT1iUzg",
+    "Hollow Body Rock": "https://www.youtube.com/shorts/17QYGBGsDvw",
+    "Side Plank": "https://www.youtube.com/watch?v=N_s9em1xTqU",
     "Negative Pull-up": "https://www.youtube.com/watch?v=S3gxEclxIYE",
     "Side-Lying External Rotation": "https://www.youtube.com/watch?v=W_VHLYBlQJc",
     "Scapular Pull-up + Hold": "https://youtu.be/pE8PJsWEV7k?si=ogf9wn9DXCRXB0HO",
     "Band-assisted Pull-up (Chin-up grip)": "https://www.youtube.com/watch?v=ZHllQTJf7eA",
-    "Bench Dip (רגל אחת מורומה)": "https://www.youtube.com/watch?v=6kALZikXxLc",
-    "Bench Dip (רגליים מורמות על כיסא)": "https://www.youtube.com/watch?v=6kALZikXxLc",
-    "Superman Hold": "https://www.youtube.com/watch?v=z6PJMT2y8GQ",
+    "Bench Dip (רגל אחת מורומה)": "https://www.youtube.com/shorts/pjAWoCAzUlg",
+    "Bench Dip (רגליים מורמות על כיסא)": "https://www.youtube.com/shorts/Qc9yA_BFSCw",
+    "Superman Hold": "https://www.youtube.com/shorts/eKB5rv5c7FQ",
 }
 
 def ex(slot, name, sets, weight=None):
@@ -82,9 +82,9 @@ def upper_a(week):
     phase = get_phase(week)
     dl = is_deload(week)
     exercises = []
-    # Warmup — phases 1-2: Finger Push-up, phases 3-4: Towel Grip Hang
+    # Warmup — phases 1-2: Knee Finger Push-up, phases 3-4: Towel Grip Hang
     if phase <= 2:
-        exercises.append(ex("W0","Finger Push-up","2×5-8" if phase==1 else "2×8-10"))
+        exercises.append(ex("W0","Knee Finger Push-up","2×5-8" if phase==1 else "2×8-10"))
     else:
         exercises.append(ex("W0","Towel Grip Hang","2×20-30 שניות" if phase==3 else "2×30-45 שניות"))
     if phase <= 2:
@@ -185,7 +185,7 @@ def upper_b(week):
     dl = is_deload(week)
     exercises = []
     if phase <= 2:
-        exercises.append(ex("W0","Finger Push-up","2×5-8" if phase==1 else "2×8-10"))
+        exercises.append(ex("W0","Knee Finger Push-up","2×5-8" if phase==1 else "2×8-10"))
     else:
         exercises.append(ex("W0","Towel Grip Hang","2×20-30 שניות" if phase==3 else "2×30-45 שניות"))
     if phase <= 2:
@@ -421,7 +421,7 @@ def generate_program():
             })
 
     exercises_guide = [
-        {"name":"Finger Push-up","category":"דחיפה","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Finger Push-up"],"setsProgression":"שלב 1-2: 2×5-10"},
+        {"name":"Knee Finger Push-up","category":"דחיפה","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Knee Finger Push-up"],"setsProgression":"שלב 1-2: 2×5-10"},
         {"name":"Incline Push-up","category":"דחיפה","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Incline Push-up"],"setsProgression":"שלב 1: 3-4×6-10"},
         {"name":"Push-up רגיל","category":"דחיפה","difficulty":"מתחיל+","weight":"משקל גוף","videoUrl":VIDEOS["Push-up רגיל"],"setsProgression":"שלב 2: 3-4×8-12"},
         {"name":"Offset Push-up","category":"דחיפה","difficulty":"בינוני","weight":"משקל גוף","videoUrl":VIDEOS["Offset Push-up"],"setsProgression":"שלב 3-4: 3-4×8 לכל צד"},
