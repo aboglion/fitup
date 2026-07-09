@@ -116,55 +116,69 @@ window.ExporterGuide = (() => {
       </div>
 
       <div class="section">
-        <h2>📖 אפיון והסבר על התוכנית</h2>
+        <h2>📖 אפיון והסבר על התוכנית — גרסה 3.1</h2>
         <p>תוכנית אימונים זו תוכננה למשך 52 שבועות (364 ימים) במטרה לבנות כוח, מסת שריר, תנועתיות, ולהקנות הרגלים בריאים ארוכי טווח. הפילוסופיה של התוכנית היא <strong>התקדמות הדרגתית (Progressive Overload)</strong> עם 4 שלבי התקדמות ושבועות דילואד מובנים.</p>
 
         <h3>🔧 כלים נדרשים</h3>
         <ul>
           <li>3 רצועות התנגדות: 30kg (כחול), 40kg (שחור), 50kg (אדום)</li>
           <li>מוט תליה (Pull-up bar)</li>
-          <li>כיסא/קופסה פלסטיק</li>
+          <li>כיסא/ספסל</li>
+          <li>מגבת (ל-Towel Grip Hang)</li>
           <li>רצפה + קיר</li>
         </ul>
 
         <h3>⚙️ מבנה שבועי</h3>
         <table>
           <tr><th>יום</th><th>סוג</th><th>RPE</th></tr>
-          <tr><td>א׳</td><td>💪 כוח עליון A</td><td>7-8</td></tr>
-          <tr><td>ב׳</td><td>🚶 הליכה פעילה + ליבה + שוקיים</td><td>5-6</td></tr>
-          <tr><td>ג׳</td><td>🦵 כוח תחתון + ליבה</td><td>7-8</td></tr>
-          <tr><td>ד׳</td><td>🚶 הליכה פעילה + ליבה + שוקיים</td><td>5-6</td></tr>
-          <tr><td>ה׳</td><td>💪 כוח עליון B</td><td>7-8</td></tr>
-          <tr><td>ו׳</td><td>🧘 מנוחה</td><td>—</td></tr>
-          <tr><td>ש׳</td><td>🧘 מנוחה או הליכה קלה</td><td>5</td></tr>
+          <tr><td>ד׳ (רביעי)</td><td>💪 כוח עליון A — דחיפה · משיכה · בייספס</td><td>7-8</td></tr>
+          <tr><td>ה׳ (חמישי)</td><td>🚶 הליכה + ליבה + שוקיים</td><td>5-6</td></tr>
+          <tr><td>ו׳ (שישי)</td><td>🧘 מנוחה — מתיחות + הליכה קלה</td><td>—</td></tr>
+          <tr><td>ש׳ (שבת)</td><td>🧘 מנוחה — התאוששות</td><td>—</td></tr>
+          <tr><td>א׳ (ראשון)</td><td>🦵 כוח תחתון + ליבה</td><td>7-8</td></tr>
+          <tr><td>ב׳ (שני)</td><td>🚶 הליכה + תחתון קל + מתיחות מלאות</td><td>5-6</td></tr>
+          <tr><td>ג׳ (שלישי)</td><td>💪 כוח עליון B — דחיפה · משיכה · Bench Dip</td><td>7-8</td></tr>
         </table>
 
         <h3>📈 4 שלבי התקדמות + מיקרו-פריודיזציה</h3>
-        <p>כדי למנוע תקיעות (Plateau), הוספנו <strong>מיקרו-פריודיזציה</strong> בתוך הפאזות עצמן. לדחיפה ומשיכה יש העלאת סטים אחרי חצי פאזה (לדוגמה מעבר מ-3 ל-4 סטים).</p>
+        <p>כדי למנוע תקיעות (Plateau), הוספנו <strong>מיקרו-פריודיזציה</strong> בתוך הפאזות. העלאת סטים אחרי חצי פאזה (מ-3 ל-4 סטים), והחלפת תרגילים ברוטציות מגוונות.</p>
         <table>
           <tr><th>תחום</th><th>שלב 1 (1-12)</th><th>שלב 2 (13-24)</th><th>שלב 3 (25-33)</th><th>שלב 4 (34-52)</th></tr>
-          <tr><td><strong>דחיפה חזה</strong></td><td>Incline Push-up (3-4 סטים)</td><td>Push-up רגיל (3-4 סטים)</td><td>Offset / Diamond (רוטציה)</td><td>Banded / Offset / Decline (רוטציה 3-שבועית) - גומייה 30kg בחזה</td></tr>
-          <tr><td><strong>משיכה אנכית</strong></td><td>Band-assisted Pull-up (עזרה מקסימלית - 50kg) + חימום מתח שכמות</td><td>Band-assisted Pull-up (עזרה בינונית - 40kg)</td><td>Band-assisted Pull-up (עזרה מינימלית - 30kg)</td><td>Pull-up / Chin-up (משקל גוף)</td></tr>
-          <tr><td><strong>משיכה אופקית</strong></td><td>Band Row (3-4 סטים)</td><td>Band Row (3-4 סטים)</td><td>Single-arm Band Row 30kg / Band Row 50kg</td><td>Single-arm Band Row 40kg / Band Row 50kg</td></tr>
-          <tr><td><strong>רגליים</strong></td><td>Squat איטי (3-4 סטים)</td><td>Split Squat (3-4 סטים)</td><td>Bulgarian Split Squat</td><td>Bulgarian Split Squat (4 סטים)</td></tr>
-          <tr><td><strong>ישבן</strong></td><td>Banded Glute Bridge + RDL</td><td>Banded Glute Bridge + RDL (40kg)</td><td>Banded Glute Bridge + RDL (50kg)</td><td>Glute Bridge / RDL (רוטציה)</td></tr>
-          <tr><td><strong>ליבה</strong></td><td>Hollow Body Hold</td><td>Hollow Body Hold</td><td>Hanging Leg Raise</td><td>Hanging Leg Raise</td></tr>
-          <tr><td><strong>ליבה צידית</strong></td><td>Pallof Press</td><td>Pallof Press</td><td>Pallof Press</td><td>Copenhagen Plank</td></tr>
-          <tr><td><strong>כתפיים</strong></td><td>Banded OHP (30kg)</td><td>Banded OHP (40kg)</td><td>Banded OHP (50kg)</td><td>Pike Push-up</td></tr>
-          <tr><td><strong>ידיים</strong></td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl + Band Lateral Raise / Face Pull</td></tr>
-          <tr><td><strong>הליכה</strong></td><td>25-30 דקות</td><td>30-35 דקות</td><td>30-35 דקות Rucking/עליות</td><td>35-40 דקות Rucking/עליות</td></tr>
+          <tr><td><strong>חימום כף יד</strong></td><td>Finger Push-up 2×5-8</td><td>Finger Push-up 2×8-10</td><td>Towel Grip Hang 2×20-30ש</td><td>Towel Grip Hang 2×30-45ש</td></tr>
+          <tr><td><strong>חימום כתף</strong></td><td>Band External Rotation</td><td>Band External Rotation</td><td>Side-Lying External Rotation</td><td>Side-Lying External Rotation</td></tr>
+          <tr><td><strong>דחיפה חזה</strong></td><td>Incline Push-up (3-4×6-10)</td><td>Push-up רגיל (3-4×8-12)</td><td>Offset / Diamond (רוטציה שבועית)</td><td>Banded / Offset / Decline (רוטציה 3-שבועית)</td></tr>
+          <tr><td><strong>דחיפה אנכית (B)</strong></td><td>Bench Dip (3×8-12)</td><td>Bench Dip (3×10-15)</td><td>Bench Dip רגל אחת (3×8-12)</td><td>Bench Dip רגליים מורמות (3×8-12)</td></tr>
+          <tr><td><strong>משיכה אנכית</strong></td><td>Band-assisted Pull-up (50kg)</td><td>Band-assisted Pull-up (40kg)</td><td>Band-assisted Pull-up (30kg)</td><td>Pull-up משקל גוף (4×2-6)</td></tr>
+          <tr><td><strong>משיכה אופקית (A)</strong></td><td>Band Row (30-40kg)</td><td>Band Row (40kg)</td><td>Single-arm Band Row (30kg)</td><td>Single-arm Band Row (40kg)</td></tr>
+          <tr><td><strong>משיכה אופקית (B)</strong></td><td>Band Pull-apart (30kg)</td><td>Band Pull-apart (40kg)</td><td>Single-arm Band Row (30kg)</td><td>Single-arm Band Row (40kg)</td></tr>
+          <tr><td><strong>כתפיים</strong></td><td>Banded OHP (30kg)</td><td>Banded OHP (40kg) + Pike Push-up</td><td>Banded OHP (50kg) + Pike Push-up</td><td>Pike Push-up + Band Lateral Raise</td></tr>
+          <tr><td><strong>רגליים</strong></td><td>Squat איטי / Step-ups</td><td>Split Squat + Step-ups</td><td>Bulgarian Split Squat + Lateral Lunges</td><td>Bulgarian Split Squat + Step-ups + Lateral Lunges</td></tr>
+          <tr><td><strong>ישבן / המסטרינגס</strong></td><td>Glute Bridge + RDL (30kg)</td><td>Glute Bridge + RDL (40kg)</td><td>Glute Bridge + RDL (50kg)</td><td>Single-leg RDL + Floor Hamstring Curl</td></tr>
+          <tr><td><strong>גב תחתון</strong></td><td>Superman 2×10-12</td><td>Superman 2×12-15</td><td>Superman 3×12-15</td><td>Superman Hold 3×20-30ש</td></tr>
+          <tr><td><strong>ליבה (עליון)</strong></td><td>Hollow Body Hold</td><td>Hollow Body Hold</td><td>Hanging Leg Raise</td><td>Hanging Leg Raise</td></tr>
+          <tr><td><strong>ליבה צידית</strong></td><td>Pallof Press</td><td>Pallof Press</td><td>Side Plank</td><td>Copenhagen Plank</td></tr>
+          <tr><td><strong>רוטציה</strong></td><td>—</td><td>—</td><td>Band Woodchop 2×10 לכל צד</td><td>Band Woodchop 2×10 לכל צד</td></tr>
+          <tr><td><strong>ידיים (A)</strong></td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl + Face Pull</td><td>Band Curl/Lateral Raise (רוטציה) + Face Pull</td></tr>
+          <tr><td><strong>הליכה</strong></td><td>25-30 דקות</td><td>30-35 דקות</td><td>35-40 דקות</td><td>40-45 דקות</td></tr>
+          <tr><td><strong>תחתון קל (שני)</strong></td><td>Reverse Lunges + Dead Bug</td><td>Reverse Lunges + Dead Bug</td><td>+ Floor Hamstring Curl</td><td>+ Floor Hamstring Curl + Hollow Body Rock</td></tr>
         </table>
 
-        <h3>🔄 Deload — שבועות התאוששות (25, 33, 41, 49)</h3>
-        <p>כל 8 שבועות יש <strong>שבוע Deload</strong>. בשבועות אלו, אותם תרגילים מתבצעים אך בנפח מופחת (כ-60% מהנפח הרגיל — בדרך כלל 3 סטים במקום 4, פחות חזרות, ומשקל קל יותר). המטרה: מניעת אוברטריינינג, איפוס מערכת העצבים ושמירה על מומנטום ארוך טווח.</p>
+        <h3>🔄 Deload — שבועות התאוששות (9, 17, 25, 33, 41, 49)</h3>
+        <p>כל 8 שבועות יש <strong>שבוע Deload</strong>. בשבועות אלו, אותם תרגילים מתבצעים אך בנפח מופחת (~60% מהנפח — 3 סטים במקום 4, פחות חזרות, משקל קל יותר). המטרה: מניעת אוברטריינינג, איפוס מערכת העצבים ושמירה על מומנטום ארוך טווח.</p>
 
-        <h3>🔄 חימום ורוטציות</h3>
-        <p><strong>חימום קבוע:</strong> לפני כל אימון כוח עליון יש לבצע <em>Band External Rotation</em> (2 סטים, 15 חזרות לכל יד) לשמירה על בריאות הכתף.</p>
-        <p><strong>רוטציות בשלב 3:</strong> תרגילי הדחיפה מתחלפים בין Offset Push-up ו-Diamond Push-up ברוטציה שבועית.</p>
-        <p><strong>רוטציות בשלב 4:</strong> תרגילי הדחיפה מתחלפים בין Banded Push-up, Offset Push-up ו-Decline Push-up ברוטציה 3-שבועית. ביום כוח עליון B הרוטציה היא Diamond, Offset ו-Banded Push-up.</p>
-        
-        <h3>🤸 שדרוג הליכה - Rucking</h3>
-        <p>משלב 3, ימי ההליכה עוברים להליכה משולבת משקל (Rucking) או הליכה בעליות להעלאת עצימות האירובי והגברת חיזוק השוקיים והליבה תוך תנועה.</p>
+        <h3>🔥 חימום דו-שלבי</h3>
+        <p><strong>שלבים 1-2:</strong> Finger Push-up (2×5-10) + Band External Rotation (2×15 לכל יד) + Scapular Pull-up (2×10-15).</p>
+        <p><strong>שלבים 3-4:</strong> Towel Grip Hang (2×20-45 שניות) + Side-Lying External Rotation (2×15 לכל יד) + Scapular Pull-up + Hold.</p>
+
+        <h3>🔄 רוטציות</h3>
+        <p><strong>שלב 3 (רוטציה שבועית):</strong> Offset Push-up ↔ Diamond Push-up (שבוע אי-זוגי/זוגי).</p>
+        <p><strong>שלב 4 (רוטציה 3-שבועית):</strong> יום A: Banded → Offset → Decline. יום B: Diamond → Offset → Banded.</p>
+
+        <h3>🦵 יום שני — תחתון קל</h3>
+        <p>יום שני כולל הליכה מהירה + Reverse Lunges איטיים + Bird-Dog + Dead Bug + Hollow Body + Couch Stretch + מתיחות מלאות. משלב 3 נוסף Floor Hamstring Curl, ומשלב 4 Hollow Body Rock.</p>
+
+        <h3>🧘 גמישות מובנית</h3>
+        <p><strong>Couch Stretch</strong> מופיע בסוף יום תחתון ויום שני. <strong>Toe Yoga</strong> מופיע כחימום כף רגל ביום תחתון.</p>
       </div>
 
       <div class="section">
