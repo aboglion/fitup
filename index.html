@@ -84,50 +84,75 @@
       <!-- Today Page -->
       <section id="page-today" class="page active">
         
-        <!-- Day Navigation Arrows -->
-        <div id="day-nav" class="day-nav-arrows">
-          <button id="nav-prev-day" class="day-nav-btn" title="יום הקודם">▶</button>
-          <div id="nav-day-info" class="day-nav-info"></div>
-          <button id="nav-next-day" class="day-nav-btn" title="יום הבא">◀</button>
-        </div>
-
         <button id="today-btn" class="btn-warning" style="display: none; width: 100%; margin-bottom: 16px; font-size: 15px; font-weight: bold; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);">
           <span>🔙</span> חזור לאימון של היום
         </button>
 
         <!-- Day Summary Card -->
-        <div id="day-summary" class="day-summary-card" style="display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px;">
-          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <div class="day-meta" style="flex: 1;">
-              <span id="day-number" class="day-badge" style="font-size: 15px; background: var(--accent-gradient); color: white; box-shadow: var(--shadow-sm);"></span>
-              <span id="today-date-badge" class="day-badge" style="background: var(--bg-input); border: 1px solid var(--border-color);"></span>
-              <span id="day-week" class="week-badge"></span>
-              <span id="day-type" class="type-badge"></span>
-              <span id="day-rpe" class="rpe-badge"></span>
-            </div>
-            <div id="day-progress" class="day-progress" style="margin-right: 16px; flex-shrink: 0;">
-              <div class="progress-ring">
-                <svg viewBox="0 0 100 100">
-                  <circle class="progress-ring-bg" cx="50" cy="50" r="42"/>
-                  <circle id="progress-circle" class="progress-ring-fill" cx="50" cy="50" r="42"/>
-                </svg>
-                <span id="progress-text" class="progress-text">0%</span>
+        <div id="day-summary" class="day-summary-card" style="padding: 24px; position: relative; overflow: hidden; border-radius: var(--radius-xl);">
+          <!-- decorative background element -->
+          <div style="position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: var(--accent-primary); opacity: 0.05; border-radius: 50%; filter: blur(30px); pointer-events: none;"></div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; position: relative; z-index: 1;">
+            
+            <div style="display: flex; flex-direction: column; gap: 16px; flex: 1;">
+              
+              <!-- Nav and Dates -->
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button id="nav-prev-day" class="day-nav-btn" title="יום הקודם" style="width: 32px; height: 32px; font-size: 12px; border-radius: 8px;">▶</button>
+                
+                <div style="display: flex; align-items: center; background: var(--bg-input); border: 1px solid var(--border-light); padding: 4px 12px; border-radius: 16px; font-size: 13px; font-weight: 600;">
+                  <span id="today-date-badge" style="color: var(--text-primary);"></span>
+                  <span style="color: var(--text-muted); margin: 0 8px;">•</span>
+                  <span style="color: var(--text-secondary);">יום <span id="day-number" style="color: var(--text-primary);"></span></span>
+                </div>
+                
+                <button id="nav-next-day" class="day-nav-btn" title="יום הבא" style="width: 32px; height: 32px; font-size: 12px; border-radius: 8px;">◀</button>
               </div>
-              <span class="progress-label">השלמה</span>
+
+              <!-- Main Title and Badges -->
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div id="day-type-container">
+                  <span id="day-type"></span>
+                </div>
+                
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                  <span id="day-week" class="week-badge" style="font-size: 12px; padding: 4px 10px; background: var(--bg-elevated); color: var(--text-secondary); border: 1px solid var(--border-color);"></span>
+                  <span id="day-rpe" class="rpe-badge" style="font-size: 12px; padding: 4px 10px;"></span>
+                </div>
+              </div>
+              
             </div>
+
+            <!-- Progress -->
+            <div style="display: flex; flex-direction: column; align-items: center; margin-right: 16px; flex-shrink: 0;">
+              <div id="day-progress" class="day-progress">
+                <div class="progress-ring" style="width: 76px; height: 76px;">
+                  <svg viewBox="0 0 100 100">
+                    <circle class="progress-ring-bg" cx="50" cy="50" r="42" stroke-width="6"/>
+                    <circle id="progress-circle" class="progress-ring-fill" cx="50" cy="50" r="42" stroke-width="6"/>
+                  </svg>
+                  <span id="progress-text" class="progress-text" style="font-size: 16px;">0%</span>
+                </div>
+                <span class="progress-label" style="font-weight: 600; margin-top: 6px; font-size: 11px;">השלמה</span>
+              </div>
+            </div>
+
           </div>
         </div>
 
         <div class="top-day-actions" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
-          <div style="display: flex; gap: 8px;">
-            <button id="skip-day-btn" class="btn-secondary" style="flex: 1; padding: 12px 8px;" title="דלג על יום זה (למשל אם פספסת)">
-              <span>⏭️</span> דלג יום
+          <div class="action-pill-bar">
+            <button id="skip-day-btn" class="action-pill-btn" title="דלג על יום זה (למשל אם פספסת)">
+              <span class="icon">⏭️</span> <span class="text">דלג יום</span>
             </button>
-            <button id="toggle-notes-btn" class="btn-secondary" style="flex: 1; padding: 12px 8px;">
-              <span>📝</span> הערות
+            <div class="action-pill-divider"></div>
+            <button id="toggle-notes-btn" class="action-pill-btn">
+              <span class="icon">📝</span> <span class="text">הערות</span>
             </button>
-            <button id="toggle-calendar-btn" class="btn-secondary" style="flex: 1; padding: 12px 8px;">
-              <span>📆</span> תאריכים
+            <div class="action-pill-divider"></div>
+            <button id="toggle-calendar-btn" class="action-pill-btn">
+              <span class="icon">📆</span> <span class="text">תאריכים</span>
             </button>
           </div>
           

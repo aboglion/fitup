@@ -132,6 +132,10 @@ const TodayPage = (() => {
     const skipDayBtn = document.getElementById('skip-day-btn');
     if (skipDayBtn) {
       skipDayBtn.style.display = isToday ? 'flex' : 'none';
+      const divider = skipDayBtn.nextElementSibling;
+      if (divider && divider.classList.contains('action-pill-divider')) {
+        divider.style.display = isToday ? 'block' : 'none';
+      }
     }
 
     const typeBadge = document.getElementById('day-type');
@@ -158,10 +162,6 @@ const TodayPage = (() => {
     document.getElementById('day-notes').value = currentTracking.notes || '';
 
     // Update navigation info
-    const navInfo = document.getElementById('nav-day-info');
-    if (navInfo) {
-      navInfo.textContent = `${day.date} — יום ${day.dayNum}`;
-    }
     const prevBtn = document.getElementById('nav-prev-day');
     const nextBtn = document.getElementById('nav-next-day');
     if (prevBtn) prevBtn.disabled = currentDayIndex <= 0;

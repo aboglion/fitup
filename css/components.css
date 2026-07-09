@@ -132,6 +132,20 @@
   color: var(--warning);
 }
 
+/* Day Type Title Override */
+.day-summary-card #day-type {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  letter-spacing: -0.5px !important;
+}
+
+.day-summary-card #day-type.strength { color: var(--strength-color) !important; }
+.day-summary-card #day-type.walk { color: var(--walk-color) !important; }
+.day-summary-card #day-type.rest { color: var(--rest-color) !important; }
+
 .day-progress {
   display: flex;
   flex-direction: column;
@@ -601,6 +615,52 @@ html.light-theme .exercise-hero-container::after {
 }
 
 /* ===== Day Actions ===== */
+.action-pill-bar {
+  display: flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: 4px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.action-pill-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 4px;
+  border-radius: calc(var(--radius-xl) - 4px);
+  transition: all var(--transition-fast);
+}
+
+.action-pill-btn:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.action-pill-btn.active {
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+  color: var(--accent-primary);
+}
+
+.action-pill-divider {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border-color);
+  margin: 8px 0;
+}
 .day-actions {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
