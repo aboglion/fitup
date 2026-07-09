@@ -6,6 +6,7 @@ const TodayPage = (() => {
   let allPlanDays = [];
   let currentTracking = null;
   let allExercises = [];
+  let allTrackingCache = null;
 
   /**
    * Initialize the today page
@@ -52,6 +53,12 @@ const TodayPage = (() => {
     document.getElementById('actual-rpe').addEventListener('change', autoSave);
     document.getElementById('body-weight').addEventListener('change', autoSave);
     document.getElementById('day-notes').addEventListener('change', autoSave);
+
+    // Day navigation arrows
+    const prevBtn = document.getElementById('nav-prev-day');
+    const nextBtn = document.getElementById('nav-next-day');
+    if (prevBtn) prevBtn.addEventListener('click', () => navigate(-1));
+    if (nextBtn) nextBtn.addEventListener('click', () => navigate(1));
 
     await render();
   }
@@ -104,6 +111,9 @@ const TodayPage = (() => {
       completed: false
     };
 
+    // Cache all tracking data for performance history lookups
+    allTrackingCache = await DB.getAllTracking();
+
     // Update header badges
     const typeInfo = UI.getDayTypeInfo(day.dayType);
     
@@ -146,6 +156,57 @@ const TodayPage = (() => {
     document.getElementById('actual-rpe').value = currentTracking.actualRPE || '';
     document.getElementById('body-weight').value = currentTracking.bodyWeight || '';
     document.getElementById('day-notes').value = currentTracking.notes || '';
+
+    // Update navigation info
+    const navInfo = document.getElementById('nav-day-info');
+    if (navInfo) {
+      navInfo.textContent = `${day.date} — יום ${day.dayNum}`;
+    }
+    const prevBtn = document.getElementById('nav-prev-day');
+    const nextBtn = document.getElementById('nav-next-day');
+    if (prevBtn) prevBtn.disabled = currentDayIndex <= 0;
+    if (nextBtn) nextBtn.disabled = currentDayIndex >= allPlanDays.length - 1;
+
+    // Render next workout preview
+    renderNextWorkout();
+  }
+
+  /**
+   * Render the next workout preview card
+   */
+  function renderNextWorkout() {
+    const container = document.getElementById('next-workout-preview');
+    if (!container) return;
+
+    // Find next non-rest workout day
+    let nextDay = null;
+    for (let i = currentDayIndex + 1; i < allPlanDays.length && i <= currentDayIndex + 7; i++) {
+      const d = allPlanDays[i];
+      if (d && d.dayType !== 'מנוחה') {
+        nextDay = d;
+        break;
+      }
+    }
+
+    if (!nextDay) {
+      container.innerHTML = '';
+      return;
+    }
+
+    const typeInfo = UI.getDayTypeInfo(nextDay.dayType);
+    const daysUntil = nextDay.dayIndex - currentDayIndex;
+    const whenLabel = daysUntil === 1 ? 'מחר' : `בעוד ${daysUntil} ימים`;
+
+    container.innerHTML = `
+      <div class="next-workout-card" onclick="TodayPage.goToDay(${nextDay.dayIndex})">
+        <span class="next-workout-icon">${typeInfo.icon}</span>
+        <div class="next-workout-info">
+          <div class="next-workout-label">האימון הבא — ${whenLabel}</div>
+          <div class="next-workout-name">${typeInfo.label} (${nextDay.exercises ? nextDay.exercises.length : 0} תרגילים)</div>
+        </div>
+        <span style="color: var(--text-muted);">◀</span>
+      </div>
+    `;
   }
 
   /**
@@ -195,6 +256,39 @@ const TodayPage = (() => {
       defs.appendChild(gradient);
       svg.insertBefore(defs, svg.firstChild);
     }
+  }
+
+  /**
+   * Find previous tracking performance for a given exercise name
+   * Looks back through plan days to find the last time this exercise was done with tracking data
+   */
+  function findPrevPerformance(exerciseName, beforeDayIndex) {
+    if (!allTrackingCache || !exerciseName) return null;
+    
+    // Build tracking map for quick lookup
+    const trackingMap = {};
+    allTrackingCache.forEach(t => { trackingMap[t.dayIndex] = t; });
+    
+    // Search backwards from the day before current
+    for (let i = beforeDayIndex - 1; i >= 0; i--) {
+      const pastDay = allPlanDays[i];
+      if (!pastDay || !pastDay.exercises) continue;
+      
+      const exIdx = pastDay.exercises.findIndex(e => e.name === exerciseName);
+      if (exIdx === -1) continue;
+      
+      const tracking = trackingMap[i];
+      if (!tracking || !tracking.setData || !tracking.setData[exIdx]) continue;
+      
+      // Found tracking data for this exercise
+      return {
+        dayIndex: i,
+        dayNum: pastDay.dayNum,
+        setData: tracking.setData[exIdx],
+        completed: tracking.exerciseStatus && tracking.exerciseStatus[exIdx]
+      };
+    }
+    return null;
   }
 
   /**
@@ -273,17 +367,47 @@ const TodayPage = (() => {
       // Determine if this is a time-based exercise
       const isTime = ex.sets && (ex.sets.includes('דקות') || ex.sets.includes('שניות'));
 
+      // Find previous tracking data for this exercise
+      const prevPerf = findPrevPerformance(ex.name, currentDayIndex);
+
       let setsHTML = '';
       if (!isTime && setsCount > 0) {
-        setsHTML = '<div class="set-tracker">';
+        // Previous performance summary
+        let prevPerfHTML = '';
+        if (prevPerf && prevPerf.setData) {
+          const prevSets = [];
+          let maxReps = 0;
+          for (let ps = 0; ps < 10; ps++) {
+            const pr = prevPerf.setData[`set_${ps}_reps`];
+            if (pr) {
+              prevSets.push(pr);
+              if (parseInt(pr) > maxReps) maxReps = parseInt(pr);
+            }
+          }
+          if (prevSets.length > 0) {
+            prevPerfHTML = `
+              <div class="prev-performance">
+                <span class="prev-perf-label">📊 ביצוע אחרון:</span>
+                <span class="prev-perf-values">${prevSets.map((r, i) => `<span class="prev-set">סט${i+1}: ${r}</span>`).join('')}</span>
+                ${maxReps > 0 ? `<span class="prev-perf-pr">🏆 שיא: ${maxReps}</span>` : ''}
+              </div>
+            `;
+          }
+        }
+
+        setsHTML = prevPerfHTML + '<div class="set-tracker">';
         for (let s = 0; s < setsCount; s++) {
           const setDone = setData[`set_${s}_done`] || false;
           const setReps = setData[`set_${s}_reps`] || '';
           const setWeight = setData[`set_${s}_weight`] || '';
 
+          // Use previous performance as placeholder hint
+          const prevReps = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_reps`]) || reps;
+          const prevWeight = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_weight`]) || ex.weight;
+
           // Weight input - only show if exercise has weight data
           const weightInput = hasWeight ? `
-              <input type="number" class="set-input" placeholder="${ex.weight}" 
+              <input type="number" class="set-input" placeholder="${prevWeight}" 
                      value="${setWeight}" ${disabledAttr}
                      data-ex="${idx}" data-set="${s}" data-field="weight"
                      onchange="TodayPage.updateSetData(${idx}, ${s}, 'weight', this.value)">
@@ -293,7 +417,7 @@ const TodayPage = (() => {
           setsHTML += `
             <div class="set-row">
               <span class="set-label">סט ${s + 1}</span>
-              <input type="number" class="set-input" placeholder="${reps}" 
+              <input type="number" class="set-input" placeholder="${prevReps}" 
                      value="${setReps}" ${disabledAttr}
                      data-ex="${idx}" data-set="${s}" data-field="reps"
                      onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
@@ -361,6 +485,7 @@ const TodayPage = (() => {
               <div>
                 <div class="exercise-card-name" style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
                   ${ex.name}
+                  ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 הפעלה</span>` : ''}
                   ${equip ? `<span style="background: var(--bg-hover, rgba(255,255,255,0.05)); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: normal; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px;">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
                 <div class="exercise-card-detail">
@@ -391,7 +516,28 @@ const TodayPage = (() => {
    */
   function toggleExpand(idx) {
     const card = document.getElementById(`ex-card-${idx}`);
-    card.classList.toggle('expanded');
+    const isExpanding = !card.classList.contains('expanded');
+    
+    // First, close all other cards and remove focus
+    document.querySelectorAll('.exercise-card').forEach(c => {
+      c.classList.remove('expanded');
+      c.classList.remove('focused');
+    });
+    
+    const listContainer = document.getElementById('exercises-list');
+
+    if (isExpanding) {
+      card.classList.add('expanded');
+      card.classList.add('focused');
+      listContainer.classList.add('has-focus');
+      
+      // Small delay before scrolling to allow expansion animation to start
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    } else {
+      listContainer.classList.remove('has-focus');
+    }
   }
 
   /**
@@ -408,6 +554,9 @@ const TodayPage = (() => {
     const card = document.getElementById(`ex-card-${idx}`);
     card.classList.toggle('completed');
 
+    // Haptic feedback
+    if (isNowCompleted && navigator.vibrate) navigator.vibrate(50);
+
     // Update progress
     const day = allPlanDays[currentDayIndex];
     updateProgress(day);
@@ -422,9 +571,65 @@ const TodayPage = (() => {
 
     await autoSave();
 
-    if (isNowCompleted && !currentTracking.completed) {
+    if (currentTracking.completed && isNowCompleted) {
+      // All exercises done! Celebrate!
+      showWorkoutCelebration(day);
+    } else if (isNowCompleted && !currentTracking.completed) {
       handleExerciseCompleted(idx, day);
     }
+  }
+
+  /**
+   * Show celebration modal when workout is fully completed
+   */
+  function showWorkoutCelebration(day) {
+    // Count total sets done
+    let totalSets = 0;
+    let totalReps = 0;
+    if (currentTracking.setData) {
+      Object.values(currentTracking.setData).forEach(exSets => {
+        if (typeof exSets === 'object') {
+          Object.entries(exSets).forEach(([key, val]) => {
+            if (key.endsWith('_done') && val) totalSets++;
+            if (key.endsWith('_reps') && val) totalReps += parseInt(val) || 0;
+          });
+        }
+      });
+    }
+
+    const typeInfo = UI.getDayTypeInfo(day.dayType);
+    
+    UI.showModal('🎉 אימון הושלם!', `
+      <div style="text-align: center; padding: 16px;">
+        <div class="celebration-confetti">🎊</div>
+        <div style="font-size: 64px; margin-bottom: 16px; animation: bounceIn 0.6s ease;">💪</div>
+        <h3 style="font-size: 22px; margin-bottom: 8px; color: var(--text-primary);">כל הכבוד! סיימת את האימון!</h3>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">${typeInfo.label} — יום ${day.dayNum}</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+          <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px;">
+            <div style="font-size: 28px; font-weight: 800; color: var(--success);">${day.exercises.length}</div>
+            <div style="font-size: 12px; color: var(--text-secondary);">תרגילים</div>
+          </div>
+          <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px;">
+            <div style="font-size: 28px; font-weight: 800; color: var(--accent-primary);">${totalSets}</div>
+            <div style="font-size: 12px; color: var(--text-secondary);">סטים</div>
+          </div>
+          ${totalReps > 0 ? `
+          <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px; grid-column: 1 / -1;">
+            <div style="font-size: 28px; font-weight: 800; color: var(--warning);">${totalReps}</div>
+            <div style="font-size: 12px; color: var(--text-secondary);">חזרות בסה"כ</div>
+          </div>` : ''}
+        </div>
+        
+        <button onclick="UI.hideModal()" class="btn-primary" style="width: 100%; padding: 14px;">
+          🏆 מעולה! המשך הלאה
+        </button>
+      </div>
+    `);
+
+    // Haptic celebration
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
   }
 
   function handleExerciseCompleted(idx, day) {

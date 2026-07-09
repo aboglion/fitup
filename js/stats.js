@@ -4,6 +4,10 @@
 const StatsPage = (() => {
   let allPlanDays = [];
 
+  const STRENGTH_TYPES = ['כוח עליון A', 'כוח עליון B', 'כוח תחתון'];
+  const isStrengthDay = (dayType) => STRENGTH_TYPES.includes(dayType);
+
+
   /**
    * Initialize
    */
@@ -25,7 +29,7 @@ const StatsPage = (() => {
     const totalDays = allPlanDays.length;
     const completedDays = allTracking.filter(t => t.completed).length;
 
-    const strengthDays = allPlanDays.filter(d => d.dayType === 'כוח');
+    const strengthDays = allPlanDays.filter(d => isStrengthDay(d.dayType));
     const completedStrength = strengthDays.filter(d => trackingMap[d.dayIndex] && trackingMap[d.dayIndex].completed).length;
 
     const walkDays = allPlanDays.filter(d => d.dayType === 'הליכה');
@@ -52,7 +56,7 @@ const StatsPage = (() => {
       if (t.completed) {
         const day = trackingMap[t.dayIndex] ? allPlanDays[t.dayIndex] : null;
         if (day) {
-          if (day.dayType === 'כוח') totalXP += 500;
+          if (isStrengthDay(day.dayType)) totalXP += 500;
           else if (day.dayType === 'הליכה') totalXP += 200;
           else if (day.dayType === 'מנוחה') totalXP += 50;
         }
@@ -211,7 +215,7 @@ const StatsPage = (() => {
       let colorClass = 'heat-empty';
       
       if (isCompleted) {
-        if (day.dayType === 'כוח') colorClass = 'heat-strength';
+        if (isStrengthDay(day.dayType)) colorClass = 'heat-strength';
         else if (day.dayType === 'הליכה') colorClass = 'heat-walk';
         else if (day.dayType === 'מנוחה') colorClass = 'heat-rest';
       }

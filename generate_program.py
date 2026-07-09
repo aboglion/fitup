@@ -64,8 +64,8 @@ VIDEOS = {
     "Superman Hold": "https://www.youtube.com/shorts/eKB5rv5c7FQ",
 }
 
-def ex(slot, name, sets, weight=None):
-    return {"slot": slot, "name": name, "sets": sets, "weight": weight, "videoUrl": VIDEOS.get(name)}
+def ex(slot, name, sets, weight=None, isWarmup=False):
+    return {"slot": slot, "name": name, "sets": sets, "weight": weight, "videoUrl": VIDEOS.get(name), "isWarmup": isWarmup}
 
 def get_phase(week):
     if week <= 12: return 1
@@ -84,15 +84,15 @@ def upper_a(week):
     exercises = []
     # Warmup — phases 1-2: Knee Finger Push-up, phases 3-4: Towel Grip Hang
     if phase <= 2:
-        exercises.append(ex("W0","Knee Finger Push-up","2×5-8" if phase==1 else "2×8-10"))
+        exercises.append(ex("W0","Knee Finger Push-up","2×5-8" if phase==1 else "2×8-10", isWarmup=True))
     else:
-        exercises.append(ex("W0","Towel Grip Hang","2×20-30 שניות" if phase==3 else "2×30-45 שניות"))
+        exercises.append(ex("W0","Towel Grip Hang","2×20-30 שניות" if phase==3 else "2×30-45 שניות", isWarmup=True))
     if phase <= 2:
-        exercises.append(ex("W1","Band External Rotation","2×15 לכל יד","30kg"))
-        exercises.append(ex("W2","Scapular Pull-up","2×10-15","משקל גוף"))
+        exercises.append(ex("W1","Band External Rotation","2×10 הפעלה לכל יד","30kg", isWarmup=True))
+        exercises.append(ex("W2","Scapular Pull-up","2×8 הפעלה","משקל גוף", isWarmup=True))
     else:
-        exercises.append(ex("W1","Side-Lying External Rotation","2×15 לכל יד","ללא גומייה" if phase==3 else "30kg"))
-        exercises.append(ex("W2","Scapular Pull-up" if phase==3 else "Scapular Pull-up + Hold","2×10-15" if phase==3 else "2-3×5","משקל גוף"))
+        exercises.append(ex("W1","Side-Lying External Rotation","2×10 הפעלה לכל יד","ללא גומייה" if phase==3 else "30kg", isWarmup=True))
+        exercises.append(ex("W2","Scapular Pull-up" if phase==3 else "Scapular Pull-up + Hold","2×8 הפעלה" if phase==3 else "2×5 הפעלה","משקל גוף", isWarmup=True))
 
     if phase == 1:
         vs = "4×6-10" if week > 6 and not dl else "3×6-10"
@@ -185,15 +185,15 @@ def upper_b(week):
     dl = is_deload(week)
     exercises = []
     if phase <= 2:
-        exercises.append(ex("W0","Knee Finger Push-up","2×5-8" if phase==1 else "2×8-10"))
+        exercises.append(ex("W0","Knee Finger Push-up","2×5-8" if phase==1 else "2×8-10", isWarmup=True))
     else:
-        exercises.append(ex("W0","Towel Grip Hang","2×20-30 שניות" if phase==3 else "2×30-45 שניות"))
+        exercises.append(ex("W0","Towel Grip Hang","2×20-30 שניות" if phase==3 else "2×30-45 שניות", isWarmup=True))
     if phase <= 2:
-        exercises.append(ex("W1","Band External Rotation","2×15 לכל יד","30kg"))
-        exercises.append(ex("W2","Scapular Pull-up","2×10-15","משקל גוף"))
+        exercises.append(ex("W1","Band External Rotation","2×10 הפעלה לכל יד","30kg", isWarmup=True))
+        exercises.append(ex("W2","Scapular Pull-up","2×8 הפעלה","משקל גוף", isWarmup=True))
     else:
-        exercises.append(ex("W1","Side-Lying External Rotation","2×15 לכל יד","ללא גומייה" if phase==3 else "30kg"))
-        exercises.append(ex("W2","Scapular Pull-up" if phase==3 else "Scapular Pull-up + Hold","2×10-15" if phase==3 else "2-3×5","משקל גוף"))
+        exercises.append(ex("W1","Side-Lying External Rotation","2×10 הפעלה לכל יד","ללא גומייה" if phase==3 else "30kg", isWarmup=True))
+        exercises.append(ex("W2","Scapular Pull-up" if phase==3 else "Scapular Pull-up + Hold","2×8 הפעלה" if phase==3 else "2×5 הפעלה","משקל גוף", isWarmup=True))
 
     if phase == 1:
         vs = "4×6-10" if week > 6 and not dl else "3×6-10"
@@ -201,58 +201,58 @@ def upper_b(week):
         if dl: vs, ps = "3×6", "3×5"
         exercises.append(ex("A1","Incline Push-up",vs))
         exercises.append(ex("A2","Band-assisted Pull-up (Chin-up grip)",ps,"50kg"))
-        exercises.append(ex("B1","Band Pull-apart","3×12-15" if not dl else "2×12","30kg"))
-        exercises.append(ex("B2","Banded OHP","3×8-10","30kg"))
+        exercises.append(ex("B1","Banded OHP","3×8-10","30kg"))
+        exercises.append(ex("B2","Bench Dip","3×8-12" if not dl else "2×8"))
+        exercises.append(ex("B3","Band Pull-apart","3×12-15" if not dl else "2×12","30kg"))
         exercises.append(ex("C1","Hollow Body Hold","2×20-30 שניות"))
         exercises.append(ex("C2","Pallof Press","3×10-12","30kg"))
-        exercises.append(ex("D1","Bench Dip","3×8-12" if not dl else "2×8"))
-        exercises.append(ex("D2","Face Pull","2×15","30kg"))
+        exercises.append(ex("D1","Face Pull","2×15","30kg"))
     elif phase == 2:
         vs = "4×8-12" if week > 18 and not dl else "3×8-12"
         if dl: vs = "2×8"
         exercises.append(ex("A1","Push-up רגיל",vs))
         exercises.append(ex("A2","Band-assisted Pull-up (Chin-up grip)","3×5-8" if not dl else "2×5","40kg"))
-        exercises.append(ex("B1","Band Pull-apart","3×12-15" if not dl else "2×12","40kg"))
-        exercises.append(ex("B2","Banded OHP","3-4×8" if not dl else "2×8","40kg"))
-        exercises.append(ex("B3","Pike Push-up","2×5-8"))
+        exercises.append(ex("B1","Banded OHP","3-4×8" if not dl else "2×8","40kg"))
+        exercises.append(ex("B2","Pike Push-up","2×5-8"))
+        exercises.append(ex("B3","Bench Dip","3×10-15" if not dl else "2×8"))
+        exercises.append(ex("B4","Band Pull-apart","3×12-15" if not dl else "2×12","40kg"))
         exercises.append(ex("C1","Hollow Body Hold","3×30 שניות" if not dl else "2×20 שניות"))
         exercises.append(ex("C2","Pallof Press","3×10-12" if not dl else "2×10","40kg"))
-        exercises.append(ex("D1","Bench Dip","3×10-15" if not dl else "2×8"))
-        exercises.append(ex("D2","Face Pull","2-3×15","30kg"))
+        exercises.append(ex("D1","Face Pull","2-3×15","30kg"))
     elif phase == 3:
         if dl:
             exercises.append(ex("A1","Push-up רגיל","3×8"))
             exercises.append(ex("A2","Band-assisted Pull-up (Chin-up grip)","3×5","30kg"))
-            exercises.append(ex("B1","Single-arm Band Row","3×8-10 לכל יד","30kg"))
-            exercises.append(ex("B2","Banded OHP","3×8","50kg"))
+            exercises.append(ex("B1","Banded OHP","3×8","50kg"))
+            exercises.append(ex("B2","Single-arm Band Row","3×8-10 לכל יד","30kg"))
             exercises.append(ex("B3","Pike Push-up","2×6"))
+            exercises.append(ex("B4","Bench Dip (רגל אחת מורומה)","2×8"))
             exercises.append(ex("C1","Hanging Leg Raise","2×8"))
             exercises.append(ex("C2","Side Plank","2×30 שניות לכל צד"))
-            exercises.append(ex("D1","Bench Dip (רגל אחת מורומה)","2×8"))
-            exercises.append(ex("D2","Face Pull","2×12","30kg"))
+            exercises.append(ex("D1","Face Pull","2×12","30kg"))
         else:
             if week % 2 == 1:
                 exercises.append(ex("A1","Diamond Push-up","4×8-12"))
             else:
                 exercises.append(ex("A1","Offset Push-up","3×8 לכל צד"))
             exercises.append(ex("A2","Band-assisted Pull-up (Chin-up grip)","3×5-8","30kg"))
-            exercises.append(ex("B1","Single-arm Band Row","3×8-10 לכל יד","30kg"))
-            exercises.append(ex("B2","Banded OHP","3-4×8","50kg"))
+            exercises.append(ex("B1","Banded OHP","3-4×8","50kg"))
+            exercises.append(ex("B2","Single-arm Band Row","3×8-10 לכל יד","30kg"))
             exercises.append(ex("B3","Pike Push-up","3×6-10"))
+            exercises.append(ex("B4","Bench Dip (רגל אחת מורומה)","3×8-12"))
             exercises.append(ex("C1","Hanging Leg Raise","3×8-12"))
             exercises.append(ex("C2","Side Plank","3×30-45 שניות לכל צד"))
-            exercises.append(ex("D1","Bench Dip (רגל אחת מורומה)","3×8-12"))
-            exercises.append(ex("D2","Face Pull","2-3×15","30kg"))
+            exercises.append(ex("D1","Face Pull","2-3×15","30kg"))
     else:  # phase 4
         if dl:
             exercises.append(ex("A1","Diamond Push-up","3×8"))
             exercises.append(ex("A2","Pull-up","3×2","משקל גוף"))
             exercises.append(ex("B1","Single-arm Band Row","3×8 לכל יד","40kg"))
             exercises.append(ex("B2","Pike Push-up","2×6"))
+            exercises.append(ex("B3","Bench Dip (רגליים מורמות על כיסא)","2×8"))
             exercises.append(ex("C1","Hanging Leg Raise","2×8"))
             exercises.append(ex("C2","Copenhagen Plank","2×20 שניות לכל צד"))
-            exercises.append(ex("D1","Bench Dip (רגליים מורמות על כיסא)","2×8"))
-            exercises.append(ex("D2","Face Pull","2×15","30kg"))
+            exercises.append(ex("D1","Face Pull","2×15","30kg"))
         else:
             rot = (week - 34) % 3
             if rot == 0:
@@ -268,19 +268,19 @@ def upper_b(week):
             exercises.append(ex("A2","Pull-up",pr,"משקל גוף"))
             exercises.append(ex("B1","Single-arm Band Row","4×8-10 לכל יד","40kg"))
             exercises.append(ex("B2","Pike Push-up","3×6-10"))
+            exercises.append(ex("B3","Bench Dip (רגליים מורמות על כיסא)","3×8-12"))
             exercises.append(ex("C1","Hanging Leg Raise","3×8-12"))
             exercises.append(ex("C2","Copenhagen Plank","3×20-30 שניות לכל צד"))
-            exercises.append(ex("D1","Bench Dip (רגליים מורמות על כיסא)","3×8-12"))
-            exercises.append(ex("D2","Face Pull","2-3×15","30kg"))
+            exercises.append(ex("D1","Face Pull","2-3×15","30kg"))
     return exercises
 
 def lower_core(week):
     phase = get_phase(week)
     dl = is_deload(week)
     exercises = []
-    exercises.append(ex("W0","Toe Yoga","1×30 שניות לכל רגל"))
 
     if phase == 1:
+        # Primary compound
         if week % 2 == 1:  # odd weeks
             s = "4×8-10" if week > 6 and not dl else "3×8-10"
             if dl: s = "3×8"
@@ -290,64 +290,93 @@ def lower_core(week):
             if dl: s = "3×8 לכל רגל"
             exercises.append(ex("A1","Step-ups",s))
         exercises.append(ex("A2","Banded Glute Bridge","3×12-15" if not dl else "2×12","30kg"))
+        # Accessory
         exercises.append(ex("B1","Banded RDL","3×10-12" if not dl else "2×10","30kg"))
         exercises.append(ex("B2","Superman","2×10-12"))
+        # Core
         exercises.append(ex("C1","Pallof Press","3×10-12" if not dl else "2×10","30kg"))
-        exercises.append(ex("C2","Single-leg Calf Raise","2-3×12-15 לכל רגל"))
-        exercises.append(ex("D1","Tibialis Raise","3×15"))
-        exercises.append(ex("D2","Couch Stretch","2×45 שניות לכל רגל"))
+        # Finish & mobility
+        exercises.append(ex("D1","Single-leg Calf Raise","2-3×12-15 לכל רגל"))
+        exercises.append(ex("D2","Tibialis Raise","3×15"))
+        exercises.append(ex("D3","Toe Yoga","1×30 שניות לכל רגל"))
+        exercises.append(ex("D4","Couch Stretch","2×45 שניות לכל רגל"))
     elif phase == 2:
+        # Primary compound
         exercises.append(ex("A1","Split Squat","4×8-10 לכל רגל" if week > 18 and not dl else "3×8-10 לכל רגל"))
         exercises.append(ex("A2","Step-ups","3×8-10 לכל רגל"))
+        # Accessory
         exercises.append(ex("B1","Banded Glute Bridge","3×12-15" if not dl else "2×12","40kg"))
         exercises.append(ex("B2","Banded RDL","3×10-12" if not dl else "2×10","40kg"))
+        # Core
         exercises.append(ex("C1","Superman","2×12-15"))
         exercises.append(ex("C2","Pallof Press","3×10-12" if not dl else "2×10","40kg"))
+        # Finish & mobility
         exercises.append(ex("D1","Single-leg Calf Raise","3-4×12-15 לכל רגל"))
         exercises.append(ex("D2","Tibialis Raise","3×15"))
-        exercises.append(ex("E1","Couch Stretch","2×45 שניות לכל רגל"))
+        exercises.append(ex("D3","Toe Yoga","1×30 שניות לכל רגל"))
+        exercises.append(ex("D4","Couch Stretch","2×45 שניות לכל רגל"))
     elif phase == 3:
         if dl:
+            # Primary compound
             exercises.append(ex("A1","Bulgarian Split Squat","3×8 לכל רגל"))
             exercises.append(ex("A2","Banded Glute Bridge","3×12","50kg"))
+            # Accessory
             exercises.append(ex("B1","Banded RDL","3×10","50kg"))
             exercises.append(ex("B2","Superman","2×12"))
+            # Core
             exercises.append(ex("C1","Side Plank","2×30 שניות לכל צד"))
-            exercises.append(ex("C2","Single-leg Calf Raise","3×12 לכל רגל"))
-            exercises.append(ex("D1","Tibialis Raise","3×15"))
-            exercises.append(ex("D2","Couch Stretch","2×60 שניות לכל רגל"))
+            # Finish & mobility
+            exercises.append(ex("D1","Single-leg Calf Raise","3×12 לכל רגל"))
+            exercises.append(ex("D2","Tibialis Raise","3×15"))
+            exercises.append(ex("D3","Toe Yoga","1×30 שניות לכל רגל"))
+            exercises.append(ex("D4","Couch Stretch","2×60 שניות לכל רגל"))
         else:
+            # Primary compound
             exercises.append(ex("A1","Bulgarian Split Squat","3×8-10 לכל רגל"))
             exercises.append(ex("A2","Lateral Lunges","3×8-10 לכל צד"))
+            # Accessory
             exercises.append(ex("B1","Banded Glute Bridge","3×12-15","50kg"))
             exercises.append(ex("B2","Banded RDL","3×10-12","50kg"))
+            # Core
             exercises.append(ex("C1","Superman","3×12-15"))
             exercises.append(ex("C2","Side Plank","3×30-45 שניות לכל צד"))
+            # Finish & mobility
             exercises.append(ex("D1","Single-leg Calf Raise","3-4×12-15 לכל רגל"))
             exercises.append(ex("D2","Tibialis Raise","3×15"))
-            exercises.append(ex("E1","Couch Stretch","2×60 שניות לכל רגל"))
+            exercises.append(ex("D3","Toe Yoga","1×30 שניות לכל רגל"))
+            exercises.append(ex("D4","Couch Stretch","2×60 שניות לכל רגל"))
     else:  # phase 4
         if dl:
+            # Primary compound
             exercises.append(ex("A1","Bulgarian Split Squat","3×8 לכל רגל"))
             exercises.append(ex("A2","Banded Glute Bridge","3×12","50kg"))
+            # Accessory
             exercises.append(ex("B1","Single-leg RDL","2×8 לכל רגל"))
-            exercises.append(ex("B2","Copenhagen Plank","2×20 שניות לכל צד"))
-            exercises.append(ex("C1","Single-leg Calf Raise","3×12 לכל רגל"))
-            exercises.append(ex("D1","Tibialis Raise","3×15"))
-            exercises.append(ex("D2","Couch Stretch","2×60 שניות לכל רגל"))
+            # Core
+            exercises.append(ex("C1","Copenhagen Plank","2×20 שניות לכל צד"))
+            # Finish & mobility
+            exercises.append(ex("D1","Single-leg Calf Raise","3×12 לכל רגל"))
+            exercises.append(ex("D2","Tibialis Raise","3×15"))
+            exercises.append(ex("D3","Toe Yoga","1×30 שניות לכל רגל"))
+            exercises.append(ex("D4","Couch Stretch","2×60 שניות לכל רגל"))
         else:
             bss_w = "30kg" if week >= 42 else None
+            # Primary compound
             exercises.append(ex("A1","Bulgarian Split Squat","4×8-10 לכל רגל",bss_w or "משקל גוף"))
             exercises.append(ex("A2","Lateral Lunges","3×8-10 לכל צד"))
+            # Accessory
             exercises.append(ex("B1","Step-ups","3×8-10 לכל רגל"))
             exercises.append(ex("B2","Banded Glute Bridge","3×12-15","50kg"))
-            exercises.append(ex("C1","Single-leg RDL","3×8-10 לכל רגל"))
-            exercises.append(ex("C2","Floor Hamstring Curl","2×6-8"))
-            exercises.append(ex("D1","Superman Hold","3×20-30 שניות"))
-            exercises.append(ex("D2","Copenhagen Plank","3×20-30 שניות לכל צד"))
-            exercises.append(ex("E1","Single-leg Calf Raise","4×12-15 לכל רגל"))
-            exercises.append(ex("E2","Tibialis Raise","3×15"))
-            exercises.append(ex("F1","Couch Stretch","2×60 שניות לכל רגל"))
+            exercises.append(ex("B3","Single-leg RDL","3×8-10 לכל רגל"))
+            exercises.append(ex("B4","Floor Hamstring Curl","2×6-8"))
+            # Core
+            exercises.append(ex("C1","Superman Hold","3×20-30 שניות"))
+            exercises.append(ex("C2","Copenhagen Plank","3×20-30 שניות לכל צד"))
+            # Finish & mobility
+            exercises.append(ex("D1","Single-leg Calf Raise","4×12-15 לכל רגל"))
+            exercises.append(ex("D2","Tibialis Raise","3×15"))
+            exercises.append(ex("D3","Toe Yoga","1×30 שניות לכל רגל"))
+            exercises.append(ex("D4","Couch Stretch","2×60 שניות לכל רגל"))
     return exercises
 
 
@@ -429,11 +458,11 @@ def generate_program():
         {"name":"Banded Push-up","category":"דחיפה","difficulty":"מתקדם","weight":"30kg","videoUrl":VIDEOS["Banded Push-up"],"setsProgression":"שלב 4: 4×8-10"},
         {"name":"Decline Push-up","category":"דחיפה","difficulty":"מתקדם","weight":"משקל גוף","videoUrl":VIDEOS["Decline Push-up"],"setsProgression":"שלב 4: 4×8-10"},
         {"name":"Pike Push-up","category":"כתפיים","difficulty":"בינוני","weight":"משקל גוף","videoUrl":VIDEOS["Pike Push-up"],"setsProgression":"שלב 2: 2×5-8 → שלב 4: 3×6-10"},
-        {"name":"Bench Dip","category":"דחיפה","difficulty":"מתחיל+","weight":"משקל גוף","videoUrl":VIDEOS["Bench Dip"],"setsProgression":"שלב 1: 3×8-12 → שלב 4: רגליים מורמות"},
-        {"name":"Bench Dip (רגל אחת מורומה)","category":"דחיפה","difficulty":"בינוני","weight":"משקל גוף","videoUrl":VIDEOS["Bench Dip (רגל אחת מורומה)"],"setsProgression":"שלב 3: 3×8-12"},
-        {"name":"Bench Dip (רגליים מורמות על כיסא)","category":"דחיפה","difficulty":"מתקדם","weight":"משקל גוף","videoUrl":VIDEOS["Bench Dip (רגליים מורמות על כיסא)"],"setsProgression":"שלב 4: 3×8-12"},
-        {"name":"Scapular Pull-up","category":"משיכה","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Scapular Pull-up"],"setsProgression":"חימום: 2×10-15"},
-        {"name":"Scapular Pull-up + Hold","category":"משיכה","difficulty":"בינוני","weight":"משקל גוף","videoUrl":VIDEOS["Scapular Pull-up + Hold"],"setsProgression":"שלב 4: 2-3×5 (3 שניות Hold)"},
+        {"name":"Bench Dip","category":"דחיפה","difficulty":"מתחיל+","weight":"משקל גוף","videoUrl":VIDEOS["Bench Dip"],"setsProgression":"שלב 1: 3×8-12 (עזר) → שלב 4: רגליים מורמות"},
+        {"name":"Bench Dip (רגל אחת מורומה)","category":"דחיפה","difficulty":"בינוני","weight":"משקל גוף","videoUrl":VIDEOS["Bench Dip (רגל אחת מורומה)"],"setsProgression":"שלב 3: 3×8-12 (עזר)"},
+        {"name":"Bench Dip (רגליים מורמות על כיסא)","category":"דחיפה","difficulty":"מתקדם","weight":"משקל גוף","videoUrl":VIDEOS["Bench Dip (רגליים מורמות על כיסא)"],"setsProgression":"שלב 4: 3×8-12 (עזר)"},
+        {"name":"Scapular Pull-up","category":"משיכה","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Scapular Pull-up"],"setsProgression":"הפעלה: 2×8 (לא לעייפות)"},
+        {"name":"Scapular Pull-up + Hold","category":"משיכה","difficulty":"בינוני","weight":"משקל גוף","videoUrl":VIDEOS["Scapular Pull-up + Hold"],"setsProgression":"הפעלה: 2×5 (3 שניות Hold)"},
         {"name":"Band-assisted Pull-up","category":"משיכה","difficulty":"בינוני","weight":"30-50kg","videoUrl":VIDEOS["Band-assisted Pull-up"],"setsProgression":"שלב 1-3: 3-4×5-8"},
         {"name":"Band-assisted Pull-up (Chin-up grip)","category":"משיכה","difficulty":"בינוני","weight":"30-50kg","videoUrl":VIDEOS["Band-assisted Pull-up (Chin-up grip)"],"setsProgression":"שלב 1-3: 3-4×5-8"},
         {"name":"Pull-up","category":"משיכה","difficulty":"מתקדם","weight":"משקל גוף","videoUrl":VIDEOS["Pull-up"],"setsProgression":"שלב 4: 4×2-6"},
@@ -445,8 +474,8 @@ def generate_program():
         {"name":"Face Pull","category":"כתפיים","difficulty":"מתחיל","weight":"30kg","videoUrl":VIDEOS["Face Pull"],"setsProgression":"2-3×15"},
         {"name":"Banded OHP","category":"כתפיים","difficulty":"מתחיל+","weight":"30-50kg","videoUrl":VIDEOS["Banded OHP"],"setsProgression":"שלב 1-4: 3-4×8-10"},
         {"name":"Band Lateral Raise","category":"כתפיים","difficulty":"בינוני","weight":"30kg","videoUrl":VIDEOS["Band Lateral Raise"],"setsProgression":"שלב 4: 3×12-15"},
-        {"name":"Band External Rotation","category":"שיקום","difficulty":"מתחיל","weight":"30kg","videoUrl":VIDEOS["Band External Rotation"],"setsProgression":"2×15 לכל יד"},
-        {"name":"Side-Lying External Rotation","category":"שיקום","difficulty":"מתחיל","weight":"ללא/30kg","videoUrl":VIDEOS["Side-Lying External Rotation"],"setsProgression":"שלב 3-4: 2×15 לכל יד"},
+        {"name":"Band External Rotation","category":"שיקום","difficulty":"מתחיל","weight":"30kg","videoUrl":VIDEOS["Band External Rotation"],"setsProgression":"הפעלה: 2×10 לכל יד (לא לעייפות)"},
+        {"name":"Side-Lying External Rotation","category":"שיקום","difficulty":"מתחיל","weight":"ללא/30kg","videoUrl":VIDEOS["Side-Lying External Rotation"],"setsProgression":"הפעלה: 2×10 לכל יד (לא לעייפות)"},
         {"name":"Band Woodchop","category":"ליבה","difficulty":"בינוני","weight":"30kg","videoUrl":VIDEOS["Band Woodchop"],"setsProgression":"שלב 3-4: 2×10 לכל צד"},
         {"name":"Squat איטי","category":"רגליים","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Squat איטי"],"setsProgression":"שלב 1: 3-4×8-10"},
         {"name":"Step-ups","category":"רגליים","difficulty":"מתחיל+","weight":"משקל גוף","videoUrl":VIDEOS["Step-ups"],"setsProgression":"שלב 1-4: 3×8-10 לכל רגל"},
@@ -471,7 +500,7 @@ def generate_program():
         {"name":"Band Curl","category":"ידיים","difficulty":"מתחיל","weight":"30-40kg","videoUrl":VIDEOS["Band Curl"],"setsProgression":"2×12-15"},
         {"name":"Single-leg Calf Raise","category":"שוקיים","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Single-leg Calf Raise"],"setsProgression":"2-4×12-15 לכל רגל"},
         {"name":"Tibialis Raise","category":"שוקיים","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Tibialis Raise"],"setsProgression":"3×15"},
-        {"name":"Toe Yoga","category":"שוקיים","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Toe Yoga"],"setsProgression":"חימום: 1×30 שניות לכל רגל"},
+        {"name":"Toe Yoga","category":"מוביליות","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Toe Yoga"],"setsProgression":"פיניש: 1×30 שניות לכל רגל"},
         {"name":"Couch Stretch","category":"גמישות","difficulty":"מתחיל","weight":"משקל גוף","videoUrl":VIDEOS["Couch Stretch"],"setsProgression":"שלב 1-2: 2×45 שניות → שלב 3-4: 2×60 שניות"},
         {"name":"הליכה מהירה","category":"קרדיו","difficulty":"מתחיל","weight":None,"videoUrl":VIDEOS["הליכה מהירה"],"setsProgression":"25-45 דקות"},
         {"name":"מתיחות מלאות","category":"גמישות","difficulty":"מתחיל","weight":None,"videoUrl":VIDEOS["מתיחות מלאות"],"setsProgression":"10-15 דקות"},
@@ -481,7 +510,7 @@ def generate_program():
 
 def to_training_data_json(program):
     rows = []
-    slot_order = ["W0","W1","W2","A1","A2","A3","B1","B2","B3","C1","C2","C3","D1","D2","E1","E2","F1"]
+    slot_order = ["W0","W1","W2","A1","A2","A3","B1","B2","B3","B4","C1","C2","C3","D1","D2","D3","D4","E1","E2","F1"]
     for day in program["daily"]:
         row = {
             "יום": f"יום {day['dayNum']}", "שבוע": day["week"], "יום בשבוע": day["dayOfWeek"],

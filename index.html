@@ -84,6 +84,13 @@
       <!-- Today Page -->
       <section id="page-today" class="page active">
         
+        <!-- Day Navigation Arrows -->
+        <div id="day-nav" class="day-nav-arrows">
+          <button id="nav-prev-day" class="day-nav-btn" title="יום הקודם">▶</button>
+          <div id="nav-day-info" class="day-nav-info"></div>
+          <button id="nav-next-day" class="day-nav-btn" title="יום הבא">◀</button>
+        </div>
+
         <button id="today-btn" class="btn-warning" style="display: none; width: 100%; margin-bottom: 16px; font-size: 15px; font-weight: bold; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);">
           <span>🔙</span> חזור לאימון של היום
         </button>
@@ -154,8 +161,12 @@
           </div>
         </div>
 
+
         <!-- Exercises List -->
         <div id="exercises-list" class="exercises-list"></div>
+        
+        <!-- Next Workout Preview -->
+        <div id="next-workout-preview"></div>
       </section>
 
 

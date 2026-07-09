@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v43';
+const CACHE_NAME = 'fitup-v44';
 const ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const ASSETS = [
   './css/main.css',
   './css/components.css',
   './css/animations.css',
+  './js/data.js',
   './js/db.js',
   './js/ui.js',
   './js/today.js',
