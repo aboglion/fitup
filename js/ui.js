@@ -44,6 +44,9 @@ const UI = (() => {
   function getDayTypeInfo(type) {
     const types = {
       'כוח': { label: 'כוח 💪', class: 'strength', icon: '💪' },
+      'כוח עליון A': { label: 'כוח עליון A 💪', class: 'strength', icon: '💪' },
+      'כוח עליון B': { label: 'כוח עליון B 🏋️', class: 'strength', icon: '🏋️' },
+      'כוח תחתון': { label: 'כוח תחתון 🦵', class: 'strength', icon: '🦵' },
       'הליכה': { label: 'הליכה 🚶', class: 'walk', icon: '🚶' },
       'מנוחה': { label: 'מנוחה 😴', class: 'rest', icon: '😴' }
     };
@@ -55,14 +58,13 @@ const UI = (() => {
    */
   function getCategoryColor(slot) {
     const colors = {
-      'A1': '#f97316',
-      'A2': '#f59e0b',
-      'B1': '#10b981',
-      'B2': '#06b6d4',
-      'C1': '#3b82f6',
-      'C2': '#8b5cf6',
-      'D1': '#ec4899',
-      'D2': '#f43f5e',
+      'W0': '#94a3b8', 'W1': '#94a3b8', 'W2': '#94a3b8',
+      'A1': '#f97316', 'A2': '#f59e0b', 'A3': '#eab308',
+      'B1': '#10b981', 'B2': '#06b6d4', 'B3': '#14b8a6',
+      'C1': '#3b82f6', 'C2': '#8b5cf6', 'C3': '#a78bfa',
+      'D1': '#ec4899', 'D2': '#f43f5e',
+      'E1': '#6366f1', 'E2': '#818cf8',
+      'F1': '#a855f7',
       'extra': '#6b7280'
     };
     return colors[slot] || '#6b7280';
@@ -73,14 +75,13 @@ const UI = (() => {
    */
   function getCategoryLabel(slot) {
     const labels = {
-      'A1': 'A1 - דחיפה',
-      'A2': 'A2 - משיכה',
-      'B1': 'B1 - תליה/משיכה',
-      'B2': 'B2 - כתפיים',
-      'C1': 'C1 - רגליים',
-      'C2': 'C2 - ישבן/גב',
-      'D1': 'D1 - ליבה',
-      'D2': 'D2 - ליבה צידית',
+      'W0': 'חימום', 'W1': 'חימום', 'W2': 'חימום',
+      'A1': 'A1', 'A2': 'A2', 'A3': 'A3',
+      'B1': 'B1', 'B2': 'B2', 'B3': 'B3',
+      'C1': 'C1', 'C2': 'C2', 'C3': 'C3',
+      'D1': 'D1', 'D2': 'D2',
+      'E1': 'E1', 'E2': 'E2',
+      'F1': 'F1',
       'extra': 'תוספות'
     };
     return labels[slot] || slot;
@@ -162,10 +163,12 @@ const UI = (() => {
     if (!name) return null;
     const n = name.toLowerCase();
     
-    if (n.includes('band') || n.includes('pallof') || n.includes('face pull')) return { label: 'גומיה', icon: '➰' };
+    if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) return { label: 'גומיה', icon: '➰' };
     if (n.includes('wall')) return { label: 'קיר', icon: '🧱' };
-    if (n.includes('box') || n.includes('bulgarian') || n.includes('incline') || n.includes('hip thrust') || n.includes('copenhagen')) return { label: 'כיסא', icon: '🪑' };
-    if (n.includes('hang') || n.includes('pull-up') || n.includes('inverted row') || n.includes('chin-up')) return { label: 'מוט', icon: '🧗‍♂️' };
+    if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('incline') || n.includes('decline') || n.includes('copenhagen')) return { label: 'כיסא', icon: '🪑' };
+    if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('inverted row') || n.includes('chin-up') || n.includes('hanging')) return { label: 'מוט', icon: '🧗‍♂️' };
+    if (n.includes('hamstring curl')) return { label: 'גרב/מגבת', icon: '🧦' };
+    if (n.includes('couch stretch')) return { label: 'קיר + כרית', icon: '🧱' };
     if (n.includes('foam roll')) return { label: 'גליל עיסוי', icon: '🪵' };
     
     // Default or bodyweight exercises
