@@ -167,47 +167,9 @@ const TodayPage = (() => {
     if (prevBtn) prevBtn.disabled = currentDayIndex <= 0;
     if (nextBtn) nextBtn.disabled = currentDayIndex >= allPlanDays.length - 1;
 
-    // Render next workout preview
-    renderNextWorkout();
+
   }
 
-  /**
-   * Render the next workout preview card
-   */
-  function renderNextWorkout() {
-    const container = document.getElementById('next-workout-preview');
-    if (!container) return;
-
-    // Find next non-rest workout day
-    let nextDay = null;
-    for (let i = currentDayIndex + 1; i < allPlanDays.length && i <= currentDayIndex + 7; i++) {
-      const d = allPlanDays[i];
-      if (d && d.dayType !== 'מנוחה') {
-        nextDay = d;
-        break;
-      }
-    }
-
-    if (!nextDay) {
-      container.innerHTML = '';
-      return;
-    }
-
-    const typeInfo = UI.getDayTypeInfo(nextDay.dayType);
-    const daysUntil = nextDay.dayIndex - currentDayIndex;
-    const whenLabel = daysUntil === 1 ? 'מחר' : `בעוד ${daysUntil} ימים`;
-
-    container.innerHTML = `
-      <div class="next-workout-card" onclick="TodayPage.goToDay(${nextDay.dayIndex})">
-        <span class="next-workout-icon">${typeInfo.icon}</span>
-        <div class="next-workout-info">
-          <div class="next-workout-label">האימון הבא — ${whenLabel}</div>
-          <div class="next-workout-name">${typeInfo.label} (${nextDay.exercises ? nextDay.exercises.length : 0} תרגילים)</div>
-        </div>
-        <span style="color: var(--text-muted);">◀</span>
-      </div>
-    `;
-  }
 
   /**
    * Update progress ring
@@ -215,7 +177,7 @@ const TodayPage = (() => {
   function updateProgress(day) {
     const total = day.exercises.length;
     if (total === 0) {
-      setProgressCircle(day.dayType === 'מנוחה' && currentTracking.completed ? 100 : 0);
+      setProgressCircle(day.dayType === 'Rest' && currentTracking.completed ? 100 : 0);
       return;
     }
 
@@ -334,14 +296,14 @@ const TodayPage = (() => {
       container.innerHTML = `
         <div class="exercise-card" style="text-align: center; padding: 40px;">
           <div style="font-size: 48px; margin-bottom: 16px;">😴</div>
-          <h3 style="font-size: 18px; margin-bottom: 8px;">יום מנוחה</h3>
+          <h3 style="font-size: 18px; margin-bottom: 8px;">Rest Day</h3>
           <p style="color: var(--text-secondary); font-size: 14px;">
             הגוף שלך צריך מנוחה כדי להתחזק. שינה טובה, תזונה נכונה, ומים!
           </p>
           <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
             <button class="btn-primary" style="width: auto; padding: 12px 32px;" 
                     onclick="TodayPage.markRestComplete()" ${disabledAttr}>
-              ✓ סימון יום מנוחה כהושלם
+              ✓ סימון Rest Day כהושלם
             </button>
             <button class="btn-secondary" style="width: auto; padding: 12px 32px;" 
                     onclick="TodayPage.skipDay()">
@@ -365,7 +327,7 @@ const TodayPage = (() => {
       const hasWeight = ex.weight && ex.weight !== '—' && ex.weight !== 'משקל גוף';
 
       // Determine if this is a time-based exercise
-      const isTime = ex.sets && (ex.sets.includes('דקות') || ex.sets.includes('שניות'));
+      const isTime = ex.sets && (ex.sets.includes('mins') || ex.sets.includes('secs'));
 
       // Find previous tracking data for this exercise
       const prevPerf = findPrevPerformance(ex.name, currentDayIndex);
@@ -388,7 +350,7 @@ const TodayPage = (() => {
             prevPerfHTML = `
               <div class="prev-performance">
                 <span class="prev-perf-label">📊 ביצוע אחרון:</span>
-                <span class="prev-perf-values">${prevSets.map((r, i) => `<span class="prev-set">סט${i+1}: ${r}</span>`).join('')}</span>
+                <span class="prev-perf-values">${prevSets.map((r, i) => `<span class="prev-set">Set ${i+1}: ${r}</span>`).join('')}</span>
                 ${maxReps > 0 ? `<span class="prev-perf-pr">🏆 שיא: ${maxReps}</span>` : ''}
               </div>
             `;
@@ -411,17 +373,17 @@ const TodayPage = (() => {
                      value="${setWeight}" ${disabledAttr}
                      data-ex="${idx}" data-set="${s}" data-field="weight"
                      onchange="TodayPage.updateSetData(${idx}, ${s}, 'weight', this.value)">
-              <span class="set-unit">ק"ג</span>
+              <span class="set-unit">kg</span>
           ` : '';
 
           setsHTML += `
             <div class="set-row">
-              <span class="set-label">סט ${s + 1}</span>
+              <span class="set-label">Set ${s + 1}</span>
               <input type="number" class="set-input" placeholder="${prevReps}" 
                      value="${setReps}" ${disabledAttr}
                      data-ex="${idx}" data-set="${s}" data-field="reps"
                      onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
-              <span class="set-unit">חזרות</span>
+              <span class="set-unit">reps</span>
               ${weightInput}
               <button class="set-check ${setDone ? 'checked' : ''}" 
                       onclick="TodayPage.toggleSet(${idx}, ${s}, this)" ${disabledAttr}>✓</button>
@@ -466,8 +428,8 @@ const TodayPage = (() => {
       
       if (hasWeight) {
         let weightText = ex.weight;
-        if (equip && equip.label === 'גומיה') {
-          weightText = `משקל גומיה: ${ex.weight}`;
+        if (equip && equip.label === 'Band') {
+          weightText = `Band: ${ex.weight}`;
         }
         detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="שינוי במשקל!">${weightText}</span>` : weightText);
       }
@@ -485,7 +447,7 @@ const TodayPage = (() => {
               <div>
                 <div class="exercise-card-name" style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
                   ${ex.name}
-                  ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 הפעלה</span>` : ''}
+                  ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
                   ${equip ? `<span style="background: var(--bg-hover, rgba(255,255,255,0.05)); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: normal; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px;">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
                 <div class="exercise-card-detail">
@@ -604,7 +566,7 @@ const TodayPage = (() => {
         <div class="celebration-confetti">🎊</div>
         <div style="font-size: 64px; margin-bottom: 16px; animation: bounceIn 0.6s ease;">💪</div>
         <h3 style="font-size: 22px; margin-bottom: 8px; color: var(--text-primary);">כל הכבוד! סיימת את האימון!</h3>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">${typeInfo.label} — יום ${day.dayNum}</p>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">${typeInfo.label} — Day ${day.dayNum}</p>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
           <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px;">
@@ -706,9 +668,9 @@ const TodayPage = (() => {
     } else {
       await autoSave();
       
-      // If we just marked a set as done (and not all sets are done), start a 60s rest timer
+      // If we just marked a set as done (and not all sets are done), start a 90s rest timer
       if (isNowDone) {
-        UI.startTimer(60, null);
+        UI.startTimer(90, null);
       }
     }
   }
@@ -743,7 +705,7 @@ const TodayPage = (() => {
     updateProgress(allPlanDays[currentDayIndex]);
     await autoSave();
     render();
-    UI.toast(currentTracking.completed ? 'יום מנוחה סומן כהושלם ✓' : 'בוטל סימון', 'success');
+    UI.toast(currentTracking.completed ? 'Rest Day סומן כהושלם ✓' : 'בוטל סימון', 'success');
   }
 
   /**
