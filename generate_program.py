@@ -13,7 +13,6 @@ VIDEOS = {
     "Hollow Body Hold": "https://www.youtube.com/watch?v=HAfUt2Cco74",
     "Band Curl": "https://www.youtube.com/watch?v=0hZboUNuogA",
     "Bodyweight Squat": "https://www.youtube.com/watch?v=7LpLZOdz68A",
-    "Deep Bodyweight Squat": "https://www.youtube.com/watch?v=7LpLZOdz68A",
     "Single-Leg Glute Bridge": "https://www.youtube.com/watch?v=JCqhuq4bCio&t=1s",
     "Bodyweight Single-Leg RDL": "https://www.youtube.com/shorts/U4sOY8Gyc-s",
     "Single-Leg Calf Raise": "https://www.youtube.com/watch?v=ElcvJ0kjt6c",
@@ -65,7 +64,7 @@ def get_warmup():
 BLOCKS = {
     "1-3": {
         "A": [
-            ("Deep Bodyweight Squat", "3×10", None),
+            ("Bodyweight Squat", "3×10", None),
             ("Reverse Lunge", "3×6 each leg", None),
             ("Table Push-up", "3×8", None),
             ("Seated Band Row", "3×8", "30 kg"),
@@ -566,6 +565,17 @@ if __name__ == "__main__":
         json.dump(td, f, ensure_ascii=False, indent=2)
     
     import os
+    import shutil
+    
+    required_exercises = set()
+    for day in program["daily"]:
+        for e in day["exercises"]:
+            required_exercises.add(e["name"])
+    for e in program["exercises"]:
+        required_exercises.add(e["name"])
+        
+    expected_images = {name.replace('/', '-').upper() + ".png" for name in required_exercises}
+
     renames = [
         ("images/exercises/INCLINE PUSH-UP.png", "images/exercises/TABLE PUSH-UP.png"),
         ("images/exercises/ELEVATED PIKE PUSH-UP.png", "images/exercises/TABLE PIKE PUSH-UP.png"),
@@ -578,4 +588,19 @@ if __name__ == "__main__":
         if os.path.exists(src) and not os.path.exists(dst):
             os.rename(src, dst)
 
-    print("Done — v4.0 generated!")
+    img_dir = "images/exercises"
+    if os.path.exists(img_dir):
+        for f in os.listdir(img_dir):
+            if f.endswith(".png") and f not in expected_images:
+                try:
+                    os.remove(os.path.join(img_dir, f))
+                except Exception:
+                    pass
+                    
+        fallback = os.path.join(img_dir, "BODYWEIGHT SQUAT.png")
+        for img in expected_images:
+            path = os.path.join(img_dir, img)
+            if not os.path.exists(path) and os.path.exists(fallback):
+                shutil.copy(fallback, path)
+
+    print("Done — v4.0 generated and images synced!")
