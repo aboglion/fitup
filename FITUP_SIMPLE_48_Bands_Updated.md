@@ -57,10 +57,10 @@
 2. 10 Arm Circles קדימה
 3. 10 Arm Circles אחורה
 4. 10 Wall Slides
-5. 8 Scapular Push-ups
-6. 8 Bodyweight Squats
-7. 5 Reverse Lunges לכל רגל
-8. 6 Dead Bugs לכל צד
+5. 8 Scapular Push-up
+6. 8 Bodyweight Squat
+7. 5 Reverse Lunge לכל רגל
+8. 6 Dead Bug לכל צד
 
 אחרי החימום מתחילים את האימון. אין צורך במתיחות נוספות.
 
@@ -97,9 +97,9 @@
 |---|---|---:|
 | 1 | Deep Bodyweight Squat | 3×10 |
 | 2 | Reverse Lunge | 3×6 לכל רגל |
-| 3 | Incline Push-up | 3×8 |
+| 3 | Table Push-up | 3×8 |
 | 4 | Seated Band Row — 30 ק״ג | 3×8 |
-| 5 | Elevated Pike Push-up | 2×6 |
+| 5 | Table Pike Push-up | 2×6 |
 | 6 | Band Pull-Apart | 2×12 |
 | 7 | Side Plank Hip Dips | 2×8 לכל צד |
 | 8 | Calf Raise | 3×15 |
@@ -110,7 +110,7 @@
 | 1 | Reverse Lunge | 3×8 לכל רגל |
 | 2 | Bodyweight Single-Leg RDL | 3×8 לכל רגל |
 | 3 | Hamstring Towel Curl | 3×5 |
-| 4 | Incline Push-up | 3×8 |
+| 4 | Table Push-up | 3×8 |
 | 5 | Seated Band Row — 30 ק״ג | 3×8 |
 | 6 | Single-Leg Glute Bridge | 3×8 לכל רגל |
 | 7 | Prone Y-T-W | 2×8 מכל אות |
@@ -137,9 +137,9 @@
 |---|---|---:|
 | 1 | Bodyweight Squat | 4×10 |
 | 2 | Reverse Lunge | 3×8 לכל רגל |
-| 3 | Incline Push-up | 4×8 |
+| 3 | Table Push-up | 4×8 |
 | 4 | Seated Band Row — 30 ק״ג | 4×8 |
-| 5 | Elevated Pike Push-up | 3×6 |
+| 5 | Table Pike Push-up | 3×6 |
 | 6 | Band Pull-Apart | 2×15 |
 | 7 | Side Plank Hip Dips | 2×10 לכל צד |
 | 8 | Calf Raise | 3×18 |

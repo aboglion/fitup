@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 START_DATE = datetime(2026, 7, 5)
 
 VIDEOS = {
-    "Incline Push-up": "https://www.youtube.com/watch?v=76TQU7iZlsI",
+    "Table Push-up": "https://www.youtube.com/watch?v=76TQU7iZlsI",
     "Scapular Pull-up": "https://youtu.be/pE8PJsWEV7k?si=ogf9wn9DXCRXB0HO",
     "Seated Band Row": "https://www.youtube.com/watch?v=gOvJDjy06sc",
     "Hollow Body Hold": "https://www.youtube.com/watch?v=HAfUt2Cco74",
@@ -23,7 +23,7 @@ VIDEOS = {
     "Diamond Push-up": "https://www.youtube.com/watch?v=mH8WhysYsaU",
     "Chin-up": "https://www.youtube.com/watch?v=e1YSApl-QcM",
     "Pike Push-up": "https://www.youtube.com/watch?v=sposDXWEB0A",
-    "Elevated Pike Push-up": "https://www.youtube.com/watch?v=sposDXWEB0A",
+    "Table Pike Push-up": "https://www.youtube.com/watch?v=sposDXWEB0A",
     "Dead Bug": "https://www.youtube.com/watch?v=I5xbsA71v1A",
     "Band Pull-Apart": "https://www.youtube.com/shorts/SuvO4TBwSu4",
     "Reverse Lunge": "https://www.youtube.com/watch?v=jgeI_ZqAxWs",
@@ -56,10 +56,10 @@ def get_warmup():
         ex("W1", "High Knees", "20 reps", isWarmup=True),
         ex("W2", "Arm Circles", "10 forward, 10 backward", isWarmup=True),
         ex("W3", "Wall Slides", "10 reps", isWarmup=True),
-        ex("W4", "Scapular Push-ups", "8 reps", isWarmup=True),
-        ex("W5", "Bodyweight Squats", "8 reps", isWarmup=True),
-        ex("W6", "Reverse Lunges", "5 each leg", isWarmup=True),
-        ex("W7", "Dead Bugs", "6 each side", isWarmup=True),
+        ex("W4", "Scapular Push-up", "8 reps", isWarmup=True),
+        ex("W5", "Bodyweight Squat", "8 reps", isWarmup=True),
+        ex("W6", "Reverse Lunge", "5 each leg", isWarmup=True),
+        ex("W7", "Dead Bug", "6 each side", isWarmup=True),
     ]
 
 BLOCKS = {
@@ -67,9 +67,9 @@ BLOCKS = {
         "A": [
             ("Deep Bodyweight Squat", "3×10", None),
             ("Reverse Lunge", "3×6 each leg", None),
-            ("Incline Push-up", "3×8", None),
+            ("Table Push-up", "3×8", None),
             ("Seated Band Row", "3×8", "30 kg"),
-            ("Elevated Pike Push-up", "2×6", None),
+            ("Table Pike Push-up", "2×6", None),
             ("Band Pull-Apart", "2×12", None),
             ("Side Plank Hip Dips", "2×8 each side", None),
             ("Calf Raise", "3×15", None),
@@ -78,7 +78,7 @@ BLOCKS = {
             ("Reverse Lunge", "3×8 each leg", None),
             ("Bodyweight Single-Leg RDL", "3×8 each leg", None),
             ("Hamstring Towel Curl", "3×5", None),
-            ("Incline Push-up", "3×8", None),
+            ("Table Push-up", "3×8", None),
             ("Seated Band Row", "3×8", "30 kg"),
             ("Single-Leg Glute Bridge", "3×8 each leg", None),
             ("Prone Y-T-W", "2×8 each letter", None),
@@ -98,9 +98,9 @@ BLOCKS = {
         "A": [
             ("Bodyweight Squat", "4×10", None),
             ("Reverse Lunge", "3×8 each leg", None),
-            ("Incline Push-up", "4×8", None),
+            ("Table Push-up", "4×8", None),
             ("Seated Band Row", "4×8", "30 kg"),
-            ("Elevated Pike Push-up", "3×6", None),
+            ("Table Pike Push-up", "3×6", None),
             ("Band Pull-Apart", "2×15", None),
             ("Side Plank Hip Dips", "2×10 each side", None),
             ("Calf Raise", "3×18", None),
@@ -425,7 +425,7 @@ BLOCKS = {
 BLOCKS["5-7"]["C"] = BLOCKS["1-3"]["C"]
 BLOCKS["13-15"]["C"] = BLOCKS["9-11"]["C"]
 
-DAYS_HEB = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+DAYS_ENG = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
 def get_block_key(week):
     if week <= 4: return "1-3"
@@ -485,48 +485,48 @@ def generate_program():
             day_type, rpe, exercises = get_day_exercises(dow, week)
             
             daily.append({
-                "dayNum": day_num, "week": f"Week {real_week}", "dayOfWeek": DAYS_HEB[dow],
+                "dayNum": day_num, "week": f"Week {real_week}", "dayOfWeek": DAYS_ENG[dow],
                 "date": date.strftime("%d/%m/%Y"), "dayType": day_type,
                 "plannedRPE": rpe, "exercises": exercises,
             })
 
     exercises_guide = [
-        {"name":"Bodyweight Squat","category":"Legs","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Bodyweight Squat"],"setsProgression":"Phase 1: 3-4×10"},
-        {"name":"Reverse Lunge","category":"Legs","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Reverse Lunge"],"setsProgression":"Phase 1-4: 3-4×6-12 each leg"},
-        {"name":"Split Squat","category":"Legs","difficulty":"בינוני","weight":"Bodyweight","videoUrl":VIDEOS["Split Squat"],"setsProgression":"Phase 2-4: 4×8-12 each leg"},
-        {"name":"Wall-Supported Skater Squat","category":"Legs","difficulty":"מתקדם","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 4-5: 4×6-10 each leg"},
-        {"name":"Incline Push-up","category":"Push","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Incline Push-up"],"setsProgression":"Phase 1: 3-4×8"},
-        {"name":"Knee Push-up","category":"Push","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Knee Push-up"],"setsProgression":"Phase 1: 3×8"},
+        {"name":"Bodyweight Squat","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Bodyweight Squat"],"setsProgression":"Phase 1: 3-4×10"},
+        {"name":"Reverse Lunge","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Reverse Lunge"],"setsProgression":"Phase 1-4: 3-4×6-12 each leg"},
+        {"name":"Split Squat","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Split Squat"],"setsProgression":"Phase 2-4: 4×8-12 each leg"},
+        {"name":"Wall-Supported Skater Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 4-5: 4×6-10 each leg"},
+        {"name":"Table Push-up","category":"Push","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Table Push-up"],"setsProgression":"Phase 1: 3-4×8"},
+        {"name":"Knee Push-up","category":"Push","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Knee Push-up"],"setsProgression":"Phase 1: 3×8"},
         {"name":"Close-Grip Knee Push-up","category":"Push","difficulty":"Beginner+","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2: 3×8"},
-        {"name":"Diamond Knee Push-up","category":"Push","difficulty":"בינוני","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 3: 3×8"},
-        {"name":"Push-up","category":"Push","difficulty":"בינוני","weight":"Bodyweight","videoUrl":VIDEOS["Push-up"],"setsProgression":"Phase 2-5: 4×6-12"},
+        {"name":"Diamond Knee Push-up","category":"Push","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 3: 3×8"},
+        {"name":"Push-up","category":"Push","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Push-up"],"setsProgression":"Phase 2-5: 4×6-12"},
         {"name":"Close-Grip Push-up","category":"Push","difficulty":"Intermediate+","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2-4: 4×6-10"},
-        {"name":"Diamond Push-up","category":"Push","difficulty":"מתקדם","weight":"Bodyweight","videoUrl":VIDEOS["Diamond Push-up"],"setsProgression":"Phase 3: 3×8"},
-        {"name":"Incline Archer Push-up","category":"Push","difficulty":"מתקדם","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 4-5: 3-4×6-10 each side"},
-        {"name":"Elevated Pike Push-up","category":"Shoulders","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Elevated Pike Push-up"],"setsProgression":"Phase 1: 2-3×6"},
-        {"name":"Pike Push-up","category":"Shoulders","difficulty":"בינוני","weight":"Bodyweight","videoUrl":VIDEOS["Pike Push-up"],"setsProgression":"Phase 2-5: 2-3×8-12"},
-        {"name":"Partial Wall Walk","category":"Shoulders","difficulty":"מתקדם","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2: 3×3"},
-        {"name":"Wall Handstand","category":"Shoulders","difficulty":"מתקדם","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2-5: 3×10-15 breaths"},
-        {"name":"Scapular Pull-up","category":"Pull","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Scapular Pull-up"],"setsProgression":"Phase 1-5: 2×12"},
-        {"name":"Pull-up Negative","category":"Pull","difficulty":"בינוני","weight":"Bodyweight","videoUrl":VIDEOS["Pull-up Negative"],"setsProgression":"ירידה רציפה של כ־3–5 שניות: 3×3"},
-        {"name":"Chin-up Negative","category":"Pull","difficulty":"בינוני","weight":"Bodyweight","videoUrl":VIDEOS["Chin-up Negative"],"setsProgression":"ירידה רציפה של כ־3–5 שניות: 3×4"},
-        {"name":"Chin-up","category":"Pull","difficulty":"מתקדם","weight":"Bodyweight","videoUrl":VIDEOS["Chin-up"],"setsProgression":"Phase 3-5: 3-5×3-6"},
-        {"name":"Seated Band Row","category":"Pull","difficulty":"מתחיל","weight":"30-50 kg","videoUrl":VIDEOS["Seated Band Row"],"setsProgression":"Phase 1-5: 3-4×8-12"},
-        {"name":"Band Pull-Apart","category":"Upper Back","difficulty":"מתחיל","weight":"30 kg","videoUrl":VIDEOS["Band Pull-Apart"],"setsProgression":"Phase 1-5: 2×12-15"},
-        {"name":"Band Curl","category":"Arms","difficulty":"מתחיל","weight":"30-50 kg","videoUrl":VIDEOS["Band Curl"],"setsProgression":"Phase 2-5: 2-3×8-12"},
-        {"name":"Bodyweight Single-Leg RDL","category":"Glutes & Hamstrings","difficulty":"בינוני","weight":"Bodyweight","videoUrl":VIDEOS["Bodyweight Single-Leg RDL"],"setsProgression":"Phase 1-5: 3-4×8-10 each leg"},
-        {"name":"Hamstring Towel Curl","category":"ירך אחורית","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Hamstring Towel Curl"],"setsProgression":"Phase 1-2: 3×5-8"},
-        {"name":"Single-Leg Towel Curl","category":"ירך אחורית","difficulty":"בינוני","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2-5: 3×5-10 each leg"},
-        {"name":"Single-Leg Glute Bridge","category":"ישבן","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg Glute Bridge"],"setsProgression":"Phase 1-5: 3-4×8-12 each leg"},
-        {"name":"Calf Raise","category":"Calves","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Calf Raise"],"setsProgression":"Phase 1: 3×15-20"},
-        {"name":"Single-Leg Calf Raise","category":"Calves","difficulty":"בינוני","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg Calf Raise"],"setsProgression":"Phase 1-5: 2-3×12-20 each leg"},
-        {"name":"Scapular Push-up","category":"Lower Back & Core","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Scapular Push-up"],"setsProgression":"Phase 1: 2×10"},
-        {"name":"Prone Y-T-W","category":"Upper Back","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 1-5: 2×8-12 each letter"},
-        {"name":"Dead Bug","category":"ליבה","difficulty":"מתחיל","weight":"Bodyweight","videoUrl":VIDEOS["Dead Bug"],"setsProgression":"Phase 1-5: 2×8-15 each side"},
-        {"name":"Side Plank Hip Dips","category":"ליבה","difficulty":"בינוני","weight":"Bodyweight","videoUrl":VIDEOS["Side Plank Hip Dips"],"setsProgression":"Phase 1-5: 2×8-15 each side"},
-        {"name":"Hollow Body Rock","category":"ליבה","difficulty":"מתקדם","weight":"Bodyweight","videoUrl":VIDEOS["Hollow Body Rock"],"setsProgression":"Phase 1-3: 2×8-12"},
-        {"name":"Hollow-to-Arch Rock","category":"ליבה","difficulty":"Expert","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 3-5: 2-3×8-15"},
-        {"name":"Towel Grip Hang","category":"Grip","difficulty":"בינוני","weight":"Bodyweight","videoUrl":VIDEOS["Towel Grip Hang"],"setsProgression":"מגבת עבה יבשה - 2×5-15 breaths"},
+        {"name":"Diamond Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Diamond Push-up"],"setsProgression":"Phase 3: 3×8"},
+        {"name":"Incline Archer Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 4-5: 3-4×6-10 each side"},
+        {"name":"Table Pike Push-up","category":"Shoulders","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Table Pike Push-up"],"setsProgression":"Phase 1: 2-3×6"},
+        {"name":"Pike Push-up","category":"Shoulders","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Pike Push-up"],"setsProgression":"Phase 2-5: 2-3×8-12"},
+        {"name":"Partial Wall Walk","category":"Shoulders","difficulty":"Advanced","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2: 3×3"},
+        {"name":"Wall Handstand","category":"Shoulders","difficulty":"Advanced","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2-5: 3×10-15 breaths"},
+        {"name":"Scapular Pull-up","category":"Pull","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Scapular Pull-up"],"setsProgression":"Phase 1-5: 2×12"},
+        {"name":"Pull-up Negative","category":"Pull","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Pull-up Negative"],"setsProgression":"Continuous 3-5s descent: 3×3"},
+        {"name":"Chin-up Negative","category":"Pull","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Chin-up Negative"],"setsProgression":"Continuous 3-5s descent: 3×4"},
+        {"name":"Chin-up","category":"Pull","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Chin-up"],"setsProgression":"Phase 3-5: 3-5×3-6"},
+        {"name":"Seated Band Row","category":"Pull","difficulty":"Beginner","weight":"30-50 kg","videoUrl":VIDEOS["Seated Band Row"],"setsProgression":"Phase 1-5: 3-4×8-12"},
+        {"name":"Band Pull-Apart","category":"Upper Back","difficulty":"Beginner","weight":"30 kg","videoUrl":VIDEOS["Band Pull-Apart"],"setsProgression":"Phase 1-5: 2×12-15"},
+        {"name":"Band Curl","category":"Arms","difficulty":"Beginner","weight":"30-50 kg","videoUrl":VIDEOS["Band Curl"],"setsProgression":"Phase 2-5: 2-3×8-12"},
+        {"name":"Bodyweight Single-Leg RDL","category":"Glutes & Hamstrings","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Bodyweight Single-Leg RDL"],"setsProgression":"Phase 1-5: 3-4×8-10 each leg"},
+        {"name":"Hamstring Towel Curl","category":"Hamstrings","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Hamstring Towel Curl"],"setsProgression":"Phase 1-2: 3×5-8"},
+        {"name":"Single-Leg Towel Curl","category":"Hamstrings","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2-5: 3×5-10 each leg"},
+        {"name":"Single-Leg Glute Bridge","category":"Glutes","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg Glute Bridge"],"setsProgression":"Phase 1-5: 3-4×8-12 each leg"},
+        {"name":"Calf Raise","category":"Calves","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Calf Raise"],"setsProgression":"Phase 1: 3×15-20"},
+        {"name":"Single-Leg Calf Raise","category":"Calves","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg Calf Raise"],"setsProgression":"Phase 1-5: 2-3×12-20 each leg"},
+        {"name":"Scapular Push-up","category":"Lower Back & Core","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Scapular Push-up"],"setsProgression":"Phase 1: 2×10"},
+        {"name":"Prone Y-T-W","category":"Upper Back","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 1-5: 2×8-12 each letter"},
+        {"name":"Dead Bug","category":"Core","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Dead Bug"],"setsProgression":"Phase 1-5: 2×8-15 each side"},
+        {"name":"Side Plank Hip Dips","category":"Core","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Side Plank Hip Dips"],"setsProgression":"Phase 1-5: 2×8-15 each side"},
+        {"name":"Hollow Body Rock","category":"Core","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Hollow Body Rock"],"setsProgression":"Phase 1-3: 2×8-12"},
+        {"name":"Hollow-to-Arch Rock","category":"Core","difficulty":"Expert","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 3-5: 2-3×8-15"},
+        {"name":"Towel Grip Hang","category":"Grip","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Towel Grip Hang"],"setsProgression":"Dry thick towel - 2×5-15 breaths"},
     ]
     return {"daily": daily, "exercises": exercises_guide}
 
@@ -535,25 +535,25 @@ def to_training_data_json(program):
     slot_order = ["W1","W2","W3","W4","W5","W6","W7","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10"]
     for day in program["daily"]:
         row = {
-            "יום": f"Day {day['dayNum']}", "שבוע": day["week"], "Day בשבוע": day["dayOfWeek"],
-            "תאריך": day["date"], "סוג יום": day["dayType"], "RPE מתוכנן": day["plannedRPE"],
+            "Day": f"Day {day['dayNum']}", "Week": day["week"], "Day of Week": day["dayOfWeek"],
+            "Date": day["date"], "Day Type": day["dayType"], "Planned RPE": day["plannedRPE"],
         }
         ex_by_slot = {}
         for e in day["exercises"]:
             ex_by_slot[e["slot"]] = e
         for slot in slot_order:
             e = ex_by_slot.get(slot)
-            row[f"{slot} - תרגיל"] = e["name"] if e else None
-            row[f"{slot} - סטים×reps"] = e["sets"] if e else None
-            row[f"{slot} - משקל/התנגדות"] = e.get("weight") if e else None
-            row[f"{slot} - קישור"] = e.get("videoUrl") if e else None
-        row["תוספות - תרגיל"] = None
-        row["תוספות - סטים×reps"] = None
-        row["תוספות - קישור"] = None
-        row["בוצע?"] = None
-        row["RPE בפועל"] = None
+            row[f"{slot} - Exercise"] = e["name"] if e else None
+            row[f"{slot} - Sets×reps"] = e["sets"] if e else None
+            row[f"{slot} - Weight/Resistance"] = e.get("weight") if e else None
+            row[f"{slot} - Link"] = e.get("videoUrl") if e else None
+        row["Extras - Exercise"] = None
+        row["Extras - Sets×reps"] = None
+        row["Extras - Link"] = None
+        row["Completed?"] = None
+        row["Actual RPE"] = None
         row["Bodyweight"] = None
-        row["הערות"] = None
+        row["Notes"] = None
         rows.append(row)
     return {"daily": rows}
 
@@ -564,4 +564,18 @@ if __name__ == "__main__":
     td = to_training_data_json(program)
     with open("training_data.json", "w", encoding="utf-8") as f:
         json.dump(td, f, ensure_ascii=False, indent=2)
+    
+    import os
+    renames = [
+        ("images/exercises/INCLINE PUSH-UP.png", "images/exercises/TABLE PUSH-UP.png"),
+        ("images/exercises/ELEVATED PIKE PUSH-UP.png", "images/exercises/TABLE PIKE PUSH-UP.png"),
+        ("images/exercises/SCAPULAR PUSH-UPS.png", "images/exercises/SCAPULAR PUSH-UP.png"),
+        ("images/exercises/BODYWEIGHT SQUATS.png", "images/exercises/BODYWEIGHT SQUAT.png"),
+        ("images/exercises/REVERSE LUNGES.png", "images/exercises/REVERSE LUNGE.png"),
+        ("images/exercises/DEAD BUGS.png", "images/exercises/DEAD BUG.png"),
+    ]
+    for src, dst in renames:
+        if os.path.exists(src) and not os.path.exists(dst):
+            os.rename(src, dst)
+
     print("Done — v4.0 generated!")
