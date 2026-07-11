@@ -89,6 +89,7 @@ const UI = (() => {
       'Workout A': { label: 'Workout A 💪', class: 'strength', icon: '💪' },
       'Workout B': { label: 'Workout B 🏋️', class: 'strength', icon: '🏋️' },
       'Workout C': { label: 'Workout C 🧗', class: 'strength', icon: '🧗' },
+      'Active Recovery': { label: 'Recovery 🚶', class: 'walk', icon: '🚶' },
       'Rest': { label: 'Rest 😴', class: 'rest', icon: '😴' }
     };
     return types[type] || { label: type, class: '', icon: '📋' };
