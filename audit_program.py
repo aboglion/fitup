@@ -35,7 +35,7 @@ for d in daily:
     t = d['dayType']
     type_counts[t] = type_counts.get(t, 0) + 1
 
-expected_types = {'כוח עליון A': 52, 'הליכה': 104, 'כוח תחתון': 52, 'כוח עליון B': 52, 'מנוחה': 104}
+expected_types = {'כוח עליון A': 52, 'הליכה': 104, 'כוח תחתון': 52, 'כוח עליון B': 52, 'Rest': 104}
 for t, expected in expected_types.items():
     actual = type_counts.get(t, 0)
     if actual != expected:
@@ -44,7 +44,7 @@ for t, expected in expected_types.items():
         print(f"✅ {t}: {actual}")
 
 # Check weekly pattern: Sun=UpperA, Mon=Walk, Tue=Lower, Wed=Walk, Thu=UpperB, Fri=Rest, Sat=Rest
-EXPECTED_PATTERN = ['כוח עליון A', 'הליכה', 'כוח תחתון', 'הליכה', 'כוח עליון B', 'מנוחה', 'מנוחה']
+EXPECTED_PATTERN = ['כוח עליון A', 'הליכה', 'כוח תחתון', 'הליכה', 'כוח עליון B', 'Rest', 'Rest']
 DAYS_HEB = ["ראשון","שני","שלישי","רביעי","חמישי","שישי","שבת"]
 for week_num in range(52):
     for dow in range(7):

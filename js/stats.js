@@ -58,7 +58,7 @@ const StatsPage = (() => {
         if (day) {
           if (isStrengthDay(day.dayType)) totalXP += 500;
           else if (day.dayType === 'הליכה') totalXP += 200;
-          else if (day.dayType === 'מנוחה') totalXP += 50;
+          else if (day.dayType === 'Rest') totalXP += 50;
         }
       }
     });
@@ -108,7 +108,7 @@ const StatsPage = (() => {
       const day = allPlanDays[i];
       const tracking = trackingMap[i];
 
-      if (day.dayType === 'מנוחה') {
+      if (day.dayType === 'Rest') {
         // Rest days don't break streak
         streak++;
         continue;
@@ -217,7 +217,7 @@ const StatsPage = (() => {
       if (isCompleted) {
         if (isStrengthDay(day.dayType)) colorClass = 'heat-strength';
         else if (day.dayType === 'הליכה') colorClass = 'heat-walk';
-        else if (day.dayType === 'מנוחה') colorClass = 'heat-rest';
+        else if (day.dayType === 'Rest') colorClass = 'heat-rest';
       }
       
       const tooltip = `יום ${day.dayIndex + 1} (${day.dayType}) - ${isCompleted ? 'הושלם' : 'לא בוצע/דולג'}`;
@@ -231,7 +231,7 @@ const StatsPage = (() => {
           <div style="display: flex; gap: 12px; font-size: 11px; font-weight: normal; flex-wrap: wrap;">
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength" style="width: 12px; height: 12px; border-radius: 3px;"></div> כוח</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-walk" style="width: 12px; height: 12px; border-radius: 3px;"></div> הליכה</div>
-             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-rest" style="width: 12px; height: 12px; border-radius: 3px;"></div> מנוחה</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-rest" style="width: 12px; height: 12px; border-radius: 3px;"></div> Rest</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-empty" style="width: 12px; height: 12px; border-radius: 3px;"></div> לא בוצע/דולג</div>
           </div>
         </div>

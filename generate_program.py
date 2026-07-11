@@ -15,6 +15,8 @@ VIDEOS = {
     "Bodyweight Squat": "https://www.youtube.com/watch?v=7LpLZOdz68A",
     "Single-Leg Glute Bridge": "https://www.youtube.com/watch?v=JCqhuq4bCio&t=1s",
     "Bodyweight Single-Leg RDL": "https://www.youtube.com/shorts/U4sOY8Gyc-s",
+    "Banded Single-Leg RDL": "https://www.youtube.com/shorts/U4sOY8Gyc-s",
+    "Banded Glute Bridge": "https://www.youtube.com/watch?v=JCqhuq4bCio&t=1s",
     "Single-Leg Calf Raise": "https://www.youtube.com/watch?v=ElcvJ0kjt6c",
     "Calf Raise": "https://www.youtube.com/watch?v=ElcvJ0kjt6c",
     "Push-up": "https://www.youtube.com/watch?v=IODxDxX7oi4",
@@ -173,7 +175,7 @@ BLOCKS = {
     "17-19": {
         "A": [
             ("Split Squat", "4×10 each leg", None),
-            ("Bodyweight Single-Leg RDL", "3×10 each leg", None),
+            ("Banded Single-Leg RDL", "3×10 each leg", "30 kg"),
             ("Push-up", "4×6", None),
             ("Seated Band Row", "4×10", "40 kg"),
             ("Elevated Pike Push-up", "3×6", None),
@@ -186,7 +188,7 @@ BLOCKS = {
             ("Single-Leg Towel Curl", "3×6 each leg", None),
             ("Decline Push-up", "3×8", None),
             ("Seated Band Row", "4×10", "40 kg"),
-            ("Single-Leg Glute Bridge", "3×12 each leg", None),
+            ("Banded Glute Bridge", "3×12 each leg", "30 kg"),
             ("Prone Y-T-W", "2×10 each letter", None),
             ("Hollow Body Rock", "2×12", None),
             ("Single-Leg Calf Raise", "3×20 each leg", None),
@@ -204,7 +206,7 @@ BLOCKS = {
     "21-23": {
         "A": [
             ("Split Squat", "4×10 each leg", None),
-            ("Bodyweight Single-Leg RDL", "4×8 each leg", None),
+            ("Banded Single-Leg RDL", "4×8 each leg", "30 kg"),
             ("Push-up", "4×8", None),
             ("Seated Band Row", "4×12", "40 kg"),
             ("Elevated Pike Push-up", "3×8", None),
@@ -217,7 +219,7 @@ BLOCKS = {
             ("Single-Leg Towel Curl", "3×6 each leg", None),
             ("Decline Push-up", "3×10", None),
             ("Seated Band Row", "4×12", "40 kg"),
-            ("Single-Leg Glute Bridge", "3×12 each leg", None),
+            ("Banded Glute Bridge", "3×12 each leg", "30 kg"),
             ("Prone Y-T-W", "2×10 each letter", None),
             ("Dead Bug", "2×12 each side", None),
             ("Single-Leg Calf Raise", "3×20 each leg", None),
@@ -235,7 +237,7 @@ BLOCKS = {
     "25-27": {
         "A": [
             ("Split Squat", "4×12 each leg", None),
-            ("Bodyweight Single-Leg RDL", "4×8 each leg", None),
+            ("Banded Single-Leg RDL", "4×8 each leg", "30 kg"),
             ("Incline Archer Push-up", "3×6 each side", None),
             ("Seated Band Row", "4×12", "40 kg"),
             ("Elevated Pike Push-up", "3×10", None),
@@ -248,7 +250,7 @@ BLOCKS = {
             ("Single-Leg Towel Curl", "3×8 each leg", None),
             ("Decline Push-up", "4×8", None),
             ("Seated Band Row", "4×12", "40 kg"),
-            ("Single-Leg Glute Bridge", "3×12 each leg", None),
+            ("Banded Glute Bridge", "3×12 each leg", "30 kg"),
             ("Prone Y-T-W", "2×12 each letter", None),
             ("Side Plank Hip Dips", "2×12 each side", None),
             ("Single-Leg Calf Raise", "3×20 each leg", None),
@@ -266,7 +268,7 @@ BLOCKS = {
     "29-31": {
         "A": [
             ("Split Squat", "4×12 each leg", None),
-            ("Bodyweight Single-Leg RDL", "4×10 each leg", None),
+            ("Banded Single-Leg RDL", "4×10 each leg", "30 kg"),
             ("Incline Archer Push-up", "4×6 each side", None),
             ("Seated Band Row", "4×12", "40 kg"),
             ("Elevated Pike Push-up", "4×8", None),
@@ -279,7 +281,7 @@ BLOCKS = {
             ("Single-Leg Towel Curl", "3×8 each leg", None),
             ("Decline Push-up", "4×10", None),
             ("Seated Band Row", "4×12", "40 kg"),
-            ("Single-Leg Glute Bridge", "3×15 each leg", None),
+            ("Banded Glute Bridge", "3×15 each leg", "30 kg"),
             ("Prone Y-T-W", "2×12 each letter", None),
             ("Dead Bug", "2×15 each side", None),
             ("Single-Leg Calf Raise", "3×20 each leg", None),
@@ -297,7 +299,7 @@ BLOCKS = {
     "33-35": {
         "A": [
             ("Wall-Supported Skater Squat", "4×6 each leg", None),
-            ("Bodyweight Single-Leg RDL", "4×10 each leg", None),
+            ("Banded Single-Leg RDL", "4×10 each leg", "40 kg"),
             ("Decline Push-up", "4×10", None),
             ("Seated Band Row", "4×10", "50 kg"),
             ("Elevated Pike Push-up", "4×10", None),
@@ -310,7 +312,7 @@ BLOCKS = {
             ("Single-Leg Towel Curl", "3×8 each leg", None),
             ("Incline Archer Push-up", "3×8 each side", None),
             ("Seated Band Row", "4×10", "50 kg"),
-            ("Single-Leg Glute Bridge", "3×15 each leg", None),
+            ("Banded Glute Bridge", "3×15 each leg", "40 kg"),
             ("Prone Y-T-W", "2×12 each letter", None),
             ("Side Plank Hip Dips", "2×15 each side", None),
             ("Single-Leg Calf Raise", "3×20 each leg", None),
@@ -328,7 +330,7 @@ BLOCKS = {
     "37-39": {
         "A": [
             ("Wall-Supported Skater Squat", "4×8 each leg", None),
-            ("Bodyweight Single-Leg RDL", "4×10 each leg", None),
+            ("Banded Single-Leg RDL", "4×10 each leg", "40 kg"),
             ("Decline Push-up", "4×12", None),
             ("Seated Band Row", "4×12", "50 kg"),
             ("Elevated Pike Push-up", "4×10", None),
@@ -341,7 +343,7 @@ BLOCKS = {
             ("Single-Leg Towel Curl", "3×10 each leg", None),
             ("Incline Archer Push-up", "3×10 each side", None),
             ("Seated Band Row", "4×12", "50 kg"),
-            ("Single-Leg Glute Bridge", "4×10 each leg", None),
+            ("Banded Glute Bridge", "4×10 each leg", "40 kg"),
             ("Prone Y-T-W", "2×12 each letter", None),
             ("Dead Bug", "2×15 each side", None),
             ("Single-Leg Calf Raise", "3×20 each leg", None),
@@ -360,7 +362,7 @@ BLOCKS = {
     "41-43": {
         "A": [
             ("Wall-Supported Skater Squat", "4×10 each leg", None),
-            ("Bodyweight Single-Leg RDL", "4×10 each leg", None),
+            ("Banded Single-Leg RDL", "4×10 each leg", "50 kg"),
             ("Decline Push-up", "4×12", None),
             ("Seated Band Row", "4×12", "50 kg"),
             ("Elevated Pike Push-up", "4×10", None),
@@ -373,7 +375,7 @@ BLOCKS = {
             ("Single-Leg Towel Curl", "3×10 each leg", None),
             ("Incline Archer Push-up", "3×10 each side", None),
             ("Seated Band Row", "4×12", "50 kg"),
-            ("Single-Leg Glute Bridge", "4×10 each leg", None),
+            ("Banded Glute Bridge", "4×10 each leg", "50 kg"),
             ("Prone Y-T-W", "2×12 each letter", None),
             ("Side Plank Hip Dips", "2×15 each side", None),
             ("Single-Leg Calf Raise", "3×20 each leg", None),
@@ -392,7 +394,7 @@ BLOCKS = {
     "45-48": {
         "A": [
             ("Wall-Supported Skater Squat", "4×10 each leg", None),
-            ("Bodyweight Single-Leg RDL", "4×10 each leg", None),
+            ("Banded Single-Leg RDL", "4×10 each leg", "50 kg"),
             ("Decline Push-up", "4×12", None),
             ("Seated Band Row", "4×12", "50 kg"),
             ("Elevated Pike Push-up", "4×12", None),
@@ -405,7 +407,7 @@ BLOCKS = {
             ("Single-Leg Towel Curl", "3×10 each leg", None),
             ("Incline Archer Push-up", "3×10 each side", None),
             ("Seated Band Row", "4×12", "50 kg"),
-            ("Single-Leg Glute Bridge", "4×12 each leg", None),
+            ("Banded Glute Bridge", "4×12 each leg", "50 kg"),
             ("Prone Y-T-W", "2×12 each letter", None),
             ("Dead Bug", "2×15 each side", None),
             ("Single-Leg Calf Raise", "3×20 each leg", None),
@@ -453,8 +455,15 @@ def get_workout_exercises(workout_type, week):
     
     is_deload = week in [4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44]
     
+    main_exercise_names = {name for name, _, _ in base}
+    
     out = []
-    out.extend(get_warmup())
+    w_idx = 1
+    for w in get_warmup():
+        if w["name"] not in main_exercise_names:
+            w["slot"] = f"W{w_idx}"
+            out.append(w)
+            w_idx += 1
     
     slot_prefix = "A"
     for i, (name, sets, weight) in enumerate(base):
@@ -520,10 +529,12 @@ def generate_program():
         {"name":"Seated Band Row","category":"Pull","difficulty":"Beginner","weight":"30-50 kg","videoUrl":VIDEOS["Seated Band Row"],"setsProgression":"Phase 1-5: 3-4×8-12"},
         {"name":"Band Pull-Apart","category":"Upper Back","difficulty":"Beginner","weight":"30 kg","videoUrl":VIDEOS["Band Pull-Apart"],"setsProgression":"Phase 1-5: 2×12-15"},
         {"name":"Band Curl","category":"Arms","difficulty":"Beginner","weight":"30-50 kg","videoUrl":VIDEOS["Band Curl"],"setsProgression":"Phase 2-5: 2-3×8-12"},
-        {"name":"Bodyweight Single-Leg RDL","category":"Glutes & Hamstrings","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Bodyweight Single-Leg RDL"],"setsProgression":"Phase 1-5: 3-4×8-10 each leg"},
+        {"name":"Bodyweight Single-Leg RDL","category":"Glutes & Hamstrings","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Bodyweight Single-Leg RDL"],"setsProgression":"Phase 1-2: 3-4×8-10 each leg"},
         {"name":"Hamstring Towel Curl","category":"Hamstrings","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Hamstring Towel Curl"],"setsProgression":"Phase 1-2: 3×5-8"},
         {"name":"Single-Leg Towel Curl","category":"Hamstrings","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2-5: 3×5-10 each leg"},
-        {"name":"Single-Leg Glute Bridge","category":"Glutes","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg Glute Bridge"],"setsProgression":"Phase 1-5: 3-4×8-12 each leg"},
+        {"name":"Banded Single-Leg RDL","category":"Glutes & Hamstrings","difficulty":"Advanced","weight":"Resistance Band","videoUrl":VIDEOS["Banded Single-Leg RDL"],"setsProgression":"Phase 3-5: 3-4×8-10 each leg"},
+        {"name":"Banded Glute Bridge","category":"Glutes","difficulty":"Intermediate","weight":"Resistance Band","videoUrl":VIDEOS["Banded Glute Bridge"],"setsProgression":"Phase 3-5: 3-4×10-15 each leg"},
+        {"name":"Single-Leg Glute Bridge","category":"Glutes","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg Glute Bridge"],"setsProgression":"Phase 1-2: 3-4×8-12 each leg"},
         {"name":"Calf Raise","category":"Calves","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Calf Raise"],"setsProgression":"Phase 1: 3×15-20"},
         {"name":"Single-Leg Calf Raise","category":"Calves","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg Calf Raise"],"setsProgression":"Phase 1-5: 2-3×12-20 each leg"},
         {"name":"Scapular Push-up","category":"Upper Back & Shoulders","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Scapular Push-up"],"setsProgression":"Phase 1: 2×10"},

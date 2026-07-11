@@ -100,11 +100,11 @@ const App = (() => {
       window.history.replaceState({ page: initialPage }, '', `#${initialPage}`);
 
       // Hide splash, show app
-      setTimeout(() => {
+      setTimeout(async () => {
         document.getElementById('splash-screen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
+        await autoShiftPlan();
         checkPhotoReminder();
-        checkMissedDays();
       }, 1600);
 
     } catch (error) {
@@ -204,134 +204,42 @@ const App = (() => {
   }
 
   /**
-   * Check if user missed days and prompt to shift program
+   * Automatically push the plan forward if the user missed a workout.
+   * If today is physically past the next incomplete workout, we shift the start date
+   * so that today becomes the next incomplete workout.
    */
-  async function checkMissedDays() {
-    if (sessionStorage.getItem('missedPromptShown')) return;
-
+  async function autoShiftPlan() {
+    const allPlanDays = await DB.getAllPlan();
     const allTracking = await DB.getAllTracking();
-    const planIndex = window.appCurrentPlanIndex;
-    
-    let lastCompletedWorkoutSeq = -1;
-    let lastCompletedDayIndex = -1;
-    
-    for (const track of allTracking) {
-      if (track.completed) {
-        const planDay = allPlanDays.find(d => d.dayIndex === track.dayIndex);
-        if (planDay && planDay.dayType !== 'מנוחה') {
-          if (planDay.workoutSeq > lastCompletedWorkoutSeq) {
-            lastCompletedWorkoutSeq = planDay.workoutSeq;
-            lastCompletedDayIndex = track.dayIndex;
-          }
+    const planStartDateStr = await DB.getSetting('planStartDate');
+    if (!planStartDateStr) return;
+
+    let firstIncompleteWorkoutIndex = -1;
+    for (let i = 0; i < allPlanDays.length; i++) {
+      const day = allPlanDays[i];
+      if (day.dayType !== 'Rest') {
+        const track = allTracking.find(t => t.dayIndex === i);
+        if (!track || !track.completed) {
+          firstIncompleteWorkoutIndex = i;
+          break;
         }
       }
     }
 
-    // Check if missed at least 2 calendar days since last completed workout
-    if (lastCompletedDayIndex !== -1) {
-      const daysMissed = planIndex - lastCompletedDayIndex - 1;
-      if (daysMissed >= 2) {
-        // Did we actually miss workouts in those days?
-        let missedWorkoutsCount = 0;
-        for (let i = lastCompletedDayIndex + 1; i < planIndex; i++) {
-          const planDay = allPlanDays[i];
-          if (planDay && planDay.dayType !== 'מנוחה') {
-            const track = allTracking.find(t => t.dayIndex === i);
-            if (!track || !track.completed) missedWorkoutsCount++;
-          }
-        }
+    if (firstIncompleteWorkoutIndex === -1) return; // All workouts completed!
 
-        if (missedWorkoutsCount > 0) {
-          sessionStorage.setItem('missedPromptShown', 'true');
-          setTimeout(() => {
-            showMissedDaysPrompt(daysMissed, lastCompletedWorkoutSeq);
-          }, 3000); // Show slightly after photo reminder if both exist
-        }
-      }
-    }
-  }
+    const startDateObj = new Date(planStartDateStr + 'T12:00:00');
+    const now = new Date();
+    const daysDiff = Math.floor((now - startDateObj) / (1000 * 60 * 60 * 24));
 
-  function showMissedDaysPrompt(daysMissed, lastCompletedWorkoutSeq) {
-    UI.showModal('ברוך שובך! 👋', `
-      <div style="text-align: center; padding: 10px;">
-        <p style="margin-bottom: 16px; font-size: 15px; color: var(--text-secondary);">
-          שמנו לב שפספסת ${daysMissed} ימים בתוכנית.<br>
-          האם תרצה לדחוף את התוכנית קדימה כדי להמשיך בדיוק מאיפה שעצרת?
-        </p>
-        <div style="background: var(--bg-hover); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: var(--text-primary); text-align: right;">
-          <ul style="margin: 0; padding-right: 20px;">
-            <li>האימון הבא שלך יחכה לך ללא דילוגים.</li>
-            <li>ימי המנוחה הקבועים שלך יישמרו.</li>
-          </ul>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <button id="push-program-btn" class="btn-primary" style="padding: 12px;">
-            ▶️ דחוף את התוכנית קדימה
-          </button>
-          <button onclick="UI.hideModal()" class="btn-secondary" style="padding: 12px;">
-            דלג (השאר מצב קיים)
-          </button>
-        </div>
-      </div>
-    `);
-
-    document.getElementById('push-program-btn').onclick = () => {
-      UI.hideModal();
-      UI.toast('מחשב מסלול מחדש... ⏳', 'info');
-      pushProgramForward(lastCompletedWorkoutSeq + 1);
-    };
-  }
-
-  async function pushProgramForward(targetWorkoutSeq) {
-    try {
-      const oldPlan = await DB.getAllPlan();
-      const oldTracking = await DB.getAllTracking();
-      
-      const todayStr = new Date().toISOString().slice(0, 10);
-      const todayObj = new Date(todayStr + 'T12:00:00');
-      let restDays = await DB.getSetting('restDays') || [5, 6];
-      
-      // Go backwards from today to find the new start date
-      let date = new Date(todayObj);
-      let nonRestDaysSeen = 0;
-      while (nonRestDaysSeen < targetWorkoutSeq) {
-        date.setDate(date.getDate() - 1);
-        if (!restDays.includes(date.getDay())) {
-          nonRestDaysSeen++;
-        }
-      }
-      const newStartDateStr = date.toISOString().slice(0, 10);
-      await DB.setSetting('planStartDate', newStartDateStr);
-      
-      // Regenerate plan
+    if (daysDiff > firstIncompleteWorkoutIndex) {
+      const shiftDays = daysDiff - firstIncompleteWorkoutIndex;
+      startDateObj.setDate(startDateObj.getDate() + shiftDays);
+      await DB.setSetting('planStartDate', startDateObj.toISOString().slice(0, 10));
       await DB.loadTrainingPlan();
-      const newPlan = await DB.getAllPlan();
       
-      // Migrate tracking data
-      await DB.clearTracking(); 
-      
-      for (const track of oldTracking) {
-        const oldDay = oldPlan.find(d => d.dayIndex === track.dayIndex);
-        if (!oldDay) continue;
-        
-        let newDay;
-        if (oldDay.dayType !== 'מנוחה') {
-          newDay = newPlan.find(d => d.workoutSeq === oldDay.workoutSeq);
-        } else {
-          newDay = newPlan.find(d => d.restSeq === oldDay.restSeq);
-        }
-        
-        if (newDay) {
-          track.dayIndex = newDay.dayIndex;
-          await DB.saveDayTracking(newDay.dayIndex, track);
-        }
-      }
-      
-      UI.toast('התוכנית סונכרנה בהצלחה! 💪', 'success');
-      setTimeout(() => location.reload(), 1500);
-    } catch (err) {
-      console.error(err);
-      UI.toast('שגיאה בסנכרון', 'error');
+      // We must reload the page so everything is synced to the new calendar
+      location.reload();
     }
   }
 
@@ -461,32 +369,7 @@ const App = (() => {
       UI.toast(`מצב תצוגה שונה ל${newTheme === 'light' ? 'בהיר ☀️' : 'כהה 🌙'}`, 'info');
     });
 
-    // Smart Scheduling Rest Days
-    DB.getSetting('restDays').then(restDays => {
-      const selected = restDays || [5, 6];
-      const selectElement = document.getElementById('rest-days-select');
-      if (selectElement) {
-        selectElement.value = selected[0].toString();
-      }
-    });
 
-    document.getElementById('save-rest-days-btn').addEventListener('click', async () => {
-      const selectElement = document.getElementById('rest-days-select');
-      const firstRestDay = parseInt(selectElement.value);
-      const secondRestDay = (firstRestDay + 1) % 7;
-      
-      const newRestDays = [firstRestDay, secondRestDay];
-      try {
-        await DB.setSetting('restDays', newRestDays);
-        // Force rebuild of training plan
-        await DB.loadTrainingPlan();
-        
-        UI.toast('ימי המנוחה נשמרו! התוכנית חושבה מחדש 🗓️', 'success');
-        setTimeout(() => location.reload(), 1500);
-      } catch (err) {
-        UI.toast('שגיאה: ' + err.message, 'error');
-      }
-    });
   }
 
   return {

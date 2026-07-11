@@ -197,22 +197,17 @@ const DB = (() => {
 
     const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
     const restTemplate1 = {
-      dayType: 'מנוחה',
+      dayType: 'Rest',
       plannedRPE: '—',
       exercises: [
-        { slot: 'A1', name: 'מתיחות מלאות', sets: '10 דקות', weight: null, videoUrl: 'https://www.youtube.com/watch?v=COO2S7lPBzA' },
-        { slot: 'B1', name: 'הליכה קלה (אופציונלי)', sets: '15-20 דקות', weight: null, videoUrl: 'https://www.youtube.com/watch?v=iesCUs8CQEQ' }
+        { slot: 'A1', name: 'Walking (Optional)', sets: '15-20 min', weight: null, videoUrl: null }
       ]
     };
     
     const restTemplate2 = {
-      dayType: 'מנוחה',
+      dayType: 'Rest',
       plannedRPE: '—',
-      exercises: [
-        { slot: 'A1', name: 'שינה 7-8 שעות', sets: null, weight: null, videoUrl: null },
-        { slot: 'A2', name: 'חלבון 160-170 גרם', sets: null, weight: null, videoUrl: null },
-        { slot: 'B1', name: 'מים 2.5-3 ליטר', sets: null, weight: null, videoUrl: null }
-      ]
+      exercises: []
     };
 
     let planStartDateStr = await getSetting('planStartDate');
@@ -222,58 +217,37 @@ const DB = (() => {
     }
     const startDate = new Date(effectiveStartDateStr + 'T12:00:00');
 
-    const newPlanData = [];
     let globalDayIndex = 0;
     let globalWorkoutSeq = 0;
     let globalRestSeq = 0;
+    const newPlanData = [];
 
-    const weeksMap = new Map();
-    data.daily.forEach(day => {
-      if (!weeksMap.has(day.week)) {
-        weeksMap.set(day.week, []);
+    data.daily.forEach((originalDay, index) => {
+      const currentDate = new Date(startDate);
+      currentDate.setDate(currentDate.getDate() + globalDayIndex);
+      const realDayOfWeekNum = currentDate.getDay(); // 0-6
+
+      let dayObj;
+      if (originalDay.dayType === 'Rest') {
+        const tpl = (globalRestSeq % 2 === 0) ? restTemplate1 : restTemplate2;
+        dayObj = {
+          ...originalDay,
+          dayOfWeek: dayNames[realDayOfWeekNum],
+          exercises: JSON.parse(JSON.stringify(tpl.exercises))
+        };
+      } else {
+        dayObj = {
+          ...originalDay,
+          dayOfWeek: dayNames[realDayOfWeekNum],
+          exercises: JSON.parse(JSON.stringify(originalDay.exercises || []))
+        };
       }
-      weeksMap.get(day.week).push(day);
-    });
-
-    for (const [weekName, days] of weeksMap.entries()) {
-      const workouts = days.filter(d => d.dayType !== 'מנוחה');
-      
-      let workoutIdx = 0;
-      let restIdx = 0;
-
-      for (let i = 0; i < 7; i++) {
-        const currentDate = new Date(startDate);
-        currentDate.setDate(currentDate.getDate() + globalDayIndex);
-        const realDayOfWeekNum = currentDate.getDay(); // 0-6
-        const isRest = restDays.includes(realDayOfWeekNum);
-        
-        let dayObj;
-
-        if (isRest || workoutIdx >= workouts.length) {
-          const tpl = (restIdx % 2 === 0) ? restTemplate1 : restTemplate2;
-          dayObj = {
-            ...tpl,
-            week: weekName,
-            dayOfWeek: dayNames[realDayOfWeekNum],
-            exercises: JSON.parse(JSON.stringify(tpl.exercises))
-          };
-          restIdx++;
-
-        } else {
-          dayObj = {
-            ...workouts[workoutIdx],
-            week: weekName,
-            dayOfWeek: dayNames[realDayOfWeekNum],
-            exercises: JSON.parse(JSON.stringify(workouts[workoutIdx].exercises || []))
-          };
-          workoutIdx++;
-        }
         
         dayObj.dayIndex = globalDayIndex;
         dayObj.dayNum = globalDayIndex + 1;
         
         // Add a sequence ID for reliable migration
-        if (dayObj.dayType !== 'מנוחה') {
+        if (dayObj.dayType !== 'Rest') {
           dayObj.workoutSeq = globalWorkoutSeq++;
         } else {
           dayObj.restSeq = globalRestSeq++;
@@ -283,8 +257,7 @@ const DB = (() => {
         
         newPlanData.push(dayObj);
         globalDayIndex++;
-      }
-    }
+    });
 
     await clear(STORES.PLAN);
     await putBulk(STORES.PLAN, newPlanData);

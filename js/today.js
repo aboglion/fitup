@@ -19,8 +19,7 @@ const TodayPage = (() => {
     const todayBtn = document.getElementById('today-btn');
     if (todayBtn) todayBtn.addEventListener('click', goToToday);
 
-    const skipDayBtn = document.getElementById('skip-day-btn');
-    if (skipDayBtn) skipDayBtn.addEventListener('click', skipDay);
+
 
     const toggleNotesBtn = document.getElementById('toggle-notes-btn');
     if (toggleNotesBtn) {
@@ -129,14 +128,6 @@ const TodayPage = (() => {
       todayBtn.style.display = isToday ? 'none' : 'flex';
     }
     
-    const skipDayBtn = document.getElementById('skip-day-btn');
-    if (skipDayBtn) {
-      skipDayBtn.style.display = isToday ? 'flex' : 'none';
-      const divider = skipDayBtn.nextElementSibling;
-      if (divider && divider.classList.contains('action-pill-divider')) {
-        divider.style.display = isToday ? 'block' : 'none';
-      }
-    }
 
     const typeBadge = document.getElementById('day-type');
     typeBadge.textContent = typeInfo.label;
@@ -298,18 +289,8 @@ const TodayPage = (() => {
           <div style="font-size: 48px; margin-bottom: 16px;">😴</div>
           <h3 style="font-size: 18px; margin-bottom: 8px;">Rest Day</h3>
           <p style="color: var(--text-secondary); font-size: 14px;">
-            הגוף שלך צריך מנוחה כדי להתחזק. שינה טובה, תזונה נכונה, ומים!
+            Your body needs rest to grow stronger. Good sleep, proper nutrition, and hydration!
           </p>
-          <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
-            <button class="btn-primary" style="width: auto; padding: 12px 32px;" 
-                    onclick="TodayPage.markRestComplete()" ${disabledAttr}>
-              ✓ סימון Rest Day כהושלם
-            </button>
-            <button class="btn-secondary" style="width: auto; padding: 12px 32px;" 
-                    onclick="TodayPage.skipDay()">
-              ⏭️ דלג על יום המנוחה
-            </button>
-          </div>
         </div>
       `;
       return;
@@ -393,16 +374,11 @@ const TodayPage = (() => {
         setsHTML += '</div>';
       }
 
-      // Video URL - use exercise's own URL, or fall back to guide lookup
-      let videoUrl = ex.videoUrl;
-      if (videoUrl && !videoUrl.startsWith('http')) {
-        videoUrl = null;
+      const gifPath = `images/gifs/${ex.name}.gif`;
+      let videoBtn = '';
+      if (!ex.name.toLowerCase().includes('walking') && !ex.name.includes('הליכה')) {
+        videoBtn = `<button type="button" class="exercise-video-btn" title="צפה ב-GIF" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>`;
       }
-      videoUrl = videoUrl || findVideoUrl(ex.name);
-      
-      const videoBtn = videoUrl
-        ? `<a href="${videoUrl}" target="_blank" class="exercise-video-btn" title="צפה בסרטון" style="text-decoration: none; color: var(--danger);" onclick="event.stopPropagation();">▶</a>`
-        : '';
 
       // Find previous occurrence
       let prevEx = null;
@@ -414,7 +390,7 @@ const TodayPage = (() => {
         }
       }
 
-      const isNewExercise = !prevEx && currentDayIndex > 0 && day.dayType !== 'מנוחה';
+      const isNewExercise = !prevEx && currentDayIndex > 0 && day.dayType !== 'Rest';
       const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
       const isWeightChanged = prevEx && ex.weight !== prevEx.weight && ex.weight !== null && ex.weight !== '—' && ex.weight !== 'משקל גוף';
 
@@ -440,7 +416,7 @@ const TodayPage = (() => {
             <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
                  class="exercise-hero-image"
                  alt="${ex.name}" onerror="this.parentElement.style.display='none'"
-                 onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', 'images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png'); event.stopPropagation();">
+                 onclick="TodayPage.handleImageClick(event, ${idx}, '${ex.name.replace(/'/g, "\\'")}')">
           </div>
           <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
             <div class="exercise-card-info">
@@ -500,6 +476,21 @@ const TodayPage = (() => {
       }, 50);
     } else {
       listContainer.classList.remove('has-focus');
+    }
+  }
+
+  /**
+   * Handle image click: expand if dimmed, else show modal
+   */
+  function handleImageClick(event, idx, exName) {
+    event.stopPropagation();
+    const listContainer = document.getElementById('exercises-list');
+    const card = document.getElementById(`ex-card-${idx}`);
+    
+    if (listContainer && listContainer.classList.contains('has-focus') && card && !card.classList.contains('focused')) {
+      toggleExpand(idx);
+    } else {
+      UI.showImageModal(exName, '');
     }
   }
 
@@ -698,18 +689,6 @@ const TodayPage = (() => {
   }
 
   /**
-   * Mark rest day as complete
-   */
-  async function markRestComplete() {
-    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
-    currentTracking.completed = !currentTracking.completed;
-    updateProgress(allPlanDays[currentDayIndex]);
-    await autoSave();
-    render();
-    UI.toast(currentTracking.completed ? 'Rest Day סומן כהושלם ✓' : 'בוטל סימון', 'success');
-  }
-
-  /**
    * Check if program has started, if not, lock the start date to today
    */
   async function checkAndLockStartDate() {
@@ -744,79 +723,7 @@ const TodayPage = (() => {
   /**
    * Skip current day and advance the plan
    */
-  async function skipDay() {
-    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) {
-      UI.toast('ניתן לדלג רק על היום הנוכחי', 'warning');
-      return;
-    }
-    
-    const modalHTML = `
-      <div style="text-align: center; padding: 16px;">
-        <p style="margin-bottom: 24px; font-size: 16px; color: var(--text-primary); font-weight: bold;">
-          האם ביצעת את האימון ושכחת לעדכן, או שפספסת אותו?
-        </p>
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <button class="btn-primary" onclick="TodayPage.completeAndAdvance()" style="padding: 14px; background: var(--success); border: none; font-size: 15px;">
-            <span>✅</span> עשיתי, שכחתי לסמן!
-          </button>
-          <button class="btn-primary" onclick="TodayPage.confirmSkipDay()" style="padding: 14px; background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); font-size: 15px;">
-            <span>⏭️</span> לא עשיתי, דלג יום
-          </button>
-          <button class="btn-secondary" onclick="UI.hideModal()" style="padding: 12px; margin-top: 8px;">ביטול</button>
-        </div>
-      </div>
-    `;
-    UI.showModal('עדכון התקדמות', modalHTML);
-  }
 
-  async function completeAndAdvance() {
-    UI.hideModal();
-    
-    await checkAndLockStartDate();
-    
-    currentTracking.completed = true;
-    currentTracking.date = currentTracking.date || new Date().toISOString().slice(0, 10);
-    
-    const day = allPlanDays[currentDayIndex];
-    if (day && day.exercises) {
-      if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
-      day.exercises.forEach((_, i) => {
-        currentTracking.exerciseStatus[i] = true;
-      });
-    }
-    await DB.saveDayTracking(currentDayIndex, currentTracking);
-    
-    window.appCurrentPlanIndex++;
-    if (window.appCurrentPlanIndex >= allPlanDays.length) {
-      window.appCurrentPlanIndex = allPlanDays.length - 1;
-    }
-    await DB.setSetting('currentPlanIndex', window.appCurrentPlanIndex);
-    
-    goToToday();
-    UI.toast('היום סומן כהושלם והתוכנית קודמה 🏆', 'success');
-  }
-
-  async function confirmSkipDay() {
-    UI.hideModal();
-    
-    let startDate = await DB.getSetting('planStartDate');
-    if (!startDate) {
-      // If they skip Day 1, set start date to yesterday so today is Day 2
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      await DB.setSetting('planStartDate', yesterday.toISOString().slice(0, 10));
-      UI.toast('התוכנית התחילה (דילגת על היום הראשון) ⏭️', 'info');
-    }
-    
-    window.appCurrentPlanIndex++;
-    if (window.appCurrentPlanIndex >= allPlanDays.length) {
-      window.appCurrentPlanIndex = allPlanDays.length - 1;
-    }
-    await DB.setSetting('currentPlanIndex', window.appCurrentPlanIndex);
-    
-    goToToday();
-    UI.toast('התוכנית קודמה ביום אחד ⏭️', 'info');
-  }
 
   function showExerciseImage(name, src) {
     UI.showModal(name, `<img src="${src}" style="width:100%; border-radius:8px;">`);
@@ -829,14 +736,11 @@ const TodayPage = (() => {
     goToDay,
     goToToday,
     toggleExpand,
+    handleImageClick,
     toggleExercise,
     toggleSet,
     updateSetData,
     updateExerciseNote,
-    markRestComplete,
-    skipDay,
-    confirmSkipDay,
-    completeAndAdvance,
     showExerciseImage,
     getCurrentDayIndex: () => currentDayIndex
   };

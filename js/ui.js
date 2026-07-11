@@ -22,12 +22,27 @@ const UI = (() => {
     }, duration);
   }
 
+  let modalStack = [];
+  let isHiding = false;
+
   /**
    * Show modal
    */
   function showModal(title, bodyHTML) {
-    document.getElementById('modal-title').textContent = title;
-    document.getElementById('modal-body').innerHTML = bodyHTML;
+    modalStack.push({ title, bodyHTML });
+    history.pushState({ isModal: true }, '');
+    
+    renderCurrentModal();
+  }
+
+  function renderCurrentModal() {
+    if (modalStack.length === 0) {
+      document.getElementById('modal-overlay').classList.add('hidden');
+      return;
+    }
+    const current = modalStack[modalStack.length - 1];
+    document.getElementById('modal-title').textContent = current.title;
+    document.getElementById('modal-body').innerHTML = current.bodyHTML;
     document.getElementById('modal-overlay').classList.remove('hidden');
   }
 
@@ -35,14 +50,35 @@ const UI = (() => {
    * Hide modal
    */
   function hideModal() {
-    document.getElementById('modal-overlay').classList.add('hidden');
+    if (modalStack.length > 0) {
+      if (!isHiding) {
+        isHiding = true;
+        history.back();
+        setTimeout(() => { isHiding = false; }, 100);
+      }
+    } else {
+      document.getElementById('modal-overlay').classList.add('hidden');
+    }
   }
 
-  /**
-   * Show image modal
-   */
+  // Handle browser back button for modals
+  window.addEventListener('popstate', (e) => {
+    if (modalStack.length > 0) {
+      modalStack.pop();
+      renderCurrentModal();
+    }
+  });
+
   function showImageModal(title, src) {
-    showModal(title, `<img src="${src}" style="width:100%; border-radius:8px;">`);
+    const pngPath = `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
+    const gifPath = `images/gifs/${title}.gif`;
+    
+    showModal(title, `
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <img src="${pngPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${title} תמונה" onerror="this.style.display='none'">
+        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${title} GIF" onerror="this.style.display='none'">
+      </div>
+    `);
   }
 
   /**

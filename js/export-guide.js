@@ -133,8 +133,8 @@ window.ExporterGuide = (() => {
           <tr><th>יום</th><th>סוג</th><th>RPE</th></tr>
           <tr><td>ד׳ (רביעי)</td><td>💪 כוח עליון A — דחיפה · משיכה · בייספס</td><td>7-8</td></tr>
           <tr><td>ה׳ (חמישי)</td><td>🚶 הליכה + ליבה + שוקיים</td><td>5-6</td></tr>
-          <tr><td>ו׳ (שישי)</td><td>🧘 מנוחה — מתיחות + הליכה קלה</td><td>—</td></tr>
-          <tr><td>ש׳ (שבת)</td><td>🧘 מנוחה — התאוששות</td><td>—</td></tr>
+          <tr><td>ו׳ (שישי)</td><td>🧘 Rest</td><td>—</td></tr>
+          <tr><td>ש׳ (שבת)</td><td>🧘 Rest</td><td>—</td></tr>
           <tr><td>א׳ (ראשון)</td><td>🦵 כוח תחתון + ליבה</td><td>7-8</td></tr>
           <tr><td>ב׳ (שני)</td><td>🚶 הליכה + תחתון קל + מתיחות מלאות</td><td>5-6</td></tr>
           <tr><td>ג׳ (שלישי)</td><td>💪 כוח עליון B — דחיפה · משיכה · Bench Dip</td><td>7-8</td></tr>
@@ -191,7 +191,7 @@ window.ExporterGuide = (() => {
               <p style="margin: 0 0 6px 0;"><span class="badge">${ex.category || 'כללי'}</span> ${ex.difficulty ? `<span class="badge" style="background: #fef3c7; color: #92400e;">${ex.difficulty}</span>` : ''}</p>
               ${ex.weight ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>התנגדות:</strong> ${ex.weight}</p>` : ''}
               ${ex.setsProgression ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>התקדמות:</strong> ${ex.setsProgression}</p>` : ''}
-              ${ex.videoUrl ? `<p style="font-size: 0.9em; margin: 4px 0;"><a href="${ex.videoUrl}" target="_blank" style="color: var(--primary);">▶ צפה בסרטון</a></p>` : ''}
+              <p style="font-size: 0.9em; margin: 4px 0;"><a href="images/gifs/${ex.name}.gif" target="_blank" style="color: var(--primary);">▶ צפה ב-GIF</a></p>
             </div>
           `).join('')}
         </div>
@@ -212,7 +212,7 @@ window.ExporterGuide = (() => {
   }
 
   function getBadgeClass(dayType) {
-    if (dayType === 'מנוחה') return 'badge rest';
+    if (dayType === 'Rest') return 'badge rest';
     if (dayType === 'הליכה') return 'badge walk';
     return 'badge';
   }
@@ -251,7 +251,7 @@ window.ExporterGuide = (() => {
             });
             html += `</table>`;
           } else {
-            html += `<p style="color: var(--text-muted);">מנוחה פעילה או פסיבית, ללא תרגילי כוח מוגדרים.</p>`;
+            html += `<p style="color: var(--text-muted);">Rest Day</p>`;
           }
           
         html += `</div>`;

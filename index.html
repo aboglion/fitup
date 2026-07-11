@@ -143,10 +143,7 @@
 
         <div class="top-day-actions" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
           <div class="action-pill-bar">
-            <button id="skip-day-btn" class="action-pill-btn" title="דלג על יום זה (למשל אם פספסת)">
-              <span class="icon">⏭️</span> <span class="text">דלג יום</span>
-            </button>
-            <div class="action-pill-divider"></div>
+
             <button id="toggle-notes-btn" class="action-pill-btn">
               <span class="icon">📝</span> <span class="text">הערות</span>
             </button>
@@ -260,24 +257,7 @@
               <button id="clear-all-btn" class="btn-danger">🗑️ מחק הכל</button>
             </div>
           </div>
-          <div class="settings-card">
-            <h3>📅 ימי מנוחה קבועים</h3>
-            <p>בחר את סוף השבוע שלך (יומיים ברצף). האפליקציה תשבץ את האימונים אוטומטית בימים הנותרים:</p>
-            <div style="margin: 12px 0;">
-              <select id="rest-days-select" style="width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-primary); font-family: inherit; font-size: 15px;">
-                <option value="5">שישי ושבת (ברירת מחדל)</option>
-                <option value="6">שבת וראשון</option>
-                <option value="0">ראשון ושני</option>
-                <option value="1">שני ושלישי</option>
-                <option value="2">שלישי ורביעי</option>
-                <option value="3">רביעי וחמישי</option>
-                <option value="4">חמישי ושישי</option>
-              </select>
-            </div>
-            <div class="settings-actions">
-              <button id="save-rest-days-btn" class="btn-primary">💾 שמור ובנה תוכנית מחדש</button>
-            </div>
-          </div>
+
           <div class="settings-card">
             <h3>🌓 מראה ותצוגה</h3>
             <p>החלף בין מצב תצוגה בהיר לכהה</p>

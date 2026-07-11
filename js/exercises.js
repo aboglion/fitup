@@ -18,7 +18,9 @@ const ExercisesPage = (() => {
   // Band weight progression tiers (exercise name → sorted tiers)
   const BAND_WEIGHT_PROGRESSION = {
     'Seated Band Row': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 17 }, { weight: '50 kg', fromWeek: 33 }],
-    'Band Curl': [{ weight: '30 kg', fromWeek: 9 }, { weight: '40 kg', fromWeek: 25 }, { weight: '50 kg', fromWeek: 37 }]
+    'Band Curl': [{ weight: '30 kg', fromWeek: 9 }, { weight: '40 kg', fromWeek: 25 }, { weight: '50 kg', fromWeek: 37 }],
+    'Banded Single-Leg RDL': [{ weight: '30 kg', fromWeek: 17 }, { weight: '40 kg', fromWeek: 33 }, { weight: '50 kg', fromWeek: 41 }],
+    'Banded Glute Bridge': [{ weight: '30 kg', fromWeek: 17 }, { weight: '40 kg', fromWeek: 33 }, { weight: '50 kg', fromWeek: 41 }]
   };
 
   // Skill paths organized by day type
@@ -106,7 +108,8 @@ const ExercisesPage = (() => {
         icon: '🏋️',
         exercises: [
           { name: 'Reverse Lunge', unlockWeek: 1 },
-          { name: 'Single-Leg Glute Bridge', unlockWeek: 1 }
+          { name: 'Single-Leg Glute Bridge', unlockWeek: 1 },
+          { name: 'Banded Glute Bridge', unlockWeek: 17 }
         ]
       },
       {
@@ -114,6 +117,7 @@ const ExercisesPage = (() => {
         icon: '🔥',
         exercises: [
           { name: 'Bodyweight Single-Leg RDL', unlockWeek: 1 },
+          { name: 'Banded Single-Leg RDL', unlockWeek: 17 },
           { name: 'Hamstring Towel Curl', unlockWeek: 1, parallel: true },
           { name: 'Single-Leg Towel Curl', unlockWeek: 13, parallel: true }
         ]
@@ -216,7 +220,7 @@ const ExercisesPage = (() => {
 
       completedPerType = {};
       allPlan.forEach(day => {
-        if (!day.dayType || day.dayType === 'מנוחה') return;
+        if (!day.dayType || day.dayType === 'Rest') return;
         if (!completedPerType[day.dayType]) {
           completedPerType[day.dayType] = { completed: 0, total: 0 };
         }
@@ -566,10 +570,8 @@ const ExercisesPage = (() => {
           const latestClass = isLatestUnlock && isUnlocked ? 'latest' : '';
           const imgSrc = node.noImage ? null : `images/exercises/${node.name.replace(/\//g, '-').toUpperCase()}.png`;
 
-          let videoBtn = '';
-          if (exData && exData.videoUrl) {
-            videoBtn = `<a href="${exData.videoUrl}" target="_blank" class="rpg-video-btn" title="צפה בסרטון" onclick="event.stopPropagation()">▶</a>`;
-          }
+          const gifPath = `images/gifs/${node.name}.gif`;
+          let videoBtn = `<button type="button" class="rpg-video-btn" title="צפה ב-GIF" onclick="UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation()">▶</button>`;
 
           const diffClass = exData ? UI.getDifficultyClass(exData.difficulty) : 'beginner';
           const equip = exData ? UI.getEquipment(exData.name) : null;
@@ -704,9 +706,8 @@ const ExercisesPage = (() => {
    */
   function generateGuideCardHTML(ex) {
     const diffClass = UI.getDifficultyClass(ex.difficulty);
-    const videoLink = ex.videoUrl
-      ? `<a href="${ex.videoUrl}" target="_blank" class="exercise-video-btn" title="צפה בסרטון" style="text-decoration: none; color: var(--danger);">▶</a>`
-      : '';
+    const gifPath = `images/gifs/${ex.name}.gif`;
+    const videoLink = `<button type="button" class="exercise-video-btn" title="צפה ב-GIF" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>`;
 
     const equip = UI.getEquipment(ex.name);
     let weightDisplay = ex.weight || '';
@@ -744,7 +745,14 @@ const ExercisesPage = (() => {
     if(!ex) return;
 
     const html = generateGuideCardHTML(ex);
-    UI.showModal('פרטי תרגיל', html);
+    const gifPath = `images/gifs/${ex.name}.gif`;
+    const fullHtml = `
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        ${html}
+        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${ex.name} GIF" onerror="this.style.display='none'">
+      </div>
+    `;
+    UI.showModal(ex.name, fullHtml);
   }
 
   return {
