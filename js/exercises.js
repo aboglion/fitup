@@ -12,7 +12,8 @@ const ExercisesPage = (() => {
   const DAY_TABS = [
     { id: 'workout-a', label: 'Workout A', subtitle: 'Push · Legs · Core', icon: '🅰️', color: '#f97316', bgColor: 'rgba(249, 115, 22, 0.15)', dayTypes: ['Workout A'] },
     { id: 'workout-b', label: 'Workout B', subtitle: 'Pull · Legs · Core', icon: '🅱️', color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.15)', dayTypes: ['Workout B'] },
-    { id: 'workout-c', label: 'Workout C', subtitle: 'Upper Body · Core',   icon: '©️', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.15)', dayTypes: ['Workout C'] }
+    { id: 'workout-c', label: 'Workout C', subtitle: 'Upper Body · Core',   icon: '©️', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.15)', dayTypes: ['Workout C'] },
+    { id: 'cardio', label: 'Cardio', subtitle: 'Zone 2 · Active', icon: '🏃‍♂️', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.15)', dayTypes: ['Active Recovery'] }
   ];
 
   // Band weight progression tiers (exercise name → sorted tiers)
@@ -200,6 +201,16 @@ const ExercisesPage = (() => {
           { name: 'Hollow Body Rock', unlockWeek: 1 },
           { name: 'Hollow-to-Arch Rock', unlockWeek: 17 },
           { name: 'Single-Leg Calf Raise', unlockWeek: 1 }
+        ]
+      }
+    ],
+    'cardio': [
+      {
+        title: '🫀 Cardio Base',
+        icon: '🏃‍♂️',
+        exercises: [
+          { name: 'Relaxed Walking', unlockWeek: 1 },
+          { name: 'Slow Jogging', unlockWeek: 17, note: 'Optional for Day 6 only' }
         ]
       }
     ]

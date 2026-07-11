@@ -552,6 +552,7 @@ def generate_program():
         {"name":"Hollow-to-Arch Rock","category":"Core","difficulty":"Expert","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 3-5: 2-3×8-15"},
         {"name":"Towel Grip Hang","category":"Grip","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Towel Grip Hang"],"setsProgression":"Dry thick towel - 2×5-15 breaths"},
         {"name":"Relaxed Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"30-45 mins in Zone 2"},
+        {"name":"Slow Jogging","category":"Cardio","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 3+: Day 6 option, slow pace"},
     ]
     return {"daily": daily, "exercises": exercises_guide}
 
@@ -625,11 +626,14 @@ if __name__ == "__main__":
                     
         fallback = os.path.join(img_dir, "BODYWEIGHT SQUAT.png")
         brisk_walk_src = "/home/uns/.gemini/antigravity/brain/3975ca3d-01cf-4bb1-bc0b-1dedfa2f6459/brisk_walking_illustration_1783791779977.png"
+        slow_jog_src = "/home/uns/.gemini/antigravity/brain/3975ca3d-01cf-4bb1-bc0b-1dedfa2f6459/slow_jogging_illustration_1783792645294.png"
         for img in expected_images:
             path = os.path.join(img_dir, img)
             if not os.path.exists(path):
                 if img == "RELAXED WALKING.png" and os.path.exists(brisk_walk_src):
                     shutil.copy(brisk_walk_src, path)
+                elif img == "SLOW JOGGING.png" and os.path.exists(slow_jog_src):
+                    shutil.copy(slow_jog_src, path)
                 elif os.path.exists(fallback):
                     shutil.copy(fallback, path)
 
