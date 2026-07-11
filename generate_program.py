@@ -490,6 +490,9 @@ def generate_program():
             })
 
     exercises_guide = [
+        {"name":"High Knees","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"Warmup"},
+        {"name":"Arm Circles","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"Warmup"},
+        {"name":"Wall Slides","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"Warmup"},
         {"name":"Bodyweight Squat","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Bodyweight Squat"],"setsProgression":"Phase 1: 3-4×10"},
         {"name":"Reverse Lunge","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Reverse Lunge"],"setsProgression":"Phase 1-4: 3-4×6-12 each leg"},
         {"name":"Split Squat","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Split Squat"],"setsProgression":"Phase 2-4: 4×8-12 each leg"},

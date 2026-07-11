@@ -10,276 +10,189 @@ const ExercisesPage = (() => {
 
   // Day type tabs configuration
   const DAY_TABS = [
-    { id: 'upper-a', label: 'כוח עליון A', subtitle: 'דחיפה · משיכה · בייספס', icon: '💪', color: '#f97316', bgColor: 'rgba(249, 115, 22, 0.15)', dayTypes: ['כוח עליון A'] },
-    { id: 'upper-b', label: 'כוח עליון B', subtitle: 'דחיפה · משיכה · Bench Dip', icon: '🏋️', color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.15)', dayTypes: ['כוח עליון B'] },
-    { id: 'lower',   label: 'כוח תחתון',   subtitle: 'רגליים · ישבן · שוקיים',    icon: '🦵', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.15)', dayTypes: ['כוח תחתון'] },
-    { id: 'walking', label: 'הליכה',       subtitle: 'הליכה · ליבה · גמישות',     icon: '🚶', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.15)', dayTypes: ['הליכה'] }
+    { id: 'workout-a', label: 'Workout A', subtitle: 'Push · Legs · Core', icon: '🅰️', color: '#f97316', bgColor: 'rgba(249, 115, 22, 0.15)', dayTypes: ['Workout A'] },
+    { id: 'workout-b', label: 'Workout B', subtitle: 'Pull · Legs · Core', icon: '🅱️', color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.15)', dayTypes: ['Workout B'] },
+    { id: 'workout-c', label: 'Workout C', subtitle: 'Upper Body · Core',   icon: '©️', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.15)', dayTypes: ['Workout C'] }
   ];
 
   // Band weight progression tiers (exercise name → sorted tiers)
   const BAND_WEIGHT_PROGRESSION = {
-    'Banded OHP':          [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }, { weight: '50kg', fromWeek: 25 }],
-    'Banded RDL':          [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }, { weight: '50kg', fromWeek: 25 }],
-    'Banded Glute Bridge': [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }, { weight: '50kg', fromWeek: 25 }],
-    'Pallof Press':        [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }],
-    'Band Curl':           [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }],
-    'Band Row':            [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }],
-    'Band Pull-apart':     [{ weight: '30kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }],
-    'Single-arm Band Row': [{ weight: '30kg', fromWeek: 25 }, { weight: '40kg', fromWeek: 34 }],
-    'Banded Push-up':      [{ weight: '30kg', fromWeek: 34 }],
-    'Band-assisted Pull-up': [{ weight: '50kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }, { weight: '30kg', fromWeek: 25 }],
-    'Band-assisted Pull-up (Chin-up grip)': [{ weight: '50kg', fromWeek: 1 }, { weight: '40kg', fromWeek: 13 }, { weight: '30kg', fromWeek: 25 }],
-    'Face Pull':           [{ weight: '30kg', fromWeek: 1 }],
-    'Band External Rotation': [{ weight: '30kg', fromWeek: 1 }],
-    'Band Lateral Raise':  [{ weight: '30kg', fromWeek: 34 }],
-    'Band Woodchop':       [{ weight: '30kg', fromWeek: 25 }],
+    'Seated Band Row': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 17 }, { weight: '50 kg', fromWeek: 33 }],
+    'Band Curl': [{ weight: '30 kg', fromWeek: 9 }, { weight: '40 kg', fromWeek: 25 }, { weight: '50 kg', fromWeek: 37 }]
   };
 
   // Skill paths organized by day type
   const SKILL_TREES = {
-    'upper-a': [
+    'workout-a': [
       {
-        title: '🔥 חימום',
+        title: '🔥 Warmup',
         icon: '🛡️',
         exercises: [
-          { name: 'Knee Finger Push-up', unlockWeek: 1, note: 'כוח כף יד - על הברכיים' },
-          { name: 'Towel Grip Hang', unlockWeek: 25, note: 'כוח אחיזה מקסימלי' },
-          { name: 'Band External Rotation', unlockWeek: 1 },
-          { name: 'Side-Lying External Rotation', unlockWeek: 25 }
+          { name: 'High Knees', unlockWeek: 1 },
+          { name: 'Arm Circles', unlockWeek: 1 },
+          { name: 'Wall Slides', unlockWeek: 1 }
         ]
       },
       {
-        title: '💥 דחיפה (חזה)',
-        icon: '🫁',
-        exercises: [
-          { name: 'Incline Push-up', unlockWeek: 1 },
-          { name: 'Push-up רגיל', unlockWeek: 13 },
-          { name: 'Offset Push-up', unlockWeek: 25, note: 'רוטציה שבועית', parallel: true },
-          { name: 'Diamond Push-up', unlockWeek: 25, note: 'רוטציה שבועית', parallel: true },
-          { name: 'Banded Push-up', unlockWeek: 34, note: 'רוטציה 3-שבועית', parallel: true },
-          { name: 'Decline Push-up', unlockWeek: 34, note: 'רוטציה 3-שבועית', parallel: true }
-        ]
-      },
-      {
-        title: '🧲 משיכה אנכית',
-        icon: '⬆️',
-        exercises: [
-          { name: 'Scapular Pull-up', unlockWeek: 1 },
-          { name: 'Scapular Pull-up + Hold', unlockWeek: 34 },
-          { name: 'Band-assisted Pull-up', unlockWeek: 1 },
-          { name: 'Pull-up', unlockWeek: 34 }
-        ]
-      },
-      {
-        title: '🔗 משיכה אופקית',
-        icon: '↔️',
-        exercises: [
-          { name: 'Band Row', unlockWeek: 1 },
-          { name: 'Single-arm Band Row', unlockWeek: 25 }
-        ]
-      },
-      {
-        title: '🎯 כתפיים',
-        icon: '🏔️',
-        exercises: [
-          { name: 'Banded OHP', unlockWeek: 1 },
-          { name: 'Pike Push-up', unlockWeek: 13 },
-          { name: 'Band Lateral Raise', unlockWeek: 34, note: 'רוטציה עם Band Curl' }
-        ]
-      },
-      {
-        title: '🧱 ליבה',
-        icon: '🔲',
-        exercises: [
-          { name: 'Hollow Body Hold', unlockWeek: 1 },
-          { name: 'Pallof Press', unlockWeek: 1 },
-          { name: 'Hanging Leg Raise', unlockWeek: 25 },
-          { name: 'Copenhagen Plank', unlockWeek: 34 },
-          { name: 'Band Woodchop', unlockWeek: 25, note: 'רוטציה עמוד שדרה' }
-        ]
-      },
-      {
-        title: '💪 זרועות',
-        icon: '🦾',
-        exercises: [
-          { name: 'Band Curl', unlockWeek: 1 },
-          { name: 'Face Pull', unlockWeek: 1 }
-        ]
-      }
-    ],
-    'upper-b': [
-      {
-        title: '🔥 חימום',
-        icon: '🛡️',
-        exercises: [
-          { name: 'Knee Finger Push-up', unlockWeek: 1, note: 'כוח כף יד - על הברכיים' },
-          { name: 'Towel Grip Hang', unlockWeek: 25, note: 'כוח אחיזה מקסימלי' },
-          { name: 'Band External Rotation', unlockWeek: 1 },
-          { name: 'Side-Lying External Rotation', unlockWeek: 25 }
-        ]
-      },
-      {
-        title: '💥 דחיפה (חזה)',
-        icon: '🫁',
-        exercises: [
-          { name: 'Incline Push-up', unlockWeek: 1 },
-          { name: 'Push-up רגיל', unlockWeek: 13 },
-          { name: 'Offset Push-up', unlockWeek: 25, note: 'רוטציה שבועית', parallel: true },
-          { name: 'Diamond Push-up', unlockWeek: 25, note: 'רוטציה שבועית', parallel: true },
-          { name: 'Banded Push-up', unlockWeek: 34, note: 'רוטציה 3-שבועית', parallel: true }
-        ]
-      },
-      {
-        title: '🧲 משיכה אנכית',
-        icon: '⬆️',
-        exercises: [
-          { name: 'Scapular Pull-up', unlockWeek: 1 },
-          { name: 'Scapular Pull-up + Hold', unlockWeek: 34 },
-          { name: 'Band-assisted Pull-up (Chin-up grip)', unlockWeek: 1 },
-          { name: 'Pull-up', unlockWeek: 34 }
-        ]
-      },
-      {
-        title: '🔗 משיכה אופקית',
-        icon: '↔️',
-        exercises: [
-          { name: 'Band Pull-apart', unlockWeek: 1 },
-          { name: 'Single-arm Band Row', unlockWeek: 25 }
-        ]
-      },
-      {
-        title: '🎯 כתפיים',
-        icon: '🏔️',
-        exercises: [
-          { name: 'Banded OHP', unlockWeek: 1 },
-          { name: 'Pike Push-up', unlockWeek: 13 }
-        ]
-      },
-      {
-        title: '🧱 ליבה',
-        icon: '🔲',
-        exercises: [
-          { name: 'Hollow Body Hold', unlockWeek: 1 },
-          { name: 'Pallof Press', unlockWeek: 1 },
-          { name: 'Hanging Leg Raise', unlockWeek: 25 },
-          { name: 'Copenhagen Plank', unlockWeek: 34 },
-          { name: 'Side Plank', unlockWeek: 25 }
-        ]
-      },
-      {
-        title: '💪 זרועות',
-        icon: '🦾',
-        exercises: [
-          { name: 'Bench Dip', unlockWeek: 1 },
-          { name: 'Bench Dip (רגל אחת מורומה)', unlockWeek: 25 },
-          { name: 'Bench Dip (רגליים מורמות על כיסא)', unlockWeek: 34 },
-          { name: 'Face Pull', unlockWeek: 1 }
-        ]
-      }
-    ],
-    'lower': [
-      {
-        title: '🦶 חימום כף רגל',
-        icon: '👣',
-        exercises: [
-          { name: 'Toe Yoga', unlockWeek: 1, note: 'חימום כף רגל' }
-        ]
-      },
-      {
-        title: '🦵 רגליים',
+        title: '🦵 Legs',
         icon: '🏋️',
         exercises: [
-          { name: 'Squat איטי', unlockWeek: 1 },
-          { name: 'Step-ups', unlockWeek: 1 },
-          { name: 'Split Squat', unlockWeek: 13 },
-          { name: 'Lateral Lunges', unlockWeek: 25 },
-          { name: 'Bulgarian Split Squat', unlockWeek: 25 }
+          { name: 'Bodyweight Squat', unlockWeek: 1 },
+          { name: 'Split Squat', unlockWeek: 9 },
+          { name: 'Wall-Supported Skater Squat', unlockWeek: 33 }
         ]
       },
       {
-        title: '🍑 ישבן וגב תחתון',
+        title: '🍑 Glutes & Hamstrings',
         icon: '🔥',
         exercises: [
-          { name: 'Banded Glute Bridge', unlockWeek: 1 },
-          { name: 'Banded RDL', unlockWeek: 1 },
-          { name: 'Single-leg RDL', unlockWeek: 34, note: 'מחליף Banded RDL' },
-          { name: 'Floor Hamstring Curl', unlockWeek: 34, note: 'המסטרינגס ישיר' }
+          { name: 'Reverse Lunge', unlockWeek: 1 },
+          { name: 'Bodyweight Single-Leg RDL', unlockWeek: 21 }
         ]
       },
       {
-        title: '🔙 גב תחתון',
-        icon: '🦴',
+        title: '💥 Push (Chest)',
+        icon: '🫁',
         exercises: [
-          { name: 'Superman', unlockWeek: 1 },
-          { name: 'Superman Hold', unlockWeek: 34, note: 'isometric' }
+          { name: 'Table Push-up', unlockWeek: 1 },
+          { name: 'Push-up', unlockWeek: 9 },
+          { name: 'Close-Grip Push-up', unlockWeek: 13 },
+          { name: 'Incline Archer Push-up', unlockWeek: 25 }
         ]
       },
       {
-        title: '🧱 ליבה',
+        title: '🎯 Shoulders',
+        icon: '🏔️',
+        exercises: [
+          { name: 'Table Pike Push-up', unlockWeek: 1 },
+          { name: 'Pike Push-up', unlockWeek: 9 },
+          { name: 'Partial Wall Walk', unlockWeek: 13, parallel: true },
+          { name: 'Wall Handstand', unlockWeek: 17, parallel: true }
+        ]
+      },
+      {
+        title: '🔗 Pull (Back)',
+        icon: '↔️',
+        exercises: [
+          { name: 'Seated Band Row', unlockWeek: 1 },
+          { name: 'Band Pull-Apart', unlockWeek: 1 }
+        ]
+      },
+      {
+        title: '🧱 Core & Calves',
         icon: '🔲',
         exercises: [
-          { name: 'Pallof Press', unlockWeek: 1 },
-          { name: 'Side Plank', unlockWeek: 25 },
-          { name: 'Copenhagen Plank', unlockWeek: 34 }
-        ]
-      },
-      {
-        title: '🦶 שוקיים',
-        icon: '⚡',
-        exercises: [
-          { name: 'Single-leg Calf Raise', unlockWeek: 1 },
-          { name: 'Tibialis Raise', unlockWeek: 1 }
-        ]
-      },
-      {
-        title: '🧘 גמישות',
-        icon: '🌊',
-        exercises: [
-          { name: 'Couch Stretch', unlockWeek: 1, note: 'Hip Flexors' }
+          { name: 'Side Plank Hip Dips', unlockWeek: 1 },
+          { name: 'Hollow Body Rock', unlockWeek: 21 },
+          { name: 'Hollow-to-Arch Rock', unlockWeek: 25 },
+          { name: 'Calf Raise', unlockWeek: 1 }
         ]
       }
     ],
-    'walking': [
+    'workout-b': [
       {
-        title: '🚶 הליכה',
-        icon: '🌳',
+        title: '🔥 Warmup',
+        icon: '🛡️',
         exercises: [
-          { name: 'הליכה מהירה', unlockWeek: 1, noImage: true }
+          { name: 'High Knees', unlockWeek: 1 },
+          { name: 'Arm Circles', unlockWeek: 1 },
+          { name: 'Wall Slides', unlockWeek: 1 }
         ]
       },
       {
-        title: '🦵 תחתון קל',
-        icon: '🏃',
+        title: '🦵 Legs & Glutes',
+        icon: '🏋️',
         exercises: [
-          { name: 'Reverse Lunges איטיים', unlockWeek: 1, note: 'תחתון קל' },
-          { name: 'Floor Hamstring Curl', unlockWeek: 25, note: 'המסטרינגס ישיר' }
+          { name: 'Reverse Lunge', unlockWeek: 1 },
+          { name: 'Single-Leg Glute Bridge', unlockWeek: 1 }
         ]
       },
       {
-        title: '🧱 ליבה ויציבות',
+        title: '🍑 Hamstrings',
+        icon: '🔥',
+        exercises: [
+          { name: 'Bodyweight Single-Leg RDL', unlockWeek: 1 },
+          { name: 'Hamstring Towel Curl', unlockWeek: 1, parallel: true },
+          { name: 'Single-Leg Towel Curl', unlockWeek: 13, parallel: true }
+        ]
+      },
+      {
+        title: '💥 Push (Chest)',
+        icon: '🫁',
+        exercises: [
+          { name: 'Table Push-up', unlockWeek: 1 },
+          { name: 'Knee Push-up', unlockWeek: 5 },
+          { name: 'Close-Grip Knee Push-up', unlockWeek: 9 },
+          { name: 'Push-up', unlockWeek: 13, parallel: true },
+          { name: 'Diamond Knee Push-up', unlockWeek: 17, parallel: true },
+          { name: 'Diamond Push-up', unlockWeek: 21, parallel: true },
+          { name: 'Close-Grip Push-up', unlockWeek: 25, parallel: true },
+          { name: 'Incline Archer Push-up', unlockWeek: 33, parallel: true }
+        ]
+      },
+      {
+        title: '🔗 Pull (Back)',
+        icon: '↔️',
+        exercises: [
+          { name: 'Seated Band Row', unlockWeek: 1 },
+          { name: 'Prone Y-T-W', unlockWeek: 1 }
+        ]
+      },
+      {
+        title: '🧱 Core & Calves',
         icon: '🔲',
         exercises: [
-          { name: 'Bird-Dog', unlockWeek: 1 },
-          { name: 'Dead Bug', unlockWeek: 1, note: 'עמוד שדרה יציב' },
-          { name: 'Hollow Body Hold', unlockWeek: 1 },
-          { name: 'Hollow Body Rock', unlockWeek: 34, note: 'פרוגרסיה דינמית' }
+          { name: 'Dead Bug', unlockWeek: 1 },
+          { name: 'Side Plank Hip Dips', unlockWeek: 25 },
+          { name: 'Single-Leg Calf Raise', unlockWeek: 9 }
+        ]
+      }
+    ],
+    'workout-c': [
+      {
+        title: '🔥 Warmup',
+        icon: '🛡️',
+        exercises: [
+          { name: 'High Knees', unlockWeek: 1 },
+          { name: 'Arm Circles', unlockWeek: 1 },
+          { name: 'Wall Slides', unlockWeek: 1 }
         ]
       },
       {
-        title: '🦶 שוקיים',
-        icon: '⚡',
+        title: '🧲 Vertical Pull',
+        icon: '⬆️',
         exercises: [
-          { name: 'Single-leg Calf Raise', unlockWeek: 1 },
-          { name: 'Tibialis Raise', unlockWeek: 1 }
+          { name: 'Scapular Pull-up', unlockWeek: 1 },
+          { name: 'Pull-up Negative', unlockWeek: 1 },
+          { name: 'Chin-up Negative', unlockWeek: 9 },
+          { name: 'Chin-up', unlockWeek: 17 }
         ]
       },
       {
-        title: '🧘 גמישות',
-        icon: '🌊',
+        title: '🎯 Shoulders',
+        icon: '🏔️',
         exercises: [
-          { name: 'Couch Stretch', unlockWeek: 1, note: 'Hip Flexors — יום שני בלבד' },
-          { name: 'Banded Glute Bridge', unlockWeek: 1, note: 'אימון קל' },
-          { name: 'מתיחות מלאות', unlockWeek: 1, noImage: true, note: 'יום שני בלבד' }
+          { name: 'Scapular Push-up', unlockWeek: 1 },
+          { name: 'Wall Handstand', unlockWeek: 9 },
+          { name: 'Pike Push-up', unlockWeek: 9 }
+        ]
+      },
+      {
+        title: '💪 Arms & Grip',
+        icon: '🦾',
+        exercises: [
+          { name: 'Towel Grip Hang', unlockWeek: 1 },
+          { name: 'Band Pull-Apart', unlockWeek: 1 },
+          { name: 'Band Curl', unlockWeek: 9 }
+        ]
+      },
+      {
+        title: '🧱 Core & Calves',
+        icon: '🔲',
+        exercises: [
+          { name: 'Hollow Body Rock', unlockWeek: 1 },
+          { name: 'Hollow-to-Arch Rock', unlockWeek: 17 },
+          { name: 'Single-Leg Calf Raise', unlockWeek: 1 }
         ]
       }
     ]

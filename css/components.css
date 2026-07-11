@@ -2024,7 +2024,7 @@ html.light-theme .exercise-hero-container::after {
 }
 
 .rpg-node.locked .rpg-node-hex {
-  background: var(--bg-input);
+  /* Removed var(--bg-input) so mix-blend-mode: multiply works on locked images too */
 }
 
 .rpg-node-img {
