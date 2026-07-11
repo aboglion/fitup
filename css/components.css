@@ -267,18 +267,18 @@
 }
 
 .exercise-hero-container {
-  /* Soft light background for the images so multiply works and red muscles show */
-  background: radial-gradient(ellipse at center, #ffffff 0%, #d1d5db 100%);
+  /* Clear background for images */
+  background: #ffffff;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  cursor: pointer;
+  cursor: zoom-in;
   overflow: hidden;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Blur the boundary between the image and the dark card background */
-  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+  /* Softer blur at the bottom for clarity */
+  -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
 }
 
 /* Delicate color-coded inner glow at the top and sides */
@@ -304,19 +304,17 @@ html.light-theme .exercise-hero-container::after {
 
 .exercise-hero-image {
   width: 100%;
-  height: 170px;
+  height: 200px;
   object-fit: contain;
+  object-position: center;
   display: block;
-  padding: 15px;
+  padding: 0;
   mix-blend-mode: multiply;
   transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-  /* Feather the image boundaries so no solid square is ever visible */
-  -webkit-mask-image: radial-gradient(ellipse 95% 95% at center, black 50%, transparent 100%);
-  mask-image: radial-gradient(ellipse 95% 95% at center, black 50%, transparent 100%);
 }
 
 .exercise-card:hover .exercise-hero-image {
-  transform: scale(1.08);
+  transform: scale(1.05);
 }
 
 .exercise-card-name {
@@ -885,9 +883,10 @@ html.light-theme .exercise-hero-container::after {
 }
 
 .guide-card-image-container {
-  width: 120px;
-  min-width: 120px;
-  background: radial-gradient(circle at center, #ffffff 0%, #e5e7eb 100%);
+  width: 140px;
+  min-width: 140px;
+  height: 160px;
+  background: #ffffff;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -897,7 +896,7 @@ html.light-theme .exercise-hero-container::after {
 }
 
 :root:not(.light-theme) .guide-card-image-container {
-  background: radial-gradient(circle at center, #d1d5db 0%, #9ca3af 100%);
+  background: #ffffff;
 }
 
 .guide-card-image-container.diff-beginner {
@@ -1532,14 +1531,17 @@ html.light-theme .exercise-hero-container::after {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  object-position: center;
+  transform: scale(1.1);
   display: block;
   mix-blend-mode: multiply;
   transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-  padding: 8px;
+  padding: 0;
+  cursor: zoom-in;
 }
 
 .guide-card:hover .exercise-image {
-  transform: scale(1.1);
+  transform: scale(1.2);
 }
 
 /* ===== RPG Skill Tree ===== */
@@ -2008,8 +2010,8 @@ html.light-theme .exercise-hero-container::after {
 /* --- Hex Node Image --- */
 .rpg-node-hex {
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 85px;
+  height: 85px;
   flex-shrink: 0;
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   background: radial-gradient(circle at center, #ffffff 0%, #e0e4ea 100%);
@@ -2031,10 +2033,13 @@ html.light-theme .exercise-hero-container::after {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 4px;
+  object-position: center;
+  transform: scale(1.15);
+  padding: 0;
   mix-blend-mode: multiply;
   position: relative;
   z-index: 1;
+  cursor: zoom-in;
 }
 
 .rpg-node-emoji {

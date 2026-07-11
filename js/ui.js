@@ -39,6 +39,13 @@ const UI = (() => {
   }
 
   /**
+   * Show image modal
+   */
+  function showImageModal(title, src) {
+    showModal(title, `<img src="${src}" style="width:100%; border-radius:8px;">`);
+  }
+
+  /**
    * Get day type display info
    */
   function getDayTypeInfo(type) {
@@ -268,6 +275,7 @@ const UI = (() => {
     toast,
     showModal,
     hideModal,
+    showImageModal,
     getDayTypeInfo,
     getCategoryColor,
     getCategoryLabel,

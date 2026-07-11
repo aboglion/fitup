@@ -249,7 +249,7 @@
 | 2 | Bodyweight Single-Leg RDL | 3×10 לכל רגל |
 | 3 | Push-up | 4×6 |
 | 4 | Seated Band Row — 40 ק״ג | 4×10 |
-| 5 | Pike Push-up | 3×10 |
+| 5 | Elevated Pike Push-up | 3×6 |
 | 6 | Wall Handstand | 3×10 נשימות |
 | 7 | Band Pull-Apart | 2×15 |
 | 8 | Side Plank Hip Dips | 2×12 לכל צד |
@@ -259,7 +259,7 @@
 |---|---|---:|
 | 1 | Reverse Lunge | 4×10 לכל רגל |
 | 2 | Single-Leg Towel Curl | 3×6 לכל רגל |
-| 3 | Diamond Knee Push-up | 3×8 |
+| 3 | Decline Push-up | 3×8 |
 | 4 | Seated Band Row — 40 ק״ג | 4×10 |
 | 5 | Single-Leg Glute Bridge | 3×12 לכל רגל |
 | 6 | Prone Y-T-W | 2×10 מכל אות |
@@ -273,7 +273,7 @@
 | 2 | Chin-up | 3×3 |
 | 3 | Band Curl — 30 ק״ג | 3×10 |
 | 4 | Wall Handstand | 3×12 נשימות |
-| 5 | Pike Push-up | 2×10 |
+| 5 | Elevated Pike Push-up | 2×8 |
 | 6 | Hollow-to-Arch Rock | 2×8 |
 | 7 | Towel Grip Hang | 2×10 נשימות |
 
@@ -289,7 +289,7 @@
 | 2 | Bodyweight Single-Leg RDL | 4×8 לכל רגל |
 | 3 | Push-up | 4×8 |
 | 4 | Seated Band Row — 40 ק״ג | 4×12 |
-| 5 | Pike Push-up | 3×10 |
+| 5 | Elevated Pike Push-up | 3×8 |
 | 6 | Wall Handstand | 3×12 נשימות |
 | 7 | Band Pull-Apart | 2×15 |
 | 8 | Hollow Body Rock | 2×12 |
@@ -299,7 +299,7 @@
 |---|---|---:|
 | 1 | Reverse Lunge | 4×10 לכל רגל |
 | 2 | Single-Leg Towel Curl | 3×6 לכל רגל |
-| 3 | Diamond Push-up | 3×8 |
+| 3 | Decline Push-up | 3×10 |
 | 4 | Seated Band Row — 40 ק״ג | 4×12 |
 | 5 | Single-Leg Glute Bridge | 3×12 לכל רגל |
 | 6 | Prone Y-T-W | 2×10 מכל אות |
@@ -313,7 +313,7 @@
 | 2 | Chin-up | 3×5 |
 | 3 | Band Curl — 30 ק״ג | 3×10 |
 | 4 | Wall Handstand | 3×12 נשימות |
-| 5 | Pike Push-up | 2×10 |
+| 5 | Elevated Pike Push-up | 2×10 |
 | 6 | Hollow-to-Arch Rock | 2×8 |
 | 7 | Towel Grip Hang | 2×10 נשימות |
 
@@ -332,7 +332,7 @@
 | 2 | Bodyweight Single-Leg RDL | 4×8 לכל רגל |
 | 3 | Incline Archer Push-up | 3×6 לכל צד |
 | 4 | Seated Band Row — 40 ק״ג | 4×12 |
-| 5 | Pike Push-up | 3×10 |
+| 5 | Elevated Pike Push-up | 3×10 |
 | 6 | Wall Handstand | 3×12 נשימות |
 | 7 | Band Pull-Apart | 2×15 |
 | 8 | Hollow-to-Arch Rock | 3×10 |
@@ -342,7 +342,7 @@
 |---|---|---:|
 | 1 | Reverse Lunge | 4×12 לכל רגל |
 | 2 | Single-Leg Towel Curl | 3×8 לכל רגל |
-| 3 | Close-Grip Push-up | 4×8 |
+| 3 | Decline Push-up | 4×8 |
 | 4 | Seated Band Row — 40 ק״ג | 4×12 |
 | 5 | Single-Leg Glute Bridge | 3×12 לכל רגל |
 | 6 | Prone Y-T-W | 2×12 מכל אות |
@@ -356,7 +356,7 @@
 | 2 | Chin-up | 4×5 |
 | 3 | Band Curl — 40 ק״ג | 3×10 |
 | 4 | Wall Handstand | 3×12 נשימות |
-| 5 | Pike Push-up | 2×10 |
+| 5 | Elevated Pike Push-up | 3×8 |
 | 6 | Hollow-to-Arch Rock | 3×10 |
 | 7 | Towel Grip Hang | 2×12 נשימות |
 
@@ -372,7 +372,7 @@
 | 2 | Bodyweight Single-Leg RDL | 4×10 לכל רגל |
 | 3 | Incline Archer Push-up | 4×6 לכל צד |
 | 4 | Seated Band Row — 40 ק״ג | 4×12 |
-| 5 | Pike Push-up | 3×10 |
+| 5 | Elevated Pike Push-up | 4×8 |
 | 6 | Wall Handstand | 3×15 נשימות |
 | 7 | Band Pull-Apart | 2×15 |
 | 8 | Hollow-to-Arch Rock | 3×10 |
@@ -382,7 +382,7 @@
 |---|---|---:|
 | 1 | Reverse Lunge | 4×12 לכל רגל |
 | 2 | Single-Leg Towel Curl | 3×8 לכל רגל |
-| 3 | Close-Grip Push-up | 4×10 |
+| 3 | Decline Push-up | 4×10 |
 | 4 | Seated Band Row — 40 ק״ג | 4×12 |
 | 5 | Single-Leg Glute Bridge | 3×15 לכל רגל |
 | 6 | Prone Y-T-W | 2×12 מכל אות |
@@ -396,7 +396,7 @@
 | 2 | Chin-up | 4×6 |
 | 3 | Band Curl — 40 ק״ג | 3×10 |
 | 4 | Wall Handstand | 3×12 נשימות |
-| 5 | Pike Push-up | 2×10 |
+| 5 | Elevated Pike Push-up | 3×10 |
 | 6 | Hollow-to-Arch Rock | 3×10 |
 | 7 | Towel Grip Hang | 2×12 נשימות |
 
@@ -410,9 +410,9 @@
 |---|---|---:|
 | 1 | Wall-Supported Skater Squat | 4×6 לכל רגל |
 | 2 | Bodyweight Single-Leg RDL | 4×10 לכל רגל |
-| 3 | Push-up | 4×10 |
+| 3 | Decline Push-up | 4×10 |
 | 4 | Seated Band Row — 50 ק״ג | 4×10 |
-| 5 | Pike Push-up | 3×12 |
+| 5 | Elevated Pike Push-up | 4×10 |
 | 6 | Wall Handstand | 3×15 נשימות |
 | 7 | Band Pull-Apart | 2×15 |
 | 8 | Hollow-to-Arch Rock | 3×12 |
@@ -436,7 +436,7 @@
 | 2 | Chin-up | 4×7 |
 | 3 | Band Curl — 40 ק״ג | 3×10 |
 | 4 | Wall Handstand | 3×12 נשימות |
-| 5 | Pike Push-up | 2×10 |
+| 5 | Elevated Pike Push-up | 3×10 |
 | 6 | Hollow-to-Arch Rock | 3×10 |
 | 7 | Towel Grip Hang | 2×12 נשימות |
 
@@ -453,9 +453,9 @@
 |---|---|---:|
 | 1 | Wall-Supported Skater Squat | 4×8 לכל רגל |
 | 2 | Bodyweight Single-Leg RDL | 4×10 לכל רגל |
-| 3 | Push-up | 4×12 |
+| 3 | Decline Push-up | 4×12 |
 | 4 | Seated Band Row — 50 ק״ג | 4×12 |
-| 5 | Pike Push-up | 3×12 |
+| 5 | Elevated Pike Push-up | 4×10 |
 | 6 | Wall Handstand | 3×15 נשימות |
 | 7 | Band Pull-Apart | 2×15 |
 | 8 | Hollow-to-Arch Rock | 3×12 |
@@ -480,7 +480,7 @@
 | 3 | Band Curl — 50 ק״ג | 3×8 |
 | 4 | Band Curl — 40 ק״ג | 3×12 |
 | 5 | Wall Handstand | 3×15 נשימות |
-| 6 | Pike Push-up | 2×12 |
+| 6 | Elevated Pike Push-up | 4×10 |
 | 7 | Hollow-to-Arch Rock | 3×12 |
 | 8 | Towel Grip Hang | 2×15 נשימות |
 
@@ -494,9 +494,9 @@
 |---|---|---:|
 | 1 | Wall-Supported Skater Squat | 4×10 לכל רגל |
 | 2 | Bodyweight Single-Leg RDL | 4×10 לכל רגל |
-| 3 | Push-up | 4×12 |
+| 3 | Decline Push-up | 4×12 |
 | 4 | Seated Band Row — 50 ק״ג | 4×12 |
-| 5 | Pike Push-up | 3×12 |
+| 5 | Elevated Pike Push-up | 4×10 |
 | 6 | Wall Handstand | 3×15 נשימות |
 | 7 | Band Pull-Apart | 2×15 |
 | 8 | Hollow-to-Arch Rock | 3×12 |
@@ -521,7 +521,7 @@
 | 3 | Band Curl — 50 ק״ג | 3×8 |
 | 4 | Band Curl — 40 ק״ג | 3×12 |
 | 5 | Wall Handstand | 3×15 נשימות |
-| 6 | Pike Push-up | 2×12 |
+| 6 | Elevated Pike Push-up | 4×12 |
 | 7 | Hollow-to-Arch Rock | 3×12 |
 | 8 | Towel Grip Hang | 2×15 נשימות |
 
@@ -535,9 +535,9 @@
 |---|---|---:|
 | 1 | Wall-Supported Skater Squat | 4×10 לכל רגל |
 | 2 | Bodyweight Single-Leg RDL | 4×10 לכל רגל |
-| 3 | Push-up | 4×12 |
+| 3 | Decline Push-up | 4×12 |
 | 4 | Seated Band Row — 50 ק״ג | 4×12 |
-| 5 | Pike Push-up | 3×12 |
+| 5 | Elevated Pike Push-up | 4×12 |
 | 6 | Wall Handstand | 3×15 נשימות |
 | 7 | Band Pull-Apart | 2×15 |
 | 8 | Hollow-to-Arch Rock | 3×15 |
@@ -562,7 +562,7 @@
 | 3 | Band Curl — 50 ק״ג | 3×8 |
 | 4 | Band Curl — 40 ק״ג | 3×12 |
 | 5 | Wall Handstand | 3×15 נשימות |
-| 6 | Pike Push-up | 2×12 |
+| 6 | Elevated Pike Push-up | 4×12 |
 | 7 | Hollow-to-Arch Rock | 3×12 |
 | 8 | Towel Grip Hang | 2×15 נשימות |
 

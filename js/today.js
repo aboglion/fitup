@@ -436,10 +436,11 @@ const TodayPage = (() => {
 
       return `
         <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="ex-card-${idx}" style="--glow-color: ${color};">
-          <div class="exercise-hero-container" onclick="TodayPage.toggleExpand(${idx})">
+          <div class="exercise-hero-container">
             <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
                  class="exercise-hero-image"
-                 alt="${ex.name}" onerror="this.parentElement.style.display='none'">
+                 alt="${ex.name}" onerror="this.parentElement.style.display='none'"
+                 onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', 'images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png'); event.stopPropagation();">
           </div>
           <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
             <div class="exercise-card-info">
@@ -817,6 +818,10 @@ const TodayPage = (() => {
     UI.toast('התוכנית קודמה ביום אחד ⏭️', 'info');
   }
 
+  function showExerciseImage(name, src) {
+    UI.showModal(name, `<img src="${src}" style="width:100%; border-radius:8px;">`);
+  }
+
   return {
     init,
     render,
@@ -832,6 +837,7 @@ const TodayPage = (() => {
     skipDay,
     confirmSkipDay,
     completeAndAdvance,
+    showExerciseImage,
     getCurrentDayIndex: () => currentDayIndex
   };
 })();

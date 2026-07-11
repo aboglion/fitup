@@ -57,6 +57,7 @@ const ExercisesPage = (() => {
           { name: 'Table Push-up', unlockWeek: 1 },
           { name: 'Push-up', unlockWeek: 9 },
           { name: 'Close-Grip Push-up', unlockWeek: 13 },
+          { name: 'Decline Push-up', unlockWeek: 17 },
           { name: 'Incline Archer Push-up', unlockWeek: 25 }
         ]
       },
@@ -67,6 +68,7 @@ const ExercisesPage = (() => {
           { name: 'Table Pike Push-up', unlockWeek: 1 },
           { name: 'Pike Push-up', unlockWeek: 9 },
           { name: 'Partial Wall Walk', unlockWeek: 13, parallel: true },
+          { name: 'Elevated Pike Push-up', unlockWeek: 17, parallel: true },
           { name: 'Wall Handstand', unlockWeek: 17, parallel: true }
         ]
       },
@@ -124,10 +126,10 @@ const ExercisesPage = (() => {
           { name: 'Knee Push-up', unlockWeek: 5 },
           { name: 'Close-Grip Knee Push-up', unlockWeek: 9 },
           { name: 'Push-up', unlockWeek: 13, parallel: true },
-          { name: 'Diamond Knee Push-up', unlockWeek: 17, parallel: true },
-          { name: 'Diamond Push-up', unlockWeek: 21, parallel: true },
-          { name: 'Close-Grip Push-up', unlockWeek: 25, parallel: true },
-          { name: 'Incline Archer Push-up', unlockWeek: 33, parallel: true }
+          { name: 'Close-Grip Push-up', unlockWeek: 13, parallel: true },
+          { name: 'Decline Push-up', unlockWeek: 17, parallel: true },
+          { name: 'Diamond Push-up', unlockWeek: 17, parallel: true },
+          { name: 'Incline Archer Push-up', unlockWeek: 25, parallel: true }
         ]
       },
       {
@@ -173,8 +175,9 @@ const ExercisesPage = (() => {
         icon: '🏔️',
         exercises: [
           { name: 'Scapular Push-up', unlockWeek: 1 },
-          { name: 'Wall Handstand', unlockWeek: 9 },
-          { name: 'Pike Push-up', unlockWeek: 9 }
+          { name: 'Pike Push-up', unlockWeek: 9 },
+          { name: 'Elevated Pike Push-up', unlockWeek: 17, parallel: true },
+          { name: 'Wall Handstand', unlockWeek: 17, parallel: true }
         ]
       },
       {
@@ -577,7 +580,7 @@ const ExercisesPage = (() => {
                  style="animation-delay: ${(pathIndex * 0.1) + (levelIndex * 0.08) + (nodeIdx * 0.05)}s">
               <div class="rpg-node-hex">
                 ${isUnlocked ? '' : '<div class="rpg-lock-icon">🔒</div>'}
-                ${imgSrc ? `<img src="${imgSrc}" class="rpg-node-img" alt="${node.name}" onerror="this.style.display='none'; this.parentElement.querySelector('.rpg-node-emoji') && (this.parentElement.querySelector('.rpg-node-emoji').style.display='flex')">` : ''}
+                ${imgSrc ? `<img src="${imgSrc}" class="rpg-node-img" alt="${node.name}" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc}')" onerror="this.style.display='none'; this.parentElement.querySelector('.rpg-node-emoji') && (this.parentElement.querySelector('.rpg-node-emoji').style.display='flex')">` : ''}
                 ${!imgSrc || node.noImage ? `<div class="rpg-node-emoji" style="display:flex">${path.icon}</div>` : `<div class="rpg-node-emoji" style="display:none">${path.icon}</div>`}
                 ${isUnlocked ? `<div class="rpg-node-glow" style="--glow-color: ${tabColor}"></div>` : ''}
               </div>
@@ -714,7 +717,7 @@ const ExercisesPage = (() => {
     return `
       <div class="guide-card">
         <div class="guide-card-image-container diff-${diffClass}">
-          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onerror="this.parentElement.style.display='none'">
+          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onclick="event.stopPropagation(); UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', this.src)" onerror="this.parentElement.style.display='none'">
         </div>
         <div class="guide-card-content">
           <div class="guide-card-title">
