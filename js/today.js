@@ -586,6 +586,43 @@ const TodayPage = (() => {
     if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
   }
 
+  function getRestTime(name) {
+    if (!name) return 90;
+    const lowerName = name.toLowerCase();
+
+    // Active Recovery (0s)
+    if (lowerName.includes('walking') || lowerName.includes('הליכה') || lowerName.includes('jogging')) {
+        return 0;
+    }
+
+    // 180 Seconds
+    if (lowerName.includes('pull-up negative') || 
+        lowerName.includes('chin-up negative') || 
+        lowerName === 'chin-up' || lowerName.includes('chin-up')) {
+        return 180;
+    }
+
+    // 60 Seconds - Check these before more generic terms (like push-up)
+    const rules60 = ['scapular pull-up', 'scapular push-up', 'band pull-apart', 'prone y-t-w', 'hollow rock', 'hollow-to-arch rock', 'dead bug', 'side plank hip dips', 'glute bridge', 'calf raise'];
+    for (const r of rules60) {
+        if (lowerName.includes(r)) return 60;
+    }
+
+    // 120 Seconds
+    const rules120 = ['squat', 'lunge', 'single-leg rdl', 'towel curl', 'push-up', 'pike push-up', 'wall handstand', 'wall walk', 'seated band row'];
+    for (const r of rules120) {
+        if (lowerName.includes(r)) return 120;
+    }
+
+    // 90 Seconds
+    const rules90 = ['band curl', 'towel grip hang'];
+    for (const r of rules90) {
+        if (lowerName.includes(r)) return 90;
+    }
+
+    return 90; // Default
+  }
+
   function handleExerciseCompleted(idx, day) {
     // Find next incomplete exercise
     let nextIdx = -1;
@@ -597,16 +634,28 @@ const TodayPage = (() => {
     }
 
     if (nextIdx !== -1) {
-        // Start a 90 second timer for exercise transition
-        UI.startTimer(90, () => {
-            // Expand next exercise when timer finishes
+        const restTime = getRestTime(day.exercises[idx].name);
+        
+        if (restTime > 0) {
+            // Start a timer for exercise transition
+            UI.startTimer(restTime, () => {
+                // Expand next exercise when timer finishes
+                document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('expanded'));
+                const nextCard = document.getElementById(`ex-card-${nextIdx}`);
+                if (nextCard) {
+                    nextCard.classList.add('expanded');
+                    nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        } else {
+            // No rest needed, just expand next exercise
             document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('expanded'));
             const nextCard = document.getElementById(`ex-card-${nextIdx}`);
             if (nextCard) {
                 nextCard.classList.add('expanded');
                 nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-        });
+        }
     }
   }
 
@@ -660,9 +709,12 @@ const TodayPage = (() => {
     } else {
       await autoSave();
       
-      // If we just marked a set as done (and not all sets are done), start a 90s rest timer
+      // If we just marked a set as done (and not all sets are done), start a rest timer based on the exercise
       if (isNowDone) {
-        UI.startTimer(90, null);
+        const restTime = getRestTime(ex.name);
+        if (restTime > 0) {
+            UI.startTimer(restTime, null);
+        }
       }
     }
   }
