@@ -519,7 +519,7 @@ def generate_program():
         {"name":"Single-Leg Glute Bridge","category":"Glutes","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg Glute Bridge"],"setsProgression":"Phase 1-5: 3-4×8-12 each leg"},
         {"name":"Calf Raise","category":"Calves","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Calf Raise"],"setsProgression":"Phase 1: 3×15-20"},
         {"name":"Single-Leg Calf Raise","category":"Calves","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg Calf Raise"],"setsProgression":"Phase 1-5: 2-3×12-20 each leg"},
-        {"name":"Scapular Push-up","category":"Lower Back & Core","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Scapular Push-up"],"setsProgression":"Phase 1: 2×10"},
+        {"name":"Scapular Push-up","category":"Upper Back & Shoulders","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Scapular Push-up"],"setsProgression":"Phase 1: 2×10"},
         {"name":"Prone Y-T-W","category":"Upper Back","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 1-5: 2×8-12 each letter"},
         {"name":"Dead Bug","category":"Core","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Dead Bug"],"setsProgression":"Phase 1-5: 2×8-15 each side"},
         {"name":"Side Plank Hip Dips","category":"Core","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Side Plank Hip Dips"],"setsProgression":"Phase 1-5: 2×8-15 each side"},
