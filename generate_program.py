@@ -476,15 +476,16 @@ def get_day_exercises(day_of_week_idx, week):
     if day_of_week_idx == 0:
         return "Workout A", "7-8", get_workout_exercises("A", week)
     elif day_of_week_idx == 1:
-        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
+        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
     elif day_of_week_idx == 2:
         return "Workout B", "7-8", get_workout_exercises("B", week)
     elif day_of_week_idx == 3:
-        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
+        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
     elif day_of_week_idx == 4:
         return "Workout C", "7-8", get_workout_exercises("C", week)
     elif day_of_week_idx == 5:
-        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
+        # For Day 6, we keep Relaxed Walking, but the user can optionally jog later as per the markdown guide.
+        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
     else:
         return "Rest", "—", []
 
@@ -550,7 +551,7 @@ def generate_program():
         {"name":"Hollow Body Rock","category":"Core","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Hollow Body Rock"],"setsProgression":"Phase 1-3: 2×8-12"},
         {"name":"Hollow-to-Arch Rock","category":"Core","difficulty":"Expert","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 3-5: 2-3×8-15"},
         {"name":"Towel Grip Hang","category":"Grip","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Towel Grip Hang"],"setsProgression":"Dry thick towel - 2×5-15 breaths"},
-        {"name":"Brisk Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"30-45 mins in Zone 2"},
+        {"name":"Relaxed Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"30-45 mins in Zone 2"},
     ]
     return {"daily": daily, "exercises": exercises_guide}
 
@@ -627,7 +628,7 @@ if __name__ == "__main__":
         for img in expected_images:
             path = os.path.join(img_dir, img)
             if not os.path.exists(path):
-                if img == "BRISK WALKING.png" and os.path.exists(brisk_walk_src):
+                if img == "RELAXED WALKING.png" and os.path.exists(brisk_walk_src):
                     shutil.copy(brisk_walk_src, path)
                 elif os.path.exists(fallback):
                     shutil.copy(fallback, path)
