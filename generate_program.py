@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate FitUp Pro v4.0 — 48-week training program + bands."""
+"""Generate FitUp Pro v4.0 — 52-week training program + bands."""
 import json
 import re
 from datetime import datetime, timedelta
