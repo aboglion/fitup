@@ -54,16 +54,22 @@ def ex(slot, name, sets, weight=None, isWarmup=False):
     v = VIDEOS.get(name) or VIDEOS.get(name.split(" — ")[0])
     return {"slot": slot, "name": name, "sets": sets, "weight": weight, "videoUrl": v, "isWarmup": isWarmup}
 
-def get_warmup():
-    return [
+def get_warmup(workout_type=None):
+    warmups = [
         ex("W1", "High Knees", "20 reps", isWarmup=True),
         ex("W2", "Arm Circles", "10 forward, 10 backward", isWarmup=True),
         ex("W3", "Wall Slides", "10 reps", isWarmup=True),
         ex("W4", "Scapular Push-up", "8 reps", isWarmup=True),
-        ex("W5", "Bodyweight Squat", "8 reps", isWarmup=True),
-        ex("W6", "Reverse Lunge", "5 each leg", isWarmup=True),
-        ex("W7", "Dead Bug", "6 each side", isWarmup=True),
     ]
+    
+    if workout_type in ["A", "B"] or workout_type is None:
+        warmups.extend([
+            ex("W5", "Bodyweight Squat", "8 reps", isWarmup=True),
+            ex("W6", "Reverse Lunge", "5 each leg", isWarmup=True),
+        ])
+        
+    warmups.append(ex("W7", "Dead Bug", "6 each side", isWarmup=True))
+    return warmups
 
 BLOCKS = {
     "1-3": {
@@ -459,7 +465,7 @@ def get_workout_exercises(workout_type, week):
     
     out = []
     w_idx = 1
-    for w in get_warmup():
+    for w in get_warmup(workout_type):
         if w["name"] not in main_exercise_names:
             w["slot"] = f"W{w_idx}"
             out.append(w)
