@@ -21,7 +21,7 @@ const App = (() => {
       await DB.init();
 
       // Check if plan is loaded or needs update
-      const currentDataVersion = 17; // v3.1 program update
+      const currentDataVersion = 19; // v3.3 program update
       const savedDataVersion = await DB.getSetting('dataVersion');
       
       let planStartDate = await DB.getSetting('planStartDate');

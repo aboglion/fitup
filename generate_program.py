@@ -484,8 +484,10 @@ def get_day_exercises(day_of_week_idx, week):
     elif day_of_week_idx == 4:
         return "Workout C", "7-8", get_workout_exercises("C", week)
     elif day_of_week_idx == 5:
-        # For Day 6, we keep Relaxed Walking, but the user can optionally jog later as per the markdown guide.
-        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
+        if week >= 17:
+            return "Active Recovery", "—", [ex("A1", "Slow Jogging", "15-20 mins", "Zone 2 (Slow Pace)")]
+        else:
+            return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
     else:
         return "Rest", "—", []
 

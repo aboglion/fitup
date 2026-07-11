@@ -199,9 +199,7 @@ const DB = (() => {
     const restTemplate1 = {
       dayType: 'Rest',
       plannedRPE: '—',
-      exercises: [
-        { slot: 'A1', name: 'Walking (Optional)', sets: '15-20 min', weight: null, videoUrl: null }
-      ]
+      exercises: []
     };
     
     const restTemplate2 = {
