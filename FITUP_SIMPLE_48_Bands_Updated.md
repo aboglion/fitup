@@ -95,7 +95,7 @@
 ### אימון A
 | # | תרגיל | סטים × חזרות |
 |---|---|---:|
-| 1 | Deep Bodyweight Squat | 3×10 |
+| 1 | Bodyweight Squat | 3×10 |
 | 2 | Reverse Lunge | 3×6 לכל רגל |
 | 3 | Table Push-up | 3×8 |
 | 4 | Seated Band Row — 30 ק״ג | 3×8 |
