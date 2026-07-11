@@ -491,6 +491,9 @@ const TodayPage = (() => {
       toggleExpand(idx);
     } else {
       UI.showImageModal(exName, '');
+      if (card && !card.classList.contains('expanded')) {
+        toggleExpand(idx);
+      }
     }
   }
 
@@ -586,9 +589,12 @@ const TodayPage = (() => {
     if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
   }
 
-  function getRestTime(name) {
-    if (!name) return 90;
-    const lowerName = name.toLowerCase();
+  function getRestTime(ex) {
+    if (!ex || !ex.name) return 90;
+    
+    if (ex.isWarmup) return 0;
+
+    const lowerName = ex.name.toLowerCase();
 
     // Active Recovery (0s)
     if (lowerName.includes('walking') || lowerName.includes('הליכה') || lowerName.includes('jogging')) {
@@ -634,7 +640,7 @@ const TodayPage = (() => {
     }
 
     if (nextIdx !== -1) {
-        const restTime = getRestTime(day.exercises[idx].name);
+        const restTime = getRestTime(day.exercises[idx]);
         
         if (restTime > 0) {
             // Start a timer for exercise transition
@@ -711,7 +717,7 @@ const TodayPage = (() => {
       
       // If we just marked a set as done (and not all sets are done), start a rest timer based on the exercise
       if (isNowDone) {
-        const restTime = getRestTime(ex.name);
+        const restTime = getRestTime(ex);
         if (restTime > 0) {
             UI.startTimer(restTime, null);
         }

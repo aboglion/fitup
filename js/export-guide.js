@@ -147,6 +147,19 @@ window.ExporterGuide = (() => {
         <p><strong>לפני אימונים A ו-B (חימום מלא):</strong> High Knees, Arm Circles, Wall Slides, Scapular Push-up, Bodyweight Squat, Reverse Lunge, Dead Bug.</p>
         <p><strong>לפני אימון C (ללא רגליים):</strong> High Knees, Arm Circles, Wall Slides, Scapular Push-up, Dead Bug.</p>
 
+        <h3>⏳ זמני מנוחה בין סטים</h3>
+        <table>
+          <tr><th>סוג תרגיל</th><th>מנוחה בין סטים</th></tr>
+          <tr><td>Pull-up Negative, Chin-up Negative, Chin-up</td><td>180 שניות</td></tr>
+          <tr><td>Squat, Lunge, Split Squat, Skater Squat, Single-Leg RDL, Hamstring Towel Curl, Single-Leg Towel Curl, כל סוג Push-up, Pike Push-up, Wall Handstand, Wall Walk</td><td>120 שניות</td></tr>
+          <tr><td>Seated Band Row</td><td>120 שניות</td></tr>
+          <tr><td>Band Curl, Towel Grip Hang</td><td>90 שניות</td></tr>
+          <tr><td>Scapular Pull-up, Scapular Push-up, Band Pull-Apart, Prone Y-T-W</td><td>60 שניות</td></tr>
+          <tr><td>Hollow Rock, Hollow-to-Arch Rock, Dead Bug, Side Plank Hip Dips, Glute Bridge, Calf Raise</td><td>60 שניות</td></tr>
+          <tr><td>כל תרגילי החימום (Warmups) / התאוששות (Recovery)</td><td>אין מנוחה (רציף)</td></tr>
+        </table>
+        <p><strong>קצב:</strong> בכל התרגילים עובדים חלק ובשליטה: עלייה רגילה, ירידה איטית ומבוקרת. החריג היחיד הוא נגטיבים במתח/צ׳ין־אפ: ירידה רציפה של כ־3–5 שניות. אין עצירות יזומות ואין ספירת קצב ביתר התרגילים.</p>
+
       </div>
 
       <div class="section">
