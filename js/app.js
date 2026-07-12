@@ -42,7 +42,7 @@ const App = (() => {
       // --- Strict Calendar Alignment ---
       // Instead of sequential progression, align the planIndex perfectly with the real calendar
       // so that chosen rest days always match the real days of the week.
-      const todayStr = new Date().toISOString().slice(0, 10);
+      const todayStr = UI.getLocalDateString();
       let planStartDateStr = await DB.getSetting('planStartDate');
       
       let planIndex = 0; // Default to day 1
@@ -52,7 +52,7 @@ const App = (() => {
         const startDateObj = new Date(planStartDateStr + 'T12:00:00');
         
         const diffTime = todayDateObj - startDateObj;
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const diffDays = Math.round((todayDateObj - startDateObj) / (1000 * 60 * 60 * 24));
         
         planIndex = diffDays;
         if (planIndex < 0) planIndex = 0;
@@ -229,13 +229,14 @@ const App = (() => {
     if (firstIncompleteWorkoutIndex === -1) return; // All workouts completed!
 
     const startDateObj = new Date(planStartDateStr + 'T12:00:00');
-    const now = new Date();
-    const daysDiff = Math.floor((now - startDateObj) / (1000 * 60 * 60 * 24));
+    const nowStr = UI.getLocalDateString();
+    const todayDateObj = new Date(nowStr + 'T12:00:00');
+    const daysDiff = Math.round((todayDateObj - startDateObj) / (1000 * 60 * 60 * 24));
 
     if (daysDiff > firstIncompleteWorkoutIndex) {
       const shiftDays = daysDiff - firstIncompleteWorkoutIndex;
       startDateObj.setDate(startDateObj.getDate() + shiftDays);
-      await DB.setSetting('planStartDate', startDateObj.toISOString().slice(0, 10));
+      await DB.setSetting('planStartDate', UI.getLocalDateString(startDateObj));
       await DB.loadTrainingPlan();
       
       // We must reload the page so everything is synced to the new calendar
@@ -297,7 +298,7 @@ const App = (() => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `fitup-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `fitup-backup-${UI.getLocalDateString()}.json`;
         a.click();
         URL.revokeObjectURL(url);
         UI.toast('הנתונים יוצאו בהצלחה! 📤', 'success');

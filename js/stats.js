@@ -4,7 +4,7 @@
 const StatsPage = (() => {
   let allPlanDays = [];
 
-  const STRENGTH_TYPES = ['כוח עליון A', 'כוח עליון B', 'כוח תחתון'];
+  const STRENGTH_TYPES = ['Workout A', 'Workout B', 'Workout C'];
   const isStrengthDay = (dayType) => STRENGTH_TYPES.includes(dayType);
 
 
@@ -32,7 +32,7 @@ const StatsPage = (() => {
     const strengthDays = allPlanDays.filter(d => isStrengthDay(d.dayType));
     const completedStrength = strengthDays.filter(d => trackingMap[d.dayIndex] && trackingMap[d.dayIndex].completed).length;
 
-    const walkDays = allPlanDays.filter(d => d.dayType === 'הליכה');
+    const walkDays = allPlanDays.filter(d => d.dayType === 'Active Recovery');
     const completedWalk = walkDays.filter(d => trackingMap[d.dayIndex] && trackingMap[d.dayIndex].completed).length;
 
     // Calculate streak
@@ -57,7 +57,7 @@ const StatsPage = (() => {
         const day = trackingMap[t.dayIndex] ? allPlanDays[t.dayIndex] : null;
         if (day) {
           if (isStrengthDay(day.dayType)) totalXP += 500;
-          else if (day.dayType === 'הליכה') totalXP += 200;
+          else if (day.dayType === 'Active Recovery') totalXP += 200;
           else if (day.dayType === 'Rest') totalXP += 50;
         }
       }
@@ -71,8 +71,8 @@ const StatsPage = (() => {
     // Calculate weekly trend
     const todayIdx = UI.findTodayIndex(allPlanDays);
     const currentWeekNum = Math.floor(todayIdx / 7) + 1;
-    const currentWeekDays = allPlanDays.filter(d => d.week === `שבוע ${currentWeekNum}`);
-    const lastWeekDays = allPlanDays.filter(d => d.week === `שבוע ${currentWeekNum - 1}`);
+    const currentWeekDays = allPlanDays.filter(d => d.week === `Week ${currentWeekNum}`);
+    const lastWeekDays = allPlanDays.filter(d => d.week === `Week ${currentWeekNum - 1}`);
     
     const currCompleted = currentWeekDays.filter(d => trackingMap[d.dayIndex] && trackingMap[d.dayIndex].completed).length;
     const lastCompleted = lastWeekDays.filter(d => trackingMap[d.dayIndex] && trackingMap[d.dayIndex].completed).length;
@@ -216,7 +216,7 @@ const StatsPage = (() => {
       
       if (isCompleted) {
         if (isStrengthDay(day.dayType)) colorClass = 'heat-strength';
-        else if (day.dayType === 'הליכה') colorClass = 'heat-walk';
+        else if (day.dayType === 'Active Recovery') colorClass = 'heat-walk';
         else if (day.dayType === 'Rest') colorClass = 'heat-rest';
       }
       

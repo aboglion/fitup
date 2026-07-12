@@ -164,6 +164,16 @@ const UI = (() => {
     return date.toLocaleDateString('en-US', { day: 'numeric', month: 'numeric' });
   }
 
+  /**
+   * Get Local Date String (YYYY-MM-DD) avoiding UTC shifts
+   */
+  function getLocalDateString(d = new Date()) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   function findTodayIndex(planDays) {
     return window.appCurrentPlanIndex || 0;
   }
@@ -319,6 +329,7 @@ const UI = (() => {
     parseDate,
     formatDate,
     formatShortDate,
+    getLocalDateString,
     findTodayIndex,
     parseSetsCount,
     parseReps,

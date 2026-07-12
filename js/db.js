@@ -211,7 +211,7 @@ const DB = (() => {
     let planStartDateStr = await getSetting('planStartDate');
     let effectiveStartDateStr = planStartDateStr;
     if (!effectiveStartDateStr) {
-      effectiveStartDateStr = new Date().toISOString().slice(0, 10);
+      effectiveStartDateStr = UI.getLocalDateString();
     }
     const startDate = new Date(effectiveStartDateStr + 'T12:00:00');
 
@@ -251,7 +251,7 @@ const DB = (() => {
           dayObj.restSeq = globalRestSeq++;
         }
 
-        dayObj.date = currentDate.toISOString().slice(0, 10).split('-').reverse().join('/');
+        dayObj.date = UI.getLocalDateString(currentDate).split('-').reverse().join('/');
         
         newPlanData.push(dayObj);
         globalDayIndex++;

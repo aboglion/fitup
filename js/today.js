@@ -119,7 +119,7 @@ const TodayPage = (() => {
     // Update summary card
     document.getElementById('day-number').textContent = day.dayNum;
     document.getElementById('today-date-badge').textContent = day.dayOfWeek;
-    document.getElementById('day-week').textContent = day.week;
+    document.getElementById('day-week').textContent = day.week ? day.week.replace('Week', 'שבוע') : '';
 
     const realTodayIndex = UI.findTodayIndex(allPlanDays);
     const isToday = currentDayIndex === realTodayIndex;
@@ -752,7 +752,7 @@ const TodayPage = (() => {
   async function checkAndLockStartDate() {
     let startDate = await DB.getSetting('planStartDate');
     if (!startDate) {
-      startDate = new Date().toISOString().slice(0, 10);
+      startDate = UI.getLocalDateString();
       await DB.setSetting('planStartDate', startDate);
       UI.toast('תוכנית האימונים התחילה בהצלחה! 🚀', 'success');
     }
@@ -772,7 +772,7 @@ const TodayPage = (() => {
     currentTracking.bodyWeight = weight ? parseFloat(weight) : null;
     currentTracking.notes = notes;
     currentTracking.lastUpdated = new Date().toISOString();
-    currentTracking.date = currentTracking.date || new Date().toISOString().slice(0, 10);
+    currentTracking.date = currentTracking.date || UI.getLocalDateString();
 
     await DB.saveDayTracking(currentDayIndex, currentTracking);
   }
