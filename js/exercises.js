@@ -18,10 +18,11 @@ const ExercisesPage = (() => {
 
   // Band weight progression tiers (exercise name → sorted tiers)
   const BAND_WEIGHT_PROGRESSION = {
-    'Seated Band Row': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 17 }, { weight: '50 kg', fromWeek: 33 }],
-    'Band Curl': [{ weight: '30 kg', fromWeek: 9 }, { weight: '40 kg', fromWeek: 25 }, { weight: '50 kg', fromWeek: 37 }],
-    'Banded Single-Leg RDL': [{ weight: '30 kg', fromWeek: 17 }, { weight: '40 kg', fromWeek: 33 }, { weight: '50 kg', fromWeek: 41 }],
-    'Banded Glute Bridge': [{ weight: '30 kg', fromWeek: 17 }, { weight: '40 kg', fromWeek: 33 }, { weight: '50 kg', fromWeek: 41 }]
+    'Seated Band Row': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 13 }],
+    'Band Pull-Apart': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 9 }],
+    'Band Curl': [{ weight: '30 kg', fromWeek: 9 }, { weight: '40 kg', fromWeek: 21 }, { weight: '50 kg', fromWeek: 33 }],
+    'Banded Single-Leg RDL': [{ weight: '30 kg', fromWeek: 17 }, { weight: '40 kg', fromWeek: 21 }, { weight: '50 kg', fromWeek: 33 }],
+    'Banded Glute Bridge': [{ weight: '30 kg', fromWeek: 17 }, { weight: '40 kg', fromWeek: 25 }, { weight: '50 kg', fromWeek: 37 }]
   };
 
   // Skill paths organized by day type
@@ -42,6 +43,7 @@ const ExercisesPage = (() => {
         exercises: [
           { name: 'Bodyweight Squat', unlockWeek: 1 },
           { name: 'Split Squat', unlockWeek: 9 },
+          { name: 'Bulgarian Split Squat', unlockWeek: 25 },
           { name: 'Wall-Supported Skater Squat', unlockWeek: 33 }
         ]
       },
@@ -50,7 +52,8 @@ const ExercisesPage = (() => {
         icon: '🔥',
         exercises: [
           { name: 'Reverse Lunge', unlockWeek: 1 },
-          { name: 'Bodyweight Single-Leg RDL', unlockWeek: 21 }
+          { name: 'Single-Leg RDL', unlockWeek: 9 },
+          { name: 'Banded Single-Leg RDL', unlockWeek: 17 }
         ]
       },
       {
@@ -58,10 +61,10 @@ const ExercisesPage = (() => {
         icon: '🫁',
         exercises: [
           { name: 'Table Push-up', unlockWeek: 1 },
+          { name: 'Knee Push-up', unlockWeek: 5 },
           { name: 'Push-up', unlockWeek: 9 },
           { name: 'Close-Grip Push-up', unlockWeek: 13 },
-          { name: 'Decline Push-up', unlockWeek: 17 },
-          { name: 'Incline Archer Push-up', unlockWeek: 25 }
+          { name: 'Archer Push-up', unlockWeek: 25 }
         ]
       },
       {
@@ -69,7 +72,7 @@ const ExercisesPage = (() => {
         icon: '🏔️',
         exercises: [
           { name: 'Table Pike Push-up', unlockWeek: 1 },
-          { name: 'Pike Push-up', unlockWeek: 9 },
+          { name: 'Pike Push-up', unlockWeek: 5 },
           { name: 'Partial Wall Walk', unlockWeek: 13, parallel: true },
           { name: 'Elevated Pike Push-up', unlockWeek: 17, parallel: true },
           { name: 'Wall Handstand', unlockWeek: 17, parallel: true }
@@ -87,10 +90,11 @@ const ExercisesPage = (() => {
         title: '🧱 Core & Calves',
         icon: '🔲',
         exercises: [
-          { name: 'Side Plank Hip Dips', unlockWeek: 1 },
+          { name: 'Side Plank Hip Dip', unlockWeek: 1 },
+          { name: 'Calf Raise', unlockWeek: 1, parallel: true },
+          { name: 'Single-Leg Calf Raise', unlockWeek: 9, parallel: true },
           { name: 'Hollow Body Rock', unlockWeek: 21 },
-          { name: 'Hollow-to-Arch Rock', unlockWeek: 25 },
-          { name: 'Calf Raise', unlockWeek: 1 }
+          { name: 'Hollow-to-Arch Rock', unlockWeek: 25 }
         ]
       }
     ],
@@ -118,7 +122,6 @@ const ExercisesPage = (() => {
         icon: '🔥',
         exercises: [
           { name: 'Bodyweight Single-Leg RDL', unlockWeek: 1 },
-          { name: 'Banded Single-Leg RDL', unlockWeek: 17 },
           { name: 'Hamstring Towel Curl', unlockWeek: 1, parallel: true },
           { name: 'Single-Leg Towel Curl', unlockWeek: 13, parallel: true }
         ]
@@ -131,10 +134,7 @@ const ExercisesPage = (() => {
           { name: 'Knee Push-up', unlockWeek: 5 },
           { name: 'Close-Grip Knee Push-up', unlockWeek: 9 },
           { name: 'Push-up', unlockWeek: 13, parallel: true },
-          { name: 'Close-Grip Push-up', unlockWeek: 13, parallel: true },
-          { name: 'Decline Push-up', unlockWeek: 17, parallel: true },
-          { name: 'Diamond Push-up', unlockWeek: 17, parallel: true },
-          { name: 'Incline Archer Push-up', unlockWeek: 25, parallel: true }
+          { name: 'Decline Push-up', unlockWeek: 17, parallel: true }
         ]
       },
       {
@@ -150,8 +150,7 @@ const ExercisesPage = (() => {
         icon: '🔲',
         exercises: [
           { name: 'Dead Bug', unlockWeek: 1 },
-          { name: 'Side Plank Hip Dips', unlockWeek: 25 },
-          { name: 'Single-Leg Calf Raise', unlockWeek: 9 }
+          { name: 'Single-Leg Calf Raise', unlockWeek: 5 }
         ]
       }
     ],
@@ -180,9 +179,9 @@ const ExercisesPage = (() => {
         icon: '🏔️',
         exercises: [
           { name: 'Scapular Push-up', unlockWeek: 1 },
-          { name: 'Pike Push-up', unlockWeek: 9 },
-          { name: 'Elevated Pike Push-up', unlockWeek: 17, parallel: true },
-          { name: 'Wall Handstand', unlockWeek: 17, parallel: true }
+          { name: 'Pike Push-up', unlockWeek: 5 },
+          { name: 'Wall Handstand', unlockWeek: 9, parallel: true },
+          { name: 'Elevated Pike Push-up', unlockWeek: 17, parallel: true }
         ]
       },
       {
@@ -190,8 +189,8 @@ const ExercisesPage = (() => {
         icon: '🦾',
         exercises: [
           { name: 'Towel Grip Hang', unlockWeek: 1 },
-          { name: 'Band Pull-Apart', unlockWeek: 1 },
-          { name: 'Band Curl', unlockWeek: 9 }
+          { name: 'Band Pull-Apart', unlockWeek: 1, parallel: true },
+          { name: 'Band Curl', unlockWeek: 9, parallel: true }
         ]
       },
       {
@@ -200,7 +199,7 @@ const ExercisesPage = (() => {
         exercises: [
           { name: 'Hollow Body Rock', unlockWeek: 1 },
           { name: 'Hollow-to-Arch Rock', unlockWeek: 17 },
-          { name: 'Single-Leg Calf Raise', unlockWeek: 1 }
+          { name: 'Single-Leg Calf Raise', unlockWeek: 1, parallel: true }
         ]
       }
     ],
@@ -210,7 +209,7 @@ const ExercisesPage = (() => {
         icon: '🏃‍♂️',
         exercises: [
           { name: 'Relaxed Walking', unlockWeek: 1 },
-          { name: 'Slow Jogging', unlockWeek: 17, note: 'Optional for Day 6 only' }
+          { name: 'Brisk Walking', unlockWeek: 1 }
         ]
       }
     ]

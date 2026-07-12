@@ -132,11 +132,11 @@ window.ExporterGuide = (() => {
         <table>
           <tr><th>יום</th><th>סוג</th><th>RPE</th></tr>
           <tr><td>א׳ (ראשון)</td><td>💪 Workout A</td><td>7-8</td></tr>
-          <tr><td>ב׳ (שני)</td><td>🚶 Active Recovery (Relaxed Walking)</td><td>—</td></tr>
+          <tr><td>ב׳ (שני)</td><td>🚶 Active Recovery (Brisk Walking 35 mins)</td><td>—</td></tr>
           <tr><td>ג׳ (שלישי)</td><td>💪 Workout B</td><td>7-8</td></tr>
-          <tr><td>ד׳ (רביעי)</td><td>🚶 Active Recovery (Relaxed Walking)</td><td>—</td></tr>
+          <tr><td>ד׳ (רביעי)</td><td>🚶 Active Recovery (Relaxed Walking 30 mins)</td><td>—</td></tr>
           <tr><td>ה׳ (חמישי)</td><td>💪 Workout C</td><td>7-8</td></tr>
-          <tr><td>ו׳ (שישי)</td><td>🚶 Active Recovery (Relaxed Walking / Slow Jogging)</td><td>—</td></tr>
+          <tr><td>ו׳ (שישי)</td><td>🚶 Active Recovery (Brisk Walking 35 mins)</td><td>—</td></tr>
           <tr><td>ש׳ (שבת)</td><td>🧘 Rest</td><td>—</td></tr>
         </table>
 

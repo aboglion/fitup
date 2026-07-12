@@ -349,7 +349,7 @@
 |---|---|---:|
 | 1 | Split Squat | 4×12 לכל רגל |
 | 2 | Bodyweight Single-Leg RDL | 4×8 לכל רגל |
-| 3 | Incline Archer Push-up | 3×6 לכל צד |
+| 3 | Archer Push-up | 3×6 לכל צד |
 | 4 | Seated Band Row — 40 ק״ג | 4×12 |
 | 5 | Elevated Pike Push-up | 3×10 |
 | 6 | Wall Handstand | 3×12 נשימות |
@@ -389,7 +389,7 @@
 |---|---|---:|
 | 1 | Split Squat | 4×12 לכל רגל |
 | 2 | Bodyweight Single-Leg RDL | 4×10 לכל רגל |
-| 3 | Incline Archer Push-up | 4×6 לכל צד |
+| 3 | Archer Push-up | 4×6 לכל צד |
 | 4 | Seated Band Row — 40 ק״ג | 4×12 |
 | 5 | Elevated Pike Push-up | 4×8 |
 | 6 | Wall Handstand | 3×15 נשימות |
@@ -441,7 +441,7 @@
 |---|---|---:|
 | 1 | Wall-Supported Skater Squat | 4×6 לכל רגל |
 | 2 | Single-Leg Towel Curl | 3×8 לכל רגל |
-| 3 | Incline Archer Push-up | 3×8 לכל צד |
+| 3 | Archer Push-up | 3×8 לכל צד |
 | 4 | Seated Band Row — 50 ק״ג | 4×10 |
 | 5 | Single-Leg Glute Bridge | 3×15 לכל רגל |
 | 6 | Prone Y-T-W | 2×12 מכל אות |
@@ -484,7 +484,7 @@
 |---|---|---:|
 | 1 | Wall-Supported Skater Squat | 4×8 לכל רגל |
 | 2 | Single-Leg Towel Curl | 3×10 לכל רגל |
-| 3 | Incline Archer Push-up | 3×10 לכל צד |
+| 3 | Archer Push-up | 3×10 לכל צד |
 | 4 | Seated Band Row — 50 ק״ג | 4×12 |
 | 5 | Single-Leg Glute Bridge | 4×10 לכל רגל |
 | 6 | Prone Y-T-W | 2×12 מכל אות |
@@ -525,7 +525,7 @@
 |---|---|---:|
 | 1 | Wall-Supported Skater Squat | 4×10 לכל רגל |
 | 2 | Single-Leg Towel Curl | 3×10 לכל רגל |
-| 3 | Incline Archer Push-up | 3×10 לכל צד |
+| 3 | Archer Push-up | 3×10 לכל צד |
 | 4 | Seated Band Row — 50 ק״ג | 4×12 |
 | 5 | Single-Leg Glute Bridge | 4×10 לכל רגל |
 | 6 | Prone Y-T-W | 2×12 מכל אות |
@@ -566,7 +566,7 @@
 |---|---|---:|
 | 1 | Wall-Supported Skater Squat | 4×10 לכל רגל |
 | 2 | Single-Leg Towel Curl | 3×10 לכל רגל |
-| 3 | Incline Archer Push-up | 3×10 לכל צד |
+| 3 | Archer Push-up | 3×10 לכל צד |
 | 4 | Seated Band Row — 50 ק״ג | 4×12 |
 | 5 | Single-Leg Glute Bridge | 4×12 לכל רגל |
 | 6 | Prone Y-T-W | 2×12 מכל אות |

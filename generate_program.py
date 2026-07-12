@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Generate FitUp Pro v4.0 — 52-week training program + bands."""
+"""Generate FitUp Pro Auto — 52-week training program + bands."""
 import json
 import re
+import os
+import shutil
 from datetime import datetime, timedelta
 
 START_DATE = datetime(2026, 7, 5)
@@ -21,6 +23,7 @@ VIDEOS = {
     "Calf Raise": "https://www.youtube.com/watch?v=ElcvJ0kjt6c",
     "Push-up": "https://www.youtube.com/watch?v=IODxDxX7oi4",
     "Split Squat": "https://www.youtube.com/watch?v=zCsZwLeXrCg",
+    "Bulgarian Split Squat": "https://www.youtube.com/watch?v=2C-uNgKwPLE",
     "Diamond Push-up": "https://www.youtube.com/watch?v=mH8WhysYsaU",
     "Chin-up": "https://www.youtube.com/watch?v=e1YSApl-QcM",
     "Pike Push-up": "https://www.youtube.com/watch?v=sposDXWEB0A",
@@ -32,7 +35,7 @@ VIDEOS = {
     "Reverse Lunge": "https://www.youtube.com/watch?v=jgeI_ZqAxWs",
     "Hamstring Towel Curl": "https://www.youtube.com/shorts/X3oyDT1iUzg",
     "Hollow Body Rock": "https://www.youtube.com/shorts/17QYGBGsDvw",
-    "Side Plank Hip Dips": "https://www.youtube.com/watch?v=N_s9em1xTqU",
+    "Side Plank Hip Dip": "https://www.youtube.com/watch?v=N_s9em1xTqU",
     "Pull-up Negative": "https://www.youtube.com/watch?v=S3gxEclxIYE",
     "Chin-up Negative": "https://www.youtube.com/watch?v=S3gxEclxIYE",
     "Knee Push-up": "https://www.youtube.com/watch?v=_DHM9Zg_0iY",
@@ -40,14 +43,14 @@ VIDEOS = {
     "Scapular Push-up": "https://www.youtube.com/watch?v=76TQU7iZlsI",
     "Wall-Supported Skater Squat": "https://www.youtube.com/watch?v=zCsZwLeXrCg",
     "Close-Grip Knee Push-up": "https://www.youtube.com/watch?v=_DHM9Zg_0iY",
-    "Diamond Knee Push-up": "https://www.youtube.com/watch?v=_DHM9Zg_0iY",
     "Close-Grip Push-up": "https://www.youtube.com/watch?v=IODxDxX7oi4",
-    "Incline Archer Push-up": "https://www.youtube.com/watch?v=76TQU7iZlsI",
+    "Archer Push-up": "https://www.youtube.com/watch?v=76TQU7iZlsI",
     "Partial Wall Walk": "https://www.youtube.com/watch?v=sposDXWEB0A",
     "Wall Handstand": "https://www.youtube.com/watch?v=sposDXWEB0A",
     "Single-Leg Towel Curl": "https://www.youtube.com/shorts/X3oyDT1iUzg",
     "Prone Y-T-W": "https://www.youtube.com/shorts/KTWWh3GsyYw",
-    "Hollow-to-Arch Rock": "https://www.youtube.com/shorts/17QYGBGsDvw"
+    "Hollow-to-Arch Rock": "https://www.youtube.com/shorts/17QYGBGsDvw",
+    "Single-Leg RDL": "https://www.youtube.com/shorts/U4sOY8Gyc-s",
 }
 
 def ex(slot, name, sets, weight=None, isWarmup=False):
@@ -59,408 +62,57 @@ def get_warmup(workout_type=None):
         ex("W1", "High Knees", "20 reps", isWarmup=True),
         ex("W2", "Arm Circles", "10 forward, 10 backward", isWarmup=True),
         ex("W3", "Wall Slides", "10 reps", isWarmup=True),
-        ex("W4", "Scapular Push-up", "8 reps", isWarmup=True),
+        ex("W4", "Scapular Push-up", "10 reps", isWarmup=True),
+        ex("W5", "Dead Bug", "6 each side", isWarmup=True),
+        ex("W6", "Bodyweight Squat", "10 reps", isWarmup=True),
     ]
-    
-    if workout_type in ["A", "B"] or workout_type is None:
-        warmups.extend([
-            ex("W5", "Bodyweight Squat", "8 reps", isWarmup=True),
-            ex("W6", "Reverse Lunge", "5 each leg", isWarmup=True),
-        ])
-        
-    warmups.append(ex("W7", "Dead Bug", "6 each side", isWarmup=True))
     return warmups
 
-BLOCKS = {
-    "1-3": {
-        "A": [
-            ("Bodyweight Squat", "3×10", None),
-            ("Reverse Lunge", "3×6 each leg", None),
-            ("Table Push-up", "3×8", None),
-            ("Seated Band Row", "3×8", "30 kg"),
-            ("Table Pike Push-up", "2×6", None),
-            ("Band Pull-Apart", "2×12", None),
-            ("Side Plank Hip Dips", "2×8 each side", None),
-            ("Calf Raise", "3×15", None),
-        ],
-        "B": [
-            ("Reverse Lunge", "3×8 each leg", None),
-            ("Bodyweight Single-Leg RDL", "3×8 each leg", None),
-            ("Hamstring Towel Curl", "3×5", None),
-            ("Table Push-up", "3×8", None),
-            ("Seated Band Row", "3×8", "30 kg"),
-            ("Single-Leg Glute Bridge", "3×8 each leg", None),
-            ("Prone Y-T-W", "2×8 each letter", None),
-            ("Dead Bug", "2×8 each side", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Pull-up Negative", "3×3", None),
-            ("Towel Grip Hang", "2×5 breaths", None),
-            ("Band Pull-Apart", "2×12", None),
-            ("Scapular Push-up", "2×10", None),
-            ("Hollow Body Rock", "2×8", None),
-            ("Single-Leg Calf Raise", "2×12 each leg", None),
-        ]
-    },
-    "5-7": {
-        "A": [
-            ("Bodyweight Squat", "4×10", None),
-            ("Reverse Lunge", "3×8 each leg", None),
-            ("Table Push-up", "4×8", None),
-            ("Seated Band Row", "4×8", "30 kg"),
-            ("Table Pike Push-up", "3×6", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Side Plank Hip Dips", "2×10 each side", None),
-            ("Calf Raise", "3×18", None),
-        ],
-        "B": [
-            ("Reverse Lunge", "3×10 each leg", None),
-            ("Bodyweight Single-Leg RDL", "3×10 each leg", None),
-            ("Hamstring Towel Curl", "3×6", None),
-            ("Knee Push-up", "3×8", None),
-            ("Seated Band Row", "4×8", "30 kg"),
-            ("Single-Leg Glute Bridge", "3×10 each leg", None),
-            ("Prone Y-T-W", "2×10 each letter", None),
-            ("Dead Bug", "2×10 each side", None),
-        ]
-    },
-    "9-11": {
-        "A": [
-            ("Split Squat", "4×8 each leg", None),
-            ("Bodyweight Single-Leg RDL", "3×10 each leg", None),
-            ("Push-up", "4×6", None),
-            ("Seated Band Row", "4×10", "30 kg"),
-            ("Pike Push-up", "3×8", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Side Plank Hip Dips", "2×10 each side", None),
-            ("Calf Raise", "3×20", None),
-        ],
-        "B": [
-            ("Reverse Lunge", "4×8 each leg", None),
-            ("Hamstring Towel Curl", "3×8", None),
-            ("Close-Grip Knee Push-up", "3×8", None),
-            ("Seated Band Row", "4×10", "30 kg"),
-            ("Single-Leg Glute Bridge", "3×10 each leg", None),
-            ("Prone Y-T-W", "2×10 each letter", None),
-            ("Dead Bug", "2×10 each side", None),
-            ("Single-Leg Calf Raise", "3×15 each leg", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Chin-up Negative", "3×4", None),
-            ("Band Curl", "2×10", "30 kg"),
-            ("Wall Handstand", "3×10 breaths", None),
-            ("Pike Push-up", "2×8", None),
-            ("Hollow Body Rock", "2×10", None),
-            ("Towel Grip Hang", "2×8 breaths", None),
-        ]
-    },
-    "13-15": {
-        "A": [
-            ("Split Squat", "4×10 each leg", None),
-            ("Bodyweight Single-Leg RDL", "3×10 each leg", None),
-            ("Close-Grip Push-up", "4×6", None),
-            ("Seated Band Row", "4×10", "30 kg"),
-            ("Pike Push-up", "3×8", None),
-            ("Partial Wall Walk", "3×3", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Side Plank Hip Dips", "2×12 each side", None),
-        ],
-        "B": [
-            ("Reverse Lunge", "4×10 each leg", None),
-            ("Single-Leg Towel Curl", "3×5 each leg", None),
-            ("Push-up", "4×8", None),
-            ("Seated Band Row", "4×10", "30 kg"),
-            ("Single-Leg Glute Bridge", "3×12 each leg", None),
-            ("Prone Y-T-W", "2×10 each letter", None),
-            ("Dead Bug", "2×12 each side", None),
-            ("Single-Leg Calf Raise", "3×18 each leg", None),
-        ]
-    },
-    "17-19": {
-        "A": [
-            ("Split Squat", "4×10 each leg", None),
-            ("Banded Single-Leg RDL", "3×10 each leg", "30 kg"),
-            ("Push-up", "4×6", None),
-            ("Seated Band Row", "4×10", "40 kg"),
-            ("Elevated Pike Push-up", "3×6", None),
-            ("Wall Handstand", "3×10 breaths", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Side Plank Hip Dips", "2×12 each side", None),
-        ],
-        "B": [
-            ("Reverse Lunge", "4×10 each leg", None),
-            ("Single-Leg Towel Curl", "3×6 each leg", None),
-            ("Decline Push-up", "3×8", None),
-            ("Seated Band Row", "4×10", "40 kg"),
-            ("Banded Glute Bridge", "3×12 each leg", "30 kg"),
-            ("Prone Y-T-W", "2×10 each letter", None),
-            ("Hollow Body Rock", "2×12", None),
-            ("Single-Leg Calf Raise", "3×20 each leg", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Chin-up", "3×3", None),
-            ("Band Curl", "3×10", "30 kg"),
-            ("Wall Handstand", "3×12 breaths", None),
-            ("Elevated Pike Push-up", "2×8", None),
-            ("Hollow-to-Arch Rock", "2×8", None),
-            ("Towel Grip Hang", "2×10 breaths", None),
-        ]
-    },
-    "21-23": {
-        "A": [
-            ("Split Squat", "4×10 each leg", None),
-            ("Banded Single-Leg RDL", "4×8 each leg", "30 kg"),
-            ("Push-up", "4×8", None),
-            ("Seated Band Row", "4×12", "40 kg"),
-            ("Elevated Pike Push-up", "3×8", None),
-            ("Wall Handstand", "3×12 breaths", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Hollow Body Rock", "2×12", None),
-        ],
-        "B": [
-            ("Reverse Lunge", "4×10 each leg", None),
-            ("Single-Leg Towel Curl", "3×6 each leg", None),
-            ("Decline Push-up", "3×10", None),
-            ("Seated Band Row", "4×12", "40 kg"),
-            ("Banded Glute Bridge", "3×12 each leg", "30 kg"),
-            ("Prone Y-T-W", "2×10 each letter", None),
-            ("Dead Bug", "2×12 each side", None),
-            ("Single-Leg Calf Raise", "3×20 each leg", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Chin-up", "3×5", None),
-            ("Band Curl", "3×10", "30 kg"),
-            ("Wall Handstand", "3×12 breaths", None),
-            ("Elevated Pike Push-up", "2×10", None),
-            ("Hollow-to-Arch Rock", "2×8", None),
-            ("Towel Grip Hang", "2×10 breaths", None),
-        ]
-    },
-    "25-27": {
-        "A": [
-            ("Split Squat", "4×12 each leg", None),
-            ("Banded Single-Leg RDL", "4×8 each leg", "30 kg"),
-            ("Incline Archer Push-up", "3×6 each side", None),
-            ("Seated Band Row", "4×12", "40 kg"),
-            ("Elevated Pike Push-up", "3×10", None),
-            ("Wall Handstand", "3×12 breaths", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Hollow-to-Arch Rock", "3×10", None),
-        ],
-        "B": [
-            ("Reverse Lunge", "4×12 each leg", None),
-            ("Single-Leg Towel Curl", "3×8 each leg", None),
-            ("Decline Push-up", "4×8", None),
-            ("Seated Band Row", "4×12", "40 kg"),
-            ("Banded Glute Bridge", "3×12 each leg", "30 kg"),
-            ("Prone Y-T-W", "2×12 each letter", None),
-            ("Side Plank Hip Dips", "2×12 each side", None),
-            ("Single-Leg Calf Raise", "3×20 each leg", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Chin-up", "4×5", None),
-            ("Band Curl", "3×10", "40 kg"),
-            ("Wall Handstand", "3×12 breaths", None),
-            ("Elevated Pike Push-up", "3×8", None),
-            ("Hollow-to-Arch Rock", "3×10", None),
-            ("Towel Grip Hang", "2×12 breaths", None),
-        ]
-    },
-    "29-31": {
-        "A": [
-            ("Split Squat", "4×12 each leg", None),
-            ("Banded Single-Leg RDL", "4×10 each leg", "30 kg"),
-            ("Incline Archer Push-up", "4×6 each side", None),
-            ("Seated Band Row", "4×12", "40 kg"),
-            ("Elevated Pike Push-up", "4×8", None),
-            ("Wall Handstand", "3×15 breaths", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Hollow-to-Arch Rock", "3×10", None),
-        ],
-        "B": [
-            ("Reverse Lunge", "4×12 each leg", None),
-            ("Single-Leg Towel Curl", "3×8 each leg", None),
-            ("Decline Push-up", "4×10", None),
-            ("Seated Band Row", "4×12", "40 kg"),
-            ("Banded Glute Bridge", "3×15 each leg", "30 kg"),
-            ("Prone Y-T-W", "2×12 each letter", None),
-            ("Dead Bug", "2×15 each side", None),
-            ("Single-Leg Calf Raise", "3×20 each leg", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Chin-up", "4×6", None),
-            ("Band Curl", "3×10", "40 kg"),
-            ("Wall Handstand", "3×12 breaths", None),
-            ("Elevated Pike Push-up", "3×10", None),
-            ("Hollow-to-Arch Rock", "3×10", None),
-            ("Towel Grip Hang", "2×12 breaths", None),
-        ]
-    },
-    "33-35": {
-        "A": [
-            ("Wall-Supported Skater Squat", "4×6 each leg", None),
-            ("Banded Single-Leg RDL", "4×10 each leg", "40 kg"),
-            ("Decline Push-up", "4×10", None),
-            ("Seated Band Row", "4×10", "50 kg"),
-            ("Elevated Pike Push-up", "4×10", None),
-            ("Wall Handstand", "3×15 breaths", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Hollow-to-Arch Rock", "3×12", None),
-        ],
-        "B": [
-            ("Wall-Supported Skater Squat", "4×6 each leg", None),
-            ("Single-Leg Towel Curl", "3×8 each leg", None),
-            ("Incline Archer Push-up", "3×8 each side", None),
-            ("Seated Band Row", "4×10", "50 kg"),
-            ("Banded Glute Bridge", "3×15 each leg", "40 kg"),
-            ("Prone Y-T-W", "2×12 each letter", None),
-            ("Side Plank Hip Dips", "2×15 each side", None),
-            ("Single-Leg Calf Raise", "3×20 each leg", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Chin-up", "4×7", None),
-            ("Band Curl", "3×10", "40 kg"),
-            ("Wall Handstand", "3×12 breaths", None),
-            ("Elevated Pike Push-up", "3×10", None),
-            ("Hollow-to-Arch Rock", "3×10", None),
-            ("Towel Grip Hang", "2×12 breaths", None),
-        ]
-    },
-    "37-39": {
-        "A": [
-            ("Wall-Supported Skater Squat", "4×8 each leg", None),
-            ("Banded Single-Leg RDL", "4×10 each leg", "40 kg"),
-            ("Decline Push-up", "4×12", None),
-            ("Seated Band Row", "4×12", "50 kg"),
-            ("Elevated Pike Push-up", "4×10", None),
-            ("Wall Handstand", "3×15 breaths", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Hollow-to-Arch Rock", "3×12", None),
-        ],
-        "B": [
-            ("Wall-Supported Skater Squat", "4×8 each leg", None),
-            ("Single-Leg Towel Curl", "3×10 each leg", None),
-            ("Incline Archer Push-up", "3×10 each side", None),
-            ("Seated Band Row", "4×12", "50 kg"),
-            ("Banded Glute Bridge", "4×10 each leg", "40 kg"),
-            ("Prone Y-T-W", "2×12 each letter", None),
-            ("Dead Bug", "2×15 each side", None),
-            ("Single-Leg Calf Raise", "3×20 each leg", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Chin-up", "5×5", None),
-            ("Band Curl", "3×8", "50 kg"),
-            ("Band Curl", "3×12", "40 kg"),
-            ("Wall Handstand", "3×15 breaths", None),
-            ("Elevated Pike Push-up", "4×10", None),
-            ("Hollow-to-Arch Rock", "3×12", None),
-            ("Towel Grip Hang", "2×15 breaths", None),
-        ]
-    },
-    "41-43": {
-        "A": [
-            ("Wall-Supported Skater Squat", "4×10 each leg", None),
-            ("Banded Single-Leg RDL", "4×10 each leg", "50 kg"),
-            ("Decline Push-up", "4×12", None),
-            ("Seated Band Row", "4×12", "50 kg"),
-            ("Elevated Pike Push-up", "4×10", None),
-            ("Wall Handstand", "3×15 breaths", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Hollow-to-Arch Rock", "3×12", None),
-        ],
-        "B": [
-            ("Wall-Supported Skater Squat", "4×10 each leg", None),
-            ("Single-Leg Towel Curl", "3×10 each leg", None),
-            ("Incline Archer Push-up", "3×10 each side", None),
-            ("Seated Band Row", "4×12", "50 kg"),
-            ("Banded Glute Bridge", "4×10 each leg", "50 kg"),
-            ("Prone Y-T-W", "2×12 each letter", None),
-            ("Side Plank Hip Dips", "2×15 each side", None),
-            ("Single-Leg Calf Raise", "3×20 each leg", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Chin-up", "5×6", None),
-            ("Band Curl", "3×8", "50 kg"),
-            ("Band Curl", "3×12", "40 kg"),
-            ("Wall Handstand", "3×15 breaths", None),
-            ("Elevated Pike Push-up", "4×12", None),
-            ("Hollow-to-Arch Rock", "3×12", None),
-            ("Towel Grip Hang", "2×15 breaths", None),
-        ]
-    },
-    "45-48": {
-        "A": [
-            ("Wall-Supported Skater Squat", "4×10 each leg", None),
-            ("Banded Single-Leg RDL", "4×10 each leg", "50 kg"),
-            ("Decline Push-up", "4×12", None),
-            ("Seated Band Row", "4×12", "50 kg"),
-            ("Elevated Pike Push-up", "4×12", None),
-            ("Wall Handstand", "3×15 breaths", None),
-            ("Band Pull-Apart", "2×15", None),
-            ("Hollow-to-Arch Rock", "3×15", None),
-        ],
-        "B": [
-            ("Wall-Supported Skater Squat", "4×10 each leg", None),
-            ("Single-Leg Towel Curl", "3×10 each leg", None),
-            ("Incline Archer Push-up", "3×10 each side", None),
-            ("Seated Band Row", "4×12", "50 kg"),
-            ("Banded Glute Bridge", "4×12 each leg", "50 kg"),
-            ("Prone Y-T-W", "2×12 each letter", None),
-            ("Dead Bug", "2×15 each side", None),
-            ("Single-Leg Calf Raise", "3×20 each leg", None),
-        ],
-        "C": [
-            ("Scapular Pull-up", "2×12", None),
-            ("Chin-up", "5×6", None),
-            ("Band Curl", "3×8", "50 kg"),
-            ("Band Curl", "3×12", "40 kg"),
-            ("Wall Handstand", "3×15 breaths", None),
-            ("Elevated Pike Push-up", "4×12", None),
-            ("Hollow-to-Arch Rock", "3×12", None),
-            ("Towel Grip Hang", "2×15 breaths", None),
-        ]
-    }
-}
+def parse_blocks():
+    lines = open("FITUP_SIMPLE_52_Complete_UPDATED.md").read().splitlines()
+    blocks = {}
+    current_weeks = []
+    current_workout = None
 
-BLOCKS["5-7"]["C"] = BLOCKS["1-3"]["C"]
-BLOCKS["13-15"]["C"] = BLOCKS["9-11"]["C"]
+    for line in lines:
+        if line.startswith("# שבועות"):
+            m = re.search(r'# שבועות (\d+)–(\d+)', line)
+            if m:
+                current_weeks = list(range(int(m.group(1)), int(m.group(2)) + 1))
+        elif line.startswith("## אימון"):
+            current_workout = line.split()[-1].strip()
+        elif line.startswith("|") and not line.startswith("| # |") and not line.startswith("|---"):
+            parts = [p.strip() for p in line.split("|")]
+            if len(parts) >= 6 and parts[1].isdigit():
+                name_weight = parts[2]
+                name = name_weight.split(" — ")[0].strip()
+                weight = name_weight.split(" — ")[1].strip() if " — " in name_weight else None
+                if weight:
+                    weight = weight.replace("גומייה", "").replace("ק״ג", "kg").strip()
+                for i, w in enumerate(current_weeks):
+                    if w not in blocks: blocks[w] = {}
+                    if current_workout not in blocks[w]: blocks[w][current_workout] = []
+                    sets = parts[3 + i].replace("x", "×")
+                    sets = sets.replace("לכל רגל", "each leg")
+                    sets = sets.replace("לכל צד", "each side")
+                    sets = sets.replace("מכל אות", "each letter")
+                    sets = sets.replace("שנ׳", "secs")
+                    sets = sets.replace("ירידה 3 שנ׳", "3s descent")
+                    sets = sets.replace("ירידה 4 שנ׳", "4s descent")
+                    sets = sets.replace("ירידה 5 שנ׳", "5s descent")
+                    if sets.strip():
+                        blocks[w][current_workout].append((name, sets, weight))
 
+    for i in range(45, 49):
+        blocks[i + 4] = blocks[i]
+        
+    return blocks
+
+BLOCKS = parse_blocks()
 DAYS_ENG = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
-def get_block_key(week):
-    if week <= 4: return "1-3"
-    elif week <= 8: return "5-7"
-    elif week <= 12: return "9-11"
-    elif week <= 16: return "13-15"
-    elif week <= 20: return "17-19"
-    elif week <= 24: return "21-23"
-    elif week <= 28: return "25-27"
-    elif week <= 32: return "29-31"
-    elif week <= 36: return "33-35"
-    elif week <= 40: return "37-39"
-    elif week <= 44: return "41-43"
-    else: return "45-48"
-
-def apply_deload(sets_str):
-    s = re.sub(r'^([345])(×)', r'2\2', sets_str)
-    s = re.sub(r'^2(×)', r'1\1', s)
-    return s
-
 def get_workout_exercises(workout_type, week):
-    key = get_block_key(week)
-    base = BLOCKS[key][workout_type]
-    
-    is_deload = week in [4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44]
-    
+    base = BLOCKS[week][workout_type]
     main_exercise_names = {name for name, _, _ in base}
     
     out = []
@@ -471,10 +123,9 @@ def get_workout_exercises(workout_type, week):
             out.append(w)
             w_idx += 1
     
-    slot_prefix = "A"
+    slot_prefix = workout_type
     for i, (name, sets, weight) in enumerate(base):
-        final_sets = apply_deload(sets) if is_deload else sets
-        out.append(ex(f"{slot_prefix}{i+1}", name, final_sets, weight))
+        out.append(ex(f"{slot_prefix}{i+1}", name, sets, weight))
         
     return out
 
@@ -482,18 +133,15 @@ def get_day_exercises(day_of_week_idx, week):
     if day_of_week_idx == 0:
         return "Workout A", "7-8", get_workout_exercises("A", week)
     elif day_of_week_idx == 1:
-        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
+        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "35 mins", "Brisk pace (can talk, but not sing)")]
     elif day_of_week_idx == 2:
         return "Workout B", "7-8", get_workout_exercises("B", week)
     elif day_of_week_idx == 3:
-        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
+        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30 mins", "Easy pace")]
     elif day_of_week_idx == 4:
         return "Workout C", "7-8", get_workout_exercises("C", week)
     elif day_of_week_idx == 5:
-        if week >= 17:
-            return "Active Recovery", "—", [ex("A1", "Slow Jogging", "15-20 mins", "Zone 2 (Slow Pace)")]
-        else:
-            return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30-45 mins", "Zone 2 (4.5 - 6.0 km/h)")]
+        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "35 mins", "Brisk pace (can talk, but not sing)")]
     else:
         return "Rest", "—", []
 
@@ -502,12 +150,10 @@ def generate_program():
     day_num = 0
     
     for real_week in range(1, 53):
-        week = real_week if real_week <= 48 else 17 + (real_week - 49)
-        
         for dow in range(7):
             day_num += 1
             date = START_DATE + timedelta(days=day_num - 1)
-            day_type, rpe, exercises = get_day_exercises(dow, week)
+            day_type, rpe, exercises = get_day_exercises(dow, real_week)
             
             daily.append({
                 "dayNum": day_num, "week": f"Week {real_week}", "dayOfWeek": DAYS_ENG[dow],
@@ -522,6 +168,7 @@ def generate_program():
         {"name":"Bodyweight Squat","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Bodyweight Squat"],"setsProgression":"Phase 1: 3-4×10"},
         {"name":"Reverse Lunge","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Reverse Lunge"],"setsProgression":"Phase 1-4: 3-4×6-12 each leg"},
         {"name":"Split Squat","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Split Squat"],"setsProgression":"Phase 2-4: 4×8-12 each leg"},
+        {"name":"Bulgarian Split Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Bulgarian Split Squat"],"setsProgression":"Phase 4-5: 4×8-12 each leg"},
         {"name":"Wall-Supported Skater Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 4-5: 4×6-10 each leg"},
         {"name":"Table Push-up","category":"Push","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Table Push-up"],"setsProgression":"Phase 1: 3-4×8"},
         {"name":"Knee Push-up","category":"Push","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Knee Push-up"],"setsProgression":"Phase 1: 3×8"},
@@ -531,7 +178,7 @@ def generate_program():
         {"name":"Close-Grip Push-up","category":"Push","difficulty":"Intermediate+","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2-4: 4×6-10"},
         {"name":"Diamond Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Diamond Push-up"],"setsProgression":"Phase 3: 3×8"},
         {"name":"Decline Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Decline Push-up"],"setsProgression":"Phase 3-4: 3-4×8-12"},
-        {"name":"Incline Archer Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 4-5: 3-4×6-10 each side"},
+        {"name":"Archer Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 4-5: 3-4×6-10 each side"},
         {"name":"Table Pike Push-up","category":"Shoulders","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Table Pike Push-up"],"setsProgression":"Phase 1: 2-3×6"},
         {"name":"Pike Push-up","category":"Shoulders","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Pike Push-up"],"setsProgression":"Phase 2-5: 2-3×8-12"},
         {"name":"Elevated Pike Push-up","category":"Shoulders","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Elevated Pike Push-up"],"setsProgression":"Phase 3-5: 3-4×6-12"},
@@ -542,9 +189,10 @@ def generate_program():
         {"name":"Chin-up Negative","category":"Pull","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Chin-up Negative"],"setsProgression":"Continuous 3-5s descent: 3×4"},
         {"name":"Chin-up","category":"Pull","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Chin-up"],"setsProgression":"Phase 3-5: 3-5×3-6"},
         {"name":"Seated Band Row","category":"Pull","difficulty":"Beginner","weight":"30-50 kg","videoUrl":VIDEOS["Seated Band Row"],"setsProgression":"Phase 1-5: 3-4×8-12"},
-        {"name":"Band Pull-Apart","category":"Upper Back","difficulty":"Beginner","weight":"30 kg","videoUrl":VIDEOS["Band Pull-Apart"],"setsProgression":"Phase 1-5: 2×12-15"},
+        {"name":"Band Pull-Apart","category":"Upper Back","difficulty":"Beginner","weight":"30-50 kg","videoUrl":VIDEOS["Band Pull-Apart"],"setsProgression":"Phase 1-5: 2×12-15"},
         {"name":"Band Curl","category":"Arms","difficulty":"Beginner","weight":"30-50 kg","videoUrl":VIDEOS["Band Curl"],"setsProgression":"Phase 2-5: 2-3×8-12"},
         {"name":"Bodyweight Single-Leg RDL","category":"Glutes & Hamstrings","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Bodyweight Single-Leg RDL"],"setsProgression":"Phase 1-2: 3-4×8-10 each leg"},
+        {"name":"Single-Leg RDL","category":"Glutes & Hamstrings","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Single-Leg RDL"],"setsProgression":"Phase 1-2: 3-4×8-10 each leg"},
         {"name":"Hamstring Towel Curl","category":"Hamstrings","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Hamstring Towel Curl"],"setsProgression":"Phase 1-2: 3×5-8"},
         {"name":"Single-Leg Towel Curl","category":"Hamstrings","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 2-5: 3×5-10 each leg"},
         {"name":"Banded Single-Leg RDL","category":"Glutes & Hamstrings","difficulty":"Advanced","weight":"Resistance Band","videoUrl":VIDEOS["Banded Single-Leg RDL"],"setsProgression":"Phase 3-5: 3-4×8-10 each leg"},
@@ -555,18 +203,18 @@ def generate_program():
         {"name":"Scapular Push-up","category":"Upper Back & Shoulders","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Scapular Push-up"],"setsProgression":"Phase 1: 2×10"},
         {"name":"Prone Y-T-W","category":"Upper Back","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 1-5: 2×8-12 each letter"},
         {"name":"Dead Bug","category":"Core","difficulty":"Beginner","weight":"Bodyweight","videoUrl":VIDEOS["Dead Bug"],"setsProgression":"Phase 1-5: 2×8-15 each side"},
-        {"name":"Side Plank Hip Dips","category":"Core","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Side Plank Hip Dips"],"setsProgression":"Phase 1-5: 2×8-15 each side"},
+        {"name":"Side Plank Hip Dip","category":"Core","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Side Plank Hip Dip"],"setsProgression":"Phase 1-5: 2×8-15 each side"},
         {"name":"Hollow Body Rock","category":"Core","difficulty":"Advanced","weight":"Bodyweight","videoUrl":VIDEOS["Hollow Body Rock"],"setsProgression":"Phase 1-3: 2×8-12"},
         {"name":"Hollow-to-Arch Rock","category":"Core","difficulty":"Expert","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 3-5: 2-3×8-15"},
         {"name":"Towel Grip Hang","category":"Grip","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":VIDEOS["Towel Grip Hang"],"setsProgression":"Dry thick towel - 2×5-15 breaths"},
-        {"name":"Relaxed Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"30-45 mins in Zone 2"},
-        {"name":"Slow Jogging","category":"Cardio","difficulty":"Intermediate","weight":"Bodyweight","videoUrl":None,"setsProgression":"Phase 3+: Day 6 option, slow pace"},
+        {"name":"Brisk Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"35 mins brisk pace"},
+        {"name":"Relaxed Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","videoUrl":None,"setsProgression":"30 mins easy pace"},
     ]
     return {"daily": daily, "exercises": exercises_guide}
 
 def to_training_data_json(program):
     rows = []
-    slot_order = ["W1","W2","W3","W4","W5","W6","W7","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10"]
+    slot_order = ["W1","W2","W3","W4","W5","W6","W7","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10", "B1","B2","B3","B4","B5","B6","B7","B8","B9","B10", "C1","C2","C3","C4","C5","C6","C7","C8","C9","C10"]
     for day in program["daily"]:
         row = {
             "Day": f"Day {day['dayNum']}", "Week": day["week"], "Day of Week": day["dayOfWeek"],
@@ -575,12 +223,32 @@ def to_training_data_json(program):
         ex_by_slot = {}
         for e in day["exercises"]:
             ex_by_slot[e["slot"]] = e
-        for slot in slot_order:
-            e = ex_by_slot.get(slot)
+        
+        # Determine active prefix based on dayType
+        active_prefix = "A"
+        if day["dayType"] == "Workout B": active_prefix = "B"
+        elif day["dayType"] == "Workout C": active_prefix = "C"
+        
+        # Keep old format structure (A1-A10 for main exercises) for compatibility
+        # Re-map the workout slots to A1-A10 for the JSON output if needed, but since we used Workout A/B/C prefix, let's remap
+        # Wait, the app.js probably expects the slots to be correctly mapped. Let's map workout slots back to A1..A10 for the CSV
+        
+        mapped_exercises = {}
+        mapped_idx = 1
+        for e in day["exercises"]:
+            if e["slot"].startswith("W"):
+                mapped_exercises[e["slot"]] = e
+            else:
+                mapped_exercises[f"A{mapped_idx}"] = e
+                mapped_idx += 1
+                
+        for slot in ["W1","W2","W3","W4","W5","W6","W7","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10"]:
+            e = mapped_exercises.get(slot)
             row[f"{slot} - Exercise"] = e["name"] if e else None
             row[f"{slot} - Sets×reps"] = e["sets"] if e else None
             row[f"{slot} - Weight/Resistance"] = e.get("weight") if e else None
             row[f"{slot} - Link"] = e.get("videoUrl") if e else None
+            
         row["Extras - Exercise"] = None
         row["Extras - Sets×reps"] = None
         row["Extras - Link"] = None
@@ -599,9 +267,6 @@ if __name__ == "__main__":
     with open("training_data.json", "w", encoding="utf-8") as f:
         json.dump(td, f, ensure_ascii=False, indent=2)
     
-    import os
-    import shutil
-    
     required_exercises = set()
     for day in program["daily"]:
         for e in day["exercises"]:
@@ -611,38 +276,12 @@ if __name__ == "__main__":
         
     expected_images = {name.replace('/', '-').upper() + ".png" for name in required_exercises}
 
-    renames = [
-        ("images/exercises/INCLINE PUSH-UP.png", "images/exercises/TABLE PUSH-UP.png"),
-        ("images/exercises/ELEVATED PIKE PUSH-UP.png", "images/exercises/TABLE PIKE PUSH-UP.png"),
-        ("images/exercises/SCAPULAR PUSH-UPS.png", "images/exercises/SCAPULAR PUSH-UP.png"),
-        ("images/exercises/BODYWEIGHT SQUATS.png", "images/exercises/BODYWEIGHT SQUAT.png"),
-        ("images/exercises/REVERSE LUNGES.png", "images/exercises/REVERSE LUNGE.png"),
-        ("images/exercises/DEAD BUGS.png", "images/exercises/DEAD BUG.png"),
-    ]
-    for src, dst in renames:
-        if os.path.exists(src) and not os.path.exists(dst):
-            os.rename(src, dst)
-
     img_dir = "images/exercises"
     if os.path.exists(img_dir):
-        for f in os.listdir(img_dir):
-            if f.endswith(".png") and f not in expected_images:
-                try:
-                    os.remove(os.path.join(img_dir, f))
-                except Exception:
-                    pass
-                    
         fallback = os.path.join(img_dir, "BODYWEIGHT SQUAT.png")
-        brisk_walk_src = "/home/uns/.gemini/antigravity/brain/3975ca3d-01cf-4bb1-bc0b-1dedfa2f6459/brisk_walking_illustration_1783791779977.png"
-        slow_jog_src = "/home/uns/.gemini/antigravity/brain/3975ca3d-01cf-4bb1-bc0b-1dedfa2f6459/slow_jogging_illustration_1783792645294.png"
         for img in expected_images:
             path = os.path.join(img_dir, img)
-            if not os.path.exists(path):
-                if img == "RELAXED WALKING.png" and os.path.exists(brisk_walk_src):
-                    shutil.copy(brisk_walk_src, path)
-                elif img == "SLOW JOGGING.png" and os.path.exists(slow_jog_src):
-                    shutil.copy(slow_jog_src, path)
-                elif os.path.exists(fallback):
-                    shutil.copy(fallback, path)
+            if not os.path.exists(path) and os.path.exists(fallback):
+                shutil.copy(fallback, path)
 
-    print("Done — v4.0 generated and images synced!")
+    print("Done — Auto v4.0 generated and images synced!")
