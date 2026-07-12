@@ -73,10 +73,25 @@ const UI = (() => {
     const pngPath = `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
     const gifPath = `images/gifs/${title}.gif`;
     
+    let extraNote = '';
+    const lowerTitle = title.toLowerCase();
+    if (lowerTitle.includes('chin-up') || lowerTitle.includes('pull-up')) {
+      extraNote = `
+        <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 8px; text-align: right; direction: rtl;">
+          <p style="font-size: 14px; margin-bottom: 8px; color: var(--text-primary);"><strong>💡 הבדלי אחיזה - חשוב לזכור:</strong></p>
+          <ul style="font-size: 13px; color: var(--text-secondary); padding-right: 20px; margin: 0; line-height: 1.5;">
+            <li style="margin-bottom: 4px;"><strong>Chin-up:</strong> כפות הידיים פונות לכיוון הפנים (אחיזה תחתית).</li>
+            <li><strong>Pull-up:</strong> כפות הידיים באחיזה פונות לכיוון חוץ (אחיזה עילית).</li>
+          </ul>
+        </div>
+      `;
+    }
+    
     showModal(title, `
       <div style="display: flex; flex-direction: column; gap: 16px;">
         <img src="${pngPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${title} תמונה" onerror="this.style.display='none'">
         <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${title} GIF" onerror="this.style.display='none'">
+        ${extraNote}
       </div>
     `);
   }
