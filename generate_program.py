@@ -243,6 +243,7 @@ def get_pull_exercises(week):
         exercises.append(("Pull-up (Overhand)", fmt_sets(sets_n, reps), None))
     else:
         exercises.append(("Explosive Pull-up", fmt_sets(sets_n, reps), None))
+        exercises.append(("Tuck Front Lever Row", fmt_sets(sets_n, reps), None))
     
     # Band Curl
     exercises.append(("Band Curl", "2-3×12-15", "30 kg"))
@@ -324,15 +325,14 @@ def generate_program():
         {"name":"Arm Circles","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Warmup"},
         {"name":"Wall Slides","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Warmup"},
         {"name":"Scapular Push-up","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Warmup"},
-        {"name":"Dead Bug","category":"Core","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1-4: 3-4×8-12"},
+        {"name":"Dead Bug","category":"Core","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×8-12"},
         {"name":"Bodyweight Squat","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×8-12"},
-        {"name":"Reverse Lunge","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1-2: 3-4×8-12"},
-        {"name":"Split Squat","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2-3: 3-4×8-12"},
-        {"name":"Bodyweight Single-Leg RDL","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 3: 3-4×8-12"},
-        {"name":"Single-Leg RDL","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 4: 3-4×6-10"},
-        {"name":"Hamstring Towel Curl","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 4: 3-4×6-10"},
-        {"name":"Bulgarian Split Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5: 3-4×6-10"},
-        {"name":"Banded Single-Leg RDL","category":"Legs","difficulty":"Advanced","weight":"30 kg","setsProgression":"Phase 6: 3-4×6-10"},
+        {"name":"Reverse Lunge","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 2: 3-4×8-12"},
+        {"name":"Split Squat","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 3-4: 3-4×8-12"},
+        {"name":"Bodyweight Single-Leg RDL","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 1-2: 3-4×8-12"},
+        {"name":"Hamstring Towel Curl","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phases 3, 5, 7, 9: 3-4×6-10"},
+        {"name":"Bulgarian Split Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5-6: 3-4×6-10"},
+        {"name":"Banded Single-Leg RDL","category":"Legs","difficulty":"Advanced","weight":"30 kg","setsProgression":"Phases 4, 6, 8, 10: 3-4×6-10"},
         {"name":"Wall-Supported Skater Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 7-8: 3-4×3-8"},
         {"name":"Pistol Squat to Chair","category":"Legs","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9: 3-4×3-8"},
         {"name":"Full Pistol Squat","category":"Legs","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 10: 3-4×3-8"},
@@ -347,8 +347,8 @@ def generate_program():
         {"name":"Diamond Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 4: 3-4×6-10"},
         {"name":"Decline Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5: 3-4×6-10"},
         {"name":"Archer Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 6-7: 3-4×3-8"},
-        {"name":"One-Arm Push-up Lean","category":"Push","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 8-9: 3-4×3-8"},
-        {"name":"Pseudo-Planche Lean","category":"Push","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9: 3-4×3-8"},
+        {"name":"One-Arm Push-up Lean","category":"Push","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 8+: 3-4×3-8"},
+        {"name":"Pseudo-Planche Lean","category":"Push","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
         {"name":"Table Pike Push-up","category":"Shoulders","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×8-12"},
         {"name":"Pike Push-up","category":"Shoulders","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2: 3-4×8-12"},
         {"name":"Elevated Pike Push-up","category":"Shoulders","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 3: 3-4×8-12"},
@@ -364,7 +364,8 @@ def generate_program():
         {"name":"Chin-up Negative","category":"Pull","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 4: 3-4×6-10"},
         {"name":"Chin-up","category":"Pull","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5-6: 3-4×6-10"},
         {"name":"Pull-up (Overhand)","category":"Pull","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 7-8: 3-4×3-8"},
-        {"name":"Explosive Pull-up","category":"Pull","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9: 3-4×3-8"},
+        {"name":"Explosive Pull-up","category":"Pull","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
+        {"name":"Tuck Front Lever Row","category":"Pull","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
         {"name":"Band Curl","category":"Arms","difficulty":"Beginner","weight":"30 kg","setsProgression":"All phases: 2-3×12-15"},
         {"name":"Towel Grip Hang","category":"Grip","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 3+: 2×20-30 secs"},
         {"name":"Hollow Body Rock","category":"Core","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2-3: 3-4×8-12"},
@@ -376,7 +377,7 @@ def generate_program():
         {"name":"Dragon Flag (Partial ROM)","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 8: 3-4×3-8"},
         {"name":"Dragon Flag","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
         {"name":"Handstand Practice","category":"Skill","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"10-15 mins practice"},
-        {"name":"L-sit Practice","category":"Skill","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"5-10 mins practice"},
+        {"name":"L-sit Practice","category":"Skill","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5+: 5-10 mins practice"},
         {"name":"Seated Band Row","category":"Upper Back","difficulty":"Intermediate","weight":"30 kg","setsProgression":"All phases: 3-4×8-12"},
         {"name":"Ankle Dorsiflexion Mobility","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 9+: 1-2 mins per side"},
         {"name":"Brisk Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"30 mins brisk pace"},

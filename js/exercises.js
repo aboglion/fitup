@@ -79,7 +79,7 @@ const ExercisesPage = (() => {
       },
       {
         title: '🧲 Vertical Pull', icon: '⬆️', exercises: [
-          { name: 'Scapular Pull-up', unlockWeek: 1 }, { name: 'Dead Hang', unlockWeek: 1, parallel: true }, { name: 'Pull-up Negative', unlockWeek: 4 }, { name: 'Chin-up Negative', unlockWeek: 10 }, { name: 'Chin-up', unlockWeek: 13 }, { name: 'Pull-up (Overhand)', unlockWeek: 19 }, { name: 'Explosive Pull-up', unlockWeek: 25 }
+          { name: 'Scapular Pull-up', unlockWeek: 1 }, { name: 'Dead Hang', unlockWeek: 1, parallel: true }, { name: 'Pull-up Negative', unlockWeek: 4 }, { name: 'Chin-up Negative', unlockWeek: 10 }, { name: 'Chin-up', unlockWeek: 13 }, { name: 'Pull-up (Overhand)', unlockWeek: 19 }, { name: 'Explosive Pull-up', unlockWeek: 25 }, { name: 'Tuck Front Lever Row', unlockWeek: 25, parallel: true }
         ]
       },
       {
