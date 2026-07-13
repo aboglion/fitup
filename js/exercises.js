@@ -500,7 +500,7 @@ const ExercisesPage = (() => {
               <div class="rpg-node-hex-wrap">
                 <div class="rpg-node-hex">
                   ${isUnlocked ? '' : '<div class="rpg-lock-icon">🔒</div>'}
-                  ${imgSrc ? `<img src="${imgSrc}" class="rpg-node-img" alt="${node.name}" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc}')" onerror="this.style.display='none'; this.parentElement.querySelector('.rpg-node-emoji') && (this.parentElement.querySelector('.rpg-node-emoji').style.display='flex')">` : ''}
+                  ${imgSrc ? `<img src="${imgSrc}" class="rpg-node-img" loading="lazy" alt="${node.name}" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc}')" onerror="this.style.display='none'; this.parentElement.querySelector('.rpg-node-emoji') && (this.parentElement.querySelector('.rpg-node-emoji').style.display='flex')">` : ''}
                   ${!imgSrc || node.noImage ? `<div class="rpg-node-emoji" style="display:flex">${path.icon}</div>` : `<div class="rpg-node-emoji" style="display:none">${path.icon}</div>`}
                   ${isUnlocked ? `<div class="rpg-node-glow" style="--glow-color: ${tabColor}"></div>` : ''}
                 </div>
@@ -637,7 +637,7 @@ const ExercisesPage = (() => {
     return `
       <div class="guide-card">
         <div class="guide-card-image-container diff-${diffClass}">
-          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onclick="event.stopPropagation(); UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', this.src)" onerror="UI.handleImageFallback(this, 'png')">
+          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" loading="lazy" alt="${ex.name}" onclick="event.stopPropagation(); UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', this.src)" onerror="UI.handleImageFallback(this, 'png')">
         </div>
         <div class="guide-card-content">
           <div class="guide-card-title">
@@ -668,7 +668,7 @@ const ExercisesPage = (() => {
     const fullHtml = `
       <div style="display: flex; flex-direction: column; gap: 16px;">
         ${html}
-        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${ex.name} GIF" onerror="UI.handleImageFallback(this, 'gif')">
+        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" loading="lazy" alt="${ex.name} GIF" onerror="UI.handleImageFallback(this, 'gif')">
       </div>
     `;
     UI.showModal(ex.name, fullHtml);
