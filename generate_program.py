@@ -88,6 +88,10 @@ def get_lower_exercises(week):
     phase = get_leg_phase(week)
     exercises = []
     
+    # Mobility for Pistol Squat
+    if phase >= 9:
+        exercises.append(("Ankle Dorsiflexion Mobility", "1-2 mins per side", None))
+    
     # Main squat movement
     if phase == 1:
         exercises.append(("Bodyweight Squat", fmt_sets(sets_n, reps), None))
@@ -156,6 +160,7 @@ def get_push_exercises(week):
     
     # Prehab
     exercises.append(("Band Pull-Apart", "2-3×15-20", "30 kg"))
+    exercises.append(("Seated Band Row", "3-4×8-12", "30 kg"))
     
     # Main push
     if phase == 1:
@@ -210,6 +215,16 @@ def get_pull_exercises(week):
     phase = get_phase(week)
     exercises = []
     
+    # Skill work
+    exercises.append(("Handstand Practice", "10-15 mins", None))
+    
+    # L-sit practice (from phase 5+)
+    if phase >= 5:
+        exercises.append(("L-sit Practice", "5-10 mins", None))
+        
+    # Scapular (warmup for pull)
+    exercises.append(("Scapular Pull-up", "2×10-15", None))
+    
     # Main pull
     if phase == 1:
         exercises.append(("Scapular Pull-up", fmt_sets(sets_n, reps), None))
@@ -231,22 +246,12 @@ def get_pull_exercises(week):
     else:
         exercises.append(("Explosive Pull-up", fmt_sets(sets_n, reps), None))
     
-    # Scapular (always)
-    exercises.append(("Scapular Pull-up", "2×10-15", None))
-    
     # Band Curl
     exercises.append(("Band Curl", "2-3×12-15", "30 kg"))
     
     # Towel Grip Hang (from phase 3+)
     if phase >= 3:
         exercises.append(("Towel Grip Hang", "2×20-30 secs", None))
-    
-    # Skill work
-    exercises.append(("Handstand Practice", "10-15 mins", None))
-    
-    # L-sit practice (from phase 5+)
-    if phase >= 5:
-        exercises.append(("L-sit Practice", "5-10 mins", None))
     
     # Core finisher
     if phase <= 3:
@@ -374,6 +379,8 @@ def generate_program():
         {"name":"Dragon Flag","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
         {"name":"Handstand Practice","category":"Skill","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"10-15 mins practice"},
         {"name":"L-sit Practice","category":"Skill","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"5-10 mins practice"},
+        {"name":"Seated Band Row","category":"Upper Back","difficulty":"Intermediate","weight":"30 kg","setsProgression":"All phases: 3-4×8-12"},
+        {"name":"Ankle Dorsiflexion Mobility","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 9+: 1-2 mins per side"},
         {"name":"Brisk Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"30 mins brisk pace"},
         {"name":"Relaxed Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"25 mins easy pace"},
     ]

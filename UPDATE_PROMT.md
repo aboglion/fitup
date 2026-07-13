@@ -45,7 +45,8 @@ You have the **FitUp Pro v4.0** 52-week bodyweight program (Hebrew, RTL). It use
 
 | Exercise Type | Rest |
 |---------------|------|
-| Pull-up / Chin-up / Negatives / L-sit variations | 2.5 min |
+| Eccentric heavy (Pull-up/HSPU Negatives) | 3 min |
+| Pull-up / Chin-up / L-sit variations | 2.5 min |
 | Squat / Lunge / Split / Skater / Pike / Decline / Archer / Wall Walk | 2 min |
 | Push-up / Row / Band Curl / Calf Raise / Glute Bridge | 90 sec |
 | Scapular / Prehab (Y-T-W, Pull-Apart, Dead Bug, Side Plank) | 60 sec |
@@ -86,8 +87,8 @@ You have the **FitUp Pro v4.0** 52-week bodyweight program (Hebrew, RTL). It use
 - Phase 6 (Weeks 16-18): Banded Single-Leg RDL (30kg band)
 - Phase 7 (Weeks 19-21): Wall-Supported Skater Squat (exists in dictionary)
 - Phase 8 (Weeks 22-24): Skater Squat — reduce wall support
-- Phase 9 (Weeks 25-27): Pistol Squat to Chair (partial ROM, chair behind)
-- Phase 10 (Weeks 28-52): Full Pistol Squat progression — lower chair, then no chair
+- Phase 9 (Weeks 25-27): Pistol Squat to Chair (partial ROM, chair behind) + Ankle Dorsiflexion Mobility (Warmup)
+- Phase 10 (Weeks 28-52): Full Pistol Squat progression — lower chair, then no chair + Ankle Dorsiflexion Mobility (Warmup)
 
 **PULL PROGRESSION:**
 - Phase 1 (Weeks 1-3): Scapular Pull-up → Dead Hang
@@ -114,7 +115,7 @@ You have the **FitUp Pro v4.0** 52-week bodyweight program (Hebrew, RTL). It use
 **POSTERIOR CHAIN / PREHAB (constant through all phases):**
 - Prone Y-T-W: 2-3 sets, 8-12 each letter
 - Band Pull-Apart: 2-3 sets, 12-20 reps (progress band resistance: 30→40→50kg)
-- Seated Band Row: 3-4 sets, 8-12 reps (progress band: 30→40→50kg)
+- Seated Band Row: 3-4 sets, 8-12 reps (progress band: 30→40→50kg) — add to Tuesday (Upper Push) to increase pull frequency
 - Single-Leg Glute Bridge → Banded Glute Bridge (30kg band, Week 13+)
 
 **CALVES:**
@@ -128,16 +129,16 @@ You have the **FitUp Pro v4.0** 52-week bodyweight program (Hebrew, RTL). It use
 
 Thursday is NOT "Workout C." It is **Skill + Pull Strength**:
 
-**Part A — Pull Strength (20 min):**
-- Main pull exercise of current phase (Pull-up/Chin-up/L-sit Pull-up)
-- Scapular Pull-up (warmup for pull)
-- Band Curl (2-3 sets)
-- Towel Grip Hang
-
-**Part B — Skill Work (15-20 min):**
+**Part A — Skill Work (15-20 min) [Always before strength to ensure fresh CNS]:**
 - Handstand practice (wall or freestanding attempts)
 - L-sit practice (chair → floor)
 - Mobility flow: Arm Circles, Wall Slides, Scapular Push-up (higher reps, no rest)
+
+**Part B — Pull Strength (20 min):**
+- Scapular Pull-up (warmup for pull)
+- Main pull exercise of current phase (Pull-up/Chin-up/L-sit Pull-up)
+- Band Curl (2-3 sets)
+- Towel Grip Hang
 
 **Part C — Core Finisher (5-10 min):**
 - Current phase core exercise

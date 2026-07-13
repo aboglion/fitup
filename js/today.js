@@ -581,6 +581,8 @@ const TodayPage = (() => {
     // 180 Seconds
     if (lowerName.includes('pull-up negative') || 
         lowerName.includes('chin-up negative') || 
+        lowerName.includes('handstand push-up negative') ||
+        lowerName.includes('hspu negative') ||
         lowerName === 'chin-up' || lowerName.includes('chin-up')) {
         return 180;
     }
