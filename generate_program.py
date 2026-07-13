@@ -92,31 +92,29 @@ def get_lower_exercises(week):
     if phase >= 9:
         exercises.append(("Ankle Dorsiflexion Mobility", "1-2 mins per side", None))
     
-    # Main squat movement
+    # Quad Dominant
     if phase == 1:
         exercises.append(("Bodyweight Squat", fmt_sets(sets_n, reps), None))
-        exercises.append(("Reverse Lunge", fmt_sets(sets_n, reps), None))
     elif phase == 2:
         exercises.append(("Reverse Lunge", fmt_sets(sets_n, reps), None))
+    elif phase == 3 or phase == 4:
         exercises.append(("Split Squat", fmt_sets(sets_n, reps), None))
-    elif phase == 3:
-        exercises.append(("Split Squat", fmt_sets(sets_n, reps), None))
-        exercises.append(("Bodyweight Single-Leg RDL", fmt_sets(sets_n, reps), None))
-    elif phase == 4:
-        exercises.append(("Single-Leg RDL", fmt_sets(sets_n, reps), None))
-        exercises.append(("Hamstring Towel Curl", fmt_sets(sets_n, reps), None))
-    elif phase == 5:
+    elif phase == 5 or phase == 6:
         exercises.append(("Bulgarian Split Squat", fmt_sets(sets_n, reps), None))
-    elif phase == 6:
-        exercises.append(("Banded Single-Leg RDL", fmt_sets(sets_n, reps), "30 kg"))
-    elif phase == 7:
-        exercises.append(("Wall-Supported Skater Squat", fmt_sets(sets_n, reps), None))
-    elif phase == 8:
+    elif phase == 7 or phase == 8:
         exercises.append(("Wall-Supported Skater Squat", fmt_sets(sets_n, reps), None))
     elif phase == 9:
         exercises.append(("Pistol Squat to Chair", fmt_sets(sets_n, reps), None))
     else:
         exercises.append(("Full Pistol Squat", fmt_sets(sets_n, reps), None))
+        
+    # Hamstring Dominant
+    if phase == 1 or phase == 2:
+        exercises.append(("Bodyweight Single-Leg RDL", fmt_sets(sets_n, reps), None))
+    elif phase == 3 or phase == 5 or phase == 7 or phase == 9:
+        exercises.append(("Hamstring Towel Curl", fmt_sets(sets_n, reps), None))
+    elif phase == 4 or phase == 6 or phase == 8 or phase == 10:
+        exercises.append(("Banded Single-Leg RDL", fmt_sets(sets_n, reps), "30 kg"))
     
     # Glute
     if phase <= 4:

@@ -78,17 +78,20 @@ You have the **FitUp Pro v4.0** 52-week bodyweight program (Hebrew, RTL). It use
 - Phase 8 (Weeks 22-24): Handstand Push-up Negative — controlled, full ROM
 - Phase 9 (Weeks 25-52): Maintain HSPU negative, increase reps; OR freestanding handstand practice on Skill Day
 
-**LEG PROGRESSION:**
-- Phase 1 (Weeks 1-3): Bodyweight Squat → Reverse Lunge
-- Phase 2 (Weeks 4-6): Reverse Lunge → Split Squat
-- Phase 3 (Weeks 7-9): Split Squat (deeper) → Bodyweight Single-Leg RDL
-- Phase 4 (Weeks 10-12): Single-Leg RDL → Hamstring Towel Curl
-- Phase 5 (Weeks 13-15): Bulgarian Split Squat (exists in dictionary)
-- Phase 6 (Weeks 16-18): Banded Single-Leg RDL (30kg band)
-- Phase 7 (Weeks 19-21): Wall-Supported Skater Squat (exists in dictionary)
-- Phase 8 (Weeks 22-24): Skater Squat — reduce wall support
-- Phase 9 (Weeks 25-27): Pistol Squat to Chair (partial ROM, chair behind) + Ankle Dorsiflexion Mobility (Warmup)
-- Phase 10 (Weeks 28-52): Full Pistol Squat progression — lower chair, then no chair + Ankle Dorsiflexion Mobility (Warmup)
+**LEG PROGRESSION (Dual Track):**
+*Track A: Quad Dominant (Squat/Lunge)*
+- Phase 1 (Weeks 1-3): Bodyweight Squat
+- Phase 2 (Weeks 4-6): Reverse Lunge
+- Phase 3-4 (Weeks 7-12): Split Squat
+- Phase 5-6 (Weeks 13-18): Bulgarian Split Squat (exists in dictionary)
+- Phase 7-8 (Weeks 19-24): Wall-Supported Skater Squat (exists in dictionary)
+- Phase 9 (Weeks 25-27): Pistol Squat to Chair (partial ROM) + Ankle Dorsiflexion Mobility
+- Phase 10 (Weeks 28-52): Full Pistol Squat progression + Ankle Dorsiflexion Mobility
+
+*Track B: Hamstring Dominant (Hinge/Curl)*
+- Phase 1-2 (Weeks 1-6): Bodyweight Single-Leg RDL
+- Phase 3, 5, 7, 9: Hamstring Towel Curl (Knee Flexion focus)
+- Phase 4, 6, 8, 10: Banded Single-Leg RDL (30kg band) (Hip Extension focus)
 
 **PULL PROGRESSION:**
 - Phase 1 (Weeks 1-3): Scapular Pull-up → Dead Hang
