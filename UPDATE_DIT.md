@@ -57,7 +57,8 @@
 
 | סוג תרגיל | מנוחה |
 |-----------|-------|
-| Pull-up / Chin-up / Negatives / L-sit | 2.5 דק׳ |
+| Eccentric heavy (Pull-up/HSPU Negatives) | 3 דק׳ |
+| Pull-up / Chin-up / L-sit | 2.5 דק׳ |
 | Squat / Lunge / Split / Skater / Pike / Decline / Archer / Wall Walk | 2 דק׳ |
 | Push-up / Row / Band Curl / Calf Raise / Glute Bridge | 90 שנ׳ |
 | Scapular / Prehab (Y-T-W, Pull-Apart, Dead Bug, Side Plank) | 60 שנ׳ |
@@ -424,20 +425,25 @@
 | 8 | 22-24 | Handstand Push-up Negative — טווח מלא |
 | 9 | 25-52 | HSPU Negative + תרגול עמידת ידיים חופשית |
 
-### רגליים (Leg Progression)
+### רגליים (Leg Progression) - מסלול כפול
 
+**ערוץ A: דומיננטיות ארבע-ראשי (Squat/Lunge)**
 | שלב | שבועות | תרגיל |
 |-----|--------|-------|
-| 1 | 1-3 | Bodyweight Squat → Reverse Lunge |
-| 2 | 4-6 | Reverse Lunge → Split Squat |
-| 3 | 7-9 | Split Squat (עמוק) → Bodyweight Single-Leg RDL |
-| 4 | 10-12 | Single-Leg RDL → Hamstring Towel Curl |
-| 5 | 13-15 | Bulgarian Split Squat |
-| 6 | 16-18 | Banded Single-Leg RDL (30kg) |
-| 7 | 19-21 | Wall-Supported Skater Squat |
-| 8 | 22-24 | Skater Squat — הפחתת תמיכת קיר |
-| 9 | 25-27 | Pistol Squat to Chair |
-| 10 | 28-52 | Full Pistol Squat — התקדמות מכיסא נמוך ללא כיסא |
+| 1 | 1-3 | Bodyweight Squat |
+| 2 | 4-6 | Reverse Lunge |
+| 3-4 | 7-12 | Split Squat |
+| 5-6 | 13-18 | Bulgarian Split Squat |
+| 7-8 | 19-24 | Wall-Supported Skater Squat |
+| 9 | 25-27 | Pistol Squat to Chair (חלקי) + מוביליות קרסול |
+| 10 | 28-52 | Full Pistol Squat + מוביליות קרסול |
+
+**ערוץ B: דומיננטיות ירך אחורית (Hinge/Curl)**
+| שלב | שבועות | תרגיל | פוקוס |
+|-----|--------|-------|-------|
+| 1-2 | 1-6 | Bodyweight Single-Leg RDL | Hip Extension |
+| 3, 5, 7, 9 | - | Hamstring Towel Curl | Knee Flexion |
+| 4, 6, 8, 10 | - | Banded Single-Leg RDL (30kg) | Hip Extension |
 
 ### משיכה (Pull Progression)
 

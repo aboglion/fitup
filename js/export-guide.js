@@ -111,12 +111,12 @@ window.ExporterGuide = (() => {
     </head>
     <body>
       <div class="header">
-        <h1>🏋️ FitUp Pro — מדריך תוכנית 52 שבועות</h1>
+        <h1>🏋️ FitUp Pro Hybrid v5.0 — מדריך תוכנית 52 שבועות</h1>
         <p><strong>אפיון, הסברים, מילון תרגילים ופריסת ימים מלאה</strong></p>
       </div>
 
       <div class="section">
-        <h2>📖 אפיון והסבר על התוכנית — גרסה 4.0</h2>
+        <h2>📖 אפיון והסבר על התוכנית — גרסה 5.0</h2>
         <p>תוכנית אימונים זו תוכננה למשך 52 שבועות במטרה לבנות כוח, מסת שריר, תנועתיות, ולהקנות הרגלים בריאים ארוכי טווח. הפילוסופיה של התוכנית היא <strong>התקדמות הדרגתית (Progressive Overload)</strong> עם 13 בלוקים של התקדמות (4 שבועות לבלוק) ושבועות דילואד מובנים.</p>
 
         <h3>🔧 כלים נדרשים</h3>
@@ -133,9 +133,9 @@ window.ExporterGuide = (() => {
           <tr><th>יום</th><th>סוג</th><th>RPE</th></tr>
           <tr><td>א׳ (ראשון)</td><td>💪 Workout A</td><td>7-8</td></tr>
           <tr><td>ב׳ (שני)</td><td>🚶 Active Recovery (Brisk Walking 35 mins)</td><td>—</td></tr>
-          <tr><td>ג׳ (שלישי)</td><td>💪 Workout B</td><td>7-8</td></tr>
+          <tr><td>ג׳ (שלישי)</td><td>💪 Upper Push</td><td>7-8</td></tr>
           <tr><td>ד׳ (רביעי)</td><td>🚶 Active Recovery (Relaxed Walking 30 mins)</td><td>—</td></tr>
-          <tr><td>ה׳ (חמישי)</td><td>💪 Workout C</td><td>7-8</td></tr>
+          <tr><td>ה׳ (חמישי)</td><td>💪 Upper Pull + Skill</td><td>7-8</td></tr>
           <tr><td>ו׳ (שישי)</td><td>🚶 Active Recovery (Brisk Walking 35 mins)</td><td>—</td></tr>
           <tr><td>ש׳ (שבת)</td><td>🧘 Rest</td><td>—</td></tr>
         </table>
@@ -150,8 +150,8 @@ window.ExporterGuide = (() => {
         <h3>⏳ זמני מנוחה בין סטים</h3>
         <table>
           <tr><th>סוג תרגיל</th><th>מנוחה בין סטים</th></tr>
-          <tr><td>Pull-up Negative, Chin-up Negative, Chin-up</td><td>180 שניות</td></tr>
-          <tr><td>Squat, Lunge, Split Squat, Skater Squat, Single-Leg RDL, Hamstring Towel Curl, Single-Leg Towel Curl, כל סוג Push-up, Pike Push-up, Wall Handstand, Wall Walk</td><td>120 שניות</td></tr>
+          <tr><td>Eccentric Heavy (Pull-up Negative, Chin-up Negative, HSPU Negative), Chin-up</td><td>180 שניות (3 דקות)</td></tr>
+          <tr><td>Squat, Lunge, Split Squat, Skater Squat, Pistol Squat, Single-Leg RDL, Hamstring Towel Curl, כל סוג Push-up, Pike Push-up, Wall Handstand, Wall Walk</td><td>120 שניות (2 דקות)</td></tr>
           <tr><td>Seated Band Row</td><td>120 שניות</td></tr>
           <tr><td>Band Curl, Towel Grip Hang</td><td>90 שניות</td></tr>
           <tr><td>Scapular Pull-up, Scapular Push-up, Band Pull-Apart, Prone Y-T-W</td><td>60 שניות</td></tr>
