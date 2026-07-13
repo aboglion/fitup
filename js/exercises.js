@@ -20,9 +20,9 @@ const ExercisesPage = (() => {
   const BAND_WEIGHT_PROGRESSION = {
     'Seated Band Row': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 13 }],
     'Band Pull-Apart': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 9 }],
-    'Band Curl': [{ weight: '30 kg', fromWeek: 9 }, { weight: '40 kg', fromWeek: 21 }, { weight: '50 kg', fromWeek: 33 }],
-    'Banded Single-Leg RDL': [{ weight: '30 kg', fromWeek: 17 }, { weight: '40 kg', fromWeek: 21 }, { weight: '50 kg', fromWeek: 33 }],
-    'Banded Glute Bridge': [{ weight: '30 kg', fromWeek: 17 }, { weight: '40 kg', fromWeek: 25 }, { weight: '50 kg', fromWeek: 37 }]
+    'Band Curl': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 17 }, { weight: '50 kg', fromWeek: 33 }],
+    'Banded Single-Leg RDL': [{ weight: '30 kg', fromWeek: 10 }, { weight: '40 kg', fromWeek: 21 }, { weight: '50 kg', fromWeek: 33 }],
+    'Banded Glute Bridge': [{ weight: '30 kg', fromWeek: 13 }, { weight: '40 kg', fromWeek: 25 }, { weight: '50 kg', fromWeek: 37 }]
   };
 
   // Skill paths organized by day type
@@ -30,12 +30,12 @@ const ExercisesPage = (() => {
     'lower-strength': [
       {
         title: '🔥 Warmup', icon: '🛡️', exercises: [
-          { name: 'High Knees', unlockWeek: 1 }, { name: 'Arm Circles', unlockWeek: 1 }, { name: 'Wall Slides', unlockWeek: 1 }, { name: 'Scapular Push-up', unlockWeek: 1 }, { name: 'Dead Bug', unlockWeek: 1 }
+          { name: 'High Knees', unlockWeek: 1 }, { name: 'Arm Circles', unlockWeek: 1 }, { name: 'Wall Slides', unlockWeek: 1 }, { name: 'Scapular Push-up', unlockWeek: 1 }, { name: 'Dead Bug', unlockWeek: 1 }, { name: 'Ankle Dorsiflexion Mobility', unlockWeek: 25 }
         ]
       },
       {
         title: '🦵 Legs', icon: '🏋️', exercises: [
-          { name: 'Bodyweight Squat', unlockWeek: 1 }, { name: 'Reverse Lunge', unlockWeek: 1, parallel: true }, { name: 'Split Squat', unlockWeek: 4 }, { name: 'Bodyweight Single-Leg RDL', unlockWeek: 7 }, { name: 'Single-Leg RDL', unlockWeek: 10 }, { name: 'Hamstring Towel Curl', unlockWeek: 10, parallel: true }, { name: 'Bulgarian Split Squat', unlockWeek: 13 }, { name: 'Banded Single-Leg RDL', unlockWeek: 16 }, { name: 'Wall-Supported Skater Squat', unlockWeek: 19 }, { name: 'Pistol Squat to Chair', unlockWeek: 25 }, { name: 'Full Pistol Squat', unlockWeek: 28 }
+          { name: 'Bodyweight Squat', unlockWeek: 1 }, { name: 'Bodyweight Single-Leg RDL', unlockWeek: 1, parallel: true }, { name: 'Reverse Lunge', unlockWeek: 4 }, { name: 'Split Squat', unlockWeek: 7 }, { name: 'Hamstring Towel Curl', unlockWeek: 7, parallel: true }, { name: 'Banded Single-Leg RDL', unlockWeek: 10, parallel: true }, { name: 'Bulgarian Split Squat', unlockWeek: 13 }, { name: 'Wall-Supported Skater Squat', unlockWeek: 19 }, { name: 'Pistol Squat to Chair', unlockWeek: 25 }, { name: 'Full Pistol Squat', unlockWeek: 28 }
         ]
       },
       {
@@ -67,7 +67,7 @@ const ExercisesPage = (() => {
       },
       {
         title: '🔗 Upper Back (Prehab)', icon: '↔️', exercises: [
-          { name: 'Band Pull-Apart', unlockWeek: 1 }, { name: 'Prone Y-T-W', unlockWeek: 1, parallel: true }
+          { name: 'Band Pull-Apart', unlockWeek: 1 }, { name: 'Prone Y-T-W', unlockWeek: 1, parallel: true }, { name: 'Seated Band Row', unlockWeek: 1, parallel: true }
         ]
       }
     ],

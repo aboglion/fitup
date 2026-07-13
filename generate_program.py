@@ -9,6 +9,29 @@ DAYS_ENG = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturda
 def ex(slot, name, sets, weight=None, isWarmup=False):
     return {"slot": slot, "name": name, "sets": sets, "weight": weight, "isWarmup": isWarmup}
 
+def get_band_weight(name, week):
+    if name == "Seated Band Row":
+        if week >= 13: return "50 kg"
+        if week >= 5: return "40 kg"
+        return "30 kg"
+    if name == "Band Pull-Apart":
+        if week >= 9: return "50 kg"
+        if week >= 5: return "40 kg"
+        return "30 kg"
+    if name == "Band Curl":
+        if week >= 33: return "50 kg"
+        if week >= 17: return "40 kg"
+        return "30 kg"
+    if name == "Banded Single-Leg RDL":
+        if week >= 33: return "50 kg"
+        if week >= 21: return "40 kg"
+        return "30 kg"
+    if name == "Banded Glute Bridge":
+        if week >= 37: return "50 kg"
+        if week >= 25: return "40 kg"
+        return "30 kg"
+    return "30 kg"
+
 def get_warmup():
     return [
         ex("W1", "High Knees", "20 reps", isWarmup=True),
@@ -114,13 +137,13 @@ def get_lower_exercises(week):
     elif phase == 3 or phase == 5 or phase == 7 or phase == 9:
         exercises.append(("Hamstring Towel Curl", fmt_sets(sets_n, reps), None))
     elif phase == 4 or phase == 6 or phase == 8 or phase == 10:
-        exercises.append(("Banded Single-Leg RDL", fmt_sets(sets_n, reps), "30 kg"))
+        exercises.append(("Banded Single-Leg RDL", fmt_sets(sets_n, reps), get_band_weight("Banded Single-Leg RDL", week)))
     
     # Glute
     if phase <= 4:
         exercises.append(("Single-Leg Glute Bridge", fmt_sets(sets_n, "10-12"), None))
     else:
-        exercises.append(("Banded Glute Bridge", fmt_sets(sets_n, "12-15"), "30 kg"))
+        exercises.append(("Banded Glute Bridge", fmt_sets(sets_n, "12-15"), get_band_weight("Banded Glute Bridge", week)))
     
     # Calf
     if phase <= 1:
@@ -157,8 +180,8 @@ def get_push_exercises(week):
     exercises = []
     
     # Prehab
-    exercises.append(("Band Pull-Apart", "2-3×15-20", "30 kg"))
-    exercises.append(("Seated Band Row", "3-4×8-12", "30 kg"))
+    exercises.append(("Band Pull-Apart", "2-3×15-20", get_band_weight("Band Pull-Apart", week)))
+    exercises.append(("Seated Band Row", "3-4×8-12", get_band_weight("Seated Band Row", week)))
     
     # Main push
     if phase == 1:
@@ -246,7 +269,7 @@ def get_pull_exercises(week):
         exercises.append(("Tuck Front Lever Row", fmt_sets(sets_n, reps), None))
     
     # Band Curl
-    exercises.append(("Band Curl", "2-3×12-15", "30 kg"))
+    exercises.append(("Band Curl", "2-3×12-15", get_band_weight("Band Curl", week)))
     
     # Towel Grip Hang (from phase 3+)
     if phase >= 3:
@@ -332,12 +355,12 @@ def generate_program():
         {"name":"Bodyweight Single-Leg RDL","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 1-2: 3-4×8-12"},
         {"name":"Hamstring Towel Curl","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phases 3, 5, 7, 9: 3-4×6-10"},
         {"name":"Bulgarian Split Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5-6: 3-4×6-10"},
-        {"name":"Banded Single-Leg RDL","category":"Legs","difficulty":"Advanced","weight":"30 kg","setsProgression":"Phases 4, 6, 8, 10: 3-4×6-10"},
+        {"name":"Banded Single-Leg RDL","category":"Legs","difficulty":"Advanced","weight":"30-50 kg","setsProgression":"Phases 4, 6, 8, 10: 3-4×6-10"},
         {"name":"Wall-Supported Skater Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 7-8: 3-4×3-8"},
         {"name":"Pistol Squat to Chair","category":"Legs","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9: 3-4×3-8"},
         {"name":"Full Pistol Squat","category":"Legs","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 10: 3-4×3-8"},
         {"name":"Single-Leg Glute Bridge","category":"Glutes","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1-4: 3-4×10-12"},
-        {"name":"Banded Glute Bridge","category":"Glutes","difficulty":"Intermediate","weight":"30 kg","setsProgression":"Phase 5+: 3-4×12-15"},
+        {"name":"Banded Glute Bridge","category":"Glutes","difficulty":"Intermediate","weight":"30-50 kg","setsProgression":"Phase 5+: 3-4×12-15"},
         {"name":"Calf Raise","category":"Calves","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×15-20"},
         {"name":"Single-Leg Calf Raise","category":"Calves","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2+: 3-4×15-20"},
         {"name":"Table Push-up","category":"Push","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×8-12"},
@@ -356,7 +379,7 @@ def generate_program():
         {"name":"Wall Walk (Full)","category":"Shoulders","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 5-6: 3-4×6-10"},
         {"name":"Wall Handstand Push-up Negative","category":"Shoulders","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 7-8: 3-4×15-30 secs"},
         {"name":"Handstand Push-up","category":"Shoulders","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
-        {"name":"Band Pull-Apart","category":"Upper Back","difficulty":"Beginner","weight":"30 kg","setsProgression":"All phases: 2-3×15-20"},
+        {"name":"Band Pull-Apart","category":"Upper Back","difficulty":"Beginner","weight":"30-50 kg","setsProgression":"All phases: 2-3×15-20"},
         {"name":"Prone Y-T-W","category":"Upper Back","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"All phases: 2-3×8-12"},
         {"name":"Scapular Pull-up","category":"Pull","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"All phases: 2×10-15"},
         {"name":"Dead Hang","category":"Pull","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3×15-30 secs"},
@@ -366,7 +389,7 @@ def generate_program():
         {"name":"Pull-up (Overhand)","category":"Pull","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 7-8: 3-4×3-8"},
         {"name":"Explosive Pull-up","category":"Pull","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
         {"name":"Tuck Front Lever Row","category":"Pull","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
-        {"name":"Band Curl","category":"Arms","difficulty":"Beginner","weight":"30 kg","setsProgression":"All phases: 2-3×12-15"},
+        {"name":"Band Curl","category":"Arms","difficulty":"Beginner","weight":"30-50 kg","setsProgression":"All phases: 2-3×12-15"},
         {"name":"Towel Grip Hang","category":"Grip","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 3+: 2×20-30 secs"},
         {"name":"Hollow Body Rock","category":"Core","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2-3: 3-4×8-12"},
         {"name":"Hollow-to-Arch Rock","category":"Core","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 4: 3-4×6-10"},
@@ -378,7 +401,7 @@ def generate_program():
         {"name":"Dragon Flag","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
         {"name":"Handstand Practice","category":"Skill","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"10-15 mins practice"},
         {"name":"L-sit Practice","category":"Skill","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5+: 5-10 mins practice"},
-        {"name":"Seated Band Row","category":"Upper Back","difficulty":"Intermediate","weight":"30 kg","setsProgression":"All phases: 3-4×8-12"},
+        {"name":"Seated Band Row","category":"Upper Back","difficulty":"Intermediate","weight":"30-50 kg","setsProgression":"All phases: 3-4×8-12"},
         {"name":"Ankle Dorsiflexion Mobility","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 9+: 1-2 mins per side"},
         {"name":"Brisk Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"30 mins brisk pace"},
         {"name":"Relaxed Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"25 mins easy pace"},
