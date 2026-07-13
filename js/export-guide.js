@@ -130,22 +130,22 @@ window.ExporterGuide = (() => {
 
         <h3>⚙️ מבנה שבועי</h3>
         <table>
-          <tr><th>יום</th><th>סוג</th><th>RPE</th></tr>
-          <tr><td>א׳ (ראשון)</td><td>💪 Workout A</td><td>7-8</td></tr>
-          <tr><td>ב׳ (שני)</td><td>🚶 Active Recovery (Brisk Walking 35 mins)</td><td>—</td></tr>
-          <tr><td>ג׳ (שלישי)</td><td>💪 Upper Push</td><td>7-8</td></tr>
-          <tr><td>ד׳ (רביעי)</td><td>🚶 Active Recovery (Relaxed Walking 30 mins)</td><td>—</td></tr>
-          <tr><td>ה׳ (חמישי)</td><td>💪 Upper Pull + Skill</td><td>7-8</td></tr>
-          <tr><td>ו׳ (שישי)</td><td>🚶 Active Recovery (Brisk Walking 35 mins)</td><td>—</td></tr>
-          <tr><td>ש׳ (שבת)</td><td>🧘 Rest</td><td>—</td></tr>
+          <tr><th>יום</th><th>אימון</th><th>עצימות</th></tr>
+          <tr><td>שני</td><td>🦵 רגליים + ליבה</td><td>RPE 7–8</td></tr>
+          <tr><td>שלישי</td><td>🚶 התאוששות פעילה — הליכה מהירה 30–35 דקות</td><td>קל</td></tr>
+          <tr><td>רביעי</td><td>💪 דחיפה + סקיל + רגליים קל</td><td>RPE 7–8</td></tr>
+          <tr><td>חמישי</td><td>🚶 התאוששות פעילה — הליכה רגועה 25–30 דקות</td><td>קל</td></tr>
+          <tr><td>שישי</td><td>🎯 משיכה + אחיזה + ליבה קלה</td><td>RPE 7–8</td></tr>
+          <tr><td>שבת</td><td>🚶 התאוששות פעילה — הליכה מהירה 30–35 דקות</td><td>קל</td></tr>
+          <tr><td>ראשון</td><td>🧘 מנוחה</td><td>—</td></tr>
         </table>
 
         <h3>🔄 Deload — שבועות התאוששות</h3>
-        <p>כל 4 שבועות (שבועות 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52) יש <strong>שבוע Deload</strong>. בשבועות אלו, אותם תרגילים מתבצעים אך בנפח מופחת (פחות סטים). המטרה: מניעת אוברטריינינג, איפוס מערכת העצבים ושמירה על מומנטום ארוך טווח.</p>
+        <p>כל 6 שבועות (שבועות 6, 12, 18, 24, 30, 36, 42, 48, 52) יש <strong>שבוע Deload</strong>. בשבועות אלו, אותם תרגילים מתבצעים אך בנפח מופחת (2 סטים במקום 3-4, עצירה עם 2-4 חזרות ברזרבה). Handstand מופחת ל-5-8 דקות. L-sit מופחת ל-2-3 ניסיונות קלים. אין סטים לכשל. הליכות והתאוששות כרגיל בקצב קל.</p>
 
         <h3>🔥 חימום לפי סוג אימון</h3>
-        <p><strong>לפני אימונים A ו-B (חימום מלא):</strong> High Knees, Arm Circles, Wall Slides, Scapular Push-up, Bodyweight Squat, Reverse Lunge, Dead Bug.</p>
-        <p><strong>לפני אימון C (ללא רגליים):</strong> High Knees, Arm Circles, Wall Slides, Scapular Push-up, Dead Bug.</p>
+        <p><strong>לפני אימוני רגליים ודחיפה (חימום מלא):</strong> High Knees, Arm Circles, Wall Slides, Scapular Push-up, Dead Bug.</p>
+        <p><strong>לפני אימון משיכה:</strong> High Knees, Arm Circles, Wall Slides, Scapular Push-up, Dead Bug.</p>
 
         <h3>⏳ זמני מנוחה בין סטים</h3>
         <table>
@@ -166,15 +166,18 @@ window.ExporterGuide = (() => {
         <h2>📚 מילון תרגילים</h2>
         <p>פירוט כל התרגילים המופיעים בתוכנית.</p>
         <div class="grid-container">
-          ${exercises.map(ex => `
+          ${exercises.map(ex => {
+            const hasNoGif = ex.name.toLowerCase().includes('walking') || ex.name.includes('הליכה') || ['Slow Jogging', 'Dead Hang', 'Full Pistol Squat'].includes(ex.name);
+            return `
             <div class="exercise-card">
               <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--primary);">${ex.name}</h4>
               <p style="margin: 0 0 6px 0;"><span class="badge">${ex.category || 'כללי'}</span> ${ex.difficulty ? `<span class="badge" style="background: #fef3c7; color: #92400e;">${ex.difficulty}</span>` : ''}</p>
               ${ex.weight ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>התנגדות:</strong> ${ex.weight}</p>` : ''}
               ${ex.setsProgression ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>התקדמות:</strong> ${ex.setsProgression}</p>` : ''}
-              <p style="font-size: 0.9em; margin: 4px 0;"><a href="images/gifs/${ex.name}.gif" target="_blank" style="color: var(--primary);">▶ צפה ב-GIF</a></p>
+              ${!hasNoGif ? `<p style="font-size: 0.9em; margin: 4px 0;"><a href="images/gifs/${ex.name}.gif" target="_blank" style="color: var(--primary);">▶ צפה ב-GIF</a></p>` : ''}
             </div>
-          `).join('')}
+            `;
+          }).join('')}
         </div>
       </div>
 

@@ -10,10 +10,10 @@ const ExercisesPage = (() => {
 
   // Day type tabs configuration
   const DAY_TABS = [
-    { id: 'lower-strength', label: 'Lower Strength', subtitle: 'Legs · Core', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><circle cx="12" cy="4" r="2"/><path d="M12 6v10M6 5v5h12V5M12 16l-4 6M12 16l4 6"/></svg>', color: '#f97316', bgColor: 'rgba(249, 115, 22, 0.15)', dayTypes: ['Lower Strength'] },
-    { id: 'upper-push', label: 'Upper Push', subtitle: 'Chest · Shoulders', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M12 6v14M6 5v5h12V5M9 20h6"/></svg>', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.15)', dayTypes: ['Upper Push'] },
-    { id: 'upper-pull', label: 'Upper Pull', subtitle: 'Back · Arms · Skill', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><circle cx="12" cy="4" r="2"/><path d="M12 6v10M6 5v5h12V5M12 16l-4 6M12 16l4 6"/></svg>', color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.15)', dayTypes: ['Upper Pull + Skill'] },
-    { id: 'cardio', label: 'Cardio', subtitle: 'Active Recovery', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.15)', dayTypes: ['Active Recovery'] }
+    { id: 'lower-strength', label: 'Legs + Core', subtitle: 'רגליים · ליבה', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M6 12h12M3 8v8M21 8v8M6 6v12M18 6v12"/></svg>', color: '#f97316', bgColor: 'rgba(249, 115, 22, 0.15)', dayTypes: ['Legs + Core'] },
+    { id: 'upper-push', label: 'Push + Skill', subtitle: 'דחיפה · סקיל · רגליים קל', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M17 11l-5-5-5 5M12 6v12M5 21h14"/></svg>', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.15)', dayTypes: ['Push + Skill'] },
+    { id: 'upper-pull', label: 'Pull + Grip', subtitle: 'משיכה · אחיזה · ליבה קלה', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M6 20h12M12 4v12M8 12l4 4 4-4"/></svg>', color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.15)', dayTypes: ['Pull + Grip'] },
+    { id: 'cardio', label: 'Cardio', subtitle: 'אירובי · התאוששות', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.15)', dayTypes: ['Active Recovery'] }
   ];
 
   // Band weight progression tiers (exercise name → sorted tiers)
@@ -29,78 +29,93 @@ const ExercisesPage = (() => {
   const SKILL_TREES = {
     'lower-strength': [
       {
-        title: '🔥 Warmup', icon: '🛡️', exercises: [
+        title: 'חימום וניידות', icon: '⚡', exercises: [
           { name: 'High Knees', unlockWeek: 1 }, { name: 'Arm Circles', unlockWeek: 1 }, { name: 'Wall Slides', unlockWeek: 1 }, { name: 'Scapular Push-up', unlockWeek: 1 }, { name: 'Dead Bug', unlockWeek: 1 }, { name: 'Ankle Dorsiflexion Mobility', unlockWeek: 25 }
         ]
       },
       {
-        title: '🦵 Legs', icon: '🏋️', exercises: [
+        title: 'כוח רגליים', icon: '🏋️', exercises: [
           { name: 'Bodyweight Squat', unlockWeek: 1 }, { name: 'Bodyweight Single-Leg RDL', unlockWeek: 1, parallel: true }, { name: 'Reverse Lunge', unlockWeek: 4 }, { name: 'Split Squat', unlockWeek: 7 }, { name: 'Hamstring Towel Curl', unlockWeek: 7, parallel: true }, { name: 'Banded Single-Leg RDL', unlockWeek: 10, parallel: true }, { name: 'Bulgarian Split Squat', unlockWeek: 13 }, { name: 'Wall-Supported Skater Squat', unlockWeek: 19 }, { name: 'Pistol Squat to Chair', unlockWeek: 25 }, { name: 'Full Pistol Squat', unlockWeek: 28 }
         ]
       },
       {
-        title: '🍑 Glutes & Calves', icon: '🔥', exercises: [
+        title: 'ישבן ותאומים', icon: '🍑', exercises: [
           { name: 'Single-Leg Glute Bridge', unlockWeek: 1 }, { name: 'Banded Glute Bridge', unlockWeek: 13 }, { name: 'Calf Raise', unlockWeek: 1, parallel: true }, { name: 'Single-Leg Calf Raise', unlockWeek: 4, parallel: true }
         ]
       },
       {
-        title: '🧱 Core', icon: '🔲', exercises: [
+        title: 'מבצר הליבה', icon: '🛡️', exercises: [
           { name: 'Dead Bug', unlockWeek: 1 }, { name: 'Hollow Body Rock', unlockWeek: 4 }, { name: 'Hollow-to-Arch Rock', unlockWeek: 10 }, { name: 'L-sit on Chair', unlockWeek: 13 }, { name: 'L-sit on Floor', unlockWeek: 16 }, { name: 'Dragon Flag Negative', unlockWeek: 19 }, { name: 'Dragon Flag (Partial ROM)', unlockWeek: 22 }, { name: 'Dragon Flag', unlockWeek: 25 }
         ]
       }
     ],
     'upper-push': [
       {
-        title: '🔥 Warmup', icon: '🛡️', exercises: [
+        title: 'חימום והכנה', icon: '⚡', exercises: [
           { name: 'High Knees', unlockWeek: 1 }, { name: 'Arm Circles', unlockWeek: 1 }, { name: 'Wall Slides', unlockWeek: 1 }, { name: 'Scapular Push-up', unlockWeek: 1 }, { name: 'Dead Bug', unlockWeek: 1 }
         ]
       },
       {
-        title: '💥 Push (Chest)', icon: '🫁', exercises: [
+        title: 'מיומנות עמידת ידיים', icon: '🤸', exercises: [
+          { name: 'Handstand Practice', unlockWeek: 1 }
+        ]
+      },
+      {
+        title: 'לחיצות (חזה ויד אחורית)', icon: '💥', exercises: [
           { name: 'Table Push-up', unlockWeek: 1 }, { name: 'Knee Push-up', unlockWeek: 1, parallel: true }, { name: 'Push-up', unlockWeek: 4 }, { name: 'Close-Grip Push-up', unlockWeek: 7 }, { name: 'Diamond Push-up', unlockWeek: 10 }, { name: 'Decline Push-up', unlockWeek: 13 }, { name: 'Archer Push-up', unlockWeek: 16 }, { name: 'One-Arm Push-up Lean', unlockWeek: 22 }, { name: 'Pseudo-Planche Lean', unlockWeek: 25 }
         ]
       },
       {
-        title: '🎯 Shoulders', icon: '🏔️', exercises: [
+        title: 'כתפיים ולחיצות מעל הראש', icon: '🎯', exercises: [
           { name: 'Table Pike Push-up', unlockWeek: 1 }, { name: 'Pike Push-up', unlockWeek: 4 }, { name: 'Elevated Pike Push-up', unlockWeek: 7 }, { name: 'Wall Handstand', unlockWeek: 10 }, { name: 'Wall Walk (Full)', unlockWeek: 13 }, { name: 'Wall Handstand Push-up Negative', unlockWeek: 19 }, { name: 'Handstand Push-up', unlockWeek: 25 }
         ]
       },
       {
-        title: '🔗 Upper Back (Prehab)', icon: '↔️', exercises: [
-          { name: 'Band Pull-Apart', unlockWeek: 1 }, { name: 'Prone Y-T-W', unlockWeek: 1, parallel: true }, { name: 'Seated Band Row', unlockWeek: 1, parallel: true }
+        title: 'מניעת פציעות כתף (Prehab)', icon: '🩹', exercises: [
+          { name: 'Band Pull-Apart', unlockWeek: 1 }, { name: 'Prone Y-T-W', unlockWeek: 1, parallel: true }
+        ]
+      },
+      {
+        title: 'גירוי רגליים קל', icon: '🦵', exercises: [
+          { name: 'Bodyweight Squat', unlockWeek: 1 }, { name: 'Single-Leg Glute Bridge', unlockWeek: 10 }, { name: 'Banded Glute Bridge', unlockWeek: 19 }
         ]
       }
     ],
     'upper-pull': [
       {
-        title: '🔥 Warmup', icon: '🛡️', exercises: [
+        title: 'חימום והכנה', icon: '⚡', exercises: [
           { name: 'High Knees', unlockWeek: 1 }, { name: 'Arm Circles', unlockWeek: 1 }, { name: 'Wall Slides', unlockWeek: 1 }, { name: 'Scapular Push-up', unlockWeek: 1 }, { name: 'Dead Bug', unlockWeek: 1 }
         ]
       },
       {
-        title: '🧲 Vertical Pull', icon: '⬆️', exercises: [
+        title: 'חתירה וכוח רוחבי', icon: '↔️', exercises: [
+          { name: 'Seated Band Row', unlockWeek: 1 }
+        ]
+      },
+      {
+        title: 'עליות מתח וכוח אנכי', icon: '🧗', exercises: [
           { name: 'Scapular Pull-up', unlockWeek: 1 }, { name: 'Dead Hang', unlockWeek: 1, parallel: true }, { name: 'Pull-up Negative', unlockWeek: 4 }, { name: 'Chin-up Negative', unlockWeek: 10 }, { name: 'Chin-up', unlockWeek: 13 }, { name: 'Pull-up (Overhand)', unlockWeek: 19 }, { name: 'Explosive Pull-up', unlockWeek: 25 }, { name: 'Tuck Front Lever Row', unlockWeek: 25, parallel: true }
         ]
       },
       {
-        title: '💪 Arms & Grip', icon: '🦾', exercises: [
+        title: 'ידיים וכוח אחיזה', icon: '✊', exercises: [
           { name: 'Band Curl', unlockWeek: 1 }, { name: 'Towel Grip Hang', unlockWeek: 7, parallel: true }
         ]
       },
       {
-        title: '✨ Skill Practice', icon: '⭐', exercises: [
-          { name: 'Handstand Practice', unlockWeek: 1 }, { name: 'L-sit Practice', unlockWeek: 13, parallel: true }
+        title: 'מיומנות אל-סיט', icon: '🧘', exercises: [
+          { name: 'L-sit Practice', unlockWeek: 13 }
         ]
       },
       {
-        title: '🧱 Core', icon: '🔲', exercises: [
-          { name: 'Side Plank Hip Dip', unlockWeek: 1 }, { name: 'Dead Bug', unlockWeek: 1 }, { name: 'Hollow Body Rock', unlockWeek: 4 }, { name: 'Hollow-to-Arch Rock', unlockWeek: 10 }, { name: 'L-sit on Chair', unlockWeek: 13 }, { name: 'L-sit on Floor', unlockWeek: 16 }, { name: 'Dragon Flag Negative', unlockWeek: 19 }, { name: 'Dragon Flag (Partial ROM)', unlockWeek: 22 }, { name: 'Dragon Flag', unlockWeek: 25 }
+        title: 'גירוי ליבה קל', icon: '🧱', exercises: [
+          { name: 'Side Plank Hip Dip', unlockWeek: 1 }, { name: 'L-sit on Chair', unlockWeek: 13 }, { name: 'L-sit on Floor', unlockWeek: 16 }
         ]
       }
     ],
     'cardio': [
       {
-        title: '🫀 Active Recovery', icon: '🏃‍♂️', exercises: [
+        title: 'התאוששות ואירובי', icon: '🫀', exercises: [
           { name: 'Relaxed Walking', unlockWeek: 1 }, { name: 'Brisk Walking', unlockWeek: 1 }
         ]
       }
@@ -482,11 +497,13 @@ const ExercisesPage = (() => {
             <div class="rpg-node ${stateClass} ${latestClass}" 
                  onclick="ExercisesPage.showExerciseDetails('${node.name.replace(/'/g, "\\'")}')"
                  style="animation-delay: ${(pathIndex * 0.1) + (levelIndex * 0.08) + (nodeIdx * 0.05)}s">
-              <div class="rpg-node-hex">
-                ${isUnlocked ? '' : '<div class="rpg-lock-icon">🔒</div>'}
-                ${imgSrc ? `<img src="${imgSrc}" class="rpg-node-img" alt="${node.name}" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc}')" onerror="this.style.display='none'; this.parentElement.querySelector('.rpg-node-emoji') && (this.parentElement.querySelector('.rpg-node-emoji').style.display='flex')">` : ''}
-                ${!imgSrc || node.noImage ? `<div class="rpg-node-emoji" style="display:flex">${path.icon}</div>` : `<div class="rpg-node-emoji" style="display:none">${path.icon}</div>`}
-                ${isUnlocked ? `<div class="rpg-node-glow" style="--glow-color: ${tabColor}"></div>` : ''}
+              <div class="rpg-node-hex-wrap">
+                <div class="rpg-node-hex">
+                  ${isUnlocked ? '' : '<div class="rpg-lock-icon">🔒</div>'}
+                  ${imgSrc ? `<img src="${imgSrc}" class="rpg-node-img" alt="${node.name}" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc}')" onerror="this.style.display='none'; this.parentElement.querySelector('.rpg-node-emoji') && (this.parentElement.querySelector('.rpg-node-emoji').style.display='flex')">` : ''}
+                  ${!imgSrc || node.noImage ? `<div class="rpg-node-emoji" style="display:flex">${path.icon}</div>` : `<div class="rpg-node-emoji" style="display:none">${path.icon}</div>`}
+                  ${isUnlocked ? `<div class="rpg-node-glow" style="--glow-color: ${tabColor}"></div>` : ''}
+                </div>
               </div>
               <div class="rpg-node-info">
                 <div class="rpg-node-name">${node.name}</div>
@@ -620,7 +637,7 @@ const ExercisesPage = (() => {
     return `
       <div class="guide-card">
         <div class="guide-card-image-container diff-${diffClass}">
-          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onclick="event.stopPropagation(); UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', this.src)" onerror="this.parentElement.style.display='none'">
+          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" onclick="event.stopPropagation(); UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', this.src)" onerror="UI.handleImageFallback(this, 'png')">
         </div>
         <div class="guide-card-content">
           <div class="guide-card-title">
@@ -651,7 +668,7 @@ const ExercisesPage = (() => {
     const fullHtml = `
       <div style="display: flex; flex-direction: column; gap: 16px;">
         ${html}
-        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${ex.name} GIF" onerror="this.style.display='none'">
+        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${ex.name} GIF" onerror="UI.handleImageFallback(this, 'gif')">
       </div>
     `;
     UI.showModal(ex.name, fullHtml);

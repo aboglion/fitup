@@ -211,7 +211,9 @@ const DB = (() => {
     let planStartDateStr = await getSetting('planStartDate');
     let effectiveStartDateStr = planStartDateStr;
     if (!effectiveStartDateStr) {
-      effectiveStartDateStr = UI.getLocalDateString();
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      effectiveStartDateStr = UI.getLocalDateString(yesterday);
     }
     const startDate = new Date(effectiveStartDateStr + 'T12:00:00');
 

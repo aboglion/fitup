@@ -39,28 +39,28 @@ const App = (() => {
       allPlanDays = await DB.getAllPlan();
       allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
 
-      // --- Strict Calendar Alignment ---
-      // Instead of sequential progression, align the planIndex perfectly with the real calendar
-      // so that chosen rest days always match the real days of the week.
-      const todayStr = UI.getLocalDateString();
-      let planStartDateStr = await DB.getSetting('planStartDate');
-      
-      let planIndex = 0; // Default to day 1
-      
-      if (planStartDateStr) {
-        const todayDateObj = new Date(todayStr + 'T12:00:00');
-        const startDateObj = new Date(planStartDateStr + 'T12:00:00');
-        
-        const diffTime = todayDateObj - startDateObj;
-        const diffDays = Math.round((todayDateObj - startDateObj) / (1000 * 60 * 60 * 24));
-        
-        planIndex = diffDays;
-        if (planIndex < 0) planIndex = 0;
-        if (planIndex >= allPlanDays.length) {
-          planIndex = allPlanDays.length - 1;
+      // --- Sequential Progress-Based Alignment ---
+      // Find the first incomplete day index
+      let planIndex = 0;
+      const allTracking = await DB.getAllTracking();
+      for (let i = 0; i < allPlanDays.length; i++) {
+        const track = allTracking.find(t => t.dayIndex === i);
+        if (!track || !track.completed) {
+          planIndex = i;
+          break;
         }
       }
+      
+      // If we haven't started yet and index is 0 (Rest), default to 1 (Workout A)
+      let planStartDateStr = await DB.getSetting('planStartDate');
+      if (!planStartDateStr && planIndex === 0) {
+        planIndex = 1;
+      }
 
+      // Update dynamic dates and day names in-memory
+      updatePlanDaysDates(allPlanDays, planIndex);
+
+      const todayStr = UI.getLocalDateString();
       await DB.setSetting('lastActiveDate', todayStr);
       await DB.setSetting('currentPlanIndex', planIndex);
       window.appCurrentPlanIndex = planIndex;
@@ -103,7 +103,6 @@ const App = (() => {
       setTimeout(async () => {
         document.getElementById('splash-screen').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
-        await autoShiftPlan();
         checkPhotoReminder();
       }, 1600);
 
@@ -204,44 +203,21 @@ const App = (() => {
   }
 
   /**
-   * Automatically push the plan forward if the user missed a workout.
-   * If today is physically past the next incomplete workout, we shift the start date
-   * so that today becomes the next incomplete workout.
+   * Dynamically update the dates and day names of the plan days relative to the active index.
    */
-  async function autoShiftPlan() {
-    const allPlanDays = await DB.getAllPlan();
-    const allTracking = await DB.getAllTracking();
-    const planStartDateStr = await DB.getSetting('planStartDate');
-    if (!planStartDateStr) return;
+  function updatePlanDaysDates(planDays, activeIndex) {
+    const today = new Date();
+    const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    planDays.forEach(day => {
+      const d = new Date(today);
+      d.setDate(today.getDate() + (day.dayIndex - activeIndex));
+      day.dayOfWeek = dayNames[d.getDay()];
+      day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
+    });
+  }
 
-    let firstIncompleteWorkoutIndex = -1;
-    for (let i = 0; i < allPlanDays.length; i++) {
-      const day = allPlanDays[i];
-      if (day.dayType !== 'Rest') {
-        const track = allTracking.find(t => t.dayIndex === i);
-        if (!track || !track.completed) {
-          firstIncompleteWorkoutIndex = i;
-          break;
-        }
-      }
-    }
-
-    if (firstIncompleteWorkoutIndex === -1) return; // All workouts completed!
-
-    const startDateObj = new Date(planStartDateStr + 'T12:00:00');
-    const nowStr = UI.getLocalDateString();
-    const todayDateObj = new Date(nowStr + 'T12:00:00');
-    const daysDiff = Math.round((todayDateObj - startDateObj) / (1000 * 60 * 60 * 24));
-
-    if (daysDiff > firstIncompleteWorkoutIndex) {
-      const shiftDays = daysDiff - firstIncompleteWorkoutIndex;
-      startDateObj.setDate(startDateObj.getDate() + shiftDays);
-      await DB.setSetting('planStartDate', UI.getLocalDateString(startDateObj));
-      await DB.loadTrainingPlan();
-      
-      // We must reload the page so everything is synced to the new calendar
-      location.reload();
-    }
+  function updatePlanDates(activeIndex) {
+    updatePlanDaysDates(allPlanDays, activeIndex);
   }
 
   /**
@@ -375,7 +351,8 @@ const App = (() => {
 
   return {
     init,
-    navigateTo
+    navigateTo,
+    updatePlanDates
   };
 })();
 

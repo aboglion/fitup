@@ -69,6 +69,79 @@ const UI = (() => {
     }
   });
 
+  const imageTrials = {};
+
+  function handleImageFallback(imgEl, type) {
+    const currentSrc = imgEl.src;
+    const urlDecoded = decodeURIComponent(currentSrc);
+    
+    if (type === 'gif') {
+      const match = urlDecoded.match(/images\/gifs\/([^/]+)$/);
+      if (match) {
+        const filename = match[1];
+        const lastDot = filename.lastIndexOf('.');
+        const baseName = lastDot !== -1 ? filename.substring(0, lastDot) : filename;
+        const cleanBase = baseName.replace(/[-_]+/g, ' ');
+        const variations = [
+          cleanBase.toUpperCase() + '.gif',
+          cleanBase.toLowerCase() + '.gif',
+          cleanBase.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + '.gif',
+          cleanBase.replace(/\s+/g, '_') + '.gif',
+          cleanBase.replace(/\s+/g, '_').toLowerCase() + '.gif',
+          cleanBase.replace(/\s+/g, '_').toUpperCase() + '.gif',
+          cleanBase.replace(/\s+/g, '-') + '.gif',
+          cleanBase.replace(/\s+/g, '-').toLowerCase() + '.gif',
+        ];
+        
+        if (!imageTrials[filename]) {
+          imageTrials[filename] = 0;
+        }
+        
+        const trialIndex = imageTrials[filename];
+        if (trialIndex < variations.length) {
+          imageTrials[filename]++;
+          imgEl.src = `images/gifs/${variations[trialIndex]}`;
+          return;
+        }
+      }
+      imgEl.style.display = 'none';
+    } else if (type === 'png') {
+      const match = urlDecoded.match(/images\/exercises\/([^/]+)$/);
+      if (match) {
+        const filename = match[1];
+        const lastDot = filename.lastIndexOf('.');
+        const baseName = lastDot !== -1 ? filename.substring(0, lastDot) : filename;
+        const cleanBase = baseName.replace(/[-_]+/g, ' ');
+        const variations = [
+          cleanBase.toUpperCase() + '.png',
+          cleanBase.toLowerCase() + '.png',
+          cleanBase.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + '.png',
+          cleanBase.replace(/\s+/g, '_') + '.png',
+          cleanBase.replace(/\s+/g, '_').toLowerCase() + '.png',
+          cleanBase.replace(/\s+/g, '_').toUpperCase() + '.png',
+          cleanBase.replace(/\s+/g, '-') + '.png',
+          cleanBase.replace(/\s+/g, '-').toLowerCase() + '.png',
+        ];
+        
+        if (!imageTrials[filename]) {
+          imageTrials[filename] = 0;
+        }
+        
+        const trialIndex = imageTrials[filename];
+        if (trialIndex < variations.length) {
+          imageTrials[filename]++;
+          imgEl.src = `images/exercises/${variations[trialIndex]}`;
+          return;
+        }
+      }
+      if (imgEl.classList.contains('exercise-image') || imgEl.classList.contains('exercise-hero-image')) {
+        if (imgEl.parentElement) imgEl.parentElement.style.display = 'none';
+      } else {
+        imgEl.style.display = 'none';
+      }
+    }
+  }
+
   function showImageModal(title, src) {
     const pngPath = `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
     const gifPath = `images/gifs/${title}.gif`;
@@ -77,7 +150,7 @@ const UI = (() => {
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes('chin-up') || lowerTitle.includes('pull-up')) {
       extraNote = `
-        <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 8px; text-align: right; direction: rtl;">
+        <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 12px; text-align: right; direction: rtl;">
           <p style="font-size: 14px; margin-bottom: 8px; color: var(--text-primary);"><strong>💡 הבדלי אחיזה - חשוב לזכור:</strong></p>
           <ul style="font-size: 13px; color: var(--text-secondary); padding-right: 20px; margin: 0; line-height: 1.5;">
             <li style="margin-bottom: 4px;"><strong>Chin-up:</strong> כפות הידיים פונות לכיוון הפנים (אחיזה תחתית).</li>
@@ -88,13 +161,14 @@ const UI = (() => {
     }
     
     showModal(title, `
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        <img src="${pngPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${title} תמונה" onerror="this.style.display='none'">
-        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${title} GIF" onerror="this.style.display='none'">
+      <div style="display: flex; flex-direction: column; gap: 16px; width: 100%; direction: rtl;">
+        <img src="${pngPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} תמונה" onerror="UI.handleImageFallback(this, 'png')">
+        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} GIF" onerror="UI.handleImageFallback(this, 'gif')">
         ${extraNote}
       </div>
     `);
   }
+
 
   /**
    * Get day type display info
@@ -338,6 +412,7 @@ const UI = (() => {
     showModal,
     hideModal,
     showImageModal,
+    handleImageFallback,
     getDayTypeInfo,
     getCategoryColor,
     getCategoryLabel,

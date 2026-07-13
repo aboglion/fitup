@@ -177,11 +177,18 @@ def get_lower_exercises(week):
 def get_push_exercises(week):
     sets_n, reps = get_volume(week)
     phase = get_phase(week)
+    leg_phase = get_leg_phase(week)
+    _, is_deload = get_block_position(week)
     exercises = []
     
-    # Prehab
-    exercises.append(("Band Pull-Apart", "2-3×15-20", get_band_weight("Band Pull-Apart", week)))
-    exercises.append(("Seated Band Row", "3-4×8-12", get_band_weight("Seated Band Row", week)))
+    # Skill work — Handstand Practice (moved from pull day)
+    if is_deload:
+        exercises.append(("Handstand Practice", "5-8 mins", None))
+    else:
+        exercises.append(("Handstand Practice", "10-15 mins", None))
+    
+    # Prehab (light — Seated Band Row moved to pull day)
+    exercises.append(("Band Pull-Apart", "2×15-20", get_band_weight("Band Pull-Apart", week)))
     
     # Main push
     if phase == 1:
@@ -227,23 +234,29 @@ def get_push_exercises(week):
         exercises.append(("Handstand Push-up", fmt_sets(sets_n, reps), None))
     
     # Prehab finisher
-    exercises.append(("Prone Y-T-W", "2-3×8-12", None))
+    exercises.append(("Prone Y-T-W", "2×8-12", None))
+    
+    # Light leg exercise — second weekly stimulus (RPE 6-7)
+    light_sets = "2" if is_deload else "2-3"
+    if leg_phase <= 3:
+        exercises.append(("Bodyweight Squat", f"{light_sets}×12-20", None))
+    elif leg_phase <= 6:
+        exercises.append(("Single-Leg Glute Bridge", f"{light_sets}×10-15", None))
+    else:
+        exercises.append(("Banded Glute Bridge", f"{light_sets}×12-20", get_band_weight("Banded Glute Bridge", week)))
     
     return exercises
 
 def get_pull_exercises(week):
     sets_n, reps = get_volume(week)
     phase = get_phase(week)
+    _, is_deload = get_block_position(week)
     exercises = []
     
-    # Skill work
-    exercises.append(("Handstand Practice", "10-15 mins", None))
+    # Horizontal pull — Seated Band Row (moved from push day)
+    exercises.append(("Seated Band Row", "3-4×8-12", get_band_weight("Seated Band Row", week)))
     
-    # L-sit practice (from phase 5+)
-    if phase >= 5:
-        exercises.append(("L-sit Practice", "5-10 mins", None))
-        
-    # Scapular (warmup for pull)
+    # Scapular (warmup for vertical pull)
     exercises.append(("Scapular Pull-up", "2×10-15", None))
     
     # Main pull
@@ -275,24 +288,19 @@ def get_pull_exercises(week):
     if phase >= 3:
         exercises.append(("Towel Grip Hang", "2×20-30 secs", None))
     
-    # Core finisher
-    if phase <= 3:
-        if phase == 1:
-            exercises.append(("Dead Bug", fmt_sets(sets_n, reps), None))
+    # L-sit practice (from phase 5+) — kept on pull day
+    if phase >= 5:
+        if is_deload:
+            exercises.append(("L-sit Practice", "2-3 attempts", None))
         else:
-            exercises.append(("Hollow Body Rock", fmt_sets(sets_n, reps), None))
-    elif phase == 4:
-        exercises.append(("Hollow-to-Arch Rock", fmt_sets(sets_n, reps), None))
-    elif phase == 5:
+            exercises.append(("L-sit Practice", "5-10 mins", None))
+    
+    # Light core finisher — NO Dragon Flag (moved to leg day only)
+    # L-sit OR Side Plank Hip Dip based on recovery
+    if phase == 5:
         exercises.append(("L-sit on Chair", fmt_sets(sets_n, "15-30 secs"), None))
-    elif phase == 6:
+    elif phase >= 6:
         exercises.append(("L-sit on Floor", fmt_sets(sets_n, "15-30 secs"), None))
-    elif phase == 7:
-        exercises.append(("Dragon Flag Negative", fmt_sets(sets_n, reps), None))
-    elif phase == 8:
-        exercises.append(("Dragon Flag (Partial ROM)", fmt_sets(sets_n, reps), None))
-    else:
-        exercises.append(("Dragon Flag", fmt_sets(sets_n, reps), None))
     
     exercises.append(("Side Plank Hip Dip", "2-3×8-10", None))
     
@@ -309,22 +317,22 @@ def build_exercise_list(raw_exercises, warmup=True):
     return out
 
 def get_day(dow, week):
-    if dow == 0:  # Sunday - Lower Strength
+    if dow == 1:  # Monday - Legs + Core
         raw = get_lower_exercises(week)
-        return "Lower Strength", "7-8", build_exercise_list(raw)
-    elif dow == 1:  # Monday - Walk
-        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30 mins")]
-    elif dow == 2:  # Tuesday - Upper Push
+        return "Legs + Core", "7-8", build_exercise_list(raw)
+    elif dow == 2:  # Tuesday - Active Recovery (Brisk Walk)
+        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-35 mins")]
+    elif dow == 3:  # Wednesday - Push + Skill + Light Legs
         raw = get_push_exercises(week)
-        return "Upper Push", "7-8", build_exercise_list(raw)
-    elif dow == 3:  # Wednesday - Walk
-        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "25 mins")]
-    elif dow == 4:  # Thursday - Upper Pull + Skill
+        return "Push + Skill", "7-8", build_exercise_list(raw)
+    elif dow == 4:  # Thursday - Active Recovery (Relaxed Walk)
+        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "25-30 mins")]
+    elif dow == 5:  # Friday - Pull + Grip + Light Core
         raw = get_pull_exercises(week)
-        return "Upper Pull + Skill", "7-8", build_exercise_list(raw)
-    elif dow == 5:  # Friday - Walk
-        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30 mins")]
-    else:  # Saturday - Rest
+        return "Pull + Grip", "7-8", build_exercise_list(raw)
+    elif dow == 6:  # Saturday - Active Recovery (Brisk Walk)
+        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-35 mins")]
+    else:  # Sunday (dow == 0) - Rest
         return "Rest", "—", []
 
 def generate_program():

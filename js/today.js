@@ -261,13 +261,21 @@ const TodayPage = (() => {
 
     if (day.exercises.length === 0) {
       // Rest day
+      const isCompleted = currentTracking.completed;
       container.innerHTML = `
-        <div class="exercise-card" style="text-align: center; padding: 40px;">
-          <div style="font-size: 48px; margin-bottom: 16px;">😴</div>
-          <h3 style="font-size: 18px; margin-bottom: 8px;">Rest Day</h3>
-          <p style="color: var(--text-secondary); font-size: 14px;">
-            Your body needs rest to grow stronger. Good sleep, proper nutrition, and hydration!
-          </p>
+        <div class="exercise-card ${isCompleted ? 'completed' : ''}" style="text-align: center; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+          <div style="font-size: 48px;">😴</div>
+          <div>
+            <h3 style="font-size: 18px; margin-bottom: 8px;">Rest Day</h3>
+            <p style="color: var(--text-secondary); font-size: 14px; max-width: 320px; margin: 0 auto; direction: rtl;">
+              הגוף שלך צריך מנוחה כדי להיבנות ולהתחזק. הקפד על שינה טובה, תזונה נכונה ושתיית מים!
+            </p>
+          </div>
+          <button class="btn-primary rest-complete-btn ${isCompleted ? 'checked' : ''}" 
+                  style="width: auto; padding: 10px 24px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; background: ${isCompleted ? 'var(--success, #10b981)' : 'var(--accent-primary, #3b82f6)'}; color: white;"
+                  onclick="TodayPage.toggleRestDayComplete()" ${disabledAttr}>
+            ${isCompleted ? '✓ יום מנוחה הושלם' : 'סמן כהושלם ויאללה לעבודה'}
+          </button>
         </div>
       `;
       return;
@@ -392,7 +400,7 @@ const TodayPage = (() => {
           <div class="exercise-hero-container">
             <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
                  class="exercise-hero-image"
-                 alt="${ex.name}" onerror="this.parentElement.style.display='none'"
+                 alt="${ex.name}" onerror="UI.handleImageFallback(this, 'png')"
                  onclick="TodayPage.handleImageClick(event, ${idx}, '${ex.name.replace(/'/g, "\\'")}')">
           </div>
           <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
@@ -556,11 +564,21 @@ const TodayPage = (() => {
           </div>` : ''}
         </div>
         
-        <button onclick="UI.hideModal()" class="btn-primary" style="width: 100%; padding: 14px;">
+        <button id="celebration-continue-btn" class="btn-primary" style="width: 100%; padding: 14px;">
           🏆 מעולה! המשך הלאה
         </button>
       </div>
     `);
+
+    document.getElementById('celebration-continue-btn').onclick = () => {
+      UI.hideModal();
+      const activeIdx = UI.findTodayIndex(allPlanDays);
+      if (currentDayIndex !== activeIdx) {
+        goToDay(activeIdx);
+      } else {
+        render();
+      }
+    };
 
     // Haptic celebration
     if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
@@ -573,12 +591,18 @@ const TodayPage = (() => {
 
     const lowerName = ex.name.toLowerCase();
 
-    // Active Recovery (0s)
+    // Active Recovery / Skill practice / Mobility (0s — no rest timer)
     if (lowerName.includes('walking') || lowerName.includes('הליכה') || lowerName.includes('jogging')) {
         return 0;
     }
+    if (lowerName.includes('handstand practice') || lowerName.includes('l-sit practice')) {
+        return 0;
+    }
+    if (lowerName.includes('ankle dorsiflexion')) {
+        return 0;
+    }
 
-    // 180 Seconds
+    // 180 Seconds — Heavy eccentrics and chin-ups
     if (lowerName.includes('pull-up negative') || 
         lowerName.includes('chin-up negative') || 
         lowerName.includes('handstand push-up negative') ||
@@ -587,22 +611,22 @@ const TodayPage = (() => {
         return 180;
     }
 
-    // 60 Seconds - Check these before more generic terms (like push-up)
-    const rules60 = ['scapular pull-up', 'scapular push-up', 'band pull-apart', 'prone y-t-w', 'hollow rock', 'hollow-to-arch rock', 'dead bug', 'side plank hip dips', 'glute bridge', 'calf raise'];
-    for (const r of rules60) {
-        if (lowerName.includes(r)) return 60;
-    }
-
-    // 120 Seconds
-    const rules120 = ['squat', 'lunge', 'single-leg rdl', 'towel curl', 'push-up', 'pike push-up', 'wall handstand', 'wall walk', 'seated band row'];
+    // 120 Seconds — Compound movements, L-sit holds, Dragon Flag
+    const rules120 = ['squat', 'lunge', 'single-leg rdl', 'towel curl', 'push-up', 'pike push-up', 'wall handstand', 'wall walk', 'seated band row', 'l-sit on chair', 'l-sit on floor', 'dragon flag', 'pull-up (overhand)', 'explosive pull-up', 'tuck front lever'];
     for (const r of rules120) {
         if (lowerName.includes(r)) return 120;
     }
 
-    // 90 Seconds
+    // 90 Seconds — Isolation
     const rules90 = ['band curl', 'towel grip hang'];
     for (const r of rules90) {
         if (lowerName.includes(r)) return 90;
+    }
+
+    // 60 Seconds — Prehab, light core, accessories
+    const rules60 = ['scapular pull-up', 'scapular push-up', 'band pull-apart', 'prone y-t-w', 'hollow rock', 'hollow-to-arch rock', 'dead bug', 'side plank hip dip', 'glute bridge', 'calf raise'];
+    for (const r of rules60) {
+        if (lowerName.includes(r)) return 60;
     }
 
     return 90; // Default
@@ -688,7 +712,9 @@ const TodayPage = (() => {
       
       await autoSave();
       
-      if (!currentTracking.completed) {
+      if (currentTracking.completed) {
+        showWorkoutCelebration(day);
+      } else {
         handleExerciseCompleted(exIdx, day);
       }
     } else {
@@ -725,15 +751,32 @@ const TodayPage = (() => {
     await autoSave();
   }
 
-  /**
-   * Check if program has started, if not, lock the start date to today
-   */
   async function checkAndLockStartDate() {
     let startDate = await DB.getSetting('planStartDate');
     if (!startDate) {
-      startDate = UI.getLocalDateString();
+      const d = new Date();
+      d.setDate(d.getDate() - currentDayIndex);
+      startDate = UI.getLocalDateString(d);
       await DB.setSetting('planStartDate', startDate);
+      await DB.loadTrainingPlan();
       UI.toast('תוכנית האימונים התחילה בהצלחה! 🚀', 'success');
+    }
+  }
+
+  async function toggleRestDayComplete() {
+    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+    
+    currentTracking.completed = !currentTracking.completed;
+    currentTracking.lastUpdated = new Date().toISOString();
+    currentTracking.date = currentTracking.date || UI.getLocalDateString();
+    
+    await autoSave();
+    
+    const day = allPlanDays[currentDayIndex];
+    if (currentTracking.completed) {
+      showWorkoutCelebration(day);
+    } else {
+      render();
     }
   }
 
@@ -754,6 +797,30 @@ const TodayPage = (() => {
     currentTracking.date = currentTracking.date || UI.getLocalDateString();
 
     await DB.saveDayTracking(currentDayIndex, currentTracking);
+
+    // --- Update the active plan index based on sequential progress ---
+    let newActiveIndex = 0;
+    const allTracking = await DB.getAllTracking();
+    for (let i = 0; i < allPlanDays.length; i++) {
+      const track = allTracking.find(t => t.dayIndex === i);
+      if (!track || !track.completed) {
+        newActiveIndex = i;
+        break;
+      }
+    }
+    
+    if (newActiveIndex !== window.appCurrentPlanIndex) {
+      window.appCurrentPlanIndex = newActiveIndex;
+      await DB.setSetting('currentPlanIndex', newActiveIndex);
+      if (typeof App !== 'undefined' && App.updatePlanDates) {
+        App.updatePlanDates(newActiveIndex);
+      }
+      
+      // Re-render calendar so the correct today column is highlighted
+      if (typeof CalendarPage !== 'undefined') {
+        CalendarPage.render();
+      }
+    }
   }
 
 
@@ -775,6 +842,7 @@ const TodayPage = (() => {
     toggleExpand,
     handleImageClick,
     toggleExercise,
+    toggleRestDayComplete,
     toggleSet,
     updateSetData,
     updateExerciseNote,
