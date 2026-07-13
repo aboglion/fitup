@@ -101,9 +101,9 @@ const UI = (() => {
    */
   function getDayTypeInfo(type) {
     const types = {
-      'Workout A': { label: 'Workout A 💪', class: 'strength', icon: '💪' },
-      'Workout B': { label: 'Workout B 🏋️', class: 'strength', icon: '🏋️' },
-      'Workout C': { label: 'Workout C 🧗', class: 'strength', icon: '🧗' },
+      'Lower Strength': { label: 'Lower Strength 🦵', class: 'strength', icon: '🦵' },
+      'Upper Push': { label: 'Upper Push 💥', class: 'strength', icon: '💥' },
+      'Upper Pull + Skill': { label: 'Upper Pull 🧲', class: 'strength', icon: '🧲' },
       'Active Recovery': { label: 'Recovery 🚶', class: 'walk', icon: '🚶' },
       'Rest': { label: 'Rest 😴', class: 'rest', icon: '😴' }
     };

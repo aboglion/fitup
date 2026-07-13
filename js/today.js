@@ -247,30 +247,7 @@ const TodayPage = (() => {
   /**
    * Look up video URL from exercise guide by name
    */
-  function findVideoUrl(exerciseName) {
-    if (!exerciseName) return null;
-    const nameLower = exerciseName.toLowerCase().trim();
-    
-    // Helper to validate url
-    const isValidUrl = (url) => url && url.startsWith('http');
 
-    // Try exact match first
-    for (const guide of allExercises) {
-      if (guide.name && guide.name.toLowerCase().trim() === nameLower && isValidUrl(guide.videoUrl)) {
-        return guide.videoUrl;
-      }
-    }
-    // Try partial match (exercise name contains or is contained in guide name)
-    for (const guide of allExercises) {
-      if (guide.name && isValidUrl(guide.videoUrl)) {
-        const guideLower = guide.name.toLowerCase().trim();
-        if (nameLower.includes(guideLower) || guideLower.includes(nameLower)) {
-          return guide.videoUrl;
-        }
-      }
-    }
-    return null;
-  }
 
   /**
    * Render exercise cards

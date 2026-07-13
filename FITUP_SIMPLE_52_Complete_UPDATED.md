@@ -216,7 +216,7 @@
 | 3 | Close-Grip Push-up | 4x6 | 4x8 | 4x10 | 2x6 |
 | 4 | Seated Band Row — גומייה 50 ק״ג | 4x8 | 4x10 | 4x12 | 2x8 |
 | 5 | Pike Push-up | 3x10 | 3x12 | 4x10 | 2x6 |
-| 6 | Partial Wall Walk | 3x3 | 3x4 | 3x5 | 2x3 |
+| 6 | Wall Walk (Full) | 3x3 | 3x4 | 3x5 | 2x3 |
 | 7 | Band Pull-Apart — גומייה 50 ק״ג | 3x15 | 3x18 | 3x20 | 1x12 |
 | 8 | Side Plank Hip Dip | 3x12 לכל צד | 3x15 לכל צד | 3x15 לכל צד | 1x10 לכל צד |
 
