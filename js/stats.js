@@ -292,13 +292,21 @@ const StatsPage = (() => {
     const img = new Image();
     img.onload = async () => {
       const canvas = document.createElement('canvas');
-      const MAX_WIDTH = 600;
-      let width = img.width;
-      let height = img.height;
+      const MAX_DIMENSION = 800;
+      let width = img.naturalWidth || img.width;
+      let height = img.naturalHeight || img.height;
 
-      if (width > MAX_WIDTH) {
-        height = Math.round((height * MAX_WIDTH) / width);
-        width = MAX_WIDTH;
+      // Fit within MAX_DIMENSION while keeping aspect ratio
+      if (width > height) {
+        if (width > MAX_DIMENSION) {
+          height = Math.round((height * MAX_DIMENSION) / width);
+          width = MAX_DIMENSION;
+        }
+      } else {
+        if (height > MAX_DIMENSION) {
+          width = Math.round((width * MAX_DIMENSION) / height);
+          height = MAX_DIMENSION;
+        }
       }
 
       canvas.width = width;
@@ -306,8 +314,17 @@ const StatsPage = (() => {
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
 
-      // Compress image
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      // Compress image: WebP with JPEG fallback
+      let dataUrl = canvas.toDataURL('image/webp', 0.7);
+      if (!dataUrl.startsWith('data:image/webp')) {
+        dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+      }
+
+      // Log optimization results for development/monitoring
+      const originalSizeKB = (file.size / 1024).toFixed(1);
+      const approxCompressedSize = Math.round((dataUrl.length - (dataUrl.indexOf(',') + 1)) * 0.75);
+      const compressedSizeKB = (approxCompressedSize / 1024).toFixed(1);
+      console.log(`[Photo Optimizer] Compressed: ${originalSizeKB} KB -> ${compressedSizeKB} KB (saved ${((1 - approxCompressedSize / file.size) * 100).toFixed(1)}%)`);
 
       await DB.savePhoto(Date.now().toString(), new Date().toISOString(), dataUrl);
       UI.toast('התמונה נשמרה בהצלחה!', 'success');

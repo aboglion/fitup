@@ -525,7 +525,7 @@ const TodayPage = (() => {
   /**
    * Show celebration modal when workout is fully completed
    */
-  function showWorkoutCelebration(day) {
+  async function showWorkoutCelebration(day) {
     // Count total sets done
     let totalSets = 0;
     let totalReps = 0;
@@ -541,6 +541,29 @@ const TodayPage = (() => {
     }
 
     const typeInfo = UI.getDayTypeInfo(day.dayType);
+
+    // Check backup status for reminder
+    const lastBackupStr = await DB.getSetting('lastBackupDate');
+    let needsBackupPrompt = false;
+    let backupMessage = "";
+    
+    if (!lastBackupStr) {
+      const allTracking = await DB.getAllTracking();
+      const completedWorkouts = allTracking.filter(t => t.completed).length;
+      if (completedWorkouts >= 3) {
+        needsBackupPrompt = true;
+        backupMessage = "מומלץ לגבות את התקדמות האימונים שלך לראשונה!";
+      }
+    } else {
+      const lastBackupDate = new Date(lastBackupStr);
+      const now = new Date();
+      const diffTime = Math.abs(now - lastBackupDate);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays >= 14) {
+        needsBackupPrompt = true;
+        backupMessage = `עברו ${diffDays} ימים מאז הגיבוי האחרון שלך. כדאי לגבות כעת!`;
+      }
+    }
     
     UI.showModal('🎉 אימון הושלם!', `
       <div style="text-align: center; padding: 16px;">
@@ -565,6 +588,14 @@ const TodayPage = (() => {
           </div>` : ''}
         </div>
         
+        ${needsBackupPrompt ? `
+        <div style="margin-top: 16px; padding: 16px; border-radius: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); margin-bottom: 16px;">
+          <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; direction: rtl; text-align: center;">⚠️ ${backupMessage}</p>
+          <button id="celebration-backup-btn" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            📤 גבה את הנתונים כעת
+          </button>
+        </div>` : ''}
+
         <button id="celebration-continue-btn" class="btn-primary" style="width: 100%; padding: 14px;">
           🏆 מעולה! המשך הלאה
         </button>
@@ -580,6 +611,20 @@ const TodayPage = (() => {
         render();
       }
     };
+
+    if (needsBackupPrompt) {
+      const backupBtn = document.getElementById('celebration-backup-btn');
+      if (backupBtn) {
+        backupBtn.onclick = async () => {
+          if (typeof App !== 'undefined' && App.shareBackup) {
+            const success = await App.shareBackup();
+            if (success) {
+              backupBtn.parentElement.style.display = 'none';
+            }
+          }
+        };
+      }
+    }
 
     // Haptic celebration
     if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);

@@ -262,25 +262,55 @@ const App = (() => {
   }
 
   /**
+   * Export database and share it using the Web Share API (or fallback to download)
+   */
+  async function shareBackup() {
+    try {
+      const data = await DB.exportData();
+      const json = JSON.stringify(data, null, 2);
+      const fileName = `fitup-backup-${UI.getLocalDateString()}.json`;
+
+      // Try using Web Share API first (mostly mobile devices / PWAs)
+      if (navigator.canShare && navigator.share) {
+        const file = new File([json], fileName, { type: 'application/json' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'גיבוי נתוני FitUp',
+            text: 'קובץ הגיבוי של אימוני FitUp שלי'
+          });
+          await DB.setSetting('lastBackupDate', UI.getLocalDateString());
+          UI.toast('הגיבוי שותף בהצלחה! 📤', 'success');
+          return true;
+        }
+      }
+
+      // Fallback: standard file download
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.click();
+      URL.revokeObjectURL(url);
+      await DB.setSetting('lastBackupDate', UI.getLocalDateString());
+      UI.toast('הנתונים יוצאו בהצלחה! 📤', 'success');
+      return true;
+    } catch (e) {
+      if (e.name !== 'AbortError') {
+        UI.toast('שגיאה בייצוא: ' + e.message, 'error');
+      }
+      return false;
+    }
+  }
+
+  /**
    * Setup settings page handlers
    */
   function setupSettings() {
     // Export data
     document.getElementById('export-data-btn').addEventListener('click', async () => {
-      try {
-        const data = await DB.exportData();
-        const json = JSON.stringify(data, null, 2);
-        const blob = new Blob([json], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `fitup-backup-${UI.getLocalDateString()}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
-        UI.toast('הנתונים יוצאו בהצלחה! 📤', 'success');
-      } catch (e) {
-        UI.toast('שגיאה בייצוא: ' + e.message, 'error');
-      }
+      await shareBackup();
     });
 
     // Export Program Guide
@@ -298,8 +328,7 @@ const App = (() => {
         const data = JSON.parse(text);
         await DB.importData(data);
         UI.toast('הנתונים שוחזרו בהצלחה! 📥', 'success');
-        // Refresh current page
-        navigateTo(currentPage);
+        setTimeout(() => location.reload(), 1000);
       } catch (err) {
         UI.toast('שגיאה בייבוא: ' + err.message, 'error');
       }
@@ -352,7 +381,8 @@ const App = (() => {
   return {
     init,
     navigateTo,
-    updatePlanDates
+    updatePlanDates,
+    shareBackup
   };
 })();
 

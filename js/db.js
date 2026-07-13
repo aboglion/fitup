@@ -325,14 +325,18 @@ const DB = (() => {
   }
 
   /**
-   * Export all data as JSON
+   * Export all data as JSON (including tracking, settings, and progress photos)
    */
   async function exportData() {
     const tracking = await getAll(STORES.TRACKING);
+    const settings = await getAll(STORES.SETTINGS);
+    const photos = await getAll(STORES.PHOTOS);
     return {
-      version: 1,
+      version: 2,
       exportDate: new Date().toISOString(),
-      tracking
+      tracking,
+      settings,
+      photos
     };
   }
 
@@ -343,6 +347,15 @@ const DB = (() => {
     if (data.tracking) {
       await clear(STORES.TRACKING);
       await putBulk(STORES.TRACKING, data.tracking);
+    }
+    if (data.settings) {
+      await clear(STORES.SETTINGS);
+      // Filter out temporary data versions if they exist, or just import everything
+      await putBulk(STORES.SETTINGS, data.settings);
+    }
+    if (data.photos) {
+      await clear(STORES.PHOTOS);
+      await putBulk(STORES.PHOTOS, data.photos);
     }
   }
 
