@@ -288,13 +288,6 @@ def get_pull_exercises(week):
     if phase >= 3:
         exercises.append(("Towel Grip Hang", "2×20-30 secs", None))
     
-    # L-sit practice (from phase 5+) — kept on pull day
-    if phase >= 5:
-        if is_deload:
-            exercises.append(("L-sit Practice", "2-3 attempts", None))
-        else:
-            exercises.append(("L-sit Practice", "5-10 mins", None))
-    
     # Light core finisher — NO Dragon Flag (moved to leg day only)
     # L-sit OR Side Plank Hip Dip based on recovery
     if phase == 5:
@@ -408,7 +401,6 @@ def generate_program():
         {"name":"Dragon Flag (Partial ROM)","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 8: 3-4×3-8"},
         {"name":"Dragon Flag","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
         {"name":"Handstand Practice","category":"Skill","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"10-15 mins practice"},
-        {"name":"L-sit Practice","category":"Skill","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5+: 5-10 mins practice"},
         {"name":"Seated Band Row","category":"Upper Back","difficulty":"Intermediate","weight":"30-50 kg","setsProgression":"All phases: 3-4×8-12"},
         {"name":"Ankle Dorsiflexion Mobility","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 9+: 1-2 mins per side"},
         {"name":"Brisk Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"30 mins brisk pace"},

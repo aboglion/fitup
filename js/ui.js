@@ -304,16 +304,27 @@ const UI = (() => {
     if (!name) return null;
     const n = name.toLowerCase();
     
-    if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) return { label: 'Band', icon: '➰' };
-    if (n.includes('wall')) return { label: 'Wall', icon: '🧱' };
-    if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('incline') || n.includes('decline') || n.includes('copenhagen')) return { label: 'Chair', icon: '🪑' };
-    if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('inverted row') || n.includes('chin-up') || n.includes('hanging')) return { label: 'Bar', icon: '🧗‍♂️' };
-    if (n.includes('hamstring curl')) return { label: 'Towel', icon: '🧦' };
-    if (n.includes('couch stretch')) return { label: 'Wall+Pillow', icon: '🧱' };
-    if (n.includes('foam roll')) return { label: 'Foam Roller', icon: '🪵' };
+    // Professional SVG Icons
+    const icons = {
+      band: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="7" ry="7" transform="rotate(-45 12 12)"/><path d="M12 2v20" opacity="0.3" transform="rotate(-45 12 12)"/></svg>`,
+      wall: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="9"/><line x1="15" y1="9" x2="15" y2="15"/><line x1="9" y1="15" x2="9" y2="21"/></svg>`,
+      bench: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16v2H4z"/><path d="M6 12v6"/><path d="M18 12v6"/></svg>`,
+      bar: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h20"/><path d="M6 5v14"/><path d="M18 5v14"/></svg>`,
+      towel: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2" ry="2"/><path d="M6 8h12"/><path d="M6 16h12"/></svg>`,
+      roller: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="12" rx="2" ry="2"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="18"/></svg>`,
+      bodyweight: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>`
+    };
+
+    if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) return { label: 'גומיית התנגדות', icon: icons.band };
+    if (n.includes('wall')) return { label: 'קיר פנוי', icon: icons.wall };
+    if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('incline') || n.includes('decline') || n.includes('copenhagen')) return { label: 'כיסא / ספסל', icon: icons.bench };
+    if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('inverted row') || n.includes('chin-up') || n.includes('hanging')) return { label: 'מתח / מקבילים', icon: icons.bar };
+    if (n.includes('hamstring curl')) return { label: 'מגבת קטנה', icon: icons.towel };
+    if (n.includes('couch stretch')) return { label: 'קיר + כרית', icon: icons.wall };
+    if (n.includes('foam roll')) return { label: 'גליל עיסוי', icon: icons.roller };
     
     // Default or bodyweight exercises
-    return { label: 'Bodyweight', icon: '💪' };
+    return { label: 'משקל גוף בלבד', icon: icons.bodyweight };
   }
 
   // Rest Timer Logic

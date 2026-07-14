@@ -116,6 +116,30 @@ const TodayPage = (() => {
     // Update header badges
     const typeInfo = UI.getDayTypeInfo(day.dayType);
     
+    // Check if program started to show preview banner
+    const isProgramStarted = await DB.getSetting('planStartDate');
+    const summaryCard = document.getElementById('day-summary');
+    let previewBanner = document.getElementById('preview-mode-banner');
+    
+    if (!isProgramStarted) {
+      if (!previewBanner) {
+        previewBanner = document.createElement('div');
+        previewBanner.id = 'preview-mode-banner';
+        previewBanner.innerHTML = `
+          <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px;">
+            <span style="font-size: 20px;">👀</span>
+            <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
+              <strong style="color: var(--accent-primary); display: block; margin-bottom: 4px;">מצב עיון: התוכנית טרם התחילה</strong>
+              ברגע שתסמן תרגיל או יום מנוחה כהושלם, התוכנית תתחיל באופן רשמי והתאריכים ייקבעו בהתאם.
+            </div>
+          </div>
+        `;
+        summaryCard.parentNode.insertBefore(previewBanner, summaryCard);
+      }
+    } else if (previewBanner) {
+      previewBanner.remove();
+    }
+
     // Update summary card
     document.getElementById('day-number').textContent = day.dayNum;
     document.getElementById('today-date-badge').textContent = day.dayOfWeek;
@@ -139,6 +163,123 @@ const TodayPage = (() => {
       rpeBadge.style.display = '';
     } else {
       rpeBadge.style.display = 'none';
+    }
+
+    // Equipment Banner
+    const eqBanner = document.getElementById('day-equipment-banner');
+    if (eqBanner) {
+      if (day.exercises && day.exercises.length > 0 && day.dayType !== 'Rest') {
+        const equipmentMap = new Map();
+        let newExercisesList = [];
+        let changedExercisesList = [];
+
+        day.exercises.forEach((ex, idx) => {
+          const exNum = idx + 1;
+          const equip = UI.getEquipment(ex.name);
+          if (equip && equip.label !== 'משקל גוף בלבד') {
+            let labelText = equip.label;
+            if (labelText === 'גומיית התנגדות' && ex.weight && ex.weight !== '—' && ex.weight !== 'משקל גוף') {
+              labelText = `גומיית התנגדות (${ex.weight})`;
+            }
+            if (!equipmentMap.has(labelText)) {
+              equipmentMap.set(labelText, { icon: equip.icon, label: labelText, exercises: [] });
+            }
+            equipmentMap.get(labelText).exercises.push(exNum);
+          }
+          
+          let prevEx = null;
+          for (let i = currentDayIndex - 1; i >= 0; i--) {
+            const pastDay = allPlanDays[i];
+            if (pastDay && pastDay.exercises) {
+              prevEx = pastDay.exercises.find(e => e.name === ex.name);
+              if (prevEx) break;
+            }
+          }
+          
+          const isNewExercise = !prevEx && currentDayIndex > 0 && day.dayType !== 'Rest';
+          if (isNewExercise) newExercisesList.push(exNum);
+          
+          const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
+          const isWeightChanged = prevEx && ex.weight !== prevEx.weight && ex.weight !== null && ex.weight !== '—' && ex.weight !== 'משקל גוף';
+          if (isSetsChanged || isWeightChanged) changedExercisesList.push(exNum);
+        });
+        
+        let reportItems = [];
+        
+        const reportSvgs = {
+          report: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>`,
+          sparkles: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`,
+          trendUp: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`,
+          bodyweight: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>`
+        };
+
+        // Equipment items
+        if (equipmentMap.size > 0) {
+          Array.from(equipmentMap.values()).forEach(eq => {
+            reportItems.push(`
+              <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0;">
+                <span style="font-size: 16px; margin-top: 1px; display: flex; color: #f97316;">${eq.icon}</span>
+                <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
+                  <span style="font-weight: 700;">${eq.label}:</span> 
+                  דרוש לתרגיל${eq.exercises.length > 1 ? 'ים' : ''} <b style="font-family: 'Inter', sans-serif;">${eq.exercises.map(n => `#${n}`).join(', ')}</b>
+                </div>
+              </div>
+            `);
+          });
+        }
+
+        // New exercises
+        if (newExercisesList.length > 0) {
+          reportItems.push(`
+            <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; background: rgba(239, 68, 68, 0.05); border-radius: 8px; margin: 2px -8px; padding-right: 8px;">
+              <span style="font-size: 16px; margin-top: 1px; animation: blinkRed 2s infinite; border-radius: 50%; display: flex;">${reportSvgs.sparkles}</span>
+              <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
+                <span style="font-weight: 700; color: #ef4444;">תרגילים חדשים:</span> 
+                תרגיל${newExercisesList.length > 1 ? 'ים' : ''} <b style="font-family: 'Inter', sans-serif; color: #ef4444;">${newExercisesList.map(n => `#${n}`).join(', ')}</b>. מומלץ לצפות בתמונת ההנפשה.
+              </div>
+            </div>
+          `);
+        }
+
+        // Changed exercises
+        if (changedExercisesList.length > 0) {
+          reportItems.push(`
+            <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; background: rgba(245, 158, 11, 0.05); border-radius: 8px; margin: 2px -8px; padding-right: 8px;">
+              <span style="font-size: 16px; margin-top: 1px; display: flex;">${reportSvgs.trendUp}</span>
+              <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
+                <span style="font-weight: 700; color: var(--warning);">עליית עומס/נפח:</span> 
+                עודכנו סטים או משקלים בתרגיל${changedExercisesList.length > 1 ? 'ים' : ''} <b style="font-family: 'Inter', sans-serif;">${changedExercisesList.map(n => `#${n}`).join(', ')}</b>
+              </div>
+            </div>
+          `);
+        }
+
+        if (reportItems.length === 0) {
+          reportItems.push(`
+            <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0;">
+              <span style="font-size: 16px; margin-top: 1px; display: flex; color: #f97316;">${reportSvgs.bodyweight}</span>
+              <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
+                <span style="font-weight: 700;">משקל גוף בלבד:</span> אימון ללא ציוד מיוחד.
+              </div>
+            </div>
+          `);
+        }
+        
+        eqBanner.innerHTML = `
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+            <div style="display: flex; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+              <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+                <span style="display: flex;">${reportSvgs.report}</span> סקירת אימון ודרישות
+              </h3>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+              ${reportItems.join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        eqBanner.innerHTML = '';
+      }
     }
 
     // Update progress
@@ -187,28 +328,33 @@ const TodayPage = (() => {
    * Set progress circle value
    */
   function setProgressCircle(percent) {
-    const circle = document.getElementById('progress-circle');
-    const text = document.getElementById('progress-text');
+    const circles = document.querySelectorAll('.js-progress-circle');
+    const texts = document.querySelectorAll('.js-progress-text');
     const circumference = 2 * Math.PI * 42; // r=42
     const offset = circumference - (percent / 100) * circumference;
 
-    circle.style.strokeDasharray = circumference;
-    circle.style.strokeDashoffset = offset;
-    text.textContent = `${percent}%`;
+    circles.forEach(circle => {
+      circle.style.strokeDasharray = circumference;
+      circle.style.strokeDashoffset = offset;
+      
+      // Add gradient definition if not exists
+      const svg = circle.closest('svg');
+      if (svg && !svg.querySelector('defs')) {
+        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+        gradient.id = 'progress-gradient';
+        gradient.innerHTML = `
+          <stop offset="0%" stop-color="#3b82f6"/>
+          <stop offset="100%" stop-color="#8b5cf6"/>
+        `;
+        defs.appendChild(gradient);
+        svg.insertBefore(defs, svg.firstChild);
+      }
+    });
 
-    // Add gradient definition if not exists
-    const svg = circle.closest('svg');
-    if (!svg.querySelector('defs')) {
-      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-      const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
-      gradient.id = 'progress-gradient';
-      gradient.innerHTML = `
-        <stop offset="0%" stop-color="#3b82f6"/>
-        <stop offset="100%" stop-color="#8b5cf6"/>
-      `;
-      defs.appendChild(gradient);
-      svg.insertBefore(defs, svg.firstChild);
-    }
+    texts.forEach(text => {
+      text.textContent = `${percent}%`;
+    });
   }
 
   /**
@@ -280,7 +426,6 @@ const TodayPage = (() => {
       `;
       return;
     }
-
     container.innerHTML = day.exercises.map((ex, idx) => {
       const isCompleted = currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx];
       const color = UI.getCategoryColor(ex.slot);
@@ -379,6 +524,8 @@ const TodayPage = (() => {
       const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
       const isWeightChanged = prevEx && ex.weight !== prevEx.weight && ex.weight !== null && ex.weight !== '—' && ex.weight !== 'משקל גוף';
 
+      const newBadgeHTML = isNewExercise ? `<div class="new-exercise-badge" style="position: absolute; bottom: 12px; left: 12px; background: #ef4444; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 13px; animation: blinkRed 1.5s infinite; box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); z-index: 10;">תרגיל חדש!</div>` : '';
+
       // Detail line - only show weight if it exists
       const detailParts = [UI.getCategoryLabel(ex.slot)];
       if (ex.sets) {
@@ -389,20 +536,24 @@ const TodayPage = (() => {
       
       if (hasWeight) {
         let weightText = ex.weight;
-        if (equip && equip.label === 'Band') {
-          weightText = `Band: ${ex.weight}`;
+        if (equip && equip.label === 'גומיית התנגדות') {
+          weightText = `משקל גומיה: ${ex.weight}`;
         }
         detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="שינוי במשקל!">${weightText}</span>` : weightText);
       }
 
       return `
         <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="ex-card-${idx}" style="--glow-color: ${color};">
-          <div class="exercise-hero-container">
+          <div class="exercise-hero-container" style="position: relative;">
+            <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-weight: 800; font-family: 'Inter', sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid rgba(255,255,255,0.1);">
+              #${idx + 1}
+            </div>
             <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
                  class="exercise-hero-image"
                  loading="lazy"
                  alt="${ex.name}" onerror="UI.handleImageFallback(this, 'png')"
                  onclick="TodayPage.handleImageClick(event, ${idx}, '${ex.name.replace(/'/g, "\\'")}')">
+            ${newBadgeHTML}
           </div>
           <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
             <div class="exercise-card-info">
@@ -859,7 +1010,7 @@ const TodayPage = (() => {
       window.appCurrentPlanIndex = newActiveIndex;
       await DB.setSetting('currentPlanIndex', newActiveIndex);
       if (typeof App !== 'undefined' && App.updatePlanDates) {
-        App.updatePlanDates(newActiveIndex);
+        await App.updatePlanDates(newActiveIndex);
       }
       
       // Re-render calendar so the correct today column is highlighted

@@ -53,12 +53,13 @@ const App = (() => {
       
       // If we haven't started yet and index is 0 (Rest), default to 1 (Workout A)
       let planStartDateStr = await DB.getSetting('planStartDate');
+      window.appNotStarted = !planStartDateStr;
       if (!planStartDateStr && planIndex === 0) {
         planIndex = 1;
       }
 
       // Update dynamic dates and day names in-memory
-      updatePlanDaysDates(allPlanDays, planIndex);
+      updatePlanDaysDates(allPlanDays, planIndex, planStartDateStr);
 
       const todayStr = UI.getLocalDateString();
       await DB.setSetting('lastActiveDate', todayStr);
@@ -205,19 +206,26 @@ const App = (() => {
   /**
    * Dynamically update the dates and day names of the plan days relative to the active index.
    */
-  function updatePlanDaysDates(planDays, activeIndex) {
+  function updatePlanDaysDates(planDays, activeIndex, planStartDateStr) {
     const today = new Date();
     const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
     planDays.forEach(day => {
       const d = new Date(today);
       d.setDate(today.getDate() + (day.dayIndex - activeIndex));
-      day.dayOfWeek = dayNames[d.getDay()];
-      day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
+      
+      if (!planStartDateStr && day.dayIndex < activeIndex) {
+        day.dayOfWeek = '—';
+        day.date = '—';
+      } else {
+        day.dayOfWeek = dayNames[d.getDay()];
+        day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
+      }
     });
   }
 
-  function updatePlanDates(activeIndex) {
-    updatePlanDaysDates(allPlanDays, activeIndex);
+  async function updatePlanDates(activeIndex) {
+    const startDate = await DB.getSetting('planStartDate');
+    updatePlanDaysDates(allPlanDays, activeIndex, startDate);
   }
 
   /**

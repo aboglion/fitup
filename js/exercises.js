@@ -511,7 +511,7 @@ const ExercisesPage = (() => {
                   ${!isUnlocked 
                     ? `<span class="rpg-unlock-badge locked">🔒 שבוע ${node.unlockWeek}</span>` 
                     : `<span class="rpg-unlock-badge unlocked">✓ שבוע ${node.unlockWeek}</span>`}
-                  ${equip ? `<span class="rpg-equip-badge">${equip.icon}</span>` : ''}
+                  ${equip && equip.label !== 'משקל גוף בלבד' ? `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
                 ${(() => {
                   const tiers = BAND_WEIGHT_PROGRESSION[node.name];
@@ -630,7 +630,7 @@ const ExercisesPage = (() => {
 
     const equip = UI.getEquipment(ex.name);
     let weightDisplay = ex.weight || '';
-    if (weightDisplay && equip && equip.label === 'גומיה' && weightDisplay !== '—' && weightDisplay !== 'משקל גוף') {
+    if (weightDisplay && equip && equip.label === 'גומיית התנגדות' && weightDisplay !== '—' && weightDisplay !== 'משקל גוף') {
       weightDisplay = `משקל גומיה: ${weightDisplay}`;
     }
 
