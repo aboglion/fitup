@@ -176,7 +176,7 @@ const TodayPage = (() => {
         day.exercises.forEach((ex, idx) => {
           const exNum = idx + 1;
           const equip = UI.getEquipment(ex.name);
-          if (equip && equip.label !== 'משקל גוף בלבד') {
+          if (equip && equip.label !== 'משקל גוף בלבד' && equip.label !== 'קיר פנוי') {
             let labelText = equip.label;
             if (labelText === 'גומיית התנגדות' && ex.weight && ex.weight !== '—' && ex.weight !== 'משקל גוף') {
               labelText = `גומיית התנגדות (${ex.weight})`;
@@ -254,29 +254,22 @@ const TodayPage = (() => {
           `);
         }
 
-        if (reportItems.length === 0) {
-          reportItems.push(`
-            <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0;">
-              <span style="font-size: 16px; margin-top: 1px; display: flex; color: #f97316;">${reportSvgs.bodyweight}</span>
-              <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
-                <span style="font-weight: 700;">משקל גוף בלבד:</span> אימון ללא ציוד מיוחד.
+        if (reportItems.length > 0) {
+          eqBanner.innerHTML = `
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+              <div style="display: flex; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+                <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+                  <span style="display: flex;">${reportSvgs.report}</span> סקירת אימון ודרישות
+                </h3>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                ${reportItems.join('')}
               </div>
             </div>
-          `);
+          `;
+        } else {
+          eqBanner.innerHTML = '';
         }
-        
-        eqBanner.innerHTML = `
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
-            <div style="display: flex; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
-              <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
-                <span style="display: flex;">${reportSvgs.report}</span> סקירת אימון ודרישות
-              </h3>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 2px;">
-              ${reportItems.join('')}
-            </div>
-          </div>
-        `;
       } else {
         eqBanner.innerHTML = '';
       }
