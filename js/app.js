@@ -40,31 +40,7 @@ const App = (() => {
       allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
 
       // --- Sequential Progress-Based Alignment ---
-      // Find the first incomplete day index
-      let planIndex = 0;
-      const allTracking = await DB.getAllTracking();
-      for (let i = 0; i < allPlanDays.length; i++) {
-        const track = allTracking.find(t => t.dayIndex === i);
-        if (!track || !track.completed) {
-          planIndex = i;
-          break;
-        }
-      }
-      
-      // If we haven't started yet and index is 0 (Rest), default to 1 (Workout A)
-      let planStartDateStr = await DB.getSetting('planStartDate');
-      window.appNotStarted = !planStartDateStr;
-      if (!planStartDateStr && planIndex === 0) {
-        planIndex = 1;
-      }
-
-      // Update dynamic dates and day names in-memory
-      updatePlanDaysDates(allPlanDays, planIndex, planStartDateStr);
-
-      const todayStr = UI.getLocalDateString();
-      await DB.setSetting('lastActiveDate', todayStr);
-      await DB.setSetting('currentPlanIndex', planIndex);
-      window.appCurrentPlanIndex = planIndex;
+      await recalculatePlanIndex();
       // ----------------------------------
 
       // Initialize page modules
@@ -209,9 +185,30 @@ const App = (() => {
   function updatePlanDaysDates(planDays, activeIndex, planStartDateStr) {
     const today = new Date();
     const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    
+    // In Browse Mode (not started), we don't want to map activeIndex to "Today" because it confuses the user
+    // (e.g. Day 1 is Sunday/Rest, but if today is Tuesday, it will say "Tuesday Day 1 - Rest").
+    // Instead, we just align Day 0 with Sunday.
+    const baseDate = new Date();
+    if (!planStartDateStr) {
+      // Find the most recent Monday to act as a placeholder base
+      const currentDay = baseDate.getDay();
+      const diffToMonday = currentDay === 0 ? 6 : currentDay - 1;
+      baseDate.setDate(baseDate.getDate() - diffToMonday);
+      // We map dayIndex 0 to this Monday
+    }
+
     planDays.forEach(day => {
-      const d = new Date(today);
-      d.setDate(today.getDate() + (day.dayIndex - activeIndex));
+      let d = new Date();
+      if (!planStartDateStr) {
+        // Absolute mapping: day 0 is Sunday, day 1 is Monday...
+        d = new Date(baseDate);
+        d.setDate(baseDate.getDate() + day.dayIndex);
+      } else {
+        // Relative mapping: activeIndex is mapped to "Today"
+        d = new Date(today);
+        d.setDate(today.getDate() + (day.dayIndex - activeIndex));
+      }
       
       if (!planStartDateStr && day.dayIndex < activeIndex) {
         day.dayOfWeek = '—';
@@ -226,6 +223,50 @@ const App = (() => {
   async function updatePlanDates(activeIndex) {
     const startDate = await DB.getSetting('planStartDate');
     updatePlanDaysDates(allPlanDays, activeIndex, startDate);
+  }
+
+  /**
+   * Recalculates the current active plan index based on completion status.
+   * If the program hasn't started, skips Rest days.
+   */
+  async function recalculatePlanIndex() {
+    let planIndex = 0;
+    const allTracking = await DB.getAllTracking();
+    for (let i = 0; i < allPlanDays.length; i++) {
+      const track = allTracking.find(t => t.dayIndex === i);
+      if (!track || !track.completed) {
+        planIndex = i;
+        break;
+      }
+    }
+    
+    let planStartDateStr = await DB.getSetting('planStartDate');
+    window.appNotStarted = !planStartDateStr;
+    
+    // Auto-skip Rest days if the user has started and is behind schedule
+    if (planStartDateStr) {
+      const startDateObj = new Date(planStartDateStr + 'T00:00:00');
+      const todayObj = new Date(UI.getLocalDateString() + 'T00:00:00');
+      const diffTime = Math.abs(todayObj - startDateObj);
+      const daysSinceStart = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      
+      while (planIndex < daysSinceStart && planIndex < allPlanDays.length && allPlanDays[planIndex].dayType === 'Rest') {
+        // Auto complete this rest day
+        const track = allTracking.find(t => t.dayIndex === planIndex) || { dayIndex: planIndex };
+        track.completed = true;
+        track.lastUpdated = new Date().toISOString();
+        track.date = UI.getLocalDateString(); // Use today's date for completion
+        await DB.saveDayTracking(planIndex, track);
+        planIndex++;
+      }
+    }
+
+    updatePlanDaysDates(allPlanDays, planIndex, planStartDateStr);
+    window.appCurrentPlanIndex = planIndex;
+    await DB.setSetting('currentPlanIndex', planIndex);
+    
+    const todayStr = UI.getLocalDateString();
+    await DB.setSetting('lastActiveDate', todayStr);
   }
 
   /**
@@ -390,6 +431,7 @@ const App = (() => {
     init,
     navigateTo,
     updatePlanDates,
+    recalculatePlanIndex,
     shareBackup
   };
 })();

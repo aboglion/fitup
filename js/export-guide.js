@@ -225,7 +225,7 @@ window.ExporterGuide = (() => {
       days.forEach(day => {
         html += `
         <div class="day-block">
-          <h4 class="day-title">יום ${day.dayNum}: ${day.dayOfWeek} <span class="${getBadgeClass(day.dayType)}">${day.dayType}</span> <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span></h4>
+          <h4 class="day-title">יום <span dir="ltr">#${day.dayNum}</span>: ${day.dayOfWeek} <span class="${getBadgeClass(day.dayType)}">${day.dayType}</span> <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span></h4>
           `;
           
           if (day.exercises && day.exercises.length > 0) {

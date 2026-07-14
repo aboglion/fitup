@@ -141,7 +141,7 @@ const TodayPage = (() => {
     }
 
     // Update summary card
-    document.getElementById('day-number').textContent = day.dayNum;
+    document.getElementById('day-number').textContent = '#' + day.dayNum;
     document.getElementById('today-date-badge').textContent = day.dayOfWeek;
     document.getElementById('day-week').textContent = day.week ? day.week.replace('Week', 'שבוע') : '';
 
@@ -714,7 +714,7 @@ const TodayPage = (() => {
         <div class="celebration-confetti">🎊</div>
         <div style="font-size: 64px; margin-bottom: 16px; animation: bounceIn 0.6s ease;">💪</div>
         <h3 style="font-size: 22px; margin-bottom: 8px; color: var(--text-primary);">כל הכבוד! סיימת את האימון!</h3>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">${typeInfo.label} — Day ${day.dayNum}</p>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">${typeInfo.label} — Day #${day.dayNum}</p>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
           <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px;">
@@ -746,8 +746,13 @@ const TodayPage = (() => {
       </div>
     `);
 
-    document.getElementById('celebration-continue-btn').onclick = () => {
+    document.getElementById('celebration-continue-btn').onclick = async () => {
       UI.hideModal();
+      
+      if (typeof App !== 'undefined' && App.recalculatePlanIndex) {
+        await App.recalculatePlanIndex();
+      }
+      
       const activeIdx = UI.findTodayIndex(allPlanDays);
       if (currentDayIndex !== activeIdx) {
         goToDay(activeIdx);

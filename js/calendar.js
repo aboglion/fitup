@@ -86,7 +86,7 @@ const CalendarPage = (() => {
         <div class="calendar-day ${isToday ? 'today' : ''} ${isCompleted ? 'completed' : ''}"
              onclick="CalendarPage.selectDay(${day.dayIndex})">
           <div class="calendar-day-name">${day.dayOfWeek}</div>
-          <div class="calendar-day-date">${day.dayNum}</div>
+          <div class="calendar-day-date" dir="ltr">#${day.dayNum}</div>
           <span class="calendar-day-type ${typeInfo.class}">${typeInfo.label}</span>
         </div>
       `;

@@ -3,8 +3,8 @@
 import json, os, shutil
 from datetime import datetime, timedelta
 
-START_DATE = datetime(2026, 7, 5)
-DAYS_ENG = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+START_DATE = datetime(2026, 7, 6) # Monday
+DAYS_ENG = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 
 def ex(slot, name, sets, weight=None, isWarmup=False):
     return {"slot": slot, "name": name, "sets": sets, "weight": weight, "isWarmup": isWarmup}
@@ -305,22 +305,22 @@ def build_exercise_list(raw_exercises, warmup=True):
     return out
 
 def get_day(dow, week):
-    if dow == 1:  # Monday - Legs + Core
+    if dow == 0:  # Monday - Legs + Core
         raw = get_lower_exercises(week)
         return "Legs + Core", "7-8", build_exercise_list(raw)
-    elif dow == 2:  # Tuesday - Active Recovery (Brisk Walk)
+    elif dow == 1:  # Tuesday - Active Recovery (Brisk Walk)
         return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-35 mins")]
-    elif dow == 3:  # Wednesday - Push + Skill + Light Legs
+    elif dow == 2:  # Wednesday - Push + Skill + Light Legs
         raw = get_push_exercises(week)
         return "Push + Skill", "7-8", build_exercise_list(raw)
-    elif dow == 4:  # Thursday - Active Recovery (Relaxed Walk)
+    elif dow == 3:  # Thursday - Active Recovery (Relaxed Walk)
         return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "25-30 mins")]
-    elif dow == 5:  # Friday - Pull + Grip + Light Core
+    elif dow == 4:  # Friday - Pull + Grip + Light Core
         raw = get_pull_exercises(week)
         return "Pull + Grip", "7-8", build_exercise_list(raw)
-    elif dow == 6:  # Saturday - Active Recovery (Brisk Walk)
+    elif dow == 5:  # Saturday - Active Recovery (Brisk Walk)
         return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-35 mins")]
-    else:  # Sunday (dow == 0) - Rest
+    else:  # Sunday (dow == 6) - Rest
         return "Rest", "—", []
 
 def generate_program():
