@@ -257,7 +257,8 @@ def get_pull_exercises(week):
     exercises.append(("Seated Band Row", "3-4×8-12", get_band_weight("Seated Band Row", week)))
     
     # Scapular (warmup for vertical pull)
-    exercises.append(("Scapular Pull-up", "2×10-15", None))
+    if phase > 1:
+        exercises.append(("Scapular Pull-up", "2×10-15", None))
     
     # Main pull
     if phase == 1:
