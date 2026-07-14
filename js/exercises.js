@@ -102,11 +102,7 @@ const ExercisesPage = (() => {
           { name: 'Band Curl', unlockWeek: 1 }, { name: 'Towel Grip Hang', unlockWeek: 7, parallel: true }
         ]
       },
-      {
-        title: 'מיומנות אל-סיט', icon: '🧘', exercises: [
-          { name: 'L-sit Practice', unlockWeek: 13 }
-        ]
-      },
+
       {
         title: 'גירוי ליבה קל', icon: '🧱', exercises: [
           { name: 'Side Plank Hip Dip', unlockWeek: 1 }, { name: 'L-sit on Chair', unlockWeek: 13 }, { name: 'L-sit on Floor', unlockWeek: 16 }
