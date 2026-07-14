@@ -181,12 +181,6 @@ def get_push_exercises(week):
     _, is_deload = get_block_position(week)
     exercises = []
     
-    # Skill work — Handstand Practice (moved from pull day)
-    if is_deload:
-        exercises.append(("Handstand Practice", "5-8 mins", None))
-    else:
-        exercises.append(("Handstand Practice", "10-15 mins", None))
-    
     # Prehab (light — Seated Band Row moved to pull day)
     exercises.append(("Band Pull-Apart", "2×15-20", get_band_weight("Band Pull-Apart", week)))
     
@@ -401,7 +395,7 @@ def generate_program():
         {"name":"Dragon Flag Negative","category":"Core","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 7: 3-4×3-8"},
         {"name":"Dragon Flag (Partial ROM)","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 8: 3-4×3-8"},
         {"name":"Dragon Flag","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
-        {"name":"Handstand Practice","category":"Skill","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"10-15 mins practice"},
+
         {"name":"Seated Band Row","category":"Upper Back","difficulty":"Intermediate","weight":"30-50 kg","setsProgression":"All phases: 3-4×8-12"},
         {"name":"Ankle Dorsiflexion Mobility","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 9+: 1-2 mins per side"},
         {"name":"Brisk Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"30 mins brisk pace"},
