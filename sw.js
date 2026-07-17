@@ -41,17 +41,27 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  // Only handle GET requests
+  if (event.request.method !== 'GET') return;
+
+  // Only handle HTTP/HTTPS requests
+  if (!event.request.url.startsWith('http')) return;
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      // Network first strategy for development flexibility
-      return fetch(event.request).then(response => {
-        return caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, response.clone());
-          return response;
-        });
-      }).catch(() => {
-        return cachedResponse;
-      });
-    })
+    fetch(event.request)
+      .then((response) => {
+        // Only cache valid, successful responses
+        if (response && (response.status === 200 || response.status === 304)) {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        // Fallback to cache if network fails
+        return caches.match(event.request, { ignoreSearch: true });
+      })
   );
 });

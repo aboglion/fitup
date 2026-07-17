@@ -993,6 +993,9 @@ const TodayPage = (() => {
 
     await DB.saveDayTracking(currentDayIndex, currentTracking);
 
+    // --- Auto-complete passed Rest days ---
+    await DB.syncRestDays(allPlanDays);
+
     // --- Update the active plan index based on sequential progress ---
     let newActiveIndex = 0;
     const allTracking = await DB.getAllTracking();

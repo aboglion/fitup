@@ -399,6 +399,92 @@ const DB = (() => {
     return clear(STORES.TRACKING);
   }
 
+  /**
+   * Automatically complete any Rest days that are in the past relative to the last completed workout date.
+   */
+  async function syncRestDays(allPlanDays) {
+    const allTracking = await getAllTracking();
+    
+    // Find the last completed workout day
+    let lastWorkoutIndex = -1;
+    let lastWorkoutDate = null;
+    
+    for (let i = 0; i < allPlanDays.length; i++) {
+      const day = allPlanDays[i];
+      if (day.dayType !== 'Rest') {
+        const track = allTracking.find(t => t.dayIndex === i);
+        if (track && track.completed) {
+          lastWorkoutIndex = i;
+          if (track.date) {
+            let parsedDate = null;
+            if (track.date.includes('/')) {
+              const [d, m, y] = track.date.split('/');
+              parsedDate = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
+            } else {
+              parsedDate = new Date(track.date);
+            }
+            if (parsedDate && !isNaN(parsedDate.getTime())) {
+              lastWorkoutDate = parsedDate;
+            }
+          }
+        }
+      }
+    }
+
+    if (lastWorkoutIndex !== -1 && lastWorkoutDate) {
+      const today = new Date();
+      const d1 = new Date(lastWorkoutDate);
+      d1.setHours(12, 0, 0, 0);
+      const d2 = new Date(today);
+      d2.setHours(12, 0, 0, 0);
+      const diffTime = d2.getTime() - d1.getTime();
+      const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (daysPassed > 0) {
+        // Find first incomplete workout after the last completed workout
+        let firstIncompleteWorkoutIndex = allPlanDays.length;
+        for (let i = lastWorkoutIndex + 1; i < allPlanDays.length; i++) {
+          if (allPlanDays[i].dayType !== 'Rest') {
+            const track = allTracking.find(t => t.dayIndex === i);
+            if (!track || !track.completed) {
+              firstIncompleteWorkoutIndex = i;
+              break;
+            }
+          }
+        }
+
+        // Complete any Rest days that are in the past
+        let updated = false;
+        for (let i = lastWorkoutIndex + 1; i < firstIncompleteWorkoutIndex; i++) {
+          const day = allPlanDays[i];
+          const dayOffset = day.dayIndex - lastWorkoutIndex;
+          if (dayOffset < daysPassed) {
+            const track = allTracking.find(t => t.dayIndex === i);
+            if (!track || !track.completed) {
+              const restDate = new Date(lastWorkoutDate.getTime() + dayOffset * 24 * 60 * 60 * 1000);
+              const yyyy = restDate.getFullYear();
+              const mm = String(restDate.getMonth() + 1).padStart(2, '0');
+              const dd = String(restDate.getDate()).padStart(2, '0');
+              const trackDateStr = `${dd}/${mm}/${yyyy}`;
+              
+              const newTrack = {
+                dayIndex: i,
+                completed: true,
+                autoCompleted: true,
+                date: trackDateStr,
+                lastUpdated: new Date().toISOString()
+              };
+              await saveDayTracking(i, newTrack);
+              updated = true;
+            }
+          }
+        }
+        return updated;
+      }
+    }
+    return false;
+  }
+
   return {
     init,
     loadTrainingPlan,
@@ -407,6 +493,7 @@ const DB = (() => {
     saveDayTracking,
     getAllTracking,
     clearTracking,
+    syncRestDays,
     getAllPlan,
     getExerciseGuide,
     getWeekData,

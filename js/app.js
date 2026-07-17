@@ -39,8 +39,34 @@ const App = (() => {
       allPlanDays = await DB.getAllPlan();
       allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
 
+      // --- Auto-complete passed Rest days ---
+      await DB.syncRestDays(allPlanDays);
+
       // --- Sequential Progress-Based Alignment ---
-      await recalculatePlanIndex();
+      // Find the first incomplete day index
+      let planIndex = 0;
+      const allTracking = await DB.getAllTracking();
+      for (let i = 0; i < allPlanDays.length; i++) {
+        const track = allTracking.find(t => t.dayIndex === i);
+        if (!track || !track.completed) {
+          planIndex = i;
+          break;
+        }
+      }
+      
+      // If we haven't started yet and index points to a Rest day, skip to the first workout day
+      let planStartDateStr = await DB.getSetting('planStartDate');
+      if (!planStartDateStr && allPlanDays[planIndex]?.dayType === 'Rest') {
+        planIndex++;
+      }
+
+      // Update dynamic dates and day names in-memory
+      updatePlanDaysDates(allPlanDays, planIndex);
+
+      const todayStr = UI.getLocalDateString();
+      await DB.setSetting('lastActiveDate', todayStr);
+      await DB.setSetting('currentPlanIndex', planIndex);
+      window.appCurrentPlanIndex = planIndex;
       // ----------------------------------
 
       // Initialize page modules

@@ -3,8 +3,8 @@
 import json, os, shutil
 from datetime import datetime, timedelta
 
-START_DATE = datetime(2026, 7, 6) # Monday
-DAYS_ENG = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+START_DATE = datetime(2026, 7, 6)
+DAYS_ENG = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
 def ex(slot, name, sets, weight=None, isWarmup=False):
     return {"slot": slot, "name": name, "sets": sets, "weight": weight, "isWarmup": isWarmup}
@@ -327,7 +327,7 @@ def generate_program():
     daily = []
     day_num = 0
     for week in range(1, 53):
-        for dow in range(7):
+        for dow in [1, 2, 3, 4, 5, 6, 0]:
             day_num += 1
             date = START_DATE + timedelta(days=day_num - 1)
             day_type, rpe, exercises = get_day(dow, week)
