@@ -203,108 +203,192 @@ const StatsPage = (() => {
   }
 
   /**
-   * Per-muscle exercise progression stages — mirrors generate_program.py phases exactly.
-   * Each muscle maps to its own progression chain and relevant day type.
+   * Weighted multi-exercise contribution model.
+   * Each muscle is trained by multiple exercises — each with its own progression
+   * stages, weight (0-1 summing to 1), and relevant day type.
+   * Formula: muscleProgress = Σ(stageProgress_i × weight_i) × completionRate
    */
-  const MUSCLE_PROGRESSIONS = {
-    chest: {
-      stages: [1, 4, 7, 10, 13, 16, 22, 25], // Table PU → Push-up → Close-Grip → Diamond → Decline → Archer → One-Arm → Pseudo-Planche
-      dayType: 'Push + Skill'
-    },
-    shoulders: {
-      stages: [1, 4, 7, 10, 13, 19, 25], // Table Pike → Pike → Elevated Pike → Wall HS → Wall Walk → HSPU Neg → HSPU
-      dayType: 'Push + Skill'
-    },
-    triceps: {
-      stages: [1, 4, 7, 10, 13, 16, 22, 25], // Shares push-up progression (compound)
-      dayType: 'Push + Skill'
-    },
-    lats: {
-      stages: [1, 4, 10, 13, 19, 25], // Scapular PU → PU Neg → Chin-up Neg → Chin-up → Pull-up → Explosive PU / FL Row
-      dayType: 'Pull + Grip'
-    },
-    traps: {
-      stages: [1, 5, 13], // Seated Band Row: 30kg → 40kg → 50kg
-      dayType: 'Pull + Grip'
-    },
-    biceps: {
-      stages: [1, 10, 13, 17, 33], // Band Curl 30kg → Chin-up Neg → Chin-up → Curl 40kg → Curl 50kg
-      dayType: 'Pull + Grip'
-    },
-    forearms: {
-      stages: [1, 7], // Dead Hang → Towel Grip Hang
-      dayType: 'Pull + Grip'
-    },
-    quads: {
-      stages: [1, 4, 7, 13, 19, 25, 28], // BW Squat → Lunge → Split → Bulgarian → Skater → Pistol Chair → Full Pistol
-      dayType: 'Legs + Core'
-    },
-    hamstrings: {
-      stages: [1, 7, 10], // BW Single-Leg RDL → Hamstring Towel Curl → Banded Single-Leg RDL
-      dayType: 'Legs + Core'
-    },
-    glutes: {
-      stages: [1, 13], // Single-Leg Glute Bridge → Banded Glute Bridge
-      dayType: 'Legs + Core'
-    },
-    calves: {
-      stages: [1, 4], // Calf Raise → Single-Leg Calf Raise
-      dayType: 'Legs + Core'
-    },
-    core: {
-      stages: [1, 4, 10, 13, 16, 19, 22, 25], // Dead Bug → Hollow → H2A → L-sit Chair → L-sit Floor → DF Neg → DF Partial → Dragon Flag
-      dayType: 'Legs + Core'
-    },
-    obliques: {
-      stages: [1, 13, 16], // Side Plank Hip Dip → L-sit Chair (Pull day) → L-sit Floor (Pull day)
-      dayType: 'Pull + Grip'
-    },
-    lowerBack: {
-      stages: [1, 7, 10], // Single-Leg RDL → Hamstring Towel Curl (posterior chain) → Banded Single-Leg RDL
-      dayType: 'Legs + Core'
-    }
+  const MUSCLE_CONTRIBUTIONS = {
+    chest: [
+      // Push-up chain: Table→Knee→Push-up→Close-Grip→Diamond→Decline→Archer→One-Arm→Pseudo-Planche
+      { stages: [1,4,7,10,13,16,22,25], weight: 0.75, dayType: 'Push + Skill' },
+      // Pike/OHP chain: upper chest activation
+      { stages: [1,4,7,10,13,19,25], weight: 0.15, dayType: 'Push + Skill' },
+      // Band Pull-Apart / Prone Y-T-W: prehab (minor chest stretch)
+      { stages: [1,5,9], weight: 0.10, dayType: 'Push + Skill' },
+    ],
+    shoulders: [
+      // Pike→HSPU chain (primary OHP)
+      { stages: [1,4,7,10,13,19,25], weight: 0.45, dayType: 'Push + Skill' },
+      // Push-up chain (anterior delt involvement)
+      { stages: [1,4,7,10,13,16,22,25], weight: 0.20, dayType: 'Push + Skill' },
+      // Band Pull-Apart (rear delt)
+      { stages: [1,5,9], weight: 0.15, dayType: 'Push + Skill' },
+      // Prone Y-T-W (rotator cuff / rear delt)
+      { stages: [1], weight: 0.10, dayType: 'Push + Skill' },
+      // Handstand Practice (stability / all heads)
+      { stages: [1], weight: 0.10, dayType: 'Push + Skill' },
+    ],
+    triceps: [
+      // Push-up chain (all push-ups train triceps)
+      { stages: [1,4,7,10,13,16,22,25], weight: 0.40, dayType: 'Push + Skill' },
+      // Close-Grip / Diamond emphasis (extra triceps)
+      { stages: [1,7,10], weight: 0.25, dayType: 'Push + Skill' },
+      // Pike/HSPU chain (lockout = triceps heavy)
+      { stages: [1,4,7,10,13,19,25], weight: 0.35, dayType: 'Push + Skill' },
+    ],
+    biceps: [
+      // Pull-up/Chin-up progression (compound, major biceps builder)
+      { stages: [1,4,10,13,19,25], weight: 0.40, dayType: 'Pull + Grip' },
+      // Band Curl (isolation, weight progression: 30→40→50kg)
+      { stages: [1,17,33], weight: 0.35, dayType: 'Pull + Grip' },
+      // Seated Band Row (secondary biceps engagement)
+      { stages: [1,5,13], weight: 0.25, dayType: 'Pull + Grip' },
+    ],
+    forearms: [
+      // Dead Hang → Towel Grip Hang
+      { stages: [1,7], weight: 0.35, dayType: 'Pull + Grip' },
+      // Pull-up progression (grip demand increases)
+      { stages: [1,4,10,13,19,25], weight: 0.30, dayType: 'Pull + Grip' },
+      // Band Curl (wrist flexors)
+      { stages: [1,17,33], weight: 0.15, dayType: 'Pull + Grip' },
+      // Seated Band Row (grip)
+      { stages: [1,5,13], weight: 0.20, dayType: 'Pull + Grip' },
+    ],
+    lats: [
+      // Pull-up/Chin-up progression (primary lat exercise)
+      { stages: [1,4,10,13,19,25], weight: 0.60, dayType: 'Pull + Grip' },
+      // Seated Band Row (horizontal pull, lat secondary)
+      { stages: [1,5,13], weight: 0.30, dayType: 'Pull + Grip' },
+      // Scapular Pull-up (lat activation)
+      { stages: [1], weight: 0.10, dayType: 'Pull + Grip' },
+    ],
+    traps: [
+      // Seated Band Row (upper back, traps secondary)
+      { stages: [1,5,13], weight: 0.35, dayType: 'Pull + Grip' },
+      // Band Pull-Apart (mid traps / rhomboids)
+      { stages: [1,5,9], weight: 0.30, dayType: 'Push + Skill' },
+      // Prone Y-T-W (lower traps)
+      { stages: [1], weight: 0.15, dayType: 'Push + Skill' },
+      // Pull-up (upper traps)
+      { stages: [1,4,10,13,19,25], weight: 0.20, dayType: 'Pull + Grip' },
+    ],
+    quads: [
+      // Squat progression (primary): BW→Lunge→Split→Bulgarian→Skater→Pistol
+      { stages: [1,4,7,13,19,25,28], weight: 0.70, dayType: 'Legs + Core' },
+      // Light leg stimulus on Push day
+      { stages: [1,10,19], weight: 0.15, dayType: 'Push + Skill' },
+      // Calf Raise (minor knee stabilization)
+      { stages: [1,4], weight: 0.05, dayType: 'Legs + Core' },
+      // Walking (Active Recovery — light quad usage)
+      { stages: [1], weight: 0.10, dayType: 'Active Recovery' },
+    ],
+    hamstrings: [
+      // RDL / Towel Curl progression (primary)
+      { stages: [1,7,10], weight: 0.50, dayType: 'Legs + Core' },
+      // Glute Bridge (hamstring synergist)
+      { stages: [1,13], weight: 0.25, dayType: 'Legs + Core' },
+      // Squat progression (eccentric hamstring work)
+      { stages: [1,4,7,13,19,25,28], weight: 0.15, dayType: 'Legs + Core' },
+      // Walking
+      { stages: [1], weight: 0.10, dayType: 'Active Recovery' },
+    ],
+    glutes: [
+      // Glute Bridge progression (primary)
+      { stages: [1,13], weight: 0.40, dayType: 'Legs + Core' },
+      // Squat progression (deep squat = glute activation)
+      { stages: [1,4,7,13,19,25,28], weight: 0.25, dayType: 'Legs + Core' },
+      // RDL / hip hinge (glute max)
+      { stages: [1,7,10], weight: 0.20, dayType: 'Legs + Core' },
+      // Light leg on Push day
+      { stages: [1,10,19], weight: 0.10, dayType: 'Push + Skill' },
+      // Walking
+      { stages: [1], weight: 0.05, dayType: 'Active Recovery' },
+    ],
+    calves: [
+      // Calf Raise → Single-Leg Calf Raise (primary)
+      { stages: [1,4], weight: 0.65, dayType: 'Legs + Core' },
+      // Walking (Active Recovery)
+      { stages: [1], weight: 0.25, dayType: 'Active Recovery' },
+      // Squat (ankle stability)
+      { stages: [1,4,7,13,19,25,28], weight: 0.10, dayType: 'Legs + Core' },
+    ],
+    core: [
+      // Core progression: Dead Bug→Hollow→H2A→L-sit→Dragon Flag (primary)
+      { stages: [1,4,10,13,16,19,22,25], weight: 0.55, dayType: 'Legs + Core' },
+      // L-sit on Pull day (secondary core)
+      { stages: [1,13,16], weight: 0.15, dayType: 'Pull + Grip' },
+      // Side Plank Hip Dip (core stability)
+      { stages: [1], weight: 0.10, dayType: 'Pull + Grip' },
+      // Push-up/plank stabilization
+      { stages: [1,4,7,10,13,16,22,25], weight: 0.10, dayType: 'Push + Skill' },
+      // Squat (core bracing)
+      { stages: [1,4,7,13,19,25,28], weight: 0.10, dayType: 'Legs + Core' },
+    ],
+    obliques: [
+      // Side Plank Hip Dip (primary oblique exercise)
+      { stages: [1], weight: 0.40, dayType: 'Pull + Grip' },
+      // L-sit progression (oblique stabilization)
+      { stages: [1,13,16], weight: 0.25, dayType: 'Pull + Grip' },
+      // Dragon Flag (anti-rotation, oblique engagement)
+      { stages: [1,4,10,13,16,19,22,25], weight: 0.20, dayType: 'Legs + Core' },
+      // Hollow Body (anti-extension, oblique co-contraction)
+      { stages: [1,4,10], weight: 0.15, dayType: 'Legs + Core' },
+    ],
+    lowerBack: [
+      // RDL / Towel Curl (posterior chain — erector spinae)
+      { stages: [1,7,10], weight: 0.40, dayType: 'Legs + Core' },
+      // Dragon Flag (spinal erector co-contraction)
+      { stages: [1,4,10,13,16,19,22,25], weight: 0.25, dayType: 'Legs + Core' },
+      // Squat (lower back stabilization)
+      { stages: [1,4,7,13,19,25,28], weight: 0.20, dayType: 'Legs + Core' },
+      // Dead Bug (lumbar stabilization)
+      { stages: [1], weight: 0.15, dayType: 'Legs + Core' },
+    ],
   };
 
   /**
-   * Calculate per-muscle progression percentages.
-   * Formula: (stagesReached / totalStages) × completionRate
-   * - stagesReached: how many exercise milestones the current week has unlocked
-   * - completionRate: what fraction of relevant day-type workouts were actually completed
+   * Calculate per-muscle progression percentages using weighted contributions.
+   * Each muscle = Σ (exerciseStageProgress × weight) × completionRate
    */
   function calculateMuscleProgressions(trackingMap) {
     const currentWeek = Math.floor((window.appCurrentPlanIndex || 0) / 7) + 1;
     const currentIdx = window.appCurrentPlanIndex || 0;
     const result = {};
 
-    // Pre-calculate completion rates per day type (only count days up to current index)
+    // Pre-calculate completion rates per day type
     const completionRates = {};
-    ['Push + Skill', 'Pull + Grip', 'Legs + Core'].forEach(dt => {
+    ['Push + Skill', 'Pull + Grip', 'Legs + Core', 'Active Recovery'].forEach(dt => {
       let total = 0, completed = 0;
       allPlanDays.forEach(day => {
         if (day.dayType === dt && day.dayIndex <= currentIdx) {
           total++;
-          if (trackingMap[day.dayIndex] && trackingMap[day.dayIndex].completed) {
-            completed++;
-          }
+          if (trackingMap[day.dayIndex] && trackingMap[day.dayIndex].completed) completed++;
         }
       });
       completionRates[dt] = total > 0 ? completed / total : 0;
     });
 
-    for (const [muscle, config] of Object.entries(MUSCLE_PROGRESSIONS)) {
-      const { stages, dayType } = config;
+    for (const [muscle, contributions] of Object.entries(MUSCLE_CONTRIBUTIONS)) {
+      let weightedProgress = 0;
+      let totalCompletionWeight = 0;
 
-      // Count how many stages have been reached
-      let reached = 0;
-      for (const weekThreshold of stages) {
-        if (currentWeek >= weekThreshold) reached++;
+      for (const contrib of contributions) {
+        // Stage progress for this contributing exercise
+        let reached = 0;
+        for (const week of contrib.stages) {
+          if (currentWeek >= week) reached++;
+        }
+        const stageProgress = reached / contrib.stages.length;
+
+        weightedProgress += stageProgress * contrib.weight;
+
+        // Weighted completion rate (each contribution uses its own day type)
+        totalCompletionWeight += (completionRates[contrib.dayType] || 0) * contrib.weight;
       }
 
-      const stagePct = (reached / stages.length) * 100;
-      const completion = completionRates[dayType] || 0;
-
-      // Weighted: progression × completion (if 0 workouts done → 0%)
-      result[muscle] = Math.round(stagePct * completion);
+      // Final: weighted stage progress × weighted completion rate
+      result[muscle] = Math.round(weightedProgress * 100 * (totalCompletionWeight > 0 ? totalCompletionWeight : 0));
     }
 
     return result;
