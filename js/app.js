@@ -208,47 +208,19 @@ const App = (() => {
   /**
    * Dynamically update the dates and day names of the plan days relative to the active index.
    */
-  function updatePlanDaysDates(planDays, activeIndex, planStartDateStr) {
+  function updatePlanDaysDates(planDays, activeIndex) {
     const today = new Date();
     const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-    
-    // In Browse Mode (not started), we don't want to map activeIndex to "Today" because it confuses the user
-    // (e.g. Day 1 is Sunday/Rest, but if today is Tuesday, it will say "Tuesday Day 1 - Rest").
-    // Instead, we just align Day 0 with Sunday.
-    const baseDate = new Date();
-    if (!planStartDateStr) {
-      // Find the most recent Monday to act as a placeholder base
-      const currentDay = baseDate.getDay();
-      const diffToMonday = currentDay === 0 ? 6 : currentDay - 1;
-      baseDate.setDate(baseDate.getDate() - diffToMonday);
-      // We map dayIndex 0 to this Monday
-    }
-
     planDays.forEach(day => {
-      let d = new Date();
-      if (!planStartDateStr) {
-        // Absolute mapping: day 0 is Sunday, day 1 is Monday...
-        d = new Date(baseDate);
-        d.setDate(baseDate.getDate() + day.dayIndex);
-      } else {
-        // Relative mapping: activeIndex is mapped to "Today"
-        d = new Date(today);
-        d.setDate(today.getDate() + (day.dayIndex - activeIndex));
-      }
-      
-      if (!planStartDateStr && day.dayIndex < activeIndex) {
-        day.dayOfWeek = '—';
-        day.date = '—';
-      } else {
-        day.dayOfWeek = dayNames[d.getDay()];
-        day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
-      }
+      const d = new Date(today);
+      d.setDate(today.getDate() + (day.dayIndex - activeIndex));
+      day.dayOfWeek = dayNames[d.getDay()];
+      day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
     });
   }
 
-  async function updatePlanDates(activeIndex) {
-    const startDate = await DB.getSetting('planStartDate');
-    updatePlanDaysDates(allPlanDays, activeIndex, startDate);
+  function updatePlanDates(activeIndex) {
+    updatePlanDaysDates(allPlanDays, activeIndex);
   }
 
   /**
