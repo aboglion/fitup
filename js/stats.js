@@ -92,6 +92,9 @@ const StatsPage = (() => {
     // Render charts
     renderCharts(trackingMap, weightValues);
 
+    // Render anatomy map
+    renderAnatomy(trackingMap);
+
     // Render photos
     await renderPhotos();
   }
@@ -197,6 +200,144 @@ const StatsPage = (() => {
         <div class="stat-label">מגמת השלמה שבועית</div>
       </div>
     `;
+  }
+
+  /**
+   * Per-muscle exercise progression stages — mirrors generate_program.py phases exactly.
+   * Each muscle maps to its own progression chain and relevant day type.
+   */
+  const MUSCLE_PROGRESSIONS = {
+    chest: {
+      stages: [1, 4, 7, 10, 13, 16, 22, 25], // Table PU → Push-up → Close-Grip → Diamond → Decline → Archer → One-Arm → Pseudo-Planche
+      dayType: 'Push + Skill'
+    },
+    shoulders: {
+      stages: [1, 4, 7, 10, 13, 19, 25], // Table Pike → Pike → Elevated Pike → Wall HS → Wall Walk → HSPU Neg → HSPU
+      dayType: 'Push + Skill'
+    },
+    triceps: {
+      stages: [1, 4, 7, 10, 13, 16, 22, 25], // Shares push-up progression (compound)
+      dayType: 'Push + Skill'
+    },
+    lats: {
+      stages: [1, 4, 10, 13, 19, 25], // Scapular PU → PU Neg → Chin-up Neg → Chin-up → Pull-up → Explosive PU / FL Row
+      dayType: 'Pull + Grip'
+    },
+    traps: {
+      stages: [1, 5, 13], // Seated Band Row: 30kg → 40kg → 50kg
+      dayType: 'Pull + Grip'
+    },
+    biceps: {
+      stages: [1, 10, 13, 17, 33], // Band Curl 30kg → Chin-up Neg → Chin-up → Curl 40kg → Curl 50kg
+      dayType: 'Pull + Grip'
+    },
+    forearms: {
+      stages: [1, 7], // Dead Hang → Towel Grip Hang
+      dayType: 'Pull + Grip'
+    },
+    quads: {
+      stages: [1, 4, 7, 13, 19, 25, 28], // BW Squat → Lunge → Split → Bulgarian → Skater → Pistol Chair → Full Pistol
+      dayType: 'Legs + Core'
+    },
+    hamstrings: {
+      stages: [1, 7, 10], // BW Single-Leg RDL → Hamstring Towel Curl → Banded Single-Leg RDL
+      dayType: 'Legs + Core'
+    },
+    glutes: {
+      stages: [1, 13], // Single-Leg Glute Bridge → Banded Glute Bridge
+      dayType: 'Legs + Core'
+    },
+    calves: {
+      stages: [1, 4], // Calf Raise → Single-Leg Calf Raise
+      dayType: 'Legs + Core'
+    },
+    core: {
+      stages: [1, 4, 10, 13, 16, 19, 22, 25], // Dead Bug → Hollow → H2A → L-sit Chair → L-sit Floor → DF Neg → DF Partial → Dragon Flag
+      dayType: 'Legs + Core'
+    },
+    obliques: {
+      stages: [1, 13, 16], // Side Plank Hip Dip → L-sit Chair (Pull day) → L-sit Floor (Pull day)
+      dayType: 'Pull + Grip'
+    }
+  };
+
+  /**
+   * Calculate per-muscle progression percentages.
+   * Formula: (stagesReached / totalStages) × completionRate
+   * - stagesReached: how many exercise milestones the current week has unlocked
+   * - completionRate: what fraction of relevant day-type workouts were actually completed
+   */
+  function calculateMuscleProgressions(trackingMap) {
+    const currentWeek = Math.floor((window.appCurrentPlanIndex || 0) / 7) + 1;
+    const currentIdx = window.appCurrentPlanIndex || 0;
+    const result = {};
+
+    // Pre-calculate completion rates per day type (only count days up to current index)
+    const completionRates = {};
+    ['Push + Skill', 'Pull + Grip', 'Legs + Core'].forEach(dt => {
+      let total = 0, completed = 0;
+      allPlanDays.forEach(day => {
+        if (day.dayType === dt && day.dayIndex <= currentIdx) {
+          total++;
+          if (trackingMap[day.dayIndex] && trackingMap[day.dayIndex].completed) {
+            completed++;
+          }
+        }
+      });
+      completionRates[dt] = total > 0 ? completed / total : 0;
+    });
+
+    for (const [muscle, config] of Object.entries(MUSCLE_PROGRESSIONS)) {
+      const { stages, dayType } = config;
+
+      // Count how many stages have been reached
+      let reached = 0;
+      for (const weekThreshold of stages) {
+        if (currentWeek >= weekThreshold) reached++;
+      }
+
+      const stagePct = (reached / stages.length) * 100;
+      const completion = completionRates[dayType] || 0;
+
+      // Weighted: progression × completion (if 0 workouts done → 0%)
+      result[muscle] = Math.round(stagePct * completion);
+    }
+
+    return result;
+  }
+
+  /**
+   * Render anatomy map
+   */
+  function renderAnatomy(trackingMap) {
+    const container = document.getElementById('stats-overview');
+    
+    // Create anatomy wrapper if it doesn't exist
+    let anatomyWrapper = document.getElementById('anatomy-wrapper');
+    if (!anatomyWrapper) {
+      anatomyWrapper = document.createElement('div');
+      anatomyWrapper.id = 'anatomy-wrapper';
+      anatomyWrapper.style.gridColumn = '1 / -1';
+      anatomyWrapper.style.marginBottom = 'var(--space-lg)';
+      
+      const title = document.createElement('div');
+      title.className = 'chart-title';
+      title.innerHTML = '<span>💪 מפת התקדמות שרירים</span>';
+      
+      const mapContainer = document.createElement('div');
+      mapContainer.id = 'anatomy-map-container';
+      
+      anatomyWrapper.appendChild(title);
+      anatomyWrapper.appendChild(mapContainer);
+      
+      // Append to stats-overview
+      container.appendChild(anatomyWrapper);
+    }
+    
+    if (typeof AnatomyMap !== 'undefined') {
+      const muscleData = calculateMuscleProgressions(trackingMap);
+      AnatomyMap.render(document.getElementById('anatomy-map-container'), muscleData);
+    }
   }
 
   /**
