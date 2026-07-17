@@ -258,6 +258,10 @@ const StatsPage = (() => {
     obliques: {
       stages: [1, 13, 16], // Side Plank Hip Dip → L-sit Chair (Pull day) → L-sit Floor (Pull day)
       dayType: 'Pull + Grip'
+    },
+    lowerBack: {
+      stages: [1, 7, 10], // Single-Leg RDL → Hamstring Towel Curl (posterior chain) → Banded Single-Leg RDL
+      dayType: 'Legs + Core'
     }
   };
 
