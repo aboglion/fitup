@@ -524,7 +524,7 @@ const App = (() => {
 
     // Load initial status
     DB.getSetting('cloudSyncUrl').then(url => {
-      if (url) urlInput.value = url;
+      if (url && urlInput) urlInput.value = url;
     });
     
     CloudSync.getLastSyncText().then(text => {
@@ -532,10 +532,12 @@ const App = (() => {
     });
 
     // Save URL on change
-    urlInput.addEventListener('change', async (e) => {
-      await DB.setSetting('cloudSyncUrl', e.target.value.trim());
-      UI.toast('כתובת API נשמרה', 'success');
-    });
+    if (urlInput) {
+      urlInput.addEventListener('change', async (e) => {
+        await DB.setSetting('cloudSyncUrl', e.target.value.trim());
+        UI.toast('כתובת API נשמרה', 'success');
+      });
+    }
 
     // Manual Sync Button
     syncBtn.addEventListener('click', async () => {
@@ -579,7 +581,9 @@ const App = (() => {
           
           // Also set it as the active sync url immediately for this device
           await DB.setSetting('cloudSyncUrl', url);
-          document.getElementById('cloud-sync-url').value = url;
+          if (document.getElementById('cloud-sync-url')) {
+            document.getElementById('cloud-sync-url').value = url;
+          }
           UI.toast('הוצפן והוגדר כפעיל!', 'success');
         } else {
           UI.toast('שגיאה בהצפנה', 'error');
