@@ -240,6 +240,17 @@ function setupWebhook() {
   var webAppUrl = "הכנס_כאן_את_הכתובת_שלך_מהפריסה"; 
   UrlFetchApp.fetch("https://api.telegram.org/bot" + TELEGRAM_BOT_TOKEN + "/setWebhook?url=" + webAppUrl);
 }
+
+// ==========================================
+// 8. משיכת נתונים לאפליקציה (doGet)
+// ==========================================
+function doGet(e) {
+  var files = DriveApp.getFilesByName(FILENAME);
+  if (files.hasNext()) {
+    return ContentService.createTextOutput(files.next().getBlob().getDataAsString()).setMimeType(ContentService.MimeType.JSON);
+  }
+  return ContentService.createTextOutput(JSON.stringify({})).setMimeType(ContentService.MimeType.JSON);
+}
 ```
 
 ---
