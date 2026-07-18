@@ -195,7 +195,14 @@ function frequentCheck() {
 // ==========================================
 function getFitUpData() {
   var files = DriveApp.getFilesByName(FILENAME);
-  return files.hasNext() ? JSON.parse(files.next().getBlob().getDataAsString()) : null;
+  if (!files.hasNext()) return null;
+  var data = files.next().getBlob().getDataAsString();
+  if (!data || data.trim() === "") return null;
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    return null;
+  }
 }
 
 function sendTelegramMessage(chatId, text) {

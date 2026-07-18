@@ -26,14 +26,14 @@ const CloudSync = (() => {
     
     if (!url) {
       if (manual) {
-        UI.showToast('לא הוגדרה כתובת סנכרון (API) בהגדרות.', 'error');
+        UI.toast('לא הוגדרה כתובת סנכרון (API) בהגדרות.', 'error');
       }
       return { success: false, error: 'No URL configured' };
     }
 
     try {
       isSyncing = true;
-      if (manual) UI.showToast('מתחיל סנכרון נתונים מול ענן גוגל...', 'info');
+      if (manual) UI.toast('מתחיל סנכרון נתונים מול ענן גוגל...', 'info');
 
       // Extract all data from local IndexedDB
       const dataToSync = await DB.exportData();
@@ -57,7 +57,7 @@ const CloudSync = (() => {
         const timestamp = new Date().toISOString();
         await DB.setSetting('lastSyncDate', timestamp);
         
-        if (manual) UI.showToast('הסנכרון לענן עבר בהצלחה! ✅', 'success');
+        if (manual) UI.toast('הסנכרון לענן עבר בהצלחה! ✅', 'success');
         return { success: true, timestamp };
       } else {
         throw new Error(result.error || 'שגיאה לא ידועה בשמירה בענן');
@@ -66,7 +66,7 @@ const CloudSync = (() => {
     } catch (error) {
       console.error('Cloud Sync Error:', error);
       if (manual) {
-        UI.showToast('שגיאה בסנכרון לענן. בדוק את חיבור האינטרנט או הכתובת.', 'error');
+        UI.toast('שגיאה בסנכרון לענן. בדוק את חיבור האינטרנט או הכתובת.', 'error');
       }
       return { success: false, error: error.message };
     } finally {
