@@ -557,41 +557,6 @@ const App = (() => {
       });
     }
 
-    // --- Encryption Tool ---
-    const encryptUrlBtn = document.getElementById('encrypt-url-btn');
-    const setupUrlInput = document.getElementById('setup-cloud-url');
-    const setupPasswordInput = document.getElementById('setup-cloud-password');
-    const encryptResult = document.getElementById('encrypted-result');
-
-    if (encryptUrlBtn) {
-      encryptUrlBtn.addEventListener('click', async () => {
-        const url = setupUrlInput.value.trim();
-        const pwd = setupPasswordInput.value;
-        
-        if (!url || !pwd) {
-          UI.toast('נא להזין לינק וסיסמה', 'error');
-          return;
-        }
-        
-        encryptUrlBtn.textContent = 'מצפין...';
-        const encrypted = await Crypto.encrypt(url, pwd);
-        
-        if (encrypted) {
-          encryptResult.style.display = 'block';
-          encryptResult.value = `const CONFIG = { encryptedUrl: "${encrypted}" };`;
-          encryptUrlBtn.textContent = 'הוצפן בהצלחה!';
-          
-          // Also set it as the active sync url immediately for this device
-          await DB.setSetting('cloudSyncUrl', url);
-          if (document.getElementById('cloud-sync-url')) {
-            document.getElementById('cloud-sync-url').value = url;
-          }
-          UI.toast('הוצפן והוגדר כפעיל!', 'success');
-        } else {
-          UI.toast('שגיאה בהצפנה', 'error');
-          encryptUrlBtn.textContent = 'הצפן שוב';
-        }
-      });
     }
   }
 
