@@ -576,7 +576,9 @@ const StatsPage = (() => {
       <div class="chart-card" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
         <div class="chart-title" style="display: flex; justify-content: space-between; align-items: center;">
           <span>📸 מעקב תמונות מצב</span>
-          <button id="add-photo-btn" class="btn-primary" style="padding: 6px 12px; font-size: 14px;">+ צלם/העלה</button>
+          <button id="add-photo-btn" class="btn-photo">
+            <span style="font-size: 16px;">📷</span> צלם/העלה
+          </button>
           <input type="file" id="photo-upload-input" accept="image/*" capture="environment" style="display: none;">
         </div>
         <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">

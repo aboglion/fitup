@@ -25,50 +25,45 @@ const AnatomyMap = (() => {
       m[k] = { pct, color: getColor(pct) };
     });
 
-    // ── FRONT VIEW ──
-    // Body centered ~50%. Shoulders ~36/64 Y18. Chest ~44/56 Y26.
-    // Biceps ~30/70 Y32. Core ~50 Y38. Obliques ~40/60 Y46.
-    // Forearms ~26/74 Y44. Quads ~43/57 Y62.
+    // Body centered 50%.
     const frontCallouts = [
-      // Left labels
-      { id: 'chest-l',    label: 'חזה',          pct: m.chest.pct,     color: m.chest.color,     nodeX: 44, nodeY: 26, side: 'left' },
+      // Left labels (User's left, Character's right)
+      { id: 'chest-l',    label: 'חזה',          pct: m.chest.pct,     color: m.chest.color,     nodeX: 45, nodeY: 25, side: 'left' },
       { id: 'core',       label: 'שרירי בטן',    pct: m.core.pct,      color: m.core.color,      nodeX: 50, nodeY: 38, side: 'left' },
-      { id: 'obliques-l', label: 'אובליקים',     pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 40, nodeY: 50, side: 'left' },
-      // Right labels
-      { id: 'shoulders-r',label: 'כתפיים',       pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 64, nodeY: 18, side: 'right' },
-      { id: 'biceps-r',   label: 'ביספס',        pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 70, nodeY: 33, side: 'right' },
-      { id: 'forearm-r',  label: 'אמות',         pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 74, nodeY: 46, side: 'right' },
-      { id: 'quads-r',    label: 'ארבע ראשי',    pct: m.quads.pct,     color: m.quads.color,     nodeX: 57, nodeY: 62, side: 'right' },
+      { id: 'obliques-l', label: 'אובליקים',     pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 45, nodeY: 48, side: 'left' },
+      // Right labels (User's right, Character's left)
+      { id: 'shoulders-r',label: 'כתפיים',       pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 62, nodeY: 21, side: 'right' },
+      { id: 'biceps-r',   label: 'ביספס',        pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 64, nodeY: 32, side: 'right' },
+      { id: 'forearm-r',  label: 'אמות',         pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 67, nodeY: 46, side: 'right' },
+      { id: 'quads-r',    label: 'ארבע ראשי',    pct: m.quads.pct,     color: m.quads.color,     nodeX: 55, nodeY: 60, side: 'right' },
       // Symmetric dots
-      { hideLabel: true, id: 'shoulders-l', color: m.shoulders.color, nodeX: 36, nodeY: 18 },
-      { hideLabel: true, id: 'chest-r',     color: m.chest.color,     nodeX: 56, nodeY: 26 },
-      { hideLabel: true, id: 'biceps-l',    color: m.biceps.color,    nodeX: 30, nodeY: 33 },
-      { hideLabel: true, id: 'quads-l',     color: m.quads.color,     nodeX: 43, nodeY: 62 },
-      { hideLabel: true, id: 'obliques-r',  color: m.obliques.color,  nodeX: 60, nodeY: 50 },
-      { hideLabel: true, id: 'forearm-l',   color: m.forearms.color,  nodeX: 26, nodeY: 46 },
+      { hideLabel: true, id: 'shoulders-l', color: m.shoulders.color, nodeX: 38, nodeY: 21 },
+      { hideLabel: true, id: 'chest-r',     color: m.chest.color,     nodeX: 55, nodeY: 25 },
+      { hideLabel: true, id: 'biceps-l',    color: m.biceps.color,    nodeX: 36, nodeY: 32 },
+      { hideLabel: true, id: 'quads-l',     color: m.quads.color,     nodeX: 45, nodeY: 60 },
+      { hideLabel: true, id: 'obliques-r',  color: m.obliques.color,  nodeX: 55, nodeY: 48 },
+      { hideLabel: true, id: 'forearm-l',   color: m.forearms.color,  nodeX: 33, nodeY: 46 },
     ];
 
     // ── BACK VIEW ──
-    // Traps ~45/55 Y16. Lats ~38/62 Y28. Triceps ~28/72 Y34.
-    // LowerBack ~50 Y42. Glutes ~44/56 Y52. Hamstrings ~43/57 Y65. Calves ~44/56 Y80.
     const backCallouts = [
       // Left labels (4)
-      { id: 'traps-l',     label: 'טרפז',       pct: m.traps.pct,       color: m.traps.color,       nodeX: 45, nodeY: 16, side: 'left' },
-      { id: 'triceps-l',   label: 'טריספס',     pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 28, nodeY: 34, side: 'left' },
+      { id: 'traps-l',     label: 'טרפז',       pct: m.traps.pct,       color: m.traps.color,       nodeX: 47, nodeY: 19, side: 'left' },
+      { id: 'triceps-l',   label: 'טריספס',     pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 36, nodeY: 34, side: 'left' },
       { id: 'lowerBack',   label: 'גב תחתון',   pct: m.lowerBack.pct,   color: m.lowerBack.color,   nodeX: 50, nodeY: 48, side: 'left' },
-      { id: 'hamstrings-l',label: 'המסטרינג',    pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 43, nodeY: 65, side: 'left' },
+      { id: 'hamstrings-l',label: 'המסטרינג',    pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 46, nodeY: 64, side: 'left' },
       // Right labels (3)
-      { id: 'lats-r',      label: 'רחב גבי',    pct: m.lats.pct,        color: m.lats.color,        nodeX: 62, nodeY: 28, side: 'right' },
-      { id: 'glutes-r',    label: 'ישבן',        pct: m.glutes.pct,      color: m.glutes.color,      nodeX: 56, nodeY: 52, side: 'right' },
-      { id: 'calves-r',    label: 'תאומים',      pct: m.calves.pct,      color: m.calves.color,      nodeX: 57, nodeY: 80, side: 'right' },
+      { id: 'lats-r',      label: 'רחב גבי',    pct: m.lats.pct,        color: m.lats.color,        nodeX: 56, nodeY: 31, side: 'right' },
+      { id: 'glutes-r',    label: 'ישבן',        pct: m.glutes.pct,      color: m.glutes.color,      nodeX: 54, nodeY: 53, side: 'right' },
+      { id: 'calves-r',    label: 'תאומים',      pct: m.calves.pct,      color: m.calves.color,      nodeX: 54, nodeY: 78, side: 'right' },
       // Symmetric dots
-      { hideLabel: true, id: 'traps-r',     color: m.traps.color,       nodeX: 55, nodeY: 16 },
-      { hideLabel: true, id: 'lats-l',      color: m.lats.color,        nodeX: 38, nodeY: 28 },
-      { hideLabel: true, id: 'triceps-r',   color: m.triceps.color,     nodeX: 72, nodeY: 34 },
-      { hideLabel: true, id: 'glutes-l',    color: m.glutes.color,      nodeX: 44, nodeY: 52 },
-      { hideLabel: true, id: 'hamstrings-r',color: m.hamstrings.color,  nodeX: 57, nodeY: 65 },
-      { hideLabel: true, id: 'calves-l',    color: m.calves.color,      nodeX: 43, nodeY: 80 },
-      { hideLabel: true, id: 'midback',     color: m.traps.color,       nodeX: 50, nodeY: 24 },
+      { hideLabel: true, id: 'traps-r',     color: m.traps.color,       nodeX: 53, nodeY: 19 },
+      { hideLabel: true, id: 'lats-l',      color: m.lats.color,        nodeX: 44, nodeY: 31 },
+      { hideLabel: true, id: 'triceps-r',   color: m.triceps.color,     nodeX: 64, nodeY: 34 },
+      { hideLabel: true, id: 'glutes-l',    color: m.glutes.color,      nodeX: 46, nodeY: 53 },
+      { hideLabel: true, id: 'hamstrings-r',color: m.hamstrings.color,  nodeX: 54, nodeY: 64 },
+      { hideLabel: true, id: 'calves-l',    color: m.calves.color,      nodeX: 46, nodeY: 78 },
+      { hideLabel: true, id: 'midback',     color: m.traps.color,       nodeX: 50, nodeY: 26 },
     ];
 
     const generatePaneHTML = (callouts, title, imagePath) => {
@@ -124,7 +119,7 @@ const AnatomyMap = (() => {
           position: relative;
           width: 100%;
           max-width: 380px;
-          aspect-ratio: 9 / 16;
+          aspect-ratio: 1 / 1;
         }
         .pane-title {
           position: absolute; top: 10px; left: 10px;
@@ -134,7 +129,7 @@ const AnatomyMap = (() => {
         }
         .anatomy-image-bg {
           position: absolute; inset: 0;
-          background-size: contain; background-position: center; background-repeat: no-repeat;
+          background-size: cover; background-position: center; background-repeat: no-repeat;
           opacity: 0.92;
           -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 4%, black 94%, transparent 100%);
           mask-image: linear-gradient(to bottom, transparent 0%, black 4%, black 94%, transparent 100%);
