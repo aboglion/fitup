@@ -37,7 +37,7 @@ front = {
     'Quads L': (45, 62), 'Quads R': (55, 62),
 }
 for name, (ex, ey) in front.items():
-    bx, by = find_best_pixel("images/anatomy-front.png", ex, ey, 5)
+    bx, by = find_best_pixel("images/anatomy-front.webp", ex, ey, 5)
     print(f"  {name:12}: X={bx}, Y={by}")
 
 print("BACK:")
@@ -51,5 +51,5 @@ back = {
     'Calves L': (46, 78), 'Calves R': (54, 78),
 }
 for name, (ex, ey) in back.items():
-    bx, by = find_best_pixel("images/anatomy-back.png", ex, ey, 5)
+    bx, by = find_best_pixel("images/anatomy-back.webp", ex, ey, 5)
     print(f"  {name:12}: X={bx}, Y={by}")

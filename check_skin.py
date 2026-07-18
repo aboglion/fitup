@@ -20,7 +20,7 @@ front = [
     ('Obliques L', 46, 43), ('Obliques R', 54, 43),
     ('Quads L', 46, 60), ('Quads R', 54, 60),
 ]
-test_points("images/anatomy-front.png", front)
+test_points("images/anatomy-front.webp", front)
 
 back = [
     ('Traps L', 47, 20), ('Traps R', 53, 20),
@@ -31,4 +31,4 @@ back = [
     ('Hamstrings L', 46, 65), ('Hamstrings R', 54, 65),
     ('Calves L', 46, 78), ('Calves R', 54, 78),
 ]
-test_points("images/anatomy-back.png", back)
+test_points("images/anatomy-back.webp", back)

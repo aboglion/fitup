@@ -22,6 +22,6 @@ def print_ascii_map(img_path):
         print(f"{y*2:02d}% {row}")
 
 print("FRONT:")
-print_ascii_map("images/anatomy-front.png")
+print_ascii_map("images/anatomy-front.webp")
 print("BACK:")
-print_ascii_map("images/anatomy-back.png")
+print_ascii_map("images/anatomy-back.webp")

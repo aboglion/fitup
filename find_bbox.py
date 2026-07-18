@@ -20,5 +20,5 @@ def get_body_bounds(img_path):
     print(f"Center X: {(min_x+max_x)/2/w*100:.1f}%, Center Y: {(min_y+max_y)/2/h*100:.1f}%")
     print(f"Width: {(max_x-min_x)/w*100:.1f}%, Height: {(max_y-min_y)/h*100:.1f}%")
 
-get_body_bounds("images/anatomy-front.png")
-get_body_bounds("images/anatomy-back.png")
+get_body_bounds("images/anatomy-front.webp")
+get_body_bounds("images/anatomy-back.webp")

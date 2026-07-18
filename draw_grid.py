@@ -21,5 +21,5 @@ def draw_grid(img_path, out_path):
 
     img.save(out_path)
 
-draw_grid("images/anatomy-front.png", "/home/uns/.gemini/antigravity/brain/1e28185b-2c7b-401e-b5a2-e47b3a0074e8/front_grid.jpg")
-draw_grid("images/anatomy-back.png", "/home/uns/.gemini/antigravity/brain/1e28185b-2c7b-401e-b5a2-e47b3a0074e8/back_grid.jpg")
+draw_grid("images/anatomy-front.webp", "/home/uns/.gemini/antigravity/brain/1e28185b-2c7b-401e-b5a2-e47b3a0074e8/front_grid.jpg")
+draw_grid("images/anatomy-back.webp", "/home/uns/.gemini/antigravity/brain/1e28185b-2c7b-401e-b5a2-e47b3a0074e8/back_grid.jpg")

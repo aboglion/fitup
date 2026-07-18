@@ -18,6 +18,6 @@ def print_ascii_map(img_path):
     print("    " + "".join([str((x*2)%10) if x % 5 == 0 else " " for x in range(50)]))
 
 print("FRONT:")
-print_ascii_map("images/anatomy-front.png")
+print_ascii_map("images/anatomy-front.webp")
 print("BACK:")
-print_ascii_map("images/anatomy-back.png")
+print_ascii_map("images/anatomy-back.webp")

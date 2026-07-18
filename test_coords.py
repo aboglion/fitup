@@ -19,7 +19,7 @@ front_points = [
     ('biceps-l', 30, 33), ('quads-l', 43, 62), ('obliques-r', 60, 50),
     ('forearm-l', 26, 46)
 ]
-draw_points("images/anatomy-front.png", "front_test.jpg", front_points)
+draw_points("images/anatomy-front.webp", "front_test.jpg", front_points)
 
 back_points = [
     ('traps-l', 45, 16), ('triceps-l', 28, 34), ('lowerBack', 50, 48),
@@ -28,4 +28,4 @@ back_points = [
     ('triceps-r', 72, 34), ('glutes-l', 44, 52), ('hamstrings-r', 57, 65),
     ('calves-l', 43, 80), ('midback', 50, 24)
 ]
-draw_points("images/anatomy-back.png", "back_test.jpg", back_points)
+draw_points("images/anatomy-back.webp", "back_test.jpg", back_points)

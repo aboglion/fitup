@@ -173,8 +173,8 @@ const AnatomyMap = (() => {
         }
       </style>
       <div class="anatomy-dual-container">
-        ${generatePaneHTML(frontCallouts, 'מבט קדמי (Front)', 'images/anatomy-front.png')}
-        ${generatePaneHTML(backCallouts, 'מבט אחורי (Back)', 'images/anatomy-back.png')}
+        ${generatePaneHTML(frontCallouts, 'מבט קדמי (Front)', 'images/anatomy-front.webp')}
+        ${generatePaneHTML(backCallouts, 'מבט אחורי (Back)', 'images/anatomy-back.webp')}
       </div>`;
   }
 
