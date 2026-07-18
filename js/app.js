@@ -422,7 +422,41 @@ const App = (() => {
       UI.toast(`מצב תצוגה שונה ל${newTheme === 'light' ? 'בהיר ☀️' : 'כהה 🌙'}`, 'info');
     });
 
+    // --- Google Drive Sync Settings ---
+    const urlInput = document.getElementById('cloud-sync-url');
+    const syncStatus = document.getElementById('last-sync-status');
+    const syncBtn = document.getElementById('cloud-sync-btn');
 
+    // Load initial status
+    DB.getSetting('cloudSyncUrl').then(url => {
+      if (url) urlInput.value = url;
+    });
+    
+    CloudSync.getLastSyncText().then(text => {
+      syncStatus.textContent = `סנכרון אחרון: ${text}`;
+    });
+
+    // Save URL on change
+    urlInput.addEventListener('change', async (e) => {
+      await DB.setSetting('cloudSyncUrl', e.target.value.trim());
+      UI.toast('כתובת API נשמרה', 'success');
+    });
+
+    // Manual Sync Button
+    syncBtn.addEventListener('click', async () => {
+      syncBtn.disabled = true;
+      syncBtn.textContent = '🔄 מסנכרן...';
+      
+      const result = await CloudSync.syncData(true); // manual = true
+      
+      if (result.success) {
+        const text = await CloudSync.getLastSyncText();
+        syncStatus.textContent = `סנכרון אחרון: ${text}`;
+      }
+      
+      syncBtn.disabled = false;
+      syncBtn.textContent = '🔄 סנכרן עכשיו';
+    });
   }
 
   return {

@@ -1019,6 +1019,11 @@ const TodayPage = (() => {
         CalendarPage.render();
       }
     }
+
+    // --- Schedule Background Cloud Sync ---
+    if (typeof CloudSync !== 'undefined') {
+      CloudSync.scheduleSync();
+    }
   }
 
 
