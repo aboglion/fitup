@@ -240,20 +240,27 @@
           <!-- Google Drive Sync Card -->
           <div class="settings-card" style="border: 2px solid var(--accent-primary); background: var(--bg-card); position: relative; overflow: hidden;">
             <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: var(--accent-primary); opacity: 0.1; filter: blur(20px); border-radius: 50%;"></div>
-            <h3>☁️ סנכרון לגוגל דרייב (Offline-First)</h3>
-            <p>שמור את הנתונים שלך אוטומטית ברקע. האפליקציה תמשיך לעבוד מקומית ומהר, ותגבה כשיש אינטרנט.</p>
+            <h3>☁️ סנכרון מאובטח לגוגל דרייב</h3>
+            <p>שמור נתונים אוטומטית ברקע בעזרת חיבור לדרייב.</p>
             
-            <div class="day-input-group full-width" style="margin-top: 12px; margin-bottom: 12px;">
-              <label for="cloud-sync-url" style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">Google Apps Script API URL</label>
-              <input type="url" id="cloud-sync-url" placeholder="הדבק כאן את כתובת ה-Web App" style="width: 100%; font-size: 12px; padding: 10px; font-family: monospace;" dir="ltr">
-            </div>
-
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
               <span id="last-sync-status" style="font-size: 11px; font-weight: 600; color: var(--text-muted);">סנכרון אחרון: מחשב...</span>
             </div>
 
             <div class="settings-actions">
               <button id="cloud-sync-btn" class="btn-primary" style="width: 100%;">🔄 סנכרן עכשיו</button>
+            </div>
+            
+            <div style="margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+              <h4 style="font-size: 12px; margin-bottom: 8px; color: var(--text-secondary);">🔐 כלי הגדרה והצפנה (חד פעמי)</h4>
+              <div class="day-input-group full-width" style="margin-bottom: 8px;">
+                <input type="url" id="setup-cloud-url" placeholder="כתובת Web App (גוגל סקריפט)" style="width: 100%; font-size: 11px; padding: 8px; font-family: monospace;" dir="ltr">
+              </div>
+              <div class="day-input-group full-width" style="margin-bottom: 8px;">
+                <input type="password" id="setup-cloud-password" placeholder="בחר סיסמת התחברות" style="width: 100%; font-size: 11px; padding: 8px;" dir="ltr">
+              </div>
+              <button id="encrypt-url-btn" class="btn-secondary" style="width: 100%; padding: 8px; font-size: 11px;">הצפן והכן קוד לקובץ Config</button>
+              <textarea id="encrypted-result" style="display: none; width: 100%; font-size: 10px; margin-top: 8px; padding: 4px; font-family: monospace; word-break: break-all;" rows="3" readonly></textarea>
             </div>
           </div>
 
@@ -346,9 +353,29 @@
     </div>
   </div>
 
+  <!-- Login Screen -->
+  <div id="login-screen" class="modal-overlay hidden" style="z-index: 9999; background: var(--bg-primary);">
+    <div style="width: 90%; max-width: 360px; background: var(--bg-card); padding: 32px 24px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); border: 1px solid var(--border-color); text-align: center;">
+      <div style="font-size: 48px; margin-bottom: 16px;">💪</div>
+      <h2 style="font-size: 24px; margin-bottom: 8px; color: var(--text-primary);">ברוך שובך!</h2>
+      <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">המכשיר הזה לא מסונכרן. אנא הכנס את סיסמת הגישה שלך כדי לטעון נתונים מהענן.</p>
+      
+      <input type="password" id="login-password" placeholder="סיסמה..." style="width: 100%; padding: 12px 16px; font-size: 16px; border-radius: 12px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); margin-bottom: 16px; text-align: center;" dir="ltr">
+      
+      <button id="login-btn" class="btn-primary" style="width: 100%; padding: 14px; font-size: 16px;">התחבר וטען נתונים</button>
+      <div id="login-error" style="color: var(--danger); font-size: 12px; margin-top: 12px; display: none;">סיסמה שגויה או בעיית תקשורת.</div>
+      
+      <div style="margin-top: 24px;">
+        <button id="login-bypass-btn" style="background: none; border: none; color: var(--text-muted); font-size: 12px; text-decoration: underline; cursor: pointer;">אני משתמש חדש לגמרי - התחל מאפס</button>
+      </div>
+    </div>
+  </div>
+
   <script src="js/data.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/db.js"></script>
+  <script src="js/crypto.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/today.js"></script>
   <script src="js/calendar.js"></script>
   <script src="js/exercises.js"></script>

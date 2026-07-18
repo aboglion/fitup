@@ -20,7 +20,29 @@ const App = (() => {
       // Initialize IndexedDB
       await DB.init();
 
-      // Check if plan is loaded or needs update
+      // Check if this is a new installation but we have an encrypted URL in config
+      let savedUrl = await DB.getSetting('cloudSyncUrl');
+      const hasEncryptedUrl = CONFIG && CONFIG.encryptedUrl && CONFIG.encryptedUrl.length > 10;
+      
+      const planCount = await DB.count(DB.STORES.PLAN);
+      
+      if (!savedUrl && hasEncryptedUrl && planCount === 0) {
+        // App is empty and we have an encrypted config, show Login Screen!
+        return showLoginScreen();
+      }
+
+      await loadAppCore();
+    } catch (error) {
+      console.error('App init error:', error);
+      showErrorScreen(error.message);
+    }
+  }
+
+  /**
+   * Load the core app after authentication or if no auth needed
+   */
+  async function loadAppCore() {
+    try {
       const currentDataVersion = 21; // v5.0 program update
       const savedDataVersion = await DB.getSetting('dataVersion');
       
@@ -102,26 +124,99 @@ const App = (() => {
       }
       window.history.replaceState({ page: initialPage }, '', `#${initialPage}`);
 
-      // Hide splash, show app
-      setTimeout(async () => {
-        document.getElementById('splash-screen').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-        checkPhotoReminder();
-      }, 1600);
+      // Hide splash and login, show app
+      document.getElementById('splash-screen').classList.add('hidden');
+      const loginScreen = document.getElementById('login-screen');
+      if(loginScreen) loginScreen.classList.add('hidden');
+      
+      document.getElementById('app').classList.remove('hidden');
+      checkPhotoReminder();
 
     } catch (error) {
-      console.error('App init error:', error);
-      document.getElementById('splash-screen').innerHTML = `
-        <div class="splash-content">
-          <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
-          <h2>שגיאה בטעינת האפליקציה</h2>
-          <p style="color: var(--text-secondary); margin-top: 8px;">${error.message}</p>
-          <button onclick="location.reload()" class="btn-primary" style="margin-top: 24px; width: auto; padding: 12px 32px;">
-            🔄 נסה שוב
-          </button>
-        </div>
-      `;
+      console.error('Core init error:', error);
+      showErrorScreen(error.message);
     }
+  }
+
+  function showErrorScreen(msg) {
+    document.getElementById('splash-screen').classList.remove('hidden');
+    document.getElementById('splash-screen').innerHTML = `
+      <div class="splash-content">
+        <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
+        <h2>שגיאה בטעינת האפליקציה</h2>
+        <p style="color: var(--text-secondary); margin-top: 8px;">${msg}</p>
+        <button onclick="location.reload()" class="btn-primary" style="margin-top: 24px; width: auto; padding: 12px 32px;">
+          🔄 נסה שוב
+        </button>
+      </div>
+    `;
+  }
+
+  /**
+   * Show and handle the Login Screen
+   */
+  function showLoginScreen() {
+    document.getElementById('splash-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('hidden');
+    const loginScreen = document.getElementById('login-screen');
+    loginScreen.classList.remove('hidden');
+
+    const loginBtn = document.getElementById('login-btn');
+    const bypassBtn = document.getElementById('login-bypass-btn');
+    const passwordInput = document.getElementById('login-password');
+    const errorMsg = document.getElementById('login-error');
+
+    bypassBtn.onclick = () => {
+      loginScreen.classList.add('hidden');
+      document.getElementById('splash-screen').classList.remove('hidden');
+      loadAppCore();
+    };
+
+    loginBtn.onclick = async () => {
+      const password = passwordInput.value;
+      if (!password) return;
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'מתחבר...';
+      errorMsg.style.display = 'none';
+
+      try {
+        // 1. Decrypt URL
+        const decryptedUrl = await Crypto.decrypt(CONFIG.encryptedUrl, password);
+        if (!decryptedUrl || !decryptedUrl.startsWith('http')) {
+          throw new Error('סיסמה שגויה!');
+        }
+
+        // 2. Fetch data from Google Drive
+        const response = await fetch(decryptedUrl);
+        if (!response.ok) throw new Error('שגיאת רשת מול שרת גוגל');
+        
+        const data = await response.json();
+        if (data.error || !data.tracking) {
+           // Might be empty Drive
+           console.log("Drive empty or error", data);
+        } else {
+           // 3. Import data
+           await DB.importData(data);
+        }
+
+        // 4. Save decrypted URL locally
+        await DB.setSetting('cloudSyncUrl', decryptedUrl);
+
+        // 5. Load App
+        loginBtn.textContent = 'הצלחה! 🚀';
+        setTimeout(() => {
+           loadAppCore();
+        }, 1000);
+
+      } catch (err) {
+        console.error(err);
+        errorMsg.textContent = err.message === 'סיסמה שגויה!' ? err.message : 'שגיאה בשאיבת נתונים. נסה שוב.';
+        errorMsg.style.display = 'block';
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'התחבר וטען נתונים';
+      }
+    };
   }
 
   /**
@@ -457,6 +552,41 @@ const App = (() => {
       syncBtn.disabled = false;
       syncBtn.textContent = '🔄 סנכרן עכשיו';
     });
+
+    // --- Encryption Tool ---
+    const encryptUrlBtn = document.getElementById('encrypt-url-btn');
+    const setupUrlInput = document.getElementById('setup-cloud-url');
+    const setupPasswordInput = document.getElementById('setup-cloud-password');
+    const encryptResult = document.getElementById('encrypted-result');
+
+    if (encryptUrlBtn) {
+      encryptUrlBtn.addEventListener('click', async () => {
+        const url = setupUrlInput.value.trim();
+        const pwd = setupPasswordInput.value;
+        
+        if (!url || !pwd) {
+          UI.toast('נא להזין לינק וסיסמה', 'error');
+          return;
+        }
+        
+        encryptUrlBtn.textContent = 'מצפין...';
+        const encrypted = await Crypto.encrypt(url, pwd);
+        
+        if (encrypted) {
+          encryptResult.style.display = 'block';
+          encryptResult.value = `const CONFIG = { encryptedUrl: "${encrypted}" };`;
+          encryptUrlBtn.textContent = 'הוצפן בהצלחה!';
+          
+          // Also set it as the active sync url immediately for this device
+          await DB.setSetting('cloudSyncUrl', url);
+          document.getElementById('cloud-sync-url').value = url;
+          UI.toast('הוצפן והוגדר כפעיל!', 'success');
+        } else {
+          UI.toast('שגיאה בהצפנה', 'error');
+          encryptUrlBtn.textContent = 'הצפן שוב';
+        }
+      });
+    }
   }
 
   return {
