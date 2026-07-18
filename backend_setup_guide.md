@@ -126,7 +126,7 @@ function handleTelegramWebhook(update) {
 // 5. המוח של המערכת (Gemini AI API)
 // ==========================================
 function askGeminiAI(userMessage, fitupData, steps) {
-  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + GEMINI_API_KEY;
+  var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + GEMINI_API_KEY;
   
   // -- הפרומפט המרכזי של "המערכת" (System Prompt) --
   var systemPrompt = "אתה 'המערכת' (The System), עוזר AI וירטואלי בעולם כושר בסגנון משחק תפקידים (בדומה ל-Solo Leveling). " +
