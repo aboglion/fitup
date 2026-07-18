@@ -4,5 +4,5 @@
  * Do not manually edit this unless you know what you are doing.
  */
 const CONFIG = {
-  encryptedUrl: "FqjFRutlfeiobnqbp5BeKw8M1+BZhP7WicyMnDFV7aFINezAfl6rI0ghTVfHrENGPCk2t/1UC2zIaO5wltzvjXNQpWnxoxjX4SE6ctFT1rVuQwgBe0Q5YknbfcsxUNUUSrBuGz3PvpRnDxSuSu61h5kzU9LM8yjsX/VA5lgHH3VyO9p/Jp9GAc2wyqGX46g3FvxUEenq3iqeLsrQ"
+  encryptedUrl: "/i5pdVKKHz7vyHPwbiskh4HcRyGJ59hvlHuaFfthUnPmiHrmJAsRdlE8B4csd3Z1EhYCVAaTk99/tUfPBQQnOhcRZO+6ziUJBKd53UyLpoKodAcBTcOvoD75HwM6cj2LpR/bkx1xQnCj4le3pxMd8wZNOVkfe9/6JswZ9h75cbtixe/1j6suD3/BSdcfnj+uO6Q9fa9G4CgjYMKHbRU="
 };
