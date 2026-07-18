@@ -540,20 +540,22 @@ const App = (() => {
     }
 
     // Manual Sync Button
-    syncBtn.addEventListener('click', async () => {
-      syncBtn.disabled = true;
-      syncBtn.textContent = '🔄 מסנכרן...';
-      
-      const result = await CloudSync.syncData(true); // manual = true
-      
-      if (result.success) {
-        const text = await CloudSync.getLastSyncText();
-        syncStatus.textContent = `סנכרון אחרון: ${text}`;
-      }
-      
-      syncBtn.disabled = false;
-      syncBtn.textContent = '🔄 סנכרן עכשיו';
-    });
+    if (syncBtn) {
+      syncBtn.addEventListener('click', async () => {
+        syncBtn.disabled = true;
+        syncBtn.textContent = '🔄 מסנכרן...';
+        
+        const result = await CloudSync.syncData(true); // manual = true
+        
+        if (result.success) {
+          const text = await CloudSync.getLastSyncText();
+          syncStatus.textContent = `סנכרון אחרון: ${text}`;
+        }
+        
+        syncBtn.disabled = false;
+        syncBtn.textContent = '🔄 סנכרן עכשיו';
+      });
+    }
 
     // --- Encryption Tool ---
     const encryptUrlBtn = document.getElementById('encrypt-url-btn');
