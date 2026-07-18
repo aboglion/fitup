@@ -556,8 +556,6 @@ const App = (() => {
         syncBtn.textContent = '🔄 סנכרן עכשיו';
       });
     }
-
-    }
   }
 
   return {
