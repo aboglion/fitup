@@ -225,12 +225,16 @@ const TodayPage = (() => {
         document.getElementById('nut-calories-total').textContent = totalCals;
         document.getElementById('nut-protein-total').textContent = totalProtein;
         
-        // Update nav totals
-        const mobileNavNut = document.getElementById('mobile-nav-nutrition');
+        // Update nav totals (Desktop and Mobile)
         const desktopNavNut = document.getElementById('desktop-nav-nutrition');
-        const nutHtml = `<span style="color: var(--warning);">${totalCals} קק"ל</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}ג חלבון</span>`;
-        if (mobileNavNut) mobileNavNut.innerHTML = nutHtml;
-        if (desktopNavNut) desktopNavNut.innerHTML = nutHtml;
+        if (desktopNavNut) {
+          desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} קק"ל</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}ג חלבון</span>`;
+        }
+        
+        const navCals = document.getElementById('nav-cals-text');
+        const navProt = document.getElementById('nav-protein-text');
+        if (navCals) navCals.textContent = `${totalCals} קק"ל`;
+        if (navProt) navProt.textContent = `${totalProtein}ג`;
         
         // Supplements Fuel Bar
         const fuelContainer = document.getElementById('supplements-fuel-container');
@@ -377,10 +381,12 @@ const TodayPage = (() => {
         `;
         
         // Clear nav totals
-        const mobileNavNut = document.getElementById('mobile-nav-nutrition');
         const desktopNavNut = document.getElementById('desktop-nav-nutrition');
-        if (mobileNavNut) mobileNavNut.innerHTML = '';
         if (desktopNavNut) desktopNavNut.innerHTML = '';
+        const navCals = document.getElementById('nav-cals-text');
+        const navProt = document.getElementById('nav-protein-text');
+        if (navCals) navCals.textContent = `0 קק"ל`;
+        if (navProt) navProt.textContent = `0ג`;
         
         const manageBtnEmpty = document.getElementById('manage-supplements-btn-empty');
         if (manageBtnEmpty && !manageBtnEmpty.hasAttribute('data-bound')) {
@@ -397,6 +403,32 @@ const TodayPage = (() => {
              }
           };
         }
+      // Bottom sheet interaction
+      const foodBtn = document.getElementById('nav-mobile-food-btn');
+      const nutritionSheet = document.getElementById('nutrition-system-card');
+      const backdrop = document.getElementById('nutrition-backdrop');
+      const closeSheet = document.getElementById('close-nutrition-sheet');
+
+      if (foodBtn && nutritionSheet) {
+        const newBtn = foodBtn.cloneNode(true);
+        foodBtn.parentNode.replaceChild(newBtn, foodBtn);
+        
+        const showSheet = () => {
+          document.getElementById('nutrition-backdrop').classList.remove('hidden');
+          setTimeout(() => {
+            document.getElementById('nutrition-system-card').style.transform = 'translateY(0)';
+          }, 10);
+        };
+        const hideSheet = () => {
+          document.getElementById('nutrition-system-card').style.transform = 'translateY(100%)';
+          setTimeout(() => {
+            document.getElementById('nutrition-backdrop').classList.add('hidden');
+          }, 300);
+        };
+        
+        document.getElementById('nav-mobile-food-btn').addEventListener('click', showSheet);
+        if (backdrop) backdrop.addEventListener('click', hideSheet);
+        if (closeSheet) closeSheet.addEventListener('click', hideSheet);
       }
     }
     // -------------------------------------
