@@ -231,7 +231,7 @@ const App = (() => {
 
       } catch (err) {
         console.error(err);
-        errorMsg.textContent = err.message === 'סיסמה שגויה!' ? err.message : 'שגיאה בשאיבת נתונים. נסה שוב.';
+        errorMsg.textContent = err.message === 'סיסמה שגויה!' ? err.message : `שגיאה בשאיבת נתונים: ${err.message}`;
         errorMsg.style.display = 'block';
         loginBtn.disabled = false;
         loginBtn.textContent = 'התחבר וטען נתונים';
