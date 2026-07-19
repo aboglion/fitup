@@ -2562,6 +2562,11 @@ html[dir="rtl"] .rpg-video-btn {
     border-radius: 12px;
   }
 
+  .rpg-node-hex-wrap {
+    width: 54px;
+    height: 54px;
+  }
+
   .rpg-node-hex {
     width: 52px;
     height: 52px;
@@ -2677,6 +2682,11 @@ html[dir="rtl"] .rpg-video-btn {
   .rpg-node {
     padding: 8px 10px;
     gap: 10px;
+  }
+
+  .rpg-node-hex-wrap {
+    width: 46px;
+    height: 46px;
   }
 
   .rpg-node-hex {
