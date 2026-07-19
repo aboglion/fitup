@@ -225,6 +225,13 @@ const TodayPage = (() => {
         document.getElementById('nut-calories-total').textContent = totalCals;
         document.getElementById('nut-protein-total').textContent = totalProtein;
         
+        // Update nav totals
+        const mobileNavNut = document.getElementById('mobile-nav-nutrition');
+        const desktopNavNut = document.getElementById('desktop-nav-nutrition');
+        const nutHtml = `<span style="color: var(--warning);">${totalCals} קק"ל</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}ג חלבון</span>`;
+        if (mobileNavNut) mobileNavNut.innerHTML = nutHtml;
+        if (desktopNavNut) desktopNavNut.innerHTML = nutHtml;
+        
         // Supplements Fuel Bar
         const fuelContainer = document.getElementById('supplements-fuel-container');
         fuelContainer.innerHTML = '';
@@ -368,6 +375,13 @@ const TodayPage = (() => {
           </div>
           <div style="text-align: center; color: var(--text-secondary); font-size: 12px; padding: 10px;">אין נתונים להיום. הוסף תוספים לרוטינה או דווח לבוט.</div>
         `;
+        
+        // Clear nav totals
+        const mobileNavNut = document.getElementById('mobile-nav-nutrition');
+        const desktopNavNut = document.getElementById('desktop-nav-nutrition');
+        if (mobileNavNut) mobileNavNut.innerHTML = '';
+        if (desktopNavNut) desktopNavNut.innerHTML = '';
+        
         const manageBtnEmpty = document.getElementById('manage-supplements-btn-empty');
         if (manageBtnEmpty && !manageBtnEmpty.hasAttribute('data-bound')) {
           manageBtnEmpty.setAttribute('data-bound', 'true');
