@@ -377,7 +377,7 @@ const TodayPage = (() => {
             <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
               <span>🍽️</span> יומן תזונה ותוספים
             </h3>
-            <button class="nav-link" data-page="today" style="background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text-muted);">✖</button>
+            <button onclick="window.history.back()" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px; color: var(--text-muted);" title="חזור">✖</button>
           </div>
           <div style="text-align: center; color: var(--text-muted); padding: 40px 20px;">
              <div style="font-size: 32px; margin-bottom: 12px;">🍽️</div>
@@ -385,13 +385,6 @@ const TodayPage = (() => {
              <div style="font-size: 14px;">שלח לבוט בטלגרם תמונת ארוחה או רשום לו מה אכלת כדי לעקוב אחר התזונה שלך!</div>
           </div>
         `;
-        
-        // Re-attach nav link event listener since we overwrote the DOM
-        nutritionCard.querySelectorAll('.nav-link').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            if (window.App && window.App.navigateTo) window.App.navigateTo('today');
-          });
-        });
         
         // Clear nav totals
         const desktopNavNut = document.getElementById('desktop-nav-nutrition');
