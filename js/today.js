@@ -795,7 +795,6 @@ const TodayPage = (() => {
             </div>
             <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
                  class="exercise-hero-image"
-                 loading="lazy"
                  alt="${ex.name}" onerror="UI.handleImageFallback(this, 'png')"
                  onclick="TodayPage.handleImageClick(event, ${idx}, '${ex.name.replace(/'/g, "\\'")}')">
             ${newBadgeHTML}
