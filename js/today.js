@@ -403,8 +403,11 @@ const TodayPage = (() => {
              }
           };
         }
-      // Bottom sheet interaction
-      const foodBtn = document.getElementById('nav-mobile-food-btn');
+      }
+    }
+    
+    // Bottom sheet interaction
+    const foodBtn = document.getElementById('nav-mobile-food-btn');
       const nutritionSheet = document.getElementById('nutrition-system-card');
       const backdrop = document.getElementById('nutrition-backdrop');
       const closeSheet = document.getElementById('close-nutrition-sheet');
@@ -430,7 +433,6 @@ const TodayPage = (() => {
         if (backdrop) backdrop.addEventListener('click', hideSheet);
         if (closeSheet) closeSheet.addEventListener('click', hideSheet);
       }
-    }
     // -------------------------------------
 
     // Equipment Banner
