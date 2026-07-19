@@ -88,8 +88,32 @@ const CloudSync = (() => {
     });
   }
 
+  /**
+   * Pull data from the Cloud (Google Drive) in the background
+   */
+  async function pullData() {
+    const url = await DB.getSetting('cloudSyncUrl');
+    if (!url) return { success: false, error: 'No URL configured' };
+    
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Network error');
+      
+      const data = await response.json();
+      if (data && !data.error) {
+        await DB.importData(data);
+        return { success: true };
+      }
+      return { success: false, error: 'Invalid data format' };
+    } catch (error) {
+      console.error('Cloud Sync Pull Error:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
   return {
     syncData,
+    pullData,
     scheduleSync,
     getLastSyncText
   };

@@ -4,7 +4,7 @@
  */
 const DB = (() => {
   const DB_NAME = 'FitUpDB';
-  const DB_VERSION = 2;
+  const DB_VERSION = 3;
   let db = null;
 
   // Store names
@@ -13,7 +13,8 @@ const DB = (() => {
     TRACKING: 'dayTracking',     // User's daily tracking data
     EXERCISES: 'exerciseGuide',  // Exercise guide reference
     SETTINGS: 'settings',        // App settings
-    PHOTOS: 'progressPhotos'     // Progress photos
+    PHOTOS: 'progressPhotos',    // Progress photos
+    NUTRITION: 'nutritionTracking' // Nutrition data
   };
 
   /**
@@ -58,6 +59,11 @@ const DB = (() => {
         if (!database.objectStoreNames.contains(STORES.PHOTOS)) {
           const photoStore = database.createObjectStore(STORES.PHOTOS, { keyPath: 'id' });
           photoStore.createIndex('date', 'date', { unique: false });
+        }
+        
+        // Nutrition store
+        if (!database.objectStoreNames.contains(STORES.NUTRITION)) {
+          database.createObjectStore(STORES.NUTRITION, { keyPath: 'date' });
         }
       };
 
@@ -331,12 +337,24 @@ const DB = (() => {
     const tracking = await getAll(STORES.TRACKING);
     const settings = await getAll(STORES.SETTINGS);
     const photos = await getAll(STORES.PHOTOS);
+    
+    // Fetch nutrition in the format the backend expects
+    const nutritionList = await getAll(STORES.NUTRITION);
+    const nutrition = {};
+    if (nutritionList && nutritionList.length > 0) {
+      nutritionList.forEach(n => {
+        const { date, ...rest } = n;
+        nutrition[date] = rest;
+      });
+    }
+    
     return {
       version: 2,
       exportDate: new Date().toISOString(),
       tracking,
       settings,
-      photos
+      photos,
+      nutrition
     };
   }
 
@@ -356,6 +374,13 @@ const DB = (() => {
     if (data.photos) {
       await clear(STORES.PHOTOS);
       await putBulk(STORES.PHOTOS, data.photos);
+    }
+    if (data.nutrition) {
+      await clear(STORES.NUTRITION);
+      const nutritionArray = Object.keys(data.nutrition).map(date => {
+        return { date, ...data.nutrition[date] };
+      });
+      await putBulk(STORES.NUTRITION, nutritionArray);
     }
   }
 
@@ -485,6 +510,14 @@ const DB = (() => {
     return false;
   }
 
+  async function getNutrition(dateStr) {
+    return get(STORES.NUTRITION, dateStr);
+  }
+
+  async function saveNutrition(dateStr, data) {
+    return put(STORES.NUTRITION, { date: dateStr, ...data });
+  }
+
   return {
     init,
     loadTrainingPlan,
@@ -505,6 +538,8 @@ const DB = (() => {
     getAllPhotos,
     deletePhoto,
     deleteDatabase,
+    getNutrition,
+    saveNutrition,
     count,
     STORES
   };

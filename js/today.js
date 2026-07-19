@@ -165,6 +165,42 @@ const TodayPage = (() => {
       rpeBadge.style.display = 'none';
     }
 
+    // --- Update Nutrition Summary Card ---
+    const nutritionCard = document.getElementById('nutrition-summary-card');
+    if (nutritionCard) {
+      let queryDateStr = null;
+      if (day.date) {
+        const parts = day.date.split('/');
+        if (parts.length === 3) {
+          queryDateStr = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+      }
+      if (!queryDateStr) queryDateStr = UI.getLocalDateString(); // fallback
+
+      let nutrition = null;
+      if (typeof DB.getNutrition === 'function') {
+        nutrition = await DB.getNutrition(queryDateStr);
+      }
+
+      if (nutrition && (nutrition.calories > 0 || nutrition.protein > 0 || (nutrition.supplements && nutrition.supplements.length > 0))) {
+        nutritionCard.style.display = 'block';
+        document.getElementById('nut-calories').textContent = nutrition.calories || 0;
+        document.getElementById('nut-protein').textContent = nutrition.protein || 0;
+        
+        const suppContainer = document.getElementById('nut-supplements-container');
+        const suppText = document.getElementById('nut-supplements');
+        if (nutrition.supplements && nutrition.supplements.length > 0) {
+          suppContainer.style.display = 'block';
+          suppText.textContent = nutrition.supplements.join(', ');
+        } else {
+          suppContainer.style.display = 'none';
+        }
+      } else {
+        nutritionCard.style.display = 'none';
+      }
+    }
+    // -------------------------------------
+
     // Equipment Banner
     const eqBanner = document.getElementById('day-equipment-banner');
     if (eqBanner) {

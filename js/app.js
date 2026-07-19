@@ -57,6 +57,13 @@ const App = (() => {
         await DB.setSetting('dataVersion', currentDataVersion);
       }
 
+      // Background pull from cloud to get latest bot data (like nutrition)
+      const savedUrl = await DB.getSetting('cloudSyncUrl');
+      if (savedUrl) {
+        console.log("Pulling latest data from cloud...");
+        await CloudSync.pullData();
+      }
+
       // Load all plan data
       allPlanDays = await DB.getAllPlan();
       allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
