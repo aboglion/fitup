@@ -2029,13 +2029,11 @@ html.light-theme .exercise-hero-container::after {
 
 .rpg-node.unlocked .rpg-node-hex-wrap {
   background: var(--path-color, var(--accent-primary));
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--path-color, var(--accent-primary)) 80%, transparent));
+  filter: drop-shadow(0 0 8px var(--path-color, var(--accent-primary)));
 }
 
 .rpg-node.unlocked:hover .rpg-node-hex-wrap {
   background: var(--path-color, var(--accent-primary));
-  box-shadow: 0 0 15px var(--path-color, var(--accent-primary));
   filter: drop-shadow(0 0 12px var(--path-color, var(--accent-primary)));
 }
 
@@ -2563,13 +2561,13 @@ html[dir="rtl"] .rpg-video-btn {
   }
 
   .rpg-node-hex-wrap {
-    width: 54px;
-    height: 54px;
+    width: 72px;
+    height: 72px;
   }
 
   .rpg-node-hex {
-    width: 52px;
-    height: 52px;
+    width: 70px;
+    height: 70px;
   }
 
   .rpg-node-emoji {
@@ -2685,13 +2683,13 @@ html[dir="rtl"] .rpg-video-btn {
   }
 
   .rpg-node-hex-wrap {
-    width: 46px;
-    height: 46px;
+    width: 66px;
+    height: 66px;
   }
 
   .rpg-node-hex {
-    width: 44px;
-    height: 44px;
+    width: 64px;
+    height: 64px;
   }
 
   .rpg-node-emoji {
