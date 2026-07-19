@@ -412,6 +412,7 @@ const App = (() => {
     // Trigger render for the activated page
     switch (pageName) {
       case 'today':
+      case 'nutrition':
         TodayPage.render();
         break;
       case 'exercises':

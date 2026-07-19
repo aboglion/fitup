@@ -373,12 +373,25 @@ const TodayPage = (() => {
         // Fallback state if absolutely empty
         nutritionCard.style.display = 'block';
         nutritionCard.innerHTML = `
-          <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-light); padding-bottom: 12px; margin-bottom: 12px;">
-            <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0;">🍽️ יומן תזונה</h3>
-            <button id="manage-supplements-btn-empty" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px;" title="ניהול תוספים">⚙️</button>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+              <span>🍽️</span> יומן תזונה ותוספים
+            </h3>
+            <button class="nav-link" data-page="today" style="background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text-muted);">✖</button>
           </div>
-          <div style="text-align: center; color: var(--text-secondary); font-size: 12px; padding: 10px;">אין נתונים להיום. הוסף תוספים לרוטינה או דווח לבוט.</div>
+          <div style="text-align: center; color: var(--text-muted); padding: 40px 20px;">
+             <div style="font-size: 32px; margin-bottom: 12px;">🍽️</div>
+             <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">אין נתוני תזונה להיום</div>
+             <div style="font-size: 14px;">שלח לבוט בטלגרם תמונת ארוחה או רשום לו מה אכלת כדי לעקוב אחר התזונה שלך!</div>
+          </div>
         `;
+        
+        // Re-attach nav link event listener since we overwrote the DOM
+        nutritionCard.querySelectorAll('.nav-link').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            if (window.App && window.App.navigateTo) window.App.navigateTo('today');
+          });
+        });
         
         // Clear nav totals
         const desktopNavNut = document.getElementById('desktop-nav-nutrition');
@@ -406,33 +419,7 @@ const TodayPage = (() => {
       }
     }
     
-    // Bottom sheet interaction
-    const foodBtn = document.getElementById('nav-mobile-food-btn');
-      const nutritionSheet = document.getElementById('nutrition-system-card');
-      const backdrop = document.getElementById('nutrition-backdrop');
-      const closeSheet = document.getElementById('close-nutrition-sheet');
-
-      if (foodBtn && nutritionSheet) {
-        const newBtn = foodBtn.cloneNode(true);
-        foodBtn.parentNode.replaceChild(newBtn, foodBtn);
-        
-        const showSheet = () => {
-          document.getElementById('nutrition-backdrop').classList.remove('hidden');
-          setTimeout(() => {
-            document.getElementById('nutrition-system-card').style.transform = 'translateY(0)';
-          }, 10);
-        };
-        const hideSheet = () => {
-          document.getElementById('nutrition-system-card').style.transform = 'translateY(100%)';
-          setTimeout(() => {
-            document.getElementById('nutrition-backdrop').classList.add('hidden');
-          }, 300);
-        };
-        
-        document.getElementById('nav-mobile-food-btn').addEventListener('click', showSheet);
-        if (backdrop) backdrop.addEventListener('click', hideSheet);
-        if (closeSheet) closeSheet.addEventListener('click', hideSheet);
-      }
+    // Bottom sheet interaction removed (Now handled by App router as a dedicated page)
     // -------------------------------------
 
     // Equipment Banner
