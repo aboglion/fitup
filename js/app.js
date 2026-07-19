@@ -200,8 +200,12 @@ const App = (() => {
 
       try {
         // 1. Decrypt URL
-        const decryptedUrl = await Crypto.decrypt(CONFIG.encryptedUrl, password);
-        if (!decryptedUrl || !decryptedUrl.startsWith('http')) {
+        let decryptedUrl = await Crypto.decrypt(CONFIG.encryptedUrl, password);
+        if (!decryptedUrl) {
+          throw new Error('סיסמה שגויה!');
+        }
+        decryptedUrl = decryptedUrl.trim();
+        if (!decryptedUrl.startsWith('http')) {
           throw new Error('סיסמה שגויה!');
         }
 
