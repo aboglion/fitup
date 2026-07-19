@@ -603,8 +603,8 @@ document.addEventListener('visibilitychange', async () => {
       console.log("App foregrounded, pulling latest data...");
       const result = await CloudSync.pullData();
       if (result && result.success) {
-        // Re-render the current page to reflect new data
-        if (typeof TodayPage !== 'undefined' && TodayPage.render && (!window.location.hash || window.location.hash === '#today')) {
+        // Always re-render TodayPage because it updates the global bottom navbar and the nutrition page
+        if (typeof TodayPage !== 'undefined' && TodayPage.render) {
           TodayPage.render();
         }
       }
