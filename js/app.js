@@ -180,8 +180,10 @@ const App = (() => {
     };
 
     loginBtn.onclick = async () => {
-      const password = passwordInput.value;
+      let password = passwordInput.value;
       if (!password) return;
+      
+      password = password.trim();
 
       loginBtn.disabled = true;
       loginBtn.textContent = 'מתחבר...';
