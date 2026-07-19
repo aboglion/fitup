@@ -84,35 +84,35 @@
       <!-- Center Progress Circle & Nutrition HUD -->
       <div id="bottom-nav-progress" style="display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(-24px); z-index: 10; position: relative;">
         
-        <!-- Interactive HUD Ring -->
-        <div id="nav-mobile-food-btn" style="cursor: pointer; background: var(--bg-secondary); border-radius: 50%; padding: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); border: 2px solid var(--bg-primary); position: relative; z-index: 5; transition: transform 0.2s;">
-          
-          <!-- Inner Workout Progress -->
-          <div class="progress-ring" style="width: 54px; height: 54px;">
+        <!-- Progress Ring -->
+        <div style="background: var(--bg-secondary); border-radius: 50%; padding: 4px; box-shadow: 0 -4px 12px rgba(0,0,0,0.15); border: 1px solid var(--border-color); position: relative; z-index: 5;">
+          <div class="progress-ring" style="width: 52px; height: 52px;">
             <svg viewBox="0 0 100 100">
               <circle class="progress-ring-bg" cx="50" cy="50" r="42" stroke-width="8"/>
               <circle class="progress-ring-fill js-progress-circle" cx="50" cy="50" r="42" stroke-width="8"/>
             </svg>
-            <span class="progress-text js-progress-text" style="font-size: 14px; font-weight: 800; color: var(--accent-primary); text-shadow: 0 0 8px rgba(59, 130, 246, 0.4);">0%</span>
+            <span class="progress-text js-progress-text" style="font-size: 14px; font-weight: 700;">0%</span>
           </div>
-
-          <!-- Calories Satellite Badge (Top Right) -->
-          <div style="position: absolute; top: -2px; right: -20px; background: var(--bg-elevated); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 2px 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); z-index: 10; display: flex; align-items: center; gap: 4px; transform: rotate(5deg);">
-            <span style="font-size: 10px;">🔥</span>
-            <span id="nav-cals-text" style="color: var(--warning); font-size: 11px; font-weight: 800; letter-spacing: 0.5px;">0</span>
-          </div>
-
-          <!-- Protein Satellite Badge (Top Left) -->
-          <div style="position: absolute; top: -2px; left: -20px; background: var(--bg-elevated); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 2px 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.4); z-index: 10; display: flex; align-items: center; gap: 4px; transform: rotate(-5deg);">
-            <span style="font-size: 10px;">🥩</span>
-            <span id="nav-protein-text" style="color: var(--success); font-size: 11px; font-weight: 800; letter-spacing: 0.5px;">0ג</span>
-          </div>
-
         </div>
-        
-        <!-- Nutrition Label Below -->
-        <div style="position: absolute; bottom: -18px; font-size: 10px; font-weight: 800; color: var(--text-muted); white-space: nowrap; pointer-events: none; text-transform: uppercase; letter-spacing: 1px;">
-          תזונה
+
+        <!-- Nutrition Cluster (Below circle) -->
+        <div style="position: absolute; bottom: -20px; display: flex; align-items: center; gap: 6px; z-index: 10; pointer-events: none; width: max-content;">
+          
+          <!-- Calories (Right in RTL) -->
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
+            <span id="nav-cals-text" style="color: var(--warning); font-size: 11px; font-weight: 800;">0</span>
+            <span style="font-size: 9px; color: var(--text-muted); font-weight: 600;">קלוריות</span>
+          </div>
+
+          <!-- Food Plate Button -->
+          <button id="nav-mobile-food-btn" style="pointer-events: auto; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 50%; width: 28px; height: 28px; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); z-index: 20;">🍽️</button>
+
+          <!-- Protein (Left in RTL) -->
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
+            <span id="nav-protein-text" style="color: var(--success); font-size: 11px; font-weight: 800;">0</span>
+            <span style="font-size: 9px; color: var(--text-muted); font-weight: 600;">חלבון</span>
+          </div>
+
         </div>
 
       </div>
