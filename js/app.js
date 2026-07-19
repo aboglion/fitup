@@ -589,3 +589,20 @@ const App = (() => {
 
 // Start the app when DOM is ready
 document.addEventListener('DOMContentLoaded', () => App.init());
+
+// Pull latest data when the app comes back to the foreground
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible') {
+    const savedUrl = await DB.getSetting('cloudSyncUrl');
+    if (savedUrl) {
+      console.log("App foregrounded, pulling latest data...");
+      const result = await CloudSync.pullData();
+      if (result && result.success) {
+        // Re-render the current page to reflect new data
+        if (typeof TodayPage !== 'undefined' && TodayPage.render && (!window.location.hash || window.location.hash === '#today')) {
+          TodayPage.render();
+        }
+      }
+    }
+  }
+});
