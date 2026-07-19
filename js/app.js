@@ -147,14 +147,23 @@ const App = (() => {
 
   function showErrorScreen(msg) {
     document.getElementById('splash-screen').classList.remove('hidden');
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen) loginScreen.classList.add('hidden');
+    document.getElementById('app').classList.add('hidden');
+    
     document.getElementById('splash-screen').innerHTML = `
-      <div class="splash-content">
+      <div class="splash-content" style="padding: 24px; text-align: center;">
         <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
         <h2>שגיאה בטעינת האפליקציה</h2>
         <p style="color: var(--text-secondary); margin-top: 8px;">${msg}</p>
-        <button onclick="location.reload()" class="btn-primary" style="margin-top: 24px; width: auto; padding: 12px 32px;">
-          🔄 נסה שוב
-        </button>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 24px;">
+          <button onclick="location.reload()" class="btn-primary" style="padding: 12px 24px;">
+            🔄 נסה שוב
+          </button>
+          <button onclick="DB.deleteDatabase().then(()=>location.reload())" class="btn-danger" style="padding: 12px 24px;">
+            🗑️ מחיקת נתונים
+          </button>
+        </div>
       </div>
     `;
   }
@@ -215,6 +224,8 @@ const App = (() => {
         // 5. Load App
         loginBtn.textContent = 'הצלחה! 🚀';
         setTimeout(() => {
+           document.getElementById('login-screen').classList.add('hidden');
+           document.getElementById('splash-screen').classList.remove('hidden');
            loadAppCore();
         }, 1000);
 
