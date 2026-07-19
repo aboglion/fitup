@@ -315,6 +315,8 @@ const TodayPage = (() => {
                  let nut = await DB.getNutrition(queryDateStr);
                  if (nut && nut.meals) {
                     nut.meals = nut.meals.filter(m => m.id !== id);
+                    if (!nut.deleted_meals) nut.deleted_meals = [];
+                    nut.deleted_meals.push(id);
                     await DB.saveNutrition(queryDateStr, nut);
                     UI.toast('הארוחה נמחקה', 'info');
                     if(CloudSync) CloudSync.syncData(true);
