@@ -54,6 +54,12 @@ const CloudSync = (() => {
       const result = await response.json();
       
       if (result.status === 'success') {
+        if (result.data) {
+          // Server returns intelligently merged data (e.g. keeping Bot nutrition)
+          await DB.importData(result.data);
+          // Re-render UI just in case there were new records merged from the cloud
+          if (typeof TodayPage !== 'undefined' && TodayPage.render) TodayPage.render();
+        }
         const timestamp = new Date().toISOString();
         await DB.setSetting('lastSyncDate', timestamp);
         
