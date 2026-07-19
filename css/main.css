@@ -119,6 +119,11 @@ body {
   background: var(--accent-primary);
 }
 
+/* ===== Utilities ===== */
+.hidden {
+  display: none !important;
+}
+
 /* ===== App Layout ===== */
 .app {
   display: flex;
