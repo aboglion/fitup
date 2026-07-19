@@ -233,7 +233,7 @@ const TodayPage = (() => {
         
         const navCals = document.getElementById('nav-cals-text');
         const navProt = document.getElementById('nav-protein-text');
-        if (navCals) navCals.textContent = `${totalCals} קק"ל`;
+        if (navCals) navCals.textContent = `${totalCals}`;
         if (navProt) navProt.textContent = `${totalProtein}ג`;
         
         // Supplements Fuel Bar
@@ -385,7 +385,7 @@ const TodayPage = (() => {
         if (desktopNavNut) desktopNavNut.innerHTML = '';
         const navCals = document.getElementById('nav-cals-text');
         const navProt = document.getElementById('nav-protein-text');
-        if (navCals) navCals.textContent = `0 קק"ל`;
+        if (navCals) navCals.textContent = `0`;
         if (navProt) navProt.textContent = `0ג`;
         
         const manageBtnEmpty = document.getElementById('manage-supplements-btn-empty');
