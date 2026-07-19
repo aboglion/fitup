@@ -234,7 +234,7 @@ const TodayPage = (() => {
         const navCals = document.getElementById('nav-cals-text');
         const navProt = document.getElementById('nav-protein-text');
         if (navCals) navCals.textContent = `${totalCals}`;
-        if (navProt) navProt.textContent = `${totalProtein}ג`;
+        if (navProt) navProt.textContent = `${totalProtein}`;
         
         // Supplements Fuel Bar
         const fuelContainer = document.getElementById('supplements-fuel-container');
@@ -386,7 +386,7 @@ const TodayPage = (() => {
         const navCals = document.getElementById('nav-cals-text');
         const navProt = document.getElementById('nav-protein-text');
         if (navCals) navCals.textContent = `0`;
-        if (navProt) navProt.textContent = `0ג`;
+        if (navProt) navProt.textContent = `0`;
         
         const manageBtnEmpty = document.getElementById('manage-supplements-btn-empty');
         if (manageBtnEmpty && !manageBtnEmpty.hasAttribute('data-bound')) {
