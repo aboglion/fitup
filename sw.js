@@ -1,12 +1,13 @@
-const CACHE_NAME = 'fitup-v58';
+const CACHE_NAME = 'fitup-v60';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './training_data.json',
   './css/main.css',
   './css/components.css',
   './css/animations.css',
+  './js/config.js',
+  './js/crypto.js',
   './js/data.js',
   './js/db.js',
   './js/ui.js',
@@ -16,6 +17,7 @@ const ASSETS = [
   './js/stats.js',
   './js/anatomy.js',
   './js/export-guide.js',
+  './js/cloud-sync.js',
   './js/app.js'
 ];
 

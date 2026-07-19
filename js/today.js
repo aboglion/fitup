@@ -165,8 +165,8 @@ const TodayPage = (() => {
       rpeBadge.style.display = 'none';
     }
 
-    // --- Update Nutrition Summary Card ---
-    const nutritionCard = document.getElementById('nutrition-summary-card');
+    // --- Update Nutrition & Supplements System Card ---
+    const nutritionCard = document.getElementById('nutrition-system-card');
     if (nutritionCard) {
       let queryDateStr = null;
       if (day.date) {
@@ -181,22 +181,208 @@ const TodayPage = (() => {
       if (typeof DB.getNutrition === 'function') {
         nutrition = await DB.getNutrition(queryDateStr);
       }
+      
+      let suppsRoutine = await DB.getSetting('supplementsRoutine');
+      if (!suppsRoutine) suppsRoutine = [];
 
-      if (nutrition && (nutrition.calories > 0 || nutrition.protein > 0 || (nutrition.supplements && nutrition.supplements.length > 0))) {
+      // Determine if we should show the card
+      if ((nutrition && nutrition.meals && nutrition.meals.length > 0) || suppsRoutine.length > 0 || (nutrition && nutrition.supplements_taken && nutrition.supplements_taken.length > 0)) {
         nutritionCard.style.display = 'block';
-        document.getElementById('nut-calories').textContent = nutrition.calories || 0;
-        document.getElementById('nut-protein').textContent = nutrition.protein || 0;
         
-        const suppContainer = document.getElementById('nut-supplements-container');
-        const suppText = document.getElementById('nut-supplements');
-        if (nutrition.supplements && nutrition.supplements.length > 0) {
-          suppContainer.style.display = 'block';
-          suppText.textContent = nutrition.supplements.join(', ');
+        let totalCals = 0;
+        let totalProtein = 0;
+        const mealsContainer = document.getElementById('meals-log-container');
+        mealsContainer.innerHTML = '';
+        
+        if (nutrition && nutrition.meals && nutrition.meals.length > 0) {
+          nutrition.meals.forEach(meal => {
+            totalCals += (meal.calories || 0);
+            totalProtein += (meal.protein || 0);
+            
+            const mealEl = document.createElement('div');
+            mealEl.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--bg-input); border-radius: 8px; font-size: 13px;";
+            
+            let bonusText = '';
+            if (meal.bonus && Object.keys(meal.bonus).length > 0) {
+              const b = Object.entries(meal.bonus).map(([k,v]) => `${k} (${v}g)`).join(', ');
+              bonusText = `<div style="font-size: 10px; color: #38bdf8; margin-top: 2px;">+ בונוס: ${b}</div>`;
+            }
+
+            mealEl.innerHTML = `
+              <div style="display: flex; flex-direction: column; gap: 2px;">
+                <strong style="color: var(--text-primary);">${meal.name}</strong>
+                <span style="color: var(--text-secondary); font-size: 11px;">${meal.time || '--:--'} | ${meal.calories} קק"ל | ${meal.protein}ג חלבון</span>
+                ${bonusText}
+              </div>
+              <button class="delete-meal-btn" data-id="${meal.id}" style="background: none; border: none; font-size: 16px; cursor: pointer; color: var(--danger);">🗑️</button>
+            `;
+            mealsContainer.appendChild(mealEl);
+          });
         } else {
-          suppContainer.style.display = 'none';
+          mealsContainer.innerHTML = '<div style="text-align: center; font-size: 12px; color: var(--text-secondary); padding: 10px;">טרם דווחו ארוחות להיום</div>';
         }
+        
+        document.getElementById('nut-calories-total').textContent = totalCals;
+        document.getElementById('nut-protein-total').textContent = totalProtein;
+        
+        // Supplements Fuel Bar
+        const fuelContainer = document.getElementById('supplements-fuel-container');
+        fuelContainer.innerHTML = '';
+        
+        if (suppsRoutine.length > 0) {
+          suppsRoutine.forEach(sup => {
+            // Check if taken today
+            const isTaken = nutrition && nutrition.supplements_taken && nutrition.supplements_taken.includes(sup.name);
+            
+            // Calculate Bonus from meals
+            let totalBonus = 0;
+            if (nutrition && nutrition.meals) {
+              nutrition.meals.forEach(m => {
+                if (m.bonus && m.bonus[sup.name]) {
+                  totalBonus += m.bonus[sup.name];
+                }
+              });
+            }
+            let bonusPercent = 0;
+            if (totalBonus > 0) {
+              const target = sup.target || 5; // Default 5g for visualization if unknown
+              bonusPercent = Math.min(100, (totalBonus / target) * 100);
+            }
+            
+            let fuelPercent = 0;
+            let fuelColor = 'var(--danger)';
+            let statusText = 'דרוש תדלוק!';
+            
+            if (isTaken) {
+              fuelPercent = 100;
+              fuelColor = 'var(--success)';
+              statusText = 'תודלק להיום';
+            } else {
+              // Calculate rough cooldown based on timeToTake (e.g., 09:00)
+              const now = new Date();
+              const currentHour = now.getHours();
+              const currentMin = now.getMinutes();
+              const currentTotalMins = currentHour * 60 + currentMin;
+              
+              const [takeH, takeM] = (sup.timeToTake || "09:00").split(':').map(Number);
+              const takeTotalMins = takeH * 60 + (takeM || 0);
+              
+              if (currentTotalMins < takeTotalMins) {
+                fuelPercent = Math.max(5, 100 - ((takeTotalMins - currentTotalMins) / 1440) * 100);
+                fuelColor = 'var(--warning)';
+                statusText = 'מתרוקן...';
+              }
+            }
+            
+            // If we have bonus, modify text
+            if (totalBonus > 0 && !isTaken) {
+              statusText += ` (+${totalBonus}g מאוכל)`;
+            }
+
+            const fuelEl = document.createElement('div');
+            fuelEl.style.cssText = "display: flex; flex-direction: column; gap: 4px;";
+            fuelEl.innerHTML = `
+              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600;">
+                <span style="color: var(--text-primary);">${sup.name} <span style="color: var(--text-secondary); font-size: 10px;">(${sup.timeToTake})</span></span>
+                <span style="color: ${fuelColor};">${statusText}</span>
+              </div>
+              <div style="height: 12px; background: var(--bg-input); border-radius: 6px; overflow: hidden; position: relative;">
+                <div style="position: absolute; top: 0; right: 0; height: 100%; width: ${fuelPercent}%; background: ${fuelColor}; transition: width 1s ease;"></div>
+                ${bonusPercent > 0 ? `<div style="position: absolute; top: 0; right: 0; height: 100%; width: ${bonusPercent}%; background: linear-gradient(90deg, #0ea5e9, #38bdf8); box-shadow: 0 0 8px #38bdf8; z-index: 10;"></div>` : ''}
+              </div>
+              <button class="mark-sup-btn" data-name="${sup.name}" style="align-self: flex-end; font-size: 11px; margin-top: 2px; background: none; border: 1px solid var(--border-light); border-radius: 4px; padding: 2px 8px; cursor: pointer; color: var(--text-secondary); display: ${isTaken ? 'none' : 'block'};">סמן שנלקח</button>
+            `;
+            fuelContainer.appendChild(fuelEl);
+          });
+        }
+        
+        // Setup Action Listeners
+        nutritionCard.querySelectorAll('.delete-meal-btn').forEach(btn => {
+           btn.onclick = async () => {
+              if (confirm('למחוק ארוחה זו?')) {
+                 const id = btn.dataset.id;
+                 let nut = await DB.getNutrition(queryDateStr);
+                 if (nut && nut.meals) {
+                    nut.meals = nut.meals.filter(m => m.id !== id);
+                    await DB.saveNutrition(queryDateStr, nut);
+                    UI.toast('הארוחה נמחקה', 'info');
+                    if(CloudSync) CloudSync.syncData(true);
+                    render();
+                 }
+              }
+           };
+        });
+        
+        nutritionCard.querySelectorAll('.mark-sup-btn').forEach(btn => {
+           btn.onclick = async () => {
+              const name = btn.dataset.name;
+              let nut = await DB.getNutrition(queryDateStr);
+              if (!nut) nut = { meals: [], supplements_taken: [] };
+              if (!nut.supplements_taken) nut.supplements_taken = [];
+              if (!nut.supplements_taken.includes(name)) {
+                 nut.supplements_taken.push(name);
+                 await DB.saveNutrition(queryDateStr, nut);
+                 UI.toast('תוסף נרשם!', 'success');
+                 if(CloudSync) CloudSync.syncData(true);
+                 render();
+              }
+           };
+        });
+        
+        const manageBtn = document.getElementById('manage-supplements-btn');
+        if (manageBtn && !manageBtn.hasAttribute('data-bound')) {
+          manageBtn.setAttribute('data-bound', 'true');
+          manageBtn.onclick = async () => {
+            let supps = await DB.getSetting('supplementsRoutine');
+            if (!supps) supps = [];
+            const name = prompt('הזן שם תוסף חדש (למשל: קריאטין). השאר ריק כדי לדלג:');
+            if (name && name.trim() !== '') {
+               const time = prompt('באיזו שעה ביום לקחת? (פורמט שעות, למשל 09:00)', '09:00');
+               const targetStr = prompt('יעד צריכה יומי בגרמים (לצורך חישוב בונוס מאוכל, למשל 5):', '5');
+               const target = parseFloat(targetStr) || 0;
+               supps.push({ name: name.trim(), timeToTake: time || '09:00', target: target });
+               await DB.setSetting('supplementsRoutine', supps);
+               UI.toast('תוסף נוסף בהצלחה', 'success');
+               render();
+            } else if (supps.length > 0) {
+               const delName = prompt('למחיקת תוסף קיים, הקלד את שמו המדויק כאן:\\n(' + supps.map(s => s.name).join(', ') + ')');
+               if (delName) {
+                  supps = supps.filter(s => s.name !== delName.trim());
+                  await DB.setSetting('supplementsRoutine', supps);
+                  UI.toast('עודכן', 'info');
+                  render();
+               }
+            } else {
+               UI.toast('אין תוספים ברוטינה', 'info');
+            }
+          };
+        }
+        
       } else {
-        nutritionCard.style.display = 'none';
+        // Fallback state if absolutely empty
+        nutritionCard.style.display = 'block';
+        nutritionCard.innerHTML = `
+          <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-light); padding-bottom: 12px; margin-bottom: 12px;">
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0;">🍽️ יומן תזונה</h3>
+            <button id="manage-supplements-btn-empty" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px;" title="ניהול תוספים">⚙️</button>
+          </div>
+          <div style="text-align: center; color: var(--text-secondary); font-size: 12px; padding: 10px;">אין נתונים להיום. הוסף תוספים לרוטינה או דווח לבוט.</div>
+        `;
+        const manageBtnEmpty = document.getElementById('manage-supplements-btn-empty');
+        if (manageBtnEmpty && !manageBtnEmpty.hasAttribute('data-bound')) {
+          manageBtnEmpty.setAttribute('data-bound', 'true');
+          manageBtnEmpty.onclick = async () => {
+             const name = prompt('הזן שם תוסף חדש (למשל: קריאטין):');
+             if (name && name.trim() !== '') {
+                const time = prompt('באיזו שעה ביום לקחת? (פורמט 09:00)', '09:00');
+                const targetStr = prompt('יעד צריכה יומי בגרמים (לצורך חישוב בונוס מאוכל, למשל 5):', '5');
+                const target = parseFloat(targetStr) || 0;
+                await DB.setSetting('supplementsRoutine', [{ name: name.trim(), timeToTake: time || '09:00', target: target }]);
+                UI.toast('תוסף ראשון נוסף!', 'success');
+                render();
+             }
+          };
+        }
       }
     }
     // -------------------------------------
