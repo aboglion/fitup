@@ -105,7 +105,7 @@
           </div>
 
           <!-- Food Plate Button -->
-          <button class="bottom-nav-link" data-page="nutrition" id="nav-mobile-food-btn" style="pointer-events: auto; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 50%; width: 38px; height: 38px; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); z-index: 20;">🍽️</button>
+          <button class="bottom-nav-link" data-page="nutrition" id="nav-mobile-food-btn" style="pointer-events: auto; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 50%; width: 38px; height: 38px; min-width: 38px; min-height: 38px; flex-shrink: 0; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); z-index: 20;">🍽️</button>
 
           <!-- Protein (Left in RTL) -->
           <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1;">
@@ -267,7 +267,10 @@
             <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
               <span>🍽️</span> יומן תזונה ותוספים
             </h3>
-            <button id="manage-supplements-btn" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px;" title="ניהול תוספים">⚙️</button>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <button id="manage-supplements-btn" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px;" title="ניהול תוספים">⚙️</button>
+              <button onclick="window.history.back()" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px; color: var(--text-muted);" title="חזור">✖</button>
+            </div>
           </div>
 
           <!-- Supplements Fuel Bars -->
