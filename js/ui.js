@@ -318,8 +318,8 @@ const UI = (() => {
     if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) return { label: 'גומיית התנגדות', icon: icons.band };
     if (n.includes('wall')) return { label: 'קיר פנוי', icon: icons.wall };
     if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('incline') || n.includes('decline') || n.includes('copenhagen')) return { label: 'כיסא / ספסל', icon: icons.bench };
+    if (n.includes('hamstring curl') || n.includes('hamstring towel curl')) return { label: 'מגבת קטנה', icon: icons.towel };
     if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('inverted row') || n.includes('chin-up') || n.includes('hanging')) return { label: 'מתח / מקבילים', icon: icons.bar };
-    if (n.includes('hamstring curl')) return { label: 'מגבת קטנה', icon: icons.towel };
     if (n.includes('couch stretch')) return { label: 'קיר + כרית', icon: icons.wall };
     if (n.includes('foam roll')) return { label: 'גליל עיסוי', icon: icons.roller };
     
