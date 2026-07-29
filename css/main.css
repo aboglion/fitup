@@ -220,13 +220,13 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: var(--bottom-nav-height);
+  height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
   background: var(--bg-secondary);
   border-top: 1px solid var(--border-color);
   z-index: 100;
   justify-content: space-around;
   align-items: center;
-  padding: 0 var(--space-sm);
+  padding: 0 var(--space-sm) env(safe-area-inset-bottom, 0px);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 }
@@ -517,7 +517,7 @@ label {
 
   .page-container {
     margin-right: 0;
-    padding: var(--space-md) var(--space-md) calc(var(--bottom-nav-height) + var(--space-xl));
+    padding: var(--space-md) var(--space-md) calc(var(--bottom-nav-height) + var(--space-xl) + env(safe-area-inset-bottom, 0px));
   }
 
   .page-title {
@@ -531,7 +531,7 @@ label {
 
 @media (max-width: 480px) {
   .page-container {
-    padding: var(--space-sm) var(--space-sm) calc(var(--bottom-nav-height) + var(--space-lg));
+    padding: var(--space-sm) var(--space-sm) calc(var(--bottom-nav-height) + var(--space-lg) + env(safe-area-inset-bottom, 0px));
   }
 }
 

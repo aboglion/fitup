@@ -441,22 +441,25 @@ const DB = (() => {
     // If tracking data doesn't exist yet, we still need to swap the slots if they do later,
     // but the easiest is just to swap the tracking records and their dayIndex pointers.
     
-    // 3. Swap plan properties (dayType, plannedRPE, exercises, workoutSeq)
+    // 3. Swap plan properties (dayType, plannedRPE, exercises, workoutSeq, restSeq)
     // We KEEP dayIndex, dayNum, dayOfWeek, date, week intact
     const tempDayType = day1.dayType;
     const tempRPE = day1.plannedRPE;
     const tempExercises = JSON.stringify(day1.exercises);
-    const tempSeq = day1.workoutSeq;
+    const tempWorkoutSeq = day1.workoutSeq;
+    const tempRestSeq = day1.restSeq;
 
     day1.dayType = day2.dayType;
     day1.plannedRPE = day2.plannedRPE;
     day1.exercises = JSON.parse(JSON.stringify(day2.exercises));
     day1.workoutSeq = day2.workoutSeq;
+    day1.restSeq = day2.restSeq;
 
     day2.dayType = tempDayType;
     day2.plannedRPE = tempRPE;
     day2.exercises = JSON.parse(tempExercises);
-    day2.workoutSeq = tempSeq;
+    day2.workoutSeq = tempWorkoutSeq;
+    day2.restSeq = tempRestSeq;
 
     // Save swapped plans
     await put(STORES.PLAN, day1);

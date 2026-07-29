@@ -162,9 +162,8 @@ const TodayPage = (() => {
     typeBadge.textContent = typeInfo.label;
     typeBadge.className = `type-badge ${typeInfo.class}`;
 
-    const swapWorkoutBtn = document.getElementById('swap-workout-btn');
     if (swapWorkoutBtn) {
-      if (day.dayType !== 'Rest' && day.dayType !== 'Active Recovery' && !currentTracking.completed) {
+      if (!currentTracking.completed) {
         swapWorkoutBtn.style.display = 'flex';
       } else {
         swapWorkoutBtn.style.display = 'none';
@@ -1310,7 +1309,6 @@ const TodayPage = (() => {
     const validSwapTargets = [];
     for (const day of weekDays) {
       if (day.dayIndex === currentDayIndex) continue;
-      if (day.dayType === 'Rest' || day.dayType === 'Active Recovery') continue;
       
       // Check if it's already completed
       const track = await DB.getDayTracking(day.dayIndex);
