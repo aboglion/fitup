@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v65';
+const CACHE_NAME = 'fitup-v66';
 const ASSETS = [
   './',
   './index.html',
