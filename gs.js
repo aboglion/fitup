@@ -2475,7 +2475,6 @@ function testPrompt() {
       fitupData,
       steps,
       sleep,
-      heartRate,
       heartPoints,
       energy
     )
