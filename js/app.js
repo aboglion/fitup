@@ -598,6 +598,16 @@ document.addEventListener('DOMContentLoaded', () => App.init());
 // Pull latest data when the app comes back to the foreground
 document.addEventListener('visibilitychange', async () => {
   if (document.visibilityState === 'visible') {
+    // 1. Update dates and active index since the day might have changed
+    if (typeof App !== 'undefined' && App.recalculatePlanIndex) {
+      await App.recalculatePlanIndex();
+    }
+    
+    // 2. Render UI immediately to reflect new day if it changed
+    if (typeof TodayPage !== 'undefined' && TodayPage.render) {
+      TodayPage.render();
+    }
+
     const savedUrl = await DB.getSetting('cloudSyncUrl');
     if (savedUrl) {
       console.log("App foregrounded, pulling latest data...");

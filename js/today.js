@@ -48,6 +48,11 @@ const TodayPage = (() => {
       });
     }
 
+    const swapWorkoutBtn = document.getElementById('swap-workout-btn');
+    if (swapWorkoutBtn) {
+      swapWorkoutBtn.addEventListener('click', showSwapModal);
+    }
+
     // Auto-save inputs on change
     document.getElementById('actual-rpe').addEventListener('change', autoSave);
     document.getElementById('body-weight').addEventListener('change', autoSave);
@@ -156,6 +161,15 @@ const TodayPage = (() => {
     const typeBadge = document.getElementById('day-type');
     typeBadge.textContent = typeInfo.label;
     typeBadge.className = `type-badge ${typeInfo.class}`;
+
+    const swapWorkoutBtn = document.getElementById('swap-workout-btn');
+    if (swapWorkoutBtn) {
+      if (day.dayType !== 'Rest' && day.dayType !== 'Active Recovery' && !currentTracking.completed) {
+        swapWorkoutBtn.style.display = 'flex';
+      } else {
+        swapWorkoutBtn.style.display = 'none';
+      }
+    }
 
     const rpeBadge = document.getElementById('day-rpe');
     if (day.plannedRPE && day.plannedRPE !== '—') {
@@ -1287,6 +1301,66 @@ const TodayPage = (() => {
     UI.showModal(name, `<img src="${src}" style="width:100%; border-radius:8px;">`);
   }
 
+  async function showSwapModal() {
+    const currentDay = allPlanDays[currentDayIndex];
+    
+    // Find all other main workouts in the same week
+    const weekDays = allPlanDays.filter(d => d.week === currentDay.week);
+    
+    const validSwapTargets = [];
+    for (const day of weekDays) {
+      if (day.dayIndex === currentDayIndex) continue;
+      if (day.dayType === 'Rest' || day.dayType === 'Active Recovery') continue;
+      
+      // Check if it's already completed
+      const track = await DB.getDayTracking(day.dayIndex);
+      if (track && track.completed) continue;
+      
+      validSwapTargets.push(day);
+    }
+    
+    if (validSwapTargets.length === 0) {
+      UI.toast('אין אימונים זמינים להחלפה בשבוע זה (שאותם טרם ביצעת).', 'warning');
+      return;
+    }
+    
+    let html = `<p style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">בחר אימון מהשבוע הנוכחי כדי להחליף איתו. ההחלפה תתבצע רק עבור השבוע הזה.</p>`;
+    html += `<div style="display: flex; flex-direction: column; gap: 10px;">`;
+    
+    validSwapTargets.forEach(targetDay => {
+      const typeInfo = UI.getDayTypeInfo(targetDay.dayType);
+      html += `
+        <button class="btn-secondary" style="justify-content: flex-start; padding: 12px; background: var(--bg-elevated); border: 1px solid var(--border-light);" onclick="TodayPage.performSwap(${targetDay.dayIndex})">
+          <div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <span style="font-weight: bold; color: var(--text-primary); margin-bottom: 4px;">${targetDay.dayOfWeek} - ${targetDay.dayType}</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">החלף עם אימון זה</span>
+          </div>
+        </button>
+      `;
+    });
+    html += `</div>`;
+    
+    UI.showModal('🔄 החלף סדר אימון', html);
+  }
+
+  async function performSwap(targetDayIndex) {
+    UI.closeModal();
+    try {
+      await DB.swapWorkouts(currentDayIndex, targetDayIndex);
+      allPlanDays = await DB.getAllPlan();
+      UI.toast('האימון הוחלף בהצלחה!', 'success');
+      
+      if (typeof CalendarPage !== 'undefined' && document.getElementById('calendar-accordion-content')?.style.display === 'block') {
+        CalendarPage.render();
+      }
+      
+      render();
+    } catch (e) {
+      console.error(e);
+      UI.toast('שגיאה בעת ביצוע ההחלפה', 'danger');
+    }
+  }
+
   return {
     init,
     render,
@@ -1301,6 +1375,7 @@ const TodayPage = (() => {
     updateSetData,
     updateExerciseNote,
     showExerciseImage,
+    performSwap,
     getCurrentDayIndex: () => currentDayIndex
   };
 })();

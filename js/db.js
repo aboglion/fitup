@@ -425,6 +425,67 @@ const DB = (() => {
   }
 
   /**
+   * Swap two main workouts in the same week
+   */
+  async function swapWorkouts(dayIndex1, dayIndex2) {
+    // 1. Get the plan data for both days
+    const day1 = await getDayPlan(dayIndex1);
+    const day2 = await getDayPlan(dayIndex2);
+
+    if (!day1 || !day2) throw new Error('One or both days not found in plan');
+
+    // 2. Get the tracking data for both days
+    let track1 = await getDayTracking(dayIndex1);
+    let track2 = await getDayTracking(dayIndex2);
+
+    // If tracking data doesn't exist yet, we still need to swap the slots if they do later,
+    // but the easiest is just to swap the tracking records and their dayIndex pointers.
+    
+    // 3. Swap plan properties (dayType, plannedRPE, exercises, workoutSeq)
+    // We KEEP dayIndex, dayNum, dayOfWeek, date, week intact
+    const tempDayType = day1.dayType;
+    const tempRPE = day1.plannedRPE;
+    const tempExercises = JSON.stringify(day1.exercises);
+    const tempSeq = day1.workoutSeq;
+
+    day1.dayType = day2.dayType;
+    day1.plannedRPE = day2.plannedRPE;
+    day1.exercises = JSON.parse(JSON.stringify(day2.exercises));
+    day1.workoutSeq = day2.workoutSeq;
+
+    day2.dayType = tempDayType;
+    day2.plannedRPE = tempRPE;
+    day2.exercises = JSON.parse(tempExercises);
+    day2.workoutSeq = tempSeq;
+
+    // Save swapped plans
+    await put(STORES.PLAN, day1);
+    await put(STORES.PLAN, day2);
+
+    // 4. Swap tracking data
+    // Remove the old tracking data
+    const trackStore = transaction(STORES.TRACKING, 'readwrite');
+    await new Promise((resolve) => {
+      let count = 0;
+      const complete = () => { if (++count === 2) resolve(); };
+      trackStore.delete(dayIndex1).onsuccess = complete;
+      trackStore.delete(dayIndex2).onsuccess = complete;
+    });
+
+    // Save swapped tracking data with updated dayIndex
+    if (track1) {
+      track1.dayIndex = dayIndex2;
+      await saveDayTracking(dayIndex2, track1);
+    }
+    if (track2) {
+      track2.dayIndex = dayIndex1;
+      await saveDayTracking(dayIndex1, track2);
+    }
+
+    return true;
+  }
+
+  /**
    * Automatically complete any Rest days that are in the past relative to the last completed workout date.
    */
   async function syncRestDays(allPlanDays) {
@@ -541,6 +602,7 @@ const DB = (() => {
     getNutrition,
     saveNutrition,
     count,
+    swapWorkouts,
     STORES
   };
 })();
