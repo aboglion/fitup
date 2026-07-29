@@ -162,6 +162,7 @@ const TodayPage = (() => {
     typeBadge.textContent = typeInfo.label;
     typeBadge.className = `type-badge ${typeInfo.class}`;
 
+    const swapWorkoutBtn = document.getElementById('swap-workout-btn');
     if (swapWorkoutBtn) {
       if (!currentTracking.completed) {
         swapWorkoutBtn.style.display = 'flex';
