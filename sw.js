@@ -50,6 +50,11 @@ self.addEventListener('fetch', (event) => {
   // Only handle HTTP/HTTPS requests
   if (!event.request.url.startsWith('http')) return;
 
+  // Bypass Google Apps Script URLs to avoid CORS and redirect issues
+  if (event.request.url.includes('script.google.com') || event.request.url.includes('script.googleusercontent.com')) {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -64,7 +69,16 @@ self.addEventListener('fetch', (event) => {
       })
       .catch(() => {
         // Fallback to cache if network fails
-        return caches.match(event.request, { ignoreSearch: true });
+        return caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return new Response('Network error and not found in cache.', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: new Headers({ 'Content-Type': 'text/plain' })
+          });
+        });
       })
   );
 });
