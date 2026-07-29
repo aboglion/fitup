@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v66';
+const CACHE_NAME = 'fitup-v67';
 const ASSETS = [
   './',
   './index.html',
@@ -50,8 +50,12 @@ self.addEventListener('fetch', (event) => {
   // Only handle HTTP/HTTPS requests
   if (!event.request.url.startsWith('http')) return;
 
-  // Bypass Google Apps Script URLs to avoid CORS and redirect issues
-  if (event.request.url.includes('script.google.com') || event.request.url.includes('script.googleusercontent.com')) {
+  // Bypass external APIs and Fonts to avoid CORS and caching issues
+  const url = event.request.url;
+  if (url.includes('script.google.com') || 
+      url.includes('script.googleusercontent.com') ||
+      url.includes('fonts.googleapis.com') || 
+      url.includes('fonts.gstatic.com')) {
     return;
   }
 
