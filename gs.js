@@ -426,7 +426,6 @@ function handleTelegramMessage(message) {
     const fitupData = getFitUpData();
     const steps = getCachedSteps();
     const sleep = getCachedSleep();
-    const heartRate = getCachedHeartRate24h();
     const heartPoints = getCachedHeartPoints24h();
     const energy = getCachedEnergyExpended24h();
 
@@ -436,7 +435,6 @@ function handleTelegramMessage(message) {
       steps,
       sleep,
       imageData,
-      heartRate,
       heartPoints,
       energy
     );
@@ -511,7 +509,6 @@ function askGeminiAI(
   steps,
   sleep,
   imageData,
-  heartRate,
   heartPoints,
   energy
 ) {
@@ -527,7 +524,6 @@ function askGeminiAI(
     fitupData,
     steps,
     sleep,
-    heartRate,
     heartPoints,
     energy
   );
@@ -621,7 +617,6 @@ function buildSystemPrompt(
   fitupData,
   steps,
   sleep,
-  heartRate,
   heartPoints,
   energy
 ) {
@@ -728,31 +723,15 @@ function buildSystemPrompt(
     ) +
     ".\n";
 
-  if (heartRate && heartRate.available) {
-    prompt +=
-      "דופק ב-24 שעות: ממוצע " +
-      (heartRate.avg !== null ? heartRate.avg : "לא זמין") +
-      ", מינימום " +
-      (heartRate.min !== null ? heartRate.min : "לא זמין") +
-      ", מקסימום " +
-      (heartRate.max !== null ? heartRate.max : "לא זמין") +
-      ", אחרון " +
-      (heartRate.last !== null ? heartRate.last : "לא זמין") +
-      " BPM בשעה " +
-      (heartRate.lastTime || "לא ידוע") +
-      ".\n";
-  } else {
-    prompt += "דופק ב-24 שעות: לא זמין.\n";
-  }
 
   prompt +=
-    "Heart Points ב-24 שעות: " +
+    "Heart Points (נקודות לב - מדד מאמץ אירובי. לפחות 22 ליום זה טוב, מעל 40 זה אימון עצים): " +
     (
       heartPoints === null || heartPoints === undefined
         ? "לא זמין"
         : heartPoints
     ) +
-    ".\n";
+    ". התייחס לזה במקום דופק כדי לנתח את העומס הקרדיו-וסקולרי שלו.\n";
 
   prompt +=
     "Energy Expended ב-24 שעות: " +
@@ -884,7 +863,6 @@ function getAiContext24h() {
     const fitupData = getFitUpData() || {};
     const sleep = getCachedSleep();
     const steps = getCachedSteps();
-    const heartRate = getCachedHeartRate24h();
     const heartPoints = getCachedHeartPoints24h();
     const energy = getCachedEnergyExpended24h();
 
@@ -936,10 +914,7 @@ function getAiContext24h() {
       summary: {
         steps24h: steps,
         sleepTotalMinutes: sleep ? sleep.totalMinutes : null,
-        heartRateAvg: heartRate ? heartRate.avg : null,
-        heartRateMin: heartRate ? heartRate.min : null,
-        heartRateMax: heartRate ? heartRate.max : null,
-        heartRateLast: heartRate ? heartRate.last : null,
+
         heartPoints24h: heartPoints,
         energy24h: energy,
         sessionsCount: Array.isArray(sessions) ? sessions.length : 0,
@@ -1543,7 +1518,6 @@ function setupWebhook() {
 // ClearCaches
   const props = PropertiesService.getScriptProperties();
   props.deleteProperty("CACHED_SLEEP");
-  props.deleteProperty("CACHED_HEART_RATE_24H");
   props.deleteProperty("CACHED_STEPS");
   props.deleteProperty("CACHED_HEART_POINTS_24H");
   props.deleteProperty("CACHED_ENERGY_24H");
@@ -1905,166 +1879,6 @@ function fetchGoogleFitSleep() {
 
 
 // ============================================================
-// 14. Google Fit — Heart Rate 24h
-// ============================================================
-
-function getCachedHeartRate24h() {
-  const props = PropertiesService.getScriptProperties();
-  const cachedRaw = props.getProperty("CACHED_HEART_RATE_24H");
-
-  if (cachedRaw) {
-    try {
-      const cached = JSON.parse(cachedRaw);
-      const maximumAge = HEART_RATE_CACHE_MINUTES * 60 * 1000;
-
-      if (
-        Date.now() - Number(cached.timestamp || 0) < maximumAge
-      ) {
-        return cached.data;
-      }
-    } catch (ignore) {}
-  }
-
-  const data = fetchGoogleFitHeartRate24h();
-
-  props.setProperty(
-    "CACHED_HEART_RATE_24H",
-    JSON.stringify({
-      data: data,
-      timestamp: Date.now()
-    })
-  );
-
-  return data;
-}
-
-
-
-
-function fetchGoogleFitHeartRate24h() {
-  try {
-    const token = ScriptApp.getOAuthToken();
-    const endTimeMillis = Date.now();
-    const startTimeMillis = endTimeMillis - 24 * 60 * 60 * 1000;
-
-    // 1. שליפת ממוצע, מינימום ומקסימום בעזרת ה-API המרכז (Aggregate API) - בטוח ומהיר
-    const aggregatePayload = {
-      aggregateBy: [{
-        dataTypeName: "com.google.heart_rate.bpm"
-      }],
-      bucketByTime: {
-        durationMillis: 86400000 // קיבוץ כל ה-24 שעות לבלוק יחיד
-      },
-      startTimeMillis: startTimeMillis,
-      endTimeMillis: endTimeMillis
-    };
-
-    const aggregateResponse = UrlFetchApp.fetch(
-      "https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate",
-      {
-        method: "post",
-        headers: { Authorization: "Bearer " + token },
-        contentType: "application/json",
-        payload: JSON.stringify(aggregatePayload),
-        muteHttpExceptions: true
-      }
-    );
-
-    let avg = null;
-    let min = null;
-    let max = null;
-
-    if (aggregateResponse.getResponseCode() >= 200 && aggregateResponse.getResponseCode() < 300) {
-      const aggData = JSON.parse(aggregateResponse.getContentText());
-      (aggData.bucket || []).forEach(function(bucket) {
-        (bucket.dataset || []).forEach(function(dataset) {
-          (dataset.point || []).forEach(function(point) {
-            if (point.value && point.value.length >= 3) {
-              // במבנה של heart_rate.summary: [0]=ממוצע, [1]=מקסימום, [2]=מינימום
-              avg = Math.round(Number(point.value[0].fpVal || 0));
-              max = Math.round(Number(point.value[1].fpVal || 0));
-              min = Math.round(Number(point.value[2].fpVal || 0));
-            }
-          });
-        });
-      });
-    }
-
-    // 2. שליפת הדופק האחרון ממשיכת נתונים גולמיים של השעתיים האחרונות בלבד למניעת קריסה
-    const recentStartTime = endTimeMillis - (2 * 60 * 60 * 1000); 
-    const rawResponse = UrlFetchApp.fetch(
-      "https://www.googleapis.com/fitness/v1/users/me/dataSources/" +
-      encodeURIComponent("derived:com.google.heart_rate.bpm:com.google.android.gms:merge_heart_rate_bpm") +
-      "/datasets/" + recentStartTime + "000000-" + endTimeMillis + "000000",
-      {
-        method: "get",
-        headers: { Authorization: "Bearer " + token },
-        muteHttpExceptions: true
-      }
-    );
-
-    let last = null;
-    let lastTime = null;
-
-    if (rawResponse.getResponseCode() >= 200 && rawResponse.getResponseCode() < 300) {
-      const rawData = JSON.parse(rawResponse.getContentText());
-      const points = Array.isArray(rawData.point) ? rawData.point : [];
-      
-      if (points.length > 0) {
-        // המיון עכשיו מהיר בהרבה כי הכמות קטנה משמעותית
-        points.sort(function(a, b) {
-          return Number(a.endTimeNanos || 0) - Number(b.endTimeNanos || 0);
-        });
-
-        const lastPoint = points[points.length - 1];
-        if (lastPoint && lastPoint.value && lastPoint.value[0]) {
-          last = Math.round(Number(lastPoint.value[0].fpVal || 0));
-          lastTime = formatSleepTime(Number(lastPoint.endTimeNanos || 0) / 1000000);
-        }
-      }
-    }
-
-    // אם ה-API החזיר ריק בשני המקרים
-    if (avg === null && last === null) {
-      return null;
-    }
-
-    return {
-      available: true,
-      avg: avg !== null ? avg : last,
-      min: min !== null ? min : last,
-      max: max !== null ? max : last,
-      last: last,
-      lastTime: lastTime
-    };
-
-  } catch (error) {
-    console.error("Google Fit heart rate error:", error);
-    return null;
-  }
-}
-
-
-
-function debugHeartRateSources() {
-  const token = ScriptApp.getOAuthToken();
-
-  const response = UrlFetchApp.fetch(
-    "https://www.googleapis.com/fitness/v1/users/me/dataSources?dataTypeName=com.google.heart_rate.bpm",
-    {
-      method: "get",
-      headers: {
-        Authorization: "Bearer " + token
-      },
-      muteHttpExceptions: true
-    }
-  );
-
-  Logger.log(response.getResponseCode());
-  Logger.log(response.getContentText());
-}
-
-// ============================================================
 // 15. Google Fit — Heart Points 24h
 // ============================================================
 
@@ -2373,7 +2187,6 @@ function buildStatusMessage() {
 
   const steps = getCachedSteps();
   const sleep = getCachedSleep();
-  const heartRate = getCachedHeartRate24h();
   const heartPoints = getCachedHeartPoints24h();
   const energy = getCachedEnergyExpended24h();
 
@@ -2417,28 +2230,6 @@ function buildStatusMessage() {
     );
   } else {
     lines.push("שינה אחרונה: לא זמינה");
-  }
-
-  if (heartRate && heartRate.available) {
-    lines.push(
-      "דופק 24ש: ממוצע " +
-      (heartRate.avg !== null ? heartRate.avg : "לא זמין") +
-      ", מינ' " +
-      (heartRate.min !== null ? heartRate.min : "לא זמין") +
-      ", מקס' " +
-      (heartRate.max !== null ? heartRate.max : "לא זמין")
-    );
-
-    if (heartRate.last !== null) {
-      lines.push(
-        "דופק אחרון: " +
-        heartRate.last +
-        " BPM ב-" +
-        (heartRate.lastTime || "לא ידוע")
-      );
-    }
-  } else {
-    lines.push("דופק 24ש: לא זמין");
   }
 
   lines.push(
@@ -2493,7 +2284,6 @@ function frequentCheck() {
   const fitupData = getFitUpData() || {};
   const steps = getCachedSteps();
   const sleep = getCachedSleep();
-  const heartRate = getCachedHeartRate24h();
   const heartPoints = getCachedHeartPoints24h();
   const energy = getCachedEnergyExpended24h();
   const aiContext24h = getCachedAiContext24h();
@@ -2524,18 +2314,6 @@ function frequentCheck() {
   const sleepInfo =
     sleep && sleep.totalMinutes > 0
       ? formatSleepDuration(sleep.totalMinutes)
-      : "לא זמין";
-
-  const heartRateInfo =
-    heartRate && heartRate.available
-      ? (
-          "ממוצע " +
-          (heartRate.avg !== null ? heartRate.avg : "לא זמין") +
-          ", מקסימום " +
-          (heartRate.max !== null ? heartRate.max : "לא זמין") +
-          ", אחרון " +
-          (heartRate.last !== null ? heartRate.last : "לא זמין")
-        )
       : "לא זמין";
 
   const contextLite = aiContext24h
@@ -2574,7 +2352,6 @@ function frequentCheck() {
     ". שינה אחרונה: " + sleepInfo +
     ". קלוריות היום: " + calories +
     ". חלבון היום: " + protein + " גרם. " +
-    "דופק 24 שעות: " + heartRateInfo + ". " +
     "Heart Points 24 שעות: " +
     (
       heartPoints === null || heartPoints === undefined
@@ -2596,7 +2373,6 @@ function frequentCheck() {
       steps,
       sleep,
       null,
-      heartRate,
       heartPoints,
       energy
     );
@@ -2691,7 +2467,6 @@ function testPrompt() {
   const fitupData = getFitUpData();
   const steps = getCachedSteps();
   const sleep = getCachedSleep();
-  const heartRate = getCachedHeartRate24h();
   const heartPoints = getCachedHeartPoints24h();
   const energy = getCachedEnergyExpended24h();
 
