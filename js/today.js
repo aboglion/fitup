@@ -1303,8 +1303,9 @@ const TodayPage = (() => {
 
   async function showSwapModal() {
     const currentDay = allPlanDays[currentDayIndex];
+    const currentTypeInfo = UI.getDayTypeInfo(currentDay.dayType);
     
-    // Find all other main workouts in the same week
+    // Find all other days in the same week
     const weekDays = allPlanDays.filter(d => d.week === currentDay.week);
     
     const validSwapTargets = [];
@@ -1319,27 +1320,41 @@ const TodayPage = (() => {
     }
     
     if (validSwapTargets.length === 0) {
-      UI.toast('אין אימונים זמינים להחלפה בשבוע זה (שאותם טרם ביצעת).', 'warning');
+      UI.toast('אין ימים זמינים להחלפה בשבוע זה (שאותם טרם ביצעת).', 'warning');
       return;
     }
     
-    let html = `<p style="margin-bottom: 16px; font-size: 14px; color: var(--text-secondary);">בחר אימון מהשבוע הנוכחי כדי להחליף איתו. ההחלפה תתבצע רק עבור השבוע הזה.</p>`;
-    html += `<div style="display: flex; flex-direction: column; gap: 10px;">`;
+    let html = `<p style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary); line-height: 1.4;">
+      בחר יום מהשבוע הנוכחי כדי להחליף איתו "ראש בראש" (1:1). 
+      ההחלפה תעביר את <b style="color: var(--text-primary);">${currentTypeInfo.label}</b> ליום שתבחר, ואת התוכן של אותו יום לכאן.
+    </p>`;
+    
+    html += `<div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">`;
     
     validSwapTargets.forEach(targetDay => {
       const typeInfo = UI.getDayTypeInfo(targetDay.dayType);
       html += `
         <button class="btn-secondary" style="justify-content: flex-start; padding: 12px; background: var(--bg-elevated); border: 1px solid var(--border-light);" onclick="TodayPage.performSwap(${targetDay.dayIndex})">
           <div style="display: flex; flex-direction: column; align-items: flex-start;">
-            <span style="font-weight: bold; color: var(--text-primary); margin-bottom: 4px;">${targetDay.dayOfWeek} - ${targetDay.dayType}</span>
-            <span style="font-size: 11px; color: var(--text-secondary);">החלף עם אימון זה</span>
+            <span style="font-weight: bold; color: var(--text-primary); margin-bottom: 4px;">${targetDay.dayOfWeek} - ${typeInfo.label}</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">החלף עם ${typeInfo.label}</span>
           </div>
         </button>
       `;
     });
     html += `</div>`;
     
-    UI.showModal('🔄 החלף סדר אימון', html);
+    html += `
+      <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 12px; display: flex; align-items: flex-start; gap: 10px;">
+        <span style="font-size: 16px; margin-top: 1px;">💡</span>
+        <div style="font-size: 12px; color: var(--text-primary); line-height: 1.4;">
+          <strong style="color: var(--warning); display: block; margin-bottom: 4px;">טיפ מקצועי (התאוששות):</strong>
+          פיצול השרירים בתוכנית מאפשר גמישות רבה, אך השתדל להימנע מרצף של יותר מ-2 אימונים עצימים ללא יום מנוחה או התאוששות (Recovery) ביניהם כדי למנוע עומס על מערכת העצבים.
+        </div>
+      </div>
+    `;
+    
+    UI.showModal('🔄 החלף סדר ימים', html);
   }
 
   async function performSwap(targetDayIndex) {
