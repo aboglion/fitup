@@ -153,8 +153,9 @@ window.ExporterGuide = (() => {
         <p>כל 6 שבועות (שבועות 6, 12, 18, 24, 30, 36, 42, 48, 52) יש <strong>שבוע Deload</strong>. בשבועות אלו, אותם תרגילים מתבצעים אך בנפח מופחת (2 סטים במקום 3-4, עצירה עם 2-4 חזרות ברזרבה). Handstand מופחת ל-5-8 דקות. L-sit מופחת ל-2-3 ניסיונות קלים. אין סטים לכשל. הליכות והתאוששות כרגיל בקצב קל.</p>
 
         <h3>🔥 חימום לפי סוג אימון</h3>
-        <p><strong>לפני אימוני רגליים ודחיפה (חימום מלא):</strong> High Knees, Arm Circles, Wall Slides, Scapular Push-up, Dead Bug.</p>
-        <p><strong>לפני אימון משיכה:</strong> High Knees, Arm Circles, Wall Slides, Scapular Push-up, Dead Bug.</p>
+        <p><strong>יום רגליים:</strong> High Knees, Bodyweight Squat (Slow), Dead Bug.</p>
+        <p><strong>יום דחיפה:</strong> Arm Circles, Wall Slides (Slow), Scapular Push-up.</p>
+        <p><strong>יום משיכה:</strong> Arm Circles, Wall Slides, Scapular Pull-up.</p>
 
         <h3>⏳ זמני מנוחה בין סטים</h3>
         <table>

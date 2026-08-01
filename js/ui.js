@@ -189,7 +189,7 @@ const UI = (() => {
    */
   function getCategoryColor(slot) {
     const colors = {
-      'W0': '#f59e0b', 'W1': '#f59e0b', 'W2': '#f59e0b',
+      'W0': '#f59e0b', 'W1': '#f59e0b', 'W2': '#f59e0b', 'W3': '#f59e0b', 'W4': '#f59e0b', 'W5': '#f59e0b',
       'A1': '#f97316', 'A2': '#f59e0b', 'A3': '#eab308', 'A4': '#84cc16', 'A5': '#22c55e', 'A6': '#10b981', 'A7': '#06b6d4', 'A8': '#3b82f6',
       'B1': '#10b981', 'B2': '#06b6d4', 'B3': '#14b8a6', 'B4': '#0d9488',
       'C1': '#3b82f6', 'C2': '#8b5cf6', 'C3': '#a78bfa',
@@ -206,7 +206,7 @@ const UI = (() => {
    */
   function getCategoryLabel(slot) {
     const labels = {
-      'W0': '🔥 Warmup', 'W1': '🔥 Warmup', 'W2': '🔥 Warmup',
+      'W0': '🔥 Warmup', 'W1': '🔥 Warmup', 'W2': '🔥 Warmup', 'W3': '🔥 Warmup', 'W4': '🔥 Warmup', 'W5': '🔥 Warmup',
       'A1': 'A1', 'A2': 'A2', 'A3': 'A3', 'A4': 'A4', 'A5': 'A5', 'A6': 'A6', 'A7': 'A7', 'A8': 'A8',
       'B1': 'B1', 'B2': 'B2', 'B3': 'B3', 'B4': 'B4',
       'C1': 'C1', 'C2': 'C2', 'C3': 'C3',

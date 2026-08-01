@@ -32,13 +32,25 @@ def get_band_weight(name, week):
         return "30 kg"
     return "30 kg"
 
-def get_warmup():
+def get_leg_warmup():
     return [
-        ex("W1", "High Knees", "20 reps", isWarmup=True),
-        ex("W2", "Arm Circles", "10 forward, 10 backward", isWarmup=True),
-        ex("W3", "Wall Slides", "10 reps", isWarmup=True),
-        ex("W4", "Scapular Push-up", "10 reps", isWarmup=True),
-        ex("W5", "Dead Bug", "6 each side", isWarmup=True),
+        ex("W1", "High Knees", "30 secs", isWarmup=True),
+        ex("W2", "Bodyweight Squat", "10 reps (Slow)", isWarmup=True),
+        ex("W3", "Dead Bug", "6 each side", isWarmup=True),
+    ]
+
+def get_push_warmup():
+    return [
+        ex("W1", "Arm Circles", "10 forward, 10 backward", isWarmup=True),
+        ex("W2", "Wall Slides", "5 reps (Slow)", isWarmup=True),
+        ex("W3", "Scapular Push-up", "10 reps", isWarmup=True),
+    ]
+
+def get_pull_warmup():
+    return [
+        ex("W1", "Arm Circles", "10 forward, 10 backward", isWarmup=True),
+        ex("W2", "Wall Slides", "5 reps", isWarmup=True),
+        ex("W3", "Scapular Pull-up", "5 reps", isWarmup=True),
     ]
 
 # Phase definitions: (week_start, week_end) -> exercises per day type
@@ -294,10 +306,15 @@ def get_pull_exercises(week):
     
     return exercises
 
-def build_exercise_list(raw_exercises, warmup=True):
+def build_exercise_list(raw_exercises, day_type=""):
     out = []
-    if warmup:
-        out = get_warmup()
+    if "Legs" in day_type:
+        out = get_leg_warmup()
+    elif "Push" in day_type:
+        out = get_push_warmup()
+    elif "Pull" in day_type:
+        out = get_pull_warmup()
+        
     idx = 1
     for name, sets, weight in raw_exercises:
         out.append(ex(f"A{idx}", name, sets, weight))
@@ -305,22 +322,22 @@ def build_exercise_list(raw_exercises, warmup=True):
     return out
 
 def get_day(dow, week):
-    if dow == 0:  # Monday - Legs + Core
+    if dow == 1:  # Monday - Legs + Core
         raw = get_lower_exercises(week)
-        return "Legs + Core", "7-8", build_exercise_list(raw)
-    elif dow == 1:  # Tuesday - Active Recovery (Brisk Walk)
+        return "Legs + Core", "7-8", build_exercise_list(raw, "Legs")
+    elif dow == 2:  # Tuesday - Active Recovery (Brisk Walk)
         return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-35 mins")]
-    elif dow == 2:  # Wednesday - Push + Skill + Light Legs
+    elif dow == 3:  # Wednesday - Push + Skill + Light Legs
         raw = get_push_exercises(week)
-        return "Push + Skill", "7-8", build_exercise_list(raw)
-    elif dow == 3:  # Thursday - Active Recovery (Relaxed Walk)
+        return "Push + Skill", "7-8", build_exercise_list(raw, "Push")
+    elif dow == 4:  # Thursday - Active Recovery (Relaxed Walk)
         return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "25-30 mins")]
-    elif dow == 4:  # Friday - Pull + Grip + Light Core
+    elif dow == 5:  # Friday - Pull + Grip + Light Core
         raw = get_pull_exercises(week)
-        return "Pull + Grip", "7-8", build_exercise_list(raw)
-    elif dow == 5:  # Saturday - Active Recovery (Brisk Walk)
+        return "Pull + Grip", "7-8", build_exercise_list(raw, "Pull")
+    elif dow == 6:  # Saturday - Active Recovery (Brisk Walk)
         return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-35 mins")]
-    else:  # Sunday (dow == 6) - Rest
+    else:  # Sunday (dow == 0) - Rest
         return "Rest", "—", []
 
 def generate_program():
