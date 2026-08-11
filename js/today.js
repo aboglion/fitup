@@ -809,7 +809,8 @@ const TodayPage = (() => {
       }
 
       if (ex.tempo) {
-        detailParts.push(`<span style="color: var(--accent-primary); font-weight: 500;">⏱️ ${ex.tempo}</span>`);
+        const formattedTempo = UI.formatTempo(ex.tempo);
+        detailParts.push(`<span style="color: var(--accent-primary); font-weight: 600; background: rgba(59, 130, 246, 0.12); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.25); display: inline-flex; align-items: center; gap: 4px;" title="טמפו ביצוע קבוע מראש (UPDDATE.md)">⏱️ ${formattedTempo}</span>`);
       }
 
       if (ex.rest && ex.rest > 0) {

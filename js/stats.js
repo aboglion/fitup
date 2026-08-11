@@ -246,7 +246,7 @@ const StatsPage = (() => {
       { stages: [1,5,13], weight: 0.25, dayType: 'Pull + Grip' },
     ],
     forearms: [
-      // Dead Hang → Towel Grip Hang
+      // Dead Hang → Towel Hang
       { stages: [1,7], weight: 0.35, dayType: 'Pull + Grip' },
       // Pull-up progression (grip demand increases)
       { stages: [1,4,10,13,19,25], weight: 0.30, dayType: 'Pull + Grip' },

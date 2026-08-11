@@ -71,6 +71,57 @@ const UI = (() => {
 
   const imageTrials = {};
 
+  const EXERCISE_GIF_ALIASES = {
+    'CHIN-UP': 'Chin-up.gif',
+    'CHIN-UP NEGATIVE': 'Chin-up Negative.gif',
+    'PULL-UP (OVERHAND)': 'Pull-up (Overhand).gif',
+    'PULL-UP NEGATIVE': 'Pull-up Negative.gif',
+    'ELEVATED PIKE PUSH-UP': 'Elevated Pike Push-up.gif',
+    'PUSH-UP': 'Push-up.gif',
+    'PUSH-UP (BARS)': 'Push-up.gif',
+    'DEFICIT PUSH-UP': 'Push-up.gif',
+    'FEET-ELEVATED PUSH-UP': 'Push-up.gif',
+    'WEIGHTED DEFICIT PUSH-UP': 'Push-up.gif',
+    'WEIGHTED CHIN-UP': 'Chin-up.gif',
+    'WEIGHTED PULL-UP': 'Pull-up (Overhand).gif',
+    'DB RDL': 'Dumbbell Romanian Deadlift (RDL).gif',
+    'DB SINGLE-LEG RDL': 'Dumbbell Single-Leg RDL.gif',
+    'DB CURL': 'Dumbbell Biceps Curl.gif',
+    'SINGLE-ARM CURL': 'Dumbbell Biceps Curl.gif',
+    'ARM BLOCK - DB CURL': 'Dumbbell Biceps Curl.gif',
+    'DB LATERAL RAISE': 'Dumbbell Lateral Raise.gif',
+    'ARM BLOCK - DB LATERAL RAISE': 'Dumbbell Lateral Raise.gif',
+    'ARM BLOCK - DB OH TRICEPS EXT': 'Dumbbell Standing Overhead Press (OHP).gif',
+    'DB OH TRICEPS EXT': 'Dumbbell Standing Overhead Press (OHP).gif',
+    'DB BULGARIAN SPLIT SQUAT': 'Bulgarian Split Squat.gif',
+    'DB BSS': 'Bulgarian Split Squat.gif',
+    'DB BSS (GOBLET)': 'Bulgarian Split Squat.gif',
+    'DB GLUTE BRIDGE': 'Banded Glute Bridge.gif',
+    'GLUTE BRIDGE': 'Single-Leg Glute Bridge.gif',
+    'DB HIP THRUST': 'Single-Leg Glute Bridge.gif',
+    'ONE-ARM DB ROW': 'Dumbbell One-Arm Row.gif',
+    'PALLOF PRESS': 'Pallof Press (Band).gif',
+    'REVERSE LUNGE + DB': 'Reverse Lunge.gif',
+    'SEATED DB OHP': 'Dumbbell Standing Overhead Press (OHP).gif',
+    'SINGLE-ARM SEATED OHP': 'Dumbbell Standing Overhead Press (OHP).gif',
+    'SINGLE-ARM FLOOR PRESS': 'Dumbbell Floor Press.gif',
+    'DB FLOOR PRESS': 'Dumbbell Floor Press.gif',
+    'DB HAMMER CURL': 'Dumbbell Hammer Curl.gif',
+    'SUITCASE CARRY': 'Dumbbell Suitcase Hold.gif',
+    'WALKING LUNGE (GOBLET)': 'Reverse Lunge.gif',
+    'WALL WALK (PARTIAL)': 'Wall Walk (Full).gif',
+    'TRX FACE PULL': 'Band Face-Pull.gif',
+    'TRX FACE PULL (ANGLE 1)': 'Band Face-Pull.gif',
+    'TRX FACE PULL (ANGLE 2)': 'Band Face-Pull.gif',
+    'TRX FACE PULL (ANGLE 3)': 'Band Face-Pull.gif',
+    'TRX Y-T-W': 'Prone Y-T-W.gif',
+    'L-SIT TUCK (BARS)': 'L-sit on Chair.gif',
+    'HOLLOW BODY HOLD': 'Hollow Body Rock.gif',
+    'PIKE HOLD': 'Pike Push-up.gif',
+    'DEEP MOBILITY PROTOCOL': 'Ankle Dorsiflexion Mobility.gif',
+    'WRIST ROCKS': 'Ankle Dorsiflexion Mobility.gif'
+  };
+
   function handleImageFallback(imgEl, type) {
     const currentSrc = imgEl.src;
     const urlDecoded = decodeURIComponent(currentSrc);
@@ -78,32 +129,63 @@ const UI = (() => {
     if (type === 'gif') {
       const match = urlDecoded.match(/images\/gifs\/([^/]+)$/);
       if (match) {
-        const filename = match[1];
-        const lastDot = filename.lastIndexOf('.');
-        const baseName = lastDot !== -1 ? filename.substring(0, lastDot) : filename;
-        const cleanBase = baseName.replace(/[-_]+/g, ' ');
-        const variations = [
-          cleanBase.toUpperCase() + '.gif',
-          cleanBase.toLowerCase() + '.gif',
-          cleanBase.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + '.gif',
-          cleanBase.replace(/\s+/g, '_') + '.gif',
-          cleanBase.replace(/\s+/g, '_').toLowerCase() + '.gif',
-          cleanBase.replace(/\s+/g, '_').toUpperCase() + '.gif',
-          cleanBase.replace(/\s+/g, '-') + '.gif',
-          cleanBase.replace(/\s+/g, '-').toLowerCase() + '.gif',
-          cleanBase.replace(/Dumbbell /i, 'DB ') + '.gif',
-          cleanBase.replace(/DB /i, 'Dumbbell ') + '.gif',
-          cleanBase.replace(/\s*\([^)]*\)/g, '') + '.gif'
-        ];
-        
-        if (!imageTrials[filename]) {
-          imageTrials[filename] = 0;
+        const rawFilename = match[1];
+        if (!imgEl.dataset.origFilename) {
+          imgEl.dataset.origFilename = rawFilename;
         }
+        const origKey = imgEl.dataset.origFilename;
+        const lastDot = origKey.lastIndexOf('.');
+        const baseName = lastDot !== -1 ? origKey.substring(0, lastDot) : origKey;
+        const cleanBase = baseName.replace(/[-_]+/g, ' ').trim();
+        const upperBase = cleanBase.toUpperCase();
         
-        const trialIndex = imageTrials[filename];
-        if (trialIndex < variations.length) {
-          imageTrials[filename]++;
-          imgEl.src = `images/gifs/${variations[trialIndex]}`;
+        const variations = [];
+        
+        // Check alias mapping first
+        if (EXERCISE_GIF_ALIASES[upperBase]) {
+          variations.push(EXERCISE_GIF_ALIASES[upperBase]);
+        }
+
+        // Hyphenated case variations (e.g. Chin-Up -> Chin-up.gif)
+        const titleHyphenLowerUp = baseName.replace(/-Up\b/g, '-up');
+        if (titleHyphenLowerUp !== baseName) variations.push(titleHyphenLowerUp + '.gif');
+        const wordLowerUp = baseName.replace(/\bUp\b/g, 'up');
+        if (wordLowerUp !== baseName) variations.push(wordLowerUp + '.gif');
+
+        // DB / Dumbbell variations
+        const dbToDumbbell = baseName.replace(/\bDB\b/gi, 'Dumbbell');
+        if (dbToDumbbell !== baseName) variations.push(dbToDumbbell + '.gif');
+        const dumbbellToDb = baseName.replace(/\bDumbbell\b/gi, 'DB');
+        if (dumbbellToDb !== baseName) variations.push(dumbbellToDb + '.gif');
+
+        // Strip parentheses
+        const strippedParen = baseName.replace(/\s*\([^)]*\)/g, '').trim();
+        if (strippedParen !== baseName) {
+          variations.push(strippedParen + '.gif');
+          variations.push(strippedParen.replace(/\bDB\b/gi, 'Dumbbell') + '.gif');
+        }
+
+        // Standard string transformations
+        variations.push(cleanBase.toUpperCase() + '.gif');
+        variations.push(cleanBase.toLowerCase() + '.gif');
+        variations.push(cleanBase.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + '.gif');
+        variations.push(cleanBase.replace(/\s+/g, '_') + '.gif');
+        variations.push(cleanBase.replace(/\s+/g, '_').toLowerCase() + '.gif');
+        variations.push(cleanBase.replace(/\s+/g, '_').toUpperCase() + '.gif');
+        variations.push(cleanBase.replace(/\s+/g, '-') + '.gif');
+        variations.push(cleanBase.replace(/\s+/g, '-').toLowerCase() + '.gif');
+
+        // Filter duplicates while preserving order
+        const uniqueVariations = Array.from(new Set(variations)).filter(v => v !== rawFilename);
+
+        if (!imageTrials[origKey]) {
+          imageTrials[origKey] = 0;
+        }
+
+        const trialIndex = imageTrials[origKey];
+        if (trialIndex < uniqueVariations.length) {
+          imageTrials[origKey]++;
+          imgEl.src = `images/gifs/${uniqueVariations[trialIndex]}`;
           return;
         }
       }
@@ -111,10 +193,14 @@ const UI = (() => {
     } else if (type === 'png') {
       const match = urlDecoded.match(/images\/exercises\/([^/]+)$/);
       if (match) {
-        const filename = match[1];
-        const lastDot = filename.lastIndexOf('.');
-        const baseName = lastDot !== -1 ? filename.substring(0, lastDot) : filename;
-        const cleanBase = baseName.replace(/[-_]+/g, ' ');
+        const rawFilename = match[1];
+        if (!imgEl.dataset.origFilename) {
+          imgEl.dataset.origFilename = rawFilename;
+        }
+        const origKey = imgEl.dataset.origFilename;
+        const lastDot = origKey.lastIndexOf('.');
+        const baseName = lastDot !== -1 ? origKey.substring(0, lastDot) : origKey;
+        const cleanBase = baseName.replace(/[-_]+/g, ' ').trim();
         const upperBase = cleanBase.toUpperCase();
         
         let dbVariant = upperBase;
@@ -137,15 +223,17 @@ const UI = (() => {
           cleanBase.replace(/\s+/g, '-') + '.png',
           cleanBase.replace(/\s+/g, '-').toLowerCase() + '.png'
         ];
-        
-        if (!imageTrials[filename]) {
-          imageTrials[filename] = 0;
+
+        const uniqueVariations = Array.from(new Set(variations)).filter(v => v !== rawFilename);
+
+        if (!imageTrials[origKey]) {
+          imageTrials[origKey] = 0;
         }
         
-        const trialIndex = imageTrials[filename];
-        if (trialIndex < variations.length) {
-          imageTrials[filename]++;
-          imgEl.src = `images/exercises/${variations[trialIndex]}`;
+        const trialIndex = imageTrials[origKey];
+        if (trialIndex < uniqueVariations.length) {
+          imageTrials[origKey]++;
+          imgEl.src = `images/exercises/${uniqueVariations[trialIndex]}`;
           return;
         }
       }
@@ -351,6 +439,33 @@ const UI = (() => {
     return { label: 'משקל גוף בלבד', icon: icons.bodyweight };
   }
 
+  /**
+   * Format tempo string to Hebrew matching UPDDATE.md
+   */
+  function formatTempo(tempo) {
+    if (!tempo) return '';
+    const map = {
+      '2 secs down': "2 שנ' ירידה",
+      '3 secs down': "3 שנ' ירידה",
+      '4 secs down': "4 שנ' ירידה",
+      '1 sec pause': "1 שנ' עצירה",
+      '2 secs pause': "2 שנ' עצירה",
+      '3 secs pause': "3 שנ' עצירה",
+      '1 sec pause at bottom': "1 שנ' עצירה למטה",
+      '2 secs pause at bottom': "2 שנ' עצירה למטה",
+      '2 secs down + 1 sec squeeze': "2 שנ' ירידה + 1 שנ' כיווץ",
+      'Slow': 'איטי',
+      'Static': 'סטטי',
+      'Walking': 'הליכה',
+      'Flow': 'איטי',
+      '5.5 km/h': "5.5 קמ'ש",
+      '5.0 km/h': "5.0 קמ'ש",
+      '4.5 km/h': "4.5 קמ'ש",
+      '6.5 km/h effort / 4.5 km/h rest': "6.5 קמ'ש מאמץ / 4.5 קמ'ש מנוחה"
+    };
+    return map[tempo] || tempo;
+  }
+
   // Rest Timer Logic
   let timerInterval;
   let timerEndTime;
@@ -460,6 +575,7 @@ const UI = (() => {
     parseReps,
     getDifficultyClass,
     getEquipment,
+    formatTempo,
     initTimer,
     startTimer
   };

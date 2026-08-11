@@ -2798,4 +2798,33 @@ html[dir="rtl"] .rpg-video-btn {
   border: 2px solid rgba(239, 68, 68, 0.6);
 }
 
+/* ===== RPG Tree SVG Connectors ===== */
+.rpg-path-svg-canvas {
+  overflow: visible;
+  pointer-events: none;
+}
+
+.rpg-svg-line {
+  transition: stroke 0.5s ease, stroke-width 0.3s ease, opacity 0.5s ease;
+}
+
+.rpg-svg-line.active {
+  animation: rpgLinePulse 3s ease-in-out infinite;
+}
+
+.rpg-svg-line.locked {
+  stroke-dasharray: 5 4;
+}
+
+@keyframes rpgLinePulse {
+  0%, 100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+}
+
+
 

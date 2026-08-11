@@ -235,7 +235,7 @@ window.ExporterGuide = (() => {
                 <td><strong>${ex.name}</strong></td>
                 <td dir="ltr" style="text-align: right;">${ex.sets || '-'}</td>
                 <td dir="ltr" style="text-align: right;">${ex.weight || '-'}</td>
-                <td dir="ltr" style="text-align: right;">${ex.tempo || '-'}</td>
+                <td dir="rtl" style="text-align: right;">${ex.tempo ? (UI.formatTempo ? UI.formatTempo(ex.tempo) : ex.tempo) : '-'}</td>
                 <td dir="ltr" style="text-align: right;">${ex.rest ? ex.rest + 's' : '-'}</td>
               </tr>`;
             });
