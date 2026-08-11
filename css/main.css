@@ -535,6 +535,74 @@ label {
   }
 }
 
+/* ===== Active Recovery Mode Theme ===== */
+body.recovery-mode {
+  --bg-primary: #061917;
+  --bg-secondary: #0a2522;
+  --bg-card: #0f332f;
+  --bg-card-hover: #143d38;
+  --bg-elevated: #1a4d47;
+  --bg-input: #08211e;
+  --accent-primary: #10b981;
+  --accent-secondary: #059669;
+  --accent-gradient: linear-gradient(135deg, #10b981, #059669);
+  --accent-glow: 0 0 25px rgba(16, 185, 129, 0.4);
+  background: radial-gradient(circle at top center, #0e302b 0%, #061917 100%);
+  transition: background 0.5s ease;
+}
+
+body.recovery-mode .nav-title {
+  background: linear-gradient(135deg, #34d399, #059669);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ===== Interval Timer Modal Styling ===== */
+.interval-timer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  direction: rtl;
+}
+
+.interval-ring-wrapper {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.interval-timer-time {
+  font-size: 42px;
+  font-weight: 900;
+  font-family: 'Inter', monospace;
+  color: var(--text-primary);
+}
+
+.interval-status-badge {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.interval-status-work {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.interval-status-rest {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
 /* ===== Light Theme ===== */
 html.light-theme {
   --bg-primary: #f8fafc;
@@ -556,3 +624,4 @@ html.light-theme {
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
+

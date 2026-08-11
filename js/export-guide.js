@@ -111,64 +111,56 @@ window.ExporterGuide = (() => {
     </head>
     <body>
       <div class="header">
-        <h1>🏋️ FitUp Pro Hybrid v5.0 — מדריך תוכנית 52 שבועות</h1>
-        <p><strong>אפיון, הסברים, מילון תרגילים ופריסת ימים מלאה</strong></p>
+        <h1>🏋️ FitUp Pro Ultimate v4.0 — מדריך תוכנית 78 שבועות</h1>
+        <p><strong>אפיון, הסברים, מילון תרגילים ופריסת 546 ימים מלאה (Dumbbell & Calisthenics Progression)</strong></p>
       </div>
 
       <div class="section">
-        <h2>📖 אפיון והסבר על התוכנית — גרסה 5.0</h2>
-        <p>תוכנית אימונים זו תוכננה למשך 52 שבועות במטרה לבנות כוח, מסת שריר, תנועתיות, ולהקנות הרגלים בריאים ארוכי טווח. הפילוסופיה של התוכנית היא <strong>התקדמות הדרגתית (Progressive Overload)</strong> עם 13 בלוקים של התקדמות (4 שבועות לבלוק) ושבועות דילואד מובנים.</p>
+        <h2>📖 אפיון והסבר על התוכנית — גרסה 4.0 Ultimate</h2>
+        <p>תוכנית אימונים זו תוכננה למשך <strong>78 שבועות (546 ימים)</strong> במטרה לבנות כוח מרבי, מסת שריר איכותית, כושר קרדיו-וואסקולרי מתקדם (VO2 Max ו-Zone 2), ותנועתיות מלאה. התוכנית מבוססת על <strong>התקדמות הדרגתית מבוקרת (Progressive Overload)</strong> המשולבת עם משקולות יד (Dumbbells) ותרגילי משקל גוף מתקדמים.</p>
 
-        <h3>🎯 פילוסופיית "אפס החלטות" ומגבלת ציוד מינימלית</h3>
-        <p>התוכנית נבנתה במכוון סביב הרעיון של <strong>אפס החלטות מצד המתאמן</strong>, ומתבססת <strong>אך ורק על מגבלת הציוד המוגדרת מראש</strong>. לגישה זו מספר יתרונות מרכזיים:</p>
+        <h3>🎯 פילוסופיית "אפס החלטות" ומעקב מובנה</h3>
+        <p>התוכנית נבנתה במכוון סביב הרעיון של <strong>אפס החלטות מצד המתאמן</strong>, ומתבססת על התקדמות מתוכננת מראש לכל 78 השבועות:</p>
         <ul>
-          <li><strong>מינימום עומס מנטלי:</strong> כל שילוב של תרגיל, סט, חזרה, קצב עבודה וזמן מנוחה נקבע מראש. אין צורך לבזבז אנרגיה מנטלית על תכנון או קבלת החלטות לפני או במהלך האימון - פשוט פותחים את האפליקציה ומבצעים.</li>
-          <li><strong>התמדה ועקביות ללא תלות בסביבה:</strong> העובדה שהתוכנית מוגבלת לציוד בסיסי ונייד (רצועות, מתח ומגבת) מאפשרת לבצע אותה בכל מקום (בבית, בפארק או בנסיעות) ללא צורך במנוי לחדר כושר או בציוד מורכב.</li>
-          <li><strong>מניעת פציעות ואימון יתר:</strong> תהליך ההתקדמות והעומס מנוהל ומבוקר באופן מדעי לאורך 52 שבועות, כולל שבועות התאוששות (Deload) מובנים, מה שמבטל את הצורך בניחושים ומפחית משמעותית את הסיכון לפציעות.</li>
-          <li><strong>התקדמות הדרגתית יעילה:</strong> עבודה על אותם תרגילים מרכזיים בשינויי עומס ונפח מבוקרים מייצרת למידה מוטורית טובה יותר והתקדמות כוח אמיתית בהשוואה להחלפת תרגילים תכופה.</li>
+          <li><strong>מינימום עומס מנטלי:</strong> כל שילוב של תרגיל, משקל משקולת, סטים, חזרות, קצב ביצוע (Tempo) וזמני מנוחה קבועים ומובנים מראש.</li>
+          <li><strong>שילוב כוח וקרדיו מתקדם:</strong> פיצול שבועי ייחודי המשלב 3 ימי כוח עצים (Legs + Core, Push + Skill, Pull + Grip), יום Zone 2 Incline Cardio, יום VO2 Max Norwegian 4x4, יום Active Recovery, ויום מנוחה מלאה.</li>
+          <li><strong>התאוששות מדעית (Deload Cycles):</strong> כל שבוע 6 בכל בלוק של 6 שבועות הינו <strong>שבוע Deload</strong> (הפחתת נפח ועומס ל-2 סטים ו-RPE 6), המאפשר למערכת העצבים והמפרקים להתאושש באופן מלא.</li>
         </ul>
 
-        <h3>🔧 כלים נדרשים</h3>
+        <h3>🔧 ציוד נדרש</h3>
         <ul>
-          <li>3 רצועות התנגדות: 30kg, 40kg, 50kg</li>
-          <li>מוט תליה (Pull-up bar)</li>
-          <li>כיסא/ספסל/שולחן יציב</li>
-          <li>מגבת (עבור Hamstring Towel Curl ו-Towel Grip Hang)</li>
-          <li>רצפה + קיר</li>
+          <li><strong>זוג משקולות יד מתכווננות (Dumbbells):</strong> 2.5kg, 5kg, 7.5kg, 10kg, 12.5kg, 15kg</li>
+          <li><strong>רצועות TRX / Gymnastic Rings</strong> (עבור TRX Rows ו-TRX Push-ups)</li>
+          <li><strong>גומיית התנגדות (Bands):</strong> 30kg, 40kg, 50kg (עבור Pallof Press, Band Pull-Apart, Band Face-Pull)</li>
+          <li><strong>ידיות שחיקות / Push-up Bars / Parallettes</strong></li>
+          <li><strong>וסט שקול (+5kg Vest)</strong></li>
+          <li><strong>מוט מתח (Pull-up Bar)</strong></li>
+          <li><strong>כיסא / ספסל יציב + קיר פנוי + מסילת כושר / הליכה</strong></li>
         </ul>
 
-        <h3>⚙️ מבנה שבועי</h3>
+        <h3>⚙️ מבנה שבועי (7 ימים)</h3>
         <table>
-          <tr><th>יום</th><th>אימון</th><th>עצימות</th></tr>
-          <tr><td>שני</td><td>🦵 רגליים + ליבה</td><td>RPE 7–8</td></tr>
-          <tr><td>שלישי</td><td>🚶 התאוששות פעילה — הליכה מהירה 30–35 דקות</td><td>קל</td></tr>
-          <tr><td>רביעי</td><td>💪 דחיפה + סקיל + רגליים קל</td><td>RPE 7–8</td></tr>
-          <tr><td>חמישי</td><td>🚶 התאוששות פעילה — הליכה רגועה 25–30 דקות</td><td>קל</td></tr>
-          <tr><td>שישי</td><td>🎯 משיכה + אחיזה + ליבה קלה</td><td>RPE 7–8</td></tr>
-          <tr><td>שבת</td><td>🚶 התאוששות פעילה — הליכה מהירה 30–35 דקות</td><td>קל</td></tr>
-          <tr><td>ראשון</td><td>🧘 מנוחה</td><td>—</td></tr>
+          <tr><th>יום</th><th>סוג אימון</th><th>עצימות / דגשים</th></tr>
+          <tr><td>יום 1</td><td>🦵 Legs + Core</td><td>RPE 7–9 — סקואט, דדליפט, ליבה ומשקולות</td></tr>
+          <tr><td>יום 2</td><td>💥 Push + Skill</td><td>RPE 7–9 — לחיצות חזה, כתפיים, TRX ועמידת ידיים</td></tr>
+          <tr><td>יום 3</td><td>🫀 Zone 2 Cardio</td><td>30–40 דק' הליכה בשיפוע 10-12% (דופק 60-70% מרובי)</td></tr>
+          <tr><td>יום 4</td><td>🧲 Pull + Grip</td><td>RPE 7–9 — מתח, חתירות DB, TRX, בייספס ואחיזה</td></tr>
+          <tr><td>יום 5</td><td>🌿 Active Recovery</td><td>30 דק' הליכה קלה + מתיחות וניידות מפרקים</td></tr>
+          <tr><td>יום 6</td><td>🔴 VO2 Max 4×4</td><td>פרוטוקול נורבגי: 4 סבבים של (4 דק' מאמץ 90-95% דופק / 3 דק' מנוחה)</td></tr>
+          <tr><td>יום 7</td><td>😴 Rest Day</td><td>מנוחה מלאה והתאוששות</td></tr>
         </table>
 
-        <h3>🔄 Deload — שבועות התאוששות</h3>
-        <p>כל 6 שבועות (שבועות 6, 12, 18, 24, 30, 36, 42, 48, 52) יש <strong>שבוע Deload</strong>. בשבועות אלו, אותם תרגילים מתבצעים אך בנפח מופחת (2 סטים במקום 3-4, עצירה עם 2-4 חזרות ברזרבה). Handstand מופחת ל-5-8 דקות. L-sit מופחת ל-2-3 ניסיונות קלים. אין סטים לכשל. הליכות והתאוששות כרגיל בקצב קל.</p>
+        <h3>🔄 Deload — שבועות התאוששות (שבוע 6 בכל בלוק)</h3>
+        <p>בשבועות 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78 מתקיים <strong>שבוע Deload</strong>. בשבועות אלו, נפח האימון יורד ל-2 סטים בלבד, עם רזרבה של 2-4 חזרות מכשל (RPE 6), כדי לאפשר בנייה מחדש של רקמות החיבור ומניעת פציעות.</p>
 
-        <h3>🔥 חימום לפי סוג אימון</h3>
-        <p><strong>יום רגליים:</strong> High Knees, Bodyweight Squat (Slow), Dead Bug.</p>
-        <p><strong>יום דחיפה:</strong> Arm Circles, Wall Slides (Slow), Scapular Push-up.</p>
-        <p><strong>יום משיכה:</strong> Arm Circles, Wall Slides, Scapular Pull-up.</p>
-
-        <h3>⏳ זמני מנוחה בין סטים</h3>
+        <h3>⏳ זמני מנוחה וקצב ביצוע (Tempo)</h3>
         <table>
-          <tr><th>סוג תרגיל</th><th>מנוחה בין סטים</th></tr>
-          <tr><td>Eccentric Heavy (Pull-up Negative, Chin-up Negative, HSPU Negative), Chin-up</td><td>180 שניות (3 דקות)</td></tr>
-          <tr><td>Squat, Lunge, Split Squat, Skater Squat, Pistol Squat, Single-Leg RDL, Hamstring Towel Curl, כל סוג Push-up, Pike Push-up, Wall Handstand, Wall Walk</td><td>120 שניות (2 דקות)</td></tr>
-          <tr><td>Seated Band Row</td><td>120 שניות</td></tr>
-          <tr><td>Band Curl, Towel Grip Hang</td><td>90 שניות</td></tr>
-          <tr><td>Scapular Pull-up, Scapular Push-up, Band Pull-Apart, Prone Y-T-W</td><td>60 שניות</td></tr>
-          <tr><td>Hollow Rock, Hollow-to-Arch Rock, Dead Bug, Side Plank Hip Dips, Glute Bridge, Calf Raise</td><td>60 שניות</td></tr>
-          <tr><td>כל תרגילי החימום (Warmups) / התאוששות (Recovery)</td><td>אין מנוחה (רציף)</td></tr>
+          <tr><th>סוג תרגיל</th><th>קצב עבודה (Tempo)</th><th>מנוחה בין סטים</th></tr>
+          <tr><td>תרגילי נגטיב עצימים (Pull-up Neg, HSPU Neg)</td><td>4-1-1-0 (ירידה 4 שנ')</td><td>180 שניות (3 דקות)</td></tr>
+          <tr><td>תרגילי מורכבים (DB Squat, DB RDL, DB OHP, Push-up)</td><td>3-1-1-0 / 2-1-1-0</td><td>120 שניות (2 דקות)</td></tr>
+          <tr><td>תרגילי בידוד (Biceps Curl, Lateral Raise, Face-Pull)</td><td>2-0-1-0</td><td>60–90 שניות</td></tr>
+          <tr><td>חימום, ניידות והתאוששות</td><td>רציף בשליטה</td><td>ללא מנוחה</td></tr>
         </table>
-        <p><strong>קצב:</strong> בכל התרגילים עובדים חלק ובשליטה: עלייה רגילה, ירידה איטית ומבוקרת. החריג היחיד הוא נגטיבים במתח/צ׳ין־אפ: ירידה רציפה של כ־3–5 שניות. אין עצירות יזומות ואין ספירת קצב ביתר התרגילים.</p>
 
       </div>
 
@@ -233,14 +225,18 @@ window.ExporterGuide = (() => {
             html += `<table>
               <tr>
                 <th>תרגיל</th>
-                <th width="150">סטים וחזרות</th>
+                <th width="140">סטים וחזרות</th>
                 <th width="120">התנגדות / משקל</th>
+                <th width="100">קצב (Tempo)</th>
+                <th width="90">מנוחה</th>
               </tr>`;
             day.exercises.forEach(ex => {
               html += `<tr>
                 <td><strong>${ex.name}</strong></td>
                 <td dir="ltr" style="text-align: right;">${ex.sets || '-'}</td>
                 <td dir="ltr" style="text-align: right;">${ex.weight || '-'}</td>
+                <td dir="ltr" style="text-align: right;">${ex.tempo || '-'}</td>
+                <td dir="ltr" style="text-align: right;">${ex.rest ? ex.rest + 's' : '-'}</td>
               </tr>`;
             });
             html += `</table>`;

@@ -120,6 +120,13 @@ const TodayPage = (() => {
 
     // Update header badges
     const typeInfo = UI.getDayTypeInfo(day.dayType);
+
+    // Active Recovery UI Background differentiation
+    if (day.dayType === 'Active Recovery') {
+      document.body.classList.add('recovery-mode');
+    } else {
+      document.body.classList.remove('recovery-mode');
+    }
     
     // Check if program started to show preview banner
     const isProgramStarted = await DB.getSetting('planStartDate');
@@ -801,6 +808,20 @@ const TodayPage = (() => {
         detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="שינוי במשקל!">${weightText}</span>` : weightText);
       }
 
+      if (ex.tempo) {
+        detailParts.push(`<span style="color: var(--accent-primary); font-weight: 500;">⏱️ ${ex.tempo}</span>`);
+      }
+
+      if (ex.rest && ex.rest > 0) {
+        detailParts.push(`<span style="color: var(--text-muted);">💤 ${ex.rest}s</span>`);
+      }
+
+      let cardioTimerBtn = '';
+      const lowerExName = ex.name.toLowerCase();
+      if (lowerExName.includes('vo2 max') || lowerExName.includes('norwegian')) {
+        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); TodayPage.startIntervalTimer('${ex.name.replace(/'/g, "\\'")}');">⏱️ טיימר 4×4</button>`;
+      }
+
       return `
         <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="ex-card-${idx}" style="--glow-color: ${color};">
           <div class="exercise-hero-container" style="position: relative;">
@@ -828,6 +849,7 @@ const TodayPage = (() => {
               </div>
             </div>
             <div class="exercise-card-actions">
+              ${cardioTimerBtn}
               ${videoBtn}
               <button class="exercise-check ${isCompleted ? 'checked' : ''}" 
                       onclick="event.stopPropagation(); TodayPage.toggleExercise(${idx}, this)" ${disabledAttr}>✓</button>
@@ -1375,6 +1397,100 @@ const TodayPage = (() => {
     }
   }
 
+  let intervalTimerId = null;
+
+  function startIntervalTimer(exName) {
+    let currentRound = 1;
+    let isWorkPhase = true; // true = 4m Work, false = 3m Rest
+    let secondsLeft = 4 * 60;
+    let isPaused = true;
+
+    function renderModalContent() {
+      const mins = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+      const secs = (secondsLeft % 60).toString().padStart(2, '0');
+      const statusText = isWorkPhase ? `🔴 סבב ${currentRound}/4 — מאמץ עירני (4 דק')` : `🟢 מנוחה / התאוששות (3 דק')`;
+      const statusClass = isWorkPhase ? 'interval-status-work' : 'interval-status-rest';
+
+      return `
+        <div class="interval-timer-container">
+          <div class="interval-status-badge ${statusClass}">
+            ${statusText}
+          </div>
+          <div class="interval-ring-wrapper">
+            <div class="interval-timer-time" id="interval-display">${mins}:${secs}</div>
+          </div>
+          <p style="font-size: 13px; color: var(--text-secondary); text-align: center;">
+            ${isWorkPhase ? 'רציף בעצימות גבוהה (90-95% דופק מרבי)' : 'הליכה קלה להתאוששות דופק (60-70% דופק)'}
+          </p>
+          <div style="display: flex; gap: 10px; width: 100%; margin-top: 10px;">
+            <button id="interval-toggle-btn" class="btn-primary" style="flex: 1;">${isPaused ? '▶️ התחל' : '⏸️ השהה'}</button>
+            <button id="interval-skip-btn" class="btn-secondary" style="flex: 1;">⏭️ דלג שלב</button>
+          </div>
+        </div>
+      `;
+    }
+
+    UI.showModal('🏃 VO2 Max Norwegian 4×4', renderModalContent());
+
+    function bindEvents() {
+      const toggleBtn = document.getElementById('interval-toggle-btn');
+      const skipBtn = document.getElementById('interval-skip-btn');
+      
+      if (toggleBtn) {
+        toggleBtn.onclick = () => {
+          isPaused = !isPaused;
+          toggleBtn.textContent = isPaused ? '▶️ התחל' : '⏸️ השהה';
+        };
+      }
+      
+      if (skipBtn) {
+        skipBtn.onclick = () => {
+          advancePhase();
+        };
+      }
+    }
+
+    function advancePhase() {
+      if (isWorkPhase) {
+        if (currentRound >= 4) {
+          clearInterval(intervalTimerId);
+          UI.toast('🎉 סיימת את פרוטוקול ה-VO2 Max! כל הכבוד!', 'success', 5000);
+          UI.hideModal();
+          return;
+        }
+        isWorkPhase = false;
+        secondsLeft = 3 * 60;
+        UI.toast(`🟢 מעבר למנוחה 3 דקות (סבב ${currentRound})`, 'info');
+      } else {
+        currentRound++;
+        isWorkPhase = true;
+        secondsLeft = 4 * 60;
+        UI.toast(`🔴 סבב ${currentRound}/4 — מאמץ עצים!`, 'warning');
+      }
+      document.getElementById('modal-body').innerHTML = renderModalContent();
+      bindEvents();
+    }
+
+    if (intervalTimerId) clearInterval(intervalTimerId);
+
+    intervalTimerId = setInterval(() => {
+      if (!isPaused && secondsLeft > 0) {
+        secondsLeft--;
+        const display = document.getElementById('interval-display');
+        if (display) {
+          const mins = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+          const secs = (secondsLeft % 60).toString().padStart(2, '0');
+          display.textContent = `${mins}:${secs}`;
+        }
+      } else if (!isPaused && secondsLeft <= 0) {
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        advancePhase();
+      }
+    }, 1000);
+
+    bindEvents();
+  }
+
   return {
     init,
     render,
@@ -1390,9 +1506,11 @@ const TodayPage = (() => {
     updateExerciseNote,
     showExerciseImage,
     performSwap,
+    startIntervalTimer,
     getCurrentDayIndex: () => currentDayIndex
   };
 })();
 
 // Expose to window for inline event handlers
 window.TodayPage = TodayPage;
+

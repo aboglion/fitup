@@ -43,7 +43,7 @@ const App = (() => {
    */
   async function loadAppCore() {
     try {
-      const currentDataVersion = 21; // v5.0 program update
+      const currentDataVersion = 40; // FitUp Pro Ultimate v4.0 78-week update
       const savedDataVersion = await DB.getSetting('dataVersion');
       
       let planStartDate = await DB.getSetting('planStartDate');
@@ -52,7 +52,8 @@ const App = (() => {
       const exCount = await DB.count(DB.STORES.EXERCISES);
       
       if (planCount === 0 || exCount === 0 || savedDataVersion !== currentDataVersion || !planStartDate) {
-        console.log("Reloading training plan due to data version change, empty DB, or missing start date.");
+        console.log("Reloading training plan due to v4.0 data version change, empty DB, or missing start date.");
+        await DB.clearTracking();
         await DB.loadTrainingPlan();
         await DB.setSetting('dataVersion', currentDataVersion);
       }

@@ -91,6 +91,9 @@ const UI = (() => {
           cleanBase.replace(/\s+/g, '_').toUpperCase() + '.gif',
           cleanBase.replace(/\s+/g, '-') + '.gif',
           cleanBase.replace(/\s+/g, '-').toLowerCase() + '.gif',
+          cleanBase.replace(/Dumbbell /i, 'DB ') + '.gif',
+          cleanBase.replace(/DB /i, 'Dumbbell ') + '.gif',
+          cleanBase.replace(/\s*\([^)]*\)/g, '') + '.gif'
         ];
         
         if (!imageTrials[filename]) {
@@ -112,15 +115,27 @@ const UI = (() => {
         const lastDot = filename.lastIndexOf('.');
         const baseName = lastDot !== -1 ? filename.substring(0, lastDot) : filename;
         const cleanBase = baseName.replace(/[-_]+/g, ' ');
+        const upperBase = cleanBase.toUpperCase();
+        
+        let dbVariant = upperBase;
+        if (upperBase.startsWith('DUMBBELL ')) {
+          dbVariant = 'DB ' + upperBase.slice(9);
+        } else if (upperBase.startsWith('DB ')) {
+          dbVariant = 'DUMBBELL ' + upperBase.slice(3);
+        }
+
         const variations = [
-          cleanBase.toUpperCase() + '.png',
+          upperBase + '.png',
+          dbVariant + '.png',
           cleanBase.toLowerCase() + '.png',
           cleanBase.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + '.png',
+          upperBase.replace(/\s*\([^)]*\)/g, '').trim() + '.png',
+          dbVariant.replace(/\s*\([^)]*\)/g, '').trim() + '.png',
           cleanBase.replace(/\s+/g, '_') + '.png',
           cleanBase.replace(/\s+/g, '_').toLowerCase() + '.png',
           cleanBase.replace(/\s+/g, '_').toUpperCase() + '.png',
           cleanBase.replace(/\s+/g, '-') + '.png',
-          cleanBase.replace(/\s+/g, '-').toLowerCase() + '.png',
+          cleanBase.replace(/\s+/g, '-').toLowerCase() + '.png'
         ];
         
         if (!imageTrials[filename]) {
@@ -175,11 +190,18 @@ const UI = (() => {
    */
   function getDayTypeInfo(type) {
     const types = {
+      'Legs + Core': { label: 'Legs + Core 🦵', class: 'strength', icon: '🦵' },
+      'Push + Skill': { label: 'Push + Skill 💥', class: 'strength', icon: '💥' },
+      'Pull + Grip': { label: 'Pull + Grip 🧲', class: 'strength', icon: '🧲' },
+      'Zone 2 Cardio': { label: 'Zone 2 Cardio 🫀', class: 'walk', icon: '🫀' },
+      'Active Recovery': { label: 'Active Recovery 🌿', class: 'recovery', icon: '🌿' },
+      'VO2 Max': { label: 'VO2 Max 4x4 🔴', class: 'vo2', icon: '🔴' },
+      'Rest': { label: 'Rest 😴', class: 'rest', icon: '😴' },
+      'Legs + Push (Strength A)': { label: 'Strength A 🦵💥', class: 'strength', icon: '🦵' },
+      'Pull + Skill (Strength B)': { label: 'Strength B 🧲', class: 'strength', icon: '🧲' },
       'Lower Strength': { label: 'Lower Strength 🦵', class: 'strength', icon: '🦵' },
       'Upper Push': { label: 'Upper Push 💥', class: 'strength', icon: '💥' },
-      'Upper Pull + Skill': { label: 'Upper Pull 🧲', class: 'strength', icon: '🧲' },
-      'Active Recovery': { label: 'Recovery 🚶', class: 'walk', icon: '🚶' },
-      'Rest': { label: 'Rest 😴', class: 'rest', icon: '😴' }
+      'Upper Pull + Skill': { label: 'Upper Pull 🧲', class: 'strength', icon: '🧲' }
     };
     return types[type] || { label: type, class: '', icon: '📋' };
   }
@@ -223,7 +245,6 @@ const UI = (() => {
    */
   function parseDate(dateStr) {
     if (!dateStr) return null;
-    // Format: DD/MM/YYYY or YYYY-MM-DD HH:MM:SS
     if (dateStr.includes('/')) {
       const [d, m, y] = dateStr.split('/');
       return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
@@ -269,7 +290,6 @@ const UI = (() => {
 
   /**
    * Parse sets string to get number of sets
-   * e.g., "3×10-12" → 3, "2×8-12" → 2
    */
   function parseSetsCount(setsStr) {
     if (!setsStr) return 0;
@@ -279,7 +299,6 @@ const UI = (() => {
 
   /**
    * Parse reps from sets string
-   * e.g., "3×10-12" → "10-12"
    */
   function parseReps(setsStr) {
     if (!setsStr) return '';
@@ -306,27 +325,29 @@ const UI = (() => {
     
     // Professional SVG Icons
     const icons = {
+      db: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 17.5l11-11"/><path d="M6 6l12 12"/><circle cx="5" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/></svg>`,
+      trx: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M7 10l-4 10"/><path d="M17 10l4 10"/><path d="M3 20h4"/><path d="M17 20h4"/></svg>`,
+      bars: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 18h16"/><path d="M7 6v12"/><path d="M17 6v12"/></svg>`,
+      vest: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v6l-2 2v10H8V10L6 8V2z"/><path d="M9 2v4"/><path d="M15 2v4"/></svg>`,
       band: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="7" ry="7" transform="rotate(-45 12 12)"/><path d="M12 2v20" opacity="0.3" transform="rotate(-45 12 12)"/></svg>`,
       wall: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="9"/><line x1="15" y1="9" x2="15" y2="15"/><line x1="9" y1="15" x2="9" y2="21"/></svg>`,
       bench: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h16v2H4z"/><path d="M6 12v6"/><path d="M18 12v6"/></svg>`,
       bar: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5h20"/><path d="M6 5v14"/><path d="M18 5v14"/></svg>`,
       towel: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2" ry="2"/><path d="M6 8h12"/><path d="M6 16h12"/></svg>`,
-      roller: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="6" width="16" height="12" rx="2" ry="2"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="18"/></svg>`,
+      treadmill: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16l-3-12H7L4 18z"/><circle cx="12" cy="18" r="2"/></svg>`,
       bodyweight: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>`
     };
 
+    if (n.includes('vest')) return { label: 'וסט +5 ק"ג', icon: icons.vest };
+    if (n.includes('trx')) return { label: 'רצועות TRX', icon: icons.trx };
+    if (n.includes('bars') || n.includes('push-up bars') || n.includes('parallettes')) return { label: 'ידיות שחיקות / Bars', icon: icons.bars };
+    if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row')) return { label: 'משקולות DB', icon: icons.db };
     if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) return { label: 'גומיית התנגדות', icon: icons.band };
-    if (n.includes('wall')) return { label: 'קיר פנוי', icon: icons.wall };
-    if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('incline') || n.includes('decline') || n.includes('copenhagen') || n.includes('chair') || n.includes('elevated')) return { label: 'כיסא / ספסל', icon: icons.bench };
-    if (n.includes('table')) return { label: 'שולחן יציב', icon: icons.bench };
-    if (n.includes('towel grip')) return { label: 'מתח + מגבת', icon: icons.bar };
-    if (n.includes('hamstring curl') || n.includes('hamstring towel curl')) return { label: 'מגבת קטנה', icon: icons.towel };
-    if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('inverted row') || n.includes('chin-up') || n.includes('hanging') || n.includes('front lever')) return { label: 'מתח / מקבילים', icon: icons.bar };
-    if (n.includes('couch stretch')) return { label: 'קיר + כרית', icon: icons.wall };
-    if (n.includes('handstand')) return { label: 'קיר פנוי', icon: icons.wall };
-    if (n.includes('foam roll')) return { label: 'גליל עיסוי', icon: icons.roller };
+    if (n.includes('wall') || n.includes('handstand')) return { label: 'קיר פנוי', icon: icons.wall };
+    if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('chair') || n.includes('elevated')) return { label: 'כיסא / ספסל', icon: icons.bench };
+    if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('chin-up')) return { label: 'מתח / מגבת', icon: icons.towel };
+    if (n.includes('walking') || n.includes('vo2') || n.includes('zone 2')) return { label: 'מסילת כושר / הליכה', icon: icons.treadmill };
     
-    // Default or bodyweight exercises
     return { label: 'משקל גוף בלבד', icon: icons.bodyweight };
   }
 

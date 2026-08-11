@@ -22,30 +22,33 @@ const ExercisesPage = (() => {
     'Band Pull-Apart': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 9 }],
     'Band Curl': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 17 }, { weight: '50 kg', fromWeek: 33 }],
     'Banded Single-Leg RDL': [{ weight: '30 kg', fromWeek: 10 }, { weight: '40 kg', fromWeek: 21 }, { weight: '50 kg', fromWeek: 33 }],
-    'Banded Glute Bridge': [{ weight: '30 kg', fromWeek: 13 }, { weight: '40 kg', fromWeek: 25 }, { weight: '50 kg', fromWeek: 37 }]
+    'Banded Glute Bridge': [{ weight: '30 kg', fromWeek: 13 }, { weight: '40 kg', fromWeek: 21 }, { weight: '50 kg', fromWeek: 33 }]
   };
-
-  // Skill paths organized by day type
   const SKILL_TREES = {
     'lower-strength': [
       {
         title: 'חימום וניידות', icon: '⚡', exercises: [
-          { name: 'High Knees', unlockWeek: 1 }, { name: 'Arm Circles', unlockWeek: 1 }, { name: 'Wall Slides', unlockWeek: 1 }, { name: 'Scapular Push-up', unlockWeek: 1 }, { name: 'Dead Bug', unlockWeek: 1 }, { name: 'Ankle Dorsiflexion Mobility', unlockWeek: 25 }
+          { name: 'High Knees', unlockWeek: 1 }, { name: 'Arm Circles', unlockWeek: 1 }, { name: 'Wall Slides', unlockWeek: 1 }, { name: 'Scapular Push-up', unlockWeek: 1 }, { name: 'Dead Bug', unlockWeek: 1 }, { name: 'Ankle Dorsiflexion Mobility', unlockWeek: 1 }
         ]
       },
       {
-        title: 'כוח רגליים', icon: '🏋️', exercises: [
-          { name: 'Bodyweight Squat', unlockWeek: 1 }, { name: 'Bodyweight Single-Leg RDL', unlockWeek: 1, parallel: true }, { name: 'Reverse Lunge', unlockWeek: 4 }, { name: 'Split Squat', unlockWeek: 7 }, { name: 'Hamstring Towel Curl', unlockWeek: 7, parallel: true }, { name: 'Banded Single-Leg RDL', unlockWeek: 10, parallel: true }, { name: 'Bulgarian Split Squat', unlockWeek: 13 }, { name: 'Wall-Supported Skater Squat', unlockWeek: 19 }, { name: 'Pistol Squat to Chair', unlockWeek: 25 }, { name: 'Full Pistol Squat', unlockWeek: 28 }
+        title: 'כוח רגליים (Squat & Hinge)', icon: '🏋️', exercises: [
+          { name: 'Bodyweight Squat', unlockWeek: 1 }, { name: 'Reverse Lunge', unlockWeek: 1 }, { name: 'Split Squat', unlockWeek: 1 }, { name: 'Dumbbell Goblet Squat', unlockWeek: 1 }, { name: 'Bulgarian Split Squat', unlockWeek: 1 }, { name: 'Wall-Supported Skater Squat', unlockWeek: 1 }, { name: 'Pistol Squat to Chair', unlockWeek: 1 }, { name: 'Full Pistol Squat', unlockWeek: 1 }
+        ]
+      },
+      {
+        title: 'המסטרינג ושרשרת אחורית', icon: '🦵', exercises: [
+          { name: 'Bodyweight Single-Leg RDL', unlockWeek: 1 }, { name: 'Banded Single-Leg RDL', unlockWeek: 1 }, { name: 'Hamstring Towel Curl', unlockWeek: 1 }, { name: 'Dumbbell Romanian Deadlift (RDL)', unlockWeek: 1 }, { name: 'Dumbbell Single-Leg RDL', unlockWeek: 1 }
         ]
       },
       {
         title: 'ישבן ותאומים', icon: '🍑', exercises: [
-          { name: 'Single-Leg Glute Bridge', unlockWeek: 1 }, { name: 'Banded Glute Bridge', unlockWeek: 13 }, { name: 'Calf Raise', unlockWeek: 1, parallel: true }, { name: 'Single-Leg Calf Raise', unlockWeek: 4, parallel: true }
+          { name: 'Single-Leg Glute Bridge', unlockWeek: 1 }, { name: 'Banded Glute Bridge', unlockWeek: 1 }, { name: 'Calf Raise', unlockWeek: 1 }, { name: 'Single-Leg Calf Raise', unlockWeek: 1 }, { name: 'Dumbbell Single-Leg Calf Raise', unlockWeek: 1 }
         ]
       },
       {
         title: 'מבצר הליבה', icon: '🛡️', exercises: [
-          { name: 'Dead Bug', unlockWeek: 1 }, { name: 'Hollow Body Rock', unlockWeek: 4 }, { name: 'Hollow-to-Arch Rock', unlockWeek: 10 }, { name: 'L-sit on Chair', unlockWeek: 13 }, { name: 'L-sit on Floor', unlockWeek: 16 }, { name: 'Dragon Flag Negative', unlockWeek: 19 }, { name: 'Dragon Flag (Partial ROM)', unlockWeek: 22 }, { name: 'Dragon Flag', unlockWeek: 25 }
+          { name: 'Dead Bug', unlockWeek: 1 }, { name: 'Hollow Body Rock', unlockWeek: 1 }, { name: 'Hollow-to-Arch Rock', unlockWeek: 1 }, { name: 'L-sit on Chair', unlockWeek: 1 }, { name: 'L-sit on Floor', unlockWeek: 1 }, { name: 'Dragon Flag Negative', unlockWeek: 1 }, { name: 'Dragon Flag (Partial ROM)', unlockWeek: 1 }, { name: 'Dragon Flag', unlockWeek: 1 }, { name: 'Dumbbell Suitcase Hold', unlockWeek: 1 }, { name: 'Pallof Press (Band)', unlockWeek: 1 }
         ]
       }
     ],
@@ -61,23 +64,18 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'לחיצות (חזה ויד אחורית)', icon: '💥', exercises: [
-          { name: 'Table Push-up', unlockWeek: 1 }, { name: 'Knee Push-up', unlockWeek: 1, parallel: true }, { name: 'Push-up', unlockWeek: 4 }, { name: 'Close-Grip Push-up', unlockWeek: 7 }, { name: 'Diamond Push-up', unlockWeek: 10 }, { name: 'Decline Push-up', unlockWeek: 13 }, { name: 'Archer Push-up', unlockWeek: 16 }, { name: 'One-Arm Push-up Lean', unlockWeek: 22 }, { name: 'Pseudo-Planche Lean', unlockWeek: 25 }
+        title: 'לחיצות חזה ומשקולות', icon: '💥', exercises: [
+          { name: 'Table Push-up', unlockWeek: 1 }, { name: 'Knee Push-up', unlockWeek: 1 }, { name: 'Push-up', unlockWeek: 1 }, { name: 'Close-Grip Push-up', unlockWeek: 1 }, { name: 'TRX Push-up', unlockWeek: 1 }, { name: 'Dumbbell Floor Press', unlockWeek: 1 }, { name: 'Diamond Push-up', unlockWeek: 1 }, { name: 'Decline Push-up', unlockWeek: 1 }, { name: 'Archer Push-up', unlockWeek: 1 }, { name: 'One-Arm Push-up Lean', unlockWeek: 1 }, { name: 'Pseudo-Planche Lean', unlockWeek: 1 }
         ]
       },
       {
         title: 'כתפיים ולחיצות מעל הראש', icon: '🎯', exercises: [
-          { name: 'Table Pike Push-up', unlockWeek: 1 }, { name: 'Pike Push-up', unlockWeek: 4 }, { name: 'Elevated Pike Push-up', unlockWeek: 7 }, { name: 'Wall Handstand', unlockWeek: 10 }, { name: 'Wall Walk (Full)', unlockWeek: 13 }, { name: 'Wall Handstand Push-up Negative', unlockWeek: 19 }, { name: 'Handstand Push-up', unlockWeek: 25 }
+          { name: 'Table Pike Push-up', unlockWeek: 1 }, { name: 'Pike Push-up', unlockWeek: 1 }, { name: 'Elevated Pike Push-up', unlockWeek: 1 }, { name: 'Dumbbell Standing Overhead Press (OHP)', unlockWeek: 1 }, { name: 'Dumbbell Lateral Raise', unlockWeek: 1 }, { name: 'Wall Handstand', unlockWeek: 1 }, { name: 'Wall Walk (Full)', unlockWeek: 1 }, { name: 'Wall Handstand Push-up Negative', unlockWeek: 1 }, { name: 'Handstand Push-up', unlockWeek: 1 }
         ]
       },
       {
         title: 'מניעת פציעות כתף (Prehab)', icon: '🩹', exercises: [
-          { name: 'Band Pull-Apart', unlockWeek: 1 }, { name: 'Prone Y-T-W', unlockWeek: 1, parallel: true }
-        ]
-      },
-      {
-        title: 'גירוי רגליים קל', icon: '🦵', exercises: [
-          { name: 'Bodyweight Squat', unlockWeek: 1 }, { name: 'Single-Leg Glute Bridge', unlockWeek: 10 }, { name: 'Banded Glute Bridge', unlockWeek: 19 }
+          { name: 'Band Pull-Apart', unlockWeek: 1 }, { name: 'Prone Y-T-W', unlockWeek: 1 }, { name: 'Band Face-Pull', unlockWeek: 1 }
         ]
       }
     ],
@@ -89,30 +87,29 @@ const ExercisesPage = (() => {
       },
       {
         title: 'חתירה וכוח רוחבי', icon: '↔️', exercises: [
-          { name: 'Seated Band Row', unlockWeek: 1 }
+          { name: 'Seated Band Row', unlockWeek: 1 }, { name: 'Inverted Row', unlockWeek: 1 }, { name: 'TRX Row', unlockWeek: 1 }, { name: 'Dumbbell Bent-Over Row', unlockWeek: 1 }, { name: 'Dumbbell One-Arm Row', unlockWeek: 1 }
         ]
       },
       {
         title: 'עליות מתח וכוח אנכי', icon: '🧗', exercises: [
-          { name: 'Scapular Pull-up', unlockWeek: 1 }, { name: 'Dead Hang', unlockWeek: 1, parallel: true }, { name: 'Pull-up Negative', unlockWeek: 4 }, { name: 'Chin-up Negative', unlockWeek: 10 }, { name: 'Chin-up', unlockWeek: 13 }, { name: 'Pull-up (Overhand)', unlockWeek: 19 }, { name: 'Explosive Pull-up', unlockWeek: 25 }, { name: 'Tuck Front Lever Row', unlockWeek: 25, parallel: true }
+          { name: 'Scapular Pull-up', unlockWeek: 1 }, { name: 'Dead Hang', unlockWeek: 1 }, { name: 'Pull-up Negative', unlockWeek: 1 }, { name: 'Chin-up Negative', unlockWeek: 1 }, { name: 'Chin-up', unlockWeek: 1 }, { name: 'Pull-up (Overhand)', unlockWeek: 1 }, { name: 'Explosive Pull-up', unlockWeek: 1 }, { name: 'Tuck Front Lever Row', unlockWeek: 1 }
         ]
       },
       {
-        title: 'ידיים וכוח אחיזה', icon: '✊', exercises: [
-          { name: 'Band Curl', unlockWeek: 1 }, { name: 'Towel Grip Hang', unlockWeek: 7, parallel: true }
+        title: 'ידיים (Biceps) וכוח אחיזה', icon: '✊', exercises: [
+          { name: 'Band Curl', unlockWeek: 1 }, { name: 'Dumbbell Biceps Curl', unlockWeek: 1 }, { name: 'Dumbbell Hammer Curl', unlockWeek: 1 }, { name: 'Towel Grip Hang', unlockWeek: 1 }
         ]
       },
-
       {
         title: 'גירוי ליבה קל', icon: '🧱', exercises: [
-          { name: 'Side Plank Hip Dip', unlockWeek: 1 }, { name: 'L-sit on Chair', unlockWeek: 13 }, { name: 'L-sit on Floor', unlockWeek: 16 }
+          { name: 'Side Plank Hip Dip', unlockWeek: 1 }, { name: 'L-sit on Chair', unlockWeek: 1 }, { name: 'L-sit on Floor', unlockWeek: 1 }
         ]
       }
     ],
     'cardio': [
       {
-        title: 'התאוששות ואירובי', icon: '🫀', exercises: [
-          { name: 'Relaxed Walking', unlockWeek: 1 }, { name: 'Brisk Walking', unlockWeek: 1 }
+        title: 'אירובי קרדיו-וואסקולרי', icon: '🫀', exercises: [
+          { name: 'Relaxed Walking', unlockWeek: 1 }, { name: 'Brisk Walking', unlockWeek: 1 }, { name: 'Zone 2 Incline Walking (10-12% Incline)', unlockWeek: 1 }, { name: 'Norwegian 4x4 VO2 Max Running / Walking', unlockWeek: 1 }
         ]
       }
     ]
@@ -482,21 +479,13 @@ const ExercisesPage = (() => {
           const stateClass = isUnlocked ? 'unlocked' : 'locked';
           const latestClass = isLatestUnlock && isUnlocked ? 'latest' : '';
           const imgSrc = node.noImage ? null : `images/exercises/${node.name.replace(/\//g, '-').toUpperCase()}.png`;
-
-          const gifPath = `images/gifs/${node.name}.gif`;
-          let videoBtn = `<button type="button" class="rpg-video-btn" title="צפה ב-GIF" onclick="UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation()">▶</button>`;
-
-          const diffClass = exData ? UI.getDifficultyClass(exData.difficulty) : 'beginner';
-          const equip = exData ? UI.getEquipment(exData.name) : null;
-
           html += `
             <div class="rpg-node ${stateClass} ${latestClass}" 
-                 onclick="ExercisesPage.showExerciseDetails('${node.name.replace(/'/g, "\\'")}')"
                  style="animation-delay: ${(pathIndex * 0.1) + (levelIndex * 0.08) + (nodeIdx * 0.05)}s">
               <div class="rpg-node-hex-wrap">
-                <div class="rpg-node-hex">
+                <div class="rpg-node-hex" style="cursor: pointer;" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc || ''}')">
                   ${isUnlocked ? '' : '<div class="rpg-lock-icon">🔒</div>'}
-                  ${imgSrc ? `<img src="${imgSrc}" class="rpg-node-img" alt="${node.name}" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc}')" onerror="this.style.display='none'; this.parentElement.querySelector('.rpg-node-emoji') && (this.parentElement.querySelector('.rpg-node-emoji').style.display='flex')">` : ''}
+                  ${imgSrc ? `<img src="${imgSrc}" class="rpg-node-img" alt="${node.name}" onerror="this.style.display='none'; this.parentElement.querySelector('.rpg-node-emoji') && (this.parentElement.querySelector('.rpg-node-emoji').style.display='flex')">` : ''}
                   ${!imgSrc || node.noImage ? `<div class="rpg-node-emoji" style="display:flex">${path.icon}</div>` : `<div class="rpg-node-emoji" style="display:none">${path.icon}</div>`}
                   ${isUnlocked ? `<div class="rpg-node-glow" style="--glow-color: ${tabColor}"></div>` : ''}
                 </div>

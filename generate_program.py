@@ -1,432 +1,616 @@
 #!/usr/bin/env python3
-"""Generate FitUp Pro Hybrid v5.0 — 52-week training program."""
+"""Generate FitUp Pro Ultimate v4.0 — 78-week training program."""
 import json, os, shutil
 from datetime import datetime, timedelta
 
 START_DATE = datetime(2026, 7, 6)
 DAYS_ENG = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
-def ex(slot, name, sets, weight=None, isWarmup=False):
-    return {"slot": slot, "name": name, "sets": sets, "weight": weight, "isWarmup": isWarmup}
-
-def get_band_weight(name, week):
-    if name == "Seated Band Row":
-        if week >= 13: return "50 kg"
-        if week >= 5: return "40 kg"
-        return "30 kg"
-    if name == "Band Pull-Apart":
-        if week >= 9: return "50 kg"
-        if week >= 5: return "40 kg"
-        return "30 kg"
-    if name == "Band Curl":
-        if week >= 33: return "50 kg"
-        if week >= 17: return "40 kg"
-        return "30 kg"
-    if name == "Banded Single-Leg RDL":
-        if week >= 33: return "50 kg"
-        if week >= 21: return "40 kg"
-        return "30 kg"
-    if name == "Banded Glute Bridge":
-        if week >= 37: return "50 kg"
-        if week >= 25: return "40 kg"
-        return "30 kg"
-    return "30 kg"
+def ex(slot, name, sets, weight=None, tempo=None, rest=90, isWarmup=False):
+    return {
+        "slot": slot,
+        "name": name,
+        "sets": sets,
+        "weight": weight,
+        "tempo": tempo,
+        "rest": rest,
+        "isWarmup": isWarmup
+    }
 
 def get_leg_warmup():
     return [
-        ex("W1", "High Knees", "30 secs", isWarmup=True),
-        ex("W2", "Bodyweight Squat", "10 reps (Slow)", isWarmup=True),
-        ex("W3", "Dead Bug", "6 each side", isWarmup=True),
+        ex("W1", "High Knees", "30 secs", isWarmup=True, rest=0),
+        ex("W2", "Bodyweight Squat", "2×8 (Slow)", isWarmup=True, rest=30),
+        ex("W3", "Dead Bug", "1×6 each side", isWarmup=True, rest=30),
+        ex("W4", "Glute Bridge", "1×12", isWarmup=True, rest=30),
     ]
 
-def get_push_warmup():
-    return [
-        ex("W1", "Arm Circles", "10 forward, 10 backward", isWarmup=True),
-        ex("W2", "Wall Slides", "5 reps (Slow)", isWarmup=True),
-        ex("W3", "Scapular Push-up", "10 reps", isWarmup=True),
+def get_push_warmup(is_year2=False):
+    warmups = [
+        ex("W1", "Arm Circles", "10 forward, 10 backward", isWarmup=True, rest=0),
+        ex("W2", "Wall Slides", "1×8 (Slow)", isWarmup=True, rest=30),
+        ex("W3", "Scapular Push-up", "2×10", isWarmup=True, rest=30),
+        ex("W4", "Band Pull-Apart", "1×15", isWarmup=True, rest=30),
     ]
+    if is_year2:
+        warmups.append(ex("W5", "Wrist Rocks", "1×10", isWarmup=True, rest=30))
+    return warmups
 
 def get_pull_warmup():
     return [
-        ex("W1", "Arm Circles", "10 forward, 10 backward", isWarmup=True),
-        ex("W2", "Wall Slides", "5 reps", isWarmup=True),
-        ex("W3", "Scapular Pull-up", "5 reps", isWarmup=True),
+        ex("W1", "Arm Circles", "10 forward, 10 backward", isWarmup=True, rest=0),
+        ex("W2", "Wall Slides", "1×8", isWarmup=True, rest=30),
+        ex("W3", "Scapular Pull-up", "2×6", isWarmup=True, rest=30),
+        ex("W4", "Dead Hang", "1×15 secs", isWarmup=True, rest=30),
+        ex("W5", "Seated Band Row", "1×12", isWarmup=True, rest=30),
     ]
 
-# Phase definitions: (week_start, week_end) -> exercises per day type
-# Volume pattern per 3-week block: week1=intro, week2=build, week3=peak
-# Deload weeks: 6,12,18,24,30,36,42,48,52
+DELOAD_WEEKS = {9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73}
 
-DELOAD_WEEKS = {6,12,18,24,30,36,42,48,52}
+def get_vo2_incline(week):
+    if week in DELOAD_WEEKS or week >= 69:
+        return None
+    if 1 <= week <= 4: return "3%"
+    if 5 <= week <= 8: return "4%"
+    if 10 <= week <= 16: return "5%"
+    if 18 <= week <= 68: return "6%"
+    return "4%"
 
-def get_block_position(week):
-    """Returns (block_week_1_based, is_deload) for volume scaling."""
-    if week in DELOAD_WEEKS:
-        return (0, True)
-    # Find which 3-week sub-block within 6-week cycle
-    cycle_pos = (week - 1) % 6  # 0-5
-    if cycle_pos < 3:
-        return (cycle_pos + 1, False)  # weeks 1,2,3 of first sub-block
-    else:
-        return (cycle_pos - 2, False)  # weeks 1,2,3 of second sub-block
+def get_day_workout(dow, week):
+    # dow: 1=Monday(Legs), 2=Tuesday(Zone2), 3=Wednesday(Push), 4=Thursday(Active Recovery), 5=Friday(Pull), 6=Saturday(VO2 Max), 0=Sunday(Rest)
+    is_deload = week in DELOAD_WEEKS
+    is_year2 = week >= 53
 
-def get_phase(week):
-    """Get exercise phase (1-based) from week number."""
-    phases = [
-        (1, 3, 1), (4, 6, 2), (7, 9, 3), (10, 12, 4),
-        (13, 15, 5), (16, 18, 6), (19, 21, 7), (22, 24, 8), (25, 52, 9)
-    ]
-    for s, e, p in phases:
-        if s <= week <= e:
-            return p
-    return 9
+    # MAINTENANCE PHASE (Weeks 74–78)
+    if week >= 74:
+        if dow == 1: # Strength A
+            raw = [
+                ("DB Single-Leg RDL", "3×8/leg", "24 kg", "3 secs down", 120),
+                ("DB BSS (Goblet)", "3×8/leg", "24 kg", "2 secs down", 90),
+                ("Single-Arm Floor Press", "3×8/side", "24 kg", "2 secs down", 120),
+                ("Seated DB OHP", "3×8", "12 kg each", "2 secs down", 90),
+                ("DB Lateral Raise", "2×15", "9 kg each", "2 secs down", 60),
+                ("Dead Bug", "2×10/side", "Bodyweight", "Slow", 60),
+                ("Arm Block - DB Lateral Raise", "1×15", "9 kg each", "2 secs down", 60),
+                ("Arm Block - DB OH Triceps Ext", "1×12", "24 kg total", "2 secs down", 60),
+            ]
+            return "Legs + Push (Strength A)", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 2:
+            return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "45 mins", "Incline 4%", "5.5 km/h", 0)]
+        elif dow == 3:
+            return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30 mins", "Incline 0%", "4.5 km/h", 0)]
+        elif dow == 4: # Strength B
+            raw = [
+                ("Pull-Up (Overhand)", "3×6", "Bodyweight", "2 secs down", 120),
+                ("Chin-Up", "2×5", "Bodyweight", "2 secs down", 120),
+                ("One-Arm DB Row", "3×10/side", "24 kg", "2 secs down", 90),
+                ("Wall Handstand", "3×30 secs", "Bodyweight", "Static", 90),
+                ("Single-Arm Curl", "2×12/side", "18 kg", "2 secs down", 60),
+                ("Towel Hang", "2×45 secs", "Bodyweight", "Static", 60),
+                ("Arm Block - DB Curl", "1×12", "18 kg each", "2 secs down", 60),
+            ]
+            return "Pull + Skill (Strength B)", "7-8", build_exercises(raw, get_pull_warmup())
+        elif dow == 5:
+            return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "45 mins", "Incline 4%", "5.5 km/h", 0)]
+        elif dow == 6:
+            return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30 mins", "Incline 0%", "4.5 km/h", 0)]
+        else:
+            return "Rest", "—", []
 
-def get_leg_phase(week):
-    phases = [
-        (1, 3, 1), (4, 6, 2), (7, 9, 3), (10, 12, 4),
-        (13, 15, 5), (16, 18, 6), (19, 21, 7), (22, 24, 8),
-        (25, 27, 9), (28, 52, 10)
-    ]
-    for s, e, p in phases:
-        if s <= week <= e:
-            return p
-    return 10
+    # CARDIO / RECOVERY DAYS (DOW 2, 4, 6, 0)
+    if dow == 2:
+        if is_deload:
+            return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "30 mins", "Incline 2%", "5.0 km/h", 0)]
+        return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "45 mins", "Incline 4%", "5.5 km/h", 0)]
 
-def get_volume(week):
-    """Returns (sets_main, reps_main) based on block position."""
-    pos, is_deload = get_block_position(week)
-    phase = get_phase(week)
-    
+    if dow == 4:
+        return "Active Recovery", "—", [
+            ex("A1", "Relaxed Walking", "25 mins", "Incline 0%", "4.5 km/h", 0),
+            ex("A2", "Deep Mobility Protocol", "10 mins", "Bodyweight", "Flow", 0)
+        ]
+
+    if dow == 6:
+        if is_deload or week >= 69:
+            return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "30 mins", "Incline 2%", "5.0 km/h", 0)]
+        incline = get_vo2_incline(week)
+        return "VO2 Max", "9-10", [
+            ex("A1", "VO2 Max Norwegian 4x4", "4x4 mins (3 min rest)", f"Incline {incline}", "6.5 km/h effort / 4.5 km/h rest", 0)
+        ]
+
+    if dow == 0:
+        return "Rest", "—", []
+
+    # STRENGTH DAYS (DOW 1, 3, 5)
+
+    # DELOAD WEEKS (9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73)
     if is_deload:
-        if phase <= 4:
-            return "2", "4-5" if phase >= 3 else "6-8"
-        return "2", "3-4"
-    
-    if phase <= 3:  # Beginner
-        if pos == 1: return "3", "8-10"
-        if pos == 2: return "3", "10-12"
-        return "4", "8-12"
-    elif phase <= 6:  # Intermediate
-        if pos == 1: return "3", "6-8"
-        if pos == 2: return "3", "8-10"
-        return "4", "6-10"
-    else:  # Advanced
-        if pos == 1: return "3", "3-5"
-        if pos == 2: return "3", "5-7"
-        return "4", "3-8"
+        if dow == 1: # Day 1 Deload
+            if week == 9: raw = [("DB RDL", "2×8", "3 kg each", "3 secs down", 120), ("DB BSS", "2×8/leg", "Bodyweight", "2 secs down", 90), ("DB Hip Thrust", "2×10", "6 kg", "2 secs pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2 secs down", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "Walking", 90), ("Dead Bug", "2×8/side", "Bodyweight", "Slow", 60)]
+            elif week == 17: raw = [("DB RDL", "2×8", "6 kg each", "3 secs down", 120), ("DB BSS", "2×8/leg", "3 kg each", "2 secs down", 90), ("DB Hip Thrust", "2×10", "6 kg", "2 secs pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2 secs down", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "Walking", 90), ("Dead Bug", "2×8/side", "Bodyweight", "Slow", 60)]
+            elif week == 25: raw = [("DB Single-Leg RDL", "2×8/leg", "6 kg", "3 secs down", 120), ("DB BSS", "2×8/leg", "6 kg each", "2 secs down", 90), ("DB Hip Thrust", "2×10", "9 kg", "2 secs pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2 secs down", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "Walking", 90), ("Dead Bug", "2×8/side", "Bodyweight", "Slow", 60)]
+            elif week == 33: raw = [("DB Single-Leg RDL", "2×8/leg", "9 kg", "3 secs down", 120), ("DB BSS", "2×8/leg", "6 kg each", "2 secs down", 90), ("DB Hip Thrust", "2×10", "9 kg", "2 secs pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2 secs down", 60), ("Suitcase Carry", "2×25m/side", "12 kg", "Walking", 90), ("Dead Bug", "2×8/side", "Bodyweight", "Slow", 60)]
+            elif week == 41: raw = [("DB Single-Leg RDL", "2×8/leg", "6 kg", "3 secs down", 120), ("DB BSS (Goblet)", "2×8/leg", "9 kg", "1 sec pause", 90), ("DB Hip Thrust", "2×10", "12 kg", "2 secs pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "9 kg", "2 secs down", 60), ("Dead Bug", "2×8/side", "Bodyweight", "Slow", 60)]
+            elif week in (49, 57, 61, 65, 69): raw = [("DB Single-Leg RDL", "2×8/leg", "12 kg", "3 secs down", 120), ("DB BSS (Goblet)", "2×8/leg", "12 kg", "1 sec pause", 90), ("DB Hip Thrust", "2×10", "12 kg", "2 secs pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "12 kg", "2 secs down", 60), ("Suitcase Carry", "2×25m/side", "12 kg", "Walking", 90), ("Dead Bug", "2×8/side", "Bodyweight", "Slow", 60)]
+            else: raw = [("DB Single-Leg RDL", "2×8/leg", "15 kg", "3 secs down", 120), ("DB BSS (Goblet)", "2×8/leg", "15 kg", "1 sec pause", 90), ("DB Hip Thrust", "2×10", "15 kg", "2 secs pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "15 kg", "2 secs down", 60), ("Dead Bug", "2×8/side", "Bodyweight", "Slow", 60)]
+            return "Legs + Core (Deload)", "5-6", build_exercises(raw, get_leg_warmup())
 
-def fmt_sets(sets_n, reps):
-    return f"{sets_n}×{reps}"
+        elif dow == 3: # Day 3 Deload
+            if week == 9: raw = [("Pike Hold", "2×15 secs", "Bodyweight", "Static", 90), ("DB Floor Press", "2×8", "3 kg each", "2 secs down", 120), ("Push-Up (Bars)", "2×6", "Bodyweight", "2 secs down", 90), ("Seated DB OHP", "2×8", "3 kg each", "2 secs down", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2 secs down", 60), ("DB OH Triceps Ext", "2×10", "3 kg total", "2 secs down", 60)]
+            elif week == 17: raw = [("Wall Walk (Partial)", "2×2", "Bodyweight", "Slow", 90), ("DB Floor Press", "2×6", "6 kg each", "2 secs down", 120), ("Push-Up (Bars)", "2×6", "Bodyweight", "2 secs down", 90), ("Seated DB OHP", "2×8", "3 kg each", "2 secs down", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2 secs down", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2 secs down", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2 secs down", 60)]
+            elif week == 25: raw = [("Single-Arm Floor Press", "2×8/side", "9 kg", "2 secs down", 120), ("Feet-Elevated Push-Up", "2×6", "Bodyweight", "2 secs down", 90), ("Seated DB OHP", "2×8", "3 kg each", "2 secs down", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2 secs down", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2 secs down", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2 secs down", 60)]
+            elif week == 33: raw = [("Single-Arm Floor Press", "2×8/side", "9 kg", "2 secs down", 120), ("Deficit Push-Up", "2×6", "Bodyweight", "2 secs down", 90), ("Seated DB OHP", "2×8", "3 kg each", "2 secs down", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2 secs down", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2 secs down", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2 secs down", 60)]
+            elif week == 41: raw = [("Single-Arm Floor Press", "2×8/side", "12 kg", "2 secs down", 120), ("Elevated Pike Push-Up", "2×6", "Bodyweight", "2 secs down", 90), ("Seated DB OHP", "2×8", "3 kg each", "2 secs down", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2 secs down", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2 secs down", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2 secs down", 60)]
+            elif week in (49, 57, 61, 65, 69): raw = [("Single-Arm Floor Press", "2×8/side", "12 kg", "2 secs down", 120), ("Single-Arm Seated OHP", "2×8/side", "9 kg", "2 secs down", 90), ("DB Lateral Raise", "2×12", "6 kg each", "2 secs down", 60), ("DB OH Triceps Ext", "2×10", "9 kg total", "2 secs down", 60), ("Arm Block - DB Lateral Raise", "1×12", "6 kg each", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "9 kg total", "2 secs down", 60)]
+            else: raw = [("Single-Arm Floor Press", "2×8/side", "15 kg", "2 secs down", 120), ("Single-Arm Seated OHP", "2×8/side", "15 kg", "2 secs down", 90), ("DB Lateral Raise", "2×12", "6 kg each", "2 secs down", 60), ("DB OH Triceps Ext", "2×10", "15 kg total", "2 secs down", 60), ("Arm Block - DB Lateral Raise", "1×12", "6 kg each", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "15 kg total", "2 secs down", 60)]
+            return "Push + Skill (Deload)", "5-6", build_exercises(raw, get_push_warmup(is_year2))
 
-def get_lower_exercises(week):
-    sets_n, reps = get_volume(week)
-    phase = get_leg_phase(week)
-    exercises = []
-    
-    # Mobility for Pistol Squat
-    if phase >= 9:
-        exercises.append(("Ankle Dorsiflexion Mobility", "1-2 mins per side", None))
-    
-    # Quad Dominant
-    if phase == 1:
-        exercises.append(("Bodyweight Squat", fmt_sets(sets_n, reps), None))
-    elif phase == 2:
-        exercises.append(("Reverse Lunge", fmt_sets(sets_n, reps), None))
-    elif phase == 3 or phase == 4:
-        exercises.append(("Split Squat", fmt_sets(sets_n, reps), None))
-    elif phase == 5 or phase == 6:
-        exercises.append(("Bulgarian Split Squat", fmt_sets(sets_n, reps), None))
-    elif phase == 7 or phase == 8:
-        exercises.append(("Wall-Supported Skater Squat", fmt_sets(sets_n, reps), None))
-    elif phase == 9:
-        exercises.append(("Pistol Squat to Chair", fmt_sets(sets_n, reps), None))
-    else:
-        exercises.append(("Full Pistol Squat", fmt_sets(sets_n, reps), None))
-        
-    # Hamstring Dominant
-    if phase == 1 or phase == 2:
-        exercises.append(("Bodyweight Single-Leg RDL", fmt_sets(sets_n, reps), None))
-    elif phase == 3 or phase == 5 or phase == 7 or phase == 9:
-        exercises.append(("Hamstring Towel Curl", fmt_sets(sets_n, reps), None))
-    elif phase == 4 or phase == 6 or phase == 8 or phase == 10:
-        exercises.append(("Banded Single-Leg RDL", fmt_sets(sets_n, reps), get_band_weight("Banded Single-Leg RDL", week)))
-    
-    # Glute
-    if phase <= 4:
-        exercises.append(("Single-Leg Glute Bridge", fmt_sets(sets_n, "10-12"), None))
-    else:
-        exercises.append(("Banded Glute Bridge", fmt_sets(sets_n, "12-15"), get_band_weight("Banded Glute Bridge", week)))
-    
-    # Calf
-    if phase <= 1:
-        exercises.append(("Calf Raise", fmt_sets(sets_n, "15-20"), None))
-    else:
-        exercises.append(("Single-Leg Calf Raise", fmt_sets(sets_n, "15-20"), None))
-    
-    # Core
-    if phase <= 3:
-        if phase == 1:
-            exercises.append(("Dead Bug", fmt_sets(sets_n, reps), None))
-        else:
-            exercises.append(("Hollow Body Rock", fmt_sets(sets_n, reps), None))
-    elif phase == 4:
-        exercises.append(("Hollow-to-Arch Rock", fmt_sets(sets_n, reps), None))
-    elif phase <= 6:
-        hold = fmt_sets(sets_n, "15-30 secs")
-        if phase == 5:
-            exercises.append(("L-sit on Chair", hold, None))
-        else:
-            exercises.append(("L-sit on Floor", hold, None))
-    elif phase == 7:
-        exercises.append(("Dragon Flag Negative", fmt_sets(sets_n, reps), None))
-    elif phase == 8:
-        exercises.append(("Dragon Flag (Partial ROM)", fmt_sets(sets_n, reps), None))
-    else:
-        exercises.append(("Dragon Flag", fmt_sets(sets_n, reps), None))
-    
-    return exercises
+        elif dow == 5: # Day 5 Deload
+            if week == 9: raw = [("Pull-Up Negative", "2×2", "Bodyweight", "3 secs down", 120), ("One-Arm DB Row", "2×8/side", "3 kg", "2 secs down", 90), ("TRX Face Pull (Angle 1)", "2×10", "Bodyweight", "2 secs down", 60), ("DB Curl", "2×10", "3 kg each", "2 secs down", 60)]
+            elif week == 17: raw = [("Pull-Up Negative", "2×2", "Bodyweight", "3 secs down", 120), ("One-Arm DB Row", "2×8/side", "6 kg", "2 secs down", 90), ("TRX Face Pull (Angle 2)", "2×10", "Bodyweight", "2 secs down", 60), ("DB Curl", "2×10", "3 kg each", "2 secs down", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2 secs down", 60)]
+            elif week == 25: raw = [("Pull-Up (Overhand)", "2×2", "Bodyweight", "2 secs down", 120), ("One-Arm DB Row", "2×8/side", "6 kg", "2 secs down", 90), ("TRX Face Pull (Angle 2)", "2×10", "Bodyweight", "2 secs down", 60), ("DB Hammer Curl", "2×10", "3 kg each", "2 secs down", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2 secs down", 60)]
+            elif week == 33: raw = [("Pull-Up (Overhand)", "2×3", "Bodyweight", "2 secs down", 120), ("One-Arm DB Row", "2×8/side", "9 kg", "2 secs down", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2 secs down", 60), ("DB Curl", "2×10", "3 kg each", "2 secs down", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2 secs down", 60)]
+            elif week == 41: raw = [("Pull-Up (Overhand)", "2×3", "Bodyweight", "2 secs down", 120), ("One-Arm DB Row", "2×8/side", "9 kg", "2 secs down", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2 secs down", 60), ("DB Curl", "2×10", "6 kg each", "2 secs down", 60), ("Arm Block - DB Curl", "1×10", "6 kg each", "2 secs down", 60)]
+            elif week in (49, 57, 61, 65, 69): raw = [("Pull-Up (Overhand)", "2×4", "Bodyweight", "2 secs down", 120), ("One-Arm DB Row", "2×8/side", "12 kg", "2 secs down", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2 secs down", 60), ("Single-Arm Curl", "2×10/side", "9 kg", "2 secs down", 60), ("Arm Block - DB Curl", "1×10", "9 kg each", "2 secs down", 60)]
+            else: raw = [("Pull-Up (Overhand)", "2×4", "Bodyweight", "2 secs down", 120), ("One-Arm DB Row", "2×8/side", "15 kg", "2 secs down", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2 secs down", 60), ("Single-Arm Curl", "2×10/side", "12 kg", "2 secs down", 60), ("Arm Block - DB Curl", "1×10", "12 kg each", "2 secs down", 60)]
+            return "Pull + Grip (Deload)", "5-6", build_exercises(raw, get_pull_warmup())
 
-def get_push_exercises(week):
-    sets_n, reps = get_volume(week)
-    phase = get_phase(week)
-    leg_phase = get_leg_phase(week)
-    _, is_deload = get_block_position(week)
-    exercises = []
-    
-    # Prehab (light — Seated Band Row moved to pull day)
-    exercises.append(("Band Pull-Apart", "2×15-20", get_band_weight("Band Pull-Apart", week)))
-    
-    # Main push
-    if phase == 1:
-        exercises.append(("Table Push-up", fmt_sets(sets_n, reps), None))
-        exercises.append(("Knee Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 2:
-        exercises.append(("Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 3:
-        exercises.append(("Close-Grip Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 4:
-        exercises.append(("Diamond Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 5:
-        exercises.append(("Decline Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 6:
-        exercises.append(("Archer Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 7:
-        exercises.append(("Archer Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 8:
-        exercises.append(("One-Arm Push-up Lean", fmt_sets(sets_n, reps), None))
-    else:
-        exercises.append(("One-Arm Push-up Lean", fmt_sets(sets_n, reps), None))
-        exercises.append(("Pseudo-Planche Lean", fmt_sets(sets_n, reps), None))
-    
-    # Shoulder
-    hold = fmt_sets(sets_n, "15-30 secs")
-    if phase == 1:
-        exercises.append(("Table Pike Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 2:
-        exercises.append(("Pike Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 3:
-        exercises.append(("Elevated Pike Push-up", fmt_sets(sets_n, reps), None))
-    elif phase == 4:
-        exercises.append(("Wall Handstand", hold, None))
-    elif phase == 5:
-        exercises.append(("Wall Walk (Full)", fmt_sets(sets_n, reps), None))
-    elif phase == 6:
-        exercises.append(("Wall Walk (Full)", fmt_sets(sets_n, reps), None))
-    elif phase == 7:
-        exercises.append(("Wall Handstand Push-up Negative", hold, None))
-    elif phase == 8:
-        exercises.append(("Wall Handstand Push-up Negative", hold, None))
-    else:
-        exercises.append(("Handstand Push-up", fmt_sets(sets_n, reps), None))
-    
-    # Prehab finisher
-    exercises.append(("Prone Y-T-W", "2×8-12", None))
-    
-    # Light leg exercise — second weekly stimulus (RPE 6-7)
-    light_sets = "2" if is_deload else "2-3"
-    if leg_phase <= 3:
-        exercises.append(("Bodyweight Squat", f"{light_sets}×12-20", None))
-    elif leg_phase <= 6:
-        exercises.append(("Single-Leg Glute Bridge", f"{light_sets}×10-15", None))
-    else:
-        exercises.append(("Banded Glute Bridge", f"{light_sets}×12-20", get_band_weight("Banded Glute Bridge", week)))
-    
-    return exercises
+    # REGULAR WEEKS (Non-Deload, Non-Maintenance)
 
-def get_pull_exercises(week):
-    sets_n, reps = get_volume(week)
-    phase = get_phase(week)
-    _, is_deload = get_block_position(week)
-    exercises = []
-    
-    # Horizontal pull — Seated Band Row (moved from push day)
-    exercises.append(("Seated Band Row", "3-4×8-12", get_band_weight("Seated Band Row", week)))
-    
-    # Scapular (warmup for vertical pull)
-    if phase > 1:
-        exercises.append(("Scapular Pull-up", "2×10-15", None))
-    
-    # Main pull
-    if phase == 1:
-        exercises.append(("Scapular Pull-up", fmt_sets(sets_n, reps), None))
-        exercises.append(("Dead Hang", fmt_sets(sets_n, "15-30 secs"), None))
-    elif phase == 2:
-        exercises.append(("Pull-up Negative", fmt_sets(sets_n, reps), None))
-    elif phase == 3:
-        exercises.append(("Pull-up Negative", fmt_sets(sets_n, reps), None))
-    elif phase == 4:
-        exercises.append(("Chin-up Negative", fmt_sets(sets_n, reps), None))
-    elif phase == 5:
-        exercises.append(("Chin-up", fmt_sets(sets_n, reps), None))
-    elif phase == 6:
-        exercises.append(("Chin-up", fmt_sets(sets_n, reps), None))
-    elif phase == 7:
-        exercises.append(("Pull-up (Overhand)", fmt_sets(sets_n, reps), None))
-    elif phase == 8:
-        exercises.append(("Pull-up (Overhand)", fmt_sets(sets_n, reps), None))
-    else:
-        exercises.append(("Explosive Pull-up", fmt_sets(sets_n, reps), None))
-        exercises.append(("Tuck Front Lever Row", fmt_sets(sets_n, reps), None))
-    
-    # Band Curl
-    exercises.append(("Band Curl", "2-3×12-15", get_band_weight("Band Curl", week)))
-    
-    # Towel Grip Hang (from phase 3+)
-    if phase >= 3:
-        exercises.append(("Towel Grip Hang", "2×20-30 secs", None))
-    
-    # Light core finisher — NO Dragon Flag (moved to leg day only)
-    # L-sit OR Side Plank Hip Dip based on recovery
-    if phase == 5:
-        exercises.append(("L-sit on Chair", fmt_sets(sets_n, "15-30 secs"), None))
-    elif phase >= 6:
-        exercises.append(("L-sit on Floor", fmt_sets(sets_n, "15-30 secs"), None))
-    
-    exercises.append(("Side Plank Hip Dip", "2-3×8-10", None))
-    
-    return exercises
+    # Phase 1: Weeks 1–4
+    if 1 <= week <= 4:
+        if dow == 1:
+            raw = [
+                ("DB RDL", "3×8", "6 kg each", "3 secs down", 120),
+                ("DB Bulgarian Split Squat", "3×8/leg", "Bodyweight", "2 secs down", 90),
+                ("DB Glute Bridge", "3×12", "9 kg on hips", "1 sec pause", 90),
+                ("Single-Leg Calf Raise", "3×15/leg", "Bodyweight", "2 secs down", 60),
+                ("Suitcase Carry", "3×25m/side", "12 kg", "Walking", 90),
+                ("Dead Bug", "3×8/side", "Bodyweight", "Slow", 60),
+            ]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [
+                ("Pike Hold", "3×15 secs", "Bodyweight", "Static", 90),
+                ("DB Floor Press", "3×8", "6 kg each", "2 secs down", 120),
+                ("Push-Up (Bars)", "3×6", "Bodyweight", "2 secs down", 90),
+                ("Seated DB OHP", "3×8", "3 kg each", "2 secs down", 90),
+                ("DB Lateral Raise", "2×12", "3 kg each", "2 secs down", 60),
+                ("DB OH Triceps Ext", "2×12", "6 kg total", "2 secs down", 60),
+                ("TRX Y-T-W", "2×8/shape", "Bodyweight (Angle 1)", "1 sec pause", 60),
+            ]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
+        elif dow == 5:
+            raw = [
+                ("Pull-Up Negative", "3×2", "Bodyweight", "3 secs down", 120),
+                ("One-Arm DB Row", "3×8/side", "6 kg", "2 secs down", 90),
+                ("TRX Face Pull", "3×12", "Bodyweight (Angle 1)", "2 secs down", 60),
+                ("DB Curl", "2×10", "3 kg each", "2 secs down", 60),
+                ("Towel Grip Hang", "3×15 secs", "Bodyweight", "Static", 60),
+                ("L-sit Tuck (Bars)", "3×8 secs", "Bodyweight", "Static", 60),
+            ]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
-def build_exercise_list(raw_exercises, day_type=""):
+    # Phase 2: Weeks 5–8
+    if 5 <= week <= 8:
+        if dow == 1:
+            raw = [
+                ("DB RDL", "4×10", "9 kg each", "3 secs down", 120),
+                ("DB Bulgarian Split Squat", "3×10/leg", "3 kg each", "2 secs down", 90),
+                ("DB Hip Thrust", "3×15", "9 kg on hips", "2 secs pause", 90),
+                ("Single-Leg Calf Raise", "3×18/leg", "9 kg in hand", "2 secs down", 60),
+                ("Suitcase Carry", "3×30m/side", "15 kg", "Walking", 90),
+                ("Hollow Body Hold", "3×15 secs", "Bodyweight", "Static", 60),
+            ]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [
+                ("Pike Hold", "3×20 secs", "Bodyweight (Feet on chair)", "Static", 90),
+                ("DB Floor Press", "4×10", "9 kg each", "2 secs down", 120),
+                ("Push-Up (Bars)", "4×5", "Bodyweight", "2 secs down", 90),
+                ("Seated DB OHP", "3×10", "6 kg each", "2 secs down", 90),
+                ("DB Lateral Raise", "3×15", "3 kg each", "2 secs down", 60),
+                ("DB OH Triceps Ext", "3×12", "6 kg total", "2 secs down", 60),
+                ("TRX Y-T-W", "2×10/shape", "Bodyweight (Angle 1)", "1 sec pause", 60),
+            ]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
+        elif dow == 5:
+            raw = [
+                ("Pull-Up Negative", "4×3", "Bodyweight", "4 secs down", 120),
+                ("Chin-Up Negative", "3×3", "Bodyweight", "4 secs down", 120),
+                ("One-Arm DB Row", "3×10/side", "9 kg", "2 secs down", 90),
+                ("TRX Face Pull", "3×15", "Bodyweight (Angle 2)", "2 secs down", 60),
+                ("DB Hammer Curl", "3×12", "6 kg each", "2 secs down", 60),
+                ("Towel Hang", "3×25 secs", "Bodyweight", "Static", 60),
+                ("L-sit Tuck (Bars)", "3×10 secs", "Bodyweight", "Static", 60),
+            ]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    # Phase 4: Weeks 10–16 (Arm block starts!)
+    if 10 <= week <= 16:
+        if dow == 1:
+            raw = [
+                ("DB RDL", "4×8", "12 kg each", "3 secs down", 120),
+                ("DB Bulgarian Split Squat", "4×8/leg", "9 kg each", "2 secs down", 90),
+                ("DB Hip Thrust", "4×10", "12 kg on hips", "2 secs pause", 90),
+                ("Single-Leg Calf Raise", "3×20/leg", "9 kg", "2 secs down", 60),
+                ("Pallof Press", "3×12/side", "Band 30 kg", "1 sec pause", 60),
+                ("Dead Bug", "3×10/side", "Bodyweight", "Slow", 60),
+            ]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [
+                ("Wall Walk (Partial)", "3×3", "Bodyweight", "Slow", 90),
+                ("DB Floor Press", "4×6", "12 kg each", "2 secs down", 120),
+                ("Deficit Push-Up", "3×6", "Bodyweight", "2 secs down", 90),
+                ("Seated DB OHP", "3×8", "6 kg each", "2 secs down", 90),
+                ("DB Lateral Raise", "3×18", "3 kg each", "2 secs down", 60),
+                ("DB OH Triceps Ext", "3×10", "9 kg total", "2 secs down", 60),
+                ("Band Pull-Apart", "2×20", "Band 30 kg", "1 sec pause", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "3-9 kg each (Ladder)", "2 secs down", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6-15 kg total (Ladder)", "2 secs down", 60),
+            ]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
+        elif dow == 5:
+            raw = [
+                ("Pull-Up (Overhand)", "3×1", "Bodyweight", "2 secs down", 120),
+                ("Chin-Up", "3×1", "Bodyweight", "2 secs down", 120),
+                ("One-Arm DB Row", "4×8/side", "12 kg", "2 secs down", 90),
+                ("TRX Face Pull", "3×12", "Bodyweight (Angle 2)", "2 secs down", 60),
+                ("DB Curl", "3×10", "6 kg each", "2 secs down", 60),
+                ("Towel Hang", "3×30 secs", "Bodyweight", "Static", 60),
+                ("L-sit Tuck (Bars)", "3×10 secs", "Bodyweight", "Static", 60),
+                ("Arm Block - DB Curl", "2×10-15", "3-12 kg each (Ladder)", "2 secs down + 1 sec squeeze", 60),
+            ]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    # Phase 6: Weeks 18–24
+    if 18 <= week <= 24:
+        if dow == 1:
+            raw = [
+                ("DB Bulgarian Split Squat", "4×10/leg", "9 kg each", "2 secs down", 90),
+                ("DB Single-Leg RDL", "4×10/leg", "12 kg", "3 secs down", 120),
+                ("DB Hip Thrust", "4×12", "15 kg on hips", "2 secs pause", 90),
+                ("Reverse Lunge + DB", "3×10/leg", "9 kg each", "2 secs down", 90),
+                ("Single-Leg Calf Raise", "4×18/leg", "12 kg", "2 secs down", 60),
+                ("Suitcase Carry", "3×40m/side", "18 kg", "Walking", 90),
+            ]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [
+                ("Wall Walk (Full)", "3×3", "Bodyweight", "Slow", 90),
+                ("Single-Arm Floor Press", "4×8/side", "15 kg", "2 secs down", 120),
+                ("Feet-Elevated Push-Up", "4×6", "Bodyweight", "2 secs down", 90),
+                ("Seated DB OHP", "3×10", "9 kg each", "2 secs down", 90),
+                ("DB Lateral Raise", "3×20", "3 kg each", "3 secs down", 60),
+                ("DB OH Triceps Ext", "3×12", "9 kg total", "2 secs down", 60),
+                ("TRX Y-T-W", "3×10/shape", "Bodyweight (Angle 1)", "1 sec pause", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "3-9 kg each (Ladder)", "2 secs down", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6-15 kg total (Ladder)", "2 secs down", 60),
+            ]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
+        elif dow == 5:
+            raw = [
+                ("Pull-Up (Overhand)", "4×3", "Bodyweight", "2 secs down", 120),
+                ("Chin-Up", "3×3", "Bodyweight", "2 secs down", 120),
+                ("One-Arm DB Row", "4×10/side", "12 kg", "2 secs down", 90),
+                ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 secs down", 60),
+                ("DB Hammer Curl", "3×12", "6 kg each", "2 secs down", 60),
+                ("Towel Hang", "3×35 secs", "Bodyweight", "Static", 60),
+                ("L-sit Tuck (Bars)", "3×12 secs", "Bodyweight", "Static", 60),
+                ("Arm Block - DB Curl", "2×10-15", "3-12 kg each (Ladder)", "2 secs down", 60),
+            ]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    # Phase 8: Weeks 26–32
+    if 26 <= week <= 32:
+        if dow == 1:
+            raw = [
+                ("DB Single-Leg RDL", "4×6/leg", "15 kg", "3 secs down", 120),
+                ("DB Bulgarian Split Squat", "4×6/leg", "12 kg each", "2 secs down", 90),
+                ("DB Hip Thrust", "4×8", "18 kg on hips", "2 secs pause", 90),
+                ("Single-Leg Calf Raise", "4×15/leg", "12 kg", "2 secs down", 60),
+                ("Suitcase Carry", "4×30m/side", "21 kg", "Walking", 90),
+                ("Hollow Body Hold", "3×20 secs", "Bodyweight", "Static", 60),
+            ]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [
+                ("Wall Handstand", "3×20 secs", "Bodyweight (Face to wall)", "Static", 90),
+                ("Single-Arm Floor Press", "4×6/side", "18 kg", "2 secs down", 120),
+                ("Deficit Push-Up", "4×6", "Bodyweight", "2 secs down", 90),
+                ("Seated DB OHP", "3×8", "9 kg each", "2 secs down", 90),
+                ("DB Lateral Raise", "3×15", "3 kg each", "2 secs down", 60),
+                ("DB OH Triceps Ext", "3×10", "9 kg total", "2 secs down", 60),
+                ("Band Pull-Apart", "3×20", "Band 30 kg", "1 sec pause", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 secs down", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 secs down", 60),
+            ]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
+        elif dow == 5:
+            raw = [
+                ("Pull-Up (Overhand)", "4×4", "Bodyweight", "2 secs down", 120),
+                ("Chin-Up", "3×4", "Bodyweight", "2 secs down", 120),
+                ("One-Arm DB Row", "4×8/side", "15 kg", "2 secs down", 90),
+                ("TRX Face Pull", "3×12", "Bodyweight (Angle 3)", "2 secs down", 60),
+                ("DB Curl", "3×10", "6 kg each", "2 secs down", 60),
+                ("Towel Hang", "3×40 secs", "Bodyweight", "Static", 60),
+                ("L-sit Tuck (Bars)", "3×12 secs", "Bodyweight", "Static", 60),
+                ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 secs down", 60),
+            ]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    # Phase 10: Weeks 34–40
+    if 34 <= week <= 40:
+        if dow == 1:
+            raw = [
+                ("DB Single-Leg RDL", "4×8/leg", "12 kg", "3 secs down", 120),
+                ("DB BSS (Goblet)", "4×8/leg", "15 kg", "1 sec pause at bottom", 90),
+                ("DB Hip Thrust", "4×10", "21 kg on hips", "2 secs pause", 90),
+                ("Reverse Lunge + DB", "3×10/leg", "9 kg each", "2 secs down", 90),
+                ("Single-Leg Calf Raise", "4×20/leg", "15 kg", "2 secs down", 60),
+                ("Pallof Press", "3×15/side", "Band 40 kg", "1 sec pause", 60),
+            ]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [
+                ("Wall Handstand", "3×30 secs", "Bodyweight", "Static", 90),
+                ("Single-Arm Floor Press", "4×8/side", "21 kg", "1 sec pause at bottom", 120),
+                ("Feet-Elevated Push-Up", "4×6", "Bodyweight", "2 secs down", 90),
+                ("Seated DB OHP", "3×10", "9 kg each", "2 secs down", 90),
+                ("DB Lateral Raise", "3×20", "3 kg each", "3 secs down", 60),
+                ("DB OH Triceps Ext", "3×12", "12 kg total", "2 secs down", 60),
+                ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1 sec pause", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 secs down", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 secs down", 60),
+            ]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
+        elif dow == 5:
+            raw = [
+                ("Pull-Up (Overhand)", "4×5", "Bodyweight", "2 secs down", 120),
+                ("Chin-Up", "3×5", "Bodyweight", "2 secs down", 120),
+                ("One-Arm DB Row", "4×10/side", "18 kg", "2 secs down", 90),
+                ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 secs down", 60),
+                ("DB Curl", "3×12", "9 kg each", "2 secs down", 60),
+                ("Towel Hang", "3×45 secs", "Bodyweight", "Static", 60),
+                ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "Static", 60),
+                ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 secs down", 60),
+            ]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    # Phase 12: Weeks 42–48
+    if 42 <= week <= 48:
+        if dow == 1:
+            raw = [
+                ("Pistol Squat to Chair", "3×5/leg", "Bodyweight", "3 secs down", 120),
+                ("DB Single-Leg RDL", "4×8/leg", "18 kg", "3 secs down", 120),
+                ("DB Hip Thrust", "4×10", "21 kg on hips", "2 secs pause", 90),
+                ("Reverse Lunge + DB", "3×12/leg", "12 kg each", "2 secs down", 90),
+                ("Single-Leg Calf Raise", "4×20/leg", "18 kg", "2 secs pause at bottom", 60),
+                ("Dead Bug", "3×12/side", "Bodyweight", "Slow", 60),
+            ]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [
+                ("Wall Handstand", "3×30 secs", "Bodyweight", "Static", 90),
+                ("Single-Arm Floor Press", "4×8/side", "24 kg", "2 secs down", 120),
+                ("Elevated Pike Push-Up", "4×8", "Bodyweight", "2 secs down", 90),
+                ("Seated DB OHP", "3×12", "12 kg each", "2 secs down", 90),
+                ("DB Lateral Raise", "3×20", "6 kg each", "3 secs down", 60),
+                ("DB OH Triceps Ext", "3×15", "12 kg total", "2 secs down", 60),
+                ("Band Pull-Apart", "3×20", "Band 30 kg", "1 sec pause", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 secs down", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 secs down", 60),
+            ]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
+        elif dow == 5:
+            raw = [
+                ("Pull-Up (Overhand)", "4×5", "Bodyweight", "2 secs down", 120),
+                ("Chin-Up", "3×5", "Bodyweight", "2 secs down", 120),
+                ("One-Arm DB Row", "4×10/side", "21 kg", "2 secs down", 90),
+                ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2 secs down", 60),
+                ("DB Curl", "3×15", "9 kg each", "2 secs down", 60),
+                ("Towel Hang", "3×45 secs", "Bodyweight", "Static", 60),
+                ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "Static", 60),
+                ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 secs down", 60),
+            ]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    # Phase 14: Weeks 50–52
+    if 50 <= week <= 52:
+        if dow == 1:
+            raw = [
+                ("Pistol Squat to Chair", "3×8/leg", "Bodyweight", "3 secs down", 120),
+                ("DB Single-Leg RDL", "3×10/leg", "21 kg", "3 secs down", 120),
+                ("DB Hip Thrust", "3×12", "24 kg on hips", "2 secs pause", 90),
+                ("Reverse Lunge + DB", "3×12/leg", "12 kg each", "2 secs down", 90),
+                ("Single-Leg Calf Raise", "4×20/leg", "21 kg", "2 secs pause at bottom", 60),
+                ("Dead Bug", "3×12/side", "Bodyweight", "Slow", 60),
+            ]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [
+                ("Wall Handstand", "3×30 secs", "Bodyweight", "Static", 90),
+                ("Single-Arm Floor Press", "3×10/side", "24 kg", "2 secs down", 120),
+                ("Feet-Elevated Push-Up", "4×10", "Bodyweight", "2 secs down", 90),
+                ("Elevated Pike Push-Up", "3×10", "Bodyweight", "2 secs down", 90),
+                ("Seated DB OHP", "3×12", "12 kg each", "2 secs down", 90),
+                ("DB Lateral Raise", "3×20", "6 kg each", "3 secs down", 60),
+                ("DB OH Triceps Ext", "3×15", "15 kg total", "2 secs down", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 secs down", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 secs down", 60),
+            ]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
+        elif dow == 5:
+            raw = [
+                ("Pull-Up (Overhand)", "4×6", "Bodyweight", "2 secs down", 120),
+                ("Chin-Up", "3×6", "Bodyweight", "2 secs down", 120),
+                ("One-Arm DB Row", "3×12/side", "21 kg", "2 secs down", 90),
+                ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2 secs down", 60),
+                ("DB Curl", "3×15", "9 kg each", "2 secs down", 60),
+                ("Towel Hang", "3×45 secs", "Bodyweight", "Static", 60),
+                ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "Static", 60),
+                ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 secs down", 60),
+            ]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    # YEAR 2 WEEKS (53–73)
+    if 53 <= week <= 56:
+        if dow == 1:
+            raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3 secs down", 120), ("DB BSS (Goblet)", "4×8/leg", "18 kg", "2 secs down", 90), ("DB Hip Thrust", "4×10", "24 kg on hips", "2 secs pause", 90), ("Reverse Lunge + DB", "3×10/leg", "12 kg each", "2 secs down", 90), ("Single-Leg Calf Raise", "4×20/leg", "21 kg", "2 secs down", 60), ("Suitcase Carry", "4×30m/side", "24 kg", "Walking", 90), ("Dead Bug", "3×12/side", "Bodyweight", "Slow", 60)]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "Static", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2 secs down", 120), ("Deficit Push-Up", "4×8", "Bodyweight", "2 secs down", 90), ("Single-Arm Seated OHP", "4×8/side", "18 kg", "2 secs down", 90), ("DB Lateral Raise", "3×15", "9 kg each", "2 secs down", 60), ("DB OH Triceps Ext", "3×12", "18 kg total", "2 secs down", 60), ("Band Pull-Apart", "2×20", "Band 30 kg", "1 sec pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
+        elif dow == 5:
+            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2 secs down", 120), ("Chin-Up", "3×6", "Bodyweight", "2 secs down", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2 secs down", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 secs down", 60), ("DB Hammer Curl", "3×12", "12 kg each", "2 secs down", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "Static", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "Static", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    if 58 <= week <= 60:
+        if dow == 1:
+            raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3 secs down", 120), ("DB BSS (Goblet)", "4×10/leg", "21 kg", "1 sec pause", 90), ("DB Hip Thrust", "4×12", "24 kg on hips", "2 secs pause", 90), ("Reverse Lunge (Goblet)", "3×12/leg", "18 kg", "2 secs down", 90), ("Single-Leg Calf Raise", "4×20/leg", "24 kg", "2 secs pause", 60), ("Pallof Press", "3×15/side", "Band 40 kg", "1 sec pause", 60), ("Hollow Body Hold", "3×20 secs", "Bodyweight", "Static", 60)]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "Static", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2 secs down", 120), ("Feet-Elevated Push-Up", "4×10", "Bodyweight", "2 secs down", 90), ("Single-Arm Seated OHP", "4×10/side", "21 kg", "2 secs down", 90), ("DB Lateral Raise", "3×18", "9 kg each", "3 secs down", 60), ("DB OH Triceps Ext", "3×12", "21 kg total", "2 secs down", 60), ("TRX Y-T-W", "3×10/shape", "Bodyweight (Angle 1)", "1 sec pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
+        elif dow == 5:
+            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2 secs down", 120), ("Chin-Up", "3×6", "Bodyweight", "2 secs down", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2 secs down", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2 secs down", 60), ("DB Curl", "3×12", "12 kg each", "2 secs down", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "Static", 60), ("L-sit Tuck (Bars)", "3×18 secs", "Bodyweight", "Static", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    if 62 <= week <= 64:
+        if dow == 1:
+            raw = [("DB Single-Leg RDL", "4×6/leg", "24 kg", "3 secs down", 120), ("DB BSS (Goblet)", "4×8/leg", "24 kg", "1 sec pause", 90), ("DB Hip Thrust", "4×10", "24 kg on hips", "3 secs pause", 90), ("Walking Lunge (Goblet)", "3×12/leg", "18 kg", "2 secs down", 90), ("Single-Leg Calf Raise", "4×15/leg", "24 kg", "2 secs down", 60), ("Suitcase Carry", "4×40m/side", "24 kg", "Walking", 90), ("Hollow Body Hold", "3×25 secs", "Bodyweight", "Static", 60)]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "Static", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2 secs down", 120), ("Weighted Deficit Push-Up", "4×6", "Vest +5 kg", "2 secs down", 90), ("Single-Arm Seated OHP", "4×8/side", "24 kg", "2 secs down", 90), ("DB Lateral Raise", "4×15", "9 kg each", "3 secs down", 60), ("DB OH Triceps Ext", "3×10", "21 kg total", "2 secs down", 60), ("Band Pull-Apart", "3×20", "Band 30 kg", "1 sec pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
+        elif dow == 5:
+            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2 secs down", 120), ("Chin-Up", "4×5", "Bodyweight", "2 secs down", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2 secs down", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 secs down", 60), ("Single-Arm Curl", "4×10/side", "15 kg", "2 secs down", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "Static", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "Static", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    if 66 <= week <= 68: # PEAK
+        if dow == 1:
+            raw = [("DB Single-Leg RDL", "4×6/leg", "24 kg", "3 secs down", 120), ("DB BSS (Goblet)", "4×6/leg", "24 kg", "2 secs pause", 90), ("DB Hip Thrust", "4×8", "24 kg on hips", "3 secs pause", 90), ("Pistol Squat to Chair", "3×5/leg", "Bodyweight", "3 secs down", 120), ("Single-Leg Calf Raise", "4×12/leg", "24 kg", "2 secs down", 60), ("Suitcase Carry", "4×40m/side", "24 kg", "Walking", 90), ("Pallof Press", "3×12/side", "Band 40 kg", "1 sec pause", 60)]
+            return "Legs + Core", "8-9", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [("Wall Handstand", "3×40 secs", "Bodyweight", "Static", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2 secs down", 120), ("Elevated Pike Push-Up", "4×8", "Bodyweight", "2 secs down", 90), ("Single-Arm Seated OHP", "4×6/side", "24 kg", "2 secs down", 90), ("DB Lateral Raise", "4×12", "9 kg each", "3 secs down", 60), ("DB OH Triceps Ext", "3×8", "24 kg total", "2 secs down", 60), ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1 sec pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Push + Skill", "8-9", build_exercises(raw, get_push_warmup(is_year2=True))
+        elif dow == 5:
+            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2 secs down", 120), ("Weighted Chin-Up", "4×5", "Vest +5 kg", "2 secs down", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2 secs down", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 4)", "2 secs down", 60), ("Single-Arm Curl", "4×8/side", "18 kg", "2 secs down", 60), ("Towel Hang", "3×60 secs", "Bodyweight", "Static", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "Static", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Pull + Grip", "8-9", build_exercises(raw, get_pull_warmup())
+
+    if 70 <= week <= 72: # TRANSITION
+        if dow == 1:
+            raw = [("DB Single-Leg RDL", "3×8/leg", "24 kg", "3 secs down", 120), ("DB BSS (Goblet)", "3×8/leg", "24 kg", "2 secs down", 90), ("DB Hip Thrust", "3×10", "24 kg on hips", "2 secs pause", 90), ("Single-Leg Calf Raise", "3×15/leg", "24 kg", "2 secs down", 60), ("Suitcase Carry", "3×30m/side", "24 kg", "Walking", 90)]
+            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
+        elif dow == 3:
+            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "Static", 90), ("Single-Arm Floor Press", "3×8/side", "24 kg", "2 secs down", 120), ("Deficit Push-Up", "3×8", "Bodyweight", "2 secs down", 90), ("Single-Arm Seated OHP", "3×8/side", "24 kg", "2 secs down", 90), ("DB Lateral Raise", "3×15", "9 kg each", "2 secs down", 60), ("DB OH Triceps Ext", "2×12", "24 kg total", "2 secs down", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 secs down", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
+        elif dow == 5:
+            raw = [("Pull-Up (Overhand)", "3×6", "Bodyweight", "2 secs down", 120), ("Chin-Up", "3×5", "Bodyweight", "2 secs down", 120), ("One-Arm DB Row", "3×10/side", "24 kg", "2 secs down", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 secs down", 60), ("Single-Arm Curl", "3×12/side", "18 kg", "2 secs down", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "Static", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "Static", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 secs down", 60)]
+            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+
+    # Fallback default
+    return "Rest", "—", []
+
+def build_exercises(raw_tuple_list, warmups):
     out = []
-    if "Legs" in day_type:
-        out = get_leg_warmup()
-    elif "Push" in day_type:
-        out = get_push_warmup()
-    elif "Pull" in day_type:
-        out = get_pull_warmup()
-        
+    for w in warmups:
+        out.append(w)
+    
     idx = 1
-    for name, sets, weight in raw_exercises:
-        out.append(ex(f"A{idx}", name, sets, weight))
+    for item in raw_tuple_list:
+        name = item[0]
+        sets = item[1]
+        weight = item[2]
+        tempo = item[3] if len(item) > 3 else "2 secs down"
+        rest = item[4] if len(item) > 4 else 90
+        
+        out.append(ex(f"A{idx}", name, sets, weight=weight, tempo=tempo, rest=rest))
         idx += 1
     return out
-
-def get_day(dow, week):
-    if dow == 1:  # Monday - Legs + Core
-        raw = get_lower_exercises(week)
-        return "Legs + Core", "7-8", build_exercise_list(raw, "Legs")
-    elif dow == 2:  # Tuesday - Active Recovery (Brisk Walk)
-        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-35 mins")]
-    elif dow == 3:  # Wednesday - Push + Skill + Light Legs
-        raw = get_push_exercises(week)
-        return "Push + Skill", "7-8", build_exercise_list(raw, "Push")
-    elif dow == 4:  # Thursday - Active Recovery (Relaxed Walk)
-        return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "25-30 mins")]
-    elif dow == 5:  # Friday - Pull + Grip + Light Core
-        raw = get_pull_exercises(week)
-        return "Pull + Grip", "7-8", build_exercise_list(raw, "Pull")
-    elif dow == 6:  # Saturday - Active Recovery (Brisk Walk)
-        return "Active Recovery", "—", [ex("A1", "Brisk Walking", "30-35 mins")]
-    else:  # Sunday (dow == 0) - Rest
-        return "Rest", "—", []
 
 def generate_program():
     daily = []
     day_num = 0
-    for week in range(1, 53):
+    total_weeks = 78
+    
+    for week in range(1, total_weeks + 1):
+        # DOW order: 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday, 0=Sunday
         for dow in [1, 2, 3, 4, 5, 6, 0]:
             day_num += 1
             date = START_DATE + timedelta(days=day_num - 1)
-            day_type, rpe, exercises = get_day(dow, week)
+            day_type, rpe, exercises = get_day_workout(dow, week)
+            
             daily.append({
-                "dayNum": day_num, "week": f"Week {week}",
+                "dayNum": day_num,
+                "week": f"Week {week}",
                 "dayOfWeek": DAYS_ENG[dow],
                 "date": date.strftime("%d/%m/%Y"),
                 "dayType": day_type,
-                "plannedRPE": rpe, "exercises": exercises,
+                "plannedRPE": rpe,
+                "exercises": exercises
             })
-    
-    exercises_guide = [
-        {"name":"High Knees","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Warmup"},
-        {"name":"Arm Circles","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Warmup"},
-        {"name":"Wall Slides","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Warmup"},
-        {"name":"Scapular Push-up","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Warmup"},
-        {"name":"Dead Bug","category":"Core","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×8-12"},
-        {"name":"Bodyweight Squat","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×8-12"},
-        {"name":"Reverse Lunge","category":"Legs","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 2: 3-4×8-12"},
-        {"name":"Split Squat","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 3-4: 3-4×8-12"},
-        {"name":"Bodyweight Single-Leg RDL","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 1-2: 3-4×8-12"},
-        {"name":"Hamstring Towel Curl","category":"Legs","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phases 3, 5, 7, 9: 3-4×6-10"},
-        {"name":"Bulgarian Split Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5-6: 3-4×6-10"},
-        {"name":"Banded Single-Leg RDL","category":"Legs","difficulty":"Advanced","weight":"30-50 kg","setsProgression":"Phases 4, 6, 8, 10: 3-4×6-10"},
-        {"name":"Wall-Supported Skater Squat","category":"Legs","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 7-8: 3-4×3-8"},
-        {"name":"Pistol Squat to Chair","category":"Legs","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9: 3-4×3-8"},
-        {"name":"Full Pistol Squat","category":"Legs","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 10: 3-4×3-8"},
-        {"name":"Single-Leg Glute Bridge","category":"Glutes","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1-4: 3-4×10-12"},
-        {"name":"Banded Glute Bridge","category":"Glutes","difficulty":"Intermediate","weight":"30-50 kg","setsProgression":"Phase 5+: 3-4×12-15"},
-        {"name":"Calf Raise","category":"Calves","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×15-20"},
-        {"name":"Single-Leg Calf Raise","category":"Calves","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2+: 3-4×15-20"},
-        {"name":"Table Push-up","category":"Push","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×8-12"},
-        {"name":"Knee Push-up","category":"Push","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×8-12"},
-        {"name":"Push-up","category":"Push","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2: 3-4×8-12"},
-        {"name":"Close-Grip Push-up","category":"Push","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 3: 3-4×8-12"},
-        {"name":"Diamond Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 4: 3-4×6-10"},
-        {"name":"Decline Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5: 3-4×6-10"},
-        {"name":"Archer Push-up","category":"Push","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 6-7: 3-4×3-8"},
-        {"name":"One-Arm Push-up Lean","category":"Push","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 8+: 3-4×3-8"},
-        {"name":"Pseudo-Planche Lean","category":"Push","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
-        {"name":"Table Pike Push-up","category":"Shoulders","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3-4×8-12"},
-        {"name":"Pike Push-up","category":"Shoulders","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2: 3-4×8-12"},
-        {"name":"Elevated Pike Push-up","category":"Shoulders","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 3: 3-4×8-12"},
-        {"name":"Wall Handstand","category":"Shoulders","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 4: 3×15-30 secs"},
-        {"name":"Wall Walk (Full)","category":"Shoulders","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 5-6: 3-4×6-10"},
-        {"name":"Wall Handstand Push-up Negative","category":"Shoulders","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 7-8: 3-4×15-30 secs"},
-        {"name":"Handstand Push-up","category":"Shoulders","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
-        {"name":"Band Pull-Apart","category":"Upper Back","difficulty":"Beginner","weight":"30-50 kg","setsProgression":"All phases: 2-3×15-20"},
-        {"name":"Prone Y-T-W","category":"Upper Back","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"All phases: 2-3×8-12"},
-        {"name":"Scapular Pull-up","category":"Pull","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"All phases: 2×10-15"},
-        {"name":"Dead Hang","category":"Pull","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 1: 3×15-30 secs"},
-        {"name":"Pull-up Negative","category":"Pull","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2-3: 3-4×8-12"},
-        {"name":"Chin-up Negative","category":"Pull","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 4: 3-4×6-10"},
-        {"name":"Chin-up","category":"Pull","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5-6: 3-4×6-10"},
-        {"name":"Pull-up (Overhand)","category":"Pull","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 7-8: 3-4×3-8"},
-        {"name":"Explosive Pull-up","category":"Pull","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
-        {"name":"Tuck Front Lever Row","category":"Pull","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
-        {"name":"Band Curl","category":"Arms","difficulty":"Beginner","weight":"30-50 kg","setsProgression":"All phases: 2-3×12-15"},
-        {"name":"Towel Grip Hang","category":"Grip","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 3+: 2×20-30 secs"},
-        {"name":"Hollow Body Rock","category":"Core","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"Phase 2-3: 3-4×8-12"},
-        {"name":"Hollow-to-Arch Rock","category":"Core","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 4: 3-4×6-10"},
-        {"name":"Side Plank Hip Dip","category":"Core","difficulty":"Intermediate","weight":"Bodyweight","setsProgression":"All phases: 2-3×8-10"},
-        {"name":"L-sit on Chair","category":"Core","difficulty":"Advanced","weight":"Bodyweight","setsProgression":"Phase 5: 3-4×15-30 secs"},
-        {"name":"L-sit on Floor","category":"Core","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 6: 3-4×15-30 secs"},
-        {"name":"Dragon Flag Negative","category":"Core","difficulty":"Expert","weight":"Bodyweight","setsProgression":"Phase 7: 3-4×3-8"},
-        {"name":"Dragon Flag (Partial ROM)","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 8: 3-4×3-8"},
-        {"name":"Dragon Flag","category":"Core","difficulty":"Elite","weight":"Bodyweight","setsProgression":"Phase 9+: 3-4×3-8"},
 
-        {"name":"Seated Band Row","category":"Upper Back","difficulty":"Intermediate","weight":"30-50 kg","setsProgression":"All phases: 3-4×8-12"},
-        {"name":"Ankle Dorsiflexion Mobility","category":"Warmup","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"Phase 9+: 1-2 mins per side"},
-        {"name":"Brisk Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"30 mins brisk pace"},
-        {"name":"Relaxed Walking","category":"Cardio","difficulty":"Beginner","weight":"Bodyweight","setsProgression":"25 mins easy pace"},
-    ]
+    # Catalog of all exercises for exercises guide / DB
+    all_exercise_names = set()
+    for day in daily:
+        for e in day["exercises"]:
+            all_exercise_names.add(e["name"])
+
+    exercises_guide = []
+    for name in sorted(all_exercise_names):
+        cat = "Legs"
+        diff = "Intermediate"
+        weight = "Dumbbells / Bodyweight"
+        
+        n_lower = name.lower()
+        if "warmup" in n_lower or name in ["High Knees", "Arm Circles", "Wall Slides", "Scapular Push-up", "Scapular Pull-up", "Wrist Rocks"]:
+            cat = "Warmup"
+            diff = "Beginner"
+            weight = "Bodyweight"
+        elif "press" in n_lower or "push" in n_lower or "dip" in n_lower:
+            cat = "Push"
+            if "one-arm" in n_lower or "weighted" in n_lower: diff = "Advanced"
+        elif "row" in n_lower or "pull" in n_lower or "chin" in n_lower:
+            cat = "Pull"
+            if "weighted" in n_lower: diff = "Advanced"
+        elif "ohp" in n_lower or "raise" in n_lower or "handstand" in n_lower or "y-t-w" in n_lower:
+            cat = "Shoulders"
+        elif "curl" in n_lower or "triceps" in n_lower or "arm block" in n_lower:
+            cat = "Arms"
+        elif "rdl" in n_lower or "squat" in n_lower or "lunge" in n_lower or "calf" in n_lower:
+            cat = "Legs"
+        elif "glute" in n_lower or "hip thrust" in n_lower:
+            cat = "Glutes"
+        elif "bug" in n_lower or "hold" in n_lower or "hollow" in n_lower or "l-sit" in n_lower or "pallof" in n_lower:
+            cat = "Core"
+        elif "carry" in n_lower or "hang" in n_lower:
+            cat = "Grip"
+        elif "walking" in n_lower or "vo2" in n_lower:
+            cat = "Cardio"
+            diff = "Beginner"
+            weight = "Bodyweight"
+
+        exercises_guide.append({
+            "name": name,
+            "category": cat,
+            "difficulty": diff,
+            "weight": weight,
+            "setsProgression": "FitUp Pro Ultimate v4.0 Schedule"
+        })
+
     return {"daily": daily, "exercises": exercises_guide}
 
 def to_training_data_json(program):
     rows = []
     for day in program["daily"]:
         row = {
-            "Day": f"Day {day['dayNum']}", "Week": day["week"],
-            "Day of Week": day["dayOfWeek"], "Date": day["date"],
-            "Day Type": day["dayType"], "Planned RPE": day["plannedRPE"],
+            "Day": f"Day {day['dayNum']}",
+            "Week": day["week"],
+            "Day of Week": day["dayOfWeek"],
+            "Date": day["date"],
+            "Day Type": day["dayType"],
+            "Planned RPE": day["plannedRPE"],
         }
         mapped = {}
         idx = 1
@@ -455,21 +639,19 @@ if __name__ == "__main__":
     td = to_training_data_json(program)
     with open("training_data.json", "w", encoding="utf-8") as f:
         json.dump(td, f, ensure_ascii=False, indent=2)
-    
+
     required = set()
     for day in program["daily"]:
         for e in day["exercises"]:
             required.add(e["name"])
-    for e in program["exercises"]:
-        required.add(e["name"])
-    
-    expected = {name.replace('/', '-').upper() + ".png" for name in required}
+
     img_dir = "images/exercises"
     if os.path.exists(img_dir):
         fallback = os.path.join(img_dir, "BODYWEIGHT SQUAT.png")
-        for img in expected:
+        for name in required:
+            img = name.replace('/', '-').upper() + ".png"
             path = os.path.join(img_dir, img)
             if not os.path.exists(path) and os.path.exists(fallback):
                 shutil.copy(fallback, path)
-    
-    print(f"Done — FitUp Pro Hybrid v5.0 generated! {len(program['daily'])} days, {len(program['exercises'])} exercises.")
+
+    print(f"Done — FitUp Pro Ultimate v4.0 generated! {len(program['daily'])} days, {len(program['exercises'])} exercise types.")
