@@ -30,7 +30,7 @@ def get_push_warmup(is_year2=False):
         ex("W1", "Arm Circles", "10 forward, 10 backward", isWarmup=True, rest=0),
         ex("W2", "Wall Slides", "1×8 (Slow)", isWarmup=True, rest=30),
         ex("W3", "Scapular Push-up", "2×10", isWarmup=True, rest=30),
-        ex("W4", "Band Pull-Apart", "1×15", isWarmup=True, rest=30),
+        ex("W4", "Band Pull-Apart", "1×15", "Band 30 kg", isWarmup=True, rest=30),
     ]
     if is_year2:
         warmups.append(ex("W5", "Wrist Rocks", "1×10", isWarmup=True, rest=30))
@@ -42,7 +42,7 @@ def get_pull_warmup():
         ex("W2", "Wall Slides", "1×8", isWarmup=True, rest=30),
         ex("W3", "Scapular Pull-up", "2×6", isWarmup=True, rest=30),
         ex("W4", "Dead Hang", "1×15 secs", isWarmup=True, rest=30),
-        ex("W5", "Seated Band Row", "1×12", isWarmup=True, rest=30),
+        ex("W5", "Seated Band Row", "1×12", "Band 30 kg", isWarmup=True, rest=30),
     ]
 
 DELOAD_WEEKS = {9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73}
@@ -322,8 +322,8 @@ def get_day_workout(dow, week):
                 ("DB Lateral Raise", "3×15", "3 kg each", "2 שנ' ירידה", 60),
                 ("DB OH Triceps Ext", "3×10", "9 kg total", "2 שנ' ירידה", 60),
                 ("Band Pull-Apart", "3×20", "Band 30 kg", "1 שנ' עצירה", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 שנ' ירידה", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 שנ' ירידה", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2 שנ' ירידה", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2 שנ' ירידה", 60),
             ]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
         elif dow == 5:
@@ -335,7 +335,7 @@ def get_day_workout(dow, week):
                 ("DB Curl", "3×10", "6 kg each", "2 שנ' ירידה", 60),
                 ("Towel Hang", "3×40 secs", "Bodyweight", "סטטי", 60),
                 ("L-sit Tuck (Bars)", "3×12 secs", "Bodyweight", "סטטי", 60),
-                ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 שנ' ירידה", 60),
+                ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2 שנ' ירידה", 60),
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
@@ -360,8 +360,8 @@ def get_day_workout(dow, week):
                 ("DB Lateral Raise", "3×20", "3 kg each", "3 שנ' ירידה", 60),
                 ("DB OH Triceps Ext", "3×12", "12 kg total", "2 שנ' ירידה", 60),
                 ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1 שנ' עצירה", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 שנ' ירידה", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 שנ' ירידה", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2 שנ' ירידה", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2 שנ' ירידה", 60),
             ]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
         elif dow == 5:
@@ -373,7 +373,7 @@ def get_day_workout(dow, week):
                 ("DB Curl", "3×12", "9 kg each", "2 שנ' ירידה", 60),
                 ("Towel Hang", "3×45 secs", "Bodyweight", "סטטי", 60),
                 ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "סטטי", 60),
-                ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 שנ' ירידה", 60),
+                ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2 שנ' ירידה", 60),
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
@@ -398,8 +398,8 @@ def get_day_workout(dow, week):
                 ("DB Lateral Raise", "3×20", "6 kg each", "3 שנ' ירידה", 60),
                 ("DB OH Triceps Ext", "3×15", "12 kg total", "2 שנ' ירידה", 60),
                 ("Band Pull-Apart", "3×20", "Band 30 kg", "1 שנ' עצירה", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 שנ' ירידה", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 שנ' ירידה", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2 שנ' ירידה", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2 שנ' ירידה", 60),
             ]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
         elif dow == 5:
@@ -411,7 +411,7 @@ def get_day_workout(dow, week):
                 ("DB Curl", "3×15", "9 kg each", "2 שנ' ירידה", 60),
                 ("Towel Hang", "3×45 secs", "Bodyweight", "סטטי", 60),
                 ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "סטטי", 60),
-                ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 שנ' ירידה", 60),
+                ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2 שנ' ירידה", 60),
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
@@ -436,8 +436,8 @@ def get_day_workout(dow, week):
                 ("Seated DB OHP", "3×12", "12 kg each", "2 שנ' ירידה", 90),
                 ("DB Lateral Raise", "3×20", "6 kg each", "3 שנ' ירידה", 60),
                 ("DB OH Triceps Ext", "3×15", "15 kg total", "2 שנ' ירידה", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 שנ' ירידה", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 שנ' ירידה", 60),
+                ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2 שנ' ירידה", 60),
+                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2 שנ' ירידה", 60),
             ]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
         elif dow == 5:
@@ -449,7 +449,7 @@ def get_day_workout(dow, week):
                 ("DB Curl", "3×15", "9 kg each", "2 שנ' ירידה", 60),
                 ("Towel Hang", "3×45 secs", "Bodyweight", "סטטי", 60),
                 ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "סטטי", 60),
-                ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 שנ' ירידה", 60),
+                ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2 שנ' ירידה", 60),
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
@@ -459,10 +459,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3 שנ' ירידה", 120), ("DB BSS (Goblet)", "4×8/leg", "18 kg", "2 שנ' ירידה", 90), ("DB Hip Thrust", "4×10", "24 kg on hips", "2 שנ' עצירה", 90), ("Reverse Lunge + DB", "3×10/leg", "12 kg each", "2 שנ' ירידה", 90), ("Single-Leg Calf Raise", "4×20/leg", "21 kg", "2 שנ' ירידה", 60), ("Suitcase Carry", "4×30m/side", "24 kg", "הליכה", 90), ("Dead Bug", "3×12/side", "Bodyweight", "איטי", 60)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2 שנ' ירידה", 120), ("Deficit Push-Up", "4×8", "Bodyweight", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "4×8/side", "18 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "3×15", "9 kg each", "2 שנ' ירידה", 60), ("DB OH Triceps Ext", "3×12", "18 kg total", "2 שנ' ירידה", 60), ("Band Pull-Apart", "2×20", "Band 30 kg", "1 שנ' עצירה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2 שנ' ירידה", 120), ("Deficit Push-Up", "4×8", "Bodyweight", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "4×8/side", "18 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "3×15", "9 kg each", "2 שנ' ירידה", 60), ("DB OH Triceps Ext", "3×12", "18 kg total", "2 שנ' ירידה", 60), ("Band Pull-Apart", "2×20", "Band 30 kg", "1 שנ' עצירה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2 שנ' ירידה", 60)]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2 שנ' ירידה", 120), ("Chin-Up", "3×6", "Bodyweight", "2 שנ' ירידה", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 שנ' ירידה", 60), ("DB Hammer Curl", "3×12", "12 kg each", "2 שנ' ירידה", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2 שנ' ירידה", 120), ("Chin-Up", "3×6", "Bodyweight", "2 שנ' ירידה", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 שנ' ירידה", 60), ("DB Hammer Curl", "3×12", "12 kg each", "2 שנ' ירידה", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2 שנ' ירידה", 60)]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
     if 58 <= week <= 60:
@@ -470,10 +470,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3 שנ' ירידה", 120), ("DB BSS (Goblet)", "4×10/leg", "21 kg", "1 שנ' עצירה", 90), ("DB Hip Thrust", "4×12", "24 kg on hips", "2 שנ' עצירה", 90), ("Reverse Lunge + DB", "3×10/leg", "12 kg each", "2 שנ' ירידה", 90), ("Single-Leg Calf Raise", "4×20/leg", "24 kg", "2 שנ' עצירה", 60), ("Pallof Press", "3×15/side", "Band 40 kg", "1 שנ' עצירה", 60), ("Hollow Body Hold", "3×20 secs", "Bodyweight", "סטטי", 60)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2 שנ' ירידה", 120), ("Feet-Elevated Push-Up", "4×10", "Bodyweight", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "4×10/side", "21 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "3×18", "9 kg each", "3 שנ' ירידה", 60), ("DB OH Triceps Ext", "3×12", "21 kg total", "2 שנ' ירידה", 60), ("TRX Y-T-W", "3×10/shape", "Bodyweight (Angle 1)", "1 שנ' עצירה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2 שנ' ירידה", 120), ("Feet-Elevated Push-Up", "4×10", "Bodyweight", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "4×10/side", "21 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "3×18", "9 kg each", "3 שנ' ירידה", 60), ("DB OH Triceps Ext", "3×12", "21 kg total", "2 שנ' ירידה", 60), ("TRX Y-T-W", "3×10/shape", "Bodyweight (Angle 1)", "1 שנ' עצירה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2 שנ' ירידה", 60)]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2 שנ' ירידה", 120), ("Chin-Up", "3×6", "Bodyweight", "2 שנ' ירידה", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2 שנ' ירידה", 60), ("DB Curl", "3×12", "12 kg each", "2 שנ' ירידה", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×18 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2 שנ' ירידה", 120), ("Chin-Up", "3×6", "Bodyweight", "2 שנ' ירידה", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2 שנ' ירידה", 60), ("DB Curl", "3×12", "12 kg each", "2 שנ' ירידה", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×18 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2 שנ' ירידה", 60)]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
     if 62 <= week <= 64:
@@ -481,10 +481,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "4×6/leg", "24 kg", "3 שנ' ירידה", 120), ("DB BSS (Goblet)", "4×8/leg", "24 kg", "1 שנ' עצירה", 90), ("DB Hip Thrust", "4×10", "24 kg on hips", "3 שנ' עצירה", 90), ("Walking Lunge (Goblet)", "3×12/leg", "18 kg", "2 שנ' ירידה", 90), ("Single-Leg Calf Raise", "4×15/leg", "24 kg", "2 שנ' ירידה", 60), ("Suitcase Carry", "4×40m/side", "24 kg", "הליכה", 90), ("Hollow Body Hold", "3×25 secs", "Bodyweight", "סטטי", 60)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2 שנ' ירידה", 120), ("Weighted Deficit Push-Up", "4×6", "Vest +5 kg", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "4×8/side", "24 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "4×15", "9 kg each", "3 שנ' ירידה", 60), ("DB OH Triceps Ext", "3×10", "21 kg total", "2 שנ' ירידה", 60), ("Band Pull-Apart", "3×20", "Band 30 kg", "1 שנ' עצירה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2 שנ' ירידה", 120), ("Weighted Deficit Push-Up", "4×6", "Vest +5 kg", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "4×8/side", "24 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "4×15", "9 kg each", "3 שנ' ירידה", 60), ("DB OH Triceps Ext", "3×10", "21 kg total", "2 שנ' ירידה", 60), ("Band Pull-Apart", "3×20", "Band 30 kg", "1 שנ' עצירה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2 שנ' ירידה", 60)]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2 שנ' ירידה", 120), ("Chin-Up", "4×5", "Bodyweight", "2 שנ' ירידה", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 שנ' ירידה", 60), ("Single-Arm Curl", "4×10/side", "15 kg", "2 שנ' ירידה", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2 שנ' ירידה", 120), ("Chin-Up", "4×5", "Bodyweight", "2 שנ' ירידה", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 שנ' ירידה", 60), ("Single-Arm Curl", "4×10/side", "15 kg", "2 שנ' ירידה", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2 שנ' ירידה", 60)]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
     if 66 <= week <= 68: # PEAK
@@ -492,10 +492,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "4×6/leg", "24 kg", "3 שנ' ירידה", 120), ("DB BSS (Goblet)", "4×6/leg", "24 kg", "2 שנ' עצירה", 90), ("DB Hip Thrust", "4×8", "24 kg on hips", "3 שנ' עצירה", 90), ("Pistol Squat to Chair", "3×5/leg", "Bodyweight", "3 שנ' ירידה", 120), ("Single-Leg Calf Raise", "4×12/leg", "24 kg", "2 שנ' ירידה", 60), ("Suitcase Carry", "4×40m/side", "24 kg", "הליכה", 90), ("Pallof Press", "3×12/side", "Band 40 kg", "1 שנ' עצירה", 60)]
             return "Legs + Core", "8-9", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×40 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2 שנ' ירידה", 120), ("Elevated Pike Push-Up", "4×8", "Bodyweight", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "4×6/side", "24 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "4×12", "9 kg each", "3 שנ' ירידה", 60), ("DB OH Triceps Ext", "3×8", "24 kg total", "2 שנ' ירידה", 60), ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1 שנ' עצירה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Wall Handstand", "3×40 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2 שנ' ירידה", 120), ("Elevated Pike Push-Up", "4×8", "Bodyweight", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "4×6/side", "24 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "4×12", "9 kg each", "3 שנ' ירידה", 60), ("DB OH Triceps Ext", "3×8", "24 kg total", "2 שנ' ירידה", 60), ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1 שנ' עצירה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2 שנ' ירידה", 60)]
             return "Push + Skill", "8-9", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2 שנ' ירידה", 120), ("Weighted Chin-Up", "4×5", "Vest +5 kg", "2 שנ' ירידה", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 4)", "2 שנ' ירידה", 60), ("Single-Arm Curl", "4×8/side", "18 kg", "2 שנ' ירידה", 60), ("Towel Hang", "3×60 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2 שנ' ירידה", 120), ("Weighted Chin-Up", "4×5", "Vest +5 kg", "2 שנ' ירידה", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 4)", "2 שנ' ירידה", 60), ("Single-Arm Curl", "4×8/side", "18 kg", "2 שנ' ירידה", 60), ("Towel Hang", "3×60 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2 שנ' ירידה", 60)]
             return "Pull + Grip", "8-9", build_exercises(raw, get_pull_warmup())
 
     if 70 <= week <= 72: # TRANSITION
@@ -503,10 +503,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "3×8/leg", "24 kg", "3 שנ' ירידה", 120), ("DB BSS (Goblet)", "3×8/leg", "24 kg", "2 שנ' ירידה", 90), ("DB Hip Thrust", "3×10", "24 kg on hips", "2 שנ' עצירה", 90), ("Single-Leg Calf Raise", "3×15/leg", "24 kg", "2 שנ' ירידה", 60), ("Suitcase Carry", "3×30m/side", "24 kg", "הליכה", 90)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "3×8/side", "24 kg", "2 שנ' ירידה", 120), ("Deficit Push-Up", "3×8", "Bodyweight", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "3×8/side", "24 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "3×15", "9 kg each", "2 שנ' ירידה", 60), ("DB OH Triceps Ext", "2×12", "24 kg total", "2 שנ' ירידה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "Ladder", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "סטטי", 90), ("Single-Arm Floor Press", "3×8/side", "24 kg", "2 שנ' ירידה", 120), ("Deficit Push-Up", "3×8", "Bodyweight", "2 שנ' ירידה", 90), ("Single-Arm Seated OHP", "3×8/side", "24 kg", "2 שנ' ירידה", 90), ("DB Lateral Raise", "3×15", "9 kg each", "2 שנ' ירידה", 60), ("DB OH Triceps Ext", "2×12", "24 kg total", "2 שנ' ירידה", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2 שנ' ירידה", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2 שנ' ירידה", 60)]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Pull-Up (Overhand)", "3×6", "Bodyweight", "2 שנ' ירידה", 120), ("Chin-Up", "3×5", "Bodyweight", "2 שנ' ירידה", 120), ("One-Arm DB Row", "3×10/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 שנ' ירידה", 60), ("Single-Arm Curl", "3×12/side", "18 kg", "2 שנ' ירידה", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "Ladder", "2 שנ' ירידה", 60)]
+            raw = [("Pull-Up (Overhand)", "3×6", "Bodyweight", "2 שנ' ירידה", 120), ("Chin-Up", "3×5", "Bodyweight", "2 שנ' ירידה", 120), ("One-Arm DB Row", "3×10/side", "24 kg", "2 שנ' ירידה", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2 שנ' ירידה", 60), ("Single-Arm Curl", "3×12/side", "18 kg", "2 שנ' ירידה", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "סטטי", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "סטטי", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2 שנ' ירידה", 60)]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
     # Fallback default

@@ -37,11 +37,7 @@ Dumbbell Biceps Curl.gif
 Arm Block - DB Curl.gif
 Overhead Press & Triceps (גודל: 2,476,584 bytes):
 
-Seated DB OHP.gif
-Single-Arm Seated OHP.gif
-Dumbbell Standing Overhead Press (OHP).gif
-DB OH Triceps Ext.gif
-Arm Block - DB OH Triceps Ext.gif
+
 Pike / Core / Sit (כפילויות זוגיות):
 
 Pike Hold.gif / Pike Push-up.gif (720,864 bytes)
@@ -60,7 +56,6 @@ Reverse Lunge.gif / Reverse Lunge (Goblet).gif / Walking Lunge (Goblet).gif (82,
 DEEP MOBILITY PROTOCOL.png ↔ WRIST ROCKS.png (393,183 bytes)
 DEAD HANG.png ↔ SCAPULAR PULL-UP.png (204,077 bytes)
 DEFICIT PUSH-UP.png ↔ WEIGHTED DEFICIT PUSH-UP.png (324,240 bytes)
-DB FLOOR PRESS.png ↔ SINGLE-ARM FLOOR PRESS.png (319,032 bytes)
 WALL WALK (FULL).png ↔ WALL WALK (PARTIAL).png (314,073 bytes)
 CHIN-UP.png ↔ WEIGHTED CHIN-UP.png (304,113 bytes)
 PULL-UP (OVERHAND).png ↔ WEIGHTED PULL-UP.png (236,724 bytes)
@@ -68,4 +63,3 @@ REVERSE LUNGE + DB.png ↔ WALKING LUNGE (GOBLET).png (290,035 bytes)
 DB HIP THRUST.png ↔ GLUTE BRIDGE.png (47,628 bytes)
 BRISK WALKING.png ↔ RELAXED WALKING.png (43,798 bytes)
 ARM BLOCK - DB CURL.png ↔ DB CURL.png ↔ SINGLE-ARM CURL.png (163,028 bytes)
-ARM BLOCK - DB OH TRICEPS EXT.png ↔ DB OH TRICEPS EXT.png ↔ SEATED DB OHP.png ↔ SINGLE-ARM SEATED OHP.png (151,697 bytes)

@@ -8,6 +8,25 @@ const TodayPage = (() => {
   let allExercises = [];
   let allTrackingCache = null;
 
+  function isWeighted(ex) {
+    if (!ex || !ex.weight) return false;
+    const w = String(ex.weight).trim().toLowerCase();
+    if (w === '' || w === '—' || w.startsWith('bodyweight') || w.startsWith('משקל גוף')) {
+      return false;
+    }
+    return true;
+  }
+
+  function extractNumericWeight(weightStr) {
+    if (!weightStr) return '';
+    const str = String(weightStr).trim();
+    if (str.toLowerCase().startsWith('bodyweight') || str.toLowerCase().startsWith('משקל גוף') || str === '—') {
+      return '';
+    }
+    const match = str.match(/(\d+(?:\.\d+)?)/);
+    return match ? match[1] : '';
+  }
+
   /**
    * Initialize the today page
    */
@@ -451,7 +470,7 @@ const TodayPage = (() => {
           const equip = UI.getEquipment(ex.name);
           if (equip && equip.label !== 'משקל גוף בלבד' && equip.label !== 'קיר פנוי') {
             let labelText = equip.label;
-            if (labelText === 'גומיית התנגדות' && ex.weight && ex.weight !== '—' && ex.weight !== 'משקל גוף') {
+            if (labelText === 'גומיית התנגדות' && isWeighted(ex)) {
               labelText = `גומיית התנגדות (${ex.weight})`;
             }
             if (!equipmentMap.has(labelText)) {
@@ -473,7 +492,7 @@ const TodayPage = (() => {
           if (isNewExercise) newExercisesList.push(exNum);
           
           const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
-          const isWeightChanged = prevEx && ex.weight !== prevEx.weight && ex.weight !== null && ex.weight !== '—' && ex.weight !== 'משקל גוף';
+          const isWeightChanged = prevEx && ex.weight !== prevEx.weight && isWeighted(ex);
           if (isSetsChanged || isWeightChanged) changedExercisesList.push(exNum);
         });
         
@@ -701,7 +720,7 @@ const TodayPage = (() => {
       const exNote = (currentTracking.exerciseNotes && currentTracking.exerciseNotes[idx]) || '';
 
       // Check if exercise has weight data
-      const hasWeight = ex.weight && ex.weight !== '—' && ex.weight !== 'משקל גוף';
+      const hasWeight = isWeighted(ex);
 
       // Determine if this is a time-based exercise
       const isTime = ex.sets && (ex.sets.includes('mins') || ex.sets.includes('secs'));
@@ -742,11 +761,12 @@ const TodayPage = (() => {
 
           // Use previous performance as placeholder hint
           const prevReps = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_reps`]) || reps;
-          const prevWeight = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_weight`]) || ex.weight;
+          const prevWeightRaw = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_weight`]) || ex.weight;
+          const prevWeightNum = extractNumericWeight(prevWeightRaw);
 
           // Weight input - only show if exercise has weight data
           const weightInput = hasWeight ? `
-              <input type="number" class="set-input" placeholder="${prevWeight}" 
+              <input type="number" class="set-input" placeholder="${prevWeightNum}" 
                      value="${setWeight}" ${disabledAttr}
                      data-ex="${idx}" data-set="${s}" data-field="weight"
                      onchange="TodayPage.updateSetData(${idx}, ${s}, 'weight', this.value)">
@@ -788,7 +808,7 @@ const TodayPage = (() => {
 
       const isNewExercise = !prevEx && currentDayIndex > 0 && day.dayType !== 'Rest';
       const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
-      const isWeightChanged = prevEx && ex.weight !== prevEx.weight && ex.weight !== null && ex.weight !== '—' && ex.weight !== 'משקל גוף';
+      const isWeightChanged = prevEx && ex.weight !== prevEx.weight && isWeighted(ex);
 
       const newBadgeHTML = isNewExercise ? `<div class="new-exercise-badge" style="position: absolute; bottom: 12px; left: 12px; background: #ef4444; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 13px; animation: blinkRed 1.5s infinite; box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); z-index: 10;">תרגיל חדש!</div>` : '';
 
