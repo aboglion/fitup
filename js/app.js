@@ -570,10 +570,24 @@ const App = (() => {
           await updateGoogleUI();
         }
         
-        syncBtn.disabled = false;
-        syncBtn.textContent = '🔄 סנכרן עכשיו מול Google Drive';
+    // Custom Google Client ID
+    const googleClientIdInput = document.getElementById('settings-google-client-id');
+    const saveGoogleClientIdBtn = document.getElementById('save-google-client-id-btn');
+
+    if (googleClientIdInput) {
+      DB.getSetting('googleClientId').then(id => {
+        if (id) googleClientIdInput.value = id;
       });
     }
+
+    if (saveGoogleClientIdBtn) {
+      saveGoogleClientIdBtn.onclick = async () => {
+        const val = googleClientIdInput ? googleClientIdInput.value.trim() : '';
+        await DB.setSetting('googleClientId', val);
+        UI.toast(val ? 'Google Client ID נשמר!' : 'חזר לברירת המחדל', 'success');
+      };
+    }
+  }
 
     // --- Gemini AI Settings ---
     const geminiKeyInput = document.getElementById('settings-gemini-key');

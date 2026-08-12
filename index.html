@@ -463,6 +463,17 @@
               <button id="cloud-sync-btn" class="btn-secondary" style="width: 100%; padding: 10px;">🔄 סנכרן עכשיו מול Google Drive</button>
               <button id="google-logout-btn" class="btn-danger" style="width: 100%; padding: 8px; display: none; font-size: 12px;">התנתק מגוגל</button>
             </div>
+
+            <div style="margin-top: 12px; text-align: right;">
+              <details style="font-size: 12px; color: var(--text-secondary); background: var(--bg-input); padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-light);">
+                <summary style="cursor: pointer; font-weight: 700; color: var(--accent-primary);">⚙️ הגדרות מתקדמות (Google Client ID)</summary>
+                <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                  <label style="font-size: 11px;">Client ID מ-Google Cloud Console (לשימוש בדומיין או פרויקט אישי):</label>
+                  <input type="text" id="settings-google-client-id" placeholder="your-client-id.apps.googleusercontent.com" style="width: 100%; padding: 8px; border-radius: 6px; background: var(--bg-card); border: 1px solid var(--border-light); font-size: 11px; color: var(--text-primary);" dir="ltr">
+                  <button id="save-google-client-id-btn" class="btn-secondary" style="padding: 6px 12px; font-size: 11px; align-self: flex-end;">שמור Client ID</button>
+                </div>
+              </details>
+            </div>
           </div>
 
           <!-- Gemini AI Settings Card -->

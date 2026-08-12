@@ -8,7 +8,7 @@ const CloudSync = (() => {
   const FILE_NAME = 'fitup-data.json';
 
   // Default Client ID for standard Google Identity Services (or configurable in DB)
-  const DEFAULT_CLIENT_ID = '35851493019-3qf1e0u1r12p0.apps.googleusercontent.com'; 
+  const DEFAULT_CLIENT_ID = '189174154188-blcjekhejsmenu6vg9ptt2e5pqnnfbv8.apps.googleusercontent.com'; 
 
   /**
    * Schedule background sync (debounced 3s)
@@ -240,13 +240,26 @@ const CloudSync = (() => {
   }
 
   /**
+   * Get configured Google OAuth Client ID
+   */
+  async function getClientId() {
+    const customId = await DB.getSetting('googleClientId');
+    if (customId && customId.trim() !== '') {
+      return customId.trim();
+    }
+    return DEFAULT_CLIENT_ID;
+  }
+
+  /**
    * Sign-in with Google OAuth Token Client (GIS API) or Manual Token Prompt
    */
-  function loginWithGoogle(onSuccess, onError) {
+  async function loginWithGoogle(onSuccess, onError) {
+    const clientId = await getClientId();
+
     if (window.google && window.google.accounts && window.google.accounts.oauth2) {
       try {
         const client = window.google.accounts.oauth2.initTokenClient({
-          client_id: DEFAULT_CLIENT_ID,
+          client_id: clientId,
           scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
           callback: async (response) => {
             if (response.access_token) {
@@ -254,19 +267,20 @@ const CloudSync = (() => {
               await setAccessToken(response.access_token, profile);
               if (onSuccess) onSuccess(profile);
             } else if (response.error) {
-              if (onError) onError(response.error);
+              console.warn('Google OAuth error:', response.error);
+              if (onError) onError(response.error_description || response.error);
             }
           }
         });
         client.requestAccessToken();
         return;
       } catch (e) {
-        console.warn('GIS Token client init failed, fallback to manual input prompt', e);
+        console.warn('GIS Token client init failed:', e);
       }
     }
 
     // Fallback: prompt for Access Token / Google Auth Key
-    const inputToken = prompt('הכנס אסימון גישה (Access Token) או מפתח גוגל:');
+    const inputToken = prompt('הכנס אסימון גישה (Google OAuth Access Token) או מפתח:');
     if (inputToken && inputToken.trim()) {
       setAccessToken(inputToken.trim()).then(() => {
         if (onSuccess) onSuccess({ name: 'משתמש גוגל', email: '' });
