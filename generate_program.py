@@ -243,8 +243,8 @@ def get_day_workout(dow, week):
                 ("DB Floor Press", "4×6", "12 kg each", "2s descent", 120),
                 ("Deficit Push-Up", "3×6", "Bodyweight", "2s descent", 90),
                 ("Seated DB OHP", "3×8", "6 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "3×18", "3 kg each", "2s descent", 60),
-                ("DB OH Triceps Ext", "3×10", "9 kg total", "2s descent", 60),
+                ("DB Lateral Raise", "2×18", "3 kg each", "2s descent", 60),
+                ("DB OH Triceps Ext", "2×10", "9 kg total", "2s descent", 60),
                 ("Band Pull-Apart", "2×20", "Band 30 kg", "1s pause", 60),
                 ("Arm Block - DB Lateral Raise", "2×12-20", "3-9 kg each (Ladder)", "2s descent", 60),
                 ("Arm Block - DB OH Triceps Ext", "2×10-15", "6-15 kg total (Ladder)", "2s descent", 60),
@@ -256,7 +256,7 @@ def get_day_workout(dow, week):
                 ("Chin-Up", "3×1", "Bodyweight", "2s descent", 120),
                 ("One-Arm DB Row", "4×8/side", "12 kg", "2s descent", 90),
                 ("TRX Face Pull", "3×12", "Bodyweight (Angle 2)", "2s descent", 60),
-                ("DB Curl", "3×10", "6 kg each", "2s descent", 60),
+                ("DB Curl", "2×10", "6 kg each", "2s descent", 60),
                 ("Towel Hang", "3×30 secs", "Bodyweight", "static", 60),
                 ("L-sit Tuck (Bars)", "3×10 secs", "Bodyweight", "static", 60),
                 ("Arm Block - DB Curl", "2×10-15", "3-12 kg each (Ladder)", "2s descent + 1s squeeze", 60),
@@ -281,8 +281,8 @@ def get_day_workout(dow, week):
                 ("Single-Arm Floor Press", "4×8/side", "15 kg", "2s descent", 120),
                 ("Feet-Elevated Push-Up", "4×6", "Bodyweight", "2s descent", 90),
                 ("Seated DB OHP", "3×10", "9 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "3×20", "3 kg each", "3s descent", 60),
-                ("DB OH Triceps Ext", "3×12", "9 kg total", "2s descent", 60),
+                ("DB Lateral Raise", "2×20", "3 kg each", "3s descent", 60),
+                ("DB OH Triceps Ext", "2×12", "9 kg total", "2s descent", 60),
                 ("TRX Y-T-W", "3×10/shape", "Bodyweight (Angle 1)", "1s pause", 60),
                 ("Arm Block - DB Lateral Raise", "2×12-20", "3-9 kg each (Ladder)", "2s descent", 60),
                 ("Arm Block - DB OH Triceps Ext", "2×10-15", "6-15 kg total (Ladder)", "2s descent", 60),
@@ -294,7 +294,7 @@ def get_day_workout(dow, week):
                 ("Chin-Up", "3×3", "Bodyweight", "2s descent", 120),
                 ("One-Arm DB Row", "4×10/side", "12 kg", "2s descent", 90),
                 ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Hammer Curl", "3×12", "6 kg each", "2s descent", 60),
+                ("DB Hammer Curl", "2×12", "6 kg each", "2s descent", 60),
                 ("Towel Hang", "3×35 secs", "Bodyweight", "static", 60),
                 ("L-sit Tuck (Bars)", "3×12 secs", "Bodyweight", "static", 60),
                 ("Arm Block - DB Curl", "2×10-15", "3-12 kg each (Ladder)", "2s descent", 60),
@@ -319,8 +319,8 @@ def get_day_workout(dow, week):
                 ("Single-Arm Floor Press", "4×6/side", "18 kg", "2s descent", 120),
                 ("Deficit Push-Up", "4×6", "Bodyweight", "2s descent", 90),
                 ("Seated DB OHP", "3×8", "9 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "3×15", "3 kg each", "2s descent", 60),
-                ("DB OH Triceps Ext", "3×10", "9 kg total", "2s descent", 60),
+                ("DB Lateral Raise", "2×15", "3 kg each", "2s descent", 60),
+                ("DB OH Triceps Ext", "2×10", "9 kg total", "2s descent", 60),
                 ("Band Pull-Apart", "3×20", "Band 30 kg", "1s pause", 60),
                 ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60),
                 ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60),
@@ -332,7 +332,7 @@ def get_day_workout(dow, week):
                 ("Chin-Up", "3×4", "Bodyweight", "2s descent", 120),
                 ("One-Arm DB Row", "4×8/side", "15 kg", "2s descent", 90),
                 ("TRX Face Pull", "3×12", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Curl", "3×10", "6 kg each", "2s descent", 60),
+                ("DB Curl", "2×10", "6 kg each", "2s descent", 60),
                 ("Towel Hang", "3×40 secs", "Bodyweight", "static", 60),
                 ("L-sit Tuck (Bars)", "3×12 secs", "Bodyweight", "static", 60),
                 ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60),
@@ -357,8 +357,8 @@ def get_day_workout(dow, week):
                 ("Single-Arm Floor Press", "4×8/side", "21 kg", "1s pause at bottom", 120),
                 ("Feet-Elevated Push-Up", "4×6", "Bodyweight", "2s descent", 90),
                 ("Seated DB OHP", "3×10", "9 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "3×20", "3 kg each", "3s descent", 60),
-                ("DB OH Triceps Ext", "3×12", "12 kg total", "2s descent", 60),
+                ("DB Lateral Raise", "2×20", "3 kg each", "3s descent", 60),
+                ("DB OH Triceps Ext", "2×12", "12 kg total", "2s descent", 60),
                 ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1s pause", 60),
                 ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60),
                 ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60),
@@ -370,7 +370,7 @@ def get_day_workout(dow, week):
                 ("Chin-Up", "3×5", "Bodyweight", "2s descent", 120),
                 ("One-Arm DB Row", "4×10/side", "18 kg", "2s descent", 90),
                 ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Curl", "3×12", "9 kg each", "2s descent", 60),
+                ("DB Curl", "2×12", "9 kg each", "2s descent", 60),
                 ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60),
                 ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60),
                 ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60),
@@ -395,8 +395,8 @@ def get_day_workout(dow, week):
                 ("Single-Arm Floor Press", "4×8/side", "24 kg", "2s descent", 120),
                 ("Elevated Pike Push-Up", "4×8", "Bodyweight", "2s descent", 90),
                 ("Seated DB OHP", "3×12", "12 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "3×20", "6 kg each", "3s descent", 60),
-                ("DB OH Triceps Ext", "3×15", "12 kg total", "2s descent", 60),
+                ("DB Lateral Raise", "2×20", "6 kg each", "3s descent", 60),
+                ("DB OH Triceps Ext", "2×15", "12 kg total", "2s descent", 60),
                 ("Band Pull-Apart", "3×20", "Band 30 kg", "1s pause", 60),
                 ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60),
                 ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60),
@@ -408,7 +408,7 @@ def get_day_workout(dow, week):
                 ("Chin-Up", "3×5", "Bodyweight", "2s descent", 120),
                 ("One-Arm DB Row", "4×10/side", "21 kg", "2s descent", 90),
                 ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Curl", "3×15", "9 kg each", "2s descent", 60),
+                ("DB Curl", "2×15", "9 kg each", "2s descent", 60),
                 ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60),
                 ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60),
                 ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60),
@@ -434,8 +434,8 @@ def get_day_workout(dow, week):
                 ("Feet-Elevated Push-Up", "4×10", "Bodyweight", "2s descent", 90),
                 ("Elevated Pike Push-Up", "3×10", "Bodyweight", "2s descent", 90),
                 ("Seated DB OHP", "3×12", "12 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "3×20", "6 kg each", "3s descent", 60),
-                ("DB OH Triceps Ext", "3×15", "15 kg total", "2s descent", 60),
+                ("DB Lateral Raise", "2×20", "6 kg each", "3s descent", 60),
+                ("DB OH Triceps Ext", "2×15", "15 kg total", "2s descent", 60),
                 ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60),
                 ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60),
             ]
@@ -446,7 +446,7 @@ def get_day_workout(dow, week):
                 ("Chin-Up", "3×6", "Bodyweight", "2s descent", 120),
                 ("One-Arm DB Row", "3×12/side", "21 kg", "2s descent", 90),
                 ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Curl", "3×15", "9 kg each", "2s descent", 60),
+                ("DB Curl", "2×15", "9 kg each", "2s descent", 60),
                 ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60),
                 ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60),
                 ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60),
@@ -459,10 +459,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×8/leg", "18 kg", "2s descent", 90), ("DB Hip Thrust", "4×10", "24 kg on hips", "2s pause", 90), ("Reverse Lunge + DB", "3×10/leg", "12 kg each", "2s descent", 90), ("Single-Leg Calf Raise", "4×20/leg", "21 kg", "2s descent", 60), ("Suitcase Carry", "4×30m/side", "24 kg", "walk", 90), ("Dead Bug", "3×12/side", "Bodyweight", "slow", 60)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2s descent", 120), ("Deficit Push-Up", "4×8", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "4×8/side", "18 kg", "2s descent", 90), ("DB Lateral Raise", "3×15", "9 kg each", "2s descent", 60), ("DB OH Triceps Ext", "3×12", "18 kg total", "2s descent", 60), ("Band Pull-Apart", "2×20", "Band 30 kg", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
+            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2s descent", 120), ("Deficit Push-Up", "4×8", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "4×8/side", "18 kg", "2s descent", 90), ("DB Lateral Raise", "2×15", "9 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×12", "18 kg total", "2s descent", 60), ("Band Pull-Apart", "2×20", "Band 30 kg", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×6", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("DB Hammer Curl", "3×12", "12 kg each", "2s descent", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
+            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×6", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("DB Hammer Curl", "2×12", "12 kg each", "2s descent", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
     if 58 <= week <= 60:
@@ -470,10 +470,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×10/leg", "21 kg", "1s pause", 90), ("DB Hip Thrust", "4×12", "24 kg on hips", "2s pause", 90), ("Reverse Lunge + DB", "3×10/leg", "12 kg each", "2s descent", 90), ("Single-Leg Calf Raise", "4×20/leg", "24 kg", "2s pause", 60), ("Pallof Press", "3×15/side", "Band 40 kg", "1s pause", 60), ("Hollow Body Hold", "3×20 secs", "Bodyweight", "static", 60)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2s descent", 120), ("Feet-Elevated Push-Up", "4×10", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "4×10/side", "21 kg", "2s descent", 90), ("DB Lateral Raise", "3×18", "9 kg each", "3s descent", 60), ("DB OH Triceps Ext", "3×12", "21 kg total", "2s descent", 60), ("TRX Y-T-W", "3×10/shape", "Bodyweight (Angle 1)", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
+            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2s descent", 120), ("Feet-Elevated Push-Up", "4×10", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "4×10/side", "21 kg", "2s descent", 90), ("DB Lateral Raise", "2×18", "9 kg each", "3s descent", 60), ("DB OH Triceps Ext", "2×12", "21 kg total", "2s descent", 60), ("TRX Y-T-W", "3×10/shape", "Bodyweight (Angle 1)", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×6", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2s descent", 60), ("DB Curl", "3×12", "12 kg each", "2s descent", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×18 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
+            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×6", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2s descent", 60), ("DB Curl", "2×12", "12 kg each", "2s descent", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×18 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
     if 62 <= week <= 64:
@@ -481,10 +481,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "4×6/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×8/leg", "24 kg", "1s pause", 90), ("DB Hip Thrust", "4×10", "24 kg on hips", "3s pause", 90), ("Walking Lunge (Goblet)", "3×12/leg", "18 kg", "2s descent", 90), ("Single-Leg Calf Raise", "4×15/leg", "24 kg", "2s descent", 60), ("Suitcase Carry", "4×40m/side", "24 kg", "walk", 90), ("Hollow Body Hold", "3×25 secs", "Bodyweight", "static", 60)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2s descent", 120), ("Weighted Deficit Push-Up", "4×6", "Vest +5 kg", "2s descent", 90), ("Single-Arm Seated OHP", "4×8/side", "24 kg", "2s descent", 90), ("DB Lateral Raise", "4×15", "9 kg each", "3s descent", 60), ("DB OH Triceps Ext", "3×10", "21 kg total", "2s descent", 60), ("Band Pull-Apart", "3×20", "Band 30 kg", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
+            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2s descent", 120), ("Weighted Deficit Push-Up", "4×6", "Vest +5 kg", "2s descent", 90), ("Single-Arm Seated OHP", "4×8/side", "24 kg", "2s descent", 90), ("DB Lateral Raise", "2×15", "9 kg each", "3s descent", 60), ("DB OH Triceps Ext", "2×10", "21 kg total", "2s descent", 60), ("Band Pull-Apart", "3×20", "Band 30 kg", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2s descent", 120), ("Chin-Up", "4×5", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("Single-Arm Curl", "4×10/side", "15 kg", "2s descent", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
+            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2s descent", 120), ("Chin-Up", "4×5", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("Single-Arm Curl", "2×10/side", "15 kg", "2s descent", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
     if 66 <= week <= 68: # PEAK
@@ -492,10 +492,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "4×6/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×6/leg", "24 kg", "2s pause", 90), ("DB Hip Thrust", "4×8", "24 kg on hips", "3s pause", 90), ("Pistol Squat to Chair", "3×5/leg", "Bodyweight", "3s descent", 120), ("Single-Leg Calf Raise", "4×12/leg", "24 kg", "2s descent", 60), ("Suitcase Carry", "4×40m/side", "24 kg", "walk", 90), ("Pallof Press", "3×12/side", "Band 40 kg", "1s pause", 60)]
             return "Legs + Core", "8-9", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×40 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2s descent", 120), ("Elevated Pike Push-Up", "4×8", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "4×6/side", "24 kg", "2s descent", 90), ("DB Lateral Raise", "4×12", "9 kg each", "3s descent", 60), ("DB OH Triceps Ext", "3×8", "24 kg total", "2s descent", 60), ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
+            raw = [("Wall Handstand", "3×40 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2s descent", 120), ("Elevated Pike Push-Up", "4×8", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "4×6/side", "24 kg", "2s descent", 90), ("DB Lateral Raise", "2×12", "9 kg each", "3s descent", 60), ("DB OH Triceps Ext", "2×8", "24 kg total", "2s descent", 60), ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
             return "Push + Skill", "8-9", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2s descent", 120), ("Weighted Chin-Up", "4×5", "Vest +5 kg", "2s descent", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 4)", "2s descent", 60), ("Single-Arm Curl", "4×8/side", "18 kg", "2s descent", 60), ("Towel Hang", "3×60 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
+            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2s descent", 120), ("Weighted Chin-Up", "4×5", "Vest +5 kg", "2s descent", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 4)", "2s descent", 60), ("Single-Arm Curl", "2×8/side", "18 kg", "2s descent", 60), ("Towel Hang", "3×60 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
             return "Pull + Grip", "8-9", build_exercises(raw, get_pull_warmup())
 
     if 70 <= week <= 72: # TRANSITION
@@ -503,10 +503,10 @@ def get_day_workout(dow, week):
             raw = [("DB Single-Leg RDL", "3×8/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "3×8/leg", "24 kg", "2s descent", 90), ("DB Hip Thrust", "3×10", "24 kg on hips", "2s pause", 90), ("Single-Leg Calf Raise", "3×15/leg", "24 kg", "2s descent", 60), ("Suitcase Carry", "3×30m/side", "24 kg", "walk", 90)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
         elif dow == 3:
-            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "3×8/side", "24 kg", "2s descent", 120), ("Deficit Push-Up", "3×8", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "3×8/side", "24 kg", "2s descent", 90), ("DB Lateral Raise", "3×15", "9 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×12", "24 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
+            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "3×8/side", "24 kg", "2s descent", 120), ("Deficit Push-Up", "3×8", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "3×8/side", "24 kg", "2s descent", 90), ("DB Lateral Raise", "2×15", "9 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×12", "24 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
             return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
         elif dow == 5:
-            raw = [("Pull-Up (Overhand)", "3×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×5", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "3×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("Single-Arm Curl", "3×12/side", "18 kg", "2s descent", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
+            raw = [("Pull-Up (Overhand)", "3×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×5", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "3×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("Single-Arm Curl", "2×12/side", "18 kg", "2s descent", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
     # Fallback default
