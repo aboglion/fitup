@@ -973,17 +973,19 @@ const TodayPage = (() => {
 
           setsHTML += `
             <div class="set-row">
-              <span class="set-label">Set ${s + 1}</span>
-              <div class="set-input-pill">
-                <input type="number" class="set-input" placeholder="${prevReps}" 
-                       value="${setReps}" ${disabledAttr}
-                       data-ex="${idx}" data-set="${s}" data-field="reps"
-                       onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
-                <span class="set-unit">reps</span>
-              </div>
-              ${weightInput}
               <button class="set-check ${setDone ? 'checked' : ''}" 
                       onclick="TodayPage.toggleSet(${idx}, ${s}, this)" ${disabledAttr}>✓</button>
+              <div class="set-inputs-group">
+                ${weightInput}
+                <div class="set-input-pill">
+                  <input type="text" inputmode="numeric" pattern="[0-9]*" class="set-input" placeholder="${prevReps}" 
+                         value="${setReps}" ${disabledAttr} dir="ltr"
+                         data-ex="${idx}" data-set="${s}" data-field="reps"
+                         onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
+                  <span class="set-unit">reps</span>
+                </div>
+              </div>
+              <span class="set-label">${s + 1}</span>
             </div>
           `;
         }

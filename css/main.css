@@ -647,3 +647,28 @@ html.light-theme {
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
+html.light-theme .set-row {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.03));
+  border-color: rgba(59, 130, 246, 0.15);
+}
+
+html.light-theme .set-input-pill {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+html.light-theme .set-input-pill:has([data-field="weight"]) {
+  background: #fffbeb;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+html.light-theme .set-input-pill:has([data-field="reps"]) {
+  background: #f5f3ff;
+  border-color: rgba(139, 92, 246, 0.25);
+}
+
+html.light-theme .set-check {
+  border-color: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.02);
+}
+

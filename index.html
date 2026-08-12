@@ -446,12 +446,10 @@
           <div class="settings-card" style="border: 2px solid var(--accent-primary); background: var(--bg-card);">
             <h3 data-i18n="language_selection">🌐 Language / שפה / اللغة</h3>
             <p data-i18n="select_language_desc">Choose application interface language</p>
-            <div style="margin-top: 12px;">
-              <select id="language-select" class="js-language-select" style="width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 15px; font-weight: 700;">
-                <option value="en">🇺🇸 English (Default)</option>
-                <option value="he">🇮🇱 עברית</option>
-                <option value="ar">🇸🇦 العربية</option>
-              </select>
+            <div id="settings-lang-buttons" style="margin-top: 12px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+              <button class="login-lang-btn" data-lang="en" style="padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span style="font-size: 20px; font-weight: 900; color: #ef4444; line-height: 1;">E</span> English</button>
+              <button class="login-lang-btn" data-lang="he" style="padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span style="font-size: 20px; font-weight: 900; color: #3b82f6; line-height: 1;">ע</span> עברית</button>
+              <button class="login-lang-btn" data-lang="ar" style="padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span style="font-size: 20px; font-weight: 900; color: #22c55e; line-height: 1;">ع</span> العربية</button>
             </div>
           </div>
 

@@ -487,6 +487,15 @@ const I18n = (() => {
       save_ai_settings: "Save AI Settings",
       model_updated: "Gemini AI model updated! 🎉",
       tempo_execution: "Execution tempo",
+      tempo_static: "Static",
+      tempo_slow: "Slow",
+      tempo_walk: "Walk",
+      tempo_descent: "{n}s descent",
+      tempo_pause: "{n}s pause",
+      tempo_pause_bottom: "{n}s pause at bottom",
+      tempo_descent_squeeze: "{d}s descent + {s}s squeeze",
+      tempo_kmh: "{speed} km/h",
+      tempo_kmh_effort_rest: "{effort} km/h effort / {rest} km/h rest",
       save_enable_ai: "✨ Save & Enable AI Scanner",
 
       // Exercises page
@@ -1100,6 +1109,15 @@ const I18n = (() => {
       save_ai_settings: "שמור הגדרות AI",
       model_updated: "מודל Gemini AI עודכן בהצלחה! 🎉",
       tempo_execution: "טמפו ביצוע",
+      tempo_static: "סטטי",
+      tempo_slow: "איטי",
+      tempo_walk: "הליכה",
+      tempo_descent: "{n} שנ' ירידה",
+      tempo_pause: "{n} שנ' עצירה",
+      tempo_pause_bottom: "{n} שנ' עצירה למטה",
+      tempo_descent_squeeze: "{d} שנ' ירידה + {s} שנ' כיווץ",
+      tempo_kmh: "{speed} קמ'ש",
+      tempo_kmh_effort_rest: "{effort} קמ'ש מאמץ / {rest} קמ'ש מנוחה",
       save_enable_ai: "✨ שמור והפעל סורק AI",
 
       cat_lower_sub: "רגליים · ליבה",
@@ -1579,7 +1597,17 @@ const I18n = (() => {
       anatomy_front: "عرض أمامي (Front)",
       anatomy_back: "عرض خلفي (Back)",
 
-      rest_complete_toast: "💪 انتهت الراحة!"
+      rest_complete_toast: "💪 انتهت الراحة!",
+      tempo_execution: "إيقاع التنفيذ",
+      tempo_static: "ثابت",
+      tempo_slow: "بطيء",
+      tempo_walk: "مشي",
+      tempo_descent: "{n} ث نزول",
+      tempo_pause: "{n} ث توقف",
+      tempo_pause_bottom: "{n} ث توقف في الأسفل",
+      tempo_descent_squeeze: "{d} ث نزول + {s} ث انقباض",
+      tempo_kmh: "{speed} كم/س",
+      tempo_kmh_effort_rest: "{effort} كم/س جهد / {rest} كم/س راحة"
     }
   };
 

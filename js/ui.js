@@ -527,10 +527,55 @@ const UI = (() => {
   }
 
   /**
-   * Format tempo string for display
+   * Format tempo string for display (translated)
    */
   function formatTempo(tempo) {
     if (!tempo) return '';
+
+    // Direct keyword matches
+    const directMap = {
+      'static': 'tempo_static',
+      'slow': 'tempo_slow',
+      'walk': 'tempo_walk'
+    };
+    if (directMap[tempo]) return I18n.t(directMap[tempo]);
+
+    // "Xs descent + Ys squeeze" pattern
+    const squeezeMatch = tempo.match(/^(\d+)s descent \+ (\d+)s squeeze$/);
+    if (squeezeMatch) {
+      return I18n.t('tempo_descent_squeeze', '', { d: squeezeMatch[1], s: squeezeMatch[2] });
+    }
+
+    // "Xs pause at bottom" pattern
+    const pauseBottomMatch = tempo.match(/^(\d+)s pause at bottom$/);
+    if (pauseBottomMatch) {
+      return I18n.t('tempo_pause_bottom', '', { n: pauseBottomMatch[1] });
+    }
+
+    // "Xs descent" pattern
+    const descentMatch = tempo.match(/^(\d+)s descent$/);
+    if (descentMatch) {
+      return I18n.t('tempo_descent', '', { n: descentMatch[1] });
+    }
+
+    // "Xs pause" pattern
+    const pauseMatch = tempo.match(/^(\d+)s pause$/);
+    if (pauseMatch) {
+      return I18n.t('tempo_pause', '', { n: pauseMatch[1] });
+    }
+
+    // km/h patterns (speed values for cardio)
+    const kmhEffortRest = tempo.match(/^([\d.]+) km\/h effort \/ ([\d.]+) km\/h rest$/);
+    if (kmhEffortRest) {
+      return I18n.t('tempo_kmh_effort_rest', '', { effort: kmhEffortRest[1], rest: kmhEffortRest[2] });
+    }
+
+    const kmhMatch = tempo.match(/^([\d.]+) km\/h$/);
+    if (kmhMatch) {
+      return I18n.t('tempo_kmh', '', { speed: kmhMatch[1] });
+    }
+
+    // Fallback: return as-is
     return tempo;
   }
 

@@ -482,13 +482,14 @@ const App = (() => {
    * Setup settings page handlers
    */
   function setupSettings() {
-    // Language selector
-    const langSelect = document.getElementById('language-select');
-    if (langSelect && window.I18n) {
-      langSelect.value = window.I18n.getLang();
-      langSelect.addEventListener('change', async (e) => {
-        const selectedLang = e.target.value;
-        await window.I18n.setLanguage(selectedLang);
+    // Language selector buttons
+    const settingsLangButtons = document.querySelectorAll('#settings-lang-buttons .login-lang-btn');
+    if (settingsLangButtons.length && window.I18n) {
+      settingsLangButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === window.I18n.getLang());
+        btn.addEventListener('click', async () => {
+          await window.I18n.setLanguage(btn.dataset.lang);
+        });
       });
     }
 
