@@ -245,6 +245,18 @@ const UI = (() => {
     }
   }
 
+  const NO_GIF_EXERCISES = new Set([
+    'BRISK WALKING',
+    'RELAXED WALKING',
+    'VO2 MAX NORWEGIAN 4X4'
+  ]);
+
+  function hasGif(title) {
+    if (!title) return false;
+    const upper = title.trim().toUpperCase();
+    return !NO_GIF_EXERCISES.has(upper);
+  }
+
   function showImageModal(title, src) {
     const pngPath = `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
     const gifPath = `images/gifs/${title}.gif`;
@@ -263,10 +275,14 @@ const UI = (() => {
       `;
     }
     
+    const gifImgHTML = hasGif(title) 
+      ? `<img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} GIF" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'gif')">`
+      : '';
+
     showModal(title, `
       <div style="display: flex; flex-direction: column; gap: 16px; width: 100%; direction: rtl;">
         <img src="${pngPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} תמונה" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'png')">
-        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} GIF" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'gif')">
+        ${gifImgHTML}
         ${extraNote}
       </div>
     `);
@@ -589,6 +605,7 @@ const UI = (() => {
     showModal,
     hideModal,
     showImageModal,
+    hasGif,
     handleImageFallback,
     getDayTypeInfo,
     getCategoryColor,

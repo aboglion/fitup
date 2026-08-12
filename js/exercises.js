@@ -535,7 +535,7 @@ const ExercisesPage = (() => {
           const imgSrc = node.noImage ? null : `images/exercises/${node.name.replace(/\//g, '-').toUpperCase()}.png`;
           const equip = UI.getEquipment(node.name);
           const gifPath = `images/gifs/${node.name}.gif`;
-          const videoBtn = `<button type="button" class="rpg-video-btn" title="צפה ב-GIF" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${gifPath}')">▶</button>`;
+          const videoBtn = UI.hasGif(node.name) ? `<button type="button" class="rpg-video-btn" title="צפה ב-GIF" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${gifPath}')">▶</button>` : '';
 
           html += `
             <div class="rpg-node ${stateClass} ${latestClass}" 
@@ -748,7 +748,7 @@ const ExercisesPage = (() => {
   function generateGuideCardHTML(ex) {
     const diffClass = UI.getDifficultyClass(ex.difficulty);
     const gifPath = `images/gifs/${ex.name}.gif`;
-    const videoLink = `<button type="button" class="exercise-video-btn" title="צפה ב-GIF" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>`;
+    const videoLink = UI.hasGif(ex.name) ? `<button type="button" class="exercise-video-btn" title="צפה ב-GIF" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>` : '';
 
     const equip = UI.getEquipment(ex.name);
     let weightDisplay = ex.weight || '';
