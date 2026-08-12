@@ -282,18 +282,18 @@ const UI = (() => {
     }
 
     const modalTitleHTML = `
-      <div style="display: flex; align-items: center; gap: 16px; direction: rtl; width: 100%; flex-wrap: wrap;">
-        <div style="width: 210px; height: 210px; min-width: 210px; max-width: 100%; border-radius: 16px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); flex-shrink: 0;">
+      <div style="display: flex; align-items: center; gap: 16px; direction: rtl; width: 100%;">
+        <div style="width: 140px; height: 140px; min-width: 140px; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); flex-shrink: 0;">
           <img src="${pngPath}" 
-               style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;" 
+               style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;" 
                alt="${title} תמונה" 
                loading="eager" 
                decoding="async" 
                onerror="UI.handleImageFallback(this, 'png')">
         </div>
-        <div style="display: flex; flex-direction: column; gap: 8px; justify-content: center; flex: 1; min-width: 140px;">
-          <span style="font-size: 20px; font-weight: 900; color: var(--text-primary); line-height: 1.25;">${title}</span>
-          ${equip ? `<span style="font-size: 13px; font-weight: 700; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; background: var(--bg-elevated); padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border-light); width: max-content;">${equip.icon} ${equip.label}</span>` : ''}
+        <div style="display: flex; flex-direction: column; gap: 6px; justify-content: center;">
+          <span style="font-size: 19px; font-weight: 900; color: var(--text-primary); line-height: 1.25;">${title}</span>
+          ${equip ? `<span style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; background: var(--bg-elevated); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-light); width: max-content;">${equip.icon} ${equip.label}</span>` : ''}
         </div>
       </div>
     `;
