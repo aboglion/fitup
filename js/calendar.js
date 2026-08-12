@@ -41,13 +41,13 @@ const CalendarPage = (() => {
    * Render calendar page
    */
   async function render() {
-    const weekLabel = `שבוע ${currentWeekNum}`;
+    const weekLabel = `${I18n.t('week_label_full')} ${currentWeekNum}`;
     document.getElementById('cal-week-label').textContent = weekLabel;
 
     // Build standard Sunday-Saturday calendar weeks
     // First, we need to know the dayOfWeek of the very first day (dayIndex 0)
     const firstDay = allPlanDays[0];
-    const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    const dayNames = [I18n.t('day_sun'), I18n.t('day_mon'), I18n.t('day_tue'), I18n.t('day_wed'), I18n.t('day_thu'), I18n.t('day_fri'), I18n.t('day_sat')];
     const startOffset = dayNames.indexOf(firstDay.dayOfWeek);
     
     // Calculate which days belong to the requested currentWeekNum (1-indexed)

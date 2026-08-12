@@ -292,7 +292,7 @@ window.ExporterGuide = (() => {
         <p>${t.dictionary_subtitle}</p>
         <div class="grid-container">
           ${exercises.map(ex => {
-            const hasNoGif = ex.name.toLowerCase().includes('walking') || ex.name.includes('הליכה') || ['Slow Jogging', 'Dead Hang', 'Full Pistol Squat'].includes(ex.name);
+            const hasNoGif = ex.name.toLowerCase().includes('walking') || ['Slow Jogging', 'Dead Hang', 'Full Pistol Squat'].includes(ex.name);
             return `
             <div class="exercise-card">
               <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--primary);">${ex.name}</h4>
@@ -321,8 +321,8 @@ window.ExporterGuide = (() => {
   }
 
   function getBadgeClass(dayType) {
-    if (dayType === 'Rest' || dayType === 'יום מנוחה' || dayType === 'يوم راحة') return 'badge rest';
-    if (dayType === 'הליכה' || dayType === 'Cardio' || dayType === 'كارديو') return 'badge walk';
+    if (dayType === 'Rest') return 'badge rest';
+    if (dayType === 'Cardio') return 'badge walk';
     return 'badge';
   }
 

@@ -156,7 +156,7 @@ const StatsPage = (() => {
         <span class="streak-fire">🔥</span>
         <div>
           <span class="streak-number">${streak}</span>
-          <div class="streak-text">ימים ברצף!</div>
+          <div class="streak-text">${I18n.t('streak_days')}</div>
         </div>
       </div>
     ` : '';
@@ -167,7 +167,7 @@ const StatsPage = (() => {
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 24px;">⭐</span>
             <div>
-              <div style="font-weight: 800; font-size: 18px; color: var(--text-primary);">רמה ${currentLevel}</div>
+              <div style="font-weight: 800; font-size: 18px; color: var(--text-primary);">${I18n.t('level_label')} ${currentLevel}</div>
               <div style="font-size: 12px; color: var(--text-secondary);">${totalXP} / ${xpForNextLevel} XP</div>
             </div>
           </div>
@@ -185,7 +185,7 @@ const StatsPage = (() => {
 
     const anatomyHTML = `
       <div id="anatomy-wrapper" style="grid-column: 1 / -1; margin-bottom: 0;">
-        <div class="chart-title"><span>💪 מפת התקדמות שרירים</span></div>
+        <div class="chart-title"><span>${I18n.t('muscle_map_title')}</span></div>
         <div id="anatomy-map-container"></div>
       </div>
     `;
@@ -430,7 +430,7 @@ const StatsPage = (() => {
       
       const title = document.createElement('div');
       title.className = 'chart-title';
-      title.innerHTML = '<span>💪 מפת התקדמות שרירים</span>';
+      title.innerHTML = `<span>${I18n.t('muscle_map_title')}</span>`;
       
       const mapContainer = document.createElement('div');
       mapContainer.id = 'anatomy-map-container';
@@ -475,20 +475,20 @@ const StatsPage = (() => {
         else if (day.dayType === 'Rest') colorClass = 'heat-rest';
       }
       
-      const tooltip = `יום ${dIdx + 1} (${day.dayType}) - ${isCompleted ? 'הושלם' : 'לא בוצע/דולג'}`;
+      const tooltip = `Day ${dIdx + 1} (${day.dayType}) - ${isCompleted ? '✓' : I18n.t('heat_skipped')}`;
       return `<div class="heat-cell ${colorClass}" title="${tooltip}"></div>`;
     }).join('');
 
     const heatmapHtml = `
       <div class="chart-card" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
         <div class="chart-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <span>🗓️ מפת התמדה (ימים שעברו)</span>
+          <span>${I18n.t('heatmap_title')}</span>
           <div style="display: flex; gap: 12px; font-size: 11px; font-weight: normal; flex-wrap: wrap;">
-             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength" style="width: 12px; height: 12px; border-radius: 3px;"></div> כוח</div>
-             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-deload" style="width: 12px; height: 12px; border-radius: 3px; background: #14b8a6;"></div> דילואד</div>
-             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-walk" style="width: 12px; height: 12px; border-radius: 3px;"></div> הליכה</div>
-             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-rest" style="width: 12px; height: 12px; border-radius: 3px;"></div> Rest</div>
-             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-empty" style="width: 12px; height: 12px; border-radius: 3px;"></div> לא בוצע/דולג</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_strength')}</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-deload" style="width: 12px; height: 12px; border-radius: 3px; background: #14b8a6;"></div> ${I18n.t('heat_deload')}</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-walk" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_walk')}</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-rest" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_rest')}</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-empty" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_skipped')}</div>
           </div>
         </div>
         <div style="width: 100%; padding: var(--space-sm) 0; max-height: 80vh; overflow-y: auto;">
@@ -526,7 +526,7 @@ const StatsPage = (() => {
 
       weightChart = `
         <div class="chart-card">
-          <div class="chart-title">📊 מעקב משקל גוף</div>
+          <div class="chart-title">${I18n.t('weight_chart_title')}</div>
           <div class="chart-bars">${weightBars}</div>
         </div>
       `;
@@ -538,44 +538,44 @@ const StatsPage = (() => {
       compactStatsHtml = `
         <div class="chart-card" style="grid-column: 1 / -1; margin-top: 0; padding: 14px 16px;">
           <div class="chart-title" style="margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
-            <span style="font-weight: 700; display: flex; align-items: center; gap: 6px;">📊 מדדי תפוקה וסיכום</span>
+            <span style="font-weight: 700; display: flex; align-items: center; gap: 6px;">${I18n.t('metrics_title')}</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
             
             <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 13px; margin-bottom: 1px;">📅</span>
               <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.completed}</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">ימים הושלמו (${metrics.total})</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_days_done')} (${metrics.total})</span>
             </div>
 
             <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 13px; margin-bottom: 1px;">💪</span>
               <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.strength}</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">אימוני כוח (${metrics.totalStrength})</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_strength')} (${metrics.totalStrength})</span>
             </div>
 
             <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 13px; margin-bottom: 1px;">🚶</span>
               <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.walk}</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">ימי הליכה (${metrics.totalWalk})</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_walk')} (${metrics.totalWalk})</span>
             </div>
 
             <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 13px; margin-bottom: 1px;">📈</span>
               <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.avgRPE}</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">RPE ממוצע</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_avg_rpe')}</span>
             </div>
 
             <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 13px; margin-bottom: 1px;">📅</span>
               <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.monthPct}%</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">השלמה חודשית</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_monthly')}</span>
             </div>
 
             <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 13px; margin-bottom: 1px;">${metrics.currPct >= metrics.lastPct ? '📈' : '📉'}</span>
               <span style="font-size: 15px; font-weight: 900; color: ${metrics.currPct >= metrics.lastPct ? 'var(--success)' : 'var(--warning)'}; line-height: 1.1;">${metrics.currPct}%</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">מגמה שבועית</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_weekly')}</span>
             </div>
 
           </div>
@@ -635,7 +635,7 @@ const StatsPage = (() => {
       console.log(`[Photo Optimizer] Compressed: ${originalSizeKB} KB -> ${compressedSizeKB} KB (saved ${((1 - approxCompressedSize / file.size) * 100).toFixed(1)}%)`);
 
       await DB.savePhoto(Date.now().toString(), new Date().toISOString(), dataUrl);
-      UI.toast('התמונה נשמרה בהצלחה!', 'success');
+      UI.toast(I18n.t('photo_saved'), 'success');
       
       // Redirect to the "today" page after uploading
       if (typeof App !== 'undefined') {
@@ -654,14 +654,14 @@ const StatsPage = (() => {
     let photosHtml = `
       <div class="chart-card" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
         <div class="chart-title" style="display: flex; justify-content: space-between; align-items: center;">
-          <span>📸 מעקב תמונות מצב</span>
+          <span>${I18n.t('photo_tracker_title')}</span>
           <button id="add-photo-btn" class="btn-photo">
-            <span style="font-size: 16px;">📷</span> צלם/העלה
+            <span style="font-size: 16px;">📷</span> ${I18n.t('photo_capture_btn')}
           </button>
           <input type="file" id="photo-upload-input" accept="image/*" capture="environment" style="display: none;">
         </div>
         <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
-          מומלץ לצלם תמונה פעם ב-4 שבועות. התמונות נשמרות מקומית במכשיר שלך באופן מוקטן וחיסכוני.
+          ${I18n.t('photo_recommended')}
         </p>
     `;
 
@@ -680,10 +680,10 @@ const StatsPage = (() => {
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-bottom: 16px;">
           ${photoCards}
         </div>
-        ${photos.length > 1 ? '<button id="play-timelapse-btn" class="btn-secondary" style="width: 100%;">▶️ נגן סרטון התקדמות</button>' : ''}
+        ${photos.length > 1 ? `<button id="play-timelapse-btn" class="btn-secondary" style="width: 100%;">${I18n.t('photo_play_timelapse')}</button>` : ''}
       `;
     } else {
-      photosHtml += `<div style="text-align: center; padding: 24px; background: var(--bg-input); border-radius: 8px; color: var(--text-secondary);">עדיין אין תמונות. העלה תמונה ראשונה כדי להתחיל לעקוב!</div>`;
+      photosHtml += `<div style="text-align: center; padding: 24px; background: var(--bg-input); border-radius: 8px; color: var(--text-secondary);">${I18n.t('no_photos_yet')}</div>`;
     }
 
     photosHtml += `</div>`;
@@ -702,7 +702,7 @@ const StatsPage = (() => {
     document.querySelectorAll('.delete-photo-btn').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        if (confirm('האם אתה בטוח שברצונך למחוק תמונה זו?')) {
+        if (confirm(I18n.t('delete_photo_confirm'))) {
           const id = btn.dataset.id;
           const photo = photos.find(p => String(p.id) === id);
           await DB.deletePhoto(photo ? photo.id : id);
@@ -723,7 +723,7 @@ const StatsPage = (() => {
     let currentIndex = 0;
     const modalContent = `
       <div style="text-align: center; padding-bottom: 16px;">
-        <h3 style="margin-bottom: 16px; color: var(--text-primary);">סרטון התקדמות</h3>
+        <h3 style="margin-bottom: 16px; color: var(--text-primary);">${I18n.t('timelapse_title')}</h3>
         <div style="position: relative; width: 100%; max-width: 400px; margin: 0 auto; border-radius: 12px; overflow: hidden; background: #000; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
           <img id="timelapse-img" src="${photos[0].dataUrl}" style="width: 100%; height: auto; max-height: 60vh; object-fit: contain; display: block; transition: opacity 0.4s ease;">
           <div id="timelapse-date" style="position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; color: white; font-weight: bold; font-size: 20px; text-shadow: 0 2px 6px rgba(0,0,0,0.9); background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 20px 0 10px 0;">
@@ -731,7 +731,7 @@ const StatsPage = (() => {
           </div>
         </div>
         <div style="margin-top: 16px; color: var(--text-secondary); font-size: 14px;">
-          מנגן...
+          ${I18n.t('timelapse_playing')}
         </div>
       </div>
     `;

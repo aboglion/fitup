@@ -10,10 +10,10 @@ const ExercisesPage = (() => {
 
   // Day type tabs configuration
   const DAY_TABS = [
-    { id: 'lower-strength', label: 'Legs + Core', subtitle: 'רגליים · ליבה', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M6 12h12M3 8v8M21 8v8M6 6v12M18 6v12"/></svg>', color: '#f97316', bgColor: 'rgba(249, 115, 22, 0.15)', dayTypes: ['Legs + Core'] },
-    { id: 'upper-push', label: 'Push + Skill', subtitle: 'דחיפה · סקיל · רגליים קל', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M17 11l-5-5-5 5M12 6v12M5 21h14"/></svg>', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.15)', dayTypes: ['Push + Skill'] },
-    { id: 'upper-pull', label: 'Pull + Grip', subtitle: 'משיכה · אחיזה · ליבה קלה', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M6 20h12M12 4v12M8 12l4 4 4-4"/></svg>', color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.15)', dayTypes: ['Pull + Grip'] },
-    { id: 'cardio', label: 'Cardio', subtitle: 'אירובי · התאוששות', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.15)', dayTypes: ['Active Recovery'] }
+    { id: 'lower-strength', label: 'Legs + Core', subtitleKey: 'cat_lower_sub', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M6 12h12M3 8v8M21 8v8M6 6v12M18 6v12"/></svg>', color: '#f97316', bgColor: 'rgba(249, 115, 22, 0.15)', dayTypes: ['Legs + Core'] },
+    { id: 'upper-push', label: 'Push + Skill', subtitleKey: 'cat_push_sub', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M17 11l-5-5-5 5M12 6v12M5 21h14"/></svg>', color: '#3b82f6', bgColor: 'rgba(59, 130, 246, 0.15)', dayTypes: ['Push + Skill'] },
+    { id: 'upper-pull', label: 'Pull + Grip', subtitleKey: 'cat_pull_sub', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M6 20h12M12 4v12M8 12l4 4 4-4"/></svg>', color: '#a855f7', bgColor: 'rgba(168, 85, 247, 0.15)', dayTypes: ['Pull + Grip'] },
+    { id: 'cardio', label: 'Cardio', subtitleKey: 'cat_cardio_sub', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.15)', dayTypes: ['Active Recovery'] }
   ];
 
   // Band weight progression tiers (exercise name → sorted tiers)
@@ -25,14 +25,14 @@ const ExercisesPage = (() => {
   const SKILL_TREES = {
     'lower-strength': [
       {
-        title: 'חימום וניידות', icon: '⚡', exercises: [
+        title: 'warmup_mobility', icon: '⚡', exercises: [
           { name: 'High Knees', unlockWeek: 1 },
           { name: 'Deep Mobility Protocol', unlockWeek: 1 },
           { name: 'Wrist Rocks', unlockWeek: 53 }
         ]
       },
       {
-        title: 'כוח רגליים וסקווט (Squat & Lunge Tree)', icon: '🏋️', exercises: [
+        title: 'squat_lunge_tree', icon: '🏋️', exercises: [
           { name: 'Bodyweight Squat', unlockWeek: 1, id: 'squat-1' },
           { name: 'DB Bulgarian Split Squat', unlockWeek: 1, parentId: 'squat-1', id: 'squat-2' },
           { name: 'Reverse Lunge + DB', unlockWeek: 18, parentId: 'squat-2', id: 'squat-3' },
@@ -42,13 +42,13 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'המסטרינג ושרשרת אחורית (Hinge & Chain)', icon: '🦵', exercises: [
+        title: 'hamstring_chain', icon: '🦵', exercises: [
           { name: 'DB RDL', unlockWeek: 1, id: 'rdl-1' },
           { name: 'DB Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2' }
         ]
       },
       {
-        title: 'ישבן ותאומים (Glutes & Calves)', icon: '🍑', exercises: [
+        title: 'glutes_calves', icon: '🍑', exercises: [
           { name: 'Glute Bridge', unlockWeek: 1, id: 'glute-1' },
           { name: 'DB Glute Bridge', unlockWeek: 1, parentId: 'glute-1', id: 'glute-2' },
           { name: 'DB Hip Thrust', unlockWeek: 5, parentId: 'glute-2', id: 'glute-3' },
@@ -56,7 +56,7 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'מבצר הליבה (Core Citadel)', icon: '🛡️', exercises: [
+        title: 'core_citadel', icon: '🛡️', exercises: [
           { name: 'Dead Bug', unlockWeek: 1, id: 'core-1' },
           { name: 'Hollow Body Hold', unlockWeek: 5, parentId: 'core-1', id: 'core-2' },
           { name: 'Suitcase Carry', unlockWeek: 1, id: 'carry-1' },
@@ -66,7 +66,7 @@ const ExercisesPage = (() => {
     ],
     'upper-push': [
       {
-        title: 'חימום והכנת כתפיים', icon: '⚡', exercises: [
+        title: 'warmup_shoulders', icon: '⚡', exercises: [
           { name: 'Arm Circles', unlockWeek: 1 },
           { name: 'Wall Slides', unlockWeek: 1 },
           { name: 'Scapular Push-up', unlockWeek: 1 },
@@ -74,7 +74,7 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'לחיצות חזה ומשקל גוף (Push Tree)', icon: '💥', exercises: [
+        title: 'push_tree', icon: '💥', exercises: [
           { name: 'Push-up', unlockWeek: 1, id: 'push-1' },
           { name: 'DB Floor Press', unlockWeek: 1, id: 'floor-1' },
           { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a' },
@@ -84,7 +84,7 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'כתפיים ועמידות ידיים (Overhead & Skill)', icon: '🎯', exercises: [
+        title: 'overhead_skill', icon: '🎯', exercises: [
           { name: 'Pike Hold', unlockWeek: 1, id: 'pike-1' },
           { name: 'Seated DB OHP', unlockWeek: 1, id: 'ohp-1' },
           { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2' },
@@ -95,7 +95,7 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'תרגילי עזר ו-Prehab', icon: '🩹', exercises: [
+        title: 'accessory_prehab', icon: '🩹', exercises: [
           { name: 'DB Lateral Raise', unlockWeek: 1, id: 'lat-1' },
           { name: 'DB OH Triceps Ext', unlockWeek: 1, id: 'tri-1' },
           { name: 'TRX Y-T-W', unlockWeek: 1 },
@@ -106,14 +106,14 @@ const ExercisesPage = (() => {
     ],
     'upper-pull': [
       {
-        title: 'חימום והכנת גב', icon: '⚡', exercises: [
+        title: 'warmup_back', icon: '⚡', exercises: [
           { name: 'Wall Slides', unlockWeek: 1 },
           { name: 'Scapular Pull-up', unlockWeek: 1 },
           { name: 'Dead Hang', unlockWeek: 1 }
         ]
       },
       {
-        title: 'עליות מתח וכוח אנכי (Pull-Up Tree)', icon: '🧗', exercises: [
+        title: 'pullup_tree', icon: '🧗', exercises: [
           { name: 'Pull-Up Negative', unlockWeek: 1, id: 'pull-1' },
           { name: 'Chin-Up Negative', unlockWeek: 5, parentId: 'pull-1', id: 'pull-1b' },
           { name: 'Pull-Up (Overhand)', unlockWeek: 10, parentId: 'pull-1', id: 'pull-2a' },
@@ -123,14 +123,14 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'חתירה וכוח רוחבי (Rows)', icon: '↔️', exercises: [
+        title: 'rows_horizontal', icon: '↔️', exercises: [
           { name: 'Seated Band Row', unlockWeek: 1, id: 'row-1' },
           { name: 'One-Arm DB Row', unlockWeek: 1, id: 'row-2' },
           { name: 'TRX Face Pull', unlockWeek: 1, id: 'row-3' }
         ]
       },
       {
-        title: 'זרועות ואחיזה (Biceps & Grip)', icon: '✊', exercises: [
+        title: 'biceps_grip', icon: '✊', exercises: [
           { name: 'DB Curl', unlockWeek: 1, id: 'curl-1' },
           { name: 'DB Hammer Curl', unlockWeek: 5, parentId: 'curl-1', id: 'curl-2' },
           { name: 'Arm Block - DB Curl', unlockWeek: 10, parentId: 'curl-1', id: 'curl-2b' },
@@ -139,14 +139,14 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'תלייה וליבה מתקדמת', icon: '🧱', exercises: [
+        title: 'hanging_core', icon: '🧱', exercises: [
           { name: 'L-sit Tuck (Bars)', unlockWeek: 1 }
         ]
       }
     ],
     'cardio': [
       {
-        title: 'אירובי והתאוששות', icon: '🫀', exercises: [
+        title: 'cardio_recovery', icon: '🫀', exercises: [
           { name: 'Relaxed Walking', unlockWeek: 1 },
           { name: 'Brisk Walking', unlockWeek: 1 },
           { name: 'VO2 Max Norwegian 4x4', unlockWeek: 1 }
@@ -263,7 +263,7 @@ const ExercisesPage = (() => {
       filters.style.display = 'none';
       treeContainer.style.display = 'flex';
       btn.classList.add('active');
-      btn.innerHTML = '<span>📚</span><span class="tree-btn-text">לכל התרגילים</span>';
+      btn.innerHTML = `<span>📚</span><span class="tree-btn-text">${I18n.t('all_exercises_btn')}</span>`;
       renderSkillTree();
     } else {
       treeContainer.style.display = 'none';
@@ -271,7 +271,7 @@ const ExercisesPage = (() => {
       searchBox.style.display = 'block';
       filters.style.display = 'flex';
       btn.classList.remove('active');
-      btn.innerHTML = '<span>🌳</span><span class="tree-btn-text">עץ התקדמות</span>';
+      btn.innerHTML = `<span>🌳</span><span class="tree-btn-text">${I18n.t('progress_tree_btn')}</span>`;
       render(document.getElementById('exercise-search').value, getActiveFilter());
     }
   }
@@ -282,7 +282,7 @@ const ExercisesPage = (() => {
   function renderFilters() {
     const container = document.getElementById('exercise-filters');
     container.innerHTML = `
-      <button class="filter-btn active" data-filter="all" onclick="ExercisesPage.setFilter('all', this)">הכל</button>
+      <button class="filter-btn active" data-filter="all" onclick="ExercisesPage.setFilter('all', this)">${I18n.t('filter_all')}</button>
       ${categories.map(cat => `
         <button class="filter-btn" data-filter="${cat}" onclick="ExercisesPage.setFilter('${cat}', this)">${cat}</button>
       `).join('')}
@@ -368,7 +368,7 @@ const ExercisesPage = (() => {
                 style="--tab-color: ${tab.color}; --tab-bg: ${tab.bgColor}">
           <span class="rpg-tab-icon">${tab.icon}</span>
           <span class="rpg-tab-label">${tab.label}</span>
-          <span class="rpg-tab-subtitle">${tab.subtitle}</span>
+          <span class="rpg-tab-subtitle">${I18n.t(tab.subtitleKey)}</span>
           <span class="rpg-tab-progress">
             <span class="rpg-tab-prog-bar"><span class="rpg-tab-prog-fill" style="width: ${xpPct}%; background: ${tab.color}"></span></span>
             <span class="rpg-tab-prog-text" style="color: ${isActive ? tab.color : 'var(--text-muted)'}">${xpData.completed}/${xpData.total}</span>
@@ -402,7 +402,7 @@ const ExercisesPage = (() => {
       headerEl.innerHTML = `
         <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
           <div style="font-size: 48px; margin-bottom: 16px;">🌳</div>
-          <p>בחר קטגוריה כדי לראות את עץ ההתקדמות</p>
+          <p>${I18n.t('select_category')}</p>
         </div>
       `;
       return;
@@ -417,22 +417,22 @@ const ExercisesPage = (() => {
     const xpData = getTabCompletedXP(activeTab);
     const totalWorkouts = xpData.total || 1;
     const levelThresholds = [
-      { min: 0,                                        name: 'מתחיל',  num: 1 },
-      { min: Math.round(totalWorkouts * 0.1),          name: 'חניך',    num: 2 },
-      { min: Math.round(totalWorkouts * 0.25),         name: 'בינוני',  num: 3 },
-      { min: Math.round(totalWorkouts * 0.5),          name: 'מתקדם',  num: 4 },
-      { min: Math.round(totalWorkouts * 0.75),         name: 'מומחה',  num: 5 },
-      { min: totalWorkouts,                            name: 'מאסטר',  num: 6 }
+      { min: 0,                                        nameKey: 'level_beginner',  num: 1 },
+      { min: Math.round(totalWorkouts * 0.1),          nameKey: 'level_apprentice', num: 2 },
+      { min: Math.round(totalWorkouts * 0.25),         nameKey: 'level_intermediate', num: 3 },
+      { min: Math.round(totalWorkouts * 0.5),          nameKey: 'level_advanced',  num: 4 },
+      { min: Math.round(totalWorkouts * 0.75),         nameKey: 'level_expert',    num: 5 },
+      { min: totalWorkouts,                            nameKey: 'level_master',   num: 6 }
     ];
 
-    let levelName = 'מתחיל';
+    let levelName = I18n.t('level_beginner');
     let levelNum = 1;
     let currentLevelMin = 0;
     let nextLevelMin = levelThresholds[1].min;
 
     for (let i = levelThresholds.length - 1; i >= 0; i--) {
       if (xpData.completed >= levelThresholds[i].min) {
-        levelName = levelThresholds[i].name;
+        levelName = I18n.t(levelThresholds[i].nameKey);
         levelNum = levelThresholds[i].num;
         currentLevelMin = levelThresholds[i].min;
         nextLevelMin = i < levelThresholds.length - 1 ? levelThresholds[i + 1].min : levelThresholds[i].min;
@@ -444,7 +444,7 @@ const ExercisesPage = (() => {
     const levelRange = nextLevelMin - currentLevelMin;
     const levelProgress = levelRange > 0 ? Math.round(((xpData.completed - currentLevelMin) / levelRange) * 100) : 100;
     const isMaster = xpData.completed >= totalWorkouts;
-    const nextLevelText = isMaster ? '🏆 הושלם!' : `${xpData.completed}/${nextLevelMin} אימונים ל-Lv.${levelNum + 1}`;
+    const nextLevelText = isMaster ? I18n.t('completed_all') : `${xpData.completed}/${nextLevelMin} ${I18n.t('workouts_to_level')}${levelNum + 1}`;
 
     headerEl.innerHTML = `
       <div class="rpg-progress-header" style="--header-color: ${tabColor}">
@@ -490,7 +490,7 @@ const ExercisesPage = (() => {
         <div class="rpg-skill-path" style="--path-color: ${tabColor}; animation-delay: ${pathIndex * 0.1}s">
           <div class="rpg-path-header">
             <span class="rpg-path-icon">${path.icon}</span>
-            <span class="rpg-path-title">${path.title}</span>
+            <span class="rpg-path-title">${I18n.t(path.title)}</span>
           </div>
           <div class="rpg-nodes-track">
       `;
@@ -535,7 +535,7 @@ const ExercisesPage = (() => {
           const imgSrc = node.noImage ? null : `images/exercises/${node.name.replace(/\//g, '-').toUpperCase()}.png`;
           const equip = UI.getEquipment(node.name);
           const gifPath = `images/gifs/${node.name}.gif`;
-          const videoBtn = UI.hasGif(node.name) ? `<button type="button" class="rpg-video-btn" title="צפה ב-GIF" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${gifPath}')">▶</button>` : '';
+          const videoBtn = UI.hasGif(node.name) ? `<button type="button" class="rpg-video-btn" title="${I18n.t('view_gif_title')}" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${gifPath}')">▶</button>` : '';
 
           html += `
             <div class="rpg-node ${stateClass} ${latestClass}" 
@@ -554,9 +554,9 @@ const ExercisesPage = (() => {
                 <div class="rpg-node-name">${node.name}</div>
                 <div class="rpg-node-badges">
                   ${!isUnlocked 
-                    ? `<span class="rpg-unlock-badge locked">🔒 שבוע ${node.unlockWeek}</span>` 
-                    : `<span class="rpg-unlock-badge unlocked">✓ שבוע ${node.unlockWeek}</span>`}
-                  ${equip && equip.label !== 'משקל גוף בלבד' ? `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${equip.icon} ${equip.label}</span>` : ''}
+                    ? `<span class="rpg-unlock-badge locked">${I18n.t('locked_week')} ${node.unlockWeek}</span>` 
+                    : `<span class="rpg-unlock-badge unlocked">${I18n.t('unlocked_week')} ${node.unlockWeek}</span>`}
+                  ${equip && equip.label !== I18n.t('equip_bodyweight') ? `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
                 ${(() => {
                   const tiers = BAND_WEIGHT_PROGRESSION[node.name];
@@ -568,7 +568,7 @@ const ExercisesPage = (() => {
                     return `<div class="rpg-evo-single">
                       <span class="rpg-evo-card ${wClass(t.weight)} ${tierActive ? 'active current' : 'locked'}">
                         <span class="rpg-evo-weight">${t.weight}</span>
-                        <span class="rpg-evo-week">${tierActive ? '✓' : '🔒'} ש׳${t.fromWeek}</span>
+                        <span class="rpg-evo-week">${tierActive ? '✓' : '🔒'} ${I18n.t('week_label_short')}${t.fromWeek}</span>
                       </span>
                     </div>`;
                   }
@@ -588,7 +588,7 @@ const ExercisesPage = (() => {
                     evoHtml += `<div class="rpg-evo-card ${wClass(t.weight)} ${stClass}">
                       <span class="rpg-evo-phase">Tier ${ti + 1}</span>
                       <span class="rpg-evo-weight">${t.weight}</span>
-                      <span class="rpg-evo-week">${tierCompleted ? '✓' : tierLatest ? '◆' : '🔒'} שבוע ${t.fromWeek}</span>
+                      <span class="rpg-evo-week">${tierCompleted ? '✓' : tierLatest ? '◆' : '🔒'} ${I18n.t('week_label_full')} ${t.fromWeek}</span>
                     </div>`;
                   });
                   return `<div class="rpg-evo-chain">${evoHtml}</div>`;
@@ -731,7 +731,7 @@ const ExercisesPage = (() => {
       container.innerHTML = `
         <div style="text-align: center; padding: 40px; grid-column: 1/-1;">
           <div style="font-size: 48px; margin-bottom: 16px;">🔍</div>
-          <p style="color: var(--text-secondary);">לא נמצאו תרגילים</p>
+          <p style="color: var(--text-secondary);">${I18n.t('no_exercises_found')}</p>
         </div>
       `;
       return;
@@ -748,12 +748,12 @@ const ExercisesPage = (() => {
   function generateGuideCardHTML(ex) {
     const diffClass = UI.getDifficultyClass(ex.difficulty);
     const gifPath = `images/gifs/${ex.name}.gif`;
-    const videoLink = UI.hasGif(ex.name) ? `<button type="button" class="exercise-video-btn" title="צפה ב-GIF" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>` : '';
+    const videoLink = UI.hasGif(ex.name) ? `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>` : '';
 
     const equip = UI.getEquipment(ex.name);
     let weightDisplay = ex.weight || '';
-    if (weightDisplay && equip && equip.label === 'גומיית התנגדות' && weightDisplay !== '—' && weightDisplay !== 'משקל גוף') {
-      weightDisplay = `משקל גומיה: ${weightDisplay}`;
+    if (weightDisplay && equip && equip.label === I18n.t('equip_band') && weightDisplay !== '—') {
+      weightDisplay = `${I18n.t('equip_band')}: ${weightDisplay}`;
     }
 
     return `
@@ -770,7 +770,7 @@ const ExercisesPage = (() => {
           <div class="guide-card-sets">${ex.setsProgression || ''}</div>
           <div class="guide-card-meta">
             <span class="guide-difficulty ${diffClass}">${ex.difficulty || ''}</span>
-            ${ex.tempo ? `<span class="guide-tempo" style="background: rgba(59, 130, 246, 0.12); color: var(--accent-primary); border: 1px solid rgba(59, 130, 246, 0.25); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;" title="טמפו ביצוע">⏱️ ${UI.formatTempo(ex.tempo)}</span>` : ''}
+            ${ex.tempo ? `<span class="guide-tempo" style="background: rgba(59, 130, 246, 0.12); color: var(--accent-primary); border: 1px solid rgba(59, 130, 246, 0.25); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('tempo_execution')}">⏱️ ${UI.formatTempo(ex.tempo)}</span>` : ''}
             ${weightDisplay ? `<span class="guide-weight"><bdi dir="ltr">${weightDisplay}</bdi></span>` : ''}
             ${videoLink}
           </div>

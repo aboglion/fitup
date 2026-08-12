@@ -191,8 +191,8 @@ const TodayPage = (() => {
           <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 12px;">
             <span style="font-size: 20px;">👀</span>
             <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
-              <strong style="color: var(--accent-primary); display: block; margin-bottom: 4px;">מצב עיון: התוכנית טרם התחילה</strong>
-              ברגע שתסמן תרגיל או יום מנוחה כהושלם, התוכנית תתחיל באופן רשמי והתאריכים ייקבעו בהתאם.
+              <strong style="color: var(--accent-primary); display: block; margin-bottom: 4px;">${I18n.t('program_not_started')}</strong>
+              ${I18n.t('program_not_started_desc')}
             </div>
           </div>
         `;
@@ -213,8 +213,8 @@ const TodayPage = (() => {
         deloadBanner.innerHTML = `
           <div class="deload-banner-icon">🌿</div>
           <div class="deload-banner-content">
-            <strong class="deload-banner-title">שבוע Deload — הפחתת עומס מתוכננת!</strong>
-            <span class="deload-banner-sub">שבוע זה מיועד להתאוששות מירבית ומניעת פציעות: בצע 2 סטים בלבד בכל תרגיל, השתמש במשקל מופחת (~60%) והימנע מהגעה לכישלון.</span>
+            <strong class="deload-banner-title">${I18n.t('deload_title')}</strong>
+            <span class="deload-banner-sub">${I18n.t('deload_desc')}</span>
           </div>
         `;
         summaryCard.parentNode.insertBefore(deloadBanner, summaryCard);
@@ -227,7 +227,7 @@ const TodayPage = (() => {
     // Update summary card
     document.getElementById('day-number').textContent = '#' + day.dayNum;
     document.getElementById('today-date-badge').textContent = day.dayOfWeek;
-    document.getElementById('day-week').textContent = day.week ? day.week.replace('Week', 'שבוע') : '';
+    document.getElementById('day-week').textContent = day.week ? day.week.replace('Week', I18n.t('week_label_full')) : '';
 
     const realTodayIndex = UI.findTodayIndex(allPlanDays);
     const isToday = currentDayIndex === realTodayIndex;
@@ -291,24 +291,24 @@ const TodayPage = (() => {
           const model = modelSelect ? modelSelect.value : 'gemini-3.1-flash-lite';
 
           if (!key) {
-            if (errorDiv) { errorDiv.textContent = 'נא להזין מפתח API'; errorDiv.style.display = 'block'; }
+            if (errorDiv) { errorDiv.textContent = I18n.t('enter_api_key'); errorDiv.style.display = 'block'; }
             return;
           }
 
           saveKeyBtn.disabled = true;
-          saveKeyBtn.textContent = 'בודק מפתח API... ⏳';
+          saveKeyBtn.textContent = I18n.t('checking_key');
           if (errorDiv) errorDiv.style.display = 'none';
 
           try {
             await GeminiService.testApiKey(key, model);
             await GeminiService.setApiKey(key);
             await GeminiService.setModel(model);
-            UI.toast('מפתח Gemini API הוגדר בהצלחה! 🎉', 'success');
+            UI.toast(I18n.t('key_saved_success'), 'success');
             if (window.updateGeminiSettingsUI) window.updateGeminiSettingsUI();
             renderNutritionSection(queryDateStr);
           } catch (err) {
             saveKeyBtn.disabled = false;
-            saveKeyBtn.textContent = '✨ שמור והפעל סורק AI';
+            saveKeyBtn.textContent = I18n.t('save_enable_ai');
             if (errorDiv) { errorDiv.textContent = err.message; errorDiv.style.display = 'block'; }
           }
         };
@@ -329,9 +329,9 @@ const TodayPage = (() => {
     const deleteBadgeBtn = document.getElementById('delete-gemini-key-badge-btn');
     if (deleteBadgeBtn) {
       deleteBadgeBtn.onclick = async () => {
-        if (confirm('האם למחוק את מפתח ה-Gemini API השמור ולחזור למסך ההגדרה?')) {
+        if (confirm(I18n.t('delete_key_confirm'))) {
           await GeminiService.removeApiKey();
-          UI.toast('מפתח Gemini API נמחק', 'info');
+          UI.toast(I18n.t('key_deleted'), 'info');
           if (window.updateGeminiSettingsUI) window.updateGeminiSettingsUI();
           renderNutritionSection(queryDateStr);
         }
@@ -341,7 +341,7 @@ const TodayPage = (() => {
     // Set date label
     const dateLabel = document.getElementById('nutrition-date-label');
     if (dateLabel) {
-      dateLabel.textContent = `תאריך: ${queryDateStr.split('-').reverse().join('/')}`;
+      dateLabel.textContent = `${I18n.t('nut_date_label')} ${queryDateStr.split('-').reverse().join('/')}`;
     }
 
     // Load nutrition data from DB for queryDateStr
@@ -390,7 +390,7 @@ const TodayPage = (() => {
 
     const desktopNavNut = document.getElementById('desktop-nav-nutrition');
     if (desktopNavNut) {
-      desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} קק"ל (${calsPercent}%)</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}ג חלבון (${proteinPercent}%)</span>`;
+      desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} ${I18n.t('nut_kcal_label')} (${calsPercent}%)</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}g ${I18n.t('nut_protein_label')} (${proteinPercent}%)</span>`;
     }
 
     // Update Quick Protein Powder Completion Button
@@ -398,14 +398,14 @@ const TodayPage = (() => {
     if (quickProtBtn) {
       const remainingNeeded = Math.max(0, targetProtein - totalProtein);
       if (remainingNeeded <= 0) {
-        quickProtBtn.innerHTML = `🎯 הגעת ליעד החלבון!`;
+        quickProtBtn.innerHTML = I18n.t('protein_goal_reached');
         quickProtBtn.disabled = true;
         quickProtBtn.style.opacity = '0.6';
         quickProtBtn.style.cursor = 'default';
         quickProtBtn.onclick = null;
       } else {
         const powderAmount = Math.ceil(remainingNeeded * 1.1);
-        quickProtBtn.innerHTML = `🥛 צרכתי ${powderAmount}ג חלבון אבקתי`;
+        quickProtBtn.innerHTML = `🥛 ${I18n.t('quick_protein_consumed')} ${powderAmount}g ${I18n.t('quick_protein_powder')}`;
         quickProtBtn.disabled = false;
         quickProtBtn.style.opacity = '1';
         quickProtBtn.style.cursor = 'pointer';
@@ -420,17 +420,17 @@ const TodayPage = (() => {
 
           const newMeal = {
             id: 'meal_' + Date.now(),
-            name: 'אבקת חלבון 🥛',
+            name: I18n.t('protein_powder_name'),
             calories: Math.round(powderAmount * 4),
             protein: powderAmount,
             time: timeStr,
-            analysis: 'השלמת חלבון אבקתי (יעד + 10%)'
+            analysis: I18n.t('protein_powder_analysis')
           };
 
           currentNut.meals.push(newMeal);
           await DB.saveNutrition(queryDateStr, currentNut);
 
-          UI.toast(`נוספה השלמת חלבון אבקתי: ${powderAmount}ג! 🎉`, 'success');
+          UI.toast(I18n.t('protein_added_toast'), 'success');
           if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
             CloudSync.scheduleSync();
           }
@@ -444,7 +444,7 @@ const TodayPage = (() => {
     const countBadge = document.getElementById('meals-count-badge');
 
     if (countBadge) {
-      countBadge.textContent = `${nutrition.meals ? nutrition.meals.length : 0} ארוחות`;
+      countBadge.textContent = `${nutrition.meals ? nutrition.meals.length : 0} ${I18n.t('nut_meals_count')}`;
     }
 
     if (mealsContainer) {
@@ -471,12 +471,12 @@ const TodayPage = (() => {
               <div style="flex: 1;">
                 <div style="font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 2px;">${meal.name}</div>
                 <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-                  <span style="font-size: 12px; font-weight: 700; color: var(--warning); background: var(--warning-bg); padding: 2px 6px; border-radius: 6px;">🔥 ${meal.calories} קק"ל</span>
-                  <span style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--success-bg); padding: 2px 6px; border-radius: 6px;">🥩 ${meal.protein}ג חלבון</span>
+                  <span style="font-size: 12px; font-weight: 700; color: var(--warning); background: var(--warning-bg); padding: 2px 6px; border-radius: 6px;">🔥 ${meal.calories} ${I18n.t('nut_kcal_label')}</span>
+                  <span style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--success-bg); padding: 2px 6px; border-radius: 6px;">🥩 ${meal.protein}g ${I18n.t('nut_protein_label')}</span>
                   <span style="font-size: 11px; color: var(--text-muted);">${meal.time || ''}</span>
                 </div>
               </div>
-              <button class="delete-meal-btn" data-id="${meal.id}" style="background: none; border: none; font-size: 16px; cursor: pointer; color: var(--danger); padding: 4px;" title="מחק ארוחה">🗑️</button>
+              <button class="delete-meal-btn" data-id="${meal.id}" style="background: none; border: none; font-size: 16px; cursor: pointer; color: var(--danger); padding: 4px;" title="${I18n.t('delete_meal')}">🗑️</button>
             </div>
             ${analysisHtml}
           `;
@@ -487,13 +487,13 @@ const TodayPage = (() => {
         // Bind delete handlers
         mealsContainer.querySelectorAll('.delete-meal-btn').forEach(btn => {
           btn.onclick = async () => {
-            if (confirm('למחוק ארוחה זו?')) {
+            if (confirm(I18n.t('delete_meal_confirm'))) {
               const id = btn.dataset.id;
               let currentNut = await DB.getNutrition(queryDateStr);
               if (currentNut && currentNut.meals) {
                 currentNut.meals = currentNut.meals.filter(m => m.id !== id);
                 await DB.saveNutrition(queryDateStr, currentNut);
-                UI.toast('הארוחה נמחקה', 'info');
+                UI.toast(I18n.t('meal_deleted'), 'info');
                 CloudSync.scheduleSync();
                 renderNutritionSection(queryDateStr);
               }
@@ -502,7 +502,7 @@ const TodayPage = (() => {
         });
 
       } else {
-        mealsContainer.innerHTML = '<div style="text-align: center; font-size: 13px; color: var(--text-muted); padding: 24px;">טרם דווחו ארוחות להיום 🥗</div>';
+        mealsContainer.innerHTML = `<div style="text-align: center; font-size: 13px; color: var(--text-muted); padding: 24px;">${I18n.t('no_meals_yet')}</div>`;
       }
     }
 
@@ -559,14 +559,14 @@ const TodayPage = (() => {
       runAiBtn.setAttribute('data-bound', 'true');
       runAiBtn.onclick = async () => {
         if (!activeBase64Image) {
-          UI.toast('נא לבחור תמונה לניתוח', 'warning');
+          UI.toast(I18n.t('select_photo'), 'warning');
           return;
         }
 
         const notes = userNotesInput ? userNotesInput.value.trim() : '';
 
         runAiBtn.disabled = true;
-        runAiBtn.innerHTML = '<span>⏳</span> מנתח ארוחה ע״י Gemini AI...';
+        runAiBtn.innerHTML = `<span>⏳</span> ${I18n.t('analyzing_ai')}`;
 
         try {
           const analysisResult = await GeminiService.analyzeFood(activeBase64Image, activeMimeType, notes);
@@ -593,7 +593,7 @@ const TodayPage = (() => {
           currentNut.meals.push(newMeal);
           await DB.saveNutrition(queryDateStr, currentNut);
 
-          UI.toast(`ארוחה נוספה: ${analysisResult.meal_name} (${analysisResult.calories} קק"ל) 🎉`, 'success');
+          UI.toast(`${I18n.t('meal_added_toast')} ${analysisResult.meal_name} (${analysisResult.calories} ${I18n.t('nut_kcal_label')}) 🎉`, 'success');
           CloudSync.scheduleSync();
 
           // Reset inputs
@@ -607,10 +607,10 @@ const TodayPage = (() => {
 
         } catch (err) {
           console.error('AI analysis error:', err);
-          UI.toast('שגיאה בניתוח התמונה: ' + err.message, 'error');
+          UI.toast(I18n.t('ai_analysis_error') + err.message, 'error');
         } finally {
           runAiBtn.disabled = false;
-          runAiBtn.innerHTML = '<span>🤖</span> נתח קלוריות וחלבון עם AI';
+          runAiBtn.innerHTML = `<span>🤖</span> ${I18n.t('analyze_with_ai')}`;
         }
       };
     }
@@ -618,10 +618,10 @@ const TodayPage = (() => {
     if (manualMealBtn && !manualMealBtn.hasAttribute('data-bound')) {
       manualMealBtn.setAttribute('data-bound', 'true');
       manualMealBtn.onclick = async () => {
-        const name = prompt('שם הארוחה (למשל: חזה עוף עם אורז):');
+        const name = prompt(I18n.t('manual_meal_name'));
         if (!name || !name.trim()) return;
-        const calsStr = prompt('כמות קלוריות (קק"ל):', '500');
-        const protStr = prompt('כמות חלבון (גרם):', '35');
+        const calsStr = prompt(I18n.t('manual_meal_cals'), '500');
+        const protStr = prompt(I18n.t('manual_meal_protein'), '35');
 
         const cals = parseInt(calsStr) || 0;
         const prot = parseInt(protStr) || 0;
@@ -639,11 +639,11 @@ const TodayPage = (() => {
           calories: cals,
           protein: prot,
           time: timeStr,
-          analysis: 'הזנה ידנית'
+          analysis: I18n.t('manual_entry')
         });
 
         await DB.saveNutrition(queryDateStr, currentNut);
-        UI.toast('ארוחה נוספה בהצלחה!', 'success');
+        UI.toast(I18n.t('meal_added_success'), 'success');
         CloudSync.scheduleSync();
         renderNutritionSection(queryDateStr);
       };
@@ -664,10 +664,10 @@ const TodayPage = (() => {
         day.exercises.forEach((ex, idx) => {
           const exNum = idx + 1;
           const equip = UI.getEquipment(ex.name);
-          if (equip && equip.label !== 'משקל גוף בלבד' && equip.label !== 'קיר פנוי') {
+          if (equip && equip.label !== I18n.t('equip_bodyweight') && equip.label !== I18n.t('equip_wall')) {
             let labelText = equip.label;
-            if (labelText === 'גומיית התנגדות' && isWeighted(ex)) {
-              labelText = `גומיית התנגדות (<bdi dir="ltr">${ex.weight}</bdi>)`;
+            if (labelText === I18n.t('equip_band') && isWeighted(ex)) {
+              labelText = `${I18n.t('equip_band')} (<bdi dir="ltr">${ex.weight}</bdi>)`;
             }
             if (!equipmentMap.has(labelText)) {
               equipmentMap.set(labelText, { icon: equip.icon, label: labelText, exercises: [] });
@@ -709,7 +709,7 @@ const TodayPage = (() => {
                 <span style="font-size: 16px; margin-top: 1px; display: flex; color: #f97316;">${eq.icon}</span>
                 <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
                   <span style="font-weight: 700;">${eq.label}:</span> 
-                  דרוש לתרגיל${eq.exercises.length > 1 ? 'ים' : ''} <b style="font-family: 'Inter', sans-serif;">${eq.exercises.map(n => `#${n}`).join(', ')}</b>
+                  ${I18n.t(eq.exercises.length > 1 ? 'required_for_exercises_plural' : 'required_for_exercises')} <b style="font-family: 'Inter', sans-serif;">${eq.exercises.map(n => `#${n}`).join(', ')}</b>
                 </div>
               </div>
             `);
@@ -722,8 +722,8 @@ const TodayPage = (() => {
             <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; background: rgba(239, 68, 68, 0.05); border-radius: 8px; margin: 2px -8px; padding-right: 8px;">
               <span style="font-size: 16px; margin-top: 1px; animation: blinkRed 2s infinite; border-radius: 50%; display: flex;">${reportSvgs.sparkles}</span>
               <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
-                <span style="font-weight: 700; color: #ef4444;">תרגילים חדשים:</span> 
-                תרגיל${newExercisesList.length > 1 ? 'ים' : ''} <b style="font-family: 'Inter', sans-serif; color: #ef4444;">${newExercisesList.map(n => `#${n}`).join(', ')}</b>. מומלץ לצפות בתמונת ההנפשה.
+                <span style="font-weight: 700; color: #ef4444;">${I18n.t('new_exercises_label')}</span> 
+                ${newExercisesList.length > 1 ? '' : ''}<b style="font-family: 'Inter', sans-serif; color: #ef4444;">${newExercisesList.map(n => `#${n}`).join(', ')}</b>. ${I18n.t('new_exercises_tip')}
               </div>
             </div>
           `);
@@ -735,8 +735,8 @@ const TodayPage = (() => {
             <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; background: rgba(245, 158, 11, 0.05); border-radius: 8px; margin: 2px -8px; padding-right: 8px;">
               <span style="font-size: 16px; margin-top: 1px; display: flex;">${reportSvgs.trendUp}</span>
               <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
-                <span style="font-weight: 700; color: var(--warning);">עליית עומס/נפח:</span> 
-                עודכנו סטים או משקלים בתרגיל${changedExercisesList.length > 1 ? 'ים' : ''} <b style="font-family: 'Inter', sans-serif;">${changedExercisesList.map(n => `#${n}`).join(', ')}</b>
+                <span style="font-weight: 700; color: var(--warning);">${I18n.t('load_volume_label')}</span> 
+                ${I18n.t(changedExercisesList.length > 1 ? 'load_volume_updated_plural' : 'load_volume_updated')} <b style="font-family: 'Inter', sans-serif;">${changedExercisesList.map(n => `#${n}`).join(', ')}</b>
               </div>
             </div>
           `);
@@ -747,7 +747,7 @@ const TodayPage = (() => {
             <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
               <div style="display: flex; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
                 <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
-                  <span style="display: flex;">${reportSvgs.report}</span> סקירת אימון ודרישות
+                  <span style="display: flex;">${reportSvgs.report}</span> ${I18n.t('workout_overview_title')}
                 </h3>
               </div>
               <div style="display: flex; flex-direction: column; gap: 2px;">
@@ -895,14 +895,14 @@ const TodayPage = (() => {
           <div style="font-size: 48px;">😴</div>
           <div>
             <h3 style="font-size: 18px; margin-bottom: 8px;">Rest Day</h3>
-            <p style="color: var(--text-secondary); font-size: 14px; max-width: 320px; margin: 0 auto; direction: rtl;">
-              הגוף שלך צריך מנוחה כדי להיבנות ולהתחזק. הקפד על שינה טובה, תזונה נכונה ושתיית מים!
+            <p style="color: var(--text-secondary); font-size: 14px; max-width: 320px; margin: 0 auto;">
+              ${I18n.t('rest_day_desc')}
             </p>
           </div>
           <button class="btn-primary rest-complete-btn ${isCompleted ? 'checked' : ''}" 
                   style="width: auto; padding: 10px 24px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; background: ${isCompleted ? 'var(--success, #10b981)' : 'var(--accent-primary, #3b82f6)'}; color: white;"
                   onclick="TodayPage.toggleRestDayComplete()" ${disabledAttr}>
-            ${isCompleted ? '✓ יום מנוחה הושלם' : 'סמן כהושלם ויאללה לעבודה'}
+            ${isCompleted ? I18n.t('rest_day_completed') : I18n.t('rest_day_mark_complete')}
           </button>
         </div>
       `;
@@ -942,9 +942,9 @@ const TodayPage = (() => {
           if (prevSets.length > 0) {
             prevPerfHTML = `
               <div class="prev-performance">
-                <span class="prev-perf-label">📊 ביצוע אחרון:</span>
+                <span class="prev-perf-label">${I18n.t('prev_performance')}</span>
                 <span class="prev-perf-values">${prevSets.map((r, i) => `<span class="prev-set">Set ${i+1}: ${r}</span>`).join('')}</span>
-                ${maxReps > 0 ? `<span class="prev-perf-pr">🏆 שיא: ${maxReps}</span>` : ''}
+                ${maxReps > 0 ? `<span class="prev-perf-pr">${I18n.t('prev_record')} ${maxReps}</span>` : ''}
               </div>
             `;
           }
@@ -992,8 +992,8 @@ const TodayPage = (() => {
 
       const gifPath = `images/gifs/${ex.name}.gif`;
       let videoBtn = '';
-      if (!ex.name.toLowerCase().includes('walking') && !ex.name.includes('הליכה')) {
-        videoBtn = `<button type="button" class="exercise-video-btn" title="צפה ב-GIF" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>`;
+      if (!ex.name.toLowerCase().includes('walking')) {
+        videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>`;
       }
 
       // Find previous occurrence
@@ -1010,28 +1010,25 @@ const TodayPage = (() => {
       const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
       const isWeightChanged = prevEx && ex.weight !== prevEx.weight && isWeighted(ex);
 
-      const newBadgeHTML = isNewExercise ? `<div class="new-exercise-badge" style="position: absolute; bottom: 12px; left: 12px; background: #ef4444; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 13px; animation: blinkRed 1.5s infinite; box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); z-index: 10;">תרגיל חדש!</div>` : '';
+      const newBadgeHTML = isNewExercise ? `<div class="new-exercise-badge" style="position: absolute; bottom: 12px; left: 12px; background: #ef4444; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 13px; animation: blinkRed 1.5s infinite; box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); z-index: 10;">${I18n.t('new_exercise_badge')}</div>` : '';
 
       // Detail line - only show weight if it exists
       const detailParts = [UI.getCategoryLabel(ex.slot)];
       if (ex.sets) {
-        detailParts.push(isSetsChanged ? `<span class="alert-pulse-text" title="שינוי בסטים/חזרות!">${ex.sets}</span>` : ex.sets);
+        detailParts.push(isSetsChanged ? `<span class="alert-pulse-text" title="${I18n.t('sets_changed_title')}">${ex.sets}</span>` : ex.sets);
       }
       
       const equip = UI.getEquipment(ex.name);
       
       if (hasWeight) {
         let weightText = ex.weight;
-        if (equip && equip.label === 'גומיית התנגדות') {
-          weightText = `משקל גומיה: ${ex.weight}`;
-        }
         const bdiWeight = `<bdi dir="ltr">${weightText}</bdi>`;
-        detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="שינוי במשקל!">${bdiWeight}</span>` : bdiWeight);
+        detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="${I18n.t('weight_changed_title')}">${bdiWeight}</span>` : bdiWeight);
       }
 
       if (ex.tempo) {
         const formattedTempo = UI.formatTempo(ex.tempo);
-        detailParts.push(`<span style="color: var(--accent-primary); font-weight: 600; background: rgba(59, 130, 246, 0.12); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.25); display: inline-flex; align-items: center; gap: 4px;" title="טמפו ביצוע קבוע מראש (UPDDATE.md)">⏱️ ${formattedTempo}</span>`);
+        detailParts.push(`<span style="color: var(--accent-primary); font-weight: 600; background: rgba(59, 130, 246, 0.12); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.25); display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('tempo_execution')}">⏱️ ${formattedTempo}</span>`);
       }
 
       if (ex.rest && ex.rest > 0) {
@@ -1041,7 +1038,7 @@ const TodayPage = (() => {
       let cardioTimerBtn = '';
       const lowerExName = ex.name.toLowerCase();
       if (lowerExName.includes('vo2 max') || lowerExName.includes('norwegian')) {
-        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); TodayPage.startIntervalTimer('${ex.name.replace(/'/g, "\\'")}');">⏱️ טיימר 4×4</button>`;
+        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); TodayPage.startIntervalTimer('${ex.name.replace(/'/g, "\\'")}');">⏱️ ${I18n.t('timer_4x4')}</button>`;
       }
 
       return `
@@ -1081,7 +1078,7 @@ const TodayPage = (() => {
           <div class="exercise-card-body">
             ${setsHTML}
             <div class="exercise-note">
-              <textarea placeholder="הערות לתרגיל..." rows="2" ${disabledAttr}
+              <textarea placeholder="${I18n.t('exercise_notes_placeholder')}" rows="2" ${disabledAttr}
                         onchange="TodayPage.updateExerciseNote(${idx}, this.value)">${exNote}</textarea>
             </div>
           </div>
@@ -1206,7 +1203,7 @@ const TodayPage = (() => {
       const completedWorkouts = allTracking.filter(t => t.completed).length;
       if (completedWorkouts >= 3) {
         needsBackupPrompt = true;
-        backupMessage = "מומלץ לגבות את התקדמות האימונים שלך לראשונה!";
+        backupMessage = I18n.t('backup_first_time');
       }
     } else {
       const lastBackupDate = new Date(lastBackupStr);
@@ -1215,30 +1212,30 @@ const TodayPage = (() => {
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       if (diffDays >= 14) {
         needsBackupPrompt = true;
-        backupMessage = `עברו ${diffDays} ימים מאז הגיבוי האחרון שלך. כדאי לגבות כעת!`;
+        backupMessage = I18n.t('backup_overdue', '', { days: diffDays });
       }
     }
     
-    UI.showModal('🎉 אימון הושלם!', `
+    UI.showModal(I18n.t('celebration_title'), `
       <div style="text-align: center; padding: 16px;">
         <div class="celebration-confetti">🎊</div>
         <div style="font-size: 64px; margin-bottom: 16px; animation: bounceIn 0.6s ease;">💪</div>
-        <h3 style="font-size: 22px; margin-bottom: 8px; color: var(--text-primary);">כל הכבוד! סיימת את האימון!</h3>
+        <h3 style="font-size: 22px; margin-bottom: 8px; color: var(--text-primary);">${I18n.t('celebration_subtitle')}</h3>
         <p style="color: var(--text-secondary); margin-bottom: 20px;">${typeInfo.label} — Day #${day.dayNum}</p>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
           <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px;">
             <div style="font-size: 28px; font-weight: 800; color: var(--success);">${day.exercises.length}</div>
-            <div style="font-size: 12px; color: var(--text-secondary);">תרגילים</div>
+            <div style="font-size: 12px; color: var(--text-secondary);">${I18n.t('celebration_exercises')}</div>
           </div>
           <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px;">
             <div style="font-size: 28px; font-weight: 800; color: var(--accent-primary);">${totalSets}</div>
-            <div style="font-size: 12px; color: var(--text-secondary);">סטים</div>
+            <div style="font-size: 12px; color: var(--text-secondary);">${I18n.t('celebration_sets')}</div>
           </div>
           ${totalReps > 0 ? `
           <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px; grid-column: 1 / -1;">
             <div style="font-size: 28px; font-weight: 800; color: var(--warning);">${totalReps}</div>
-            <div style="font-size: 12px; color: var(--text-secondary);">חזרות בסה"כ</div>
+            <div style="font-size: 12px; color: var(--text-secondary);">${I18n.t('celebration_reps_total')}</div>
           </div>` : ''}
         </div>
         
@@ -1246,12 +1243,12 @@ const TodayPage = (() => {
         <div style="margin-top: 16px; padding: 16px; border-radius: 12px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); margin-bottom: 16px;">
           <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px; direction: rtl; text-align: center;">⚠️ ${backupMessage}</p>
           <button id="celebration-backup-btn" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            📤 גבה את הנתונים כעת
+            ${I18n.t('celebration_backup')}
           </button>
         </div>` : ''}
 
         <button id="celebration-continue-btn" class="btn-primary" style="width: 100%; padding: 14px;">
-          🏆 מעולה! המשך הלאה
+          ${I18n.t('celebration_continue')}
         </button>
       </div>
     `);
@@ -1297,7 +1294,7 @@ const TodayPage = (() => {
     const lowerName = ex.name.toLowerCase();
 
     // Active Recovery / Skill practice / Mobility (0s — no rest timer)
-    if (lowerName.includes('walking') || lowerName.includes('הליכה') || lowerName.includes('jogging')) {
+    if (lowerName.includes('walking') || lowerName.includes('jogging')) {
         return 0;
     }
     if (lowerName.includes('handstand practice') || lowerName.includes('l-sit practice')) {
@@ -1464,7 +1461,7 @@ const TodayPage = (() => {
       startDate = UI.getLocalDateString(d);
       await DB.setSetting('planStartDate', startDate);
       await DB.loadTrainingPlan();
-      UI.toast('תוכנית האימונים התחילה בהצלחה! 🚀', 'success');
+      UI.toast(I18n.t('program_started'), 'success');
     }
   }
 
@@ -1565,13 +1562,12 @@ const TodayPage = (() => {
     }
     
     if (validSwapTargets.length === 0) {
-      UI.toast('אין ימים זמינים להחלפה בשבוע זה (שאותם טרם ביצעת).', 'warning');
+      UI.toast(I18n.t('swap_no_days'), 'warning');
       return;
     }
     
     let html = `<p style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary); line-height: 1.4;">
-      בחר יום מהשבוע הנוכחי כדי להחליף איתו "ראש בראש" (1:1). 
-      ההחלפה תעביר את <b style="color: var(--text-primary);">${currentTypeInfo.label}</b> ליום שתבחר, ואת התוכן של אותו יום לכאן.
+      ${I18n.t('swap_instructions', '', { dayType: `<b style="color: var(--text-primary);">${currentTypeInfo.label}</b>` })}
     </p>`;
     
     html += `<div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">`;
@@ -1582,7 +1578,7 @@ const TodayPage = (() => {
         <button class="btn-secondary" style="justify-content: flex-start; padding: 12px; background: var(--bg-elevated); border: 1px solid var(--border-light);" onclick="TodayPage.performSwap(${targetDay.dayIndex})">
           <div style="display: flex; flex-direction: column; align-items: flex-start;">
             <span style="font-weight: bold; color: var(--text-primary); margin-bottom: 4px;">${targetDay.dayOfWeek} - ${typeInfo.label}</span>
-            <span style="font-size: 11px; color: var(--text-secondary);">החלף עם ${typeInfo.label}</span>
+            <span style="font-size: 11px; color: var(--text-secondary);">${I18n.t('swap_with')} ${typeInfo.label}</span>
           </div>
         </button>
       `;
@@ -1593,13 +1589,13 @@ const TodayPage = (() => {
       <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 12px; display: flex; align-items: flex-start; gap: 10px;">
         <span style="font-size: 16px; margin-top: 1px;">💡</span>
         <div style="font-size: 12px; color: var(--text-primary); line-height: 1.4;">
-          <strong style="color: var(--warning); display: block; margin-bottom: 4px;">טיפ מקצועי (התאוששות):</strong>
-          פיצול השרירים בתוכנית מאפשר גמישות רבה, אך השתדל להימנע מרצף של יותר מ-2 אימונים עצימים ללא יום מנוחה או התאוששות (Recovery) ביניהם כדי למנוע עומס על מערכת העצבים.
+          <strong style="color: var(--warning); display: block; margin-bottom: 4px;">${I18n.t('swap_recovery_tip_title')}</strong>
+          ${I18n.t('swap_recovery_tip_desc')}
         </div>
       </div>
     `;
     
-    UI.showModal('🔄 החלף סדר ימים', html);
+    UI.showModal(I18n.t('swap_modal_title'), html);
   }
 
   async function performSwap(targetDayIndex) {
@@ -1607,7 +1603,7 @@ const TodayPage = (() => {
     try {
       await DB.swapWorkouts(currentDayIndex, targetDayIndex);
       allPlanDays = await DB.getAllPlan();
-      UI.toast('האימון הוחלף בהצלחה!', 'success');
+      UI.toast(I18n.t('swap_success'), 'success');
       
       if (typeof CalendarPage !== 'undefined' && document.getElementById('calendar-accordion-content')?.style.display === 'block') {
         CalendarPage.render();
@@ -1616,7 +1612,7 @@ const TodayPage = (() => {
       render();
     } catch (e) {
       console.error(e);
-      UI.toast('שגיאה בעת ביצוע ההחלפה', 'danger');
+      UI.toast(I18n.t('swap_error'), 'danger');
     }
   }
 
@@ -1631,7 +1627,7 @@ const TodayPage = (() => {
     function renderModalContent() {
       const mins = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
       const secs = (secondsLeft % 60).toString().padStart(2, '0');
-      const statusText = isWorkPhase ? `🔴 סבב ${currentRound}/4 — מאמץ עירני (4 דק')` : `🟢 מנוחה / התאוששות (3 דק')`;
+      const statusText = isWorkPhase ? `🔴 ${I18n.t('vo2_round')} ${currentRound}/4 — ${I18n.t('vo2_effort')}` : `🟢 ${I18n.t('vo2_rest_phase')}`;
       const statusClass = isWorkPhase ? 'interval-status-work' : 'interval-status-rest';
 
       return `
@@ -1643,11 +1639,11 @@ const TodayPage = (() => {
             <div class="interval-timer-time" id="interval-display">${mins}:${secs}</div>
           </div>
           <p style="font-size: 13px; color: var(--text-secondary); text-align: center;">
-            ${isWorkPhase ? 'רציף בעצימות גבוהה (90-95% דופק מרבי)' : 'הליכה קלה להתאוששות דופק (60-70% דופק)'}
+            ${isWorkPhase ? I18n.t('vo2_work_desc') : I18n.t('vo2_rest_desc')}
           </p>
           <div style="display: flex; gap: 10px; width: 100%; margin-top: 10px;">
-            <button id="interval-toggle-btn" class="btn-primary" style="flex: 1;">${isPaused ? '▶️ התחל' : '⏸️ השהה'}</button>
-            <button id="interval-skip-btn" class="btn-secondary" style="flex: 1;">⏭️ דלג שלב</button>
+            <button id="interval-toggle-btn" class="btn-primary" style="flex: 1;">${isPaused ? `▶️ ${I18n.t('vo2_start')}` : `⏸️ ${I18n.t('vo2_pause')}`}</button>
+            <button id="interval-skip-btn" class="btn-secondary" style="flex: 1;">⏭️ ${I18n.t('vo2_skip')}</button>
           </div>
         </div>
       `;
@@ -1662,7 +1658,7 @@ const TodayPage = (() => {
       if (toggleBtn) {
         toggleBtn.onclick = () => {
           isPaused = !isPaused;
-          toggleBtn.textContent = isPaused ? '▶️ התחל' : '⏸️ השהה';
+          toggleBtn.textContent = isPaused ? `▶️ ${I18n.t('vo2_start')}` : `⏸️ ${I18n.t('vo2_pause')}`;
         };
       }
       
@@ -1677,18 +1673,18 @@ const TodayPage = (() => {
       if (isWorkPhase) {
         if (currentRound >= 4) {
           clearInterval(intervalTimerId);
-          UI.toast('🎉 סיימת את פרוטוקול ה-VO2 Max! כל הכבוד!', 'success', 5000);
+          UI.toast(I18n.t('vo2_complete'), 'success', 5000);
           UI.hideModal();
           return;
         }
         isWorkPhase = false;
         secondsLeft = 3 * 60;
-        UI.toast(`🟢 מעבר למנוחה 3 דקות (סבב ${currentRound})`, 'info');
+        UI.toast(`🟢 ${I18n.t('vo2_switching_rest')} (${I18n.t('vo2_round')} ${currentRound})`, 'info');
       } else {
         currentRound++;
         isWorkPhase = true;
         secondsLeft = 4 * 60;
-        UI.toast(`🔴 סבב ${currentRound}/4 — מאמץ עצים!`, 'warning');
+        UI.toast(`🔴 ${I18n.t('vo2_round')} ${currentRound}/4 — ${I18n.t('vo2_effort')}`, 'warning');
       }
       document.getElementById('modal-body').innerHTML = renderModalContent();
       bindEvents();

@@ -271,11 +271,11 @@ const UI = (() => {
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes('chin-up') || lowerTitle.includes('pull-up')) {
       extraNote = `
-        <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 12px; text-align: right; direction: rtl;">
-          <p style="font-size: 13px; margin-bottom: 6px; color: var(--text-primary);"><strong>💡 הבדלי אחיזה - חשוב לזכור:</strong></p>
-          <ul style="font-size: 12px; color: var(--text-secondary); padding-right: 18px; margin: 0; line-height: 1.5;">
-            <li style="margin-bottom: 4px;"><strong>Chin-up:</strong> כפות הידיים פונות לכיוון הפנים (אחיזה תחתית).</li>
-            <li><strong>Pull-up:</strong> כפות הידיים באחיזה פונות לכיוון חוץ (אחיזה עילית).</li>
+        <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 12px;">
+          <p style="font-size: 13px; margin-bottom: 6px; color: var(--text-primary);"><strong>${I18n.t('grip_tip_title')}</strong></p>
+          <ul style="font-size: 12px; color: var(--text-secondary); padding-inline-start: 18px; margin: 0; line-height: 1.5;">
+            <li style="margin-bottom: 4px;"><strong>Chin-up:</strong> ${I18n.t('grip_chin')}</li>
+            <li><strong>Pull-up:</strong> ${I18n.t('grip_pull')}</li>
           </ul>
         </div>
       `;
@@ -286,7 +286,7 @@ const UI = (() => {
         <div style="width: 140px; height: 140px; min-width: 140px; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); flex-shrink: 0;">
           <img src="${pngPath}" 
                style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;" 
-               alt="${title} תמונה" 
+               alt="${title}" 
                loading="eager" 
                decoding="async" 
                onerror="UI.handleImageFallback(this, 'png')">
@@ -316,7 +316,7 @@ const UI = (() => {
         <div style="position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); padding: 6px;">
           <img src="${pngPath}" 
                style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
-               alt="${title} תמונה" 
+               alt="${title}" 
                loading="eager" 
                decoding="async" 
                onerror="UI.handleImageFallback(this, 'png')">
@@ -513,44 +513,25 @@ const UI = (() => {
       bodyweight: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>`
     };
 
-    if (n.includes('vest')) return { label: 'וסט +5 ק"ג', icon: icons.vest };
-    if (n.includes('trx')) return { label: 'רצועות TRX', icon: icons.trx };
-    if (n.includes('bars') || n.includes('push-up bars') || n.includes('parallettes')) return { label: 'ידיות שחיקות / Bars', icon: icons.bars };
-    if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row')) return { label: 'משקולות DB', icon: icons.db };
-    if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) return { label: 'גומיית התנגדות', icon: icons.band };
-    if (n.includes('wall') || n.includes('handstand')) return { label: 'קיר פנוי', icon: icons.wall };
-    if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('chair') || n.includes('elevated')) return { label: 'כיסא / ספסל', icon: icons.bench };
-    if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('chin-up')) return { label: 'מתח / מגבת', icon: icons.towel };
-    if (n.includes('walking') || n.includes('vo2') || n.includes('zone 2')) return { label: 'מסילת כושר / הליכה', icon: icons.treadmill };
+    if (n.includes('vest')) return { label: I18n.t('equip_vest'), icon: icons.vest };
+    if (n.includes('trx')) return { label: I18n.t('equip_trx'), icon: icons.trx };
+    if (n.includes('bars') || n.includes('push-up bars') || n.includes('parallettes')) return { label: I18n.t('equip_bars'), icon: icons.bars };
+    if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row')) return { label: I18n.t('equip_db'), icon: icons.db };
+    if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) return { label: I18n.t('equip_band'), icon: icons.band };
+    if (n.includes('wall') || n.includes('handstand')) return { label: I18n.t('equip_wall'), icon: icons.wall };
+    if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('chair') || n.includes('elevated')) return { label: I18n.t('equip_bench'), icon: icons.bench };
+    if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('chin-up')) return { label: I18n.t('equip_towel'), icon: icons.towel };
+    if (n.includes('walking') || n.includes('vo2') || n.includes('zone 2')) return { label: I18n.t('equip_treadmill'), icon: icons.treadmill };
     
-    return { label: 'משקל גוף בלבד', icon: icons.bodyweight };
+    return { label: I18n.t('equip_bodyweight'), icon: icons.bodyweight };
   }
 
   /**
-   * Format tempo string to Hebrew matching UPDDATE.md
+   * Format tempo string for display
    */
   function formatTempo(tempo) {
     if (!tempo) return '';
-    const map = {
-      '2 secs down': "2 שנ' ירידה",
-      '3 secs down': "3 שנ' ירידה",
-      '4 secs down': "4 שנ' ירידה",
-      '1 sec pause': "1 שנ' עצירה",
-      '2 secs pause': "2 שנ' עצירה",
-      '3 secs pause': "3 שנ' עצירה",
-      '1 sec pause at bottom': "1 שנ' עצירה למטה",
-      '2 secs pause at bottom': "2 שנ' עצירה למטה",
-      '2 secs down + 1 sec squeeze': "2 שנ' ירידה + 1 שנ' כיווץ",
-      'Slow': 'איטי',
-      'Static': 'סטטי',
-      'Walking': 'הליכה',
-      'Flow': 'איטי',
-      '5.5 km/h': "5.5 קמ'ש",
-      '5.0 km/h': "5.0 קמ'ש",
-      '4.5 km/h': "4.5 קמ'ש",
-      '6.5 km/h effort / 4.5 km/h rest': "6.5 קמ'ש מאמץ / 4.5 קמ'ש מנוחה"
-    };
-    return map[tempo] || tempo;
+    return tempo;
   }
 
   // Rest Timer Logic
@@ -595,7 +576,7 @@ const UI = (() => {
         clearInterval(timerInterval);
         updateTimerDisplay(0);
         playTimerSound();
-        UI.toast('המנוחה הסתיימה! 💪', 'success');
+        UI.toast(I18n.t('rest_complete_toast'), 'success');
         
         setTimeout(() => {
           document.getElementById('rest-timer').classList.add('hidden');

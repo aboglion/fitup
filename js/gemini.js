@@ -6,9 +6,9 @@ const GeminiService = (() => {
   const DEFAULT_MODEL = 'gemini-3.1-flash-lite';
   
   const AVAILABLE_MODELS = [
-    { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash Lite (מומלץ - מהיר וקל)' },
+    { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash Lite (Recommended)' },
     { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
-    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (עמוק ומפורט)' },
+    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (Deep & Detailed)' },
     { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' }
   ];
 
@@ -66,7 +66,7 @@ const GeminiService = (() => {
    */
   async function testApiKey(key, modelId = DEFAULT_MODEL) {
     const apiKey = key || await getApiKey();
-    if (!apiKey) throw new Error('נא להזין מפתח API');
+    if (!apiKey) throw new Error(I18n.t('enter_api_key'));
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelId)}:generateContent?key=${encodeURIComponent(apiKey)}`;
     
@@ -74,13 +74,13 @@ const GeminiService = (() => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: 'הגדרה תקינה! ענה במילה אחת: OK' }] }]
+        contents: [{ role: 'user', parts: [{ text: 'Valid config! Reply in one word: OK' }] }]
       })
     });
 
     if (!response.ok) {
       const errJson = await response.json().catch(() => ({}));
-      throw new Error(errJson.error?.message || `HTTP ${response.status}: מפתח API לא תקין`);
+      throw new Error(errJson.error?.message || `HTTP ${response.status}: Invalid API key`);
     }
 
     return true;
@@ -95,7 +95,7 @@ const GeminiService = (() => {
   async function analyzeFood(base64Image, mimeType = 'image/jpeg', userNotes = '') {
     const apiKey = await getApiKey();
     if (!apiKey) {
-      throw new Error('מפתח Gemini API אינו מוגדר. נא להגדיר מפתח בהגדרות התזונה.');
+      throw new Error(I18n.t('gemini_key_not_set'));
     }
 
     const model = await getModel();
@@ -154,7 +154,7 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
     }
 
     if (userNotes) {
-      parts.push({ text: `הערות המשתמש על המנה: ${userNotes}` });
+      parts.push({ text: `User notes about the meal: ${userNotes}` });
     }
 
     const payload = {
@@ -197,14 +197,14 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
 
     if (!response || !response.ok) {
       const err = await response.json().catch(() => ({}));
-      throw new Error(err.error?.message || `שגיאת תקשורת מול Gemini (HTTP ${response ? response.status : 'ERR'})`);
+      throw new Error(err.error?.message || `Gemini communication error (HTTP ${response ? response.status : 'ERR'})`);
     }
 
     const result = await response.json();
     const candidateText = result.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || '';
 
     if (!candidateText) {
-      throw new Error('Gemini לא החזיר תשובה. נסה לצלם שוב בבהירות.');
+      throw new Error(I18n.t('gemini_no_response'));
     }
 
     // Extract JSON block
@@ -213,13 +213,13 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
         return {
-          meal_name: parsed.meal_name || 'ארוחה ללא שם',
+          meal_name: parsed.meal_name || I18n.t('unnamed_meal'),
           calories: Math.round(Number(parsed.calories || 0)),
           protein: Math.round(Number(parsed.protein || 0)),
           carbs: Math.round(Number(parsed.carbs || 0)),
           fat: Math.round(Number(parsed.fat || 0)),
-          analysis: parsed.analysis || 'הארוחה הוקלדה בהצלחה.',
-          confidence: parsed.confidence || 'בינונית'
+          analysis: parsed.analysis || I18n.t('meal_logged_success'),
+          confidence: parsed.confidence || 'medium'
         };
       }
     } catch (e) {
@@ -227,7 +227,7 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
     }
 
     return {
-      meal_name: 'ארוחת AI',
+      meal_name: I18n.t('ai_meal_name'),
       calories: 400,
       protein: 25,
       carbs: 40,

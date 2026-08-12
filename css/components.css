@@ -2953,5 +2953,15 @@ html[dir="rtl"] .rpg-video-btn {
   }
 }
 
+/* ===== Login Language Selector ===== */
+.login-lang-btn.active {
+  border-color: var(--accent-primary) !important;
+  background: color-mix(in srgb, var(--accent-primary) 12%, var(--bg-elevated)) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
 
+.login-lang-btn:hover:not(.active) {
+  border-color: var(--text-muted);
+  background: var(--bg-hover, rgba(255,255,255,0.05));
+}
 
