@@ -313,3 +313,5 @@ const CloudSync = (() => {
     loginWithGoogle
   };
 })();
+
+window.CloudSync = CloudSync;

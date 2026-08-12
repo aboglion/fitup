@@ -805,3 +805,5 @@ const ExercisesPage = (() => {
     switchTab
   };
 })();
+
+window.ExercisesPage = ExercisesPage;

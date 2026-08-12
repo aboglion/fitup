@@ -715,6 +715,8 @@ const App = (() => {
   };
 })();
 
+window.App = App;
+
 // Start the app when DOM is ready (handles case where DOM is already ready)
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => App.init());

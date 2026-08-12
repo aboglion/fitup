@@ -302,3 +302,5 @@ window.ExporterGuide = (() => {
   };
 
 })();
+
+window.ExportGuidePage = window.ExporterGuide;

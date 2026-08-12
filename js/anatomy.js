@@ -180,3 +180,5 @@ const AnatomyMap = (() => {
 
   return { render };
 })();
+
+window.AnatomyMap = AnatomyMap;

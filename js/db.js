@@ -609,3 +609,5 @@ const DB = (() => {
     STORES
   };
 })();
+
+window.DB = DB;

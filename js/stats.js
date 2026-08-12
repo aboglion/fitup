@@ -728,3 +728,5 @@ const StatsPage = (() => {
     calculateMuscleProgressions
   };
 })();
+
+window.StatsPage = StatsPage;
