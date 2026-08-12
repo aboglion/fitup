@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v109';
+const CACHE_NAME = 'fitup-v110';
 const ASSETS = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const ASSETS = [
   './js/data.js',
   './js/db.js',
   './js/preloader.js',
+  './js/i18n.js',
   './js/ui.js',
   './js/gemini.js',
   './js/today.js',

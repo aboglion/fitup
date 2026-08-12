@@ -34,6 +34,11 @@ const App = (() => {
       // Initialize IndexedDB
       await DB.init();
 
+      // Initialize i18n
+      if (window.I18n) {
+        await window.I18n.init();
+      }
+
       // Check if this is a new installation but we have an encrypted URL in config
       let savedUrl = await DB.getSetting('cloudSyncUrl');
       const hasEncryptedUrl = CONFIG && CONFIG.encryptedUrl && CONFIG.encryptedUrl.length > 10;
@@ -477,6 +482,16 @@ const App = (() => {
    * Setup settings page handlers
    */
   function setupSettings() {
+    // Language selector
+    const langSelect = document.getElementById('language-select');
+    if (langSelect && window.I18n) {
+      langSelect.value = window.I18n.getLang();
+      langSelect.addEventListener('change', async (e) => {
+        const selectedLang = e.target.value;
+        await window.I18n.setLanguage(selectedLang);
+      });
+    }
+
     // Export data
     document.getElementById('export-data-btn').addEventListener('click', async () => {
       await shareBackup();

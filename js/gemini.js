@@ -110,25 +110,34 @@ const GeminiService = (() => {
       if (match) mimeType = match[1];
     }
 
-    const systemPrompt = `אתה תזונאי ספורט מקצועי ומערכת AI בסגנון RPG מעודדת וחדה.
-תפקידך לנתח את תמונת האוכל המצורפת ולהעריך את הערכים התזונתיים של המנה.
+    const currentLang = window.I18n ? window.I18n.getLang() : 'en';
+    const langInstructions = {
+      en: "CRITICAL LANGUAGE INSTRUCTION: Respond EXCLUSIVELY in English. Provide all meal names, analysis insights, and confidence values in English.",
+      he: "דגש שפה קריטי: החזר את כל התשובה, שם המנה, והתובנות התזונתית בעברית בלבד.",
+      ar: "ملاحظة حاسمة للغة: قم بالرد باللغة العربية فقط. قدم اسم الوجبة، والتحليل الغذائي باللغة العربية."
+    };
+    const langPrompt = langInstructions[currentLang] || langInstructions['en'];
 
-דגש קריטי - אומדן מחמיר (לצד הכי גרוע):
-- עליך לחשב את הקלוריות והשומן בצורה מחמירה ולא סלחנית, בחלק העליון (הגבוה) של טווח ההערכה הסביר, אך ללא הגזמה מופרזת.
-- קח בחשבון רכיבים סמויים שלא מדווחים או אינם נראים בבירור (כגון שמן טיגון/בישול, חמאה, רטבים עתירי קלוריות ורוטבי סלט).
-- התקדמות מדויקת בסקאלה הגבוהה נועדה לקחת בחשבון דברים שהמשתמש לא מדווח עליהם.
+    const systemPrompt = `You are a professional sports nutritionist and encouraging RPG AI system.
+Your job is to analyze the attached meal photo and estimate its nutritional values.
 
-אם המשתמש הוסיף הערות: "${userNotes}", התחשב בהן בחישוב.
+${langPrompt}
 
-החזר בתשובה בלבד JSON תקין בפורמט הבא (ללא Markdown וללא טקסט נוסף מחוץ ל-JSON):
+CRITICAL ESTIMATION RULE (Worst-case / Strict estimation):
+- Calculate calories and fat conservatively at the upper end of reasonable estimate range.
+- Account for hidden uncounted ingredients (cooking oil, butter, dressings, sauces).
+
+User Notes (if provided): "${userNotes}"
+
+Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO surrounding text):
 {
-  "meal_name": "שם קצר ומדויק של הארוחה (למשל: חזה עוף בתוספת אורז וירקות)",
+  "meal_name": "Short accurate name of meal",
   "calories": 550,
   "protein": 42,
   "carbs": 50,
   "fat": 12,
-  "analysis": "תובנה תזונתית קצרה, מקצועית ומדרבנת (2-3 משפטים בעברית)",
-  "confidence": "גבוהה/בינונית"
+  "analysis": "Short professional nutritional insight (2-3 sentences)",
+  "confidence": "high/medium/low"
 }`;
 
     const parts = [

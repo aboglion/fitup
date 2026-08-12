@@ -438,10 +438,23 @@
       <!-- Settings Page -->
       <section id="page-settings" class="page">
         <div class="page-header">
-          <h1 class="page-title">הגדרות</h1>
+          <h1 class="page-title" data-i18n="settings_title">הגדרות</h1>
         </div>
         <div class="settings-content">
           
+          <!-- Language Selector Card -->
+          <div class="settings-card" style="border: 2px solid var(--accent-primary); background: var(--bg-card);">
+            <h3 data-i18n="language_selection">🌐 Language / שפה / اللغة</h3>
+            <p data-i18n="select_language_desc">Choose application interface language</p>
+            <div style="margin-top: 12px;">
+              <select id="language-select" class="js-language-select" style="width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 15px; font-weight: 700;">
+                <option value="en">🇺🇸 English (Default)</option>
+                <option value="he">🇮🇱 עברית</option>
+                <option value="ar">🇸🇦 العربية</option>
+              </select>
+            </div>
+          </div>
+
           <!-- Google Account & Drive Sync Card -->
           <div class="settings-card" style="border: 2px solid var(--accent-primary); background: var(--bg-card); position: relative; overflow: hidden;">
             <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: var(--accent-primary); opacity: 0.1; filter: blur(20px); border-radius: 50%;"></div>
@@ -603,9 +616,10 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=109"></script>
-  <script src="js/preloader.js?v=109"></script>
-  <script src="js/ui.js?v=109"></script>
+  <script src="js/data.js?v=110"></script>
+  <script src="js/preloader.js?v=110"></script>
+  <script src="js/i18n.js?v=110"></script>
+  <script src="js/ui.js?v=110"></script>
   <script src="js/db.js?v=109"></script>
   <script src="js/gemini.js?v=109"></script>
   <script src="js/crypto.js?v=109"></script>
