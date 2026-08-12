@@ -110,11 +110,19 @@ const App = (() => {
       window.appCurrentPlanIndex = planIndex;
       // ----------------------------------
 
-      // Initialize page modules
-      await TodayPage.init(allPlanDays);
-      CalendarPage.init(allPlanDays);
-      await ExercisesPage.init();
-      StatsPage.init(allPlanDays);
+      // Initialize page modules defensively
+      if (typeof TodayPage !== 'undefined' && TodayPage.init) {
+        await TodayPage.init(allPlanDays);
+      }
+      if (typeof CalendarPage !== 'undefined' && CalendarPage.init) {
+        CalendarPage.init(allPlanDays);
+      }
+      if (typeof ExercisesPage !== 'undefined' && ExercisesPage.init) {
+        await ExercisesPage.init();
+      }
+      if (typeof StatsPage !== 'undefined' && StatsPage.init) {
+        StatsPage.init(allPlanDays);
+      }
 
       // Setup navigation
       setupNavigation();
