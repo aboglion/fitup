@@ -8,6 +8,8 @@ const TodayPage = (() => {
   let allExercises = [];
   let allTrackingCache = null;
 
+  let renderNutritionSectionRef = null;
+
   function isWeighted(ex) {
     if (!ex || !ex.weight) return false;
     const w = String(ex.weight).trim().toLowerCase();
@@ -262,6 +264,7 @@ const TodayPage = (() => {
    * Render Nutrition Section with Gemini AI & Photo Scanner
    */
   async function renderNutritionSection(queryDateStr) {
+    renderNutritionSectionRef = renderNutritionSection;
     if (!queryDateStr) queryDateStr = UI.getLocalDateString();
 
     const setupCard = document.getElementById('gemini-setup-card');
@@ -1657,7 +1660,7 @@ const TodayPage = (() => {
   return {
     init,
     render,
-    renderNutritionSection,
+    renderNutritionSection: (dateStr) => renderNutritionSectionRef ? renderNutritionSectionRef(dateStr) : Promise.resolve(),
     navigate,
     goToDay,
     goToToday,
