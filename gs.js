@@ -11,9 +11,17 @@ function debugFitSources() {
 }
 
 function getConfig() {
+  let modelName = "gemini-3.1-flash-lite";
+  try {
+    if (typeof GEMINI_MODEL !== "undefined" && GEMINI_MODEL && String(GEMINI_MODEL).trim()) {
+      modelName = String(GEMINI_MODEL).trim();
+    }
+  } catch (e) {}
+
   const config = {
     telegramToken: String(TELEGRAM_BOT_TOKEN || "").trim(),
     geminiKey: String(GEMINI_API_KEY || "").trim(),
+    geminiModel: modelName,
     filename: String(FILENAME || "fitup-data.json").trim(),
     webAppUrl: String(WEB_APP_URL || "").trim(),
     allowedChatId: String(ALLOWED_CHAT_ID || "").trim()
@@ -514,9 +522,11 @@ function askGeminiAI(
 ) {
   const config = getConfig();
 
+  const modelToUse = config.geminiModel || "gemini-3.1-flash-lite";
+
   const url =
     "https://generativelanguage.googleapis.com/v1beta/models/" +
-    encodeURIComponent(GEMINI_MODEL) +
+    encodeURIComponent(modelToUse) +
     ":generateContent?key=" +
     encodeURIComponent(config.geminiKey);
 

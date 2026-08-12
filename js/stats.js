@@ -350,20 +350,41 @@ const StatsPage = (() => {
       Cardio: { total: 0, completed: 0 }
     };
 
-    allPlanDays.forEach(day => {
-      if (day.dayIndex <= currentIdx) {
+    allPlanDays.forEach((day, index) => {
+      const dIdx = day.dayIndex != null ? day.dayIndex : index;
+      if (dIdx <= currentIdx) {
         const dt = day.dayType || '';
-        let cat = null;
-        if (dt.includes('Push') || dt.includes('Strength A')) cat = 'Push';
-        else if (dt.includes('Pull') || dt.includes('Strength B')) cat = 'Pull';
-        else if (dt.includes('Legs') || dt.includes('Strength A')) cat = 'Legs';
-        else if (dt.includes('Recovery') || dt.includes('Zone') || dt.includes('VO2')) cat = 'Cardio';
+        const isPush = dt.includes('Push') || dt.includes('Strength A');
+        const isPull = dt.includes('Pull') || dt.includes('Strength B');
+        const isLegs = dt.includes('Legs');
+        const isCardio = dt.includes('Recovery') || dt.includes('Zone') || dt.includes('VO2');
 
-        if (cat) {
-          categoryStats[cat].total++;
-          if (trackingMap[day.dayIndex] && trackingMap[day.dayIndex].completed) {
-            categoryStats[cat].completed++;
+        const track = trackingMap[dIdx];
+        let dayRatio = 0;
+        if (track) {
+          if (track.completed) {
+            dayRatio = 1.0;
+          } else if (track.exerciseStatus && day.exercises && day.exercises.length > 0) {
+            const completedCount = Object.values(track.exerciseStatus).filter(Boolean).length;
+            dayRatio = completedCount / day.exercises.length;
           }
+        }
+
+        if (isPush) {
+          categoryStats.Push.total++;
+          categoryStats.Push.completed += dayRatio;
+        }
+        if (isPull) {
+          categoryStats.Pull.total++;
+          categoryStats.Pull.completed += dayRatio;
+        }
+        if (isLegs) {
+          categoryStats.Legs.total++;
+          categoryStats.Legs.completed += dayRatio;
+        }
+        if (isCardio) {
+          categoryStats.Cardio.total++;
+          categoryStats.Cardio.completed += dayRatio;
         }
       }
     });
@@ -372,8 +393,6 @@ const StatsPage = (() => {
     for (const [cat, stat] of Object.entries(categoryStats)) {
       completionRates[cat] = stat.total > 0 ? stat.completed / stat.total : 0;
     }
-
-    const hasAnyTracking = Object.keys(trackingMap).length > 0;
 
     for (const [muscle, contributions] of Object.entries(MUSCLE_CONTRIBUTIONS)) {
       let weightedProgress = 0;
@@ -394,10 +413,7 @@ const StatsPage = (() => {
         weightedCompletion += rate * contrib.weight;
       }
 
-      // If user has not tracked any days yet in the database, show stage baseline
-      const finalCompletion = hasAnyTracking ? weightedCompletion : 1.0;
-
-      result[muscle] = Math.round(weightedProgress * 100 * finalCompletion);
+      result[muscle] = Math.round(weightedProgress * 100 * weightedCompletion);
     }
 
     return result;
@@ -708,6 +724,7 @@ const StatsPage = (() => {
 
   return {
     init,
-    render
+    render,
+    calculateMuscleProgressions
   };
 })();

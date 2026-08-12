@@ -3,13 +3,13 @@
  * Handles direct integration with Google Gemini AI API for vision food analysis and model management.
  */
 const GeminiService = (() => {
-  const DEFAULT_MODEL = 'gemini-2.0-flash';
+  const DEFAULT_MODEL = 'gemini-3.1-flash-lite';
   
   const AVAILABLE_MODELS = [
-    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (מומלץ - מהיר ומדויק)' },
-    { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash' },
-    { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (עמוק ומפורט)' },
-    { id: 'gemini-2.0-flash-lite', name: 'Gemini 2.0 Flash Lite' }
+    { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash Lite (מומלץ - מהיר וקל)' },
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
+    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (עמוק ומפורט)' },
+    { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash' }
   ];
 
   /**

@@ -286,7 +286,7 @@ const TodayPage = (() => {
           const modelSelect = document.getElementById('gemini-model-select');
           const errorDiv = document.getElementById('gemini-key-error');
           const key = keyInput ? keyInput.value.trim() : '';
-          const model = modelSelect ? modelSelect.value : 'gemini-2.0-flash';
+          const model = modelSelect ? modelSelect.value : 'gemini-3.1-flash-lite';
 
           if (!key) {
             if (errorDiv) { errorDiv.textContent = 'נא להזין מפתח API'; errorDiv.style.display = 'block'; }

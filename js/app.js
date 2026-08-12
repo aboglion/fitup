@@ -638,7 +638,7 @@ const App = (() => {
       if (saveGeminiBtn) {
         saveGeminiBtn.onclick = async () => {
           const key = geminiKeyInput ? geminiKeyInput.value.trim() : '';
-          const model = geminiModelSelect ? geminiModelSelect.value : 'gemini-2.0-flash';
+          const model = geminiModelSelect ? geminiModelSelect.value : 'gemini-3.1-flash-lite';
 
           if (!key) {
             UI.toast('נא להזין מפתח API', 'warning');
