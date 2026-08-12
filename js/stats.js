@@ -540,7 +540,7 @@ const StatsPage = (() => {
           <div class="chart-title" style="margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
             <span style="font-weight: 700; display: flex; align-items: center; gap: 6px;">📊 מדדי תפוקה וסיכום</span>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); gap: 8px;">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
             
             <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 13px; margin-bottom: 1px;">📅</span>
