@@ -1,9 +1,11 @@
 /**
  * Gemini Service Module
  * Handles direct integration with Google Gemini AI API for vision food analysis and model management.
+ * API keys are encrypted at rest using AES-256-GCM via the Crypto module.
  */
 const GeminiService = (() => {
   const DEFAULT_MODEL = 'gemini-3.1-flash-lite';
+  const ENC_PREFIX = 'ENC:';
   
   const AVAILABLE_MODELS = [
     { id: 'gemini-3.1-flash-lite', name: 'Gemini 3.1 Flash Lite (Recommended)' },
@@ -13,18 +15,80 @@ const GeminiService = (() => {
   ];
 
   /**
-   * Get configured API key
+   * Get the encryption password derived from the Google User ID.
+   * Returns null if no Google profile is available.
    */
-  async function getApiKey() {
-    return await DB.getSetting('geminiApiKey');
+  async function getEncryptionPassword() {
+    if (typeof CloudSync === 'undefined') return null;
+    const profile = await CloudSync.getUserProfile();
+    // Use Google's stable user ID (sub) as the encryption key
+    if (profile && profile.sub) return 'fitup_key_' + profile.sub;
+    // Fallback: use email if sub is missing
+    if (profile && profile.email) return 'fitup_key_' + profile.email;
+    return null;
   }
 
   /**
-   * Save API key
+   * Get configured API key (decrypted)
+   */
+  async function getApiKey() {
+    const stored = await DB.getSetting('geminiApiKey');
+    if (!stored) return null;
+
+    // Check if encrypted
+    if (stored.startsWith(ENC_PREFIX)) {
+      const password = await getEncryptionPassword();
+      if (!password) {
+        console.warn('Cannot decrypt API key: no Google profile available');
+        return null;
+      }
+      const encData = stored.slice(ENC_PREFIX.length);
+      const decrypted = await Crypto.decrypt(encData, password);
+      if (!decrypted) {
+        console.warn('API key decryption failed (wrong account or corrupted data)');
+        return null;
+      }
+      return decrypted;
+    }
+
+    // Legacy: plain-text key found → auto-migrate to encrypted form
+    const password = await getEncryptionPassword();
+    if (password && typeof Crypto !== 'undefined') {
+      const encrypted = await Crypto.encrypt(stored, password);
+      if (encrypted) {
+        await DB.setSetting('geminiApiKey', ENC_PREFIX + encrypted);
+        console.log('API key auto-migrated to encrypted storage');
+      }
+    }
+    return stored;
+  }
+
+  /**
+   * Save API key (encrypted)
    */
   async function setApiKey(key) {
     const cleaned = String(key || '').trim();
-    await DB.setSetting('geminiApiKey', cleaned);
+    if (!cleaned) {
+      await DB.setSetting('geminiApiKey', '');
+      return '';
+    }
+
+    // Encrypt if possible
+    const password = await getEncryptionPassword();
+    if (password && typeof Crypto !== 'undefined') {
+      const encrypted = await Crypto.encrypt(cleaned, password);
+      if (encrypted) {
+        await DB.setSetting('geminiApiKey', ENC_PREFIX + encrypted);
+      } else {
+        // Encryption failed, store plain (shouldn't happen)
+        console.warn('Encryption failed, storing API key as plain text');
+        await DB.setSetting('geminiApiKey', cleaned);
+      }
+    } else {
+      // No Google profile yet, store plain text (will be migrated on next read after login)
+      await DB.setSetting('geminiApiKey', cleaned);
+    }
+
     // Sync API key to cloud for cross-device availability
     if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
     return cleaned;
@@ -36,6 +100,7 @@ const GeminiService = (() => {
   async function removeApiKey() {
     await DB.setSetting('geminiApiKey', '');
     await DB.setSetting('geminiModel', '');
+    if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
   }
 
   /**
@@ -273,3 +338,4 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
 })();
 
 window.GeminiService = GeminiService;
+
