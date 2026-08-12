@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v92';
+const CACHE_NAME = 'fitup-v93';
 const ASSETS = [
   './',
   './index.html',
@@ -10,6 +10,7 @@ const ASSETS = [
   './js/crypto.js',
   './js/data.js',
   './js/db.js',
+  './js/preloader.js',
   './js/ui.js',
   './js/gemini.js',
   './js/today.js',
@@ -57,6 +58,27 @@ self.addEventListener('fetch', (event) => {
       url.includes('script.googleusercontent.com') ||
       url.includes('fonts.googleapis.com') || 
       url.includes('fonts.gstatic.com')) {
+    return;
+  }
+
+  // Cache-First Strategy for media assets (images, gifs, webp)
+  if (url.includes('/images/')) {
+    event.respondWith(
+      caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(event.request).then((response) => {
+          if (response && (response.status === 200 || response.status === 304)) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return response;
+        });
+      })
+    );
     return;
   }
 

@@ -17,8 +17,8 @@ except ImportError:
     Image = None
 
 # Configuration
-PNG_MAX_SIZE = (800, 800)  # Max resolution for exercise static images
-GIF_MAX_SIZE = (400, 400)  # Max resolution for animated GIFs
+PNG_MAX_SIZE = (600, 600)  # Max resolution for exercise static images
+GIF_MAX_SIZE = (360, 360)  # Max resolution for animated GIFs
 GIF_COLORS = 64            # Limit colors in GIF to save space
 
 def check_command_exists(cmd):
@@ -59,12 +59,21 @@ def optimize_gif_pillow(input_path, max_size=GIF_MAX_SIZE, colors=GIF_COLORS):
     try:
         with Image.open(input_path) as im:
             is_animated = getattr(im, "is_animated", False)
+            raw_frames = list(ImageSequence.Iterator(im))
+            total_raw = len(raw_frames)
+
+            # Smart frame subsampling for long GIFs
+            step = 1
+            if total_raw > 30:
+                step = 2 if total_raw <= 60 else max(2, total_raw // 30)
+
+            subsampled_frames = raw_frames[::step]
             
             frames = []
             durations = []
             loops = im.info.get('loop', 0)
             
-            for frame in ImageSequence.Iterator(im):
+            for frame in subsampled_frames:
                 # Copy frame & convert to RGBA to resize cleanly
                 rgba_frame = frame.convert("RGBA")
                 
@@ -73,6 +82,8 @@ def optimize_gif_pillow(input_path, max_size=GIF_MAX_SIZE, colors=GIF_COLORS):
                     rgba_frame.thumbnail(max_size, Image.Resampling.LANCZOS)
                 
                 transparency = frame.info.get('transparency')
+                dur = frame.info.get('duration', 100) * step
+
                 if transparency is not None:
                     # Handle transparency by creating a palette mode image with transparency mapped
                     alpha = rgba_frame.getchannel('A')
@@ -87,7 +98,7 @@ def optimize_gif_pillow(input_path, max_size=GIF_MAX_SIZE, colors=GIF_COLORS):
                     p_frame = rgba_frame.convert("P", palette=Image.Palette.ADAPTIVE, colors=colors)
                 
                 frames.append(p_frame)
-                durations.append(frame.info.get('duration', 100))
+                durations.append(dur)
             
             if is_animated and len(frames) > 1:
                 frames[0].save(

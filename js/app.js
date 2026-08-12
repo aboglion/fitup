@@ -127,6 +127,11 @@ const App = (() => {
         window.StatsPage.init(allPlanDays);
       }
 
+      // Initialize media preloader in background
+      if (window.Preloader && window.Preloader.init) {
+        window.Preloader.init();
+      }
+
       // Setup navigation
       setupNavigation();
 

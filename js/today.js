@@ -400,7 +400,7 @@ const TodayPage = (() => {
           mealCard.style.cssText = "background: var(--bg-input); border-radius: 12px; padding: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px;";
 
           const imgHtml = meal.image ? `
-            <img src="${meal.image}" alt="${meal.name}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-light); flex-shrink: 0;">
+            <img src="${meal.image}" alt="${meal.name}" loading="eager" decoding="async" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-light); flex-shrink: 0;">
           ` : '';
 
           const analysisHtml = meal.analysis ? `
@@ -996,6 +996,7 @@ const TodayPage = (() => {
             </div>
             <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
                  class="exercise-hero-image"
+                 loading="eager" decoding="async"
                  alt="${ex.name}" onerror="UI.handleImageFallback(this, 'png')"
                  onclick="TodayPage.handleImageClick(event, ${idx}, '${ex.name.replace(/'/g, "\\'")}')">
             ${newBadgeHTML}
@@ -1486,7 +1487,7 @@ const TodayPage = (() => {
 
 
   function showExerciseImage(name, src) {
-    UI.showModal(name, `<img src="${src}" style="width:100%; border-radius:8px;">`);
+    UI.showModal(name, `<img src="${src}" loading="eager" decoding="async" style="width:100%; border-radius:8px;">`);
   }
 
   async function showSwapModal() {

@@ -265,8 +265,8 @@ const UI = (() => {
     
     showModal(title, `
       <div style="display: flex; flex-direction: column; gap: 16px; width: 100%; direction: rtl;">
-        <img src="${pngPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} תמונה" onerror="UI.handleImageFallback(this, 'png')">
-        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} GIF" onerror="UI.handleImageFallback(this, 'gif')">
+        <img src="${pngPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} תמונה" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'png')">
+        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} GIF" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'gif')">
         ${extraNote}
       </div>
     `);
