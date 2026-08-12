@@ -204,7 +204,11 @@ const App = (() => {
           (err) => {
             googleBtn.disabled = false;
             googleBtn.innerHTML = '<span>🔑</span> התחבר עם חשבון גוגל';
-            UI.toast('שגיאה בהתחברות: ' + err, 'error');
+            if (String(err).includes('invalid_client') || String(err).includes('401')) {
+              UI.toast('גוגל מעדכנת את מזהה החיבור בשרתיה (2-5 דקות). אנא המתן דקה ונסה שוב ⏳', 'warning');
+            } else {
+              UI.toast('שגיאה בהתחברות: ' + err, 'error');
+            }
           }
         );
       };
