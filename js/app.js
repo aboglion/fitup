@@ -10,6 +10,17 @@ const App = (() => {
    */
   async function init() {
     try {
+      // Safety timeout: ensure splash screen hides within max 2.5s if anything gets stuck
+      setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        const app = document.getElementById('app');
+        if (splash && !splash.classList.contains('hidden') && app) {
+          console.warn("Safety timeout: hiding splash screen to allow offline view.");
+          splash.classList.add('hidden');
+          app.classList.remove('hidden');
+        }
+      }, 2500);
+
       // Register Service Worker for PWA
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
@@ -58,11 +69,11 @@ const App = (() => {
         await DB.setSetting('dataVersion', currentDataVersion);
       }
 
-      // Background pull from cloud to get latest bot data (like nutrition)
+      // Non-blocking background pull from cloud
       const savedUrl = await DB.getSetting('cloudSyncUrl');
       if (savedUrl) {
-        console.log("Pulling latest data from cloud...");
-        await CloudSync.pullData();
+        console.log("Pulling latest data from cloud (background)...");
+        CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
       }
 
       // Load all plan data

@@ -93,9 +93,12 @@ const TodayPage = (() => {
     }
 
     // Auto-save inputs on change
-    document.getElementById('actual-rpe').addEventListener('change', autoSave);
-    document.getElementById('body-weight').addEventListener('change', autoSave);
-    document.getElementById('day-notes').addEventListener('change', autoSave);
+    const actualRpe = document.getElementById('actual-rpe');
+    if (actualRpe) actualRpe.addEventListener('change', autoSave);
+    const bodyWeight = document.getElementById('body-weight');
+    if (bodyWeight) bodyWeight.addEventListener('change', autoSave);
+    const dayNotes = document.getElementById('day-notes');
+    if (dayNotes) dayNotes.addEventListener('change', autoSave);
 
     // Day navigation arrows
     const prevBtn = document.getElementById('nav-prev-day');

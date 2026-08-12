@@ -20,8 +20,10 @@ const CalendarPage = (() => {
       if (match) currentWeekNum = parseInt(match[0]);
     }
 
-    document.getElementById('cal-prev-week').addEventListener('click', () => navigateWeek(-1));
-    document.getElementById('cal-next-week').addEventListener('click', () => navigateWeek(1));
+    const prevWeekBtn = document.getElementById('cal-prev-week');
+    if (prevWeekBtn) prevWeekBtn.addEventListener('click', () => navigateWeek(-1));
+    const nextWeekBtn = document.getElementById('cal-next-week');
+    if (nextWeekBtn) nextWeekBtn.addEventListener('click', () => navigateWeek(1));
   }
 
   /**
