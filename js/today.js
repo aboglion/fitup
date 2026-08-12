@@ -391,6 +391,52 @@ const TodayPage = (() => {
       desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} קק"ל (${calsPercent}%)</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}ג חלבון (${proteinPercent}%)</span>`;
     }
 
+    // Update Quick Protein Powder Completion Button
+    const quickProtBtn = document.getElementById('quick-protein-powder-btn');
+    if (quickProtBtn) {
+      const remainingNeeded = Math.max(0, targetProtein - totalProtein);
+      if (remainingNeeded <= 0) {
+        quickProtBtn.innerHTML = `🎯 הגעת ליעד החלבון!`;
+        quickProtBtn.disabled = true;
+        quickProtBtn.style.opacity = '0.6';
+        quickProtBtn.style.cursor = 'default';
+        quickProtBtn.onclick = null;
+      } else {
+        const powderAmount = Math.ceil(remainingNeeded * 1.1);
+        quickProtBtn.innerHTML = `🥛 צרכתי ${powderAmount}ג חלבון אבקתי`;
+        quickProtBtn.disabled = false;
+        quickProtBtn.style.opacity = '1';
+        quickProtBtn.style.cursor = 'pointer';
+
+        quickProtBtn.onclick = async () => {
+          let currentNut = await DB.getNutrition(queryDateStr);
+          if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
+          if (!currentNut.meals) currentNut.meals = [];
+
+          const now = new Date();
+          const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+          const newMeal = {
+            id: 'meal_' + Date.now(),
+            name: 'אבקת חלבון 🥛',
+            calories: Math.round(powderAmount * 4),
+            protein: powderAmount,
+            time: timeStr,
+            analysis: 'השלמת חלבון אבקתי (יעד + 10%)'
+          };
+
+          currentNut.meals.push(newMeal);
+          await DB.saveNutrition(queryDateStr, currentNut);
+
+          UI.toast(`נוספה השלמת חלבון אבקתי: ${powderAmount}ג! 🎉`, 'success');
+          if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+            CloudSync.scheduleSync();
+          }
+          renderNutritionSection(queryDateStr);
+        };
+      }
+    }
+
     // Render Meals Log List
     const mealsContainer = document.getElementById('meals-log-container');
     const countBadge = document.getElementById('meals-count-badge');

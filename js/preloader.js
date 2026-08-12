@@ -123,18 +123,22 @@
           }
         };
 
-        // 1. Image Object Preload (Populates Browser Memory Cache)
-        const img = new Image();
-        img.onload = img.onerror = checkDone;
-        img.src = url;
+        if (window.fetch) {
+          fetch(url)
+            .then(() => checkDone())
+            .catch(() => {
+              const img = new Image();
+              img.onload = img.onerror = checkDone;
+              img.src = url;
+            });
+        } else {
+          const img = new Image();
+          img.onload = img.onerror = checkDone;
+          img.src = url;
+        }
 
-        // 2. Fetch API Call (Triggers Service Worker Cache-First Storage)
-        fetch(url, { cache: 'force-cache' })
-          .then(checkDone)
-          .catch(checkDone);
-
-        // Safeguard timeout per image (max 5 seconds)
-        setTimeout(checkDone, 5000);
+        // Safeguard timeout per image (max 4 seconds)
+        setTimeout(checkDone, 4000);
       });
     },
 
