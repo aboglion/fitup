@@ -283,7 +283,7 @@ const UI = (() => {
 
     const modalTitleHTML = `
       <div style="display: flex; align-items: center; gap: 16px; direction: rtl; width: 100%; flex-wrap: wrap;">
-        <div style="width: 210px; height: 210px; min-width: 210px; max-width: 100%; border-radius: 16px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-light, rgba(255, 255, 255, 0.18)); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); flex-shrink: 0;">
+        <div style="width: 210px; height: 210px; min-width: 210px; max-width: 100%; border-radius: 16px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); flex-shrink: 0;">
           <img src="${pngPath}" 
                style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;" 
                alt="${title} תמונה" 
