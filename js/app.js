@@ -226,8 +226,11 @@ const App = (() => {
           (err) => {
             googleBtn.disabled = false;
             googleBtn.innerHTML = '<span>🔑</span> התחבר עם חשבון גוגל';
-            if (String(err).includes('invalid_client') || String(err).includes('401')) {
+            const errStr = String(err);
+            if (errStr.includes('invalid_client') || errStr.includes('401')) {
               UI.toast('גוגל מעדכנת את מזהה החיבור בשרתיה (2-5 דקות). אנא המתן דקה ונסה שוב ⏳', 'warning');
+            } else if (errStr.includes('access_denied') || errStr.includes('popup_closed') || errStr.includes('dismissed')) {
+              UI.toast('התחברות בוטלה או שהרשאות Google Drive לא אושרו. נסה שוב או המשך אופליין ⚠️', 'warning');
             } else {
               UI.toast('שגיאה בהתחברות: ' + err, 'error');
             }
