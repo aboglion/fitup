@@ -193,6 +193,22 @@ const GeminiService = (() => {
     };
   }
 
+  function populateSelect(selectEl) {
+    if (!selectEl) return;
+    const currentVal = selectEl.value;
+    selectEl.innerHTML = AVAILABLE_MODELS.map(m => 
+      `<option value="${m.id}">${m.name}</option>`
+    ).join('');
+    if (currentVal && AVAILABLE_MODELS.some(m => m.id === currentVal)) {
+      selectEl.value = currentVal;
+    }
+  }
+
+  function initSelects() {
+    populateSelect(document.getElementById('gemini-model-select'));
+    populateSelect(document.getElementById('settings-gemini-model'));
+  }
+
   return {
     DEFAULT_MODEL,
     AVAILABLE_MODELS,
@@ -202,6 +218,8 @@ const GeminiService = (() => {
     setModel,
     isConfigured,
     testApiKey,
-    analyzeFood
+    analyzeFood,
+    populateSelect,
+    initSelects
   };
 })();

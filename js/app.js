@@ -628,6 +628,7 @@ const App = (() => {
     const saveGeminiBtn = document.getElementById('save-settings-gemini-btn');
 
     if (typeof GeminiService !== 'undefined') {
+      if (GeminiService.initSelects) GeminiService.initSelects();
       GeminiService.getApiKey().then(key => {
         if (key && geminiKeyInput) geminiKeyInput.value = key;
       });

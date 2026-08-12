@@ -270,6 +270,7 @@ const TodayPage = (() => {
     const mainContent = document.getElementById('nutrition-main-content');
     
     if (typeof GeminiService === 'undefined') return;
+    if (GeminiService.initSelects) GeminiService.initSelects();
 
     const isConfigured = await GeminiService.isConfigured();
 
