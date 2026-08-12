@@ -4,8 +4,11 @@
 const StatsPage = (() => {
   let allPlanDays = [];
 
-  const STRENGTH_TYPES = ['Workout A', 'Workout B', 'Workout C'];
-  const isStrengthDay = (dayType) => STRENGTH_TYPES.includes(dayType);
+  const isStrengthDay = (dayType) => {
+    if (!dayType) return false;
+    if (dayType === 'Rest' || dayType.includes('Active Recovery') || dayType.includes('Cardio') || dayType.includes('VO2')) return false;
+    return true;
+  };
 
 
   /**
@@ -89,8 +92,22 @@ const StatsPage = (() => {
     renderOverview(completedDays, totalDays, completedStrength, strengthDays.length,
                    completedWalk, walkDays.length, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currPct, lastPct, monthPct);
 
-    // Render charts
-    renderCharts(trackingMap, weightValues);
+    // Metrics for compact cards at the bottom
+    const metrics = {
+      completed: completedDays,
+      total: totalDays,
+      strength: completedStrength,
+      totalStrength: strengthDays.length,
+      walk: completedWalk,
+      totalWalk: walkDays.length,
+      avgRPE,
+      monthPct,
+      currPct,
+      lastPct
+    };
+
+    // Render charts & compact stats
+    renderCharts(trackingMap, weightValues, metrics);
 
     // Render anatomy map
     renderAnatomy(trackingMap);
@@ -167,7 +184,7 @@ const StatsPage = (() => {
     `;
 
     const anatomyHTML = `
-      <div id="anatomy-wrapper" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
+      <div id="anatomy-wrapper" style="grid-column: 1 / -1; margin-bottom: 0;">
         <div class="chart-title"><span>💪 מפת התקדמות שרירים</span></div>
         <div id="anatomy-map-container"></div>
       </div>
@@ -177,36 +194,6 @@ const StatsPage = (() => {
       ${xpHTML}
       ${streakHTML}
       ${anatomyHTML}
-      <div class="stat-card">
-        <div class="stat-icon">📅</div>
-        <div class="stat-value">${completed}</div>
-        <div class="stat-label">ימים הושלמו מתוך ${total}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">💪</div>
-        <div class="stat-value">${strength}</div>
-        <div class="stat-label">אימוני כוח מתוך ${totalStrength}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">🚶</div>
-        <div class="stat-value">${walk}</div>
-        <div class="stat-label">ימי הליכה מתוך ${totalWalk}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">📈</div>
-        <div class="stat-value">${avgRPE}</div>
-        <div class="stat-label">RPE ממוצע</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">📅</div>
-        <div class="stat-value">${monthPct}%</div>
-        <div class="stat-label">השלמה חודשית (30 ימים)</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-icon">${currPct >= lastPct ? '📈' : '📉'}</div>
-        <div class="stat-value" style="color: ${currPct >= lastPct ? 'var(--success)' : 'var(--warning)'};">${currPct}%</div>
-        <div class="stat-label">מגמת השלמה שבועית</div>
-      </div>
     `;
   }
 
@@ -468,15 +455,16 @@ const StatsPage = (() => {
   /**
    * Render charts
    */
-  function renderCharts(trackingMap, weightValues) {
+  function renderCharts(trackingMap, weightValues, metrics) {
     const container = document.getElementById('stats-charts');
 
     // Progression Heatmap (up to current day)
     const todayIdx = UI.findTodayIndex(allPlanDays);
     const heatmapDays = allPlanDays.slice(0, todayIdx + 1);
     
-    const heatmapCells = heatmapDays.map(day => {
-      const tracking = trackingMap[day.dayIndex];
+    const heatmapCells = heatmapDays.map((day, index) => {
+      const dIdx = day.dayIndex != null ? day.dayIndex : index;
+      const tracking = trackingMap[dIdx];
       const isCompleted = tracking && tracking.completed;
       let colorClass = 'heat-empty';
       
@@ -487,7 +475,7 @@ const StatsPage = (() => {
         else if (day.dayType === 'Rest') colorClass = 'heat-rest';
       }
       
-      const tooltip = `יום ${day.dayIndex + 1} (${day.dayType}) - ${isCompleted ? 'הושלם' : 'לא בוצע/דולג'}`;
+      const tooltip = `יום ${dIdx + 1} (${day.dayType}) - ${isCompleted ? 'הושלם' : 'לא בוצע/דולג'}`;
       return `<div class="heat-cell ${colorClass}" title="${tooltip}"></div>`;
     }).join('');
 
@@ -544,9 +532,61 @@ const StatsPage = (() => {
       `;
     }
 
+    // Compact Stat Cards (Placed at the very end)
+    let compactStatsHtml = '';
+    if (metrics) {
+      compactStatsHtml = `
+        <div class="chart-card" style="grid-column: 1 / -1; margin-top: 0; padding: 14px 16px;">
+          <div class="chart-title" style="margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-weight: 700; display: flex; align-items: center; gap: 6px;">📊 מדדי תפוקה וסיכום</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); gap: 8px;">
+            
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 13px; margin-bottom: 1px;">📅</span>
+              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.completed}</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">ימים הושלמו (${metrics.total})</span>
+            </div>
+
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 13px; margin-bottom: 1px;">💪</span>
+              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.strength}</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">אימוני כוח (${metrics.totalStrength})</span>
+            </div>
+
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 13px; margin-bottom: 1px;">🚶</span>
+              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.walk}</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">ימי הליכה (${metrics.totalWalk})</span>
+            </div>
+
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 13px; margin-bottom: 1px;">📈</span>
+              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.avgRPE}</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">RPE ממוצע</span>
+            </div>
+
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 13px; margin-bottom: 1px;">📅</span>
+              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.monthPct}%</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">השלמה חודשית</span>
+            </div>
+
+            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 13px; margin-bottom: 1px;">${metrics.currPct >= metrics.lastPct ? '📈' : '📉'}</span>
+              <span style="font-size: 15px; font-weight: 900; color: ${metrics.currPct >= metrics.lastPct ? 'var(--success)' : 'var(--warning)'}; line-height: 1.1;">${metrics.currPct}%</span>
+              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">מגמה שבועית</span>
+            </div>
+
+          </div>
+        </div>
+      `;
+    }
+
     container.innerHTML = `
       ${heatmapHtml}
       ${weightChart}
+      ${compactStatsHtml}
     `;
   }
 
