@@ -571,15 +571,36 @@ function askGeminiAI(
     }
   };
 
-  const response = UrlFetchApp.fetch(url, {
-    method: "post",
-    contentType: "application/json",
-    payload: JSON.stringify(payload),
-    muteHttpExceptions: true
-  });
+  const fallbackList = [modelToUse, "gemini-3.1-flash-lite", "gemini-2.5-flash", "gemini-2.0-flash"];
+  let response;
+  let statusCode = 404;
+  let rawBody = "";
 
-  const statusCode = response.getResponseCode();
-  const rawBody = response.getContentText();
+  for (var i = 0; i < fallbackList.length; i++) {
+    var candidateModel = fallbackList[i];
+    var candidateUrl =
+      "https://generativelanguage.googleapis.com/v1beta/models/" +
+      encodeURIComponent(candidateModel) +
+      ":generateContent?key=" +
+      encodeURIComponent(config.geminiKey);
+
+    response = UrlFetchApp.fetch(candidateUrl, {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+
+    statusCode = response.getResponseCode();
+    rawBody = response.getContentText();
+
+    if (statusCode >= 200 && statusCode < 300) {
+      break;
+    }
+    if (statusCode !== 404) {
+      break;
+    }
+  }
 
   let json;
 

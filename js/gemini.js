@@ -146,15 +146,36 @@ const GeminiService = (() => {
       }
     };
 
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    const fallbackList = Array.from(new Set([model, DEFAULT_MODEL, 'gemini-2.5-flash', 'gemini-2.0-flash']));
+    let response;
+    let successfulModel = model;
 
-    if (!response.ok) {
+    for (const modelCandidate of fallbackList) {
+      const candidateUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelCandidate)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      response = await fetch(candidateUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        successfulModel = modelCandidate;
+        if (successfulModel !== model) {
+          console.warn(`Model ${model} was unavailable (404/deprecated). Automatically switched to ${successfulModel}.`);
+          await setModel(successfulModel);
+        }
+        break;
+      }
+
+      // If error is not 404, break early (e.g. invalid API key or quota exceeded)
+      if (response.status !== 404) {
+        break;
+      }
+    }
+
+    if (!response || !response.ok) {
       const err = await response.json().catch(() => ({}));
-      throw new Error(err.error?.message || `שגיאת תקשורת מול Gemini (HTTP ${response.status})`);
+      throw new Error(err.error?.message || `שגיאת תקשורת מול Gemini (HTTP ${response ? response.status : 'ERR'})`);
     }
 
     const result = await response.json();
