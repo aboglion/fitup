@@ -541,9 +541,10 @@ const ExercisesPage = (() => {
             <div class="rpg-node ${stateClass} ${latestClass}" 
                  data-node-id="${node.id || node.name}"
                  data-parent-id="${node.parentId || ''}"
+                 onclick="UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc || ''}')"
                  style="animation-delay: ${(pathIndex * 0.1) + (levelIndex * 0.08) + (nodeIdx * 0.05)}s">
               <div class="rpg-node-hex-wrap">
-                <div class="rpg-node-hex" style="cursor: pointer;" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc || ''}')">
+                <div class="rpg-node-hex" style="cursor: pointer;">
                   ${isUnlocked ? '' : '<div class="rpg-lock-icon">🔒</div>'}
                   ${imgSrc ? `<img src="${imgSrc}" class="rpg-node-img" alt="${node.name}" loading="eager" decoding="async" onerror="this.style.display='none'; this.parentElement.querySelector('.rpg-node-emoji') && (this.parentElement.querySelector('.rpg-node-emoji').style.display='flex')">` : ''}
                   ${!imgSrc || node.noImage ? `<div class="rpg-node-emoji" style="display:flex">${path.icon}</div>` : `<div class="rpg-node-emoji" style="display:none">${path.icon}</div>`}
@@ -757,9 +758,9 @@ const ExercisesPage = (() => {
     }
 
     return `
-      <div class="guide-card">
+      <div class="guide-card" style="cursor: pointer;" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}')">
         <div class="guide-card-image-container diff-${diffClass}">
-          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" loading="eager" decoding="async" onclick="event.stopPropagation(); UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', this.src)" onerror="UI.handleImageFallback(this, 'png')">
+          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'png')">
         </div>
         <div class="guide-card-content">
           <div class="guide-card-title">
