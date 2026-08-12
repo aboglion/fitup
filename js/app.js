@@ -21,10 +21,13 @@ const App = (() => {
         }
       }, 2500);
 
-      // Register Service Worker for PWA
+      // Register Service Worker for PWA with automatic update force
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('SW registered!', reg))
+          .then(reg => {
+            console.log('SW registered!', reg);
+            reg.update();
+          })
           .catch(err => console.error('SW failed', err));
       }
 

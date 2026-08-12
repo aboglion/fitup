@@ -577,13 +577,6 @@ const TodayPage = (() => {
         renderNutritionSection(queryDateStr);
       };
     }
-                UI.toast('תוסף ראשון נוסף!', 'success');
-                render();
-             }
-          };
-        }
-      }
-    }
     
     // Bottom sheet interaction removed (Now handled by App router as a dedicated page)
     // -------------------------------------
