@@ -414,13 +414,13 @@ const App = (() => {
     switch (pageName) {
       case 'today':
       case 'nutrition':
-        TodayPage.render();
+        if (typeof TodayPage !== 'undefined' && TodayPage.render) TodayPage.render();
         break;
       case 'exercises':
-        ExercisesPage.render();
+        if (typeof ExercisesPage !== 'undefined' && ExercisesPage.render) ExercisesPage.render();
         break;
       case 'stats':
-        StatsPage.render();
+        if (typeof StatsPage !== 'undefined' && StatsPage.render) StatsPage.render();
         break;
     }
   }
