@@ -260,6 +260,7 @@ const UI = (() => {
   function showImageModal(title, src) {
     const pngPath = `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
     const gifPath = `images/gifs/${title}.gif`;
+    const gifExists = hasGif(title);
     
     let extraNote = '';
     const lowerTitle = title.toLowerCase();
@@ -274,15 +275,53 @@ const UI = (() => {
         </div>
       `;
     }
-    
-    const gifImgHTML = hasGif(title) 
-      ? `<img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} GIF" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'gif')">`
-      : '';
+
+    let mediaHTML = '';
+
+    if (gifExists) {
+      // Facebook-style Instant Frame Swap: Static PNG shows instantly, animated GIF swaps seamlessly when downloaded
+      mediaHTML = `
+        <div style="position: relative; width: 100%; min-height: 250px; background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          <!-- Facebook Style Instant Frame (PNG) -->
+          <img src="${pngPath}" 
+               style="width: 100%; border-radius: 12px; object-fit: contain; max-height: 48vh; display: block; margin: 0 auto; transition: opacity 0.4s ease;" 
+               alt="${title} תמונה" 
+               loading="eager" 
+               decoding="async" 
+               onerror="this.style.opacity='0'">
+          
+          <!-- Loading Badge -->
+          <div class="fb-gif-badge" style="position: absolute; bottom: 12px; left: 12px; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.2); transition: opacity 0.3s ease; z-index: 2; font-family: sans-serif;">
+            <span style="display: inline-block; animation: pulse 1s infinite;">🎬</span> טוען הנפשה...
+          </div>
+
+          <!-- Animated GIF (smoothly fades in & swaps when ready) -->
+          <img src="${gifPath}" 
+               style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px; object-fit: contain; max-height: 48vh; opacity: 0; transition: opacity 0.4s ease; z-index: 3;" 
+               alt="${title} GIF" 
+               loading="eager" 
+               decoding="async" 
+               onload="this.style.opacity='1'; const b = this.parentElement.querySelector('.fb-gif-badge'); if(b) b.style.opacity='0';" 
+               onerror="UI.handleImageFallback(this, 'gif')">
+        </div>
+      `;
+    } else {
+      // Non-GIF exercise (Cardio etc.) - Show PNG frame only
+      mediaHTML = `
+        <div style="position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.2);">
+          <img src="${pngPath}" 
+               style="width: 100%; border-radius: 12px; object-fit: contain; max-height: 48vh; display: block; margin: 0 auto;" 
+               alt="${title} תמונה" 
+               loading="eager" 
+               decoding="async" 
+               onerror="UI.handleImageFallback(this, 'png')">
+        </div>
+      `;
+    }
 
     showModal(title, `
-      <div style="display: flex; flex-direction: column; gap: 16px; width: 100%; direction: rtl;">
-        <img src="${pngPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh; display: block; margin: 0 auto;" alt="${title} תמונה" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'png')">
-        ${gifImgHTML}
+      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; direction: rtl;">
+        ${mediaHTML}
         ${extraNote}
       </div>
     `);
