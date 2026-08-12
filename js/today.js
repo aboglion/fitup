@@ -256,10 +256,6 @@ const TodayPage = (() => {
       rpeBadge.style.display = 'none';
     }
 
-    // --- Update Nutrition & AI System ---
-    await renderNutritionSection();
-  }
-
   /**
    * Render Nutrition Section with Gemini AI & Photo Scanner
    */
@@ -721,7 +717,8 @@ const TodayPage = (() => {
     if (prevBtn) prevBtn.disabled = currentDayIndex <= 0;
     if (nextBtn) nextBtn.disabled = currentDayIndex >= allPlanDays.length - 1;
 
-
+    // --- Update Nutrition & AI System ---
+    await renderNutritionSection();
   }
 
 
