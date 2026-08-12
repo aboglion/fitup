@@ -128,6 +128,7 @@ const CloudSync = (() => {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json; charset=UTF-8'
       };
+      let multipartResponseBody = null;
 
       if (fileId) {
         // Update existing file
@@ -140,7 +141,7 @@ const CloudSync = (() => {
         const delimiter = "\r\n--" + boundary + "\r\n";
         const close_delim = "\r\n--" + boundary + "--";
 
-        const multipartResponseBody =
+        multipartResponseBody =
           delimiter +
           'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
           JSON.stringify(metadata) +

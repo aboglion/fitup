@@ -32,12 +32,18 @@
     getMediaUrls: function() {
       const urlSet = new Set(this.staticAssets);
 
+      const isCardioOrNoImage = (name, noImage) => {
+        if (noImage) return true;
+        const lower = name.toLowerCase();
+        return lower.includes('walking') || lower.includes('zone 2') || lower.includes('vo2 max') || lower.includes('cardio');
+      };
+
       // 1. Extract from TRAINING_DATA if loaded
       if (window.TRAINING_DATA && Array.isArray(window.TRAINING_DATA.daily)) {
         window.TRAINING_DATA.daily.forEach(day => {
           if (Array.isArray(day.exercises)) {
             day.exercises.forEach(ex => {
-              if (ex && ex.name) {
+              if (ex && ex.name && !isCardioOrNoImage(ex.name, ex.noImage)) {
                 const cleanName = ex.name.trim();
                 const pngName = cleanName.replace(/\//g, '-').toUpperCase();
                 urlSet.add(`images/exercises/${pngName}.png`);
@@ -56,13 +62,15 @@
         "DB Lateral Raise", "DB OH Triceps Ext", "TRX Y-T-W", "Scapular Push-up",
         "Scapular Pull-up", "Band Pull-Apart", "Arm Circles", "Dead Bug",
         "Glute Bridge", "Suitcase Carry", "Single-Leg Calf Raise", "Towel Hang",
-        "L-sit Tuck (Bars)", "VO2 Max Norwegian 4x4", "Deep Mobility Protocol"
+        "L-sit Tuck (Bars)", "Deep Mobility Protocol"
       ];
 
       commonExercises.forEach(name => {
-        const pngName = name.replace(/\//g, '-').toUpperCase();
-        urlSet.add(`images/exercises/${pngName}.png`);
-        urlSet.add(`images/gifs/${name}.gif`);
+        if (!isCardioOrNoImage(name, false)) {
+          const pngName = name.replace(/\//g, '-').toUpperCase();
+          urlSet.add(`images/exercises/${pngName}.png`);
+          urlSet.add(`images/gifs/${name}.gif`);
+        }
       });
 
       return Array.from(urlSet);
