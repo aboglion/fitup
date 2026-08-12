@@ -285,7 +285,8 @@ const UI = (() => {
       <div style="display: flex; align-items: center; gap: 16px; direction: rtl; width: 100%; padding-left: 36px;">
         <div style="width: 140px; height: 140px; min-width: 140px; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); flex-shrink: 0;">
           <img src="${pngPath}" 
-               style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px;" 
+               class="modal-title-img"
+               style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px; mix-blend-mode: multiply;" 
                alt="${title}" 
                loading="eager" 
                decoding="async" 
