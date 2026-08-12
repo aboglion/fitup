@@ -166,9 +166,17 @@ const StatsPage = (() => {
       </div>
     `;
 
+    const anatomyHTML = `
+      <div id="anatomy-wrapper" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
+        <div class="chart-title"><span>💪 מפת התקדמות שרירים</span></div>
+        <div id="anatomy-map-container"></div>
+      </div>
+    `;
+
     container.innerHTML = `
       ${xpHTML}
       ${streakHTML}
+      ${anatomyHTML}
       <div class="stat-card">
         <div class="stat-icon">📅</div>
         <div class="stat-value">${completed}</div>
@@ -443,8 +451,12 @@ const StatsPage = (() => {
       anatomyWrapper.appendChild(title);
       anatomyWrapper.appendChild(mapContainer);
       
-      // Append to stats-overview
-      container.appendChild(anatomyWrapper);
+      const firstStatCard = container.querySelector('.stat-card');
+      if (firstStatCard) {
+        container.insertBefore(anatomyWrapper, firstStatCard);
+      } else {
+        container.appendChild(anatomyWrapper);
+      }
     }
     
     if (typeof AnatomyMap !== 'undefined') {
