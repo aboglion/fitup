@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitUp - Personal Fitness Tracker</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      background: #13131a;
+      border-radius: 16px;
+      padding: 2.5rem;
+      border: 1px solid #1e1e2e;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tagline { color: #888; font-size: 1.1rem; margin-bottom: 2rem; }
+    .features { text-align: left; margin: 2rem 0; }
+    h2 { font-size: 1.2rem; color: #6ee7b7; margin: 1.5rem 0 0.6rem; }
+    p, li { font-size: 0.95rem; color: #bbb; margin-bottom: 0.6rem; }
+    ul { padding-left: 1.5rem; }
+    a { color: #3b82f6; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .cta {
+      display: inline-block;
+      margin-top: 2rem;
+      padding: 0.8rem 2rem;
+      background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+      color: #000;
+      font-weight: bold;
+      border-radius: 12px;
+      font-size: 1rem;
+    }
+    .links { margin-top: 2rem; font-size: 0.85rem; }
+    .links a { margin: 0 1rem; color: #888; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💪 FitUp</h1>
+    <p class="tagline">Your Personal Fitness Tracker</p>
+
+    <div class="features">
+      <h2>What is FitUp?</h2>
+      <p>FitUp is a free, personal fitness tracking web application that helps you follow structured workout programs, log exercises, track nutrition, and monitor your progress over time.</p>
+
+      <h2>Features</h2>
+      <ul>
+        <li><strong>48-Week Training Program:</strong> Structured progressive overload workout plan with detailed exercise instructions and video demos.</li>
+        <li><strong>Workout Logging:</strong> Track sets, reps, weights, and tempo for every exercise.</li>
+        <li><strong>AI Nutrition Analysis:</strong> Snap a photo of your meal and get instant nutritional breakdown powered by Google Gemini AI.</li>
+        <li><strong>Cloud Sync:</strong> Sign in with Google to backup and sync your data across devices via Google Drive.</li>
+        <li><strong>Multi-Language Support:</strong> Available in English, Hebrew, and Arabic.</li>
+        <li><strong>Offline Support:</strong> Works as a Progressive Web App (PWA) — use it even without internet.</li>
+      </ul>
+
+      <h2>How We Use Google Services</h2>
+      <p>FitUp uses Google Sign-In to authenticate users and Google Drive to store a backup of your fitness data as a JSON file. We only access files created by the app. Your data remains private and is never shared with third parties.</p>
+    </div>
+
+    <a href="./index.html" class="cta">Open FitUp →</a>
+
+    <div class="links">
+      <a href="./privacy.html">Privacy Policy</a>
+      <a href="./terms.html">Terms of Service</a>
+      <a href="mailto:aboglion@gmail.com">Contact</a>
+    </div>
+  </div>
+</body>
+</html>
