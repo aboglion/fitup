@@ -2340,7 +2340,6 @@ html[dir="ltr"] .modal-close, [dir="ltr"] .modal-close {
 
 .rpg-node-img,
 .exercise-image,
-.exercise-hero-image,
 .modal-title-img {
   width: 100%;
   height: 100%;
@@ -2356,26 +2355,26 @@ html[dir="ltr"] .modal-close, [dir="ltr"] .modal-close {
 }
 
 /* 1. Vertical Hanging & Pull-Up Exercises (Pull-up, Chin-up, Dead Hang, Scapular Pull-up) */
-img[src*="PULL-UP"],
-img[src*="CHIN-UP"],
-img[src*="DEAD HANG"],
-img[src*="TOWEL GRIP HANG"],
-img[src*="SCAPULAR PULL"] {
+.rpg-node-img[src*="PULL-UP"], .exercise-image[src*="PULL-UP"], .modal-title-img[src*="PULL-UP"],
+.rpg-node-img[src*="CHIN-UP"], .exercise-image[src*="CHIN-UP"], .modal-title-img[src*="CHIN-UP"],
+.rpg-node-img[src*="DEAD HANG"], .exercise-image[src*="DEAD HANG"], .modal-title-img[src*="DEAD HANG"],
+.rpg-node-img[src*="TOWEL GRIP HANG"], .exercise-image[src*="TOWEL GRIP HANG"], .modal-title-img[src*="TOWEL GRIP HANG"],
+.rpg-node-img[src*="SCAPULAR PULL"], .exercise-image[src*="SCAPULAR PULL"], .modal-title-img[src*="SCAPULAR PULL"] {
   transform: scale(1.8) translateY(2px);
   transform-origin: center;
 }
 
 /* 2. Standing Lower Body (Squat, Lunge, Handstand, Step-Up) */
-img[src*="SQUAT"],
-img[src*="LUNGE"],
-img[src*="HANDSTAND"],
-img[src*="STEP-UP"] {
+.rpg-node-img[src*="SQUAT"], .exercise-image[src*="SQUAT"], .modal-title-img[src*="SQUAT"],
+.rpg-node-img[src*="LUNGE"], .exercise-image[src*="LUNGE"], .modal-title-img[src*="LUNGE"],
+.rpg-node-img[src*="HANDSTAND"], .exercise-image[src*="HANDSTAND"], .modal-title-img[src*="HANDSTAND"],
+.rpg-node-img[src*="STEP-UP"], .exercise-image[src*="STEP-UP"], .modal-title-img[src*="STEP-UP"] {
   transform: scale(1.85);
   transform-origin: center;
 }
 
 /* 3. Calf Raises */
-img[src*="CALF"] {
+.rpg-node-img[src*="CALF"], .exercise-image[src*="CALF"], .modal-title-img[src*="CALF"] {
   object-fit: cover;
   object-position: bottom;
   transform: scale(1.65);
@@ -2383,10 +2382,10 @@ img[src*="CALF"] {
 }
 
 /* 4. Upper Back / Arm Accessories */
-img[src*="PULL-APART"],
-img[src*="WALL SLIDES"],
-img[src*="ARM CIRCLES"],
-img[src*="Y-T-W"] {
+.rpg-node-img[src*="PULL-APART"], .exercise-image[src*="PULL-APART"], .modal-title-img[src*="PULL-APART"],
+.rpg-node-img[src*="WALL SLIDES"], .exercise-image[src*="WALL SLIDES"], .modal-title-img[src*="WALL SLIDES"],
+.rpg-node-img[src*="ARM CIRCLES"], .exercise-image[src*="ARM CIRCLES"], .modal-title-img[src*="ARM CIRCLES"],
+.rpg-node-img[src*="Y-T-W"], .exercise-image[src*="Y-T-W"], .modal-title-img[src*="Y-T-W"] {
   object-fit: cover;
   object-position: top;
   transform: scale(1.4);
@@ -2394,23 +2393,23 @@ img[src*="Y-T-W"] {
 }
 
 /* 5. Pike & Inverted Holds */
-img[src*="PIKE"] {
+.rpg-node-img[src*="PIKE"], .exercise-image[src*="PIKE"], .modal-title-img[src*="PIKE"] {
   transform: scale(1.35);
 }
 
-img[src*="ELEVATED PIKE"] {
+.rpg-node-img[src*="ELEVATED PIKE"], .exercise-image[src*="ELEVATED PIKE"], .modal-title-img[src*="ELEVATED PIKE"] {
   transform: scale(1.5);
 }
 
 /* 6. Core & Lying Exercises */
-img[src*="DEAD BUG"],
-img[src*="HOLLOW"],
-img[src*="BRIDGE"],
-img[src*="HIP THRUST"],
-img[src*="RDL"],
-img[src*="PLANK"],
-img[src*="CARRY"],
-img[src*="PALLOF"] {
+.rpg-node-img[src*="DEAD BUG"], .exercise-image[src*="DEAD BUG"], .modal-title-img[src*="DEAD BUG"],
+.rpg-node-img[src*="HOLLOW"], .exercise-image[src*="HOLLOW"], .modal-title-img[src*="HOLLOW"],
+.rpg-node-img[src*="BRIDGE"], .exercise-image[src*="BRIDGE"], .modal-title-img[src*="BRIDGE"],
+.rpg-node-img[src*="HIP THRUST"], .exercise-image[src*="HIP THRUST"], .modal-title-img[src*="HIP THRUST"],
+.rpg-node-img[src*="RDL"], .exercise-image[src*="RDL"], .modal-title-img[src*="RDL"],
+.rpg-node-img[src*="PLANK"], .exercise-image[src*="PLANK"], .modal-title-img[src*="PLANK"],
+.rpg-node-img[src*="CARRY"], .exercise-image[src*="CARRY"], .modal-title-img[src*="CARRY"],
+.rpg-node-img[src*="PALLOF"], .exercise-image[src*="PALLOF"], .modal-title-img[src*="PALLOF"] {
   transform: scale(1.5);
   transform-origin: center;
 }
