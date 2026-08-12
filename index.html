@@ -90,6 +90,9 @@
       <!-- Center Progress Circle & Nutrition HUD -->
       <div id="bottom-nav-progress" style="display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(-24px); z-index: 10; position: relative;">
         
+        <!-- Progress Label Badge Above Ring -->
+        <span style="font-size: 10px; font-weight: 800; color: var(--text-secondary); background: var(--bg-card); padding: 2px 8px; border-radius: 10px; border: 1px solid var(--border-light); margin-bottom: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); white-space: nowrap; letter-spacing: 0.2px;">אחוז התקדמות</span>
+
         <!-- Progress Ring -->
         <div style="background: var(--bg-secondary); border-radius: 50%; padding: 4px; box-shadow: 0 -4px 12px rgba(0,0,0,0.15); border: 1px solid var(--border-color); position: relative; z-index: 5;">
           <div class="progress-ring" style="width: 52px; height: 52px;">
@@ -108,6 +111,7 @@
             
             <!-- Calories (Physical Right) -->
             <div style="position: absolute; right: 0; top: 50%; transform: translate(calc(100% + 8px), -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; width: max-content;">
+              <span id="nav-cals-percent" style="color: var(--warning); font-size: 10px; font-weight: 800; line-height: 1; margin-bottom: 2px;">0%</span>
               <span id="nav-cals-text" style="color: var(--warning); font-size: 13px; font-weight: 800;">0</span>
               <span style="font-size: 10px; color: var(--text-muted); font-weight: 700;">קלוריות</span>
             </div>
@@ -117,6 +121,7 @@
 
             <!-- Protein (Physical Left) -->
             <div style="position: absolute; left: 0; top: 50%; transform: translate(calc(-100% - 8px), -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; width: max-content;">
+              <span id="nav-protein-percent" style="color: var(--success); font-size: 10px; font-weight: 800; line-height: 1; margin-bottom: 2px;">0%</span>
               <span id="nav-protein-text" style="color: var(--success); font-size: 13px; font-weight: 800;">0</span>
               <span style="font-size: 10px; color: var(--text-muted); font-weight: 700;">חלבון</span>
             </div>
@@ -602,20 +607,20 @@
     </div>
   </div>
 
-  <script src="js/data.js?v=95"></script>
-  <script src="js/preloader.js?v=95"></script>
-  <script src="js/ui.js?v=95"></script>
-  <script src="js/db.js?v=95"></script>
-  <script src="js/gemini.js?v=95"></script>
-  <script src="js/crypto.js?v=95"></script>
-  <script src="js/config.js?v=95"></script>
-  <script src="js/today.js?v=95"></script>
-  <script src="js/calendar.js?v=95"></script>
-  <script src="js/exercises.js?v=95"></script>
-  <script src="js/anatomy.js?v=95"></script>
-  <script src="js/stats.js?v=95"></script>
-  <script src="js/export-guide.js?v=95"></script>
-  <script src="js/cloud-sync.js?v=95"></script>
-  <script src="js/app.js?v=95"></script>
+  <script src="js/data.js?v=96"></script>
+  <script src="js/preloader.js?v=96"></script>
+  <script src="js/ui.js?v=96"></script>
+  <script src="js/db.js?v=96"></script>
+  <script src="js/gemini.js?v=96"></script>
+  <script src="js/crypto.js?v=96"></script>
+  <script src="js/config.js?v=96"></script>
+  <script src="js/today.js?v=96"></script>
+  <script src="js/calendar.js?v=96"></script>
+  <script src="js/exercises.js?v=96"></script>
+  <script src="js/anatomy.js?v=96"></script>
+  <script src="js/stats.js?v=96"></script>
+  <script src="js/export-guide.js?v=96"></script>
+  <script src="js/cloud-sync.js?v=96"></script>
+  <script src="js/app.js?v=96"></script>
 </body>
 </html>

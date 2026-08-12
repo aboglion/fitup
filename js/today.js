@@ -367,6 +367,9 @@ const TodayPage = (() => {
     if (nutCalsEl) nutCalsEl.textContent = totalCals;
     if (nutProtEl) nutProtEl.textContent = totalProtein;
 
+    const calsPercent = Math.round((totalCals / targetCals) * 100);
+    const proteinPercent = Math.round((totalProtein / targetProtein) * 100);
+
     const calsBar = document.getElementById('nut-calories-bar');
     const protBar = document.getElementById('nut-protein-bar');
     if (calsBar) calsBar.style.width = `${Math.min(100, (totalCals / targetCals) * 100)}%`;
@@ -375,12 +378,17 @@ const TodayPage = (() => {
     // Nav HUD
     const navCals = document.getElementById('nav-cals-text');
     const navProt = document.getElementById('nav-protein-text');
+    const navCalsPercent = document.getElementById('nav-cals-percent');
+    const navProtPercent = document.getElementById('nav-protein-percent');
+
     if (navCals) navCals.textContent = `${totalCals}`;
     if (navProt) navProt.textContent = `${totalProtein}`;
+    if (navCalsPercent) navCalsPercent.textContent = `${calsPercent}%`;
+    if (navProtPercent) navProtPercent.textContent = `${proteinPercent}%`;
 
     const desktopNavNut = document.getElementById('desktop-nav-nutrition');
     if (desktopNavNut) {
-      desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} קק"ל</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}ג חלבון</span>`;
+      desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} קק"ל (${calsPercent}%)</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}ג חלבון (${proteinPercent}%)</span>`;
     }
 
     // Render Meals Log List
