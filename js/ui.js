@@ -41,7 +41,7 @@ const UI = (() => {
       return;
     }
     const current = modalStack[modalStack.length - 1];
-    document.getElementById('modal-title').textContent = current.title;
+    document.getElementById('modal-title').innerHTML = current.title;
     document.getElementById('modal-body').innerHTML = current.bodyHTML;
     document.getElementById('modal-overlay').classList.remove('hidden');
   }
@@ -265,14 +265,15 @@ const UI = (() => {
     const pngPath = `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
     const gifPath = `images/gifs/${title}.gif`;
     const gifExists = hasGif(title);
+    const equip = getEquipment(title);
     
     let extraNote = '';
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes('chin-up') || lowerTitle.includes('pull-up')) {
       extraNote = `
-        <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 12px; text-align: right; direction: rtl;">
-          <p style="font-size: 14px; margin-bottom: 8px; color: var(--text-primary);"><strong>💡 הבדלי אחיזה - חשוב לזכור:</strong></p>
-          <ul style="font-size: 13px; color: var(--text-secondary); padding-right: 20px; margin: 0; line-height: 1.5;">
+        <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 12px; text-align: right; direction: rtl;">
+          <p style="font-size: 13px; margin-bottom: 6px; color: var(--text-primary);"><strong>💡 הבדלי אחיזה - חשוב לזכור:</strong></p>
+          <ul style="font-size: 12px; color: var(--text-secondary); padding-right: 18px; margin: 0; line-height: 1.5;">
             <li style="margin-bottom: 4px;"><strong>Chin-up:</strong> כפות הידיים פונות לכיוון הפנים (אחיזה תחתית).</li>
             <li><strong>Pull-up:</strong> כפות הידיים באחיזה פונות לכיוון חוץ (אחיזה עילית).</li>
           </ul>
@@ -280,42 +281,41 @@ const UI = (() => {
       `;
     }
 
-    let mediaHTML = '';
-
-    if (gifExists) {
-      // Facebook-style Instant Frame Swap: Static PNG shows instantly, animated GIF swaps seamlessly when downloaded
-      mediaHTML = `
-        <div style="position: relative; width: 100%; min-height: 250px; background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-          <!-- Facebook Style Instant Frame (PNG) -->
+    const modalTitleHTML = `
+      <div style="display: flex; align-items: center; gap: 14px; direction: rtl; width: 100%;">
+        <div style="width: 72px; height: 72px; min-width: 72px; border-radius: 12px; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-light, rgba(255, 255, 255, 0.15)); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 4px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); flex-shrink: 0;">
           <img src="${pngPath}" 
-               class="fb-png-frame"
-               style="width: 100%; border-radius: 12px; object-fit: contain; max-height: 48vh; display: block; margin: 0 auto; transition: opacity 0.4s ease;" 
+               style="width: 100%; height: 100%; object-fit: contain; border-radius: 8px;" 
                alt="${title} תמונה" 
                loading="eager" 
                decoding="async" 
-               onerror="this.style.opacity='0'">
-          
-          <!-- Loading Badge -->
-          <div class="fb-gif-badge" style="position: absolute; bottom: 12px; left: 12px; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,0.2); transition: opacity 0.3s ease; z-index: 2; font-family: sans-serif;">
-            <span style="display: inline-block; animation: pulse 1s infinite;">🎬</span> טוען הנפשה...
-          </div>
+               onerror="UI.handleImageFallback(this, 'png')">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; justify-content: center;">
+          <span style="font-size: 17px; font-weight: 800; color: var(--text-primary); line-height: 1.2;">${title}</span>
+          ${equip ? `<span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 5px; background: var(--bg-elevated); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border-light); width: max-content;">${equip.icon} ${equip.label}</span>` : ''}
+        </div>
+      </div>
+    `;
 
-          <!-- Animated GIF (smoothly fades in & replaces PNG in flow when ready) -->
+    let mediaHTML = '';
+
+    if (gifExists) {
+      mediaHTML = `
+        <div style="position: relative; width: 100%; min-height: 240px; background: rgba(0, 0, 0, 0.25); border-radius: 14px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); padding: 6px; box-shadow: inset 0 0 20px rgba(0,0,0,0.15);">
           <img src="${gifPath}" 
-               style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px; object-fit: contain; max-height: 48vh; opacity: 0; transition: opacity 0.4s ease; z-index: 3;" 
+               style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
                alt="${title} GIF" 
                loading="eager" 
                decoding="async" 
-               onload="this.style.position='relative'; this.style.opacity='1'; const p = this.parentElement.querySelector('.fb-png-frame'); if(p) p.style.display='none'; const b = this.parentElement.querySelector('.fb-gif-badge'); if(b) b.style.display='none';" 
                onerror="UI.handleImageFallback(this, 'gif')">
         </div>
       `;
     } else {
-      // Non-GIF exercise (Cardio etc.) - Show PNG frame only
       mediaHTML = `
-        <div style="position: relative; width: 100%; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.2);">
+        <div style="position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); padding: 6px;">
           <img src="${pngPath}" 
-               style="width: 100%; border-radius: 12px; object-fit: contain; max-height: 48vh; display: block; margin: 0 auto;" 
+               style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
                alt="${title} תמונה" 
                loading="eager" 
                decoding="async" 
@@ -324,7 +324,7 @@ const UI = (() => {
       `;
     }
 
-    showModal(title, `
+    showModal(modalTitleHTML, `
       <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; direction: rtl;">
         ${mediaHTML}
         ${extraNote}
