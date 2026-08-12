@@ -189,6 +189,10 @@ const UI = (() => {
           return;
         }
       }
+      if (imgEl.parentElement) {
+        const b = imgEl.parentElement.querySelector('.fb-gif-badge');
+        if (b) b.style.display = 'none';
+      }
       imgEl.style.display = 'none';
     } else if (type === 'png') {
       const match = urlDecoded.match(/images\/exercises\/([^/]+)$/);
@@ -284,6 +288,7 @@ const UI = (() => {
         <div style="position: relative; width: 100%; min-height: 250px; background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
           <!-- Facebook Style Instant Frame (PNG) -->
           <img src="${pngPath}" 
+               class="fb-png-frame"
                style="width: 100%; border-radius: 12px; object-fit: contain; max-height: 48vh; display: block; margin: 0 auto; transition: opacity 0.4s ease;" 
                alt="${title} תמונה" 
                loading="eager" 
@@ -295,13 +300,13 @@ const UI = (() => {
             <span style="display: inline-block; animation: pulse 1s infinite;">🎬</span> טוען הנפשה...
           </div>
 
-          <!-- Animated GIF (smoothly fades in & swaps when ready) -->
+          <!-- Animated GIF (smoothly fades in & replaces PNG in flow when ready) -->
           <img src="${gifPath}" 
                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 12px; object-fit: contain; max-height: 48vh; opacity: 0; transition: opacity 0.4s ease; z-index: 3;" 
                alt="${title} GIF" 
                loading="eager" 
                decoding="async" 
-               onload="this.style.opacity='1'; const b = this.parentElement.querySelector('.fb-gif-badge'); if(b) b.style.opacity='0';" 
+               onload="this.style.position='relative'; this.style.opacity='1'; const p = this.parentElement.querySelector('.fb-png-frame'); if(p) p.style.display='none'; const b = this.parentElement.querySelector('.fb-gif-badge'); if(b) b.style.display='none';" 
                onerror="UI.handleImageFallback(this, 'gif')">
         </div>
       `;

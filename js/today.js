@@ -358,14 +358,16 @@ const TodayPage = (() => {
       });
     }
 
-    const targetCals = 2200;
+    const targetCals = 1980; // 2200 with 10% reduction
     const targetProtein = 160;
 
     // Update HUD
     const nutCalsEl = document.getElementById('nut-calories-total');
     const nutProtEl = document.getElementById('nut-protein-total');
+    const nutCalsTargetEl = document.getElementById('nut-calories-target');
     if (nutCalsEl) nutCalsEl.textContent = totalCals;
     if (nutProtEl) nutProtEl.textContent = totalProtein;
+    if (nutCalsTargetEl) nutCalsTargetEl.textContent = targetCals;
 
     const calsPercent = Math.round((totalCals / targetCals) * 100);
     const proteinPercent = Math.round((totalProtein / targetProtein) * 100);
