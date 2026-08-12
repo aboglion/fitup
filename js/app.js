@@ -659,8 +659,12 @@ const App = (() => {
   };
 })();
 
-// Start the app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => App.init());
+// Start the app when DOM is ready (handles case where DOM is already ready)
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => App.init());
+} else {
+  App.init();
+}
 
 // Pull latest data when the app comes back to the foreground
 document.addEventListener('visibilitychange', async () => {
