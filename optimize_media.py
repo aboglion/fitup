@@ -54,67 +54,9 @@ def optimize_png_optipng(input_path):
         return False
 
 def optimize_gif_pillow(input_path, max_size=GIF_MAX_SIZE, colors=GIF_COLORS):
-    if Image is None:
-        return False
-    try:
-        with Image.open(input_path) as im:
-            is_animated = getattr(im, "is_animated", False)
-            raw_frames = list(ImageSequence.Iterator(im))
-            total_raw = len(raw_frames)
-
-            # Smart frame subsampling for long GIFs
-            step = 1
-            if total_raw > 30:
-                step = 2 if total_raw <= 60 else max(2, total_raw // 30)
-
-            subsampled_frames = raw_frames[::step]
-            
-            frames = []
-            durations = []
-            loops = im.info.get('loop', 0)
-            
-            for frame in subsampled_frames:
-                # Copy frame & convert to RGBA to resize cleanly
-                rgba_frame = frame.convert("RGBA")
-                
-                # Resize if needed
-                if rgba_frame.width > max_size[0] or rgba_frame.height > max_size[1]:
-                    rgba_frame.thumbnail(max_size, Image.Resampling.LANCZOS)
-                
-                transparency = frame.info.get('transparency')
-                dur = frame.info.get('duration', 100) * step
-
-                if transparency is not None:
-                    # Handle transparency by creating a palette mode image with transparency mapped
-                    alpha = rgba_frame.getchannel('A')
-                    # Convert RGB part to P
-                    p_frame = rgba_frame.convert("RGB").convert("P", palette=Image.Palette.ADAPTIVE, colors=colors - 1)
-                    # Create a mask where alpha is transparent (<= 128)
-                    mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-                    # Paste the transparent color index (colors-1) into masked areas
-                    p_frame.paste(colors - 1, mask)
-                    p_frame.info['transparency'] = colors - 1
-                else:
-                    p_frame = rgba_frame.convert("P", palette=Image.Palette.ADAPTIVE, colors=colors)
-                
-                frames.append(p_frame)
-                durations.append(dur)
-            
-            if is_animated and len(frames) > 1:
-                frames[0].save(
-                    input_path,
-                    save_all=True,
-                    append_images=frames[1:],
-                    optimize=True,
-                    duration=durations,
-                    loop=loops
-                )
-            else:
-                frames[0].save(input_path, optimize=True)
-            return True
-    except Exception as e:
-        print(f"  [Pillow GIF Error] {input_path.name}: {e}")
-        return False
+    # Safely skip Pillow optimization for GIFs to preserve original animation frames & timing
+    print(f"  [GIF Skipped] Preserving original animation for {input_path.name}")
+    return False
 
 def optimize_gif_gifsicle(input_path, max_size=GIF_MAX_SIZE, colors=GIF_COLORS):
     try:
