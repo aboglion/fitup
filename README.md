@@ -98,6 +98,22 @@ The program is split into two primary macrocycles designed to ensure progressive
 
 ---
 
+### 🏋️‍♂️ Required Equipment & Home Setup
+The 78-week program is designed around a minimal yet complete home-gym setup:
+
+| Equipment Item | Specifications & Usage | Purpose in Program |
+| :--- | :--- | :--- |
+| **Modular Dumbbells** | 8 plates × 3 kg (24 kg total plates) + 2 handles. Allows dual dumbbells (3, 6, 9, 12 kg each) and single dumbbell loading (3–24 kg in 3 kg increments). | Floor Press, Seated OHP, RDLs, Split Squats, Single-Arm Rows, Biceps Curls, Triceps Extensions. |
+| **Mounted Pull-Up Bar** | Secure doorway or wall-mounted pull-up bar. | Overhand Pull-Ups, Chin-Ups, Dead Hangs, Towel Hangs for grip. |
+| **Push-Up Bars** | Ergonomic push-up handles / parallettes. | **Mandatory** for all Push-Ups, Deficit Push-Ups, Elevated Pike Push-Ups, and L-Sit Tucks to prevent wrist hyperextension. |
+| **TRX Suspension Trainer** | Adjustable suspension trainer anchored to door/wall. | TRX Face Pulls (Angles 1–4) and TRX Y-T-W shoulder stability sequences. |
+| **Resistance Bands** | Loop/flat resistance bands: 30 kg band & 40 kg band. | Band Pull-Aparts, Pallof Press (core anti-rotation), and light warmups. |
+| **Sturdy Chair / Box** | Flat, stable chair or workout bench (knee-to-hip height). | Bulgarian Split Squats (BSS), Feet-Elevated Push-Ups, Pistol Squats to chair, Seated OHP. |
+| **Treadmill** | Home or gym treadmill with adjustable speed & incline. | Zone 2 Aerobic Base walking, Norwegian 4x4 VO2 Max intervals (incline strictly capped at ≤6%). |
+| **Weighted Vest / Pack** | +5 kg weighted vest or loaded backpack. | Advanced Year 2 calisthenics progression (Weighted Pull-Ups & Deficit Push-Ups). |
+
+---
+
 ## 🛠️ Technology Stack
 
 | Layer | Technology |
