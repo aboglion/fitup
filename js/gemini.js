@@ -25,6 +25,8 @@ const GeminiService = (() => {
   async function setApiKey(key) {
     const cleaned = String(key || '').trim();
     await DB.setSetting('geminiApiKey', cleaned);
+    // Sync API key to cloud for cross-device availability
+    if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
     return cleaned;
   }
 
@@ -50,6 +52,8 @@ const GeminiService = (() => {
   async function setModel(modelId) {
     const cleaned = String(modelId || DEFAULT_MODEL).trim();
     await DB.setSetting('geminiModel', cleaned);
+    // Sync model choice to cloud for cross-device consistency
+    if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
     return cleaned;
   }
 

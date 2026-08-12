@@ -79,7 +79,8 @@ const App = (() => {
 
       // Non-blocking background pull from cloud
       const savedUrl = await DB.getSetting('cloudSyncUrl');
-      if (savedUrl) {
+      const hasOAuthToken = await CloudSync.isLoggedIn();
+      if (savedUrl || hasOAuthToken) {
         console.log("Pulling latest data from cloud (background)...");
         CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
       }
@@ -687,6 +688,8 @@ const App = (() => {
               await window.GeminiService.setModel(model);
               UI.toast(I18n.t('key_saved_success'), 'success');
               await updateGeminiSettingsUI();
+              // Sync API key to cloud so it's available on all devices
+              if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
               if (window.TodayPage && window.TodayPage.renderNutritionSection) {
                 window.TodayPage.renderNutritionSection();
               }
@@ -700,6 +703,7 @@ const App = (() => {
             try {
               await window.GeminiService.setModel(model);
               UI.toast(I18n.t('model_updated'), 'success');
+              if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
               if (window.TodayPage && window.TodayPage.renderNutritionSection) {
                 window.TodayPage.renderNutritionSection();
               }
@@ -760,7 +764,8 @@ document.addEventListener('visibilitychange', async () => {
     }
 
     const savedUrl = await DB.getSetting('cloudSyncUrl');
-    if (savedUrl) {
+    const hasOAuthToken = await CloudSync.isLoggedIn();
+    if (savedUrl || hasOAuthToken) {
       console.log("App foregrounded, pulling latest data...");
       const result = await CloudSync.pullData();
       if (result && result.success) {

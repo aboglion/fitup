@@ -367,9 +367,24 @@ const DB = (() => {
       await putBulk(STORES.TRACKING, data.tracking);
     }
     if (data.settings) {
+      // Preserve local-only keys that should never be overwritten by cloud data
+      const LOCAL_ONLY_KEYS = ['googleAccessToken', 'googleUserProfile', 'cloudSyncUrl'];
+      const preservedSettings = {};
+      for (const key of LOCAL_ONLY_KEYS) {
+        const record = await get(STORES.SETTINGS, key);
+        if (record) preservedSettings[key] = record;
+      }
+
       await clear(STORES.SETTINGS);
-      // Filter out temporary data versions if they exist, or just import everything
+      // Import cloud settings
       await putBulk(STORES.SETTINGS, data.settings);
+
+      // Restore preserved local-only settings
+      for (const key of LOCAL_ONLY_KEYS) {
+        if (preservedSettings[key]) {
+          await put(STORES.SETTINGS, preservedSettings[key]);
+        }
+      }
     }
     if (data.photos) {
       await clear(STORES.PHOTOS);
