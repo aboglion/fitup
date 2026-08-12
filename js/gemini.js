@@ -253,3 +253,5 @@ const GeminiService = (() => {
     initSelects
   };
 })();
+
+window.GeminiService = GeminiService;

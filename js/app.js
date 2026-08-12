@@ -114,17 +114,17 @@ const App = (() => {
       // ----------------------------------
 
       // Initialize page modules defensively
-      if (typeof TodayPage !== 'undefined' && TodayPage.init) {
-        await TodayPage.init(allPlanDays);
+      if (window.TodayPage && window.TodayPage.init) {
+        await window.TodayPage.init(allPlanDays);
       }
-      if (typeof CalendarPage !== 'undefined' && CalendarPage.init) {
-        CalendarPage.init(allPlanDays);
+      if (window.CalendarPage && window.CalendarPage.init) {
+        window.CalendarPage.init(allPlanDays);
       }
-      if (typeof ExercisesPage !== 'undefined' && ExercisesPage.init) {
-        await ExercisesPage.init();
+      if (window.ExercisesPage && window.ExercisesPage.init) {
+        await window.ExercisesPage.init();
       }
-      if (typeof StatsPage !== 'undefined' && StatsPage.init) {
-        StatsPage.init(allPlanDays);
+      if (window.StatsPage && window.StatsPage.init) {
+        window.StatsPage.init(allPlanDays);
       }
 
       // Setup navigation
@@ -414,13 +414,13 @@ const App = (() => {
     switch (pageName) {
       case 'today':
       case 'nutrition':
-        if (typeof TodayPage !== 'undefined' && TodayPage.render) TodayPage.render();
+        if (window.TodayPage && window.TodayPage.render) window.TodayPage.render();
         break;
       case 'exercises':
-        if (typeof ExercisesPage !== 'undefined' && ExercisesPage.render) ExercisesPage.render();
+        if (window.ExercisesPage && window.ExercisesPage.render) window.ExercisesPage.render();
         break;
       case 'stats':
-        if (typeof StatsPage !== 'undefined' && StatsPage.render) StatsPage.render();
+        if (window.StatsPage && window.StatsPage.render) window.StatsPage.render();
         break;
     }
   }
@@ -615,9 +615,9 @@ const App = (() => {
     const geminiActiveWrapper = document.getElementById('settings-gemini-key-active-wrapper');
 
     const updateGeminiSettingsUI = async () => {
-      if (typeof GeminiService === 'undefined') return;
+      if (!window.GeminiService) return;
       
-      const isConfigured = await GeminiService.isConfigured();
+      const isConfigured = await window.GeminiService.isConfigured();
       
       if (isConfigured) {
         if (geminiInputWrapper) geminiInputWrapper.style.display = 'none';
@@ -632,21 +632,21 @@ const App = (() => {
     };
     window.updateGeminiSettingsUI = updateGeminiSettingsUI;
 
-    if (typeof GeminiService !== 'undefined') {
-      if (GeminiService.initSelects) GeminiService.initSelects();
+    if (window.GeminiService) {
+      if (window.GeminiService.initSelects) window.GeminiService.initSelects();
       
-      GeminiService.getApiKey().then(key => {
+      window.GeminiService.getApiKey().then(key => {
         if (key && geminiKeyInput) geminiKeyInput.value = key;
         updateGeminiSettingsUI();
       });
 
-      GeminiService.getModel().then(model => {
+      window.GeminiService.getModel().then(model => {
         if (model && geminiModelSelect) geminiModelSelect.value = model;
       });
 
       if (saveGeminiBtn) {
         saveGeminiBtn.onclick = async () => {
-          const isConfigured = await GeminiService.isConfigured();
+          const isConfigured = await window.GeminiService.isConfigured();
           const model = geminiModelSelect ? geminiModelSelect.value : 'gemini-3.1-flash-lite';
           
           if (!isConfigured) {
@@ -660,13 +660,13 @@ const App = (() => {
             saveGeminiBtn.textContent = 'בודק תקינות מפתח... ⏳';
 
             try {
-              await GeminiService.testApiKey(key, model);
-              await GeminiService.setApiKey(key);
-              await GeminiService.setModel(model);
+              await window.GeminiService.testApiKey(key, model);
+              await window.GeminiService.setApiKey(key);
+              await window.GeminiService.setModel(model);
               UI.toast('הגדרות Gemini AI נשמרו בהצלחה! 🎉', 'success');
               await updateGeminiSettingsUI();
-              if (typeof TodayPage !== 'undefined' && TodayPage.renderNutritionSection) {
-                TodayPage.renderNutritionSection();
+              if (window.TodayPage && window.TodayPage.renderNutritionSection) {
+                window.TodayPage.renderNutritionSection();
               }
             } catch (err) {
               UI.toast('שגיאה: ' + err.message, 'error');
@@ -676,10 +676,10 @@ const App = (() => {
           } else {
             saveGeminiBtn.disabled = true;
             try {
-              await GeminiService.setModel(model);
+              await window.GeminiService.setModel(model);
               UI.toast('מודל Gemini AI עודכן בהצלחה! 🎉', 'success');
-              if (typeof TodayPage !== 'undefined' && TodayPage.renderNutritionSection) {
-                TodayPage.renderNutritionSection();
+              if (window.TodayPage && window.TodayPage.renderNutritionSection) {
+                window.TodayPage.renderNutritionSection();
               }
             } catch (err) {
               UI.toast('שגיאה: ' + err.message, 'error');
@@ -694,11 +694,11 @@ const App = (() => {
       if (deleteSettingsGeminiBtn) {
         deleteSettingsGeminiBtn.onclick = async () => {
           if (confirm('האם למחוק את מפתח ה-Gemini API השמור?')) {
-            await GeminiService.removeApiKey();
+            await window.GeminiService.removeApiKey();
             UI.toast('מפתח Gemini API נמחק בהצלחה', 'info');
             await updateGeminiSettingsUI();
-            if (typeof TodayPage !== 'undefined' && TodayPage.renderNutritionSection) {
-              TodayPage.renderNutritionSection();
+            if (window.TodayPage && window.TodayPage.renderNutritionSection) {
+              window.TodayPage.renderNutritionSection();
             }
           }
         };
@@ -726,13 +726,13 @@ if (document.readyState === 'loading') {
 document.addEventListener('visibilitychange', async () => {
   if (document.visibilityState === 'visible') {
     // 1. Update dates and active index since the day might have changed
-    if (typeof App !== 'undefined' && App.recalculatePlanIndex) {
-      await App.recalculatePlanIndex();
+    if (window.App && window.App.recalculatePlanIndex) {
+      await window.App.recalculatePlanIndex();
     }
     
     // 2. Render UI immediately to reflect new day if it changed
-    if (typeof TodayPage !== 'undefined' && TodayPage.render) {
-      TodayPage.render();
+    if (window.TodayPage && window.TodayPage.render) {
+      window.TodayPage.render();
     }
 
     const savedUrl = await DB.getSetting('cloudSyncUrl');
@@ -741,8 +741,8 @@ document.addEventListener('visibilitychange', async () => {
       const result = await CloudSync.pullData();
       if (result && result.success) {
         // Always re-render TodayPage because it updates the global bottom navbar and the nutrition page
-        if (typeof TodayPage !== 'undefined' && TodayPage.render) {
-          TodayPage.render();
+        if (window.TodayPage && window.TodayPage.render) {
+          window.TodayPage.render();
         }
       }
     }
