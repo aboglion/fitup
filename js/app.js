@@ -591,6 +591,7 @@ const App = (() => {
       googleLogoutBtn.onclick = async () => {
         await CloudSync.logout();
         await updateGoogleUI();
+        showLoginScreen();
       };
     }
 
