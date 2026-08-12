@@ -610,51 +610,96 @@ const App = (() => {
     const geminiKeyInput = document.getElementById('settings-gemini-key');
     const geminiModelSelect = document.getElementById('settings-gemini-model');
     const saveGeminiBtn = document.getElementById('save-settings-gemini-btn');
+    const deleteSettingsGeminiBtn = document.getElementById('delete-settings-gemini-btn');
+    const geminiInputWrapper = document.getElementById('settings-gemini-key-input-wrapper');
+    const geminiActiveWrapper = document.getElementById('settings-gemini-key-active-wrapper');
+
+    const updateGeminiSettingsUI = async () => {
+      if (typeof GeminiService === 'undefined') return;
+      
+      const isConfigured = await GeminiService.isConfigured();
+      
+      if (isConfigured) {
+        if (geminiInputWrapper) geminiInputWrapper.style.display = 'none';
+        if (geminiActiveWrapper) geminiActiveWrapper.style.display = 'flex';
+        if (saveGeminiBtn) saveGeminiBtn.textContent = 'שמור מודל מועדף';
+      } else {
+        if (geminiInputWrapper) geminiInputWrapper.style.display = 'block';
+        if (geminiActiveWrapper) geminiActiveWrapper.style.display = 'none';
+        if (geminiKeyInput) geminiKeyInput.value = '';
+        if (saveGeminiBtn) saveGeminiBtn.textContent = 'שמור הגדרות AI';
+      }
+    };
+    window.updateGeminiSettingsUI = updateGeminiSettingsUI;
 
     if (typeof GeminiService !== 'undefined') {
       if (GeminiService.initSelects) GeminiService.initSelects();
+      
       GeminiService.getApiKey().then(key => {
         if (key && geminiKeyInput) geminiKeyInput.value = key;
+        updateGeminiSettingsUI();
       });
+
       GeminiService.getModel().then(model => {
         if (model && geminiModelSelect) geminiModelSelect.value = model;
       });
 
       if (saveGeminiBtn) {
         saveGeminiBtn.onclick = async () => {
-          const key = geminiKeyInput ? geminiKeyInput.value.trim() : '';
+          const isConfigured = await GeminiService.isConfigured();
           const model = geminiModelSelect ? geminiModelSelect.value : 'gemini-3.1-flash-lite';
+          
+          if (!isConfigured) {
+            const key = geminiKeyInput ? geminiKeyInput.value.trim() : '';
+            if (!key) {
+              UI.toast('נא להזין מפתח API', 'warning');
+              return;
+            }
 
-          if (!key) {
-            UI.toast('נא להזין מפתח API', 'warning');
-            return;
-          }
+            saveGeminiBtn.disabled = true;
+            saveGeminiBtn.textContent = 'בודק תקינות מפתח... ⏳';
 
-          saveGeminiBtn.disabled = true;
-          saveGeminiBtn.textContent = 'בודק תקינות מפתח... ⏳';
-
-          try {
-            await GeminiService.testApiKey(key, model);
-            await GeminiService.setApiKey(key);
-            await GeminiService.setModel(model);
-            UI.toast('הגדרות Gemini AI נשמרו בהצלחה! 🎉', 'success');
-          } catch (err) {
-            UI.toast('שגיאה: ' + err.message, 'error');
-          } finally {
-            saveGeminiBtn.disabled = false;
-            saveGeminiBtn.textContent = 'שמור הגדרות AI';
+            try {
+              await GeminiService.testApiKey(key, model);
+              await GeminiService.setApiKey(key);
+              await GeminiService.setModel(model);
+              UI.toast('הגדרות Gemini AI נשמרו בהצלחה! 🎉', 'success');
+              await updateGeminiSettingsUI();
+              if (typeof TodayPage !== 'undefined' && TodayPage.renderNutritionSection) {
+                TodayPage.renderNutritionSection();
+              }
+            } catch (err) {
+              UI.toast('שגיאה: ' + err.message, 'error');
+            } finally {
+              saveGeminiBtn.disabled = false;
+            }
+          } else {
+            saveGeminiBtn.disabled = true;
+            try {
+              await GeminiService.setModel(model);
+              UI.toast('מודל Gemini AI עודכן בהצלחה! 🎉', 'success');
+              if (typeof TodayPage !== 'undefined' && TodayPage.renderNutritionSection) {
+                TodayPage.renderNutritionSection();
+              }
+            } catch (err) {
+              UI.toast('שגיאה: ' + err.message, 'error');
+            } finally {
+              saveGeminiBtn.disabled = false;
+              if (saveGeminiBtn) saveGeminiBtn.textContent = 'שמור מודל מועדף';
+            }
           }
         };
       }
 
-      const deleteSettingsGeminiBtn = document.getElementById('delete-settings-gemini-btn');
       if (deleteSettingsGeminiBtn) {
         deleteSettingsGeminiBtn.onclick = async () => {
           if (confirm('האם למחוק את מפתח ה-Gemini API השמור?')) {
             await GeminiService.removeApiKey();
-            if (geminiKeyInput) geminiKeyInput.value = '';
             UI.toast('מפתח Gemini API נמחק בהצלחה', 'info');
-            setTimeout(() => location.reload(), 800);
+            await updateGeminiSettingsUI();
+            if (typeof TodayPage !== 'undefined' && TodayPage.renderNutritionSection) {
+              TodayPage.renderNutritionSection();
+            }
           }
         };
       }

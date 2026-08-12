@@ -299,6 +299,7 @@ const TodayPage = (() => {
             await GeminiService.setApiKey(key);
             await GeminiService.setModel(model);
             UI.toast('מפתח Gemini API הוגדר בהצלחה! 🎉', 'success');
+            if (window.updateGeminiSettingsUI) window.updateGeminiSettingsUI();
             renderNutritionSection(queryDateStr);
           } catch (err) {
             saveKeyBtn.disabled = false;
@@ -326,6 +327,7 @@ const TodayPage = (() => {
         if (confirm('האם למחוק את מפתח ה-Gemini API השמור ולחזור למסך ההגדרה?')) {
           await GeminiService.removeApiKey();
           UI.toast('מפתח Gemini API נמחק', 'info');
+          if (window.updateGeminiSettingsUI) window.updateGeminiSettingsUI();
           renderNutritionSection(queryDateStr);
         }
       };
@@ -1653,6 +1655,7 @@ const TodayPage = (() => {
   return {
     init,
     render,
+    renderNutritionSection,
     navigate,
     goToDay,
     goToToday,

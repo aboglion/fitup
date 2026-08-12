@@ -475,10 +475,23 @@
             <h3>🤖 הגדרות מודל Gemini AI</h3>
             <p>הגדר את מפתח ה-API והמודל המועדף לניתוח ארוחות אוכל</p>
 
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
-              <div>
+            <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+              <!-- Key Input Wrapper (Shown when key is NOT defined) -->
+              <div id="settings-gemini-key-input-wrapper">
                 <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">מפתח Gemini API</label>
                 <input type="password" id="settings-gemini-key" placeholder="הכנס מפתח API..." style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary);" dir="ltr">
+              </div>
+
+              <!-- Key Active / Delete Wrapper (Shown in place of key input ONLY when key IS defined) -->
+              <div id="settings-gemini-key-active-wrapper" style="display: none; flex-direction: column; gap: 4px;">
+                <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block;">מפתח Gemini API</label>
+                <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-elevated); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-light); gap: 12px;">
+                  <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--success);">
+                    <span style="font-size: 16px;">🔑</span>
+                    <span>מפתח API מוגדר ופעיל</span>
+                  </div>
+                  <button id="delete-settings-gemini-btn" class="btn-danger" style="padding: 8px 12px; font-size: 13px; white-space: nowrap;" title="מחק מפתח API">🗑️ מחק מפתח</button>
+                </div>
               </div>
 
               <div>
@@ -491,9 +504,8 @@
                 </select>
               </div>
 
-              <div style="display: flex; gap: 8px; margin-top: 4px;">
-                <button id="save-settings-gemini-btn" class="btn-primary" style="flex: 1;">שמור הגדרות AI</button>
-                <button id="delete-settings-gemini-btn" class="btn-danger" style="padding: 10px 14px;" title="מחק מפתח API">🗑️ מחק מפתח</button>
+              <div style="margin-top: 4px;">
+                <button id="save-settings-gemini-btn" class="btn-primary" style="width: 100%;">שמור הגדרות AI</button>
               </div>
             </div>
           </div>
