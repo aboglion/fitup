@@ -81,9 +81,10 @@ const CalendarPage = (() => {
       const isCompleted = tracking && tracking.completed;
       const typeInfo = UI.getDayTypeInfo(day.dayType);
       const isToday = (day.dayIndex === window.appCurrentPlanIndex);
+      const isDeload = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload'));
 
       return `
-        <div class="calendar-day ${isToday ? 'today' : ''} ${isCompleted ? 'completed' : ''}"
+        <div class="calendar-day ${isToday ? 'today' : ''} ${isCompleted ? 'completed' : ''} ${isDeload ? 'deload-day' : ''}"
              onclick="CalendarPage.selectDay(${day.dayIndex})">
           <div class="calendar-day-name">${day.dayOfWeek}</div>
           <div class="calendar-day-date" dir="ltr">#${day.dayNum}</div>

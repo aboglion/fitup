@@ -30,12 +30,12 @@ const AnatomyMap = (() => {
       // Left labels (User's left, Character's right)
       { id: 'chest-l',    label: 'חזה',          pct: m.chest.pct,     color: m.chest.color,     nodeX: 45, nodeY: 25, side: 'left' },
       { id: 'core',       label: 'שרירי בטן',    pct: m.core.pct,      color: m.core.color,      nodeX: 50, nodeY: 38, side: 'left' },
-      { id: 'obliques-l', label: 'אובליקים',     pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 45, nodeY: 48, side: 'left' },
+      { id: 'obliques-l', label: 'אלכסונים',     pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 45, nodeY: 48, side: 'left' },
       // Right labels (User's right, Character's left)
       { id: 'shoulders-r',label: 'כתפיים',       pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 62, nodeY: 21, side: 'right' },
       { id: 'biceps-r',   label: 'ביספס',        pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 64, nodeY: 32, side: 'right' },
-      { id: 'forearm-r',  label: 'אמות',         pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 67, nodeY: 46, side: 'right' },
-      { id: 'quads-r',    label: 'ארבע ראשי',    pct: m.quads.pct,     color: m.quads.color,     nodeX: 55, nodeY: 60, side: 'right' },
+      { id: 'forearm-r',  label: 'אמות ואחיזה',  pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 67, nodeY: 46, side: 'right' },
+      { id: 'quads-r',    label: 'ארבע-ראשי',    pct: m.quads.pct,     color: m.quads.color,     nodeX: 55, nodeY: 60, side: 'right' },
       // Symmetric dots
       { hideLabel: true, id: 'shoulders-l', color: m.shoulders.color, nodeX: 38, nodeY: 21 },
       { hideLabel: true, id: 'chest-r',     color: m.chest.color,     nodeX: 55, nodeY: 25 },
@@ -48,7 +48,7 @@ const AnatomyMap = (() => {
     // ── BACK VIEW ──
     const backCallouts = [
       // Left labels (4)
-      { id: 'traps-l',     label: 'טרפז',       pct: m.traps.pct,       color: m.traps.color,       nodeX: 47, nodeY: 19, side: 'left' },
+      { id: 'traps-l',     label: 'טרפז וגב עליון', pct: m.traps.pct,       color: m.traps.color,       nodeX: 47, nodeY: 19, side: 'left' },
       { id: 'triceps-l',   label: 'טריספס',     pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 36, nodeY: 34, side: 'left' },
       { id: 'lowerBack',   label: 'גב תחתון',   pct: m.lowerBack.pct,   color: m.lowerBack.color,   nodeX: 50, nodeY: 48, side: 'left' },
       { id: 'hamstrings-l',label: 'המסטרינג',    pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 46, nodeY: 64, side: 'left' },

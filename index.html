@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>FitUp - מעקב אימונים</title>
-  <meta name="description" content="אפליקציית מעקב אימונים מקצועית - ניהול תוכנית אימונים שנתית">
+  <title>FitUp - מעקב אימונים ותזונה</title>
+  <meta name="description" content="אפליקציית מעקב אימונים ותזונה מקצועית - ניהול תוכנית אימונים וניתוח ארוחות ע״י AI">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💪</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="manifest" href="manifest.json">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script>
     if (localStorage.getItem('theme') === 'light') {
       document.documentElement.classList.add('light-theme');
@@ -25,7 +26,7 @@
     <div class="splash-content">
       <div class="splash-icon">💪</div>
       <h1 class="splash-title">FitUp</h1>
-      <p class="splash-subtitle">מעקב אימונים מקצועי</p>
+      <p class="splash-subtitle">מעקב אימונים ותזונה AI מקצועי</p>
       <div class="splash-loader">
         <div class="splash-loader-bar"></div>
       </div>
@@ -44,6 +45,10 @@
         <button class="nav-link active" data-page="today" id="nav-today">
           <span class="nav-link-icon">📅</span>
           <span class="nav-link-text">היום</span>
+        </button>
+        <button class="nav-link" data-page="nutrition" id="nav-nutrition">
+          <span class="nav-link-icon">🍽️</span>
+          <span class="nav-link-text">תזונה & AI</span>
         </button>
         <button class="nav-link" data-page="exercises" id="nav-exercises">
           <span class="nav-link-icon">🏋️</span>
@@ -108,7 +113,7 @@
             </div>
 
             <!-- Food Plate Button -->
-            <button class="bottom-nav-link" data-page="nutrition" id="nav-mobile-food-btn" style="pointer-events: auto; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 50%; width: 38px; height: 38px; min-width: 38px; min-height: 38px; flex-shrink: 0; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); z-index: 20;">🍽️</button>
+            <button class="bottom-nav-link" data-page="nutrition" id="nav-mobile-food-btn" style="pointer-events: auto; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 50%; width: 38px; height: 38px; min-width: 38px; min-height: 38px; flex-shrink: 0; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); z-index: 20;" title="מעבר ליומן תזונה">🍽️</button>
 
             <!-- Protein (Physical Left) -->
             <div style="position: absolute; left: 0; top: 50%; transform: translate(calc(-100% - 8px), -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; width: max-content;">
@@ -190,11 +195,8 @@
           </div>
         </div>
 
-
-
         <div class="top-day-actions" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
 
-          
           <!-- Day Actions (Accordion Content) -->
           <div id="notes-accordion-content" class="day-actions" style="display: none; margin-top: 0;">
             <div class="day-input-group">
@@ -225,16 +227,13 @@
           </div>
         </div>
 
-
         <!-- Equipment Banner -->
         <div id="day-equipment-banner" style="margin-bottom: 20px;"></div>
 
         <!-- Exercises List -->
         <div id="exercises-list" class="exercises-list"></div>
         
-
       </section>
-
 
       <!-- Exercises Guide Page -->
       <section id="page-exercises" class="page">
@@ -266,64 +265,228 @@
         <div id="stats-charts" class="stats-charts"></div>
       </section>
 
-      <!-- Settings Page -->
-      <!-- Nutrition Page -->
+      <!-- Nutrition & AI Camera Page -->
       <section id="page-nutrition" class="page">
-        <div id="nutrition-system-card" style="padding: 16px; margin-bottom: 80px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
-            <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
-              <span>🍽️</span> יומן תזונה ותוספים
-            </h3>
-            <div style="display: flex; gap: 12px; align-items: center;">
-              <button id="manage-supplements-btn" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px;" title="ניהול תוספים">⚙️</button>
-              <button onclick="window.history.back()" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px; color: var(--text-muted);" title="חזור">✖</button>
+        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h1 class="page-title" style="display: flex; align-items: center; gap: 10px;">
+            <span>🍽️</span> יומן תזונה ו-AI
+          </h1>
+          <div style="display: flex; gap: 8px;">
+            <button id="nut-settings-btn" class="btn-secondary" style="padding: 8px 12px; font-size: 13px;">⚙️ הגדרות AI</button>
+            <button id="manage-supplements-btn" class="btn-secondary" style="padding: 8px 12px; font-size: 13px;">💊 תוספים</button>
+          </div>
+        </div>
+
+        <!-- Gemini API Key Setup Card (Shown if key is missing) -->
+        <div id="gemini-setup-card" class="settings-card" style="display: none; border: 2px solid var(--accent-primary); background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); border-radius: var(--radius-lg); margin-bottom: 20px; padding: 20px;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <span style="font-size: 32px;">🔑</span>
+            <div>
+              <h3 style="margin: 0; font-size: 18px; color: var(--text-primary);">הגדרת Gemini AI (סורק אוכל)</h3>
+              <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-secondary);">כדי לצלם אוכל ולקבל חישוב קלוריות וחלבון אוטומטי, הזן מפתח Gemini API חינמי</p>
             </div>
           </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
+            <div>
+              <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">מפתח API (Google Gemini)</label>
+              <input type="password" id="gemini-api-key-input" placeholder="AIzaSy..." style="width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-family: monospace;" dir="ltr">
+            </div>
 
-          <!-- Supplements Fuel Bars -->
-          <div id="supplements-fuel-container" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
-             <!-- Injected via JS -->
+            <div>
+              <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">מודל בינה מלאכותית (AI Model)</label>
+              <select id="gemini-model-select" style="width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary);">
+                <option value="gemini-2.0-flash">Gemini 2.0 Flash (מומלץ - מהיר ומדויק)</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                <option value="gemini-1.5-pro">Gemini 1.5 Pro (מפורט)</option>
+                <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
+              </select>
+            </div>
+
+            <button id="save-gemini-key-btn" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px; font-weight: 700; margin-top: 4px;">
+              ✨ שמור והפעל סורק AI
+            </button>
+            <div id="gemini-key-error" style="color: var(--danger); font-size: 12px; display: none; text-align: center;"></div>
+
+            <div style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 4px;">
+              💡 אין לך מפתח? ניתן להנפיק מפתח בחינם תוך דקה דרך <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: var(--accent-primary); text-decoration: underline;">Google AI Studio</a>.
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Nutrition Content Container -->
+        <div id="nutrition-main-content">
+          
+          <!-- Camera & Food Capture Action Bar -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+            <div style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+              <span>📸 הוספת ארוחה מבוססת AI</span>
+              <span id="current-ai-model-badge" style="font-size: 11px; background: var(--bg-elevated); padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border-light); color: var(--accent-primary);">gemini-2.0-flash</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+              <!-- Camera capture input -->
+              <label class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; cursor: pointer; border-radius: 12px; font-weight: 700; background: linear-gradient(135deg, #3b82f6, #8b5cf6);">
+                <span style="font-size: 18px;">📸</span>
+                <span>צלם אוכל</span>
+                <input type="file" id="food-camera-input" accept="image/*" capture="environment" style="display: none;">
+              </label>
+
+              <!-- Gallery upload input -->
+              <label class="btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; cursor: pointer; border-radius: 12px; font-weight: 700;">
+                <span style="font-size: 18px;">🖼️</span>
+                <span>העלה תמונה</span>
+                <input type="file" id="food-gallery-input" accept="image/*" style="display: none;">
+              </label>
+            </div>
+
+            <button id="manual-meal-btn" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <span>✏️</span> הוספת ארוחה ידנית (ללא תמונה)
+            </button>
           </div>
 
-          <!-- Totals -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-            <div style="background: var(--bg-elevated); padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-light);">
-              <div style="font-size: 20px; font-weight: 800; color: var(--warning);" id="nut-calories-total">0</div>
-              <div style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">סה״כ קלוריות</div>
+          <!-- Photo Analysis Preview Modal / Card -->
+          <div id="food-analysis-preview" style="display: none; background: var(--bg-card); border: 2px solid var(--accent-primary); border-radius: 16px; padding: 16px; margin-bottom: 20px; animation: slideDown 0.3s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+                <span>✨</span> מנות לניתוח AI
+              </h4>
+              <button id="cancel-analysis-btn" style="background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-muted);">✕</button>
             </div>
-            <div style="background: var(--bg-elevated); padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border-light);">
-              <div style="font-size: 20px; font-weight: 800; color: var(--success);" id="nut-protein-total">0</div>
-              <div style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">סה״כ חלבון</div>
+
+            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
+              <img id="food-preview-img" src="" alt="תמונת אוכל" style="width: 90px; height: 90px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-light); background: #000;">
+              <div style="flex: 1;">
+                <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">הערה/תיאור נוסף (אופציונלי):</label>
+                <input type="text" id="food-user-notes" placeholder="למשל: 200ג חזה עוף, חצי צלחת אורז" style="width: 100%; padding: 8px 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); font-size: 13px; color: var(--text-primary);">
+              </div>
+            </div>
+
+            <button id="run-ai-analysis-btn" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <span>🤖</span> נתח קלוריות וחלבון עם AI
+            </button>
+          </div>
+
+          <!-- Daily Calorie & Protein Balance Gauge HUD -->
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 8px;">
+              <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+                <span>📊</span> מאזן קלורי ותזונה להיום
+              </h3>
+              <span id="nutrition-date-label" style="font-size: 12px; color: var(--text-muted); font-weight: 600;"></span>
+            </div>
+
+            <!-- Macro Cards Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+              <!-- Calories Card -->
+              <div style="background: var(--bg-elevated); padding: 14px; border-radius: 14px; display: flex; flex-direction: column; border: 1px solid var(--border-light); position: relative; overflow: hidden;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <span style="font-size: 12px; color: var(--text-secondary); font-weight: 700;">קלוריות</span>
+                  <span style="font-size: 14px;">🔥</span>
+                </div>
+                <div style="display: flex; align-items: baseline; gap: 4px;">
+                  <span id="nut-calories-total" style="font-size: 24px; font-weight: 900; color: var(--warning);">0</span>
+                  <span style="font-size: 12px; color: var(--text-muted);">/ <span id="nut-calories-target">2200</span> קק"ל</span>
+                </div>
+                <div style="height: 6px; background: var(--bg-input); border-radius: 3px; margin-top: 8px; overflow: hidden;">
+                  <div id="nut-calories-bar" style="height: 100%; width: 0%; background: var(--warning); transition: width 0.5s ease;"></div>
+                </div>
+              </div>
+
+              <!-- Protein Card -->
+              <div style="background: var(--bg-elevated); padding: 14px; border-radius: 14px; display: flex; flex-direction: column; border: 1px solid var(--border-light); position: relative; overflow: hidden;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <span style="font-size: 12px; color: var(--text-secondary); font-weight: 700;">חלבון</span>
+                  <span style="font-size: 14px;">🥩</span>
+                </div>
+                <div style="display: flex; align-items: baseline; gap: 4px;">
+                  <span id="nut-protein-total" style="font-size: 24px; font-weight: 900; color: var(--success);">0</span>
+                  <span style="font-size: 12px; color: var(--text-muted);">/ <span id="nut-protein-target">160</span>ג</span>
+                </div>
+                <div style="height: 6px; background: var(--bg-input); border-radius: 3px; margin-top: 8px; overflow: hidden;">
+                  <div id="nut-protein-bar" style="height: 100%; width: 0%; background: var(--success); transition: width 0.5s ease;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Supplements Fuel Bars -->
+            <div style="font-size: 12px; font-weight: 800; color: var(--text-secondary); margin-bottom: 8px;">תוספים ורוטינה יומית:</div>
+            <div id="supplements-fuel-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;">
+               <!-- Injected via JS -->
             </div>
           </div>
 
           <!-- Meals Log -->
-          <div style="margin-top: 16px;">
-            <div style="font-size: 12px; font-weight: 800; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase;">ארוחות אחרונות מהבוט</div>
-            <div id="meals-log-container" style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 80px;">
+            <div style="font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+              <span>🍽️ פירוט ארוחות שנרשמו היום</span>
+              <span id="meals-count-badge" style="font-size: 11px; font-weight: 700; color: var(--text-muted);">0 ארוחות</span>
+            </div>
+
+            <div id="meals-log-container" style="display: flex; flex-direction: column; gap: 10px;">
                <!-- Injected via JS -->
             </div>
           </div>
+
         </div>
       </section>
 
+      <!-- Settings Page -->
       <section id="page-settings" class="page">
         <div class="page-header">
           <h1 class="page-title">הגדרות</h1>
         </div>
         <div class="settings-content">
-          <!-- Google Drive Sync Card -->
+          
+          <!-- Google Account & Drive Sync Card -->
           <div class="settings-card" style="border: 2px solid var(--accent-primary); background: var(--bg-card); position: relative; overflow: hidden;">
             <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: var(--accent-primary); opacity: 0.1; filter: blur(20px); border-radius: 50%;"></div>
-            <h3>☁️ סנכרון מאובטח לגוגל דרייב</h3>
-            <p>שמור נתונים אוטומטית ברקע בעזרת חיבור לדרייב.</p>
+            <h3>☁️ חיבור לחשבון Google & סנכרון דרייב</h3>
+            <p>שמור וסנכרן את הנתונים שלך אוטומטית ב-Google Drive האישי שלך.</p>
+
+            <div id="google-user-status" style="display: flex; align-items: center; gap: 12px; background: var(--bg-elevated); padding: 12px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border-light);">
+              <div style="font-size: 28px;">👤</div>
+              <div style="flex: 1;">
+                <div id="google-user-name" style="font-weight: 700; color: var(--text-primary); font-size: 14px;">לא מחובר לחשבון גוגל</div>
+                <div id="google-user-email" style="font-size: 12px; color: var(--text-secondary);">עבודת אופליין מקומית בלבד</div>
+              </div>
+            </div>
             
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
               <span id="last-sync-status" style="font-size: 11px; font-weight: 600; color: var(--text-muted);">סנכרון אחרון: מחשב...</span>
             </div>
 
-            <div class="settings-actions">
-              <button id="cloud-sync-btn" class="btn-primary" style="width: 100%;">🔄 סנכרן עכשיו</button>
+            <div class="settings-actions" style="display: flex; flex-direction: column; gap: 8px;">
+              <button id="google-login-btn" class="btn-primary" style="width: 100%; padding: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span>🔑</span> התחבר עם חשבון גוגל
+              </button>
+              <button id="cloud-sync-btn" class="btn-secondary" style="width: 100%; padding: 10px;">🔄 סנכרן עכשיו מול Google Drive</button>
+              <button id="google-logout-btn" class="btn-danger" style="width: 100%; padding: 8px; display: none; font-size: 12px;">התנתק מגוגל</button>
+            </div>
+          </div>
+
+          <!-- Gemini AI Settings Card -->
+          <div class="settings-card">
+            <h3>🤖 הגדרות מודל Gemini AI</h3>
+            <p>הגדר את מפתח ה-API והמודל המועדף לניתוח ארוחות אוכל</p>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+              <div>
+                <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">מפתח Gemini API</label>
+                <input type="password" id="settings-gemini-key" placeholder="הכנס מפתח API..." style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary);" dir="ltr">
+              </div>
+
+              <div>
+                <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;">מודל מועדף</label>
+                <select id="settings-gemini-model" style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary);">
+                  <option value="gemini-2.0-flash">Gemini 2.0 Flash (מומלץ - מהיר ומדויק)</option>
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                  <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
+                </select>
+              </div>
+
+              <button id="save-settings-gemini-btn" class="btn-primary" style="margin-top: 4px;">שמור הגדרות AI</button>
             </div>
           </div>
 
@@ -367,21 +530,9 @@
           </div>
           <div class="settings-card about-card">
             <h3>ℹ️ אודות</h3>
-            <p>FitUp v1.0 - אפליקציית מעקב אימונים</p>
+            <p>FitUp v2.0 Pro - אפליקציית מעקב אימונים ותזונה AI</p>
             <p>תוכנית 52 שבועות • 365 ימים</p>
-            <p class="muted">כל הנתונים נשמרים מקומית בדפדפן שלך</p>
-            
-            <div class="philosophy-box" style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-color);">
-              <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: var(--accent-primary);">
-                <span>🧭</span> נוקשות שנתית
-              </h4>
-              <p style="margin-bottom: 12px;">תכנון של 365 ימים מראש עלול לייצר תחושת כישלון במידה ומפספסים שבוע בגלל מחלה, נסיעה או עומס בלתי צפוי. <strong>חובה להתייחס למערכת הזו כאל מצפן (סדר האימונים) ולא כאל לוח שנה קשיח שלא ניתן להזזה.</strong></p>
-
-              <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; color: var(--accent-primary);">
-                <span>🎯</span> אפס החלטות ומגבלת ציוד
-              </h4>
-              <p style="margin-bottom: 0;">התוכנית נבנתה במכוון ל<strong>אפס החלטות מצד המתאמן</strong> ועם <strong>מגבלת הציוד המוגדרת בלבד</strong>. היתרון הוא מיקוד מנטלי מלא בביצוע (ללא עומס קוגניטיבי), עקביות בכל מקום ללא צורך במנוי לחדר כושר, ומניעת פציעות או ניחושים ע"י ניהול עומסים (RPE ו-Deload) מובנה ומדעי.</p>
-            </div>
+            <p class="muted">כל הנתונים נשמרים מקומית בדפדפן ובדרייב האישי שלך</p>
           </div>
         </div>
       </section>
@@ -420,23 +571,21 @@
   <div id="login-screen" class="modal-overlay hidden" style="z-index: 9999; background: var(--bg-primary);">
     <div style="width: 90%; max-width: 360px; background: var(--bg-card); padding: 32px 24px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); border: 1px solid var(--border-color); text-align: center;">
       <div style="font-size: 48px; margin-bottom: 16px;">💪</div>
-      <h2 style="font-size: 24px; margin-bottom: 8px; color: var(--text-primary);">ברוך שובך!</h2>
-      <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">המכשיר הזה לא מסונכרן. אנא הכנס את סיסמת הגישה שלך כדי לטעון נתונים מהענן.</p>
+      <h2 style="font-size: 24px; margin-bottom: 8px; color: var(--text-primary);">ברוך הבא ל-FitUp!</h2>
+      <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;">סנכרן את נתוני האימונים והתזונה שלך בצורה בטוחה ישירות מול Google Drive</p>
       
-      <input type="password" id="login-password" placeholder="סיסמה..." autocapitalize="none" autocorrect="off" autocomplete="off" style="width: 100%; padding: 12px 16px; font-size: 16px; border-radius: 12px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); margin-bottom: 16px; text-align: center;" dir="ltr">
+      <button id="login-google-btn" class="btn-primary" style="width: 100%; padding: 14px; font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #4285F4, #34A853);">
+        <span>🔑</span> התחבר עם חשבון גוגל
+      </button>
       
-      <button id="login-btn" class="btn-primary" style="width: 100%; padding: 14px; font-size: 16px;">התחבר וטען נתונים</button>
-      <div id="login-error" style="color: var(--danger); font-size: 12px; margin-top: 12px; display: none;">סיסמה שגויה או בעיית תקשורת.</div>
-      
-      <div style="margin-top: 24px;">
-        <button id="login-bypass-btn" style="background: none; border: none; color: var(--text-muted); font-size: 12px; text-decoration: underline; cursor: pointer;">אני משתמש חדש לגמרי - התחל מאפס</button>
-      </div>
+      <button id="login-bypass-btn" style="background: none; border: none; color: var(--text-muted); font-size: 13px; text-decoration: underline; cursor: pointer; padding: 8px;">אני משתמש חדש / המשך מקומית באופליין בלבד</button>
     </div>
   </div>
 
   <script src="js/data.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/db.js"></script>
+  <script src="js/gemini.js"></script>
   <script src="js/crypto.js"></script>
   <script src="js/config.js"></script>
   <script src="js/today.js"></script>

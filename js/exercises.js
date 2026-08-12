@@ -765,7 +765,7 @@ const ExercisesPage = (() => {
           <div class="guide-card-meta">
             <span class="guide-difficulty ${diffClass}">${ex.difficulty || ''}</span>
             ${ex.tempo ? `<span class="guide-tempo" style="background: rgba(59, 130, 246, 0.12); color: var(--accent-primary); border: 1px solid rgba(59, 130, 246, 0.25); padding: 2px 6px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;" title="טמפו ביצוע">⏱️ ${UI.formatTempo(ex.tempo)}</span>` : ''}
-            ${weightDisplay ? `<span class="guide-weight">${weightDisplay}</span>` : ''}
+            ${weightDisplay ? `<span class="guide-weight"><bdi dir="ltr">${weightDisplay}</bdi></span>` : ''}
             ${videoLink}
           </div>
         </div>

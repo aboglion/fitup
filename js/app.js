@@ -178,70 +178,37 @@ const App = (() => {
     const loginScreen = document.getElementById('login-screen');
     loginScreen.classList.remove('hidden');
 
-    const loginBtn = document.getElementById('login-btn');
+    const googleBtn = document.getElementById('login-google-btn');
     const bypassBtn = document.getElementById('login-bypass-btn');
-    const passwordInput = document.getElementById('login-password');
-    const errorMsg = document.getElementById('login-error');
 
-    bypassBtn.onclick = () => {
-      loginScreen.classList.add('hidden');
-      document.getElementById('splash-screen').classList.remove('hidden');
-      loadAppCore();
-    };
+    if (bypassBtn) {
+      bypassBtn.onclick = () => {
+        loginScreen.classList.add('hidden');
+        document.getElementById('splash-screen').classList.remove('hidden');
+        loadAppCore();
+      };
+    }
 
-    loginBtn.onclick = async () => {
-      let password = passwordInput.value;
-      if (!password) return;
-      
-      password = password.trim();
-
-      loginBtn.disabled = true;
-      loginBtn.textContent = 'מתחבר...';
-      errorMsg.style.display = 'none';
-
-      try {
-        // 1. Decrypt URL
-        let decryptedUrl = await Crypto.decrypt(CONFIG.encryptedUrl, password);
-        if (!decryptedUrl) {
-          throw new Error('סיסמה שגויה!');
-        }
-        decryptedUrl = decryptedUrl.trim();
-        if (!decryptedUrl.startsWith('http')) {
-          throw new Error('סיסמה שגויה!');
-        }
-
-        // 2. Fetch data from Google Drive
-        const response = await fetch(decryptedUrl);
-        if (!response.ok) throw new Error('שגיאת רשת מול שרת גוגל');
-        
-        const data = await response.json();
-        if (data.error || !data.tracking) {
-           // Might be empty Drive
-           console.log("Drive empty or error", data);
-        } else {
-           // 3. Import data
-           await DB.importData(data);
-        }
-
-        // 4. Save decrypted URL locally
-        await DB.setSetting('cloudSyncUrl', decryptedUrl);
-
-        // 5. Load App
-        loginBtn.textContent = 'הצלחה! 🚀';
-        setTimeout(() => {
-           document.getElementById('login-screen').classList.add('hidden');
-           document.getElementById('splash-screen').classList.remove('hidden');
-           loadAppCore();
-        }, 1000);
-
-      } catch (err) {
-        console.error(err);
-        errorMsg.textContent = err.message === 'סיסמה שגויה!' ? err.message : `שגיאה בשאיבת נתונים: ${err.message}`;
-        errorMsg.style.display = 'block';
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'התחבר וטען נתונים';
-      }
-    };
+    if (googleBtn) {
+      googleBtn.onclick = () => {
+        googleBtn.disabled = true;
+        googleBtn.textContent = 'מתחבר ל-Google...';
+        CloudSync.loginWithGoogle(
+          async (profile) => {
+            UI.toast(`שלום, ${profile.name || 'משתמש גוגל'}! 👋`, 'success');
+            await CloudSync.pullData();
+            loginScreen.classList.add('hidden');
+            document.getElementById('splash-screen').classList.remove('hidden');
+            loadAppCore();
+          },
+          (err) => {
+            googleBtn.disabled = false;
+            googleBtn.innerHTML = '<span>🔑</span> התחבר עם חשבון גוגל';
+            UI.toast('שגיאה בהתחברות: ' + err, 'error');
+          }
+        );
+      };
+    }
   }
 
   /**
@@ -543,44 +510,110 @@ const App = (() => {
       UI.toast(`מצב תצוגה שונה ל${newTheme === 'light' ? 'בהיר ☀️' : 'כהה 🌙'}`, 'info');
     });
 
-    // --- Google Drive Sync Settings ---
-    const urlInput = document.getElementById('cloud-sync-url');
+    // --- Google Drive & Account Settings ---
+    const googleLoginBtn = document.getElementById('google-login-btn');
+    const googleLogoutBtn = document.getElementById('google-logout-btn');
+    const googleUserName = document.getElementById('google-user-name');
+    const googleUserEmail = document.getElementById('google-user-email');
     const syncStatus = document.getElementById('last-sync-status');
     const syncBtn = document.getElementById('cloud-sync-btn');
 
-    // Load initial status
-    DB.getSetting('cloudSyncUrl').then(url => {
-      if (url && urlInput) urlInput.value = url;
-    });
-    
-    CloudSync.getLastSyncText().then(text => {
-      syncStatus.textContent = `סנכרון אחרון: ${text}`;
-    });
+    const updateGoogleUI = async () => {
+      const loggedIn = await CloudSync.isLoggedIn();
+      const profile = await CloudSync.getUserProfile();
 
-    // Save URL on change
-    if (urlInput) {
-      urlInput.addEventListener('change', async (e) => {
-        await DB.setSetting('cloudSyncUrl', e.target.value.trim());
-        UI.toast('כתובת API נשמרה', 'success');
-      });
+      if (loggedIn) {
+        if (googleUserName) googleUserName.textContent = profile?.name || 'משתמש גוגל מחובר';
+        if (googleUserEmail) googleUserEmail.textContent = profile?.email || 'סנכרון Google Drive פעיל 🟢';
+        if (googleLoginBtn) googleLoginBtn.style.display = 'none';
+        if (googleLogoutBtn) googleLogoutBtn.style.display = 'block';
+      } else {
+        if (googleUserName) googleUserName.textContent = 'לא מחובר לחשבון גוגל';
+        if (googleUserEmail) googleUserEmail.textContent = 'עבודת אופליין מקומית בלבד';
+        if (googleLoginBtn) googleLoginBtn.style.display = 'flex';
+        if (googleLogoutBtn) googleLogoutBtn.style.display = 'none';
+      }
+
+      const syncText = await CloudSync.getLastSyncText();
+      if (syncStatus) syncStatus.textContent = `סנכרון אחרון: ${syncText}`;
+    };
+
+    updateGoogleUI();
+
+    if (googleLoginBtn) {
+      googleLoginBtn.onclick = () => {
+        CloudSync.loginWithGoogle(
+          async (profile) => {
+            UI.toast(`התחברת כ-${profile.name || 'משתמש גוגל'}!`, 'success');
+            await updateGoogleUI();
+            CloudSync.syncData(true);
+          },
+          (err) => UI.toast('שגיאה: ' + err, 'error')
+        );
+      };
     }
 
-    // Manual Sync Button
+    if (googleLogoutBtn) {
+      googleLogoutBtn.onclick = async () => {
+        await CloudSync.logout();
+        await updateGoogleUI();
+      };
+    }
+
     if (syncBtn) {
       syncBtn.addEventListener('click', async () => {
         syncBtn.disabled = true;
-        syncBtn.textContent = '🔄 מסנכרן...';
+        syncBtn.textContent = '🔄 מסנכרן מול Drive...';
         
-        const result = await CloudSync.syncData(true); // manual = true
-        
+        const result = await CloudSync.syncData(true);
         if (result.success) {
-          const text = await CloudSync.getLastSyncText();
-          syncStatus.textContent = `סנכרון אחרון: ${text}`;
+          await updateGoogleUI();
         }
         
         syncBtn.disabled = false;
-        syncBtn.textContent = '🔄 סנכרן עכשיו';
+        syncBtn.textContent = '🔄 סנכרן עכשיו מול Google Drive';
       });
+    }
+
+    // --- Gemini AI Settings ---
+    const geminiKeyInput = document.getElementById('settings-gemini-key');
+    const geminiModelSelect = document.getElementById('settings-gemini-model');
+    const saveGeminiBtn = document.getElementById('save-settings-gemini-btn');
+
+    if (typeof GeminiService !== 'undefined') {
+      GeminiService.getApiKey().then(key => {
+        if (key && geminiKeyInput) geminiKeyInput.value = key;
+      });
+      GeminiService.getModel().then(model => {
+        if (model && geminiModelSelect) geminiModelSelect.value = model;
+      });
+
+      if (saveGeminiBtn) {
+        saveGeminiBtn.onclick = async () => {
+          const key = geminiKeyInput ? geminiKeyInput.value.trim() : '';
+          const model = geminiModelSelect ? geminiModelSelect.value : 'gemini-2.0-flash';
+
+          if (!key) {
+            UI.toast('נא להזין מפתח API', 'warning');
+            return;
+          }
+
+          saveGeminiBtn.disabled = true;
+          saveGeminiBtn.textContent = 'בודק תקינות מפתח... ⏳';
+
+          try {
+            await GeminiService.testApiKey(key, model);
+            await GeminiService.setApiKey(key);
+            await GeminiService.setModel(model);
+            UI.toast('הגדרות Gemini AI נשמרו בהצלחה! 🎉', 'success');
+          } catch (err) {
+            UI.toast('שגיאה: ' + err.message, 'error');
+          } finally {
+            saveGeminiBtn.disabled = false;
+            saveGeminiBtn.textContent = 'שמור הגדרות AI';
+          }
+        };
+      }
     }
   }
 

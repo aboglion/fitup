@@ -11,7 +11,7 @@ const TodayPage = (() => {
   function isWeighted(ex) {
     if (!ex || !ex.weight) return false;
     const w = String(ex.weight).trim().toLowerCase();
-    if (w === '' || w === '—' || w.startsWith('bodyweight') || w.startsWith('משקל גוף')) {
+    if (w === '' || w === '—' || w.startsWith('bodyweight') || w.startsWith('משקל גוף') || w.startsWith('incline') || w.includes('%')) {
       return false;
     }
     return true;
@@ -20,11 +20,31 @@ const TodayPage = (() => {
   function extractNumericWeight(weightStr) {
     if (!weightStr) return '';
     const str = String(weightStr).trim();
-    if (str.toLowerCase().startsWith('bodyweight') || str.toLowerCase().startsWith('משקל גוף') || str === '—') {
+    if (str.toLowerCase().startsWith('bodyweight') || str.toLowerCase().startsWith('משקל גוף') || str === '—' || str.toLowerCase().startsWith('incline') || str.includes('%')) {
       return '';
     }
     const match = str.match(/(\d+(?:\.\d+)?)/);
     return match ? match[1] : '';
+  }
+
+  /**
+   * Get suggested numeric weight for set (supports ladder ranges e.g. "6-15 kg total (Ladder)")
+   */
+  function getSuggestedWeightForSet(ex, setIndex, totalSets, prevPerf) {
+    if (prevPerf && prevPerf.setData && prevPerf.setData[`set_${setIndex}_weight`]) {
+      return prevPerf.setData[`set_${setIndex}_weight`];
+    }
+    if (!ex || !ex.weight || !isWeighted(ex)) return '';
+    const wStr = String(ex.weight).trim();
+
+    // Check for range like "6-15 kg total (Ladder)" or "3-9 kg each (Ladder)"
+    const rangeMatch = wStr.match(/(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)/);
+    if (rangeMatch) {
+      // Both sets start at the current stage weight (min weight of range for stage 1)
+      return String(rangeMatch[1]);
+    }
+
+    return extractNumericWeight(wStr);
   }
 
   /**
@@ -139,12 +159,18 @@ const TodayPage = (() => {
 
     // Update header badges
     const typeInfo = UI.getDayTypeInfo(day.dayType);
+    const isDeloadDay = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload')) || (day.week && day.week.includes('Deload'));
 
-    // Active Recovery UI Background differentiation
+    // Active Recovery & Deload UI Background differentiation
     if (day.dayType === 'Active Recovery') {
       document.body.classList.add('recovery-mode');
+      document.body.classList.remove('deload-mode');
+    } else if (isDeloadDay) {
+      document.body.classList.add('deload-mode');
+      document.body.classList.remove('recovery-mode');
     } else {
       document.body.classList.remove('recovery-mode');
+      document.body.classList.remove('deload-mode');
     }
     
     // Check if program started to show preview banner
@@ -169,6 +195,28 @@ const TodayPage = (() => {
       }
     } else if (previewBanner) {
       previewBanner.remove();
+    }
+
+    // Deload Alert Banner logic
+    let deloadBanner = document.getElementById('deload-mode-banner');
+    if (isDeloadDay) {
+      if (summaryCard) summaryCard.classList.add('is-deload');
+      if (!deloadBanner && summaryCard) {
+        deloadBanner = document.createElement('div');
+        deloadBanner.id = 'deload-mode-banner';
+        deloadBanner.className = 'deload-warning-banner';
+        deloadBanner.innerHTML = `
+          <div class="deload-banner-icon">🌿</div>
+          <div class="deload-banner-content">
+            <strong class="deload-banner-title">שבוע Deload — הפחתת עומס מתוכננת!</strong>
+            <span class="deload-banner-sub">שבוע זה מיועד להתאוששות מירבית ומניעת פציעות: בצע 2 סטים בלבד בכל תרגיל, השתמש במשקל מופחת (~60%) והימנע מהגעה לכישלון.</span>
+          </div>
+        `;
+        summaryCard.parentNode.insertBefore(deloadBanner, summaryCard);
+      }
+    } else {
+      if (summaryCard) summaryCard.classList.remove('is-deload');
+      if (deloadBanner) deloadBanner.remove();
     }
 
     // Update summary card
@@ -205,247 +253,327 @@ const TodayPage = (() => {
       rpeBadge.style.display = 'none';
     }
 
-    // --- Update Nutrition & Supplements System Card ---
-    const nutritionCard = document.getElementById('nutrition-system-card');
-    if (nutritionCard) {
-      let queryDateStr = null;
-      if (day.date) {
-        const parts = day.date.split('/');
-        if (parts.length === 3) {
-          queryDateStr = `${parts[2]}-${parts[1]}-${parts[0]}`;
-        }
+    // --- Update Nutrition & AI System ---
+    await renderNutritionSection();
+  }
+
+  /**
+   * Render Nutrition Section with Gemini AI & Photo Scanner
+   */
+  async function renderNutritionSection(queryDateStr) {
+    if (!queryDateStr) queryDateStr = UI.getLocalDateString();
+
+    const setupCard = document.getElementById('gemini-setup-card');
+    const mainContent = document.getElementById('nutrition-main-content');
+    
+    if (typeof GeminiService === 'undefined') return;
+
+    const isConfigured = await GeminiService.isConfigured();
+
+    if (!isConfigured) {
+      if (setupCard) setupCard.style.display = 'block';
+      if (mainContent) mainContent.style.display = 'none';
+
+      // Bind setup button
+      const saveKeyBtn = document.getElementById('save-gemini-key-btn');
+      if (saveKeyBtn && !saveKeyBtn.hasAttribute('data-bound')) {
+        saveKeyBtn.setAttribute('data-bound', 'true');
+        saveKeyBtn.onclick = async () => {
+          const keyInput = document.getElementById('gemini-api-key-input');
+          const modelSelect = document.getElementById('gemini-model-select');
+          const errorDiv = document.getElementById('gemini-key-error');
+          const key = keyInput ? keyInput.value.trim() : '';
+          const model = modelSelect ? modelSelect.value : 'gemini-2.0-flash';
+
+          if (!key) {
+            if (errorDiv) { errorDiv.textContent = 'נא להזין מפתח API'; errorDiv.style.display = 'block'; }
+            return;
+          }
+
+          saveKeyBtn.disabled = true;
+          saveKeyBtn.textContent = 'בודק מפתח API... ⏳';
+          if (errorDiv) errorDiv.style.display = 'none';
+
+          try {
+            await GeminiService.testApiKey(key, model);
+            await GeminiService.setApiKey(key);
+            await GeminiService.setModel(model);
+            UI.toast('מפתח Gemini API הוגדר בהצלחה! 🎉', 'success');
+            renderNutritionSection(queryDateStr);
+          } catch (err) {
+            saveKeyBtn.disabled = false;
+            saveKeyBtn.textContent = '✨ שמור והפעל סורק AI';
+            if (errorDiv) { errorDiv.textContent = err.message; errorDiv.style.display = 'block'; }
+          }
+        };
       }
-      if (!queryDateStr) queryDateStr = UI.getLocalDateString(); // fallback
+      return;
+    }
 
-      let nutrition = null;
-      if (typeof DB.getNutrition === 'function') {
-        nutrition = await DB.getNutrition(queryDateStr);
-      }
-      
-      let suppsRoutine = await DB.getSetting('supplementsRoutine');
-      if (!suppsRoutine) suppsRoutine = [];
+    if (setupCard) setupCard.style.display = 'none';
+    if (mainContent) mainContent.style.display = 'block';
 
-      // Determine if we should show the card
-      if ((nutrition && nutrition.meals && nutrition.meals.length > 0) || suppsRoutine.length > 0 || (nutrition && nutrition.supplements_taken && nutrition.supplements_taken.length > 0)) {
-        nutritionCard.style.display = 'block';
-        
-        let totalCals = 0;
-        let totalProtein = 0;
-        const mealsContainer = document.getElementById('meals-log-container');
-        mealsContainer.innerHTML = '';
-        
-        if (nutrition && nutrition.meals && nutrition.meals.length > 0) {
-          nutrition.meals.forEach(meal => {
-            totalCals += (meal.calories || 0);
-            totalProtein += (meal.protein || 0);
-            
-            const mealEl = document.createElement('div');
-            mealEl.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--bg-input); border-radius: 8px; font-size: 13px;";
-            
-            let bonusText = '';
-            if (meal.bonus && Object.keys(meal.bonus).length > 0) {
-              const b = Object.entries(meal.bonus).map(([k,v]) => `${k} (${v}g)`).join(', ');
-              bonusText = `<div style="font-size: 10px; color: #38bdf8; margin-top: 2px;">+ בונוס: ${b}</div>`;
-            }
+    // Display current model badge
+    const modelBadge = document.getElementById('current-ai-model-badge');
+    if (modelBadge) {
+      const currentModel = await GeminiService.getModel();
+      modelBadge.textContent = currentModel;
+    }
 
-            mealEl.innerHTML = `
-              <div style="display: flex; flex-direction: column; gap: 2px;">
-                <strong style="color: var(--text-primary);">${meal.name}</strong>
-                <span style="color: var(--text-secondary); font-size: 11px;">${meal.time || '--:--'} | ${meal.calories} קק"ל | ${meal.protein}ג חלבון</span>
-                ${bonusText}
+    // Set date label
+    const dateLabel = document.getElementById('nutrition-date-label');
+    if (dateLabel) {
+      dateLabel.textContent = `תאריך: ${queryDateStr.split('-').reverse().join('/')}`;
+    }
+
+    // Load nutrition data from DB for queryDateStr
+    let nutrition = await DB.getNutrition(queryDateStr);
+    if (!nutrition) nutrition = { meals: [], supplements_taken: [] };
+
+    // Calculate totals
+    let totalCals = 0;
+    let totalProtein = 0;
+    if (nutrition.meals && nutrition.meals.length > 0) {
+      nutrition.meals.forEach(m => {
+        totalCals += (m.calories || 0);
+        totalProtein += (m.protein || 0);
+      });
+    }
+
+    const targetCals = 2200;
+    const targetProtein = 160;
+
+    // Update HUD
+    const nutCalsEl = document.getElementById('nut-calories-total');
+    const nutProtEl = document.getElementById('nut-protein-total');
+    if (nutCalsEl) nutCalsEl.textContent = totalCals;
+    if (nutProtEl) nutProtEl.textContent = totalProtein;
+
+    const calsBar = document.getElementById('nut-calories-bar');
+    const protBar = document.getElementById('nut-protein-bar');
+    if (calsBar) calsBar.style.width = `${Math.min(100, (totalCals / targetCals) * 100)}%`;
+    if (protBar) protBar.style.width = `${Math.min(100, (totalProtein / targetProtein) * 100)}%`;
+
+    // Nav HUD
+    const navCals = document.getElementById('nav-cals-text');
+    const navProt = document.getElementById('nav-protein-text');
+    if (navCals) navCals.textContent = `${totalCals}`;
+    if (navProt) navProt.textContent = `${totalProtein}`;
+
+    const desktopNavNut = document.getElementById('desktop-nav-nutrition');
+    if (desktopNavNut) {
+      desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} קק"ל</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}ג חלבון</span>`;
+    }
+
+    // Render Meals Log List
+    const mealsContainer = document.getElementById('meals-log-container');
+    const countBadge = document.getElementById('meals-count-badge');
+
+    if (countBadge) {
+      countBadge.textContent = `${nutrition.meals ? nutrition.meals.length : 0} ארוחות`;
+    }
+
+    if (mealsContainer) {
+      mealsContainer.innerHTML = '';
+
+      if (nutrition.meals && nutrition.meals.length > 0) {
+        nutrition.meals.forEach(meal => {
+          const mealCard = document.createElement('div');
+          mealCard.style.cssText = "background: var(--bg-input); border-radius: 12px; padding: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px;";
+
+          const imgHtml = meal.image ? `
+            <img src="${meal.image}" alt="${meal.name}" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-light); flex-shrink: 0;">
+          ` : '';
+
+          const analysisHtml = meal.analysis ? `
+            <div style="font-size: 11px; color: var(--text-secondary); background: var(--bg-card); padding: 8px 10px; border-radius: 8px; border-right: 3px solid var(--accent-primary); line-height: 1.4;">
+              🤖 <em>${meal.analysis}</em>
+            </div>
+          ` : '';
+
+          mealCard.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+              ${imgHtml}
+              <div style="flex: 1;">
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 2px;">${meal.name}</div>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                  <span style="font-size: 12px; font-weight: 700; color: var(--warning); background: var(--warning-bg); padding: 2px 6px; border-radius: 6px;">🔥 ${meal.calories} קק"ל</span>
+                  <span style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--success-bg); padding: 2px 6px; border-radius: 6px;">🥩 ${meal.protein}ג חלבון</span>
+                  <span style="font-size: 11px; color: var(--text-muted);">${meal.time || ''}</span>
+                </div>
               </div>
-              <button class="delete-meal-btn" data-id="${meal.id}" style="background: none; border: none; font-size: 16px; cursor: pointer; color: var(--danger);">🗑️</button>
-            `;
-            mealsContainer.appendChild(mealEl);
-          });
-        } else {
-          mealsContainer.innerHTML = '<div style="text-align: center; font-size: 12px; color: var(--text-secondary); padding: 10px;">טרם דווחו ארוחות להיום</div>';
-        }
-        
-        document.getElementById('nut-calories-total').textContent = totalCals;
-        document.getElementById('nut-protein-total').textContent = totalProtein;
-        
-        // Update nav totals (Desktop and Mobile)
-        const desktopNavNut = document.getElementById('desktop-nav-nutrition');
-        if (desktopNavNut) {
-          desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} קק"ל</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}ג חלבון</span>`;
-        }
-        
-        const navCals = document.getElementById('nav-cals-text');
-        const navProt = document.getElementById('nav-protein-text');
-        if (navCals) navCals.textContent = `${totalCals}`;
-        if (navProt) navProt.textContent = `${totalProtein}`;
-        
-        // Supplements Fuel Bar
-        const fuelContainer = document.getElementById('supplements-fuel-container');
-        fuelContainer.innerHTML = '';
-        
-        if (suppsRoutine.length > 0) {
-          suppsRoutine.forEach(sup => {
-            // Check if taken today
-            const isTaken = nutrition && nutrition.supplements_taken && nutrition.supplements_taken.includes(sup.name);
-            
-            // Calculate Bonus from meals
-            let totalBonus = 0;
-            if (nutrition && nutrition.meals) {
-              nutrition.meals.forEach(m => {
-                if (m.bonus && m.bonus[sup.name]) {
-                  totalBonus += m.bonus[sup.name];
-                }
-              });
-            }
-            let bonusPercent = 0;
-            if (totalBonus > 0) {
-              const target = sup.target || 5; // Default 5g for visualization if unknown
-              bonusPercent = Math.min(100, (totalBonus / target) * 100);
-            }
-            
-            let fuelPercent = 0;
-            let fuelColor = 'var(--danger)';
-            let statusText = 'דרוש תדלוק!';
-            
-            if (isTaken) {
-              fuelPercent = 100;
-              fuelColor = 'var(--success)';
-              statusText = 'תודלק להיום';
-            } else {
-              // Calculate rough cooldown based on timeToTake (e.g., 09:00)
-              const now = new Date();
-              const currentHour = now.getHours();
-              const currentMin = now.getMinutes();
-              const currentTotalMins = currentHour * 60 + currentMin;
-              
-              const [takeH, takeM] = (sup.timeToTake || "09:00").split(':').map(Number);
-              const takeTotalMins = takeH * 60 + (takeM || 0);
-              
-              if (currentTotalMins < takeTotalMins) {
-                fuelPercent = Math.max(5, 100 - ((takeTotalMins - currentTotalMins) / 1440) * 100);
-                fuelColor = 'var(--warning)';
-                statusText = 'מתרוקן...';
-              }
-            }
-            
-            // If we have bonus, modify text
-            if (totalBonus > 0 && !isTaken) {
-              statusText += ` (+${totalBonus}g מאוכל)`;
-            }
+              <button class="delete-meal-btn" data-id="${meal.id}" style="background: none; border: none; font-size: 16px; cursor: pointer; color: var(--danger); padding: 4px;" title="מחק ארוחה">🗑️</button>
+            </div>
+            ${analysisHtml}
+          `;
 
-            const fuelEl = document.createElement('div');
-            fuelEl.style.cssText = "display: flex; flex-direction: column; gap: 4px;";
-            fuelEl.innerHTML = `
-              <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600;">
-                <span style="color: var(--text-primary);">${sup.name} <span style="color: var(--text-secondary); font-size: 10px;">(${sup.timeToTake})</span></span>
-                <span style="color: ${fuelColor};">${statusText}</span>
-              </div>
-              <div style="height: 12px; background: var(--bg-input); border-radius: 6px; overflow: hidden; position: relative;">
-                <div style="position: absolute; top: 0; right: 0; height: 100%; width: ${fuelPercent}%; background: ${fuelColor}; transition: width 1s ease;"></div>
-                ${bonusPercent > 0 ? `<div style="position: absolute; top: 0; right: 0; height: 100%; width: ${bonusPercent}%; background: linear-gradient(90deg, #0ea5e9, #38bdf8); box-shadow: 0 0 8px #38bdf8; z-index: 10;"></div>` : ''}
-              </div>
-              <button class="mark-sup-btn" data-name="${sup.name}" style="align-self: flex-end; font-size: 11px; margin-top: 2px; background: none; border: 1px solid var(--border-light); border-radius: 4px; padding: 2px 8px; cursor: pointer; color: var(--text-secondary); display: ${isTaken ? 'none' : 'block'};">סמן שנלקח</button>
-            `;
-            fuelContainer.appendChild(fuelEl);
-          });
-        }
-        
-        // Setup Action Listeners
-        nutritionCard.querySelectorAll('.delete-meal-btn').forEach(btn => {
-           btn.onclick = async () => {
-              if (confirm('למחוק ארוחה זו?')) {
-                 const id = btn.dataset.id;
-                 let nut = await DB.getNutrition(queryDateStr);
-                 if (nut && nut.meals) {
-                    nut.meals = nut.meals.filter(m => m.id !== id);
-                    if (!nut.deleted_meals) nut.deleted_meals = [];
-                    nut.deleted_meals.push(id);
-                    await DB.saveNutrition(queryDateStr, nut);
-                    UI.toast('הארוחה נמחקה', 'info');
-                    if(CloudSync) CloudSync.syncData(true);
-                    render();
-                 }
-              }
-           };
+          mealsContainer.appendChild(mealCard);
         });
-        
-        nutritionCard.querySelectorAll('.mark-sup-btn').forEach(btn => {
-           btn.onclick = async () => {
-              const name = btn.dataset.name;
-              let nut = await DB.getNutrition(queryDateStr);
-              if (!nut) nut = { meals: [], supplements_taken: [] };
-              if (!nut.supplements_taken) nut.supplements_taken = [];
-              if (!nut.supplements_taken.includes(name)) {
-                 nut.supplements_taken.push(name);
-                 await DB.saveNutrition(queryDateStr, nut);
-                 UI.toast('תוסף נרשם!', 'success');
-                 if(CloudSync) CloudSync.syncData(true);
-                 render();
+
+        // Bind delete handlers
+        mealsContainer.querySelectorAll('.delete-meal-btn').forEach(btn => {
+          btn.onclick = async () => {
+            if (confirm('למחוק ארוחה זו?')) {
+              const id = btn.dataset.id;
+              let currentNut = await DB.getNutrition(queryDateStr);
+              if (currentNut && currentNut.meals) {
+                currentNut.meals = currentNut.meals.filter(m => m.id !== id);
+                await DB.saveNutrition(queryDateStr, currentNut);
+                UI.toast('הארוחה נמחקה', 'info');
+                CloudSync.scheduleSync();
+                renderNutritionSection(queryDateStr);
               }
-           };
-        });
-        
-        const manageBtn = document.getElementById('manage-supplements-btn');
-        if (manageBtn && !manageBtn.hasAttribute('data-bound')) {
-          manageBtn.setAttribute('data-bound', 'true');
-          manageBtn.onclick = async () => {
-            let supps = await DB.getSetting('supplementsRoutine');
-            if (!supps) supps = [];
-            const name = prompt('הזן שם תוסף חדש (למשל: קריאטין). השאר ריק כדי לדלג:');
-            if (name && name.trim() !== '') {
-               const time = prompt('באיזו שעה ביום לקחת? (פורמט שעות, למשל 09:00)', '09:00');
-               const targetStr = prompt('יעד צריכה יומי בגרמים (לצורך חישוב בונוס מאוכל, למשל 5):', '5');
-               const target = parseFloat(targetStr) || 0;
-               supps.push({ name: name.trim(), timeToTake: time || '09:00', target: target });
-               await DB.setSetting('supplementsRoutine', supps);
-               UI.toast('תוסף נוסף בהצלחה', 'success');
-               render();
-            } else if (supps.length > 0) {
-               const delName = prompt('למחיקת תוסף קיים, הקלד את שמו המדויק כאן:\\n(' + supps.map(s => s.name).join(', ') + ')');
-               if (delName) {
-                  supps = supps.filter(s => s.name !== delName.trim());
-                  await DB.setSetting('supplementsRoutine', supps);
-                  UI.toast('עודכן', 'info');
-                  render();
-               }
-            } else {
-               UI.toast('אין תוספים ברוטינה', 'info');
             }
           };
-        }
-        
+        });
+
       } else {
-        // Fallback state if absolutely empty
-        nutritionCard.style.display = 'block';
-        nutritionCard.innerHTML = `
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
-            <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
-              <span>🍽️</span> יומן תזונה ותוספים
-            </h3>
-            <button onclick="window.history.back()" style="background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px; color: var(--text-muted);" title="חזור">✖</button>
-          </div>
-          <div style="text-align: center; color: var(--text-muted); padding: 40px 20px;">
-             <div style="font-size: 32px; margin-bottom: 12px;">🍽️</div>
-             <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">אין נתוני תזונה להיום</div>
-             <div style="font-size: 14px;">שלח לבוט בטלגרם תמונת ארוחה או רשום לו מה אכלת כדי לעקוב אחר התזונה שלך!</div>
-          </div>
-        `;
-        
-        // Clear nav totals
-        const desktopNavNut = document.getElementById('desktop-nav-nutrition');
-        if (desktopNavNut) desktopNavNut.innerHTML = '';
-        const navCals = document.getElementById('nav-cals-text');
-        const navProt = document.getElementById('nav-protein-text');
-        if (navCals) navCals.textContent = `0`;
-        if (navProt) navProt.textContent = `0`;
-        
-        const manageBtnEmpty = document.getElementById('manage-supplements-btn-empty');
-        if (manageBtnEmpty && !manageBtnEmpty.hasAttribute('data-bound')) {
-          manageBtnEmpty.setAttribute('data-bound', 'true');
-          manageBtnEmpty.onclick = async () => {
-             const name = prompt('הזן שם תוסף חדש (למשל: קריאטין):');
-             if (name && name.trim() !== '') {
-                const time = prompt('באיזו שעה ביום לקחת? (פורמט 09:00)', '09:00');
-                const targetStr = prompt('יעד צריכה יומי בגרמים (לצורך חישוב בונוס מאוכל, למשל 5):', '5');
-                const target = parseFloat(targetStr) || 0;
-                await DB.setSetting('supplementsRoutine', [{ name: name.trim(), timeToTake: time || '09:00', target: target }]);
+        mealsContainer.innerHTML = '<div style="text-align: center; font-size: 13px; color: var(--text-muted); padding: 24px;">טרם דווחו ארוחות להיום 🥗</div>';
+      }
+    }
+
+    // Wire Camera & Gallery Inputs
+    setupCameraAndPhotoHandlers(queryDateStr);
+  }
+
+  function setupCameraAndPhotoHandlers(queryDateStr) {
+    const cameraInput = document.getElementById('food-camera-input');
+    const galleryInput = document.getElementById('food-gallery-input');
+    const previewBox = document.getElementById('food-analysis-preview');
+    const previewImg = document.getElementById('food-preview-img');
+    const cancelBtn = document.getElementById('cancel-analysis-btn');
+    const runAiBtn = document.getElementById('run-ai-analysis-btn');
+    const userNotesInput = document.getElementById('food-user-notes');
+    const manualMealBtn = document.getElementById('manual-meal-btn');
+
+    let activeBase64Image = null;
+    let activeMimeType = 'image/jpeg';
+
+    const handleFileSelect = (file) => {
+      if (!file) return;
+      activeMimeType = file.type || 'image/jpeg';
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        activeBase64Image = e.target.result;
+        if (previewImg) previewImg.src = activeBase64Image;
+        if (previewBox) previewBox.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    };
+
+    if (cameraInput && !cameraInput.hasAttribute('data-bound')) {
+      cameraInput.setAttribute('data-bound', 'true');
+      cameraInput.onchange = (e) => handleFileSelect(e.target.files[0]);
+    }
+
+    if (galleryInput && !galleryInput.hasAttribute('data-bound')) {
+      galleryInput.setAttribute('data-bound', 'true');
+      galleryInput.onchange = (e) => handleFileSelect(e.target.files[0]);
+    }
+
+    if (cancelBtn && !cancelBtn.hasAttribute('data-bound')) {
+      cancelBtn.setAttribute('data-bound', 'true');
+      cancelBtn.onclick = () => {
+        if (previewBox) previewBox.style.display = 'none';
+        activeBase64Image = null;
+        if (cameraInput) cameraInput.value = '';
+        if (galleryInput) galleryInput.value = '';
+      };
+    }
+
+    if (runAiBtn && !runAiBtn.hasAttribute('data-bound')) {
+      runAiBtn.setAttribute('data-bound', 'true');
+      runAiBtn.onclick = async () => {
+        if (!activeBase64Image) {
+          UI.toast('נא לבחור תמונה לניתוח', 'warning');
+          return;
+        }
+
+        const notes = userNotesInput ? userNotesInput.value.trim() : '';
+
+        runAiBtn.disabled = true;
+        runAiBtn.innerHTML = '<span>⏳</span> מנתח ארוחה ע״י Gemini AI...';
+
+        try {
+          const analysisResult = await GeminiService.analyzeFood(activeBase64Image, activeMimeType, notes);
+          
+          let currentNut = await DB.getNutrition(queryDateStr);
+          if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
+          if (!currentNut.meals) currentNut.meals = [];
+
+          const now = new Date();
+          const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+          const newMeal = {
+            id: 'meal_' + Date.now(),
+            name: analysisResult.meal_name,
+            calories: analysisResult.calories,
+            protein: analysisResult.protein,
+            carbs: analysisResult.carbs,
+            fat: analysisResult.fat,
+            analysis: analysisResult.analysis,
+            time: timeStr,
+            image: activeBase64Image
+          };
+
+          currentNut.meals.push(newMeal);
+          await DB.saveNutrition(queryDateStr, currentNut);
+
+          UI.toast(`ארוחה נוספה: ${analysisResult.meal_name} (${analysisResult.calories} קק"ל) 🎉`, 'success');
+          CloudSync.scheduleSync();
+
+          // Reset inputs
+          if (previewBox) previewBox.style.display = 'none';
+          activeBase64Image = null;
+          if (cameraInput) cameraInput.value = '';
+          if (galleryInput) galleryInput.value = '';
+          if (userNotesInput) userNotesInput.value = '';
+
+          renderNutritionSection(queryDateStr);
+
+        } catch (err) {
+          console.error('AI analysis error:', err);
+          UI.toast('שגיאה בניתוח התמונה: ' + err.message, 'error');
+        } finally {
+          runAiBtn.disabled = false;
+          runAiBtn.innerHTML = '<span>🤖</span> נתח קלוריות וחלבון עם AI';
+        }
+      };
+    }
+
+    if (manualMealBtn && !manualMealBtn.hasAttribute('data-bound')) {
+      manualMealBtn.setAttribute('data-bound', 'true');
+      manualMealBtn.onclick = async () => {
+        const name = prompt('שם הארוחה (למשל: חזה עוף עם אורז):');
+        if (!name || !name.trim()) return;
+        const calsStr = prompt('כמות קלוריות (קק"ל):', '500');
+        const protStr = prompt('כמות חלבון (גרם):', '35');
+
+        const cals = parseInt(calsStr) || 0;
+        const prot = parseInt(protStr) || 0;
+
+        let currentNut = await DB.getNutrition(queryDateStr);
+        if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
+        if (!currentNut.meals) currentNut.meals = [];
+
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+        currentNut.meals.push({
+          id: 'meal_' + Date.now(),
+          name: name.trim(),
+          calories: cals,
+          protein: prot,
+          time: timeStr,
+          analysis: 'הזנה ידנית'
+        });
+
+        await DB.saveNutrition(queryDateStr, currentNut);
+        UI.toast('ארוחה נוספה בהצלחה!', 'success');
+        CloudSync.scheduleSync();
+        renderNutritionSection(queryDateStr);
+      };
+    }
                 UI.toast('תוסף ראשון נוסף!', 'success');
                 render();
              }
@@ -471,7 +599,7 @@ const TodayPage = (() => {
           if (equip && equip.label !== 'משקל גוף בלבד' && equip.label !== 'קיר פנוי') {
             let labelText = equip.label;
             if (labelText === 'גומיית התנגדות' && isWeighted(ex)) {
-              labelText = `גומיית התנגדות (${ex.weight})`;
+              labelText = `גומיית התנגדות (<bdi dir="ltr">${ex.weight}</bdi>)`;
             }
             if (!equipmentMap.has(labelText)) {
               equipmentMap.set(labelText, { icon: equip.icon, label: labelText, exercises: [] });
@@ -761,26 +889,29 @@ const TodayPage = (() => {
 
           // Use previous performance as placeholder hint
           const prevReps = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_reps`]) || reps;
-          const prevWeightRaw = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_weight`]) || ex.weight;
-          const prevWeightNum = extractNumericWeight(prevWeightRaw);
+          const suggestedWeightNum = getSuggestedWeightForSet(ex, s, setsCount, prevPerf);
 
           // Weight input - only show if exercise has weight data
           const weightInput = hasWeight ? `
-              <input type="number" class="set-input" placeholder="${prevWeightNum}" 
+            <div class="set-input-pill">
+              <input type="number" class="set-input" placeholder="${suggestedWeightNum}" 
                      value="${setWeight}" ${disabledAttr}
                      data-ex="${idx}" data-set="${s}" data-field="weight"
                      onchange="TodayPage.updateSetData(${idx}, ${s}, 'weight', this.value)">
               <span class="set-unit">kg</span>
+            </div>
           ` : '';
 
           setsHTML += `
             <div class="set-row">
               <span class="set-label">Set ${s + 1}</span>
-              <input type="number" class="set-input" placeholder="${prevReps}" 
-                     value="${setReps}" ${disabledAttr}
-                     data-ex="${idx}" data-set="${s}" data-field="reps"
-                     onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
-              <span class="set-unit">reps</span>
+              <div class="set-input-pill">
+                <input type="number" class="set-input" placeholder="${prevReps}" 
+                       value="${setReps}" ${disabledAttr}
+                       data-ex="${idx}" data-set="${s}" data-field="reps"
+                       onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
+                <span class="set-unit">reps</span>
+              </div>
               ${weightInput}
               <button class="set-check ${setDone ? 'checked' : ''}" 
                       onclick="TodayPage.toggleSet(${idx}, ${s}, this)" ${disabledAttr}>✓</button>
@@ -825,7 +956,8 @@ const TodayPage = (() => {
         if (equip && equip.label === 'גומיית התנגדות') {
           weightText = `משקל גומיה: ${ex.weight}`;
         }
-        detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="שינוי במשקל!">${weightText}</span>` : weightText);
+        const bdiWeight = `<bdi dir="ltr">${weightText}</bdi>`;
+        detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="שינוי במשקל!">${bdiWeight}</span>` : bdiWeight);
       }
 
       if (ex.tempo) {

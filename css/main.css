@@ -557,6 +557,28 @@ body.recovery-mode .nav-title {
   background-clip: text;
 }
 
+/* ===== Deload Mode Theme (Calming Green-Turquoise) ===== */
+body.deload-mode {
+  --bg-primary: #041716;
+  --bg-secondary: #082220;
+  --bg-card: #0c2e2b;
+  --bg-card-hover: #103936;
+  --bg-elevated: #154541;
+  --bg-input: #041716;
+  --accent-primary: #2dd4bf;
+  --accent-secondary: #14b8a6;
+  --accent-gradient: linear-gradient(135deg, #2dd4bf, #0d9488);
+  --accent-glow: 0 0 25px rgba(45, 212, 191, 0.4);
+  background: radial-gradient(circle at top center, #0c2e2b 0%, #041716 100%);
+  transition: background 0.5s ease;
+}
+
+body.deload-mode .nav-title {
+  background: linear-gradient(135deg, #5eead4, #14b8a6);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
 /* ===== Interval Timer Modal Styling ===== */
 .interval-timer-container {
   display: flex;

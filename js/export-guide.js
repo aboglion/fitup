@@ -174,7 +174,7 @@ window.ExporterGuide = (() => {
             <div class="exercise-card">
               <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--primary);">${ex.name}</h4>
               <p style="margin: 0 0 6px 0;"><span class="badge">${ex.category || 'כללי'}</span> ${ex.difficulty ? `<span class="badge" style="background: #fef3c7; color: #92400e;">${ex.difficulty}</span>` : ''}</p>
-              ${ex.weight ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>התנגדות:</strong> ${ex.weight}</p>` : ''}
+              ${ex.weight ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>התנגדות:</strong> <bdi dir="ltr">${ex.weight}</bdi></p>` : ''}
               ${ex.setsProgression ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>התקדמות:</strong> ${ex.setsProgression}</p>` : ''}
               ${!hasNoGif ? `<p style="font-size: 0.9em; margin: 4px 0;"><a href="images/gifs/${ex.name}.gif" target="_blank" style="color: var(--primary);">▶ צפה ב-GIF</a></p>` : ''}
             </div>
@@ -234,7 +234,7 @@ window.ExporterGuide = (() => {
               html += `<tr>
                 <td><strong>${ex.name}</strong></td>
                 <td dir="ltr" style="text-align: right;">${ex.sets || '-'}</td>
-                <td dir="ltr" style="text-align: right;">${ex.weight || '-'}</td>
+                <td dir="ltr" style="text-align: right;"><bdi dir="ltr">${ex.weight || '-'}</bdi></td>
                 <td dir="rtl" style="text-align: right;">${ex.tempo ? (UI.formatTempo ? UI.formatTempo(ex.tempo) : ex.tempo) : '-'}</td>
                 <td dir="ltr" style="text-align: right;">${ex.rest ? ex.rest + 's' : '-'}</td>
               </tr>`;

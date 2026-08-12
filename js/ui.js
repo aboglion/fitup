@@ -75,51 +75,51 @@ const UI = (() => {
     'CHIN-UP': 'Chin-up.gif',
     'CHIN-UP NEGATIVE': 'Chin-up Negative.gif',
     'PULL-UP (OVERHAND)': 'Pull-up (Overhand).gif',
-    'PULL-UP NEGATIVE': 'Pull-up Negative.gif',
+    'PULL-UP NEGATIVE': 'Pull-Up Negative.gif',
     'ELEVATED PIKE PUSH-UP': 'Elevated Pike Push-up.gif',
     'PUSH-UP': 'Push-up.gif',
     'PUSH-UP (BARS)': 'Push-up.gif',
-    'DEFICIT PUSH-UP': 'Push-up.gif',
-    'FEET-ELEVATED PUSH-UP': 'Push-up.gif',
-    'WEIGHTED DEFICIT PUSH-UP': 'Push-up.gif',
-    'WEIGHTED CHIN-UP': 'Chin-up.gif',
-    'WEIGHTED PULL-UP': 'Pull-up (Overhand).gif',
+    'DEFICIT PUSH-UP': 'Deficit Push-Up.gif',
+    'FEET-ELEVATED PUSH-UP': 'Feet-Elevated Push-Up.gif',
+    'WEIGHTED DEFICIT PUSH-UP': 'Weighted Deficit Push-Up.gif',
+    'WEIGHTED CHIN-UP': 'Weighted Chin-Up.gif',
+    'WEIGHTED PULL-UP': 'Weighted Pull-Up.gif',
     'DB RDL': 'Dumbbell Romanian Deadlift (RDL).gif',
     'DB SINGLE-LEG RDL': 'Dumbbell Single-Leg RDL.gif',
     'DB CURL': 'Dumbbell Biceps Curl.gif',
-    'SINGLE-ARM CURL': 'Dumbbell Biceps Curl.gif',
-    'ARM BLOCK - DB CURL': 'Dumbbell Biceps Curl.gif',
+    'SINGLE-ARM CURL': 'Single-Arm Curl.gif',
+    'ARM BLOCK - DB CURL': 'Arm Block - DB Curl.gif',
     'DB LATERAL RAISE': 'Dumbbell Lateral Raise.gif',
-    'ARM BLOCK - DB LATERAL RAISE': 'Dumbbell Lateral Raise.gif',
-    'ARM BLOCK - DB OH TRICEPS EXT': 'Dumbbell Standing Overhead Press (OHP).gif',
-    'DB OH TRICEPS EXT': 'Dumbbell Standing Overhead Press (OHP).gif',
-    'DB BULGARIAN SPLIT SQUAT': 'Bulgarian Split Squat.gif',
-    'DB BSS': 'Bulgarian Split Squat.gif',
-    'DB BSS (GOBLET)': 'Bulgarian Split Squat.gif',
-    'DB GLUTE BRIDGE': 'Banded Glute Bridge.gif',
-    'GLUTE BRIDGE': 'Single-Leg Glute Bridge.gif',
-    'DB HIP THRUST': 'Single-Leg Glute Bridge.gif',
+    'ARM BLOCK - DB LATERAL RAISE': 'Arm Block - DB Lateral Raise.gif',
+    'ARM BLOCK - DB OH TRICEPS EXT': 'DB OH Triceps Ext.gif',
+    'DB OH TRICEPS EXT': 'DB OH Triceps Ext.gif',
+    'DB BULGARIAN SPLIT SQUAT': 'DB Bulgarian Split Squat.gif',
+    'DB BSS': 'DB Bulgarian Split Squat.gif',
+    'DB BSS (GOBLET)': 'DB BSS (Goblet).gif',
+    'DB GLUTE BRIDGE': 'DB Glute Bridge.gif',
+    'GLUTE BRIDGE': 'Glute Bridge.gif',
+    'DB HIP THRUST': 'DB Glute Bridge.gif',
     'ONE-ARM DB ROW': 'Dumbbell One-Arm Row.gif',
     'PALLOF PRESS': 'Pallof Press (Band).gif',
-    'REVERSE LUNGE + DB': 'Reverse Lunge.gif',
-    'SEATED DB OHP': 'Dumbbell Standing Overhead Press (OHP).gif',
-    'SINGLE-ARM SEATED OHP': 'Dumbbell Standing Overhead Press (OHP).gif',
-    'SINGLE-ARM FLOOR PRESS': 'Dumbbell Floor Press.gif',
+    'REVERSE LUNGE + DB': 'Reverse Lunge + DB.gif',
+    'SEATED DB OHP': 'Seated DB OHP.gif',
+    'SINGLE-ARM SEATED OHP': 'Single-Arm Seated OHP.gif',
+    'SINGLE-ARM FLOOR PRESS': 'Single-Arm Floor Press.gif',
     'DB FLOOR PRESS': 'Dumbbell Floor Press.gif',
     'DB HAMMER CURL': 'Dumbbell Hammer Curl.gif',
-    'SUITCASE CARRY': 'Dumbbell Suitcase Hold.gif',
-    'WALKING LUNGE (GOBLET)': 'Reverse Lunge.gif',
-    'WALL WALK (PARTIAL)': 'Wall Walk (Full).gif',
-    'TRX FACE PULL': 'Band Face-Pull.gif',
-    'TRX FACE PULL (ANGLE 1)': 'Band Face-Pull.gif',
-    'TRX FACE PULL (ANGLE 2)': 'Band Face-Pull.gif',
-    'TRX FACE PULL (ANGLE 3)': 'Band Face-Pull.gif',
-    'TRX Y-T-W': 'Prone Y-T-W.gif',
-    'L-SIT TUCK (BARS)': 'L-sit on Chair.gif',
-    'HOLLOW BODY HOLD': 'Hollow Body Rock.gif',
-    'PIKE HOLD': 'Pike Push-up.gif',
-    'DEEP MOBILITY PROTOCOL': 'Ankle Dorsiflexion Mobility.gif',
-    'WRIST ROCKS': 'Ankle Dorsiflexion Mobility.gif'
+    'SUITCASE CARRY': 'Suitcase Carry.gif',
+    'WALKING LUNGE (GOBLET)': 'Walking Lunge (Goblet).gif',
+    'WALL WALK (PARTIAL)': 'Wall Walk (Partial).gif',
+    'TRX FACE PULL': 'TRX Face Pull.gif',
+    'TRX FACE PULL (ANGLE 1)': 'TRX Face Pull (Angle 1).gif',
+    'TRX FACE PULL (ANGLE 2)': 'TRX Face Pull (Angle 2).gif',
+    'TRX FACE PULL (ANGLE 3)': 'TRX Face Pull (Angle 3).gif',
+    'TRX Y-T-W': 'TRX Y-T-W.gif',
+    'L-SIT TUCK (BARS)': 'L-sit Tuck (Bars).gif',
+    'HOLLOW BODY HOLD': 'Hollow Body Hold.gif',
+    'PIKE HOLD': 'Pike Hold.gif',
+    'DEEP MOBILITY PROTOCOL': 'Deep Mobility Protocol.gif',
+    'WRIST ROCKS': 'Wrist Rocks.gif'
   };
 
   function handleImageFallback(imgEl, type) {
@@ -277,6 +277,10 @@ const UI = (() => {
    * Get day type display info
    */
   function getDayTypeInfo(type) {
+    if (!type) return { label: '', class: '', icon: '📋', isDeload: false };
+
+    const isDeload = type.toLowerCase().includes('deload');
+
     const types = {
       'Legs + Core': { label: 'Legs + Core 🦵', class: 'strength', icon: '🦵' },
       'Push + Skill': { label: 'Push + Skill 💥', class: 'strength', icon: '💥' },
@@ -289,9 +293,32 @@ const UI = (() => {
       'Pull + Skill (Strength B)': { label: 'Strength B 🧲', class: 'strength', icon: '🧲' },
       'Lower Strength': { label: 'Lower Strength 🦵', class: 'strength', icon: '🦵' },
       'Upper Push': { label: 'Upper Push 💥', class: 'strength', icon: '💥' },
-      'Upper Pull + Skill': { label: 'Upper Pull 🧲', class: 'strength', icon: '🧲' }
+      'Upper Pull + Skill': { label: 'Upper Pull 🧲', class: 'strength', icon: '🧲' },
+
+      // Deload specific mappings
+      'Legs + Core (Deload)': { label: 'Legs + Core 🌿 (Deload)', class: 'strength deload', icon: '🦵' },
+      'Push + Skill (Deload)': { label: 'Push + Skill 🌿 (Deload)', class: 'strength deload', icon: '💥' },
+      'Pull + Grip (Deload)': { label: 'Pull + Grip 🌿 (Deload)', class: 'strength deload', icon: '🧲' },
+      'Zone 2 Cardio (Deload)': { label: 'Zone 2 Cardio 🌿 (Deload)', class: 'walk deload', icon: '🫀' },
+      'Active Recovery (Deload)': { label: 'Active Recovery 🌿 (Deload)', class: 'recovery deload', icon: '🌿' }
     };
-    return types[type] || { label: type, class: '', icon: '📋' };
+
+    if (types[type]) {
+      return { ...types[type], isDeload };
+    }
+
+    if (isDeload) {
+      const cleanType = type.replace(/\s*\([^)]*deload[^)]*\)/gi, '').trim();
+      const baseInfo = types[cleanType] || { label: type, class: 'strength', icon: '🌿' };
+      return {
+        label: `${cleanType || type} 🌿 (Deload)`,
+        class: `${baseInfo.class} deload`.trim(),
+        icon: baseInfo.icon || '🌿',
+        isDeload: true
+      };
+    }
+
+    return { label: type, class: '', icon: '📋', isDeload: false };
   }
 
   /**

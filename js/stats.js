@@ -208,170 +208,176 @@ const StatsPage = (() => {
    * stages, weight (0-1 summing to 1), and relevant day type.
    * Formula: muscleProgress = Σ(stageProgress_i × weight_i) × completionRate
    */
+  /**
+   * Weighted multi-exercise contribution model across the 78-week program.
+   * Each muscle group is mapped to its actual exercise progressions in the program.
+   * Each exercise has specific milestone weeks across all 78 weeks and a relative weight.
+   * Formula: muscleProgress = Σ(stageProgress_i × weight_i) × categoryCompletionRate
+   */
   const MUSCLE_CONTRIBUTIONS = {
     chest: [
-      // Push-up chain: Table→Knee→Push-up→Close-Grip→Diamond→Decline→Archer→One-Arm→Pseudo-Planche
-      { stages: [1,4,7,10,13,16,22,25], weight: 0.75, dayType: 'Push + Skill' },
-      // Pike/OHP chain: upper chest activation
-      { stages: [1,4,7,10,13,19,25], weight: 0.15, dayType: 'Push + Skill' },
-      // Band Pull-Apart / Prone Y-T-W: prehab (minor chest stretch)
-      { stages: [1,5,9], weight: 0.10, dayType: 'Push + Skill' },
+      // Primary Pressing (Floor Press -> Single-Arm Floor Press -> Heavy Weighted Pressing)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 62, 66], weight: 0.65, category: 'Push' },
+      // Bodyweight Push-Up Progression (Push-up -> Deficit -> Elevated -> Vest Push-up)
+      { stages: [1, 5, 10, 18, 26, 34, 41, 53, 62, 66], weight: 0.25, category: 'Push' },
+      // Upper Chest / Handstand Stability (Pike Hold -> Wall Walk -> Wall Handstand)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.10, category: 'Push' },
     ],
     shoulders: [
-      // Pike→HSPU chain (primary OHP)
-      { stages: [1,4,7,10,13,19,25], weight: 0.45, dayType: 'Push + Skill' },
-      // Push-up chain (anterior delt involvement)
-      { stages: [1,4,7,10,13,16,22,25], weight: 0.20, dayType: 'Push + Skill' },
-      // Band Pull-Apart (rear delt)
-      { stages: [1,5,9], weight: 0.15, dayType: 'Push + Skill' },
-      // Prone Y-T-W (rotator cuff / rear delt)
-      { stages: [1], weight: 0.10, dayType: 'Push + Skill' },
-      // Handstand Practice (stability / all heads)
-      { stages: [1], weight: 0.10, dayType: 'Push + Skill' },
+      // Overhead Pressing (Seated DB OHP -> Single-Arm Seated OHP 18-24kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 58, 62, 66], weight: 0.45, category: 'Push' },
+      // Pike / Wall Walk / Handstand Progression (Shoulder Overhead Stability)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.25, category: 'Push' },
+      // Lateral Delts (DB Lateral Raise 3-9kg + Arm Block Ladders)
+      { stages: [1, 5, 10, 18, 34, 42, 53, 62, 66], weight: 0.20, category: 'Push' },
+      // Rear Delts & Rotator Cuff (TRX Face Pull Angles 1-4 & TRX Y-T-W)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.10, category: 'Pull' },
     ],
     triceps: [
-      // Push-up chain (all push-ups train triceps)
-      { stages: [1,4,7,10,13,16,22,25], weight: 0.40, dayType: 'Push + Skill' },
-      // Close-Grip / Diamond emphasis (extra triceps)
-      { stages: [1,7,10], weight: 0.25, dayType: 'Push + Skill' },
-      // Pike/HSPU chain (lockout = triceps heavy)
-      { stages: [1,4,7,10,13,19,25], weight: 0.35, dayType: 'Push + Skill' },
+      // Overhead Triceps Extension Isolation (DB OH Ext 6-24kg + Arm Block Ladders)
+      { stages: [1, 5, 10, 18, 34, 42, 50, 53, 58, 66], weight: 0.45, category: 'Push' },
+      // Compound Floor Press & Push-Up Lockout
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 62, 66], weight: 0.35, category: 'Push' },
+      // Overhead Press Lockout (OHP & Pike Push-up)
+      { stages: [1, 5, 10, 18, 34, 42, 53, 62, 66], weight: 0.20, category: 'Push' },
     ],
     biceps: [
-      // Pull-up/Chin-up progression (compound, major biceps builder)
-      { stages: [1,4,10,13,19,25], weight: 0.40, dayType: 'Pull + Grip' },
-      // Band Curl (isolation, weight progression: 30→40→50kg)
-      { stages: [1,17,33], weight: 0.35, dayType: 'Pull + Grip' },
-      // Seated Band Row (secondary biceps engagement)
-      { stages: [1,5,13], weight: 0.25, dayType: 'Pull + Grip' },
+      // Vertical Pulling Compound (Pull-Up / Chin-Up -> Weighted Pull-Up +5kg Vest)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 62, 66], weight: 0.45, category: 'Pull' },
+      // Biceps Curls Isolation (DB Curl, Hammer Curl, Single-Arm Curl 3-18kg + Arm Block Ladders)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 62, 66], weight: 0.40, category: 'Pull' },
+      // Horizontal Row Synergist (One-Arm DB Row 6-24kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.15, category: 'Pull' },
     ],
     forearms: [
-      // Dead Hang → Towel Hang
-      { stages: [1,7], weight: 0.35, dayType: 'Pull + Grip' },
-      // Pull-up progression (grip demand increases)
-      { stages: [1,4,10,13,19,25], weight: 0.30, dayType: 'Pull + Grip' },
-      // Band Curl (wrist flexors)
-      { stages: [1,17,33], weight: 0.15, dayType: 'Pull + Grip' },
-      // Seated Band Row (grip)
-      { stages: [1,5,13], weight: 0.20, dayType: 'Pull + Grip' },
+      // Direct Grip Endurance (Towel Hang 15s -> 60s)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 58, 66], weight: 0.40, category: 'Pull' },
+      // Loaded Carrying (Suitcase Carry 12-24kg Walk)
+      { stages: [1, 5, 18, 26, 34, 53, 62, 66], weight: 0.35, category: 'Legs' },
+      // Heavy Pull-Up & Row Grip Demand
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 62, 66], weight: 0.25, category: 'Pull' },
     ],
     lats: [
-      // Pull-up/Chin-up progression (primary lat exercise)
-      { stages: [1,4,10,13,19,25], weight: 0.60, dayType: 'Pull + Grip' },
-      // Seated Band Row (horizontal pull, lat secondary)
-      { stages: [1,5,13], weight: 0.30, dayType: 'Pull + Grip' },
-      // Scapular Pull-up (lat activation)
-      { stages: [1], weight: 0.10, dayType: 'Pull + Grip' },
+      // Vertical Pulling Primary (Pull-Up & Chin-Up -> Weighted +5kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 62, 66], weight: 0.60, category: 'Pull' },
+      // Horizontal Row Primary (One-Arm DB Row 6-24kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.35, category: 'Pull' },
+      // Scapular Activation (Scapular Pull-up)
+      { stages: [1, 10, 26, 53], weight: 0.05, category: 'Pull' },
     ],
     traps: [
-      // Seated Band Row (upper back, traps secondary)
-      { stages: [1,5,13], weight: 0.35, dayType: 'Pull + Grip' },
-      // Band Pull-Apart (mid traps / rhomboids)
-      { stages: [1,5,9], weight: 0.30, dayType: 'Push + Skill' },
-      // Prone Y-T-W (lower traps)
-      { stages: [1], weight: 0.15, dayType: 'Push + Skill' },
-      // Pull-up (upper traps)
-      { stages: [1,4,10,13,19,25], weight: 0.20, dayType: 'Pull + Grip' },
+      // Scapular Retraction & Rear Delt (TRX Face Pull, Y-T-W, Band Pull-Apart)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.45, category: 'Pull' },
+      // Heavy Row Upper Traps & Rhomboids (One-Arm DB Row 6-24kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.35, category: 'Pull' },
+      // Vertical Pull Scapular Control
+      { stages: [1, 5, 10, 18, 34, 53, 66], weight: 0.20, category: 'Pull' },
     ],
     quads: [
-      // Squat progression (primary): BW→Lunge→Split→Bulgarian→Skater→Pistol
-      { stages: [1,4,7,13,19,25,28], weight: 0.70, dayType: 'Legs + Core' },
-      // Light leg stimulus on Push day
-      { stages: [1,10,19], weight: 0.15, dayType: 'Push + Skill' },
-      // Calf Raise (minor knee stabilization)
-      { stages: [1,4], weight: 0.05, dayType: 'Legs + Core' },
-      // Walking (Active Recovery — light quad usage)
-      { stages: [1], weight: 0.10, dayType: 'Active Recovery' },
+      // Unilateral Squats & Goblet Progression (DB BSS -> Goblet BSS 15-24kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 58, 62, 66], weight: 0.55, category: 'Legs' },
+      // Advanced Knee Extension (Pistol Squat to Chair, Reverse Lunge, Walking Lunge 18kg)
+      { stages: [1, 5, 18, 26, 34, 42, 53, 62, 66], weight: 0.35, category: 'Legs' },
+      // Active Recovery & Cardio Walking
+      { stages: [1, 10, 26, 53], weight: 0.10, category: 'Cardio' },
     ],
     hamstrings: [
-      // RDL / Towel Curl progression (primary)
-      { stages: [1,7,10], weight: 0.50, dayType: 'Legs + Core' },
-      // Glute Bridge (hamstring synergist)
-      { stages: [1,13], weight: 0.25, dayType: 'Legs + Core' },
-      // Squat progression (eccentric hamstring work)
-      { stages: [1,4,7,13,19,25,28], weight: 0.15, dayType: 'Legs + Core' },
-      // Walking
-      { stages: [1], weight: 0.10, dayType: 'Active Recovery' },
+      // Primary Hip Hinge (DB RDL -> DB Single-Leg RDL 12-24kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.65, category: 'Legs' },
+      // Posterior Chain Synergist (DB Glute Bridge -> DB Hip Thrust 9-24kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.25, category: 'Legs' },
+      // Unilateral Squat Assistance
+      { stages: [1, 5, 18, 34, 53, 66], weight: 0.10, category: 'Legs' },
     ],
     glutes: [
-      // Glute Bridge progression (primary)
-      { stages: [1,13], weight: 0.40, dayType: 'Legs + Core' },
-      // Squat progression (deep squat = glute activation)
-      { stages: [1,4,7,13,19,25,28], weight: 0.25, dayType: 'Legs + Core' },
-      // RDL / hip hinge (glute max)
-      { stages: [1,7,10], weight: 0.20, dayType: 'Legs + Core' },
-      // Light leg on Push day
-      { stages: [1,10,19], weight: 0.10, dayType: 'Push + Skill' },
-      // Walking
-      { stages: [1], weight: 0.05, dayType: 'Active Recovery' },
+      // Primary Hip Extension (DB Glute Bridge -> DB Hip Thrust 9-24kg with 2-3s pauses)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.50, category: 'Legs' },
+      // Single-Leg Hinge & Squat (Single-Leg RDL & BSS Goblet 12-24kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.40, category: 'Legs' },
+      // Loaded Carry & Active Recovery
+      { stages: [1, 10, 26, 53], weight: 0.10, category: 'Legs' },
     ],
     calves: [
-      // Calf Raise → Single-Leg Calf Raise (primary)
-      { stages: [1,4], weight: 0.65, dayType: 'Legs + Core' },
-      // Walking (Active Recovery)
-      { stages: [1], weight: 0.25, dayType: 'Active Recovery' },
-      // Squat (ankle stability)
-      { stages: [1,4,7,13,19,25,28], weight: 0.10, dayType: 'Legs + Core' },
+      // Primary Calf Isolation (Single-Leg Calf Raise 0-24kg, 15-20 reps with pauses)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 50, 58, 66], weight: 0.75, category: 'Legs' },
+      // Active Recovery & Cardio Intervals (Brisk Walking, VO2 Max 4x4)
+      { stages: [1, 10, 26, 53], weight: 0.25, category: 'Cardio' },
     ],
     core: [
-      // Core progression: Dead Bug→Hollow→H2A→L-sit→Dragon Flag (primary)
-      { stages: [1,4,10,13,16,19,22,25], weight: 0.55, dayType: 'Legs + Core' },
-      // L-sit on Pull day (secondary core)
-      { stages: [1,13,16], weight: 0.15, dayType: 'Pull + Grip' },
-      // Side Plank Hip Dip (core stability)
-      { stages: [1], weight: 0.10, dayType: 'Pull + Grip' },
-      // Push-up/plank stabilization
-      { stages: [1,4,7,10,13,16,22,25], weight: 0.10, dayType: 'Push + Skill' },
-      // Squat (core bracing)
-      { stages: [1,4,7,13,19,25,28], weight: 0.10, dayType: 'Legs + Core' },
+      // Core Flexion & Isometric (Dead Bug, Hollow Body Hold, L-sit Tuck)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 62, 66], weight: 0.60, category: 'Legs' },
+      // Anti-Rotation (Pallof Press Band 30-40kg)
+      { stages: [1, 10, 26, 34, 53, 66], weight: 0.25, category: 'Legs' },
+      // Pressing & Plank Stabilization
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.15, category: 'Push' },
     ],
     obliques: [
-      // Side Plank Hip Dip (primary oblique exercise)
-      { stages: [1], weight: 0.40, dayType: 'Pull + Grip' },
-      // L-sit progression (oblique stabilization)
-      { stages: [1,13,16], weight: 0.25, dayType: 'Pull + Grip' },
-      // Dragon Flag (anti-rotation, oblique engagement)
-      { stages: [1,4,10,13,16,19,22,25], weight: 0.20, dayType: 'Legs + Core' },
-      // Hollow Body (anti-extension, oblique co-contraction)
-      { stages: [1,4,10], weight: 0.15, dayType: 'Legs + Core' },
+      // Anti-Lateral Flexion (Suitcase Carry Heavy Walk 12-24kg)
+      { stages: [1, 5, 18, 26, 34, 53, 62, 66], weight: 0.45, category: 'Legs' },
+      // Anti-Rotation & Isometric (Pallof Press & L-sit Tuck)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.35, category: 'Legs' },
+      // Core Co-contraction & Single-Arm Pressing Balance
+      { stages: [1, 5, 18, 34, 53, 66], weight: 0.20, category: 'Push' },
     ],
     lowerBack: [
-      // RDL / Towel Curl (posterior chain — erector spinae)
-      { stages: [1,7,10], weight: 0.40, dayType: 'Legs + Core' },
-      // Dragon Flag (spinal erector co-contraction)
-      { stages: [1,4,10,13,16,19,22,25], weight: 0.25, dayType: 'Legs + Core' },
-      // Squat (lower back stabilization)
-      { stages: [1,4,7,13,19,25,28], weight: 0.20, dayType: 'Legs + Core' },
-      // Dead Bug (lumbar stabilization)
-      { stages: [1], weight: 0.15, dayType: 'Legs + Core' },
+      // Lumbar Extension & Hinge (DB RDL -> DB Single-Leg RDL 12-24kg)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.60, category: 'Legs' },
+      // Hip Thrust Lumbar Stabilization
+      { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.25, category: 'Legs' },
+      // Loaded Carry & Anti-Flexion Bracing (Suitcase Carry & Dead Bug)
+      { stages: [1, 5, 18, 26, 34, 53, 66], weight: 0.15, category: 'Legs' },
     ],
   };
 
   /**
    * Calculate per-muscle progression percentages using weighted contributions.
-   * Each muscle = Σ (exerciseStageProgress × weight) × completionRate
+   * Stage progress is based on current week progression in the 78-week plan.
+   * Completion rate is calculated per category (Push, Pull, Legs, Cardio).
+   * Formula: muscleProgress = Σ (exerciseStageProgress × weight) × categoryCompletionRate
    */
   function calculateMuscleProgressions(trackingMap) {
-    const currentWeek = Math.floor((window.appCurrentPlanIndex || 0) / 7) + 1;
-    const currentIdx = window.appCurrentPlanIndex || 0;
+    const currentIdx = window.appCurrentPlanIndex != null 
+      ? window.appCurrentPlanIndex 
+      : (typeof UI !== 'undefined' ? UI.findTodayIndex(allPlanDays) : 0);
+    const currentWeek = Math.floor(currentIdx / 7) + 1;
     const result = {};
 
-    // Pre-calculate completion rates per day type
-    const completionRates = {};
-    ['Push + Skill', 'Pull + Grip', 'Legs + Core', 'Active Recovery'].forEach(dt => {
-      let total = 0, completed = 0;
-      allPlanDays.forEach(day => {
-        if (day.dayType === dt && day.dayIndex <= currentIdx) {
-          total++;
-          if (trackingMap[day.dayIndex] && trackingMap[day.dayIndex].completed) completed++;
+    // Pre-calculate completion rates per category (Push, Pull, Legs, Cardio)
+    const categoryStats = {
+      Push: { total: 0, completed: 0 },
+      Pull: { total: 0, completed: 0 },
+      Legs: { total: 0, completed: 0 },
+      Cardio: { total: 0, completed: 0 }
+    };
+
+    allPlanDays.forEach(day => {
+      if (day.dayIndex <= currentIdx) {
+        const dt = day.dayType || '';
+        let cat = null;
+        if (dt.includes('Push') || dt.includes('Strength A')) cat = 'Push';
+        else if (dt.includes('Pull') || dt.includes('Strength B')) cat = 'Pull';
+        else if (dt.includes('Legs') || dt.includes('Strength A')) cat = 'Legs';
+        else if (dt.includes('Recovery') || dt.includes('Zone') || dt.includes('VO2')) cat = 'Cardio';
+
+        if (cat) {
+          categoryStats[cat].total++;
+          if (trackingMap[day.dayIndex] && trackingMap[day.dayIndex].completed) {
+            categoryStats[cat].completed++;
+          }
         }
-      });
-      completionRates[dt] = total > 0 ? completed / total : 0;
+      }
     });
+
+    const completionRates = {};
+    for (const [cat, stat] of Object.entries(categoryStats)) {
+      completionRates[cat] = stat.total > 0 ? stat.completed / stat.total : 0;
+    }
+
+    const hasAnyTracking = Object.keys(trackingMap).length > 0;
 
     for (const [muscle, contributions] of Object.entries(MUSCLE_CONTRIBUTIONS)) {
       let weightedProgress = 0;
-      let totalCompletionWeight = 0;
+      let weightedCompletion = 0;
 
       for (const contrib of contributions) {
         // Stage progress for this contributing exercise
@@ -383,12 +389,15 @@ const StatsPage = (() => {
 
         weightedProgress += stageProgress * contrib.weight;
 
-        // Weighted completion rate (each contribution uses its own day type)
-        totalCompletionWeight += (completionRates[contrib.dayType] || 0) * contrib.weight;
+        const cat = contrib.category || 'Push';
+        const rate = completionRates[cat] != null ? completionRates[cat] : 0;
+        weightedCompletion += rate * contrib.weight;
       }
 
-      // Final: weighted stage progress × weighted completion rate
-      result[muscle] = Math.round(weightedProgress * 100 * (totalCompletionWeight > 0 ? totalCompletionWeight : 0));
+      // If user has not tracked any days yet in the database, show stage baseline
+      const finalCompletion = hasAnyTracking ? weightedCompletion : 1.0;
+
+      result[muscle] = Math.round(weightedProgress * 100 * finalCompletion);
     }
 
     return result;
@@ -444,7 +453,8 @@ const StatsPage = (() => {
       let colorClass = 'heat-empty';
       
       if (isCompleted) {
-        if (isStrengthDay(day.dayType)) colorClass = 'heat-strength';
+        if (day.dayType && day.dayType.includes('Deload')) colorClass = 'heat-deload';
+        else if (isStrengthDay(day.dayType)) colorClass = 'heat-strength';
         else if (day.dayType === 'Active Recovery') colorClass = 'heat-walk';
         else if (day.dayType === 'Rest') colorClass = 'heat-rest';
       }
@@ -459,6 +469,7 @@ const StatsPage = (() => {
           <span>🗓️ מפת התמדה (ימים שעברו)</span>
           <div style="display: flex; gap: 12px; font-size: 11px; font-weight: normal; flex-wrap: wrap;">
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength" style="width: 12px; height: 12px; border-radius: 3px;"></div> כוח</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-deload" style="width: 12px; height: 12px; border-radius: 3px; background: #14b8a6;"></div> דילואד</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-walk" style="width: 12px; height: 12px; border-radius: 3px;"></div> הליכה</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-rest" style="width: 12px; height: 12px; border-radius: 3px;"></div> Rest</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-empty" style="width: 12px; height: 12px; border-radius: 3px;"></div> לא בוצע/דולג</div>

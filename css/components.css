@@ -127,6 +127,20 @@
   border: 1px solid var(--rest-border);
 }
 
+.type-badge.deload {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.25), rgba(6, 182, 212, 0.2)) !important;
+  color: #2dd4bf !important;
+  border: 1.5px solid rgba(45, 212, 191, 0.6) !important;
+  box-shadow: 0 2px 10px rgba(20, 184, 166, 0.25);
+  font-weight: 800 !important;
+  animation: deloadGlowPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes deloadGlowPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(45, 212, 191, 0.3); }
+  50% { box-shadow: 0 0 18px rgba(45, 212, 191, 0.6); }
+}
+
 .rpe-badge {
   background: var(--warning-bg);
   color: var(--warning);
@@ -145,6 +159,61 @@
 .day-summary-card #day-type.strength { color: var(--strength-color) !important; }
 .day-summary-card #day-type.walk { color: var(--walk-color) !important; }
 .day-summary-card #day-type.rest { color: var(--rest-color) !important; }
+.day-summary-card #day-type.deload {
+  color: #2dd4bf !important;
+  text-shadow: 0 0 12px rgba(45, 212, 191, 0.4);
+}
+
+/* Day Summary Card in Deload */
+.day-summary-card.is-deload {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.16) 0%, rgba(6, 182, 212, 0.1) 100%), var(--bg-card) !important;
+  border: 2px solid rgba(45, 212, 191, 0.5) !important;
+  box-shadow: 0 4px 20px rgba(20, 184, 166, 0.25) !important;
+}
+
+/* Deload Warning Banner */
+.deload-warning-banner {
+  background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.15));
+  border: 1.5px solid rgba(45, 212, 191, 0.6);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 16px rgba(20, 184, 166, 0.15);
+  animation: slideDown 0.3s ease;
+}
+
+.deload-banner-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+  animation: warningPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes warningPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.deload-banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.deload-banner-title {
+  color: #2dd4bf;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.deload-banner-sub {
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.4;
+  opacity: 0.9;
+}
 
 .day-progress {
   display: flex;
@@ -409,18 +478,53 @@ html.light-theme .exercise-hero-container::after {
   flex-shrink: 0;
 }
 
-.set-input {
-  width: 55px !important;
-  padding: 6px !important;
-  font-size: 13px !important;
-  text-align: center;
-  flex: 1;
-  min-width: 45px;
+.set-input-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2px 8px;
+  transition: all var(--transition-fast);
 }
 
-.set-unit {
-  font-size: 12px;
+.set-input-pill:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 25%, transparent);
+}
+
+/* Hide number input spinners/arrows globally for clean UI */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.set-input-pill .set-input {
+  width: 46px !important;
+  padding: 4px 2px !important;
+  font-size: 13px !important;
+  text-align: center;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  min-width: 36px;
+  -webkit-appearance: none;
+  appearance: textfield;
+}
+
+.set-input-pill .set-unit {
+  font-size: 11px;
+  font-weight: 600;
   color: var(--text-muted);
+  user-select: none;
+  direction: ltr;
 }
 
 .set-check {
@@ -778,6 +882,29 @@ html.light-theme .exercise-hero-container::after {
 .calendar-day-type.rest {
   background: var(--rest-bg);
   color: var(--rest-color);
+}
+
+.calendar-day-type.deload {
+  background: rgba(20, 184, 166, 0.25) !important;
+  color: #2dd4bf !important;
+  border: 1px solid rgba(45, 212, 191, 0.5) !important;
+  font-weight: 700;
+}
+
+.calendar-day.deload-day {
+  background: rgba(20, 184, 166, 0.12) !important;
+  border: 1.5px solid rgba(45, 212, 191, 0.4) !important;
+}
+
+.calendar-day.deload-day:hover {
+  background: rgba(20, 184, 166, 0.22) !important;
+  border-color: #2dd4bf !important;
+  box-shadow: 0 4px 16px rgba(45, 212, 191, 0.25) !important;
+}
+
+.heat-cell.heat-deload {
+  background: #14b8a6 !important;
+  box-shadow: 0 0 6px rgba(20, 184, 166, 0.4);
 }
 
 .week-stats-card {
