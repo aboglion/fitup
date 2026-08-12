@@ -240,13 +240,9 @@ const CloudSync = (() => {
   }
 
   /**
-   * Get configured Google OAuth Client ID
+   * Get embedded Google OAuth Client ID
    */
   async function getClientId() {
-    const customId = await DB.getSetting('googleClientId');
-    if (customId && customId.trim() !== '') {
-      return customId.trim();
-    }
     return DEFAULT_CLIENT_ID;
   }
 
