@@ -29,6 +29,14 @@ const GeminiService = (() => {
   }
 
   /**
+   * Remove API key and clear saved model
+   */
+  async function removeApiKey() {
+    await DB.setSetting('geminiApiKey', '');
+    await DB.setSetting('geminiModel', '');
+  }
+
+  /**
    * Get configured model (or default)
    */
   async function getModel() {
@@ -235,6 +243,7 @@ const GeminiService = (() => {
     AVAILABLE_MODELS,
     getApiKey,
     setApiKey,
+    removeApiKey,
     getModel,
     setModel,
     isConfigured,

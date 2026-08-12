@@ -324,6 +324,17 @@ const TodayPage = (() => {
       modelBadge.textContent = currentModel;
     }
 
+    const deleteBadgeBtn = document.getElementById('delete-gemini-key-badge-btn');
+    if (deleteBadgeBtn) {
+      deleteBadgeBtn.onclick = async () => {
+        if (confirm('האם למחוק את מפתח ה-Gemini API השמור ולחזור למסך ההגדרה?')) {
+          await GeminiService.removeApiKey();
+          UI.toast('מפתח Gemini API נמחק', 'info');
+          renderNutritionSection(queryDateStr);
+        }
+      };
+    }
+
     // Set date label
     const dateLabel = document.getElementById('nutrition-date-label');
     if (dateLabel) {

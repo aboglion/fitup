@@ -662,6 +662,18 @@ const App = (() => {
           }
         };
       }
+
+      const deleteSettingsGeminiBtn = document.getElementById('delete-settings-gemini-btn');
+      if (deleteSettingsGeminiBtn) {
+        deleteSettingsGeminiBtn.onclick = async () => {
+          if (confirm('האם למחוק את מפתח ה-Gemini API השמור?')) {
+            await GeminiService.removeApiKey();
+            if (geminiKeyInput) geminiKeyInput.value = '';
+            UI.toast('מפתח Gemini API נמחק בהצלחה', 'info');
+            setTimeout(() => location.reload(), 800);
+          }
+        };
+      }
     }
   }
 

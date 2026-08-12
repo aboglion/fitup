@@ -321,7 +321,10 @@
           <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
             <div style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
               <span>📸 הוספת ארוחה מבוססת AI</span>
-              <span id="current-ai-model-badge" style="font-size: 11px; background: var(--bg-elevated); padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border-light); color: var(--accent-primary);">gemini-3.1-flash-lite</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span id="current-ai-model-badge" style="font-size: 11px; background: var(--bg-elevated); padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border-light); color: var(--accent-primary);">gemini-3.1-flash-lite</span>
+                <button id="delete-gemini-key-badge-btn" title="מחק מפתח API" style="background: none; border: none; font-size: 14px; cursor: pointer; color: var(--danger); padding: 2px 4px;">🗑️</button>
+              </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
@@ -497,7 +500,10 @@
                 </select>
               </div>
 
-              <button id="save-settings-gemini-btn" class="btn-primary" style="margin-top: 4px;">שמור הגדרות AI</button>
+              <div style="display: flex; gap: 8px; margin-top: 4px;">
+                <button id="save-settings-gemini-btn" class="btn-primary" style="flex: 1;">שמור הגדרות AI</button>
+                <button id="delete-settings-gemini-btn" class="btn-danger" style="padding: 10px 14px;" title="מחק מפתח API">🗑️ מחק מפתח</button>
+              </div>
             </div>
           </div>
 
