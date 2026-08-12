@@ -513,10 +513,19 @@ const ExercisesPage = (() => {
         // Fallback vertical connector line
         if (levelIndex > 0) {
           const prevUnlocked = currentWeek >= sortedWeeks[levelIndex - 1];
-          html += `<div class="rpg-connector ${prevUnlocked && isLevelUnlocked ? 'active' : ''}">
-            <div class="rpg-connector-line"></div>
-            ${prevUnlocked && isLevelUnlocked ? '<div class="rpg-connector-energy"></div>' : ''}
-          </div>`;
+          const isNextTarget = prevUnlocked && !isLevelUnlocked;
+          const arrowIcon = isLevelUnlocked ? '▼' : '🔒';
+          const badgeText = isLevelUnlocked 
+            ? `${arrowIcon}` 
+            : `${arrowIcon} ${I18n.t('week_label_short') || 'W'}${week}`;
+
+          html += `
+            <div class="rpg-connector ${prevUnlocked && isLevelUnlocked ? 'active' : ''} ${isNextTarget ? 'next-target' : ''}">
+              <div class="rpg-connector-line"></div>
+              <div class="rpg-connector-badge">${badgeText}</div>
+              ${prevUnlocked && isLevelUnlocked ? '<div class="rpg-connector-energy"></div>' : ''}
+            </div>
+          `;
         }
 
         const hasParallel = nodes.length > 1;

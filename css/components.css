@@ -2099,32 +2099,75 @@ html[dir="ltr"] .modal-close, [dir="ltr"] .modal-close {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 36px;
+  height: 38px;
   width: 100%;
   position: relative;
+  margin: 2px 0;
 }
 
 .rpg-connector-line {
-  width: 3px;
+  width: 4px;
   height: 100%;
   background: var(--border-light);
-  border-radius: 3px;
-  transition: background 0.5s;
+  border-radius: 4px;
+  transition: all 0.5s;
 }
 
 .rpg-connector.active .rpg-connector-line {
-  background: var(--path-color, var(--accent-primary));
-  box-shadow: 0 0 8px var(--path-color, var(--accent-primary));
+  background: linear-gradient(180deg, var(--path-color, var(--accent-primary)), color-mix(in srgb, var(--path-color, var(--accent-primary)) 70%, white));
+  box-shadow: 0 0 10px var(--path-color, var(--accent-primary)), 0 0 18px color-mix(in srgb, var(--path-color, var(--accent-primary)) 40%, transparent);
+}
+
+.rpg-connector.next-target .rpg-connector-line {
+  background: linear-gradient(180deg, var(--path-color, var(--accent-primary)), var(--border-light));
+}
+
+.rpg-connector-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  z-index: 2;
+  transition: all 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.rpg-connector.active .rpg-connector-badge {
+  border-color: var(--path-color, var(--accent-primary));
+  color: var(--path-color, var(--accent-primary));
+  background: var(--bg-elevated);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--path-color, var(--accent-primary)) 30%, transparent);
+}
+
+.rpg-connector.next-target .rpg-connector-badge {
+  border-color: var(--warning);
+  color: var(--warning);
 }
 
 .rpg-connector-energy {
   position: absolute;
-  width: 8px;
-  height: 8px;
-  background: var(--path-color, var(--accent-primary));
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: white;
+  border: 2px solid var(--path-color, var(--accent-primary));
   border-radius: 50%;
   box-shadow: 0 0 12px var(--path-color, var(--accent-primary));
   animation: rpgEnergyFlow 1.5s ease-in-out infinite;
+  pointer-events: none;
 }
 
 /* --- Fork Group --- */
@@ -2784,7 +2827,33 @@ html[dir="rtl"] .rpg-video-btn {
   }
 
   .rpg-connector {
-    height: 28px;
+    height: 32px;
+  }
+
+  html[dir="rtl"] .rpg-connector {
+    justify-content: flex-end;
+    padding-right: 48px;
+    padding-left: 0;
+  }
+
+  html[dir="ltr"] .rpg-connector {
+    justify-content: flex-start;
+    padding-left: 48px;
+    padding-right: 0;
+  }
+
+  html[dir="rtl"] .rpg-connector-badge,
+  html[dir="rtl"] .rpg-connector-energy {
+    left: auto;
+    right: 48px;
+    transform: translate(50%, -50%);
+  }
+
+  html[dir="ltr"] .rpg-connector-badge,
+  html[dir="ltr"] .rpg-connector-energy {
+    left: 48px;
+    right: auto;
+    transform: translate(-50%, -50%);
   }
 
   .rpg-node {
@@ -2910,6 +2979,24 @@ html[dir="rtl"] .rpg-video-btn {
 
   .rpg-skill-path {
     padding: 12px 8px;
+  }
+
+  html[dir="rtl"] .rpg-connector {
+    padding-right: 43px;
+  }
+
+  html[dir="ltr"] .rpg-connector {
+    padding-left: 43px;
+  }
+
+  html[dir="rtl"] .rpg-connector-badge,
+  html[dir="rtl"] .rpg-connector-energy {
+    right: 43px;
+  }
+
+  html[dir="ltr"] .rpg-connector-badge,
+  html[dir="ltr"] .rpg-connector-energy {
+    left: 43px;
   }
 
   .rpg-node {
