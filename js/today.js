@@ -589,6 +589,7 @@ const TodayPage = (() => {
         renderNutritionSection(queryDateStr);
       };
     }
+  }
     
     // Bottom sheet interaction removed (Now handled by App router as a dedicated page)
     // -------------------------------------
