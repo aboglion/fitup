@@ -584,6 +584,11 @@ const App = (() => {
         if (result.success) {
           await updateGoogleUI();
         }
+
+        syncBtn.disabled = false;
+        syncBtn.textContent = '🔄 סנכרן עכשיו מול Google Drive';
+      });
+    }
         
     // Custom Google Client ID
     const googleClientIdInput = document.getElementById('settings-google-client-id');
@@ -602,7 +607,6 @@ const App = (() => {
         UI.toast(val ? 'Google Client ID נשמר!' : 'חזר לברירת המחדל', 'success');
       };
     }
-  }
 
     // --- Gemini AI Settings ---
     const geminiKeyInput = document.getElementById('settings-gemini-key');
