@@ -218,12 +218,18 @@ const ExercisesPage = (() => {
     renderFilters();
 
     // Search handler
-    document.getElementById('exercise-search').addEventListener('input', (e) => {
-      if(!isTreeView) render(e.target.value, getActiveFilter());
-    });
+    const searchEl = document.getElementById('exercise-search');
+    if (searchEl) {
+      searchEl.addEventListener('input', (e) => {
+        if(!isTreeView) render(e.target.value, getActiveFilter());
+      });
+    }
 
     // Toggle tree view handler
-    document.getElementById('toggle-tree-btn').addEventListener('click', toggleView);
+    const treeBtn = document.getElementById('toggle-tree-btn');
+    if (treeBtn) {
+      treeBtn.addEventListener('click', toggleView);
+    }
 
     // Window resize handler for SVG lines recalculation
     window.addEventListener('resize', debounce(() => {
