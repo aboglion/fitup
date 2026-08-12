@@ -11,6 +11,13 @@ window.ExporterGuide = (() => {
       mental_load: "<strong>Zero Decisions & Mechanical Stop:</strong> Predefined weights, sets, reps, tempo, and rest. A set ends strictly upon completing specified reps or reaching a mechanical stop (cannot maintain tempo). No RIR or failure decisions.",
       strength_cardio: "<strong>Fixed 7-Day Weekly Structure:</strong> 3 strength days, Zone 2 cardio day, VO2 Max 4x4 day, Active Recovery day, and Rest day.",
       deload_cycles: "<strong>Scientific Recovery (Deload Cycles):</strong> Scheduled deload weeks (Weeks 9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73) reduce volume to 2 sets (~60% load) for neural and joint recovery.",
+      time_efficiency_title: "⏱️ Time Efficiency & Antagonistic Supersets Protocol (45–50 min target)",
+      time_efficiency_list: [
+        "<strong>Antagonistic Supersets:</strong> Pair non-competing isolation exercises (e.g., Lateral Raise + Triceps Ext on Day 3). Perform Ex A → 45s rest → Ex B → 45s rest. Target muscle gets 120s full recovery while cutting clock time by 50%.",
+        "<strong>Arm Block Integration:</strong> From Week 10 onwards, main table isolation sets (Lateral & Triceps) are capped at 2 sets as the Arm Block ladder handles primary progression.",
+        "<strong>Single-Arm Staggered Rest:</strong> On unilateral work, rest 45s between right and left sides (giving Arm A 105s total rest without passive waiting).",
+        "<strong>Micro-Mobility Integration:</strong> Perform Dead Hang or chest stretches during set rest periods to save 5 minutes post-workout."
+      ],
       equipment_title: "🔧 Required Equipment & Specifications",
       equipment_list: [
         "Modular Dumbbells: 8 plates × 3kg (24kg total) + 2 handles (3, 6, 9, 12kg per dumbbell / up to 24kg single)",
@@ -61,6 +68,13 @@ window.ExporterGuide = (() => {
       mental_load: "<strong>אפס החלטות ועצירה מכנית:</strong> כל תרגיל, משקל, סטים, חזרות, קצב (Tempo) וזמני מנוחה קבועים מראש. סט מסתיים בחזרות הכתובות או בעצירה מכנית (חזרה שלא הושלמה בקצב). אין RIR ואין כישלון.",
       strength_cardio: "<strong>מבנה שבועי קבוע (7 ימים):</strong> יום 1 (רגליים+ליבה+אחיזה), יום 2 (Zone 2+מוביליות), יום 3 (דחיפה+עמידת ידיים+בלוק זרועות), יום 4 (התאוששות פעילה), יום 5 (משיכה+אחיזה+בלוק זרועות), יום 6 (VO2 Max 4x4), יום 7 (מנוחה מלאה).",
       deload_cycles: "<strong>התאוששות מדעית (Deload Cycles):</strong> שבועות דילואד מוגדרים מראש (שבועות 9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73) שבהם הנפח יורד ל-2 סטים (~60% משקל) להורדת עומס מעצבים ומפרקים.",
+      time_efficiency_title: "⏱️ פרוטוקול ייעול זמנים וסופר-סטים (אימון ב-45–50 דקות)",
+      time_efficiency_list: [
+        "<strong>סופר-סטים אנטגוניסטיים (Antagonistic Supersets):</strong> בתרגילי בידוד (כמו Lateral Raise + Triceps Ext ביום 3, או Curl + Core ביום 5), בצע את תרגיל א' ← מנוחה 45 שנ' ← תרגיל ב' ← מנוחה 45 שנ'. השריר מרוויח 120 שנ' מנוחה מלאה, והזמן הכללי נחתך ב-50%.",
+        "<strong>איחוד סטים כפולים מול בלוק הזרועות:</strong> החל משבוע 10, כשבלוק הזרועות נכנס לתוקף, צמצם ל-2 סטים בטבלה הראשית בתרגילי Lateral Raise ו-Triceps Extension כדי למנוע עומס נפחי כפול.",
+        "<strong>מנוחה מוצלבת בתרגילים חד-צדדיים:</strong> בתרגילי Single-Arm / Single-Leg, בצע צד ימין ← מנוחה 45 שנ' ← צד שמאל ← מנוחה 45 שנ' (מעניק 105 שנ' מנוחה לצד ימין ללא זמן מת).",
+        "<strong>שילוב מיקרו-מוביליות בזמני מנוחה:</strong> בצע את ה-Dead Hang ומתיחת החזה בזמן המנוחה בין סטי הליבה/הרגליים כדי לסיים את האימון מיד ולחסוך 5 דקות בסוף."
+      ],
       equipment_title: "🔧 ציוד נדרש ושימוש קבוע",
       equipment_list: [
         "משקולות מודולריות: 8 פלטות × 3 ק\"ג (24 ק\"ג סה\"כ) + 2 ידיות (3 / 6 / 9 / 12 ק\"ג ליד, עד 24 ק\"ג בידית אחת)",
@@ -111,6 +125,13 @@ window.ExporterGuide = (() => {
       mental_load: "<strong>صفر قرارات والتوقف الميكانيكي:</strong> الأوزان والمجموعات والتكرارات والوتيرة محددة مسبقاً. تنتهي المجموعة عند التكرارات المحددة أو التوقف الميكانيكي.",
       strength_cardio: "<strong>الهيكل الأسبوعي (7 أيام):</strong> اليوم 1 (الأرجل+الظهر/الكتف), اليوم 2 (Zone 2+مرونة), اليوم 3 (الدفع+المهارة+بلوك الذراعين), اليوم 4 (التعافي النشط), اليوم 5 (السحب+القبضة+بلوك الذراعين), اليوم 6 (VO2 Max 4x4), اليوم 7 (راحة كاملة).",
       deload_cycles: "<strong>التعافي العلمي (أسابيع Deload):</strong> أسابيع تعافي محددة (الأسابيع 9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73) يقل فيها الحجم إلى مجموعتين (~60% وزن).",
+      time_efficiency_title: "⏱️ بروتوكول تحسين الوقت والمجموعات الفائقة (45-50 دقيقة)",
+      time_efficiency_list: [
+        "<strong>المجموعات الفائقة (Antagonistic Supersets):</strong> في تمارين العزل (مثل Lateral Raise + Triceps Ext)، قم بالتمرين أ ← راحة 45 ثانية ← التمرين ب ← راحة 45 ثانية. تحصل العضلة على 120 ثانية راحة كاملة.",
+        "<strong>دمج مجموعات الذراعين:</strong> بدءًا من الأسبوع 10، قلل مجموعات العزل في الجدول الرئيسي إلى مجموعتين نظرًا لوجود بلوك الذراعين.",
+        "<strong>الراحة المتقاطعة للتمارين الأحادية:</strong> في التمارين الأحادية، استرح 45 ثانية بين الجانبين الأيمن والأيسر.",
+        "<strong>دمج التمدد الخفيف أثناء الراحة:</strong> قم بتمارين التعليق والتمدد خلال فترات الراحة لتوفير 5 دقائق."
+      ],
       equipment_title: "🔧 المعدات المطلوبة",
       equipment_list: [
         "أثقال يدوية قابلة للتعديل: 8 أقراص × 3 كغم (24 كغم إجمالي) + مقبضان (3 / 6 / 9 / 12 كغم لكل يد، وحتى 24 كغم بمقبض واحد)",
@@ -282,6 +303,11 @@ window.ExporterGuide = (() => {
           <li>${t.mental_load}</li>
           <li>${t.strength_cardio}</li>
           <li>${t.deload_cycles}</li>
+        </ul>
+
+        <h3>${t.time_efficiency_title}</h3>
+        <ul>
+          ${t.time_efficiency_list ? t.time_efficiency_list.map(item => `<li>${item}</li>`).join('') : ''}
         </ul>
 
         <h3>${t.equipment_title}</h3>
