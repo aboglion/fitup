@@ -247,6 +247,7 @@ body {
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
   min-width: 56px;
+  flex: 1;
 }
 
 .bottom-nav-link.active {
