@@ -140,7 +140,39 @@ const GoogleFitService = (() => {
 
     const isLoggedIn = await CloudSync.isLoggedIn();
     if (!isLoggedIn) {
-      container.style.display = 'none';
+      container.style.display = 'block';
+      container.innerHTML = `
+        <div style="background: linear-gradient(135deg, rgba(66, 133, 244, 0.08), rgba(52, 168, 83, 0.08)); border: 1px dashed rgba(66, 133, 244, 0.4); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;">
+            <span style="font-size: 22px;">⌚</span>
+            <div>
+              <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">סנכרון מדדי כושר (Google Fit)</div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">התחבר לחשבון גוגל כדי לסנכרן ולהציג צעדים, קלוריות, דופק ונקודות לב בזמן אמת.</div>
+            </div>
+          </div>
+          <button id="fit-login-btn" style="padding: 7px 16px; font-size: 12px; font-weight: 700; border-radius: 20px; white-space: nowrap; display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #4285f4, #34a853); border: none; color: #fff; cursor: pointer; box-shadow: 0 3px 8px rgba(66, 133, 244, 0.3);">
+            <span>🔗</span> <span>התחבר לגוגל</span>
+          </button>
+        </div>
+      `;
+
+      const loginBtn = document.getElementById('fit-login-btn');
+      if (loginBtn && typeof CloudSync !== 'undefined') {
+        loginBtn.onclick = () => {
+          CloudSync.loginWithGoogle(
+            () => {
+              if (typeof StatsPage !== 'undefined' && StatsPage.render) {
+                StatsPage.render();
+              } else {
+                renderWidget(containerId, dateStr);
+              }
+            },
+            (err) => {
+              if (typeof UI !== 'undefined' && UI.toast) UI.toast('התחברות לגוגל בוטלה', 'warning');
+            }
+          );
+        };
+      }
       return;
     }
 
