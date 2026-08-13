@@ -683,8 +683,8 @@ label {
   }
 
   .page-container {
-    margin-right: 0;
-    margin-left: 0;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
     padding: var(--space-md) var(--space-md) calc(var(--bottom-nav-height) + var(--space-xl) + env(safe-area-inset-bottom, 0px));
   }
 
