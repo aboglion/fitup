@@ -54,7 +54,6 @@ const AnatomyMap = (() => {
       return `
         <div class="anatomy-pane">
           <div class="anatomy-inner">
-            <div class="pane-title">${title}</div>
             <div class="anatomy-image-bg" style="background-image: url('${imagePath}');"></div>
             <svg class="anatomy-svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%">
               ${visible.map(c => {
