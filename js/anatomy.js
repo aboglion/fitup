@@ -87,8 +87,8 @@ const AnatomyMap = (() => {
             ${visible.map(c => `
               <div class="callout-label side-${c.side}" style="top: ${c.nodeY}%; --color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${c.label.replace(/'/g, "\\'")}', ${c.pct})">
                 <div class="callout-title">${c.label}</div>
-                <div class="callout-value" style="color: ${c.color}">${c.pct}%</div>
-                <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${c.pct}%; background: ${c.color};"></div></div>
+                <div class="callout-value">${c.pct}%</div>
+                <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${c.pct}%; background: ${c.pct > 0 ? '#00ff66' : 'rgba(255,255,255,0.2)'};"></div></div>
               </div>
             `).join('')}
             ${callouts.map(c => `
@@ -191,32 +191,34 @@ const AnatomyMap = (() => {
           }
         }
         .callout-label {
-          position: absolute; display: flex; flex-direction: column; gap: 1px;
-          background: rgba(8,12,22,0.92); backdrop-filter: blur(10px);
-          border: 1px solid rgba(255,255,255,0.08);
-          padding: 3px 7px; border-radius: 5px; transform: translateY(-50%);
-          z-index: 20; box-shadow: 0 3px 10px rgba(0,0,0,0.5);
-          width: max-content; white-space: nowrap; transition: transform 0.2s ease, border-color 0.2s ease;
+          position: absolute; display: flex; flex-direction: column; gap: 2px;
+          align-items: center; text-align: center; justify-content: center;
+          background: rgba(8, 12, 22, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          padding: 5px 10px; border-radius: 8px; transform: translateY(-50%);
+          z-index: 20; box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+          width: max-content; min-width: 64px; white-space: nowrap; transition: transform 0.2s ease, border-color 0.2s ease;
         }
         .callout-label:hover {
-          transform: translateY(-50%) scale(1.05);
+          transform: translateY(-50%) scale(1.06);
+          border-color: #00ff66;
         }
         .callout-label.side-left {
-          right: 77%; border-right: 2px solid var(--color);
-          text-align: right; align-items: flex-end;
+          right: 78%; border-right: 3px solid var(--color);
+          text-align: center; align-items: center;
         }
         .callout-label.side-right {
-          left: 77%; border-left: 2px solid var(--color);
-          text-align: left; align-items: flex-start;
+          left: 78%; border-left: 3px solid var(--color);
+          text-align: center; align-items: center;
         }
-        .callout-title { font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 700; line-height: 1.2; }
-        .callout-value { font-size: 12px; font-weight: 900; text-shadow: 0 0 6px currentColor; line-height: 1.2; }
+        .callout-title { font-size: 11px; color: #ff9800; font-weight: 800; line-height: 1.2; text-shadow: 0 0 6px rgba(255, 152, 0, 0.4); }
+        .callout-value { font-size: 15px; font-weight: 900; color: #00ff66; text-shadow: 0 0 8px #00ff66, 0 0 16px rgba(0, 255, 102, 0.6); line-height: 1.2; }
         .progress-glow-bar {
-          width: 100%; min-width: 36px; height: 2px; background: rgba(255,255,255,0.06);
-          border-radius: 2px; margin-top: 2px; overflow: hidden;
+          width: 100%; min-width: 44px; height: 3px; background: rgba(255,255,255,0.1);
+          border-radius: 2px; margin-top: 3px; overflow: hidden;
         }
         .progress-glow-fill {
-          height: 100%; border-radius: 2px; box-shadow: 0 0 6px currentColor; transition: width 1s ease-out;
+          height: 100%; border-radius: 2px; box-shadow: 0 0 8px #00ff66; transition: width 1s ease-out;
         }
       </style>
       <div class="anatomy-dual-container">
