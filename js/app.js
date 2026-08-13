@@ -817,6 +817,15 @@ const App = (() => {
     let isDismissed = sessionStorage.getItem('authBannerDismissed') === 'true';
 
     const updateBannerVisibility = async () => {
+      // Don't display floating banner if full-screen login or splash screen is active
+      const loginScreen = document.getElementById('login-screen');
+      const splashScreen = document.getElementById('splash-screen');
+      if ((loginScreen && !loginScreen.classList.contains('hidden')) ||
+          (splashScreen && !splashScreen.classList.contains('hidden'))) {
+        banner.classList.add('hidden');
+        return;
+      }
+
       const loggedIn = await CloudSync.isLoggedIn();
       const status = CloudSync.getStatus();
 
@@ -873,10 +882,10 @@ const App = (() => {
       };
     }
 
-    // Initial check with brief delay after splash screen hides
-    setTimeout(() => {
-      updateBannerVisibility();
-    }, 1200);
+    // Initial checks (immediate and scheduled)
+    updateBannerVisibility();
+    setTimeout(updateBannerVisibility, 600);
+    setTimeout(updateBannerVisibility, 1500);
 
     // Listen to sync status changes
     if (CloudSync.onSyncStatusChange) {

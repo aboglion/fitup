@@ -3214,19 +3214,19 @@ html[dir="rtl"] .rpg-video-btn {
 /* ===== Non-Intrusive Floating Auth Prompt Banner ===== */
 .login-prompt-banner {
   position: fixed;
-  z-index: 990;
-  bottom: 84px;
-  left: 16px;
-  right: 16px;
-  max-width: 440px;
+  z-index: 1050; /* Higher than bottom nav (100) to ensure high visibility on mobile */
+  bottom: calc(var(--bottom-nav-height, 64px) + 14px + env(safe-area-inset-bottom, 0px));
+  left: 12px;
+  right: 12px;
+  max-width: calc(100vw - 24px);
   margin: 0 auto;
-  background: rgba(17, 24, 39, 0.88);
+  background: rgba(17, 24, 39, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(59, 130, 246, 0.35);
+  border: 1.5px solid rgba(59, 130, 246, 0.4);
   border-radius: 18px;
   padding: 14px 16px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 24px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 25px rgba(59, 130, 246, 0.25);
   transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s ease;
   animation: bannerSlideUp 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
@@ -3250,27 +3250,30 @@ html.light-theme .login-prompt-banner {
 
 .login-banner-close {
   position: absolute;
-  top: 8px;
-  inset-inline-end: 10px;
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  font-size: 15px;
+  top: -12px;
+  inset-inline-start: 12px;
+  background: var(--bg-card, #1a2236);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-primary, #ffffff);
+  font-size: 13px;
+  font-weight: 800;
   cursor: pointer;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  z-index: 2;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
 }
 
 .login-banner-close:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--text-primary);
-  transform: scale(1.1);
+  background: var(--danger, #ef4444);
+  border-color: #ef4444;
+  color: #ffffff;
+  transform: scale(1.15);
 }
 
 .login-banner-content {
