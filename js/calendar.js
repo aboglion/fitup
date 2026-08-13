@@ -30,9 +30,10 @@ const CalendarPage = (() => {
    * Navigate weeks
    */
   function navigateWeek(offset) {
-    const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
-    const effectiveOffset = isRTL ? -offset : offset;
-    const newWeek = currentWeekNum + effectiveOffset;
+    // Days are displayed Right-to-Left (earlier days on right, later days on left).
+    // Left button (offset = -1) advances to Next Week (+1).
+    // Right button (offset = +1) goes back to Prev Week (-1).
+    const newWeek = currentWeekNum - offset;
     if (newWeek >= 1 && newWeek <= totalWeeks) {
       currentWeekNum = newWeek;
       render();

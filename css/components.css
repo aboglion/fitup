@@ -885,9 +885,11 @@ input[type="number"] {
 
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: var(--space-sm);
   margin-bottom: var(--space-xl);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .calendar-day {
@@ -899,6 +901,9 @@ input[type="number"] {
   transition: all var(--transition-fast);
   min-height: 100px;
   position: relative;
+  min-width: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .calendar-day:hover {
@@ -1650,17 +1655,28 @@ html[dir="ltr"] .modal-close, [dir="ltr"] .modal-close {
   }
 
   .calendar-grid {
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 3px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .calendar-day {
-    min-height: 72px;
-    padding: var(--space-sm);
+    min-height: 68px;
+    padding: 4px 2px;
+    min-width: 0;
+    overflow: hidden;
+    box-sizing: border-box;
   }
 
   .calendar-day-name {
-    font-size: 9px;
+    font-size: clamp(7px, 2vw, 10px);
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .calendar-day-date {

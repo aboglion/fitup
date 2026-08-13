@@ -115,9 +115,10 @@ const TodayPage = (() => {
    * Navigate to a specific day
    */
   function navigate(offset) {
-    const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
-    const effectiveOffset = isRTL ? -offset : offset;
-    const newIndex = currentDayIndex + effectiveOffset;
+    // Days are displayed Right-to-Left (earlier days on right, later days on left).
+    // Left button (offset = -1) advances to Next Day (+1).
+    // Right button (offset = +1) goes back to Prev Day (-1).
+    const newIndex = currentDayIndex - offset;
     if (newIndex >= 0 && newIndex < allPlanDays.length) {
       currentDayIndex = newIndex;
       render();
