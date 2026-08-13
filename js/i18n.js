@@ -1637,6 +1637,11 @@ const I18n = (() => {
     if (window.DB && window.DB.setSetting) {
       await DB.setSetting('language', lang);
     }
+
+    if (typeof window.CloudSync !== 'undefined' && window.CloudSync.scheduleSync) {
+      window.CloudSync.scheduleSync();
+    }
+
     applyToDOM();
 
     if (window.UI && window.UI.toast) {

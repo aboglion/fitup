@@ -359,13 +359,37 @@ const DB = (() => {
   }
 
   /**
-   * Import data from JSON
+   * Import data from JSON with smart merging capability
    */
-  async function importData(data) {
+  async function importData(data, merge = false) {
+    if (!data) return;
+
     if (data.tracking) {
-      await clear(STORES.TRACKING);
-      await putBulk(STORES.TRACKING, data.tracking);
+      if (merge) {
+        const localTracking = await getAll(STORES.TRACKING);
+        const trackingMap = new Map();
+        localTracking.forEach(t => trackingMap.set(t.dayIndex, t));
+
+        data.tracking.forEach(cloudTrack => {
+          const localTrack = trackingMap.get(cloudTrack.dayIndex);
+          if (!localTrack) {
+            trackingMap.set(cloudTrack.dayIndex, cloudTrack);
+          } else {
+            // Compare timestamp or completion
+            const localTime = new Date(localTrack.lastUpdated || 0).getTime();
+            const cloudTime = new Date(cloudTrack.lastUpdated || 0).getTime();
+            if (cloudTime >= localTime || (cloudTrack.completed && !localTrack.completed)) {
+              trackingMap.set(cloudTrack.dayIndex, { ...localTrack, ...cloudTrack });
+            }
+          }
+        });
+        await putBulk(STORES.TRACKING, Array.from(trackingMap.values()));
+      } else {
+        await clear(STORES.TRACKING);
+        await putBulk(STORES.TRACKING, data.tracking);
+      }
     }
+
     if (data.settings) {
       // Preserve local-only keys that should never be overwritten by cloud data
       const LOCAL_ONLY_KEYS = ['googleAccessToken', 'googleUserProfile', 'cloudSyncUrl'];
@@ -375,7 +399,7 @@ const DB = (() => {
         if (record) preservedSettings[key] = record;
       }
 
-      await clear(STORES.SETTINGS);
+      if (!merge) await clear(STORES.SETTINGS);
       // Import cloud settings
       await putBulk(STORES.SETTINGS, data.settings);
 
@@ -386,16 +410,50 @@ const DB = (() => {
         }
       }
     }
+
     if (data.photos) {
-      await clear(STORES.PHOTOS);
-      await putBulk(STORES.PHOTOS, data.photos);
+      if (merge) {
+        const localPhotos = await getAll(STORES.PHOTOS);
+        const photoMap = new Map();
+        localPhotos.forEach(p => photoMap.set(p.id, p));
+        data.photos.forEach(p => photoMap.set(p.id, p));
+        await putBulk(STORES.PHOTOS, Array.from(photoMap.values()));
+      } else {
+        await clear(STORES.PHOTOS);
+        await putBulk(STORES.PHOTOS, data.photos);
+      }
     }
+
     if (data.nutrition) {
-      await clear(STORES.NUTRITION);
-      const nutritionArray = Object.keys(data.nutrition).map(date => {
-        return { date, ...data.nutrition[date] };
-      });
-      await putBulk(STORES.NUTRITION, nutritionArray);
+      const cloudDates = Object.keys(data.nutrition);
+      if (merge) {
+        for (const date of cloudDates) {
+          const cloudDay = data.nutrition[date];
+          const localDay = await get(STORES.NUTRITION, date);
+
+          if (!localDay) {
+            await put(STORES.NUTRITION, { date, ...cloudDay });
+          } else {
+            // Merge meals
+            const mergedMealsMap = new Map();
+            (localDay.meals || []).forEach(m => mergedMealsMap.set(m.id || `${m.name}_${m.time}`, m));
+            (cloudDay.meals || []).forEach(m => mergedMealsMap.set(m.id || `${m.name}_${m.time}`, m));
+
+            await put(STORES.NUTRITION, {
+              ...localDay,
+              ...cloudDay,
+              date,
+              meals: Array.from(mergedMealsMap.values())
+            });
+          }
+        }
+      } else {
+        await clear(STORES.NUTRITION);
+        const nutritionArray = cloudDates.map(date => {
+          return { date, ...data.nutrition[date] };
+        });
+        await putBulk(STORES.NUTRITION, nutritionArray);
+      }
     }
   }
 

@@ -80,14 +80,14 @@ const AnatomyMap = (() => {
               }).join('')}
             </svg>
             ${visible.map(c => `
-              <div class="callout-label side-${c.side}" style="top: ${c.nodeY}%; --color: ${c.color};">
+              <div class="callout-label side-${c.side}" style="top: ${c.nodeY}%; --color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${c.label.replace(/'/g, "\\'")}', ${c.pct})">
                 <div class="callout-title">${c.label}</div>
                 <div class="callout-value" style="color: ${c.color}">${c.pct}%</div>
                 <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${c.pct}%; background: ${c.color};"></div></div>
               </div>
             `).join('')}
             ${callouts.map(c => `
-              <div class="anatomy-node" style="left: ${c.nodeX}%; top: ${c.nodeY}%; background-color: ${c.color}; color: ${c.color};"></div>
+              <div class="anatomy-node" style="left: ${c.nodeX}%; top: ${c.nodeY}%; background-color: ${c.color}; color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${(c.label || c.id).replace(/'/g, "\\'")}', ${c.pct || 0})"></div>
             `).join('')}
           </div>
         </div>`;
@@ -151,8 +151,11 @@ const AnatomyMap = (() => {
           background: rgba(8,12,22,0.92); backdrop-filter: blur(10px);
           border: 1px solid rgba(255,255,255,0.08);
           padding: 3px 7px; border-radius: 5px; transform: translateY(-50%);
-          z-index: 20; pointer-events: none; box-shadow: 0 3px 10px rgba(0,0,0,0.5);
-          width: max-content; white-space: nowrap;
+          z-index: 20; box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+          width: max-content; white-space: nowrap; transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .callout-label:hover {
+          transform: translateY(-50%) scale(1.05);
         }
         .callout-label.side-left {
           right: 77%; border-right: 2px solid var(--color);
@@ -178,7 +181,65 @@ const AnatomyMap = (() => {
       </div>`;
   }
 
-  return { render };
+  /**
+   * Show detailed modal when a muscle group is clicked
+   */
+  function showMuscleDetails(muscleKey, muscleName, pct) {
+    const muscleExerciseMap = {
+      chest: ['Dumbbell Floor Press', 'Push-Up', 'Deficit Push-Up', 'Single-Arm Floor Press'],
+      shoulders: ['Seated Dumbbell OHP', 'Pike Push-Up', 'Dumbbell Lateral Raise', 'TRX Face Pull'],
+      triceps: ['Overhead Triceps Extension', 'Floor Press Lockout', 'Push-Up Lockout'],
+      biceps: ['Biceps Curls', 'Hammer Curls', 'Pull-Up / Chin-Up', 'One-Arm DB Row'],
+      forearms: ['Towel Hang', 'Suitcase Carry', 'Heavy Pull-Up Grip'],
+      lats: ['Pull-Up', 'Chin-Up', 'One-Arm DB Row', 'Scapular Pull-Up'],
+      traps: ['TRX Face Pull', 'TRX Y-T-W', 'One-Arm DB Row'],
+      quads: ['Bulgarian Split Squat', 'Goblet Squat', 'Reverse Lunge', 'Walking Lunge'],
+      hamstrings: ['Dumbbell RDL', 'Single-Leg RDL', 'Glute Bridge', 'Hip Thrust'],
+      glutes: ['Dumbbell Hip Thrust', 'Bulgarian Split Squat', 'Single-Leg RDL'],
+      calves: ['Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max 4x4'],
+      core: ['Dead Bug', 'Hollow Body Hold', 'L-Sit Tuck', 'Plank'],
+      obliques: ['Suitcase Carry', 'Pallof Press', 'Side Plank'],
+      lowerBack: ['Dumbbell RDL', 'Single-Leg RDL', 'Hip Thrust']
+    };
+
+    const exercises = muscleExerciseMap[muscleKey] || ['תרגילי התוכנית היחידיים המכוונים בקטגוריה זו'];
+
+    const modalContent = `
+      <div style="padding: 12px 4px; text-align: right;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <span style="font-size: 20px; font-weight: 800; color: var(--text-primary);">${muscleName}</span>
+          <span style="font-size: 14px; font-weight: 900; color: var(--accent-primary); background: var(--bg-elevated); padding: 4px 12px; border-radius: 20px;">
+            ${pct}% ${I18n.t('muscle_map_title')}
+          </span>
+        </div>
+        <div style="width: 100%; height: 8px; background: var(--bg-input); border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
+          <div style="height: 100%; width: ${pct}%; background: var(--accent-gradient);"></div>
+        </div>
+        <h4 style="font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;">תרגילים בתוכנית הפועלים על שריר זה:</h4>
+        <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; display: flex; flex-direction: column; gap: 6px;">
+          ${exercises.map(ex => `
+            <li style="background: var(--bg-elevated); border: 1px solid var(--border-light); padding: 8px 12px; border-radius: 8px; font-size: 13px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+              <span>💪</span> <span>${ex}</span>
+            </li>
+          `).join('')}
+        </ul>
+        <button id="view-ex-dir-btn" class="btn-primary" style="width: 100%;">
+          📖 פתח את מדריך התרגילים
+        </button>
+      </div>
+    `;
+
+    UI.showModal(`מפת שרירים - ${muscleName}`, modalContent);
+    const btn = document.getElementById('view-ex-dir-btn');
+    if (btn) {
+      btn.onclick = () => {
+        UI.hideModal();
+        if (typeof App !== 'undefined') App.navigateTo('exercises');
+      };
+    }
+  }
+
+  return { render, showMuscleDetails };
 })();
 
 window.AnatomyMap = AnatomyMap;

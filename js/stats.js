@@ -171,7 +171,10 @@ const StatsPage = (() => {
               <div style="font-size: 12px; color: var(--text-secondary);">${totalXP} / ${xpForNextLevel} XP</div>
             </div>
           </div>
-          <div style="text-align: left;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button onclick="StatsPage.shareProgressCard()" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; display: flex; align-items: center; gap: 4px; border-radius: 20px;">
+              <span>📤</span> <span>שיתוף</span>
+            </button>
             <div style="font-size: 11px; font-weight: 600; color: var(--accent-primary); background: var(--bg-elevated); padding: 4px 10px; border-radius: 20px;">
               ${Math.round(levelProgress)}%
             </div>
@@ -190,11 +193,20 @@ const StatsPage = (() => {
       </div>
     `;
 
+    const fitContainerHTML = `
+      <div id="stats-google-fit-container" style="grid-column: 1 / -1; margin-bottom: 0;"></div>
+    `;
+
     container.innerHTML = `
       ${xpHTML}
+      ${fitContainerHTML}
       ${streakHTML}
       ${anatomyHTML}
     `;
+
+    if (window.GoogleFitService) {
+      window.GoogleFitService.renderWidget('stats-google-fit-container');
+    }
   }
 
   /**
@@ -772,12 +784,104 @@ const StatsPage = (() => {
         UI.hideModal();
       }
     };
+  async function shareProgressCard() {
+    const isLoggedIn = await CloudSync.isLoggedIn();
+    if (!isLoggedIn) {
+      UI.showModal('🔒 שיתוף חברתי למשתמשים מחוברים', `
+        <div style="text-align: center; padding: 16px;">
+          <p style="margin-bottom: 16px; color: var(--text-secondary);">אפשרות השיתוף החברתי זמינה בלעדית למשתמשים שהתחברו לחשבון גוגל.</p>
+          <button id="share-login-btn" class="btn-primary" style="width: 100%;">🔗 התחבר עכשיו לחשבון גוגל</button>
+        </div>
+      `);
+      document.getElementById('share-login-btn').onclick = () => {
+        UI.hideModal();
+        if (typeof App !== 'undefined') App.navigateTo('settings');
+      };
+      return;
+    }
+
+    const profile = await CloudSync.getUserProfile();
+    const userName = profile?.name || 'מתאמן FitUp';
+    const allTracking = await DB.getAllTracking();
+    const completedDays = allTracking.filter(t => t.completed).length;
+    let totalXP = 0;
+    allTracking.forEach(t => { if (t.completed) totalXP += 500; });
+    const currentLevel = Math.floor(Math.sqrt(totalXP / 500)) + 1;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 600;
+    canvas.height = 600;
+    const ctx = canvas.getContext('2d');
+
+    const grad = ctx.createLinearGradient(0, 0, 600, 600);
+    grad.addColorStop(0, '#0f172a');
+    grad.addColorStop(0.5, '#1e1b4b');
+    grad.addColorStop(1, '#0f172a');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 600, 600);
+
+    ctx.strokeStyle = '#38bdf8';
+    ctx.lineWidth = 4;
+    ctx.strokeRect(20, 20, 560, 560);
+
+    ctx.fillStyle = '#f8fafc';
+    ctx.font = 'bold 34px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('FITUP PRO ULTIMATE', 300, 80);
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.font = '20px sans-serif';
+    ctx.fillText('🔥 Workout Progress Card 🔥', 300, 115);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 26px sans-serif';
+    ctx.fillText(userName, 300, 190);
+
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.roundRect(80, 230, 440, 240, 16);
+    ctx.fill();
+    ctx.strokeStyle = '#334155';
+    ctx.stroke();
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillText(`⭐ ${I18n.t('level_label')} ${currentLevel}`, 300, 280);
+    ctx.fillText(`🏆 ${totalXP.toLocaleString()} XP`, 300, 330);
+    ctx.fillText(`📅 ${completedDays} אימונים הושלמו`, 300, 380);
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '16px sans-serif';
+    ctx.fillText('FitUp Pro • 78-Week Prescriptive Program', 300, 530);
+
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+      const file = new File([blob], 'fitup-progress.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'FitUp Progress',
+            text: `הנה ההתקדמות שלי ב-FitUp Pro! רמה ${currentLevel} עם ${totalXP} XP! 💪`
+          });
+        } catch (e) {
+          console.warn('Share cancelled or failed:', e);
+        }
+      } else {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'fitup-progress.png';
+        a.click();
+        UI.toast('תמונת ההישגים הורדה בהצלחה! 📸', 'success');
+      }
+    });
   }
 
   return {
     init,
     render,
-    calculateMuscleProgressions
+    calculateMuscleProgressions,
+    shareProgressCard
   };
 })();
 

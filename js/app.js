@@ -568,6 +568,7 @@ const App = (() => {
     const googleUserEmail = document.getElementById('google-user-email');
     const syncStatus = document.getElementById('last-sync-status');
     const syncBtn = document.getElementById('cloud-sync-btn');
+    const cloudIndicator = document.getElementById('cloud-status-indicator');
 
     const updateGoogleUI = async () => {
       const loggedIn = await CloudSync.isLoggedIn();
@@ -590,6 +591,65 @@ const App = (() => {
     };
 
     updateGoogleUI();
+
+    // Handle sync status changes and update header indicator
+    if (CloudSync.onSyncStatusChange) {
+      CloudSync.onSyncStatusChange((status, detail) => {
+        updateGoogleUI();
+        if (!cloudIndicator) return;
+
+        switch (status) {
+          case 'synced':
+            cloudIndicator.innerHTML = '☁️✅';
+            cloudIndicator.title = 'מסונכרן בהצלחה מול Google Drive';
+            cloudIndicator.style.borderColor = 'var(--success)';
+            break;
+          case 'syncing':
+            cloudIndicator.innerHTML = '☁️🔄';
+            cloudIndicator.title = 'מסנכרן נתונים ברקע...';
+            cloudIndicator.style.borderColor = 'var(--warning)';
+            break;
+          case 'reauth_needed':
+            cloudIndicator.innerHTML = '☁️⚠️';
+            cloudIndicator.title = 'תוקף אסימון גוגל פג. לחץ להתחברות מחדש';
+            cloudIndicator.style.borderColor = 'var(--danger)';
+            break;
+          case 'offline':
+            cloudIndicator.innerHTML = '🔌';
+            cloudIndicator.title = 'אין חיבור אינטרנט (אופליין)';
+            cloudIndicator.style.borderColor = 'var(--border-light)';
+            break;
+          case 'error':
+            cloudIndicator.innerHTML = '☁️❌';
+            cloudIndicator.title = `שגיאת סנכרון: ${detail || ''}`;
+            cloudIndicator.style.borderColor = 'var(--danger)';
+            break;
+          default:
+            cloudIndicator.innerHTML = '☁️';
+            cloudIndicator.title = 'Google Drive Sync';
+            cloudIndicator.style.borderColor = 'var(--border-light)';
+            break;
+        }
+      });
+    }
+
+    if (cloudIndicator) {
+      cloudIndicator.onclick = async () => {
+        const status = CloudSync.getStatus();
+        if (status === 'reauth_needed' || !(await CloudSync.isLoggedIn())) {
+          CloudSync.loginWithGoogle(
+            async (profile) => {
+              UI.toast(`${I18n.t('connected_as')} ${profile.name || I18n.t('google_user')}!`, 'success');
+              await updateGoogleUI();
+              CloudSync.syncData(true);
+            },
+            (err) => UI.toast(I18n.t('error_prefix') + err, 'error')
+          );
+        } else {
+          navigateTo('settings');
+        }
+      };
+    }
 
     if (googleLoginBtn) {
       googleLoginBtn.onclick = () => {

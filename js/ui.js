@@ -621,7 +621,7 @@ const UI = (() => {
       if (remaining <= 0) {
         clearInterval(timerInterval);
         updateTimerDisplay(0);
-        playTimerSound();
+        playTimerSound(true);
         UI.toast(I18n.t('rest_complete_toast'), 'success');
         
         setTimeout(() => {
@@ -632,6 +632,9 @@ const UI = (() => {
           timerOnComplete = null;
         }, 1500);
       } else {
+        if (remaining <= 3 && remaining >= 1) {
+          playBeepSound(600, 0.1);
+        }
         updateTimerDisplay(remaining);
       }
     }, 1000);
@@ -644,24 +647,57 @@ const UI = (() => {
       `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
-  function playTimerSound() {
+  function playBeepSound(freq = 800, duration = 0.15) {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
       const ctx = new AudioContext();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(800, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
       gain.gain.setValueAtTime(0, ctx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
-      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.5);
+      gain.gain.linearRampToValueAtTime(0.4, ctx.currentTime + 0.02);
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + duration);
       osc.start();
-      osc.stop(ctx.currentTime + 0.5);
+      osc.stop(ctx.currentTime + duration);
     } catch (e) {
       // Audio not supported
+    }
+  }
+
+  function playTimerSound(isFinal = false) {
+    playBeepSound(1000, 0.4);
+    if (isFinal) {
+      speakVoiceCue();
+    }
+  }
+
+  function speakVoiceCue() {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const lang = window.I18n ? window.I18n.getLang() : 'he';
+      let message = 'הפסקה הסתיימה! הסט הבא מחכה';
+      let speechLang = 'he-IL';
+
+      if (lang === 'en') {
+        message = 'Rest complete! Next set is ready.';
+        speechLang = 'en-US';
+      } else if (lang === 'ar') {
+        message = 'انتهت الاستراحة! المجموعة التالية جاهزة.';
+        speechLang = 'ar-SA';
+      }
+
+      const utterance = new SpeechSynthesisUtterance(message);
+      utterance.lang = speechLang;
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      console.warn('Speech synthesis failed:', e);
     }
   }
 

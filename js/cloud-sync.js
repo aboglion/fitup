@@ -5,10 +5,38 @@
 const CloudSync = (() => {
   let isSyncing = false;
   let syncTimeout = null;
+  let currentStatus = 'idle'; // 'idle' | 'syncing' | 'synced' | 'reauth_needed' | 'offline' | 'error'
+  const statusListeners = [];
   const FILE_NAME = 'fitup-data.json';
 
   // Default Client ID for standard Google Identity Services (or configurable in DB)
   const DEFAULT_CLIENT_ID = '189174154188-blcjekhejsmenu6vg9ptt2e5pqnnfbv8.apps.googleusercontent.com'; 
+
+  function setStatus(status, detail = '') {
+    currentStatus = status;
+    statusListeners.forEach(cb => {
+      try { cb(status, detail); } catch (e) { console.error('Sync status listener error:', e); }
+    });
+  }
+
+  function getStatus() {
+    return currentStatus;
+  }
+
+  function onSyncStatusChange(callback) {
+    if (typeof callback === 'function') {
+      statusListeners.push(callback);
+    }
+  }
+
+  /**
+   * Prompt user to re-authenticate with Google
+   */
+  function promptReauth() {
+    if (typeof UI !== 'undefined' && UI.toast) {
+      UI.toast('פג תוקף אסימון גוגל ⚠️ לחץ בהגדרות או כאן לחיבור מחדש', 'warning');
+    }
+  }
 
   /**
    * Schedule background sync (debounced 3s)
@@ -59,6 +87,7 @@ const CloudSync = (() => {
   async function logout() {
     await DB.setSetting('googleAccessToken', null);
     await DB.setSetting('googleUserProfile', null);
+    setStatus('idle');
     if (typeof UI !== 'undefined' && UI.toast) UI.toast('התנתקת מחשבון גוגל', 'info');
   }
 
@@ -71,6 +100,9 @@ const CloudSync = (() => {
       const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      if (res.status === 401) {
+        return { error: 401 };
+      }
       if (!res.ok) return null;
       const data = await res.json();
       return data.files && data.files.length > 0 ? data.files[0].id : null;
@@ -84,19 +116,33 @@ const CloudSync = (() => {
    * Save data directly to Google Drive
    */
   async function syncData(manual = false) {
+    if (!navigator.onLine) {
+      setStatus('offline');
+      if (manual && typeof UI !== 'undefined' && UI.toast) {
+        UI.toast('אין חיבור לאינטרנט (מצב אופליין)', 'warning');
+      }
+      return { success: false, error: 'Offline' };
+    }
+
     if (isSyncing) return { success: false, error: 'כבר מתבצע סנכרון כרגע.' };
 
     const token = await getAccessToken();
     const legacyUrl = await DB.getSetting('cloudSyncUrl');
 
     if (!token && !legacyUrl) {
-      if (manual) UI.toast('לא התחברת לחשבון גוגל (Google Drive).', 'error');
+      setStatus('idle');
+      if (manual && typeof UI !== 'undefined' && UI.toast) {
+        UI.toast('לא התחברת לחשבון גוגל (Google Drive).', 'error');
+      }
       return { success: false, error: 'Not logged in' };
     }
 
     try {
       isSyncing = true;
-      if (manual) UI.toast('מסנכרן נתונים מול Google Drive...', 'info');
+      setStatus('syncing');
+      if (manual && typeof UI !== 'undefined' && UI.toast) {
+        UI.toast('מסנכרן נתונים מול Google Drive...', 'info');
+      }
 
       const dataToSync = await DB.exportData();
 
@@ -110,16 +156,25 @@ const CloudSync = (() => {
         if (!response.ok) throw new Error('שגיאת רשת מול שרת גוגל');
         const result = await response.json();
         if (result.status === 'success') {
-          if (result.data) await DB.importData(result.data);
+          if (result.data) await DB.importData(result.data, true);
           const timestamp = new Date().toISOString();
           await DB.setSetting('lastSyncDate', timestamp);
-          if (manual) UI.toast('הסנכרון עבר בהצלחה! ✅', 'success');
+          setStatus('synced');
+          if (manual && typeof UI !== 'undefined' && UI.toast) UI.toast('הסנכרון עבר בהצלחה! ✅', 'success');
           return { success: true, timestamp };
         }
       }
 
       // Direct Google Drive REST API
-      const fileId = await findDriveFileId(token);
+      const fileIdResult = await findDriveFileId(token);
+      if (fileIdResult && fileIdResult.error === 401) {
+        await logout();
+        setStatus('reauth_needed');
+        promptReauth();
+        throw new Error('פג תוקף אסימון הגישה של גוגל. נא להתחבר מחדש.');
+      }
+
+      const fileId = typeof fileIdResult === 'string' ? fileIdResult : null;
       const jsonContent = JSON.stringify(dataToSync, null, 2);
 
       let uploadUrl;
@@ -164,6 +219,8 @@ const CloudSync = (() => {
       if (!res.ok) {
         if (res.status === 401) {
           await logout();
+          setStatus('reauth_needed');
+          promptReauth();
           throw new Error('פג תוקף אסימון הגישה של גוגל. נא להתחבר מחדש.');
         }
         throw new Error(`שגיאת Google Drive (HTTP ${res.status})`);
@@ -171,13 +228,15 @@ const CloudSync = (() => {
 
       const timestamp = new Date().toISOString();
       await DB.setSetting('lastSyncDate', timestamp);
+      setStatus('synced');
 
-      if (manual) UI.toast('הנתונים נשמרו בהצלחה ב-Google Drive! ☁️', 'success');
+      if (manual && typeof UI !== 'undefined' && UI.toast) UI.toast('הנתונים נשמרו בהצלחה ב-Google Drive! ☁️', 'success');
       return { success: true, timestamp };
 
     } catch (error) {
       console.error('Cloud Sync Error:', error);
-      if (manual) UI.toast('שגיאה בסנכרון: ' + error.message, 'error');
+      if (currentStatus !== 'reauth_needed') setStatus('error', error.message);
+      if (manual && typeof UI !== 'undefined' && UI.toast) UI.toast('שגיאה בסנכרון: ' + error.message, 'error');
       return { success: false, error: error.message };
     } finally {
       isSyncing = false;
@@ -188,40 +247,75 @@ const CloudSync = (() => {
    * Pull data from Google Drive file
    */
   async function pullData() {
+    if (!navigator.onLine) {
+      setStatus('offline');
+      return { success: false, error: 'Offline' };
+    }
+
     const token = await getAccessToken();
     const legacyUrl = await DB.getSetting('cloudSyncUrl');
 
-    if (!token && !legacyUrl) return { success: false, error: 'Not logged in' };
+    if (!token && !legacyUrl) {
+      setStatus('idle');
+      return { success: false, error: 'Not logged in' };
+    }
 
     try {
+      setStatus('syncing');
+
       if (!token && legacyUrl) {
         const response = await fetch(legacyUrl);
         if (!response.ok) throw new Error('Network error');
         const data = await response.json();
         if (data && !data.error) {
-          await DB.importData(data);
+          await DB.importData(data, true);
+          if (window.I18n && window.I18n.init) await window.I18n.init();
+          setStatus('synced');
           return { success: true };
         }
       }
 
-      const fileId = await findDriveFileId(token);
-      if (!fileId) return { success: false, error: 'No backup file found in Drive' };
+      const fileIdResult = await findDriveFileId(token);
+      if (fileIdResult && fileIdResult.error === 401) {
+        await logout();
+        setStatus('reauth_needed');
+        promptReauth();
+        return { success: false, error: 'Token expired' };
+      }
+
+      const fileId = typeof fileIdResult === 'string' ? fileIdResult : null;
+      if (!fileId) {
+        setStatus('synced');
+        return { success: false, error: 'No backup file found in Drive' };
+      }
 
       const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        if (res.status === 401) {
+          await logout();
+          setStatus('reauth_needed');
+          promptReauth();
+          return { success: false, error: 'Token expired' };
+        }
+        throw new Error(`HTTP ${res.status}`);
+      }
 
       const data = await res.json();
       if (data) {
-        await DB.importData(data);
+        await DB.importData(data, true);
+        if (window.I18n && window.I18n.init) await window.I18n.init();
+        setStatus('synced');
         return { success: true };
       }
+      setStatus('error', 'Invalid data');
       return { success: false, error: 'Invalid data' };
 
     } catch (error) {
       console.error('Cloud Sync Pull Error:', error);
+      if (currentStatus !== 'reauth_needed') setStatus('error', error.message);
       return { success: false, error: error.message };
     }
   }
@@ -257,11 +351,12 @@ const CloudSync = (() => {
       try {
         const client = window.google.accounts.oauth2.initTokenClient({
           client_id: clientId,
-          scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
+          scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.body.read',
           callback: async (response) => {
             if (response.access_token) {
               const profile = await fetchGoogleProfile(response.access_token);
               await setAccessToken(response.access_token, profile);
+              setStatus('synced');
               if (onSuccess) onSuccess(profile);
             } else if (response.error) {
               console.warn('Google OAuth error:', response.error);
@@ -280,6 +375,7 @@ const CloudSync = (() => {
     const inputToken = prompt('הכנס אסימון גישה (Google OAuth Access Token) או מפתח:');
     if (inputToken && inputToken.trim()) {
       setAccessToken(inputToken.trim()).then(() => {
+        setStatus('synced');
         if (onSuccess) onSuccess({ name: 'משתמש גוגל', email: '' });
       });
     } else if (onError) {
@@ -301,6 +397,18 @@ const CloudSync = (() => {
     return { name: 'משתמש גוגל', email: '' };
   }
 
+  // Listener for regaining internet connection to auto-retry sync
+  window.addEventListener('online', async () => {
+    console.log('Network connection restored. Triggering cloud sync...');
+    if (await isLoggedIn()) {
+      await syncData(false);
+    }
+  });
+
+  window.addEventListener('offline', () => {
+    setStatus('offline');
+  });
+
   return {
     syncData,
     pullData,
@@ -311,8 +419,11 @@ const CloudSync = (() => {
     isLoggedIn,
     getUserProfile,
     logout,
-    loginWithGoogle
+    loginWithGoogle,
+    getStatus,
+    onSyncStatusChange
   };
 })();
 
 window.CloudSync = CloudSync;
+

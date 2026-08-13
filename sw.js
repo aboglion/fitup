@@ -21,6 +21,8 @@ const ASSETS = [
   './js/anatomy.js',
   './js/export-guide.js',
   './js/cloud-sync.js',
+  './js/google-fit.js',
+  './js/notifications.js',
   './js/app.js'
 ];
 
@@ -131,4 +133,22 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
+
+// Handle Notification Clicks
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow('./');
+      }
+    })
+  );
+});
+
 
