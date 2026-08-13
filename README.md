@@ -61,7 +61,7 @@ Built on a strict **"Zero Decisions" Philosophy**, every single workout day acro
 FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tech Sci-Fi aesthetic. Below is a detailed visual walkthrough of the primary modules and features:
 
 ### 1. Progress & Stats Dashboard & Interactive Muscle Map
-![Progress Dashboard, Google Fit Sync & Interactive Muscle Map](PICS/Pasted%20image.png)
+<img src="PICS/Pasted%20image.png" alt="Progress Dashboard, Google Fit Sync & Interactive Muscle Map" width="380" />
 
 - **Google Fit Real-Time Sync**: Displays live data retrieved from Google Fit APIs (`fitness.activity.read` and `fitness.body.read`), including daily step counts (e.g., 2,343 steps), active activity calorie burn (e.g., 1,439 kcal), and heart rate monitoring (~120–145 BPM exertion zone). Step calorie expenditure automatically recalibrates daily net energy balances.
 - **Level & Gamification Engine**: Visual XP progression bar (Level 1, 0/500 XP). Users earn 500 XP per completed strength workout and 200 XP for active recovery walk days, with instant social sharing capabilities.
@@ -70,7 +70,7 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 ---
 
 ### 2. Gemini AI Nutrition Log & Daily Caloric Balance
-![Gemini AI Meal Entry & Daily Calorie Tracker](PICS/Pasted%20image%20%282%29.png)
+<img src="PICS/Pasted%20image%20%282%29.png" alt="Gemini AI Meal Entry & Daily Calorie Tracker" width="380" />
 
 - **AI-Powered Photo Meal Analysis**: Snap a photo using the device camera ("Capture Food") or upload an image for instant nutritional analysis via Google Gemini AI (`gemini-3.1-flash-lite`). The AI extracts macro estimates (Calories, Protein, Carbs, Fats) and generates deep nutritional insights regarding energy density, sodium content, and post-workout muscle recovery suitability.
 - **Daily Calorie & Protein Counters**: Real-time progress bars comparing consumed calories against daily target limits (e.g., 1,150 / 1,980 kcal) and protein goals (e.g., 48 / 160g). Includes quick-add shortcuts for protein supplements (e.g., +24g protein powder per serving).
@@ -79,7 +79,7 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 ---
 
 ### 3. RPG Skill Tree & Exercise Directory
-![RPG Skill Tree & Exercise Directory](PICS/Pasted%20image%20%283%29.png)
+<img src="PICS/Pasted%20image%20%283%29.png" alt="RPG Skill Tree & Exercise Directory" width="380" />
 
 - **Categorized Movement Domains**: Filterable exercise directory divided into four primary disciplines: **Legs + Core**, **Push + Skill**, **Pull + Grip**, and **Cardio & Recovery**.
 - **Interactive Progression Skill Tree**: Visual node tree displaying week-by-week exercise unlocks across the 78-week roadmap. Features dedicated warmups (High Knees, Deep Mobility Protocol) and locked future skill nodes (e.g., Week 53 Wrist Rocks, Pistol Squats to chair).
@@ -87,7 +87,7 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 ---
 
 ### 4. Anatomical Muscle Breakdown & Animated Execution
-![Exercise Detail Modal with Muscle Highlights and GIF Demo](PICS/Pasted%20image%20%284%29.png)
+<img src="PICS/Pasted%20image%20%284%29.png" alt="Exercise Detail Modal with Muscle Highlights and GIF Demo" width="380" />
 
 - **Target Muscle Visualizer**: Every exercise card (e.g., Dumbbell Romanian Deadlift - DB RDL) opens a high-detail modal highlighting primary target muscle groups (glutes and hamstrings highlighted in vivid red on an anatomical body model).
 - **Looping Demonstration GIFs**: Embedded high-definition animation loops demonstrating proper biomechanical form, setup posture, movement cadence, and safety control.
@@ -95,7 +95,7 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 ---
 
 ### 5. Searchable Exercise Library & Muscle Filtering
-![Searchable Exercise Library with Category Filters](PICS/Pasted%20image%20%285%29.png)
+<img src="PICS/Pasted%20image%20%285%29.png" alt="Searchable Exercise Library with Category Filters" width="380" />
 
 - **Instant Search & Multi-Category Filters**: Instant search engine with tag filters (All, Arms, Shoulders, Warmup, Pull, Push, Legs, Core) to find any movement in the 78-week dictionary.
 - **Detailed Card Metadata**: Shows required equipment (e.g., Dumbbells, Bodyweight, TRX), difficulty rating (Beginner, Intermediate, Advanced), schedule assignment badges, and primary target muscle diagrams (e.g., DB Biceps Curl, DB Lateral Raise, DB Overhead Triceps Extension).
@@ -103,7 +103,7 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 ---
 
 ### 6. Today View Workout Tracker & Prescriptive Set Execution
-![Today View Interactive Set Logger & Rest Timer](PICS/Pasted%20image%20%286%29.png)
+<img src="PICS/Pasted%20image%20%286%29.png" alt="Today View Interactive Set Logger & Rest Timer" width="380" />
 
 - **Prescriptive Workout Execution**: Displays the exact daily schedule generated by the 78-week training engine. Outlines exact exercise sequence, prescribed set counts, target reps, and tempo instructions (e.g., Bodyweight Squat with slow eccentric control, 2 sets of 8 reps, 30s rest interval).
 - **Interactive Logging Interface**: One-click completion checkboxes for completed sets, customizable rep and load fields, integrated rest timer countdowns, and per-exercise personal notes inputs.
@@ -111,7 +111,7 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 ---
 
 ### 7. Progress Photo Tracker, Consistency Map & Performance Metrics
-![Progress Photo Tracker, 546-Day Consistency Map & Analytics](PICS/Pasted%20image%20%287%29.png)
+<img src="PICS/Pasted%20image%20%287%29.png" alt="Progress Photo Tracker, 546-Day Consistency Map & Analytics" width="380" />
 
 - **Private Progress Photo Journal**: Client-side progress photo recorder (prompted every 4 weeks) compressed into lightweight WebP format and stored locally in IndexedDB for 100% private physical transformation tracking.
 - **546-Day Visual Consistency Map**: Grid-style calendar matrix tracking overall program adherence across all 546 days, color-coded by day type (Strength, Deload, Walk, Rest, Skipped).
@@ -120,7 +120,7 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 ---
 
 ### 8. Settings Hub, Encrypted Cloud Sync & Program Exporter
-![Settings Hub, Gemini AI Setup & Google Cloud Sync](PICS/Pasted%20image%20%288%29.png)
+<img src="PICS/Pasted%20image%20%288%29.png" alt="Settings Hub, Gemini AI Setup & Google Cloud Sync" width="380" />
 
 - **Gemini AI API Configuration**: Secure setup interface for Google Gemini API key with AES-256 client-side encryption and model selector dropdown (`gemini-3.1-flash-lite`, `gemini-1.5-flash`, etc.).
 - **Google Drive & Local Data Backup/Restore**: One-click local JSON file export/import, alongside automatic background sync to Google Drive (`drive.file` scope) to preserve workout logs across all devices without central server data exposure.
