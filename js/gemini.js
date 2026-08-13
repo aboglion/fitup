@@ -187,10 +187,28 @@ const GeminiService = (() => {
     };
     const langPrompt = langInstructions[currentLang] || langInstructions['en'];
 
+    let fitContext = '';
+    if (window.GoogleFitService) {
+      try {
+        const fitData = await window.GoogleFitService.fetchDailyFitData();
+        if (fitData && (fitData.steps > 0 || fitData.calories > 0 || fitData.heartPoints > 0)) {
+          fitContext = `\nUser's Today Activity Context (Google Fit Live Metrics):
+- Daily Steps: ${fitData.steps.toLocaleString()}
+- Active Expended Calories: ${fitData.calories} kcal
+- Heart Exertion Points: ${fitData.heartPoints}
+- Avg Heart Rate: ${fitData.avgHeartRate > 0 ? fitData.avgHeartRate + ' bpm' : 'N/A'}
+Instructions for AI Analysis insight: Consider the user's live physical activity level when writing your 2-3 sentence nutritional insight (e.g. tailor recovery recommendations if steps/calories burned are high).`;
+        }
+      } catch (err) {
+        console.warn('Could not fetch Google Fit data for AI prompt context:', err);
+      }
+    }
+
     const systemPrompt = `You are a professional sports nutritionist and encouraging RPG AI system.
 Your job is to analyze the attached meal photo and estimate its nutritional values.
 
 ${langPrompt}
+${fitContext}
 
 CRITICAL ESTIMATION RULE (Worst-case / Strict estimation):
 - Calculate calories and fat conservatively at the upper end of reasonable estimate range.
@@ -305,6 +323,61 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
     };
   }
 
+  /**
+   * Get personalized AI daily nutrition & activity advice based on Google Fit & workout progress
+   */
+  async function getDailyAdvice(totals = {}, goals = {}) {
+    const apiKey = await getApiKey();
+    if (!apiKey) return null;
+
+    const model = await getModel();
+    let fitDataText = 'אין מדדי Google Fit שנרשמו היום';
+
+    if (window.GoogleFitService) {
+      try {
+        const fitData = await window.GoogleFitService.fetchDailyFitData();
+        if (fitData && (fitData.steps > 0 || fitData.calories > 0 || fitData.heartPoints > 0)) {
+          fitDataText = `צעדים: ${fitData.steps.toLocaleString()}, קלוריות שנשרפו במאמץ: ${fitData.calories} kcal, נקודות לב: ${fitData.heartPoints}`;
+        }
+      } catch (e) {
+        console.warn('Google Fit context fetch error:', e);
+      }
+    }
+
+    const currentLang = window.I18n ? window.I18n.getLang() : 'en';
+    const langInstructions = {
+      en: "Respond EXCLUSIVELY in English in 2 crisp encouraging sentences.",
+      he: "החזר תשובה בעברית בלבד בתור 2 משפטים קצרים, מקצועיים ומעודדים.",
+      ar: "قدم الرد باللغة العربية فقط في جملتين قصيرتين ومشجعتين."
+    };
+    const langPrompt = langInstructions[currentLang] || langInstructions['en'];
+
+    const prompt = `You are an elite AI sports nutritionist. Analyze the user's daily metrics:
+- Activity Context (Google Fit): ${fitDataText}
+- Today's Nutrition Consumed: ${totals.calories || 0}/${goals.calories || 2000} kcal, ${totals.protein || 0}/${goals.protein || 140}g Protein.
+${langPrompt}
+Give a personalized 2-sentence tactical recommendation for optimal recovery and remaining calorie/protein targets.`;
+
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.5, maxOutputTokens: 250 }
+        })
+      });
+
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.candidates?.[0]?.content?.parts?.map(p => p.text).join('').trim() || null;
+    } catch (e) {
+      console.warn('AI Daily Advice fetch error:', e);
+      return null;
+    }
+  }
+
   function populateSelect(selectEl) {
     if (!selectEl) return;
     const currentVal = selectEl.value;
@@ -332,6 +405,7 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
     isConfigured,
     testApiKey,
     analyzeFood,
+    getDailyAdvice,
     populateSelect,
     initSelects
   };
