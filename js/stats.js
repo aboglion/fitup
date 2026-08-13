@@ -778,12 +778,13 @@ const StatsPage = (() => {
     modalClose.onclick = () => {
       clearInterval(interval);
       if (oldClose) {
-        // Find existing listener or just hide modal
         UI.hideModal();
       } else {
         UI.hideModal();
       }
     };
+  }
+
   async function shareProgressCard() {
     const isLoggedIn = await CloudSync.isLoggedIn();
     if (!isLoggedIn) {
