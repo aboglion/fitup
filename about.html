@@ -4,83 +4,144 @@
   <meta charset="UTF-8">
   <meta name="google-site-verification" content="_fuGMhftIfxS8IGi3hPlkWa9ZiwtMpy0UusLsFvy-NU" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitUp - Personal Fitness Tracker</title>
+  <title>FitUp - Personal Training, Fitness & Health Tracker</title>
   <meta name="application-name" content="FitUp">
+  <meta name="description" content="FitUp is a comprehensive personal training, workout logging, nutrition tracking, and fitness PWA application with Google Drive and Google Fit integration.">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: #0a0a0f;
-      color: #e0e0e0;
+      background: #090d16;
+      color: #e2e8f0;
       line-height: 1.7;
       padding: 2rem 1rem;
     }
     .container {
-      max-width: 720px;
+      max-width: 780px;
       margin: 0 auto;
-      background: #13131a;
-      border-radius: 16px;
+      background: #111827;
+      border-radius: 20px;
       padding: 2.5rem;
-      border: 1px solid #1e1e2e;
+      border: 1px solid #1f2937;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+    .header {
       text-align: center;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid #1f2937;
+      padding-bottom: 1.5rem;
+    }
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
     }
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.5rem;
+      font-weight: 800;
       margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+      background: linear-gradient(135deg, #38bdf8, #34d399);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      display: inline-block;
     }
-    .tagline { color: #888; font-size: 1.1rem; margin-bottom: 2rem; }
-    .features { text-align: left; margin: 2rem 0; }
-    h2 { font-size: 1.2rem; color: #6ee7b7; margin: 1.5rem 0 0.6rem; }
-    p, li { font-size: 0.95rem; color: #bbb; margin-bottom: 0.6rem; }
+    .tagline { color: #94a3b8; font-size: 1.15rem; font-weight: 500; }
+    .content-section { text-align: left; margin: 1.8rem 0; }
+    h2 { font-size: 1.3rem; color: #38bdf8; margin: 1.5rem 0 0.6rem; font-weight: 700; }
+    p, li { font-size: 1rem; color: #cbd5e1; margin-bottom: 0.75rem; }
     ul { padding-left: 1.5rem; }
-    a { color: #3b82f6; text-decoration: none; }
+    .badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.1);
+      color: #38bdf8;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      margin-bottom: 1rem;
+    }
+    .scope-box {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+    }
+    .scope-box h3 { color: #f43f5e; font-size: 1.05rem; margin-bottom: 0.5rem; }
+    a { color: #38bdf8; text-decoration: none; font-weight: 600; }
     a:hover { text-decoration: underline; }
+    .cta-container { text-align: center; margin-top: 2.5rem; }
     .cta {
       display: inline-block;
-      margin-top: 2rem;
-      padding: 0.8rem 2rem;
-      background: linear-gradient(135deg, #6ee7b7, #3b82f6);
-      color: #000;
-      font-weight: bold;
-      border-radius: 12px;
-      font-size: 1rem;
+      padding: 0.9rem 2.5rem;
+      background: linear-gradient(135deg, #38bdf8, #34d399);
+      color: #0f172a;
+      font-weight: 800;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.3);
+      transition: transform 0.2s;
     }
-    .links { margin-top: 2rem; font-size: 0.85rem; }
-    .links a { margin: 0 1rem; color: #888; }
+    .cta:hover { transform: translateY(-2px); text-decoration: none; }
+    .footer-links {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #1f2937;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .footer-links a { margin: 0 1rem; color: #94a3b8; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>FitUp</h1>
-    <p class="tagline">Your Personal Fitness Tracker</p>
-
-    <div class="features">
-      <h2>What is FitUp?</h2>
-      <p>FitUp is a free, personal fitness tracking web application that helps you follow structured workout programs, log exercises, track nutrition, and monitor your progress over time.</p>
-
-      <h2>Features</h2>
-      <ul>
-        <li><strong>48-Week Training Program:</strong> Structured progressive overload workout plan with detailed exercise instructions and video demos.</li>
-        <li><strong>Workout Logging:</strong> Track sets, reps, weights, and tempo for every exercise.</li>
-        <li><strong>AI Nutrition Analysis:</strong> Snap a photo of your meal and get instant nutritional breakdown powered by Google Gemini AI.</li>
-        <li><strong>Cloud Sync:</strong> Sign in with Google to backup and sync your data across devices via Google Drive.</li>
-        <li><strong>Multi-Language Support:</strong> Available in English, Hebrew, and Arabic.</li>
-        <li><strong>Offline Support:</strong> Works as a Progressive Web App (PWA) — use it even without internet.</li>
-      </ul>
-
-      <h2>How We Use Google Services</h2>
-      <p>FitUp uses Google Sign-In to authenticate users and Google Drive to store a backup of your fitness data as a JSON file. We only access files created by the app. Your data remains private and is never shared with third parties.</p>
+    <div class="header">
+      <div class="logo">💪</div>
+      <h1>FitUp</h1>
+      <p class="tagline">Comprehensive Personal Training, Workout & Health Tracker</p>
     </div>
 
-    <a href="./index.html" class="cta">Open FitUp →</a>
+    <div class="content-section">
+      <span class="badge">Application Purpose</span>
+      <h2>What is FitUp?</h2>
+      <p><strong>FitUp</strong> is a non-commercial, private personal fitness tracking web application designed to help individuals follow structured 78-week prescriptive workout routines, log exercise volume, monitor daily caloric balances, and measure strength progression over time.</p>
 
-    <div class="links">
+      <h2>Core Features of FitUp</h2>
+      <ul>
+        <li><strong>78-Week Prescriptive Training Plan:</strong> Guided progressive overload program with target sets, reps, and tempo guidance.</li>
+        <li><strong>Interactive Muscle Progression Map:</strong> Visual anatomical breakdown of trained muscle groups and volume distribution.</li>
+        <li><strong>AI Nutrition Analysis:</strong> Automated meal logging and calorie tracking powered by Google Gemini AI.</li>
+        <li><strong>Strength Analytics & 1RM Prediction:</strong> Estimated One Rep Max tracking using the Epley formula.</li>
+        <li><strong>Google Fit Integration:</strong> Daily step count, active calorie sync, and heart rate monitoring.</li>
+        <li><strong>Google Drive Cloud Backup:</strong> Private JSON data synchronization across all user devices.</li>
+      </ul>
+
+      <h2>Google OAuth & Data Use Policy</h2>
+      <p>FitUp integrates with Google Services strictly to enhance user personal fitness tracking while protecting user privacy:</p>
+      
+      <div class="scope-box">
+        <h3>☁️ Google Drive API Scope (drive.file)</h3>
+        <p>FitUp uses the <code>https://www.googleapis.com/auth/drive.file</code> scope solely to create and update a single private backup JSON file (<code>fitup-data.json</code>) in the user's personal Google Drive. FitUp has no access to any other files in the user's Drive.</p>
+      </div>
+
+      <div class="scope-box">
+        <h3>⌚ Google Fit API Scopes (fitness.activity.read & fitness.body.read)</h3>
+        <p>FitUp accesses Google Fit to read daily step counts, expended activity calories, and heart rate metrics. This data is displayed in the user's personal daily nutrition and fitness dashboard to adjust energy balance estimates. No user health data is sold or shared with any third party.</p>
+      </div>
+
+      <h2>Developer & Contact Information</h2>
+      <p>FitUp is maintained and developed by <strong>aboglion@gmail.com</strong>.</p>
+      <p>For support, privacy questions, or feedback, please contact us via email at <a href="mailto:aboglion@gmail.com">aboglion@gmail.com</a>.</p>
+    </div>
+
+    <div class="cta-container">
+      <a href="./index.html" class="cta">Launch FitUp App →</a>
+    </div>
+
+    <div class="footer-links">
       <a href="./privacy.html">Privacy Policy</a>
       <a href="./terms.html">Terms of Service</a>
-      <a href="mailto:aboglion@gmail.com">Contact</a>
+      <a href="mailto:aboglion@gmail.com">Contact Developer</a>
     </div>
   </div>
 </body>

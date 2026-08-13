@@ -8,81 +8,80 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      background: #0a0a0f;
-      color: #e0e0e0;
+      background: #090d16;
+      color: #e2e8f0;
       line-height: 1.7;
       padding: 2rem 1rem;
     }
     .container {
-      max-width: 720px;
+      max-width: 780px;
       margin: 0 auto;
-      background: #13131a;
-      border-radius: 16px;
+      background: #111827;
+      border-radius: 20px;
       padding: 2.5rem;
-      border: 1px solid #1e1e2e;
+      border: 1px solid #1f2937;
     }
     h1 {
-      font-size: 1.8rem;
+      font-size: 2rem;
       margin-bottom: 0.5rem;
-      background: linear-gradient(135deg, #6ee7b7, #3b82f6);
+      background: linear-gradient(135deg, #38bdf8, #34d399);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      display: inline-block;
     }
-    .updated { color: #888; font-size: 0.85rem; margin-bottom: 2rem; }
-    h2 { font-size: 1.15rem; color: #6ee7b7; margin: 1.8rem 0 0.6rem; }
-    p, li { font-size: 0.95rem; color: #bbb; margin-bottom: 0.6rem; }
+    .updated { color: #94a3b8; font-size: 0.85rem; margin-bottom: 2rem; }
+    h2 { font-size: 1.2rem; color: #38bdf8; margin: 1.8rem 0 0.6rem; font-weight: 700; }
+    p, li { font-size: 0.95rem; color: #cbd5e1; margin-bottom: 0.75rem; }
     ul { padding-left: 1.5rem; }
-    a { color: #3b82f6; text-decoration: none; }
+    a { color: #38bdf8; text-decoration: none; font-weight: 600; }
     a:hover { text-decoration: underline; }
-    .back { display: inline-block; margin-top: 2rem; color: #6ee7b7; font-size: 0.9rem; }
+    .limited-use-box {
+      background: #1e293b;
+      border-left: 4px solid #38bdf8;
+      padding: 1.25rem;
+      border-radius: 8px;
+      margin: 1.5rem 0;
+    }
+    .back { display: inline-block; margin-top: 2rem; color: #38bdf8; font-size: 1rem; font-weight: 700; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Privacy Policy</h1>
-    <p class="updated">Last updated: August 12, 2026</p>
+    <h1>FitUp - Privacy Policy</h1>
+    <p class="updated">Last updated: August 13, 2026</p>
 
     <h2>Overview</h2>
-    <p>FitUp is a personal fitness tracking application. Your privacy is important to us. This policy explains what data we collect, how we use it, and your rights.</p>
+    <p>FitUp ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how our personal fitness tracking web application collects, uses, and safeguards your data when you use FitUp.</p>
 
-    <h2>Data We Collect</h2>
+    <h2>Data We Collect & How We Use It</h2>
     <ul>
-      <li><strong>Fitness Data:</strong> Workout logs, exercise sets, reps, weights, and meal/nutrition notes you enter into the app.</li>
-      <li><strong>Google Account Info:</strong> When you sign in with Google, we access your name, email, and profile picture solely for authentication and display purposes.</li>
-      <li><strong>Google Drive:</strong> We store your fitness data as a JSON file in your Google Drive for cloud backup and cross-device sync.</li>
+      <li><strong>Fitness & Workout Data:</strong> Sets, reps, weights, exercise logs, and nutritional notes entered directly into FitUp.</li>
+      <li><strong>Google Account Profile:</strong> Name, email address, and profile photo when signing in with Google OAuth for device authentication.</li>
+      <li><strong>Google Drive Storage:</strong> FitUp creates and reads a single <code>fitup-data.json</code> backup file in your personal Google Drive account to sync your fitness logs across your devices.</li>
+      <li><strong>Google Fit Data:</strong> Read-only access to daily step counts, expended activity calories, and heart rate data from Google Fit to calculate and display your personal daily energy balance.</li>
     </ul>
 
-    <h2>How We Use Your Data</h2>
+    <div class="limited-use-box">
+      <h3>Google API Services User Data Policy Compliance</h3>
+      <p>FitUp's use and transfer of information received from Google APIs (Google Drive API and Google Fit API) to any other app will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank">Google API Services User Data Policy</a>, including the <strong>Limited Use</strong> requirements.</p>
+    </div>
+
+    <h2>Data Storage & Security</h2>
+    <p>All fitness data is saved locally on your device via browser IndexedDB. If you connect Google Sign-In, backup copies are synced directly to your personal Google Drive account. We do not store or transmit your fitness data to any external third-party server.</p>
+
+    <h2>Data Sharing & Third Parties</h2>
+    <p>FitUp does not sell, rent, trade, or share your personal information or health metrics with third parties or advertising networks.</p>
+
+    <h2>Your Data Rights</h2>
     <ul>
-      <li>To display and track your workouts and nutrition.</li>
-      <li>To sync your data across devices via Google Drive.</li>
-      <li>To provide AI-powered nutritional analysis (via Google Gemini API) when you choose to use it.</li>
+      <li>You can delete all stored data from the app settings at any time.</li>
+      <li>You can revoke FitUp's access to your Google Account at any time via <a href="https://myaccount.google.com/permissions" target="_blank">Google Account Permissions</a>.</li>
     </ul>
 
-    <h2>Data Storage</h2>
-    <p>All fitness data is stored locally on your device using IndexedDB. If you enable cloud sync, a copy is stored in your personal Google Drive account. We do not store your data on any external server.</p>
+    <h2>Contact Us</h2>
+    <p>If you have any questions or feedback regarding this Privacy Policy, please contact the developer at <a href="mailto:aboglion@gmail.com">aboglion@gmail.com</a>.</p>
 
-    <h2>Third-Party Services</h2>
-    <ul>
-      <li><strong>Google Identity Services:</strong> For authentication.</li>
-      <li><strong>Google Drive API:</strong> For cloud backup/sync.</li>
-      <li><strong>Google Gemini API:</strong> For optional AI-powered meal analysis (only when you provide an API key).</li>
-    </ul>
-
-    <h2>Data Sharing</h2>
-    <p>We do not sell, share, or transfer your personal data to any third parties. Your data stays on your device and in your personal Google Drive.</p>
-
-    <h2>Your Rights</h2>
-    <ul>
-      <li>You can delete all your data at any time from the app settings.</li>
-      <li>You can revoke Google access at <a href="https://myaccount.google.com/permissions" target="_blank">Google Account Permissions</a>.</li>
-      <li>You can export your data from the app at any time.</li>
-    </ul>
-
-    <h2>Contact</h2>
-    <p>For questions about this privacy policy, contact us at <a href="mailto:aboglion@gmail.com">aboglion@gmail.com</a>.</p>
-
-    <a href="./index.html" class="back">← Back to FitUp</a>
+    <a href="./index.html" class="back">← Back to FitUp Application</a>
   </div>
 </body>
 </html>
