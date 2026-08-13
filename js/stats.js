@@ -647,6 +647,9 @@ const StatsPage = (() => {
       console.log(`[Photo Optimizer] Compressed: ${originalSizeKB} KB -> ${compressedSizeKB} KB (saved ${((1 - approxCompressedSize / file.size) * 100).toFixed(1)}%)`);
 
       await DB.savePhoto(Date.now().toString(), new Date().toISOString(), dataUrl);
+      if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+        CloudSync.scheduleSync();
+      }
       UI.toast(I18n.t('photo_saved'), 'success');
       
       // Redirect to the "today" page after uploading
@@ -718,6 +721,9 @@ const StatsPage = (() => {
           const id = btn.dataset.id;
           const photo = photos.find(p => String(p.id) === id);
           await DB.deletePhoto(photo ? photo.id : id);
+          if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+            CloudSync.scheduleSync();
+          }
           render();
         }
       });

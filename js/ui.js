@@ -214,18 +214,12 @@ const UI = (() => {
           dbVariant = 'DUMBBELL ' + upperBase.slice(3);
         }
 
+        // Prioritize uppercase disk filenames with spaces to match actual asset files
         const variations = [
           upperBase + '.png',
           dbVariant + '.png',
-          cleanBase.toLowerCase() + '.png',
-          cleanBase.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') + '.png',
           upperBase.replace(/\s*\([^)]*\)/g, '').trim() + '.png',
-          dbVariant.replace(/\s*\([^)]*\)/g, '').trim() + '.png',
-          cleanBase.replace(/\s+/g, '_') + '.png',
-          cleanBase.replace(/\s+/g, '_').toLowerCase() + '.png',
-          cleanBase.replace(/\s+/g, '_').toUpperCase() + '.png',
-          cleanBase.replace(/\s+/g, '-') + '.png',
-          cleanBase.replace(/\s+/g, '-').toLowerCase() + '.png'
+          dbVariant.replace(/\s*\([^)]*\)/g, '').trim() + '.png'
         ];
 
         const uniqueVariations = Array.from(new Set(variations)).filter(v => v !== rawFilename);
