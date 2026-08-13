@@ -103,8 +103,8 @@ const AnatomyMap = (() => {
           justify-content: center;
           background: radial-gradient(ellipse at 50% 40%, #051a10 0%, #020b06 100%);
           border-radius: var(--radius-xl, 16px);
-          border: 3px solid rgba(0, 255, 102, 0.5);
-          box-shadow: 0 0 30px rgba(0, 255, 102, 0.25), 0 0 8px rgba(0, 255, 102, 0.15), inset 0 0 50px rgba(0, 255, 102, 0.08), 0 8px 32px rgba(0, 0, 0, 0.5);
+          border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 0 40px rgba(0, 255, 102, 0.06);
           overflow: hidden;
           padding: 0;
           transition: border-color var(--transition-fast, 0.2s), box-shadow var(--transition-fast, 0.2s);

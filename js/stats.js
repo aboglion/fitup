@@ -474,9 +474,8 @@ const StatsPage = (() => {
   function renderCharts(trackingMap, weightValues, metrics) {
     const container = document.getElementById('stats-charts');
 
-    // Progression Heatmap (up to current day)
-    const todayIdx = UI.findTodayIndex(allPlanDays);
-    const heatmapDays = allPlanDays.slice(0, todayIdx + 1);
+    // Progression Heatmap (all program days)
+    const heatmapDays = allPlanDays;
     
     const heatmapCells = heatmapDays.map((day, index) => {
       const dIdx = day.dayIndex != null ? day.dayIndex : index;
@@ -498,7 +497,7 @@ const StatsPage = (() => {
     const heatmapHtml = `
       <div class="chart-card" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
         <div class="chart-title" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <span>${I18n.t('heatmap_title')}</span>
+          <span>${I18n.t('heatmap_title')} (${heatmapDays.length})</span>
           <div style="display: flex; gap: 12px; font-size: 11px; font-weight: normal; flex-wrap: wrap;">
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_strength')}</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-deload" style="width: 12px; height: 12px; border-radius: 3px; background: #14b8a6;"></div> ${I18n.t('heat_deload')}</div>
@@ -507,7 +506,7 @@ const StatsPage = (() => {
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-empty" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_skipped')}</div>
           </div>
         </div>
-        <div style="width: 100%; padding: var(--space-sm) 0; max-height: 80vh; overflow-y: auto;">
+        <div style="width: 100%; padding: var(--space-sm) 0; max-height: 340px; overflow-y: auto;">
           <div style="display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; width: 100%;">
             ${heatmapCells}
           </div>
@@ -552,46 +551,46 @@ const StatsPage = (() => {
     let compactStatsHtml = '';
     if (metrics) {
       compactStatsHtml = `
-        <div class="chart-card" style="grid-column: 1 / -1; margin-top: 0; padding: 14px 16px;">
-          <div class="chart-title" style="margin-bottom: 12px; font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
-            <span style="font-weight: 700; display: flex; align-items: center; gap: 6px;">${I18n.t('metrics_title')}</span>
+        <div class="chart-card" style="grid-column: 1 / -1; margin-top: 0; padding: 16px 18px;">
+          <div class="chart-title" style="margin-bottom: 14px; font-size: 14px; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-weight: 800; display: flex; align-items: center; gap: 6px;">${I18n.t('metrics_title')}</span>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
             
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <span style="font-size: 13px; margin-bottom: 1px;">📅</span>
-              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.completed}</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_days_done')} (${metrics.total})</span>
+            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 16px; margin-bottom: 2px;">📅</span>
+              <span style="font-size: 17px; font-weight: 900; color: #60a5fa; line-height: 1.1;">${metrics.completed}</span>
+              <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_days_done')} (${metrics.total})</span>
             </div>
 
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <span style="font-size: 13px; margin-bottom: 1px;">💪</span>
-              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.strength}</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_strength')} (${metrics.totalStrength})</span>
+            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 16px; margin-bottom: 2px;">💪</span>
+              <span style="font-size: 17px; font-weight: 900; color: #f97316; line-height: 1.1;">${metrics.strength}</span>
+              <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_strength')} (${metrics.totalStrength})</span>
             </div>
 
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <span style="font-size: 13px; margin-bottom: 1px;">🚶</span>
-              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.walk}</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_walk')} (${metrics.totalWalk})</span>
+            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 16px; margin-bottom: 2px;">🚶</span>
+              <span style="font-size: 17px; font-weight: 900; color: #10b981; line-height: 1.1;">${metrics.walk}</span>
+              <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_walk')} (${metrics.totalWalk})</span>
             </div>
 
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <span style="font-size: 13px; margin-bottom: 1px;">📈</span>
-              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.avgRPE}</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_avg_rpe')}</span>
+            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 16px; margin-bottom: 2px;">📈</span>
+              <span style="font-size: 17px; font-weight: 900; color: #a78bfa; line-height: 1.1;">${metrics.avgRPE}</span>
+              <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_avg_rpe')}</span>
             </div>
 
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <span style="font-size: 13px; margin-bottom: 1px;">📅</span>
-              <span style="font-size: 15px; font-weight: 900; color: var(--text-primary); line-height: 1.1;">${metrics.monthPct}%</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_monthly')}</span>
+            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 16px; margin-bottom: 2px;">📅</span>
+              <span style="font-size: 17px; font-weight: 900; color: #38bdf8; line-height: 1.1;">${metrics.monthPct}%</span>
+              <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_monthly')}</span>
             </div>
 
-            <div style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 4px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-              <span style="font-size: 13px; margin-bottom: 1px;">${metrics.currPct >= metrics.lastPct ? '📈' : '📉'}</span>
-              <span style="font-size: 15px; font-weight: 900; color: ${metrics.currPct >= metrics.lastPct ? 'var(--success)' : 'var(--warning)'}; line-height: 1.1;">${metrics.currPct}%</span>
-              <span style="font-size: 9px; color: var(--text-muted); font-weight: 700; line-height: 1.1; margin-top: 2px;">${I18n.t('metric_weekly')}</span>
+            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+              <span style="font-size: 16px; margin-bottom: 2px;">${metrics.currPct >= metrics.lastPct ? '📈' : '📉'}</span>
+              <span style="font-size: 17px; font-weight: 900; color: ${metrics.currPct >= metrics.lastPct ? '#10b981' : '#f59e0b'}; line-height: 1.1;">${metrics.currPct}%</span>
+              <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_weekly')}</span>
             </div>
 
           </div>
