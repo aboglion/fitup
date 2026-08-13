@@ -197,6 +197,10 @@ const I18n = (() => {
       equip_new_tip: "Recommended to watch the animation.",
       equip_load_change: "Load/Volume change:",
       equip_sets_updated: "Sets or weights updated in exercise(s)",
+      dumbbells_needed_today: "Required Dumbbells & Weights Today",
+      exercise_weights_breakdown: "Exercise Weight & Dumbbell Breakdown",
+      per_hand_tag: "per hand",
+      regular_weight_tag: "regular weight",
 
       // Preview mode
       preview_title: "Preview Mode: Program has not started yet",
@@ -863,6 +867,10 @@ const I18n = (() => {
       equip_new_tip: "מומלץ לצפות בתמונת ההנפשה.",
       equip_load_change: "עליית עומס/נפח:",
       equip_sets_updated: "עודכנו סטים או משקלים בתרגיל",
+      dumbbells_needed_today: "משקולות וציוד נדרש לאימון היום",
+      exercise_weights_breakdown: "פירוט משקולות ודרישות עבודה לפי תרגיל",
+      per_hand_tag: "כל יד",
+      regular_weight_tag: "משקל רגיל",
 
       preview_title: "מצב עיון: התוכנית טרם התחילה",
       preview_desc: "ברגע שתסמן תרגיל או יום מנוחה כהושלם, התוכנית תתחיל באופן רשמי והתאריכים ייקבעו בהתאם.",
@@ -1484,6 +1492,10 @@ const I18n = (() => {
       equip_new_tip: "يُنصح بمشاهدة الرسوم المتحركة.",
       equip_load_change: "تغيير الحمل/الحجم:",
       equip_sets_updated: "تم تحديث المجموعات أو الأوزان في التمرين",
+      dumbbells_needed_today: "الأوزان والمعدات المطلوبة لتمرين اليوم",
+      exercise_weights_breakdown: "تفاصيل الأوزان لكل تمرين",
+      per_hand_tag: "لكل يد",
+      regular_weight_tag: "وزن عادي",
 
       preview_title: "وضع المعاينة: لم يبدأ البرنامج بعد",
       preview_desc: "بمجرد وضع علامة على تمرين أو يوم راحة كمكتمل، سيبدأ البرنامج رسمياً وسيتم تحديد التواريخ وفقاً لذلك.",

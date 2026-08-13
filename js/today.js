@@ -20,6 +20,64 @@ const TodayPage = (() => {
     return true;
   }
 
+  /**
+   * Helper to parse weight strings and determine if exercise is per hand / dual arm
+   */
+  function parseWeightDetails(weightStr, exName = '') {
+    if (!weightStr) return null;
+    const str = String(weightStr).trim();
+    const lowerStr = str.toLowerCase();
+    
+    if (lowerStr === '' || lowerStr === '—' || lowerStr.startsWith('bodyweight') || lowerStr.startsWith('משקל גוף') || lowerStr.startsWith('incline') || lowerStr.includes('%')) {
+      return null;
+    }
+    
+    const isPerHand = lowerStr.includes('each') || lowerStr.includes('per hand') || lowerStr.includes('כל יד') || lowerStr.includes('לכל יד');
+    
+    // Clean display weight string by removing "each", "per hand", etc.
+    let cleanWeight = str;
+    if (isPerHand) {
+      cleanWeight = str.replace(/\b(each|per hand)\b/gi, '').replace(/(כל יד|לכל יד)/gi, '').trim();
+    }
+    
+    return {
+      raw: str,
+      cleanWeight: cleanWeight,
+      isPerHand: isPerHand,
+      multiplier: isPerHand ? '×2' : '1',
+      handIcon: isPerHand ? '🖐️' : ''
+    };
+  }
+
+  /**
+   * Helper to build visual weight badge HTML
+   */
+  function buildWeightBadgeHTML(weightInfo, isCompact = false) {
+    if (!weightInfo) return '';
+    
+    if (weightInfo.isPerHand) {
+      const tagText = I18n.t('per_hand_tag') || 'כל יד';
+      return `
+        <span class="weight-badge per-hand" style="background: rgba(59, 130, 246, 0.14); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--text-primary); padding: ${isCompact ? '2px 7px' : '4px 10px'}; border-radius: 8px; font-size: ${isCompact ? '12px' : '13px'}; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);" title="${tagText} (×2)">
+          <bdi dir="ltr">${weightInfo.cleanWeight}</bdi>
+          <span style="background: #3b82f6; color: #ffffff; padding: 2px 6px; border-radius: 5px; font-size: 10.5px; font-weight: 900; letter-spacing: 0.2px; display: inline-flex; align-items: center; gap: 3px;">
+            ×2 🖐️ <span style="font-size: 10px;">${tagText}</span>
+          </span>
+        </span>
+      `;
+    } else {
+      const tagText = I18n.t('regular_weight_tag') || 'משקל רגיל';
+      return `
+        <span class="weight-badge regular" style="background: var(--bg-input, rgba(255, 255, 255, 0.04)); border: 1px solid var(--border-color); color: var(--text-primary); padding: ${isCompact ? '2px 7px' : '4px 10px'}; border-radius: 8px; font-size: ${isCompact ? '12px' : '13px'}; font-weight: 800; display: inline-flex; align-items: center; gap: 5px;" title="${tagText}">
+          <bdi dir="ltr">${weightInfo.cleanWeight}</bdi>
+          <span style="background: var(--bg-hover, rgba(255, 255, 255, 0.08)); color: var(--text-secondary); padding: 2px 6px; border-radius: 5px; font-size: 10px; font-weight: 700;">
+            ${tagText}
+          </span>
+        </span>
+      `;
+    }
+  }
+
   function extractNumericWeight(weightStr) {
     if (!weightStr) return '';
     const str = String(weightStr).trim();
@@ -750,6 +808,8 @@ const TodayPage = (() => {
         const equipmentMap = new Map();
         let newExercisesList = [];
         let changedExercisesList = [];
+        let weightedExercisesList = [];
+        const requiredWeightsMap = new Map();
 
         day.exercises.forEach((ex, idx) => {
           const exNum = idx + 1;
@@ -763,6 +823,25 @@ const TodayPage = (() => {
               equipmentMap.set(labelText, { icon: equip.icon, label: labelText, exercises: [] });
             }
             equipmentMap.get(labelText).exercises.push(exNum);
+          }
+
+          if (isWeighted(ex)) {
+            const weightInfo = parseWeightDetails(ex.weight, ex.name);
+            if (weightInfo) {
+              weightedExercisesList.push({ num: exNum, name: ex.name, weightInfo: weightInfo });
+
+              const reqKey = `${weightInfo.cleanWeight}_${weightInfo.isPerHand ? '2x' : '1x'}`;
+              if (!requiredWeightsMap.has(reqKey)) {
+                requiredWeightsMap.set(reqKey, {
+                  cleanWeight: weightInfo.cleanWeight,
+                  isPerHand: weightInfo.isPerHand,
+                  count: 0,
+                  exercises: []
+                });
+              }
+              requiredWeightsMap.get(reqKey).count++;
+              requiredWeightsMap.get(reqKey).exercises.push(exNum);
+            }
           }
           
           let prevEx = null;
@@ -782,8 +861,6 @@ const TodayPage = (() => {
           if (isSetsChanged || isWeightChanged) changedExercisesList.push(exNum);
         });
         
-        let reportItems = [];
-        
         const reportSvgs = {
           report: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>`,
           sparkles: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`,
@@ -791,11 +868,81 @@ const TodayPage = (() => {
           bodyweight: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>`
         };
 
-        // Equipment items
+        let reportSections = [];
+
+        // Section 1: Dumbbells & Weights Required Summary
+        if (requiredWeightsMap.size > 0) {
+          let neededBadgesHTML = Array.from(requiredWeightsMap.values()).map(item => {
+            if (item.isPerHand) {
+              return `
+                <div style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 9px; padding: 6px 12px; font-size: 13px; font-weight: 800; color: var(--text-primary); display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(59, 130, 246, 0.1);">
+                  <span style="color: #3b82f6; font-size: 14px; font-weight: 900;">2×</span>
+                  <bdi dir="ltr">${item.cleanWeight}</bdi>
+                  <span style="font-size: 11px; background: #3b82f6; color: #ffffff; padding: 2px 7px; border-radius: 6px; font-weight: 900; display: inline-flex; align-items: center; gap: 3px;">
+                    🖐️ ${I18n.t('per_hand_tag') || 'כל יד'}
+                  </span>
+                </div>
+              `;
+            } else {
+              return `
+                <div style="background: var(--bg-input, rgba(255,255,255,0.04)); border: 1px solid var(--border-color); border-radius: 9px; padding: 6px 12px; font-size: 13px; font-weight: 800; color: var(--text-primary); display: inline-flex; align-items: center; gap: 8px;">
+                  <span style="color: var(--text-muted); font-size: 14px; font-weight: 900;">1×</span>
+                  <bdi dir="ltr">${item.cleanWeight}</bdi>
+                  <span style="font-size: 11px; background: var(--bg-hover, rgba(255,255,255,0.08)); color: var(--text-secondary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
+                    ${I18n.t('regular_weight_tag') || 'משקל רגיל'}
+                  </span>
+                </div>
+              `;
+            }
+          }).join('');
+
+          reportSections.push(`
+            <div style="background: var(--bg-input, rgba(255,255,255,0.03)); border: 1px solid var(--border-light); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-size: 12px; font-weight: 800; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                🏋️‍♂️ <span>${I18n.t('dumbbells_needed_today') || 'משקולות וציוד נדרש לאימון היום'}</span>
+              </div>
+              <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+                ${neededBadgesHTML}
+              </div>
+            </div>
+          `);
+        }
+
+        // Section 2: Per-exercise weight breakdown
+        if (weightedExercisesList.length > 0) {
+          let exerciseGridItems = weightedExercisesList.map(item => {
+            const badgeHTML = buildWeightBadgeHTML(item.weightInfo, true);
+            return `
+              <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
+                  <span style="font-size: 11px; font-weight: 900; color: var(--accent-primary); background: rgba(59, 130, 246, 0.1); padding: 2px 6px; border-radius: 6px; font-family: 'Inter', sans-serif; flex-shrink: 0;">#${item.num}</span>
+                  <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.name}</span>
+                </div>
+                <div style="flex-shrink: 0;">
+                  ${badgeHTML}
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          reportSections.push(`
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-size: 12px; font-weight: 800; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
+                📋 <span>${I18n.t('exercise_weights_breakdown') || 'פירוט משקולות ודרישות עבודה לפי תרגיל'}</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px;">
+                ${exerciseGridItems}
+              </div>
+            </div>
+          `);
+        }
+
+        // Section 3: Equipment types (TRX, Band, Bars, etc.)
+        let otherItems = [];
         if (equipmentMap.size > 0) {
           Array.from(equipmentMap.values()).forEach(eq => {
-            reportItems.push(`
-              <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0;">
+            otherItems.push(`
+              <div style="display: flex; align-items: flex-start; gap: 10px; padding: 4px 0;">
                 <span style="font-size: 16px; margin-top: 1px; display: flex; color: #f97316;">${eq.icon}</span>
                 <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
                   <span style="font-weight: 700;">${eq.label}:</span> 
@@ -808,12 +955,12 @@ const TodayPage = (() => {
 
         // New exercises
         if (newExercisesList.length > 0) {
-          reportItems.push(`
-            <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; background: rgba(239, 68, 68, 0.05); border-radius: 8px; margin: 2px -8px; padding-right: 8px;">
+          otherItems.push(`
+            <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 10px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px;">
               <span style="font-size: 16px; margin-top: 1px; animation: blinkRed 2s infinite; border-radius: 50%; display: flex;">${reportSvgs.sparkles}</span>
               <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
                 <span style="font-weight: 700; color: #ef4444;">${I18n.t('new_exercises_label')}</span> 
-                ${newExercisesList.length > 1 ? '' : ''}<b style="font-family: 'Inter', sans-serif; color: #ef4444;">${newExercisesList.map(n => `#${n}`).join(', ')}</b>. ${I18n.t('new_exercises_tip')}
+                <b style="font-family: 'Inter', sans-serif; color: #ef4444;">${newExercisesList.map(n => `#${n}`).join(', ')}</b>. ${I18n.t('new_exercises_tip')}
               </div>
             </div>
           `);
@@ -821,8 +968,8 @@ const TodayPage = (() => {
 
         // Changed exercises
         if (changedExercisesList.length > 0) {
-          reportItems.push(`
-            <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 0; background: rgba(245, 158, 11, 0.05); border-radius: 8px; margin: 2px -8px; padding-right: 8px;">
+          otherItems.push(`
+            <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 10px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
               <span style="font-size: 16px; margin-top: 1px; display: flex;">${reportSvgs.trendUp}</span>
               <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
                 <span style="font-weight: 700; color: var(--warning);">${I18n.t('load_volume_label')}</span> 
@@ -832,17 +979,23 @@ const TodayPage = (() => {
           `);
         }
 
-        if (reportItems.length > 0) {
+        if (otherItems.length > 0) {
+          reportSections.push(`
+            <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed var(--border-light); padding-top: 10px; margin-top: 4px;">
+              ${otherItems.join('')}
+            </div>
+          `);
+        }
+
+        if (reportSections.length > 0) {
           eqBanner.innerHTML = `
-            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
-              <div style="display: flex; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
                 <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
-                  <span style="display: flex;">${reportSvgs.report}</span> ${I18n.t('workout_overview_title')}
+                  <span style="display: flex; color: var(--accent-primary);">${reportSvgs.report}</span> ${I18n.t('workout_overview_title')}
                 </h3>
               </div>
-              <div style="display: flex; flex-direction: column; gap: 2px;">
-                ${reportItems.join('')}
-              </div>
+              ${reportSections.join('')}
             </div>
           `;
         } else {
@@ -1116,9 +1269,9 @@ const TodayPage = (() => {
       const equip = UI.getEquipment(ex.name);
       
       if (hasWeight) {
-        let weightText = ex.weight;
-        const bdiWeight = `<bdi dir="ltr">${weightText}</bdi>`;
-        detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="${I18n.t('weight_changed_title')}">${bdiWeight}</span>` : bdiWeight);
+        const weightInfo = parseWeightDetails(ex.weight, ex.name);
+        const weightHTML = buildWeightBadgeHTML(weightInfo, true);
+        detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="${I18n.t('weight_changed_title')}">${weightHTML}</span>` : weightHTML);
       }
 
       if (ex.tempo) {
@@ -1828,7 +1981,9 @@ const TodayPage = (() => {
     showExerciseImage,
     performSwap,
     startIntervalTimer,
-    getCurrentDayIndex: () => currentDayIndex
+    getCurrentDayIndex: () => currentDayIndex,
+    parseWeightDetails,
+    buildWeightBadgeHTML
   };
 })();
 
