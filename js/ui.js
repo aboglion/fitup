@@ -484,11 +484,17 @@ const UI = (() => {
 
   /**
    * Get Local Date String (YYYY-MM-DD) avoiding UTC shifts
+   * Treats times before 04:00 AM as belonging to the previous day 
+   * for consistent late-night logging (meals/workouts).
    */
   function getLocalDateString(d = new Date()) {
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
+    const adjustedDate = new Date(d.getTime());
+    if (adjustedDate.getHours() < 4) {
+      adjustedDate.setDate(adjustedDate.getDate() - 1);
+    }
+    const year = adjustedDate.getFullYear();
+    const month = String(adjustedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(adjustedDate.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
 

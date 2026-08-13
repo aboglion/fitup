@@ -99,6 +99,11 @@ const I18n = (() => {
       difficulty: "Difficulty",
 
       // Stats & Anatomy
+      anatomy_only_exercises: "Program exercises targeting this category",
+      anatomy_muscle_score: "Muscle Score",
+      anatomy_program_exercises: "Program Exercises & Personal Progress:",
+      anatomy_open_guide: "Open Exercise Guide",
+      anatomy_muscle_map: "Muscle Map",
       progress_title: "Progress & Stats",
       muscle_map_title: "Muscle Progression Map",
       workout_consistency: "Workout Consistency",
@@ -156,6 +161,22 @@ const I18n = (() => {
       auth_prompt_reauth_title: "Google Token Expired ⚠️",
       auth_prompt_reauth_sub: "Please re-authenticate to keep your Google Drive sync active.",
       auth_prompt_btn: "Sign in with Google",
+
+      // Google Fit
+      fit_sync_title: "Fitness Metrics Sync (Google Fit)",
+      fit_sync_desc: "Connect your Google account to sync and view steps, calories, heart rate, and heart points in real-time.",
+      fit_connect_btn: "Connect to Google",
+      fit_login_canceled: "Google login canceled",
+      fit_sync_header: "Google Fit Sync",
+      fit_loading: "Loading data from Google Fit...",
+      fit_steps: "Steps",
+      fit_burned_cals: "Burned (kcal)",
+      fit_hp_title: "Heart Points (equivalent to activity at avg effort of ~120-145 bpm)",
+      fit_hp_est_effort: "~120-145 bpm effort",
+      fit_hp_aerobic: "Aerobic effort",
+      fit_hp_label: "Heart Points",
+      fit_avg_hr: "Avg Heart Rate",
+      fit_no_data: "No data received from Google Fit (If already connected, click 'Sync Now' in Settings to refresh permissions)",
 
       // Toasts & Alerts
       saved_successfully: "Saved successfully! ",
@@ -773,6 +794,11 @@ const I18n = (() => {
       difficulty: "רמת קושי",
 
       // Stats & Anatomy
+      anatomy_only_exercises: "תרגילים בתוכנית המכוונים לקטגוריה זו",
+      anatomy_muscle_score: "ציון שריר",
+      anatomy_program_exercises: "תרגילים בתוכנית והתקדמות אישית:",
+      anatomy_open_guide: "פתח את מדריך התרגילים",
+      anatomy_muscle_map: "מפת שרירים",
       progress_title: "התקדמות",
       muscle_map_title: "מפת התקדמות שרירים",
       workout_consistency: "עקביות אימונים",
@@ -830,6 +856,22 @@ const I18n = (() => {
       auth_prompt_reauth_title: "פג תוקף חיבור גוגל! ⚠️",
       auth_prompt_reauth_sub: "אנא התחבר מחדש כדי להמשיך לסנכרן את ההתקדמות ב-Google Drive.",
       auth_prompt_btn: "התחבר בלחיצה",
+
+      // Google Fit
+      fit_sync_title: "סנכרון מדדי כושר (Google Fit)",
+      fit_sync_desc: "התחבר לחשבון גוגל כדי לסנכרן ולהציג צעדים, קלוריות, דופק ונקודות לב בזמן אמת.",
+      fit_connect_btn: "התחבר לגוגל",
+      fit_login_canceled: "התחברות לגוגל בוטלה",
+      fit_sync_header: "Google Fit Sync",
+      fit_loading: "טוען נתונים מ-Google Fit...",
+      fit_steps: "צעדים",
+      fit_burned_cals: "נשרפו (kcal)",
+      fit_hp_title: "נקודות לב (Heart Points) שוות ערך לפעילות בדופק מאמץ ממוצע של ~120-145 פעימות לדקה",
+      fit_hp_est_effort: "~120-145 bpm במאמץ",
+      fit_hp_aerobic: "מאמץ אירובי",
+      fit_hp_label: "נקודות לב",
+      fit_avg_hr: "דופק ממוצע",
+      fit_no_data: 'לא התקבלו נתונים מ-Google Fit (אם כבר התחברת, לחץ על "סנכרון" בהגדרות לרענון הרשאות הדופק והצעדים)',
 
       // Toasts & Alerts
       saved_successfully: "הנתונים שנשמרו בהצלחה! ",
@@ -1398,6 +1440,11 @@ const I18n = (() => {
       difficulty: "مستوى الصعوبة",
 
       // Stats & Anatomy
+      anatomy_only_exercises: "تمارين البرنامج المستهدفة لهذه الفئة",
+      anatomy_muscle_score: "تقييم العضلات",
+      anatomy_program_exercises: "تمارين البرنامج والتقدم الشخصي:",
+      anatomy_open_guide: "افتح دليل التمارين",
+      anatomy_muscle_map: "خريطة العضلات",
       progress_title: "التقدم والإحصائيات",
       muscle_map_title: "خريطة تطور العضلات",
       workout_consistency: "الاستمرارية في التمارين",
@@ -1448,6 +1495,22 @@ const I18n = (() => {
       welcome_title: "مرحباً بك في FitUp!",
       welcome_sub: "قم بمزامنة بيانات التمارين والتغذية بأمان مباشرة إلى Google Drive",
       offline_continue: "أنا مستخدم جديد / المتابعة محلياً بدون اتصال",
+
+      // Google Fit
+      fit_sync_title: "مزامنة مقاييس اللياقة (Google Fit)",
+      fit_sync_desc: "قم بتوصيل حساب Google الخاص بك لمزامنة وعرض الخطوات والسعرات الحرارية ومعدل ضربات القلب ونقاط القلب في الوقت الفعلي.",
+      fit_connect_btn: "اتصل بـ Google",
+      fit_login_canceled: "تم إلغاء تسجيل الدخول إلى Google",
+      fit_sync_header: "مزامنة Google Fit",
+      fit_loading: "جاري تحميل البيانات من Google Fit...",
+      fit_steps: "خطوات",
+      fit_burned_cals: "تم حرقها (kcal)",
+      fit_hp_title: "نقاط القلب (تعادل نشاطًا بمتوسط جهد ~120-145 نبضة في الدقيقة)",
+      fit_hp_est_effort: "~120-145 bpm جهد",
+      fit_hp_aerobic: "جهد هوائي",
+      fit_hp_label: "نقاط القلب",
+      fit_avg_hr: "متوسط النبض",
+      fit_no_data: "لم يتم تلقي بيانات من Google Fit (إذا كنت متصلاً بالفعل، انقر على 'مزامنة الآن' في الإعدادات لتحديث الأذونات)",
 
       // Toasts & Alerts
       saved_successfully: "تم الحفظ بنجاح! ",

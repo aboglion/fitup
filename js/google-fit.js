@@ -146,12 +146,12 @@ const GoogleFitService = (() => {
           <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 200px;">
             <span style="font-size: 22px;">⌚</span>
             <div>
-              <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">סנכרון מדדי כושר (Google Fit)</div>
-              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">התחבר לחשבון גוגל כדי לסנכרן ולהציג צעדים, קלוריות, דופק ונקודות לב בזמן אמת.</div>
+              <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">${I18n.t('fit_sync_title')}</div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">${I18n.t('fit_sync_desc')}</div>
             </div>
           </div>
           <button id="fit-login-btn" style="padding: 7px 16px; font-size: 12px; font-weight: 700; border-radius: 20px; white-space: nowrap; display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #4285f4, #34a853); border: none; color: #fff; cursor: pointer; box-shadow: 0 3px 8px rgba(66, 133, 244, 0.3);">
-            <span>🔗</span> <span>התחבר לגוגל</span>
+            <span>🔗</span> <span>${I18n.t('fit_connect_btn')}</span>
           </button>
         </div>
       `;
@@ -168,7 +168,7 @@ const GoogleFitService = (() => {
               }
             },
             (err) => {
-              if (typeof UI !== 'undefined' && UI.toast) UI.toast('התחברות לגוגל בוטלה', 'warning');
+              if (typeof UI !== 'undefined' && UI.toast) UI.toast(I18n.t('fit_login_canceled'), 'warning');
             }
           );
         };
@@ -181,12 +181,12 @@ const GoogleFitService = (() => {
       <div style="background: linear-gradient(135deg, rgba(66, 133, 244, 0.1), rgba(52, 168, 83, 0.1)); border: 1px solid rgba(66, 133, 244, 0.3); border-radius: 14px; padding: 14px; margin-bottom: 16px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
           <span style="font-size: 13px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-            <span>⌚</span> <span>Google Fit Sync</span>
+            <span>⌚</span> <span>${I18n.t('fit_sync_header')}</span>
           </span>
           <span id="fit-refresh-btn" style="font-size: 12px; cursor: pointer; color: var(--accent-primary);">🔄</span>
         </div>
         <div id="fit-metrics-loading" style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 8px;">
-          טוען נתונים מ-Google Fit...
+          ${I18n.t('fit_loading')}
         </div>
         <div id="fit-metrics-content" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
         </div>
@@ -224,22 +224,22 @@ const GoogleFitService = (() => {
         <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
           <div style="font-size: 16px;">👟</div>
           <div style="font-size: 15px; font-weight: 900; color: var(--text-primary);">${fitData.steps.toLocaleString()}</div>
-          <div style="font-size: 10px; color: var(--text-muted);" data-i18n="steps">צעדים</div>
+          <div style="font-size: 10px; color: var(--text-muted);">${I18n.t('fit_steps')}</div>
         </div>
         <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
           <div style="font-size: 16px;">🔥</div>
           <div style="font-size: 15px; font-weight: 900; color: var(--warning);">${fitData.calories.toLocaleString()}</div>
-          <div style="font-size: 10px; color: var(--text-muted);" data-i18n="burned_cals">נשרפו (kcal)</div>
+          <div style="font-size: 10px; color: var(--text-muted);">${I18n.t('fit_burned_cals')}</div>
         </div>
       `;
 
       if (showHP || fitData.heartPoints > 0) {
-        const estHRPrompt = fitData.heartPoints > 0 ? '~120-145 bpm במאמץ' : 'מאמץ אירובי';
+        const estHRPrompt = fitData.heartPoints > 0 ? I18n.t('fit_hp_est_effort') : I18n.t('fit_hp_aerobic');
         cardsHtml += `
-          <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);" title="נקודות לב (Heart Points) שוות ערך לפעילות בדופק מאמץ ממוצע של ~120-145 פעימות לדקה">
+          <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);" title="${I18n.t('fit_hp_title')}">
             <div style="font-size: 16px;">💓</div>
             <div style="font-size: 15px; font-weight: 900; color: #ec4899;">${fitData.heartPoints.toLocaleString()}</div>
-            <div style="font-size: 10px; color: var(--text-muted);" title="${estHRPrompt}">נקודות לב (${estHRPrompt})</div>
+            <div style="font-size: 10px; color: var(--text-muted);" title="${estHRPrompt}">${I18n.t('fit_hp_label')} (${estHRPrompt})</div>
           </div>
         `;
       }
@@ -249,14 +249,14 @@ const GoogleFitService = (() => {
           <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
             <div style="font-size: 16px;">❤️</div>
             <div style="font-size: 15px; font-weight: 900; color: var(--danger);">${fitData.avgHeartRate} bpm</div>
-            <div style="font-size: 10px; color: var(--text-muted);" data-i18n="avg_hr">דופק ממוצע</div>
+            <div style="font-size: 10px; color: var(--text-muted);">${I18n.t('fit_avg_hr')}</div>
           </div>
         `;
       }
 
       content.innerHTML = cardsHtml;
     } else {
-      loading.textContent = 'לא התקבלו נתונים מ-Google Fit (אם כבר התחברת, לחץ על "התחבר מחדש" בהגדרות לרענון הרשאות הדופק והצעדים)';
+      loading.textContent = I18n.t('fit_no_data');
     }
   }
 

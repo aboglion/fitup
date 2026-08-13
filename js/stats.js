@@ -179,13 +179,13 @@ const StatsPage = (() => {
             <button onclick="StatsPage.shareProgressCard()" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; display: flex; align-items: center; gap: 4px; border-radius: 20px;">
               <span>📤</span> <span>שיתוף</span>
             </button>
-            <div style="font-size: 11px; font-weight: 600; color: var(--accent-primary); background: var(--bg-elevated); padding: 4px 10px; border-radius: 20px;">
+            <div style="font-size: 11px; font-weight: 800; color: #00ff66; background: rgba(0, 255, 102, 0.1); border: 1px solid rgba(0, 255, 102, 0.3); padding: 4px 10px; border-radius: 20px; text-shadow: 0 0 5px rgba(0,255,102,0.5);">
               ${Math.round(levelProgress)}%
             </div>
           </div>
         </div>
-        <div style="width: 100%; height: 8px; background: var(--bg-input); border-radius: 4px; overflow: hidden; margin-top: 4px;">
-          <div style="height: 100%; width: ${levelProgress}%; background: var(--accent-gradient); transition: width 1s ease-out;"></div>
+        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 4px;">
+          <div style="height: 100%; width: ${levelProgress}%; background: #00ff66; box-shadow: 0 0 10px rgba(0, 255, 102, 0.6); transition: width 1s ease-out;"></div>
         </div>
       </div>
     `;
@@ -202,6 +202,23 @@ const StatsPage = (() => {
     `;
 
     container.innerHTML = `
+      <style>
+        #stats-overview .xp-container, #stats-charts .chart-card {
+          border: 1px solid rgba(0, 255, 102, 0.25) !important;
+          box-shadow: inset 0 0 20px rgba(0, 255, 102, 0.03), 0 4px 16px rgba(0,0,0,0.3) !important;
+          background-color: var(--bg-card);
+          background-image: linear-gradient(180deg, rgba(0, 255, 102, 0.04) 0%, transparent 100%) !important;
+        }
+        #stats-charts .chart-title, #stats-overview .chart-title span {
+          color: #00ff66 !important;
+          text-shadow: 0 0 8px rgba(0, 255, 102, 0.4);
+        }
+        #stats-charts .metric-box {
+          background: rgba(0, 255, 102, 0.03) !important;
+          border: 1px solid rgba(0, 255, 102, 0.15) !important;
+          box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.02) !important;
+        }
+      </style>
       ${xpHTML}
       ${fitContainerHTML}
       ${streakHTML}
@@ -560,37 +577,37 @@ const StatsPage = (() => {
           </div>
           <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
             
-            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="metric-box" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 16px; margin-bottom: 2px;">📅</span>
               <span style="font-size: 17px; font-weight: 900; color: #60a5fa; line-height: 1.1;">${metrics.completed}</span>
               <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_days_done')} (${metrics.total})</span>
             </div>
 
-            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="metric-box" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 16px; margin-bottom: 2px;">💪</span>
               <span style="font-size: 17px; font-weight: 900; color: #f97316; line-height: 1.1;">${metrics.strength}</span>
               <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_strength')} (${metrics.totalStrength})</span>
             </div>
 
-            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="metric-box" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 16px; margin-bottom: 2px;">🚶</span>
               <span style="font-size: 17px; font-weight: 900; color: #10b981; line-height: 1.1;">${metrics.walk}</span>
               <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_walk')} (${metrics.totalWalk})</span>
             </div>
 
-            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="metric-box" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 16px; margin-bottom: 2px;">📈</span>
               <span style="font-size: 17px; font-weight: 900; color: #a78bfa; line-height: 1.1;">${metrics.avgRPE}</span>
               <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_avg_rpe')}</span>
             </div>
 
-            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="metric-box" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 16px; margin-bottom: 2px;">📅</span>
               <span style="font-size: 17px; font-weight: 900; color: #38bdf8; line-height: 1.1;">${metrics.monthPct}%</span>
               <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_monthly')}</span>
             </div>
 
-            <div style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <div class="metric-box" style="background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
               <span style="font-size: 16px; margin-bottom: 2px;">${metrics.currPct >= metrics.lastPct ? '📈' : '📉'}</span>
               <span style="font-size: 17px; font-weight: 900; color: ${metrics.currPct >= metrics.lastPct ? '#10b981' : '#f59e0b'}; line-height: 1.1;">${metrics.currPct}%</span>
               <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600; line-height: 1.2; margin-top: 4px;">${I18n.t('metric_weekly')}</span>

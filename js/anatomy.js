@@ -239,7 +239,7 @@ const AnatomyMap = (() => {
       lowerBack: ['Dumbbell RDL', 'Single-Leg RDL', 'Hip Thrust']
     };
 
-    const exerciseNames = muscleExerciseMap[muscleKey] || ['תרגילי התוכנית היחידיים המכוונים בקטגוריה זו'];
+    const exerciseNames = muscleExerciseMap[muscleKey] || [I18n.t('anatomy_only_exercises')];
 
     let trackingMap = {};
     let allPlanDays = [];
@@ -287,44 +287,57 @@ const AnatomyMap = (() => {
     });
 
     const modalContent = `
+      <style>
+        .anatomy-modal-btn {
+          width: 100%; padding: 12px; font-size: 14px; font-weight: 800; border-radius: 10px;
+          background: rgba(0, 255, 102, 0.1); color: #00ff66; border: 1px solid rgba(0, 255, 102, 0.4);
+          box-shadow: 0 0 15px rgba(0, 255, 102, 0.1); cursor: pointer; transition: all 0.2s ease;
+        }
+        .anatomy-modal-btn:hover {
+          background: rgba(0, 255, 102, 0.2);
+          border-color: #00ff66;
+          box-shadow: 0 0 20px rgba(0, 255, 102, 0.3);
+          transform: translateY(-1px);
+        }
+      </style>
       <div style="padding: 12px 4px; text-align: right;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
           <span style="font-size: 20px; font-weight: 900; color: var(--text-primary);">${muscleName}</span>
-          <span style="font-size: 14px; font-weight: 900; color: #38bdf8; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 12px; border-radius: 20px;">
-            💪 ציון שריר: ${pct}%
+          <span style="font-size: 14px; font-weight: 900; color: #00ff66; background: rgba(0, 255, 102, 0.1); border: 1px solid rgba(0, 255, 102, 0.3); padding: 4px 12px; border-radius: 20px; text-shadow: 0 0 8px rgba(0, 255, 102, 0.5); box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.05);">
+            💪 ${I18n.t('anatomy_muscle_score')}: ${pct}%
           </span>
         </div>
-        <div style="width: 100%; height: 8px; background: var(--bg-input); border-radius: 4px; overflow: hidden; margin-bottom: 18px;">
-          <div style="height: 100%; width: ${pct}%; background: linear-gradient(90deg, #38bdf8, #34d399); border-radius: 4px; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);"></div>
+        <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 18px;">
+          <div style="height: 100%; width: ${pct}%; background: #00ff66; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 255, 102, 0.6);"></div>
         </div>
 
-        <h4 style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px;">תרגילים בתוכנית והתקדמות אישית:</h4>
+        <h4 style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px;">${I18n.t('anatomy_program_exercises')}</h4>
 
         <ul style="list-style: none; padding: 0; margin: 0 0 18px 0; display: flex; flex-direction: column; gap: 8px;">
           ${exercises.map(ex => `
-            <li style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); padding: 10px 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 6px;">
+            <li style="background: rgba(0, 255, 102, 0.04); border: 1px solid rgba(0, 255, 102, 0.2); padding: 10px 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
                   <span>🏋️‍♂️</span> <span>${ex.name}</span>
                 </span>
-                <span style="font-size: 12px; font-weight: 800; color: ${ex.pct > 50 ? '#34d399' : '#38bdf8'};">
+                <span style="font-size: 12px; font-weight: 900; color: #00ff66; text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);">
                   ${ex.pct}%
                 </span>
               </div>
-              <div style="width: 100%; height: 5px; background: rgba(0,0,0,0.3); border-radius: 3px; overflow: hidden;">
-                <div style="height: 100%; width: ${ex.pct}%; background: ${ex.pct > 50 ? 'linear-gradient(90deg, #34d399, #10b981)' : 'linear-gradient(90deg, #38bdf8, #6366f1)'}; border-radius: 3px; transition: width 0.6s ease;"></div>
+              <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                <div style="height: 100%; width: ${ex.pct}%; background: #00ff66; border-radius: 3px; transition: width 0.6s ease; box-shadow: 0 0 8px #00ff66;"></div>
               </div>
             </li>
           `).join('')}
         </ul>
 
-        <button id="view-ex-dir-btn" class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; border-radius: 10px;">
-          📖 פתח את מדריך התרגילים
+        <button id="view-ex-dir-btn" class="anatomy-modal-btn">
+          📖 ${I18n.t('anatomy_open_guide')}
         </button>
       </div>
     `;
 
-    UI.showModal(`מפת שרירים - ${muscleName}`, modalContent);
+    UI.showModal(`${I18n.t('anatomy_muscle_map')} - ${muscleName}`, modalContent);
 
     const btn = document.getElementById('view-ex-dir-btn');
     if (btn) {
