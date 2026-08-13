@@ -101,10 +101,10 @@ const AnatomyMap = (() => {
         .anatomy-pane {
           display: flex;
           justify-content: center;
-          background: var(--bg-card, #121827);
+          background: radial-gradient(ellipse at 50% 40%, #051a10 0%, #020b06 100%);
           border-radius: var(--radius-xl, 16px);
-          border: 2px solid var(--border-color, rgba(255, 255, 255, 0.12));
-          box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45), inset 0 0 40px rgba(0, 0, 0, 0.25);
+          border: 1.5px solid rgba(0, 255, 102, 0.35);
+          box-shadow: 0 0 25px rgba(0, 255, 102, 0.2), inset 0 0 50px rgba(0, 255, 102, 0.08), 0 8px 32px rgba(0, 0, 0, 0.5);
           overflow: hidden;
           padding: 0;
           transition: border-color var(--transition-fast, 0.2s), box-shadow var(--transition-fast, 0.2s);
@@ -117,11 +117,11 @@ const AnatomyMap = (() => {
         }
         .pane-title {
           position: absolute; top: 12px; left: 12px;
-          background: rgba(18, 24, 39, 0.88); padding: 4px 12px; border-radius: 8px;
-          font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-weight: 800; color: var(--accent-primary, #3b82f6); z-index: 30; font-size: 12px;
+          background: rgba(4, 20, 12, 0.88); padding: 4px 12px; border-radius: 8px;
+          font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-weight: 800; color: #00ff66; z-index: 30; font-size: 12px;
           letter-spacing: 0.5px; text-transform: uppercase;
-          border: 1px solid var(--border-light, rgba(255, 255, 255, 0.15)); backdrop-filter: blur(8px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          border: 1px solid rgba(0, 255, 102, 0.3); backdrop-filter: blur(8px);
+          box-shadow: 0 0 12px rgba(0, 255, 102, 0.25);
         }
         .anatomy-image-bg {
           position: absolute; inset: 0;
