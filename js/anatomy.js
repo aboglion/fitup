@@ -7,13 +7,11 @@ const AnatomyMap = (() => {
 
   function render(container, muscleData) {
     const getColor = (pct) => {
-      if (pct === 0) return 'rgba(255, 255, 255, 0.35)';
-      if (pct < 20) return '#ef4444';
-      if (pct < 40) return '#f97316';
-      if (pct < 60) return '#eab308';
-      if (pct < 80) return '#3b82f6';
-      if (pct < 100) return '#22d3ee';
-      return '#10b981';
+      if (pct === 0) return 'rgba(0, 255, 102, 0.45)';
+      if (pct < 30) return '#00d656';
+      if (pct < 60) return '#00ff66';
+      if (pct < 85) return '#39ff14';
+      return '#00ffaa';
     };
 
     // Safe fallback for all muscle keys
@@ -28,41 +26,41 @@ const AnatomyMap = (() => {
     // Body centered 50%.
     const frontCallouts = [
       // Left labels (User's left, Character's right)
-      { id: 'chest-l',    label: I18n.t('muscle_chest'),     pct: m.chest.pct,     color: m.chest.color,     nodeX: 44, nodeY: 27, side: 'left' },
+      { id: 'chest-l',    label: I18n.t('muscle_chest'),     pct: m.chest.pct,     color: m.chest.color,     nodeX: 43, nodeY: 27, side: 'left' },
       { id: 'core',       label: I18n.t('muscle_core'),      pct: m.core.pct,      color: m.core.color,      nodeX: 50, nodeY: 38, side: 'left' },
-      { id: 'obliques-l', label: I18n.t('muscle_obliques'),  pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 43, nodeY: 46, side: 'left' },
+      { id: 'obliques-l', label: I18n.t('muscle_obliques'),  pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 42, nodeY: 46, side: 'left' },
       // Right labels (User's right, Character's left)
-      { id: 'shoulders-r',label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 65, nodeY: 22, side: 'right' },
-      { id: 'biceps-r',   label: I18n.t('muscle_biceps'),    pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 66, nodeY: 33, side: 'right' },
-      { id: 'forearm-r',  label: I18n.t('muscle_forearms'),  pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 70, nodeY: 45, side: 'right' },
-      { id: 'quads-r',    label: I18n.t('muscle_quads'),     pct: m.quads.pct,     color: m.quads.color,     nodeX: 56, nodeY: 62, side: 'right' },
+      { id: 'shoulders-r',label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 67, nodeY: 22, side: 'right' },
+      { id: 'biceps-r',   label: I18n.t('muscle_biceps'),    pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 69, nodeY: 33, side: 'right' },
+      { id: 'forearm-r',  label: I18n.t('muscle_forearms'),  pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 73, nodeY: 46, side: 'right' },
+      { id: 'quads-r',    label: I18n.t('muscle_quads'),     pct: m.quads.pct,     color: m.quads.color,     nodeX: 57, nodeY: 64, side: 'right' },
       // Symmetric dots
-      { hideLabel: true, id: 'shoulders-l', color: m.shoulders.color, nodeX: 35, nodeY: 22 },
-      { hideLabel: true, id: 'chest-r',     color: m.chest.color,     nodeX: 56, nodeY: 27 },
-      { hideLabel: true, id: 'biceps-l',    color: m.biceps.color,    nodeX: 34, nodeY: 33 },
-      { hideLabel: true, id: 'quads-l',     color: m.quads.color,     nodeX: 44, nodeY: 62 },
-      { hideLabel: true, id: 'obliques-r',  color: m.obliques.color,  nodeX: 57, nodeY: 46 },
-      { hideLabel: true, id: 'forearm-l',   color: m.forearms.color,  nodeX: 30, nodeY: 45 },
+      { hideLabel: true, id: 'shoulders-l', color: m.shoulders.color, nodeX: 33, nodeY: 22 },
+      { hideLabel: true, id: 'chest-r',     color: m.chest.color,     nodeX: 57, nodeY: 27 },
+      { hideLabel: true, id: 'biceps-l',    color: m.biceps.color,    nodeX: 31, nodeY: 33 },
+      { hideLabel: true, id: 'quads-l',     color: m.quads.color,     nodeX: 43, nodeY: 64 },
+      { hideLabel: true, id: 'obliques-r',  color: m.obliques.color,  nodeX: 58, nodeY: 46 },
+      { hideLabel: true, id: 'forearm-l',   color: m.forearms.color,  nodeX: 27, nodeY: 46 },
     ];
 
     // ── BACK VIEW ──
     const backCallouts = [
       // Left labels (4)
-      { id: 'traps-l',     label: I18n.t('muscle_traps'),      pct: m.traps.pct,       color: m.traps.color,       nodeX: 44, nodeY: 20, side: 'left' },
-      { id: 'triceps-l',   label: I18n.t('muscle_triceps'),    pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 34, nodeY: 33, side: 'left' },
+      { id: 'traps-l',     label: I18n.t('muscle_traps'),      pct: m.traps.pct,       color: m.traps.color,       nodeX: 44, nodeY: 19, side: 'left' },
+      { id: 'triceps-l',   label: I18n.t('muscle_triceps'),    pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 31, nodeY: 33, side: 'left' },
       { id: 'lowerBack',   label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct,   color: m.lowerBack.color,   nodeX: 50, nodeY: 45, side: 'left' },
-      { id: 'hamstrings-l',label: I18n.t('muscle_hamstrings'),  pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 44, nodeY: 66, side: 'left' },
+      { id: 'hamstrings-l',label: I18n.t('muscle_hamstrings'),  pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 43, nodeY: 66, side: 'left' },
       // Right labels (3)
-      { id: 'lats-r',      label: I18n.t('muscle_lats'),       pct: m.lats.pct,        color: m.lats.color,        nodeX: 58, nodeY: 34, side: 'right' },
-      { id: 'glutes-r',    label: I18n.t('muscle_glutes'),     pct: m.glutes.pct,      color: m.glutes.color,      nodeX: 56, nodeY: 54, side: 'right' },
-      { id: 'calves-r',    label: I18n.t('muscle_calves'),     pct: m.calves.pct,      color: m.calves.color,      nodeX: 56, nodeY: 79, side: 'right' },
+      { id: 'lats-r',      label: I18n.t('muscle_lats'),       pct: m.lats.pct,        color: m.lats.color,        nodeX: 59, nodeY: 34, side: 'right' },
+      { id: 'glutes-r',    label: I18n.t('muscle_glutes'),     pct: m.glutes.pct,      color: m.glutes.color,      nodeX: 57, nodeY: 54, side: 'right' },
+      { id: 'calves-r',    label: I18n.t('muscle_calves'),     pct: m.calves.pct,      color: m.calves.color,      nodeX: 57, nodeY: 79, side: 'right' },
       // Symmetric dots
-      { hideLabel: true, id: 'traps-r',     color: m.traps.color,       nodeX: 56, nodeY: 20 },
-      { hideLabel: true, id: 'lats-l',      color: m.lats.color,        nodeX: 42, nodeY: 34 },
-      { hideLabel: true, id: 'triceps-r',   color: m.triceps.color,     nodeX: 66, nodeY: 33 },
-      { hideLabel: true, id: 'glutes-l',    color: m.glutes.color,      nodeX: 44, nodeY: 54 },
-      { hideLabel: true, id: 'hamstrings-r',color: m.hamstrings.color,  nodeX: 56, nodeY: 66 },
-      { hideLabel: true, id: 'calves-l',    color: m.calves.color,      nodeX: 44, nodeY: 79 },
+      { hideLabel: true, id: 'traps-r',     color: m.traps.color,       nodeX: 56, nodeY: 19 },
+      { hideLabel: true, id: 'lats-l',      color: m.lats.color,        nodeX: 41, nodeY: 34 },
+      { hideLabel: true, id: 'triceps-r',   color: m.triceps.color,     nodeX: 69, nodeY: 33 },
+      { hideLabel: true, id: 'glutes-l',    color: m.glutes.color,      nodeX: 43, nodeY: 54 },
+      { hideLabel: true, id: 'hamstrings-r',color: m.hamstrings.color,  nodeX: 57, nodeY: 66 },
+      { hideLabel: true, id: 'calves-l',    color: m.calves.color,      nodeX: 43, nodeY: 79 },
       { hideLabel: true, id: 'midback',     color: m.traps.color,       nodeX: 50, nodeY: 26 },
     ];
 
@@ -73,13 +71,16 @@ const AnatomyMap = (() => {
           <div class="anatomy-inner">
             <div class="pane-title">${title}</div>
             <div class="anatomy-image-bg" style="background-image: url('${imagePath}');"></div>
-            <svg class="anatomy-svg-overlay" width="100%" height="100%">
+            <svg class="anatomy-svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%">
               ${visible.map(c => {
-                const targetX = c.side === 'left' ? 23 : 77;
+                const targetX = c.side === 'left' ? 22 : 78;
+                const midX = c.side === 'left' ? c.nodeX - 4 : c.nodeX + 4;
                 return `
-                  <line x1="${c.nodeX}%" y1="${c.nodeY}%" x2="${targetX}%" y2="${c.nodeY}%" stroke="${c.color}" stroke-width="2.5" stroke-linecap="round" opacity="0.95" style="filter: drop-shadow(0 0 5px ${c.color});" />
-                  <circle cx="${c.nodeX}%" cy="${c.nodeY}%" r="3" fill="${c.color}" style="filter: drop-shadow(0 0 5px ${c.color});" />
-                  <circle cx="${targetX}%" cy="${c.nodeY}%" r="2.5" fill="${c.color}" style="filter: drop-shadow(0 0 5px ${c.color});" />
+                  <path d="M ${c.nodeX} ${c.nodeY} L ${midX} ${c.nodeY} L ${targetX} ${c.nodeY}" 
+                        stroke="${c.color}" stroke-width="0.8" fill="none" opacity="0.8" 
+                        stroke-dasharray="1.5 1" style="filter: drop-shadow(0 0 2px ${c.color});" />
+                  <circle cx="${c.nodeX}" cy="${c.nodeY}" r="1.2" fill="${c.color}" />
+                  <circle cx="${targetX}" cy="${c.nodeY}" r="1" fill="${c.color}" />
                 `;
               }).join('')}
             </svg>
@@ -112,10 +113,10 @@ const AnatomyMap = (() => {
         .anatomy-pane {
           display: flex;
           justify-content: center;
-          background: radial-gradient(ellipse at 50% 40%, #0d1a28 0%, #050a10 100%);
+          background: radial-gradient(ellipse at 50% 40%, #051a10 0%, #020b06 100%);
           border-radius: var(--radius-xl, 16px);
-          border: 1px solid rgba(255,255,255,0.06);
-          box-shadow: inset 0 0 60px rgba(0,0,0,0.6), 0 8px 32px rgba(0,0,0,0.3);
+          border: 1px solid rgba(0, 255, 102, 0.15);
+          box-shadow: inset 0 0 60px rgba(0, 255, 102, 0.05), 0 8px 32px rgba(0,0,0,0.5);
           overflow: hidden;
           padding: 0;
         }
@@ -127,9 +128,10 @@ const AnatomyMap = (() => {
         }
         .pane-title {
           position: absolute; top: 10px; left: 10px;
-          background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 7px;
-          font-weight: 700; color: white; z-index: 30; font-size: 12px;
-          border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(6px);
+          background: rgba(4, 20, 12, 0.85); padding: 4px 10px; border-radius: 7px;
+          font-weight: 700; color: #00ff66; z-index: 30; font-size: 12px;
+          border: 1px solid rgba(0, 255, 102, 0.25); backdrop-filter: blur(6px);
+          box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);
         }
         .anatomy-image-bg {
           position: absolute; inset: 0;
@@ -140,49 +142,47 @@ const AnatomyMap = (() => {
         }
         .anatomy-svg-overlay { position: absolute; inset: 0; z-index: 15; pointer-events: none; }
         .anatomy-node {
-          position: absolute; width: 8px; height: 8px; border-radius: 50%;
+          position: absolute; width: 6px; height: 6px; border-radius: 50%;
           transform: translate(-50%, -50%); z-index: 16;
-          box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
-          animation: heartbeat-core 1.2s infinite ease-in-out;
+          box-shadow: 0 0 6px currentColor, 0 0 12px currentColor;
+          animation: heartbeat-core 1.4s infinite ease-in-out;
         }
         .anatomy-node::after {
-          content: ''; position: absolute; inset: -4px; border-radius: 50%;
-          border: 2px solid currentColor;
-          animation: heartbeat-pulse 1.2s infinite ease-in-out;
+          content: ''; position: absolute; inset: -2px; border-radius: 50%;
+          border: 1.5px solid currentColor;
+          animation: heartbeat-pulse 1.4s infinite ease-in-out;
         }
         @keyframes heartbeat-core {
           0%, 100% {
             transform: translate(-50%, -50%) scale(1);
-            box-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+            box-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
           }
           15% {
-            transform: translate(-50%, -50%) scale(1.5);
-            box-shadow: 0 0 18px currentColor, 0 0 32px currentColor;
-          }
-          30% {
-            transform: translate(-50%, -50%) scale(1.15);
+            transform: translate(-50%, -50%) scale(1.3);
             box-shadow: 0 0 10px currentColor, 0 0 18px currentColor;
           }
-          42% {
-            transform: translate(-50%, -50%) scale(1.7);
-            box-shadow: 0 0 22px currentColor, 0 0 40px currentColor;
+          30% {
+            transform: translate(-50%, -50%) scale(1.1);
           }
-          70% {
+          45% {
+            transform: translate(-50%, -50%) scale(1.4);
+            box-shadow: 0 0 12px currentColor, 0 0 22px currentColor;
+          }
+          75% {
             transform: translate(-50%, -50%) scale(1);
-            box-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
           }
         }
         @keyframes heartbeat-pulse {
           0% {
             transform: scale(0.8);
-            opacity: 0.95;
+            opacity: 0.85;
           }
           15% {
-            transform: scale(2.3);
-            opacity: 0.8;
+            transform: scale(1.4);
+            opacity: 0.7;
           }
-          42% {
-            transform: scale(3.8);
+          45% {
+            transform: scale(2.0);
             opacity: 0;
           }
           100% {
