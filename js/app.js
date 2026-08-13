@@ -924,7 +924,10 @@ document.addEventListener('visibilitychange', async () => {
       await window.App.recalculatePlanIndex();
     }
     
-    // 2. Render UI immediately to reflect new day if it changed
+    // 2. Reset nutrition date to today and render UI immediately to reflect new day if it changed
+    if (window.TodayPage && window.TodayPage.resetNutritionDateToToday) {
+      window.TodayPage.resetNutritionDateToToday();
+    }
     if (window.TodayPage && window.TodayPage.render) {
       window.TodayPage.render();
     }

@@ -9,6 +9,7 @@ const TodayPage = (() => {
   let allTrackingCache = null;
 
   let renderNutritionSectionRef = null;
+  let selectedNutritionDate = null;
 
   function isWeighted(ex) {
     if (!ex || !ex.weight) return false;
@@ -56,6 +57,7 @@ const TodayPage = (() => {
     allPlanDays = planDays;
     currentDayIndex = UI.findTodayIndex(planDays);
     allExercises = await DB.getExerciseGuide();
+    selectedNutritionDate = UI.getLocalDateString();
 
     const todayBtn = document.getElementById('today-btn');
     if (todayBtn) todayBtn.addEventListener('click', goToToday);
@@ -129,7 +131,12 @@ const TodayPage = (() => {
    */
   function goToToday() {
     currentDayIndex = UI.findTodayIndex(allPlanDays);
+    selectedNutritionDate = UI.getLocalDateString();
     render();
+  }
+
+  function resetNutritionDateToToday() {
+    selectedNutritionDate = UI.getLocalDateString();
   }
 
   /**
@@ -268,7 +275,12 @@ const TodayPage = (() => {
   async function renderNutritionSection(queryDateStr) {
     renderNutritionSectionRef = renderNutritionSection;
     if (!queryDateStr) {
-      queryDateStr = UI.getLocalDateString();
+      if (!selectedNutritionDate) {
+        selectedNutritionDate = UI.getLocalDateString();
+      }
+      queryDateStr = selectedNutritionDate;
+    } else {
+      selectedNutritionDate = queryDateStr;
     }
 
     const parts = queryDateStr.split('-').map(Number);
@@ -354,11 +366,15 @@ const TodayPage = (() => {
     const dateLabel = document.getElementById('nutrition-date-label');
     if (dateLabel) {
       const formattedDate = queryDateStr.split('-').reverse().join('/');
+      const isToday = queryDateStr === todayStr;
+      const todayText = isToday ? ` (${I18n.t('nav_today')})` : '';
+
       dateLabel.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 4px; direction: ltr !important;">
+        <div style="display: flex; align-items: center; gap: 4px; direction: ltr !important; flex-wrap: wrap;">
           <button id="nut-prev-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_prev_nut_day')}">◀</button>
-          <span style="font-weight: 700; color: var(--text-primary); font-size: 12px; margin: 0 4px;">${I18n.t('nut_date_label')} ${formattedDate}</span>
+          <span style="font-weight: 700; color: var(--text-primary); font-size: 12px; margin: 0 2px;">${I18n.t('nut_date_label')} ${formattedDate}${todayText}</span>
           <button id="nut-next-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_next_nut_day')}">▶</button>
+          ${!isToday ? `<button id="nut-today-btn" style="background: var(--accent-primary); border: none; color: #fff; border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700; margin-left: 4px;" title="${I18n.t('back_to_today')}">📅 ${I18n.t('nav_today')}</button>` : ''}
         </div>
       `;
       const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
@@ -366,8 +382,10 @@ const TodayPage = (() => {
       const rightDateStr = isRTL ? yesterdayStr : tomorrowStr;
       const prevBtn = document.getElementById('nut-prev-day-btn');
       const nextBtn = document.getElementById('nut-next-day-btn');
+      const todayBtn = document.getElementById('nut-today-btn');
       if (prevBtn) prevBtn.onclick = () => renderNutritionSection(leftDateStr);
       if (nextBtn) nextBtn.onclick = () => renderNutritionSection(rightDateStr);
+      if (todayBtn) todayBtn.onclick = () => renderNutritionSection(todayStr);
     }
 
     // Load nutrition data from DB for queryDateStr
@@ -853,8 +871,10 @@ const TodayPage = (() => {
     if (nextBtn) nextBtn.disabled = currentDayIndex >= allPlanDays.length - 1;
 
     // --- Update Nutrition & AI System ---
-    const dayDateStr = (day && day.date) ? day.date.split('/').reverse().join('-') : UI.getLocalDateString();
-    await renderNutritionSection(dayDateStr);
+    if (!selectedNutritionDate) {
+      selectedNutritionDate = UI.getLocalDateString();
+    }
+    await renderNutritionSection(selectedNutritionDate);
   }
 
 
@@ -1794,6 +1814,7 @@ const TodayPage = (() => {
     init,
     render,
     renderNutritionSection: (dateStr) => renderNutritionSectionRef ? renderNutritionSectionRef(dateStr) : Promise.resolve(),
+    resetNutritionDateToToday,
     navigate,
     goToDay,
     goToToday,
