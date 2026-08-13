@@ -58,8 +58,8 @@ const AnatomyMap = (() => {
             <svg class="anatomy-svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%">
               ${visible.map(c => {
                 const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
-                const targetX = c.side === 'left' ? 22 : 78;
-                const midX = c.side === 'left' ? Math.min(c.nodeX - 5, 34) : Math.max(c.nodeX + 5, 66);
+                const targetX = c.side === 'left' ? 28 : 72;
+                const midX = c.side === 'left' ? Math.min(c.nodeX - 4, 35) : Math.max(c.nodeX + 4, 65);
                 return `
                   <path d="M ${c.nodeX} ${c.nodeY} L ${midX} ${labelY} L ${targetX} ${labelY}" 
                         stroke="${c.color}" stroke-width="0.85" fill="none" opacity="0.9" 
@@ -185,9 +185,9 @@ const AnatomyMap = (() => {
           align-items: center; text-align: center; justify-content: center;
           background: rgba(0, 255, 102, 0.04); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
           border: 1px solid rgba(0, 255, 102, 0.3);
-          padding: 4px 8px; border-radius: 6px; transform: translateY(-50%);
+          padding: 3px 6px; border-radius: 6px; transform: translateY(-50%);
           z-index: 20; box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 0 10px rgba(0, 255, 102, 0.05);
-          width: max-content; min-width: 58px; white-space: nowrap; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+          width: max-content; min-width: 52px; white-space: nowrap; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
         }
         .callout-label:hover {
           transform: translateY(-50%) scale(1.06);
@@ -195,15 +195,15 @@ const AnatomyMap = (() => {
           border-color: #00ff66;
         }
         .callout-label.side-left {
-          right: 79%; border-right: 3px solid var(--color);
+          right: 72%; border-right: 3px solid var(--color);
           text-align: center; align-items: center;
         }
         .callout-label.side-right {
-          left: 79%; border-left: 3px solid var(--color);
+          left: 72%; border-left: 3px solid var(--color);
           text-align: center; align-items: center;
         }
-        .callout-title { font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-size: 11px; color: #ffaa00; font-weight: 800; letter-spacing: 0.3px; text-transform: uppercase; line-height: 1.1; }
-        .callout-value { font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-size: 15px; font-weight: 900; color: #00ff66; letter-spacing: 0.3px; text-shadow: 0 0 8px rgba(0, 255, 102, 0.8); line-height: 1.1; }
+        .callout-title { font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-size: 9.5px; color: #ffaa00; font-weight: 800; letter-spacing: 0.2px; text-transform: uppercase; line-height: 1.1; }
+        .callout-value { font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-size: 14px; font-weight: 900; color: #00ff66; letter-spacing: 0.2px; text-shadow: 0 0 8px rgba(0, 255, 102, 0.8); line-height: 1.1; }
         .progress-glow-bar {
           width: 100%; min-width: 40px; height: 3px; background: rgba(255,255,255,0.1);
           border-radius: 2px; margin-top: 2px; overflow: hidden;

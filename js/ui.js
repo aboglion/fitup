@@ -299,7 +299,7 @@ const UI = (() => {
     }
 
     const modalTitleHTML = `
-      <div style="display: flex; align-items: center; gap: 16px; direction: rtl; width: 100%; padding-left: 48px; padding-right: 12px;">
+      <div style="display: flex; align-items: center; gap: 16px; width: 100%;">
         <div class="skeleton-loading" style="width: 140px; height: 140px; min-width: 140px; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); flex-shrink: 0; position: relative;">
           <div class="skeleton-placeholder" style="gap: 4px;">
             <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
@@ -358,7 +358,7 @@ const UI = (() => {
     }
 
     showModal(modalTitleHTML, `
-      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; direction: rtl;">
+      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
         ${mediaHTML}
         ${extraNote}
       </div>

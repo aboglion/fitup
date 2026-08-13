@@ -177,7 +177,7 @@ const StatsPage = (() => {
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <button onclick="StatsPage.shareProgressCard()" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; display: flex; align-items: center; gap: 4px; border-radius: 20px;">
-              <span>📤</span> <span>שיתוף</span>
+              <span>📤</span> <span>${I18n.t('share_btn')}</span>
             </button>
             <div style="font-size: 11px; font-weight: 800; color: #00ff66; background: rgba(0, 255, 102, 0.1); border: 1px solid rgba(0, 255, 102, 0.3); padding: 4px 10px; border-radius: 20px; text-shadow: 0 0 5px rgba(0,255,102,0.5);">
               ${Math.round(levelProgress)}%

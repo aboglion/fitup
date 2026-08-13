@@ -471,6 +471,7 @@ const I18n = (() => {
       // Stats page
       streak_days: "Day Streak!",
       level_label: "Level",
+      share_btn: "Share",
       muscle_map_title: "💪 Muscle Progress Map",
       heatmap_title: "🗓️ Consistency Map (Past Days)",
       heat_strength: "Strength",
@@ -584,6 +585,7 @@ const I18n = (() => {
       // Stats page
       streak_days: "Days in a row!",
       level_label: "Level",
+      share_btn: "Share",
       muscle_map_title: "💪 Muscle Progress Map",
       heatmap_title: "🗓️ Consistency Map (Days Passed)",
       heat_strength: "Strength",
@@ -1135,6 +1137,7 @@ const I18n = (() => {
 
       streak_days: "ימים ברצף!",
       level_label: "רמה",
+      share_btn: "שיתוף",
       muscle_map_title: "💪 מפת התקדמות שרירים",
       heatmap_title: "🗓️ מפת התמדה (ימים שעברו)",
       heat_strength: "כוח",
@@ -1240,6 +1243,7 @@ const I18n = (() => {
 
       streak_days: "ימים ברצף!",
       level_label: "רמה",
+      share_btn: "שיתוף",
       muscle_map_title: "💪 מפת התקדמות שרירים",
       heatmap_title: "🗓️ מפת התמדה (ימים שעברו)",
       heat_strength: "כוח",
@@ -1686,6 +1690,7 @@ const I18n = (() => {
 
       streak_days: "أيام متتالية!",
       level_label: "المستوى",
+      share_btn: "مشاركة",
       muscle_map_title: "💪 خريطة تقدم العضلات",
       heatmap_title: "🗓️ خريطة الالتزام (الأيام السابقة)",
       heat_strength: "قوة",

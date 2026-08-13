@@ -566,7 +566,7 @@ const ExercisesPage = (() => {
                   ${!isUnlocked 
                     ? `<span class="rpg-unlock-badge locked">${I18n.t('locked_week')} ${node.unlockWeek}</span>` 
                     : `<span class="rpg-unlock-badge unlocked">${I18n.t('unlocked_week')} ${node.unlockWeek}</span>`}
-                  ${equip && equip.label !== I18n.t('equip_bodyweight') ? `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${equip.icon} ${equip.label}</span>` : ''}
+                  ${equip && equip.label !== I18n.t('equip_bodyweight') ? `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; unicode-bidi: isolate; max-width: 100%; white-space: normal; word-break: break-word;">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
                 ${(() => {
                   const tiers = BAND_WEIGHT_PROGRESSION[node.name];
@@ -776,8 +776,8 @@ const ExercisesPage = (() => {
         </div>
         <div class="guide-card-content">
           <div class="guide-card-title">
-            ${ex.name}
-            ${equip ? `<span class="guide-equipment">${equip.icon} ${equip.label}</span>` : ''}
+            <span style="flex: 0 1 auto; word-break: break-word;">${ex.name}</span>
+            ${equip ? `<span class="guide-equipment" style="flex-shrink: 0; unicode-bidi: isolate;">${equip.icon} ${equip.label}</span>` : ''}
           </div>
           <span class="guide-card-category">${ex.category || ''}</span>
           <div class="guide-card-sets">${ex.setsProgression || ''}</div>
