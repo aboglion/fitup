@@ -1,690 +1,749 @@
-# FitUp Pro Ultimate v4.0 — מהדורת "פלטות 3 ק"ג" + בלוק זרועות קבוע
-מטרה: גוף אתלטי מפוסל | V-Taper | זרועות בולטות | גב חזק | גידים חזקים | אנטי-אייג'ינג | מנוע אירובי | גמישות
-רמת פתיחה: מתחיל (0 שנות אימון) | מתח נקי: 2 | פוש-אפ נקי: 7
-עיקרון: **אפס החלטות. הכל כתוב מראש. אתה רק מבצע.**
-
-## חלק 1 — הצהרת בטיחות וכללי ברזל
-
-**1.1 הצהרת בטיחות**
-התוכנית מותאמת לגיל 42 עם דיסק קל מאוד בגב התחתון.
-כללי עצירה קשיחים (מתי להפסיק אימון מיד):
-- כאב חד או יורה בגב התחתון, ברכיים, כתפיים או אכילס.
-- סחרחורת, כאב בחזה, או קוצר נשימה חריג.
-- כאב בשורש כף היד שנמשך מעבר ל-48 שעות.
-- כל כאב שמשנה את הטכניקה שלך.
-
-**1.2 כללי ברזל — אפס החלטות**
-- אין בחירות: תרגיל, משקל, סטים, חזרות, טמפו, מנוחה, שיפוע ומהירות — הכל קבוע מראש.
-- אין שפה מעורפלת ואין טווחים. רק מספרים מדויקים.
-- **אין פינישר מאולתר:** שום דבר לא מתווסף בסוף האימון מעבר לכתוב בטבלה. בלוק הזרועות (משבוע 10) הוא חלק בלתי נפרד מהטבלה — ולכן אינו פינישר.
-- **אין RIR, אין כשל, אין "במיכל", אין תחושה.** סט נגמר רק באחד משני מצבים עובדתיים: (א) ביצעת את החזרות הכתובות; (ב) **עצירה מכנית** — חזרה שלא הושלמה בטמפו הכתוב. עצירה מכנית אינה החלטה.
-- **התקדמות כפולה (בלוק הזרועות בלבד):** השלמת הכל בטמפו → שלב אחד למעלה בסולם; לא השלמת → חוזרים על אותו שלב. הסולם מחליט, לא אתה.
-- Push-up Bars: כל תרגילי הדחיפה רק איתם. אין כפות ידיים על הרצפה.
-- TRX: רק ל-Face Pull ו-Y-T-W. זווית קבועה לפי שלב.
-- גב ניטרלי: בכל תרגילי RDL, Row, Carry — הגב ישר. מתעגל = המשקל כבד מדי.
-- תרגילי Single-Arm / Single-Leg: מלוא הסטים לצד אחד, החלפת צד, ורק אז עוברים הלאה.
-- משקל הידית קבוע וקטן — לא נספר. מתייחסים לפלטות בלבד.
-
-**1.3 פרוטוקול ייעול זמנים וסופר-סטים (אימון ב-45–50 דקות)**
-לשמירה על משך אימון אופטימלי של 45–50 דקות בשלבים המתקדמים (שבועות 34+) ללא פגיעה בהתאוששות השרירית ובתוצאות:
-- **סופר-סטים אנטגוניסטיים (Antagonistic Supersets):** בתרגילי בידוד וזרועות (כמו Lateral Raise + Triceps Ext ביום 3, או Curl + Core ביום 5), בצע את תרגיל א' ← מנוחה 45 שנ' ← תרגיל ב' ← מנוחה 45 שנ'. השריר מרוויח 120 שנ' מנוחה מלאה, והזמן הכללי נחתך ב-50%.
-- **איחוד סטים כפולים מול בלוק הזרועות:** החל משבוע 10, כשבלוק הזרועות נכנס לתוקף, צמצם ל-2 סטים בטבלה הראשית בתרגילי Lateral Raise ו-Triceps Extension כדי למנוע עומס נפחי כפול.
-- **מנוחה מוצלבת בתרגילים חד-צדדיים:** בתרגילי Single-Arm / Single-Leg, בצע צד ימין ← מנוחה 45 שנ' ← צד שמאל ← מנוחה 45 שנ' (מעניק 105 שנ' מנוחה לצד ימין ללא זמן מת).
-- **שילוב מיקרו-מוביליות בזמני מנוחה:** בצע את ה-Dead Hang ומתיחת החזה בזמן המנוחה בין סטי הליבה/הרגליים כדי לסיים את האימון מיד ולחסוך 5 דקות בסוף.
-
-## חלק 2 — פרטי הציוד
-
-**2.2 ציוד זמין ושימוש קבוע**
-- **משקולות מודולריות:** 8 פלטות × 3 ק"ג (24 ק"ג סה"כ) + 2 ידיות.
-  - שתי משקולות (ליד): 3 / 6 / 9 / 12 ק"ג.
-  - משקולת אחת (ידית אחת): 3–24 בכפולות 3.
-  - משקולת אחת דו-צדדית: 6–24 בכפולות 6.
-- מוט מתח: Pull-Up, Chin-Up, Dead Hang, Towel Hang.
-- Push-up Bars: כל תרגילי Push-Up, Deficit, Pike, L-sit.
-- TRX: Face Pull, Y-T-W.
-- גומיות: 30 ק"ג (Pull-Apart, Pallof), 40 ק"ג (Pallof מתקדם).
-- כיסא: BSS, Feet-Elevated Push-Up, Pike Hold.
-- הליכון: Zone 2, VO2 Max, התאוששות.
-- וסט/תיק +5 ק"ג: לתרגילים המסומנים בלבד.
-
-## חלק 3 — תוכנית שבועית קבועה ופרוטוקולי קרדיו
-
-**3.1 מבנה שבועי קבוע**
-
-| יום | אימון | משך |
-|---|---|---|
-| 1 | רגליים + ליבה + אחיזה/נשיאה | 50 דק' |
-| 2 | Zone 2 + מוביליות יומית | 50 דק' |
-| 3 | דחיפה + כתפיים + טריספס + Handstand + בלוק זרועות (משבוע 10) | 55 דק' |
-| 4 | התאוששות פעילה + מוביליות עמוקה | 30 דק' |
-| 5 | משיכה + גב + ביספס + אחיזה + ליבה + בלוק זרועות (משבוע 10) | 55 דק' |
-| 6 | VO2 Max (או Zone 2 בדילואד) | 35 דק' |
-| 7 | מנוחה מלאה | — |
-
-**3.2 פרוטוקולי קרדיו**
-
-🟢 **Zone 2 (יום 2):** שיפוע 4% | 5.5 קמ"ש | 45 דק' רצוף | מבחן דיבור: משפט שלם, אחרת הורד ל-5.0. בדילואד: 30 דק', 2%, 5.0 קמ"ש.
-
-🔴 **VO2 Max נורווגי 4×4 (יום 6):** הגנת אכילס — מקס' 6%, אין ספרינטים.
-חימום 10 דק' 0% 4.5 | מאמץ 4×4 דק' 6.5 קמ"ש בשיפוע השלב | מנוחה 3×3 דק' 0% 4.5 | שחרור 5 דק' 0% 4.0. בדילואד: לא מבצעים.
-
-| שבועות | שיפוע מאמץ |
-|---|---|
-| 1–4 | 3% |
-| 5–8 | 4% |
-| 10–16 | 5% |
-| 18–68 | 6% |
-
-🟡 **התאוששות פעילה (יום 4):** הליכון 25 דק' 0% 4.5 קמ"ש + מוביליות 10 דק'.
-
-## חלק 4 — פרוטוקול מוביליות
-
-**מיקרו יומי (5 דק' אחרי כל אימון כוח):** Dead Hang 30 שנ' | Deep Squat Hold 60 שנ' | Doorway Chest 30 שנ'/צד | World's Greatest 5/צד.
-**מאקרו שבועי (יום 4, 10 דק'):** Cat-Cow 10 | 90/90 8/צד | Thoracic Rotation 8/צד | Couch 45 שנ'/צד | Sleeper 30 שנ'/צד | Prone Y-T-W 8/צורה.
-
-## חלק 5 — טבלאות שנה ראשונה (שבועות 1–52)
-
-**חימום קבוע (5 דק'):**
-יום 1: High Knees 30 שנ', BW Squat 2×8, Dead Bug 1×6/צד, Glute Bridge 1×12.
-יום 3: Arm Circles 10/כיוון, Wall Slides 1×8, Scapular Push-up 2×10, Band Pull-Apart 1×15.
-יום 5: Arm Circles 10/כיוון, Wall Slides 1×8, Scapular Pull-up 2×6, Dead Hang 1×15 שנ', Seated Band Row 1×12.
-
-### שלב 1 — שבועות 1–4 (VO2: 3%)
-
-**יום 1 — רגליים + ליבה**
-
-| # | תרגיל | סטים×חזרות | משקל מדויק | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB RDL (2 משקולות) | 3×8 | 6 ליד | 3 שנ' ירידה | 120 |
-| 2 | DB Bulgarian Split Squat | 3×8/רגל | משקל גוף | 2 שנ' ירידה | 90 |
-| 3 | DB Glute Bridge (משקולת אחת על האגן) | 3×12 | 9 | 1 שנ' עצירה | 90 |
-| 4 | Single-Leg Calf Raise | 3×15/רגל | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | Suitcase Carry | 3×25 מ'/צד | 12 | הליכה | 90 |
-| 6 | Dead Bug | 3×8/צד | משקל גוף | איטי | 60 |
-
-**יום 3 — דחיפה**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pike Hold | 3×15 שנ' | משקל גוף | סטטי | 90 |
-| 2 | DB Floor Press | 3×8 | 6 ליד | 2 שנ' ירידה | 120 |
-| 3 | Push-up | 3×6 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | Seated DB OHP | 3×8 | 3 ליד | 2 שנ' ירידה | 90 |
-| 5 | DB Lateral Raise | 2×12 | 3 ליד | 2 שנ' ירידה | 60 |
-| 6 | DB OH Triceps Ext (משקולת אחת) | 2×12 | 6 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | TRX Y-T-W (Angle 1) | 2×8/צורה | משקל גוף | 1 שנ' עצירה | 60 |
-
-**יום 5 — משיכה**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up Negative | 3×2 | משקל גוף | 3 שנ' ירידה | 120 |
-| 2 | One-Arm DB Row | 3×8/צד | 6 | 2 שנ' ירידה | 90 |
-| 3 | TRX Face Pull (Angle 1) | 3×12 | משקל גוף | 2 שנ' ירידה | 60 |
-| 4 | DB Curl | 2×10 | 3 ליד | 2 שנ' ירידה | 60 |
-| 5 | Towel Hang | 3×15 שנ' | משקל גוף | סטטי | 60 |
-| 6 | L-sit Tuck (Bars) | 3×8 שנ' | משקל גוף | סטטי | 60 |
-
-### שלב 2 — שבועות 5–8 (VO2: 4%)
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB RDL | 4×10 | 9 ליד | 3 שנ' ירידה | 120 |
-| 2 | DB BSS | 3×10/רגל | 3 ליד | 2 שנ' ירידה | 90 |
-| 3 | DB Hip Thrust (על האגן) | 3×15 | 9 | 2 שנ' עצירה | 90 |
-| 4 | SL Calf Raise (משקולת אחת ביד) | 3×18/רגל | 9 | 2 שנ' ירידה | 60 |
-| 5 | Suitcase Carry | 3×30 מ'/צד | 15 | הליכה | 90 |
-| 6 | Hollow Body Hold | 3×15 שנ' | משקל גוף | סטטי | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pike Hold (רגליים על כיסא) | 3×20 שנ' | משקל גוף | סטטי | 90 |
-| 2 | DB Floor Press | 4×10 | 9 ליד | 2 שנ' ירידה | 120 |
-| 3 | Push-Up | 4×5 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | Seated DB OHP | 3×10 | 6 ליד | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 3×15 | 3 ליד | 2 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×12 | 6 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | TRX Y-T-W (Angle 1) | 2×10/צורה | משקל גוף | 1 שנ' עצירה | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up Negative | 4×3 | משקל גוף | 4 שנ' ירידה | 120 |
-| 2 | Chin-Up Negative | 3×3 | משקל גוף | 4 שנ' ירידה | 120 |
-| 3 | One-Arm DB Row | 3×10/צד | 9 | 2 שנ' ירידה | 90 |
-| 4 | TRX Face Pull (Angle 2) | 3×15 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | DB Hammer Curl | 3×12 | 6 ליד | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×25 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit Tuck | 3×10 שנ' | משקל גוף | סטטי | 60 |
-
-### שבוע 9: Deload
-VO2 לא מבצעים; Zone 2 קל 30 דק'. 2 סטים בכל תרגיל. מוביליות 15 דק'.
-**משקלים:** RDL 3 ליד | Floor 3 ליד | Row 3 | OHP 3 ליד | Carry 9 | Hip Thrust 6 | Calf 6 | Triceps 3 | Hammer 3 | Lateral 3 | Curl 3. אין בלוק זרועות (מתחיל שבוע 10).
-
-### שלב 4 — שבועות 10–16 (VO2: 5%) — **בלוק הזרועות נכנס לתוקף (נספח ב')**
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB RDL | 4×8 | 12 ליד | 3 שנ' ירידה | 120 |
-| 2 | DB BSS | 4×8/רגל | 9 ליד | 2 שנ' ירידה | 90 |
-| 3 | DB Hip Thrust | 4×10 | 12 על האגן | 2 שנ' עצירה | 90 |
-| 4 | SL Calf Raise | 3×20/רגל | 9 | 2 שנ' ירידה | 60 |
-| 5 | Pallof Press (גומייה 30) | 3×12/צד | 30 | 1 שנ' עצירה | 60 |
-| 6 | Dead Bug | 3×10/צד | משקל גוף | איטי | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Walk חלקי | 3×3 | משקל גוף | איטי | 90 |
-| 2 | DB Floor Press | 4×6 | 12 ליד | 2 שנ' ירידה | 120 |
-| 3 | Deficit Push-Up | 3×6 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | Seated DB OHP | 3×8 | 6 ליד | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 3×18 | 3 ליד | 2 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×10 | 9 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | Band Pull-Apart | 2×20 | 30 | 1 שנ' עצירה | 60 |
-| 8 | **בלוק זרועות — נספח ב'** (Lateral + Triceps) | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up Overhand | 3×1 | משקל גוף (אם לא — Negative) | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 3×1 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm DB Row | 4×8/צד | 12 | 2 שנ' ירידה | 90 |
-| 4 | TRX Face Pull (Angle 2) | 3×12 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | DB Curl | 3×10 | 6 ליד | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×30 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit Tuck | 3×10 שנ' | משקל גוף | סטטי | 60 |
-| 8 | **בלוק זרועות — נספח ב'** (Curl) | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-### שבוע 17: Deload
-2 סטים. **משקלים:** RDL 6 ליד | Floor 6 ליד | Row 6 | OHP 3 ליד | Carry 9 | Hip Thrust 6 | Calf 6 | Triceps 6 | Curl 3. **בלוק זרועות:** סט אחד בשלב הנוכחי בסולם.
-
-### שלב 6 — שבועות 18–24 (VO2: 6%)
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB BSS | 4×10/רגל | 9 ליד | 2 שנ' ירידה | 90 |
-| 2 | DB Single-Leg RDL | 4×10/רגל | 12 | 3 שנ' ירידה | 120 |
-| 3 | DB Hip Thrust | 4×12 | 15 על האגן | 2 שנ' עצירה | 90 |
-| 4 | Reverse Lunge + DB | 3×10/רגל | 9 ליד | 2 שנ' ירידה | 90 |
-| 5 | SL Calf Raise | 4×18/רגל | 12 | 2 שנ' ירידה | 60 |
-| 6 | Suitcase Carry | 3×40 מ'/צד | 18 | הליכה | 90 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Walk מלא | 3×3 | משקל גוף | איטי | 90 |
-| 2 | Single-Arm Floor Press | 4×8/צד | 15 | 2 שנ' ירידה | 120 |
-| 3 | Feet-Elevated Push-Up | 4×6 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | Seated DB OHP | 3×10 | 9 ליד | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 3×20 | 3 ליד | 3 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×12 | 9 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | TRX Y-T-W (Angle 1) | 3×10/צורה | משקל גוף | 1 שנ' עצירה | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up | 4×3 | משקל גוף | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 3×3 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm DB Row | 4×10/צד | 12 | 2 שנ' ירידה | 90 |
-| 4 | TRX Face Pull (Angle 3) | 3×15 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | Hammer Curl | 3×12 | 6 ליד | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×35 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit Tuck | 3×12 שנ' | משקל גוף | סטטי | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-### שבוע 25: Deload
-2 סטים. **משקלים:** SL RDL 6 | SA Floor 9 | Row 6 | OHP 3 ליד | Carry 9 | Hip Thrust 9 | Calf 6 | Triceps 6. בלוק: סט אחד בשלב הנוכחי.
-
-### שלב 8 — שבועות 26–32
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB Single-Leg RDL | 4×6/רגל | 15 | 3 שנ' ירידה | 120 |
-| 2 | DB BSS | 4×6/רגל | 12 ליד | 2 שנ' ירידה | 90 |
-| 3 | DB Hip Thrust | 4×8 | 18 על האגן | 2 שנ' עצירה | 90 |
-| 4 | SL Calf Raise | 4×15/רגל | 12 | 2 שנ' ירידה | 60 |
-| 5 | Suitcase Carry | 4×30 מ'/צד | 21 | הליכה | 90 |
-| 6 | Hollow Body Hold | 3×20 שנ' | משקל גוף | סטטי | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Handstand (פנים לקיר) | 3×20 שנ' | משקל גוף | סטטי | 90 |
-| 2 | Single-Arm Floor Press | 4×6/צד | 18 | 2 שנ' ירידה | 120 |
-| 3 | Deficit Push-Up | 4×6 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | Seated DB OHP | 3×8 | 9 ליד | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 3×15 | 3 ליד | 2 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×10 | 9 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | Band Pull-Apart | 3×20 | 30 | 1 שנ' עצירה | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up | 4×4 | משקל גוף | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 3×4 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm DB Row | 4×8/צד | 15 | 2 שנ' ירידה | 90 |
-| 4 | TRX Face Pull (Angle 3) | 3×12 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | DB Curl | 3×10 | 6 ליד | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×40 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit (Tuck/רגל אחת) | 3×12 שנ' | משקל גוף | סטטי | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-### שבוע 33: Deload
-2 סטים. **משקלים:** SL RDL 9 | SA Floor 9 | Row 9 | OHP 3 ליד | Carry 12 | Hip Thrust 9 | Calf 6 | Triceps 6 | Curl 3. בלוק: סט אחד.
-
-### שלב 10 — שבועות 34–40
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB Single-Leg RDL | 4×8/רגל | 12 | 3 שנ' ירידה | 120 |
-| 2 | DB BSS (Goblet) | 4×8/רגל | 15 | 1 שנ' עצירה למטה | 90 |
-| 3 | DB Hip Thrust | 4×10 | 21 על האגן | 2 שנ' עצירה | 90 |
-| 4 | Reverse Lunge + DB | 3×10/רגל | 9 ליד | 2 שנ' ירידה | 90 |
-| 5 | SL Calf Raise | 4×20/רגל | 15 | 2 שנ' ירידה | 60 |
-| 6 | Pallof Press (גומייה 40) | 3×15/צד | 40 | 1 שנ' עצירה | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Handstand | 3×30 שנ' | משקל גוף | סטטי | 90 |
-| 2 | Single-Arm Floor Press | 4×8/צד | 21 | 1 שנ' עצירה למטה | 120 |
-| 3 | Feet-Elevated Push-Up | 4×6 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | Seated DB OHP | 3×10 | 9 ליד | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 3×20 | 3 ליד | 3 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×12 | 12 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | TRX Y-T-W (Angle 1) | 3×12/צורה | משקל גוף | 1 שנ' עצירה | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up | 4×5 | משקל גוף | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 3×5 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm DB Row | 4×10/צד | 18 | 2 שנ' ירידה | 90 |
-| 4 | TRX Face Pull (Angle 3) | 3×15 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | DB Curl | 3×12 | 9 ליד | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×45 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit | 3×15 שנ' | משקל גוף | סטטי | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-### שבוע 41: Deload
-2 סטים. **משקלים:** SL RDL 6 | Goblet BSS 9 | SA Floor 12 | Row 9 | OHP 3 ליד | Hip Thrust 12 | Calf 9 | Triceps 6 | Curl 6. בלוק: סט אחד.
-
-### שלב 12 — שבועות 42–48
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pistol Squat to Chair | 3×5/רגל | משקל גוף | 3 שנ' ירידה | 120 |
-| 2 | DB Single-Leg RDL | 4×8/רגל | 18 | 3 שנ' ירידה | 120 |
-| 3 | DB Hip Thrust | 4×10 | 21 על האגן | 2 שנ' עצירה | 90 |
-| 4 | Reverse Lunge + DB | 3×12/רגל | 12 ליד | 2 שנ' ירידה | 90 |
-| 5 | SL Calf Raise | 4×20/רגל | 18 | 2 שנ' עצירה למטה | 60 |
-| 6 | Dead Bug | 3×12/צד | משקל גוף | איטי | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Handstand | 3×30 שנ' | משקל גוף | סטטי | 90 |
-| 2 | Single-Arm Floor Press | 4×8/צד | 24 | 2 שנ' ירידה | 120 |
-| 3 | Elevated Pike Push-Up | 4×8 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | Seated DB OHP | 3×12 | 12 ליד | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 3×20 | 6 ליד | 3 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×15 | 12 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | Band Pull-Apart | 3×20 | 30 | 1 שנ' עצירה | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up | 4×5 | משקל גוף | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 3×5 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm DB Row | 4×10/צד | 21 | 2 שנ' ירידה | 90 |
-| 4 | TRX Face Pull (Angle 3) | 3×18 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | DB Curl | 3×15 | 9 ליד | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×45 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit | 3×15 שנ' | משקל גוף | סטטי | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-### שבוע 49: Deload
-2 סטים. **משקלים:** SL RDL 9 | SA Floor 12 | Row 12 | OHP 6 ליד | Hip Thrust 12 | Calf 9 | Triceps 6 | Curl 6. בלוק: סט אחד.
-
-### שלב 14 — שבועות 50–52
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pistol to Chair | 3×8/רגל | משקל גוף | 3 שנ' ירידה | 120 |
-| 2 | DB Single-Leg RDL | 3×10/רגל | 21 | 3 שנ' ירידה | 120 |
-| 3 | DB Hip Thrust | 3×12 | 24 על האגן | 2 שנ' עצירה | 90 |
-| 4 | Reverse Lunge + DB | 3×12/רגל | 12 ליד | 2 שנ' ירידה | 90 |
-| 5 | SL Calf Raise | 4×20/רגל | 21 | 2 שנ' עצירה למטה | 60 |
-| 6 | Dead Bug | 3×12/צד | משקל גוף | איטי | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Handstand | 3×30 שנ' | משקל גוף | סטטי | 90 |
-| 2 | Single-Arm Floor Press | 3×10/צד | 24 | 2 שנ' ירידה | 120 |
-| 3 | Feet-Elevated Push-Up | 4×10 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | Elevated Pike Push-Up | 3×10 | משקל גוף | 2 שנ' ירידה | 90 |
-| 5 | Seated DB OHP | 3×12 | 12 ליד | 2 שנ' ירידה | 90 |
-| 6 | Lateral Raise | 3×20 | 6 ליד | 3 שנ' ירידה | 60 |
-| 7 | OH Triceps Ext | 3×15 | 15 סה"כ | 2 שנ' ירידה | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up | 4×6 | משקל גוף | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 3×6 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm DB Row | 3×12/צד | 21 | 2 שנ' ירידה | 90 |
-| 4 | TRX Face Pull (Angle 3) | 3×18 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | DB Curl | 3×15 | 9 ליד | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×45 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit | 3×15 שנ' | משקל גוף | סטטי | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-## חלק 6 — שנה שנייה (שבועות 53–78)
-
-**חימום שנה שנייה:** כבשנה ראשונה + Wrist Rocks עדין 1×10 ביום 3.
-
-### שבועות 53–56
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB Single-Leg RDL | 4×8/רגל | 24 | 3 שנ' ירידה | 120 |
-| 2 | DB BSS (Goblet) | 4×8/רגל | 18 | 2 שנ' ירידה | 90 |
-| 3 | DB Hip Thrust | 4×10 | 24 על האגן | 2 שנ' עצירה | 90 |
-| 4 | Reverse Lunge + DB | 3×10/רגל | 12 ליד | 2 שנ' ירידה | 90 |
-| 5 | SL Calf Raise | 4×20/רגל | 21 | 2 שנ' ירידה | 60 |
-| 6 | Suitcase Carry | 4×30 מ'/צד | 24 | הליכה | 90 |
-| 7 | Dead Bug | 3×12/צד | משקל גוף | איטי | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Handstand | 3×30 שנ' | משקל גוף | סטטי | 90 |
-| 2 | Single-Arm Floor Press | 4×8/צד | 24 | 2 שנ' ירידה | 120 |
-| 3 | Deficit Push-Up | 4×8 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | Single-Arm Seated OHP | 4×8/צד | 18 | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 3×15 | 9 ליד | 2 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×12 | 18 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | Band Pull-Apart | 2×20 | 30 | 1 שנ' עצירה | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up | 4×6 | משקל גוף | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 3×6 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm DB Row | 4×10/צד | 24 | 2 שנ' ירידה | 90 |
-| 4 | TRX Face Pull (Angle 3) | 3×15 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | Hammer Curl | 3×12 | 12 ליד | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×45 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit | 3×15 שנ' | משקל גוף | סטטי | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**שבוע 57: Deload** — 2 סטים. **משקלים:** SL RDL 12 | SA Floor 12 | Row 12 | SA OHP 9 | Carry 12 | Hip Thrust 12 | Calf 12 | Triceps 9 | Hammer 6. בלוק: סט אחד.
-
-### שבועות 58–60
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB Single-Leg RDL | 4×8/רגל | 24 | 3 שנ' ירידה | 120 |
-| 2 | BSS (Goblet) | 4×10/רגל | 21 | 1 שנ' עצירה | 90 |
-| 3 | Hip Thrust | 4×12 | 24 | 2 שנ' עצירה | 90 |
-| 4 | Reverse Lunge + DB | 3×10/רגל | 12 ליד | 2 שנ' ירידה | 90 |
-| 5 | SL Calf Raise | 4×20/רגל | 24 | 2 שנ' עצירה | 60 |
-| 6 | Pallof Press (40) | 3×15/צד | 40 | 1 שנ' עצירה | 60 |
-| 7 | Hollow Hold | 3×20 שנ' | משקל גוף | סטטי | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Handstand | 3×35 שנ' | משקל גוף | סטטי | 90 |
-| 2 | SA Floor Press | 4×8/צד | 24 | 2 שנ' ירידה | 120 |
-| 3 | Feet-Elevated Push-Up | 4×10 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | SA Seated OHP | 4×10/צד | 21 | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 3×18 | 9 ליד | 3 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×12 | 21 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | TRX Y-T-W (Angle 1) | 3×10/צורה | משקל גוף | 1 שנ' עצירה | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up | 4×6 | משקל גוף | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 3×6 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm Row | 4×10/צד | 24 | 2 שנ' ירידה | 90 |
-| 4 | Face Pull (Angle 3) | 3×18 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | DB Curl | 3×12 | 12 ליד | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×50 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit | 3×18 שנ' | משקל גוף | סטטי | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-### שבוע 61: Deload
-2 סטים. **משקלים:** SL RDL 12 | SA Floor 12 | Row 12 | SA OHP 12 | Goblet 12 | Calf 12 | Triceps 12 | Curl 6. בלוק: סט אחד.
-
-### שבועות 62–64
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB Single-Leg RDL | 4×6/רגל | 24 | 3 שנ' ירידה | 120 |
-| 2 | BSS (Goblet) | 4×8/רגל | 24 | 1 שנ' עצירה | 90 |
-| 3 | Hip Thrust | 4×10 | 24 | 3 שנ' עצירה | 90 |
-| 4 | Walking Lunge (Goblet) | 3×12/רגל | 18 | 2 שנ' ירידה | 90 |
-| 5 | SL Calf Raise | 4×15/רגל | 24 | 2 שנ' ירידה | 60 |
-| 6 | Suitcase Carry | 4×40 מ'/צד | 24 | הליכה | 90 |
-| 7 | Hollow Hold | 3×25 שנ' | משקל גוף | סטטי | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Handstand | 3×35 שנ' | משקל גוף | סטטי | 90 |
-| 2 | SA Floor Press | 5×6/צד | 24 | 2 שנ' ירידה | 120 |
-| 3 | Weighted Deficit Push-Up | 4×6 | משקל גוף +5 ק"ג | 2 שנ' ירידה | 90 |
-| 4 | SA Seated OHP | 4×8/צד | 24 | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 4×15 | 9 ליד | 3 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×10 | 21 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | Band Pull-Apart | 3×20 | 30 | 1 שנ' עצירה | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Weighted Pull-Up | 5×5 | משקל גוף +5 ק"ג | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 4×5 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm Row | 4×8/צד | 24 | 2 שנ' ירידה | 90 |
-| 4 | Face Pull (Angle 3) | 3×15 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | Single-Arm Curl | 4×10/צד | 15 | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×50 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit | 3×20 שנ' | משקל גוף | סטטי | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-### שבוע 65: Deload
-2 סטים. **משקלים:** SL RDL 12 | SA Floor 12 | Row 12 | SA OHP 12 | Goblet 12 | Carry 12 | SA Curl 9 | Triceps 12. בלוק: סט אחד.
-
-### שבועות 66–68 (שיא)
-
-**יום 1**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB Single-Leg RDL | 4×6/רגל | 24 | 3 שנ' ירידה | 120 |
-| 2 | BSS (Goblet) | 4×6/רגל | 24 | 2 שנ' עצירה | 90 |
-| 3 | Hip Thrust | 4×8 | 24 | 3 שנ' עצירה | 90 |
-| 4 | Pistol to Chair | 3×5/רגל | משקל גוף | 3 שנ' ירידה | 120 |
-| 5 | SL Calf Raise | 4×12/רגל | 24 | 2 שנ' ירידה | 60 |
-| 6 | Suitcase Carry | 4×40 מ'/צד | 24 | הליכה | 90 |
-| 7 | Pallof Press (40) | 3×12/צד | 40 | 1 שנ' עצירה | 60 |
-
-**יום 3**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Wall Handstand | 3×40 שנ' | משקל גוף | סטטי | 90 |
-| 2 | SA Floor Press | 5×6/צד | 24 | 2 שנ' ירידה | 120 |
-| 3 | Elevated Pike Push-Up | 4×8 | משקל גוף | 2 שנ' ירידה | 90 |
-| 4 | SA Seated OHP | 4×6/צד | 24 | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 4×12 | 9 ליד | 3 שנ' ירידה | 60 |
-| 6 | OH Triceps Ext | 3×8 | 24 סה"כ | 2 שנ' ירידה | 60 |
-| 7 | TRX Y-T-W (Angle 1) | 3×12/צורה | משקל גוף | 1 שנ' עצירה | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-**יום 5**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Weighted Pull-Up | 5×5 | +5 ק"ג | 2 שנ' ירידה | 120 |
-| 2 | Weighted Chin-Up | 4×5 | +5 ק"ג | 2 שנ' ירידה | 120 |
-| 3 | One-Arm Row | 4×8/צד | 24 | 2 שנ' ירידה | 90 |
-| 4 | Face Pull (Angle 4) | 3×18 | משקל גוף | 2 שנ' ירידה | 60 |
-| 5 | Single-Arm Curl | 4×8/צד | 18 | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 3×60 שנ' | משקל גוף | סטטי | 60 |
-| 7 | L-sit | 3×20 שנ' | משקל גוף | סטטי | 60 |
-| 8 | בלוק זרועות — נספח ב' | לפי הסולם | לפי הסולם | לפי הסולם | 60 |
-
-### שבועות 69–72 (מעבר)
-VO2 לא מבצעים. Zone 2: 3×שבוע (ימים 2, 4, 6), 40 דק', 4%, 5.5 קמ"ש.
-**שבוע 69: Deload** — 2 סטים. **משקלים:** SL RDL 12 | SA Floor 12 | Row 12 | SA OHP 12 | Goblet 12 | Carry 12 | SA Curl 9 | Triceps 12. בלוק: סט אחד.
-
-**שבועות 70–72**
-
-**יום 1:** SL RDL 3×8/רגל @24 | BSS Goblet 3×8/רגל @24 | Hip Thrust 3×10 @24 | SL Calf 3×15/רגל @24 | Carry 3×30 מ'/צד @24.
-**יום 3:** Handstand 3×30 שנ' | SA Floor Press 3×8/צד @24 | Deficit Push-Up 3×8 | SA OHP 3×8/צד @24 | Lateral 3×15 @9 ליד | Triceps Ext 2×12 @24 | בלוק זרועות — נספח ב'.
-**יום 5:** Pull-Up 3×6 | Chin-Up 3×5 | One-Arm Row 3×10/צד @24 | Face Pull 3×15 | SA Curl 3×12/צד @18 | Towel 3×45 שנ' | L-sit 3×15 שנ' | בלוק זרועות — נספח ב'.
-
-### שבועות 73–78 (שימור, 2 אימוני כוח)
-Zone 2: 3×שבוע, 45 דק', 4%, 5.5 קמ"ש.
-**שבוע 73: Deload** — 2 סטים, **70%**: SL RDL 15 | SA Floor 15 | Row 15 | SA OHP 15 | Goblet 15 | Lateral 6 ליד | SA Curl 12 | Triceps 15. בלוק: סט אחד.
-
-**שבועות 74–78**
-
-**יום 1 — כוח A**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | DB Single-Leg RDL | 3×8/רגל | 24 | 3 שנ' ירידה | 120 |
-| 2 | BSS (Goblet) | 3×8/רגל | 24 | 2 שנ' ירידה | 90 |
-| 3 | SA Floor Press | 3×8/צד | 24 | 2 שנ' ירידה | 120 |
-| 4 | Seated DB OHP | 3×8 | 12 ליד | 2 שנ' ירידה | 90 |
-| 5 | Lateral Raise | 2×15 | 9 ליד | 2 שנ' ירידה | 60 |
-| 6 | Dead Bug | 2×10/צד | משקל גוף | איטי | 60 |
-| 7 | בלוק זרועות (Lateral + Triceps) | סט אחד | שלב נוכחי | לפי הסולם | 60 |
-
-**יום 4 — כוח B**
-
-| # | תרגיל | סטים×חזרות | משקל | טמפו | מנוחה |
-|---|---|---|---|---|---|
-| 1 | Pull-Up | 3×6 | משקל גוף | 2 שנ' ירידה | 120 |
-| 2 | Chin-Up | 2×5 | משקל גוף | 2 שנ' ירידה | 120 |
-| 3 | One-Arm Row | 3×10/צד | 24 | 2 שנ' ירידה | 90 |
-| 4 | Wall Handstand | 3×30 שנ' | משקל גוף | סטטי | 90 |
-| 5 | Single-Arm Curl | 2×12/צד | 18 | 2 שנ' ירידה | 60 |
-| 6 | Towel Hang | 2×45 שנ' | משקל גוף | סטטי | 60 |
-| 7 | בלוק זרועות (Curl) | סט אחד | שלב נוכחי | לפי הסולם | 60 |
-
-## חלק 7 — אחרי שבוע 78: שימור לתמיד
-
-| יום | פעילות | משך | פרטים |
-|---|---|---|---|
-| 1 | כוח A + בלוק (סט אחד) | 35 דק' | לפי טבלת שימור |
-| 2 | Zone 2 | 45 דק' | 4%, 5.5 קמ"ש |
-| 3 | מנוחה/מוביליות | 10 דק' | מאקרו-מינון |
-| 4 | כוח B + בלוק (סט אחד) | 35 דק' | לפי טבלת שימור |
-| 5 | Zone 2 | 45 דק' | 4%, 5.5 קמ"ש |
-| 6 | הליכה חופשית | 20–30 דק' | 0%, 4.5 קמ"ש |
-| 7 | מנוחה מלאה | — | — |
-
-**כללי תחזוקה:** Deload קל כל 8 שבועות (2 סטים, 70%, Zone 2 קל, בלוק סט אחד). בדיקת איכות אחת ל-6 חודשים: משקלים נשמרו? Pull-ups נקיים? Handstand יציב? כן → ממשיך. לא → חזרה לשלב המעבר ל-4 שבועות.
+import sys
+
+content = """# FitUp Pro Ultimate v4.0 — "3 kg Plates" Edition + Fixed Arm Block
+**Target Objective**: Sculpted Athletic Physique | V-Taper | Prominent Arms | Strong Back | Resilient Tendons | Anti-Aging | Aerobic Engine | Flexibility  
+**Starting Level**: Beginner (0 years formal training) | Clean Pull-Ups: 2 | Clean Push-Ups: 7  
+**Core Philosophy**: **Zero Decisions. Everything is prescriptive. You only execute.**
 
 ---
 
-## נספח א' — סיכום דילואדים (שבועות 9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73)
+## Part 1 — Safety Declaration & Iron Rules
 
-**מה עושים:** 2 סטים בכל תרגיל | משקל 60% (שבוע 73: 70%) **מעוגל כלפי מטה לקפיצה הזמינה: ליד 3/6/9/12; משקולת אחת כפולות 3** | טמפו רגיל | Handstand 15–20 שנ' | VO2 Max לא מבצעים → Zone 2 קל 30 דק' | מוביליות 15–20 דק' | **בלוק זרועות: סט אחד בשלב הנוכחי בסולם.**
-**מה לא עושים:** אין פינישר מאולתר | אין שיאים | אין עבודה עד כישלון | אין העלאת משקל | אין RIR.
+### 1.1 Safety Declaration
+The program is tailored for age 42 with a minor lumbar disc bulge history.  
+**Strict Stop Conditions (Immediate Session Termination)**:
+- Sharp or shooting pain in lower back, knees, shoulders, or Achilles tendon.
+- Dizziness, chest pain, or abnormal shortness of breath.
+- Wrist joint pain persisting beyond 48 hours.
+- Any pain that forces alteration of exercise form or technique.
 
-## נספח ב' — בלוק זרועות v5 (Double Progression) — משבוע 10
+### 1.2 Iron Rules — Zero Decisions
+- **No Choices**: Exercise selection, load, set count, rep count, tempo, rest intervals, incline, and treadmill speed are 100% pre-determined.
+- **No Ambiguity**: No ranges or vague descriptions. Only exact numeric values.
+- **No Improvised Finishers**: Nothing is added after sessions beyond table instructions. The Arm Block (starting Week 10) is an integral table component, not an optional finisher.
+- **No RIR, No Failure, No "In The Tank", No Feeling**: A set ends under only two factual conditions: (a) You completed all prescribed reps at tempo; (b) **Mechanical Stop** — a rep that cannot be completed at tempo. A mechanical stop is a factual boundary, not a subjective decision.
+- **Double Progression (Arm Block Only)**: Complete all reps at prescribed tempo → Advance one step up the ladder next workout. Incomplete reps → Repeat same step next workout. The ladder dictates progression, not feeling.
+- **Push-Up Bars**: All push-up variations must strictly use Push-Up Bars. Palms flat on the floor is strictly forbidden.
+- **TRX**: Strictly for Face Pulls and Y-T-W. Fixed body angles assigned per phase.
+- **Neutral Spine**: Rigid neutral alignment across all RDL, Row, and Carry variations. Lumbar rounding = load is too heavy.
+- **Unilateral Execution**: Complete all sets for side A, swap to side B, then proceed to the next exercise.
+- **Handle Weight**: Small dumbbell handle weight is constant and ignored. Only plate weight is counted.
 
-**מיקום:** בסוף יום 3 ויום 5, אחרי כל תרגילי הטבלה, לפני מיקרו-מוביליות.
-**עיקרון:** סולמות כתובים. ✔ השלמת את כל הסטים בחזרות הכתובות בטמפו → שלב אחד למעלה באימון הבא. ✗ לא השלמת → חוזרים על אותו שלב. אין שום החלטה אחרת.
+### 1.3 Time-Efficiency Protocol (45–50 Minute Session Target)
+To maintain optimal session duration (45–50 minutes) in advanced phases (Weeks 34+) without compromising muscle recovery or strength gains:
+- **Antagonistic Supersets**: On isolation and arm movements (e.g., Lateral Raise + Triceps Ext on Day 3, or Curl + Core on Day 5), execute Movement A → Rest 45s → Movement B → Rest 45s. Muscle receives 120s total rest while overall session time is reduced by 50%.
+- **Main Table Volume Consolidation**: From Week 10 onwards (Arm Block active), main table set volume for Lateral Raises and Overhead Triceps Extensions is capped at 2 sets to avoid redundant volume.
+- **Unilateral Staggered Rest**: On Single-Arm / Single-Leg exercises, execute Right Side → Rest 45s → Left Side → Rest 45s (provides 105s total rest per side with zero dead time).
+- **Embedded Micro-Mobility**: Perform Dead Hangs and Doorway Chest Stretches *during* rest intervals between core/leg sets to conclude the workout immediately without adding 5 minutes at the end.
 
-**יום 3 — סיום (2 סטים כל תרגיל, מנוחה 60 שנ'):**
+---
 
-| שלב | DB Lateral Raise (2 שנ' ירידה) | DB OH Triceps Ext — משקולת אחת (2 שנ' ירידה) |
-|---|---|---|
-| 1 | 3 ק"ג × 12 | 6 ק"ג × 12 |
-| 2 | 3 ק"ג × 15 | 6 ק"ג × 15 |
-| 3 | 3 ק"ג × 18 | 9 ק"ג × 10 |
-| 4 | 3 ק"ג × 20 | 9 ק"ג × 12 |
-| 5 | 6 ק"ג × 10 | 9 ק"ג × 15 |
-| 6 | 6 ק"ג × 12 | 12 ק"ג × 10 |
-| 7 | 6 ק"ג × 15 | 12 ק"ג × 12 |
-| 8 | 9 ק"ג × 10 | 15 ק"ג × 10 |
-| 9 | 9 ק"ג × 12 | 15 ק"ג × 12 |
+## Part 2 — Equipment Breakdown
 
-**יום 5 — סיום (2 סטים, מנוחה 60 שנ'):**
+### 2.1 Available Equipment & Fixed Loading
+- **Modular Dumbbells**: 8 plates × 3 kg (24 kg total plates) + 2 handles.
+  - Dual Dumbbells (per hand): 3 / 6 / 9 / 12 kg per hand.
+  - Single Dumbbell (one handle): 3 to 24 kg in 3 kg increments.
+  - Single Dumbbell (dual-loaded): 6 to 24 kg in 6 kg increments.
+- **Pull-Up Bar**: Overhand Pull-Ups, Chin-Ups, Dead Hangs, Towel Hangs.
+- **Push-Up Bars**: All Push-Ups, Deficit Push-Ups, Pike Holds/Push-Ups, L-Sit Tucks.
+- **TRX Suspension Trainer**: TRX Face Pulls, TRX Y-T-W.
+- **Resistance Bands**: 30 kg band (Pull-Apart, Pallof), 40 kg band (Advanced Pallof).
+- **Chair**: BSS, Feet-Elevated Push-Ups, Pike Holds, Chair Pistol Squats.
+- **Treadmill**: Zone 2 Aerobic Base, Norwegian 4x4 VO2 Max, Active Recovery.
+- **Weighted Vest / Pack (+5 kg)**: Used exclusively for marked advanced progressions.
 
-| שלב | DB Curl ליד (2 שנ' ירידה + 1 שנ' כיווץ) |
-|---|---|
-| 1 | 3 ק"ג × 12 |
-| 2 | 3 ק"ג × 15 |
-| 3 | 6 ק"ג × 10 |
-| 4 | 6 ק"ג × 12 |
-| 5 | 6 ק"ג × 15 |
-| 6 | 9 ק"ג × 10 |
-| 7 | 9 ק"ג × 12 |
-| 8 | 12 ק"ג × 10 |
+---
 
-**קצה הסולם:** השלמת את שלב 9 (או 8 ב-Curl) פעמיים ברציפות → מוסיפים סט שלישי באותו משקל×חזרות. זהו.
+## Part 3 — Master Weekly Microcycle Architecture & Cardio Protocols
 
-**כללי הבלוק:**
-- עצירה מכנית: חזרה שלא הושלמה בטמפו = הסט נגמר. לא מוסיפים ולא מפצים.
-- דילואד: סט אחד בשלב הנוכחי.
-- כלל עדיפות: הטבלה הראשית לא הושלמה באותו יום → הבלוק מבוטל באותו יום.
-- כלל ביטול: שני אימונים רצופים עם ירידה בתרגילים הראשיים → הבלוק מבוטל עד הדילואד הבא.
-- שבועות 74+: סט אחד בלבד לכל תרגיל.
+### 3.1 Weekly Schedule Structure
+
+| Day | Workout Type | Target Focus & Modules | Target Duration |
+| :--- | :--- | :--- | :--- |
+| **Day 1** | **Legs + Core + Carry** | Lower body unilateral strength, posterior chain, anti-rotation core & suitcase carries | 50 min |
+| **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building, treadmill walking & daily micro-mobility | 50 min |
+| **Day 3** | **Push + Shoulders + Triceps + Handstand** | Chest, delts, triceps overhead pressing, parallette push-ups & Arm Block (W10+) | 55 min |
+| **Day 4** | **Active Recovery + Deep Mobility** | Light treadmill recovery walk & 10-minute macro mobility sequence | 30 min |
+| **Day 5** | **Pull + Back + Biceps + Grip + Core** | Pull-up progressions, dumbbell rows, biceps, grip hang & Arm Block (W10+) | 55 min |
+| **Day 6** | **Cardio VO2 Max** | Norwegian 4x4 interval protocol (or Zone 2 during Deload weeks) | 35 min |
+| **Day 7** | **Complete Rest** | Passive recovery, hydration & CNS regeneration | — |
+
+### 3.2 Cardio Protocols
+
+🟢 **Zone 2 Base (Day 2):** 4% incline | 5.5 km/h | 45 min continuous | Conversational test: Must speak full sentences, otherwise lower to 5.0 km/h. *Deload*: 30 min, 2% incline, 5.0 km/h.
+
+🔴 **Norwegian 4×4 VO2 Max (Day 6):** Achilles Protection — Max 6% incline, NO sprinting.
+Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase incline | Active recovery 3×3 min @ 0% 4.5 km/h | Cooldown 5 min @ 0% 4.0 km/h. *Deload*: Omitted.
+
+| Phase Weeks | Work Interval Incline |
+| :--- | :--- |
+| **Weeks 1–4** | 3% |
+| **Weeks 5–8** | 4% |
+| **Weeks 10–16** | 5% |
+| **Weeks 18–68** | 6% |
+
+🟡 **Active Recovery (Day 4):** Treadmill 25 min @ 0% 4.5 km/h + 10 min deep mobility.
+
+---
+
+## Part 4 — Mobility Protocols
+
+- **Daily Micro (5 min post-strength session):** Dead Hang 30s | Deep Squat Hold 60s | Doorway Chest Stretch 30s/side | World's Greatest Stretch 5/side.
+- **Weekly Macro (Day 4, 10 min):** Cat-Cow 10 reps | 90/90 Hip Stretch 8/side | Thoracic Rotations 8/side | Couch Stretch 45s/side | Sleeper Stretch 30s/side | Prone Y-T-W 8 reps/shape.
+
+---
+
+## Part 5 — Year 1 Master Workout Tables (Weeks 1–52)
+
+**Fixed Warmup Protocol (5 min):**
+- **Day 1**: High Knees 30s, BW Squat 2×8, Dead Bug 1×6/side, Glute Bridge 1×12.
+- **Day 3**: Arm Circles 10/dir, Wall Slides 1×8, Scapular Push-up 2×10, Band Pull-Apart 1×15.
+- **Day 5**: Arm Circles 10/dir, Wall Slides 1×8, Scapular Push-up 2×6, Dead Hang 1×15s, Seated Band Row 1×12.
+
+### Phase 1 — Weeks 1–4 (VO2 Incline: 3%)
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB RDL (2 dumbbells) | 3×8 | 6 kg each | 3s lowering | 120 |
+| 2 | DB Bulgarian Split Squat | 3×8/leg | Bodyweight | 2s lowering | 90 |
+| 3 | DB Glute Bridge (1 DB on hips) | 3×12 | 9 kg | 1s pause | 90 |
+| 4 | Single-Leg Calf Raise | 3×15/leg | Bodyweight | 2s lowering | 60 |
+| 5 | Suitcase Carry | 3×25 m/side | 12 kg | Walk | 90 |
+| 6 | Dead Bug | 3×8/side | Bodyweight | Slow | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pike Hold | 3×15s | Bodyweight | Static | 90 |
+| 2 | DB Floor Press | 3×8 | 6 kg each | 2s lowering | 120 |
+| 3 | Push-Up | 3×6 | Bodyweight | 2s lowering | 90 |
+| 4 | Seated DB OHP | 3×8 | 3 kg each | 2s lowering | 90 |
+| 5 | DB Lateral Raise | 2×12 | 3 kg each | 2s lowering | 60 |
+| 6 | DB OH Triceps Ext (1 DB) | 2×12 | 6 kg total | 2s lowering | 60 |
+| 7 | TRX Y-T-W (Angle 1) | 2×8/shape | Bodyweight | 1s pause | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up Negative | 3×2 | Bodyweight | 3s lowering | 120 |
+| 2 | One-Arm DB Row | 3×8/side | 6 kg | 2s lowering | 90 |
+| 3 | TRX Face Pull (Angle 1) | 3×12 | Bodyweight | 2s lowering | 60 |
+| 4 | DB Curl | 2×10 | 3 kg each | 2s lowering | 60 |
+| 5 | Towel Hang | 3×15s | Bodyweight | Static | 60 |
+| 6 | L-sit Tuck (Bars) | 3×8s | Bodyweight | Static | 60 |
+
+---
+
+### Phase 2 — Weeks 5–8 (VO2 Incline: 4%)
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB RDL | 4×10 | 9 kg each | 3s lowering | 120 |
+| 2 | DB BSS | 3×10/leg | 3 kg each | 2s lowering | 90 |
+| 3 | DB Hip Thrust (on hips) | 3×15 | 9 kg | 2s pause | 90 |
+| 4 | SL Calf Raise (1 DB in hand) | 3×18/leg | 9 kg | 2s lowering | 60 |
+| 5 | Suitcase Carry | 3×30 m/side | 15 kg | Walk | 90 |
+| 6 | Hollow Body Hold | 3×15s | Bodyweight | Static | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pike Hold (feet on chair) | 3×20s | Bodyweight | Static | 90 |
+| 2 | DB Floor Press | 4×10 | 9 kg each | 2s lowering | 120 |
+| 3 | Push-Up | 4×5 | Bodyweight | 2s lowering | 90 |
+| 4 | Seated DB OHP | 3×10 | 6 kg each | 2s lowering | 90 |
+| 5 | Lateral Raise | 3×15 | 3 kg each | 2s lowering | 60 |
+| 6 | OH Triceps Ext | 3×12 | 6 kg total | 2s lowering | 60 |
+| 7 | TRX Y-T-W (Angle 1) | 2×10/shape | Bodyweight | 1s pause | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up Negative | 4×3 | Bodyweight | 4s lowering | 120 |
+| 2 | Chin-Up Negative | 3×3 | Bodyweight | 4s lowering | 120 |
+| 3 | One-Arm DB Row | 3×10/side | 9 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 2) | 3×15 | Bodyweight | 2s lowering | 60 |
+| 5 | DB Hammer Curl | 3×12 | 6 kg each | 2s lowering | 60 |
+| 6 | Towel Hang | 3×25s | Bodyweight | Static | 60 |
+| 7 | L-sit Tuck | 3×10s | Bodyweight | Static | 60 |
+
+---
+
+### Week 9: Deload Microcycle
+VO2 Omitted; Zone 2 light 30 min. 2 sets per exercise. Mobility 15 min.  
+**Loads**: RDL 3 kg each | Floor Press 3 kg each | Row 3 kg | OHP 3 kg each | Carry 9 kg | Hip Thrust 6 kg | Calf 6 kg | Triceps 3 kg | Hammer 3 kg | Lateral 3 kg | Curl 3 kg. No Arm Block.
+
+---
+
+### Phase 4 — Weeks 10–16 (VO2 Incline: 5%) — **Arm Block Active (Appendix B)**
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB RDL | 4×8 | 12 kg each | 3s lowering | 120 |
+| 2 | DB BSS | 4×8/leg | 9 kg each | 2s lowering | 90 |
+| 3 | DB Hip Thrust | 4×10 | 12 kg on hips | 2s pause | 90 |
+| 4 | SL Calf Raise | 3×20/leg | 9 kg | 2s lowering | 60 |
+| 5 | Pallof Press (Band 30) | 3×12/side | 30 kg band | 1s pause | 60 |
+| 6 | Dead Bug | 3×10/side | Bodyweight | Slow | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Walk (Partial) | 3×3 | Bodyweight | Slow | 90 |
+| 2 | DB Floor Press | 4×6 | 12 kg each | 2s lowering | 120 |
+| 3 | Deficit Push-Up | 3×6 | Bodyweight | 2s lowering | 90 |
+| 4 | Seated DB OHP | 3×8 | 6 kg each | 2s lowering | 90 |
+| 5 | Lateral Raise | 3×18 | 3 kg each | 2s lowering | 60 |
+| 6 | OH Triceps Ext | 3×10 | 9 kg total | 2s lowering | 60 |
+| 7 | Band Pull-Apart | 2×20 | 30 kg band | 1s pause | 60 |
+| 8 | **Arm Block — Appendix B** (Lateral + Triceps) | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up Overhand | 3×1 | Bodyweight (or Negative) | 2s lowering | 120 |
+| 2 | Chin-Up | 3×1 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 4×8/side | 12 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 2) | 3×12 | Bodyweight | 2s lowering | 60 |
+| 5 | DB Curl | 3×10 | 6 kg each | 2s lowering | 60 |
+| 6 | Towel Hang | 3×30s | Bodyweight | Static | 60 |
+| 7 | L-sit Tuck | 3×10s | Bodyweight | Static | 60 |
+| 8 | **Arm Block — Appendix B** (Curl) | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+---
+
+### Week 17: Deload Microcycle
+2 sets per exercise. **Loads**: RDL 6 kg each | Floor Press 6 kg each | Row 6 kg | OHP 3 kg each | Carry 9 kg | Hip Thrust 6 kg | Calf 6 kg | Triceps 6 kg | Curl 3 kg. **Arm Block**: 1 set at current ladder step.
+
+---
+
+### Phase 6 — Weeks 18–24 (VO2 Incline: 6%)
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB BSS | 4×10/leg | 9 kg each | 2s lowering | 90 |
+| 2 | DB Single-Leg RDL | 4×10/leg | 12 kg | 3s lowering | 120 |
+| 3 | DB Hip Thrust | 4×12 | 15 kg on hips | 2s pause | 90 |
+| 4 | Reverse Lunge + DB | 3×10/leg | 9 kg each | 2s lowering | 90 |
+| 5 | SL Calf Raise | 4×18/leg | 12 kg | 2s lowering | 60 |
+| 6 | Suitcase Carry | 3×40 m/side | 18 kg | Walk | 90 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Walk (Full) | 3×3 | Bodyweight | Slow | 90 |
+| 2 | Single-Arm Floor Press | 4×8/side | 15 kg | 2s lowering | 120 |
+| 3 | Feet-Elevated Push-Up | 4×6 | Bodyweight | 2s lowering | 90 |
+| 4 | Seated DB OHP | 3×10 | 9 kg each | 2s lowering | 90 |
+| 5 | Lateral Raise | 3×20 | 3 kg each | 3s lowering | 60 |
+| 6 | OH Triceps Ext | 3×12 | 9 kg total | 2s lowering | 60 |
+| 7 | TRX Y-T-W (Angle 1) | 3×10/shape | Bodyweight | 1s pause | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up | 4×3 | Bodyweight | 2s lowering | 120 |
+| 2 | Chin-Up | 3×3 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 4×10/side | 12 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 3) | 3×15 | Bodyweight | 2s lowering | 60 |
+| 5 | Hammer Curl | 3×12 | 6 kg each | 2s lowering | 60 |
+| 6 | Towel Hang | 3×35s | Bodyweight | Static | 60 |
+| 7 | L-sit Tuck | 3×12s | Bodyweight | Static | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+---
+
+### Week 25: Deload Microcycle
+2 sets. **Loads**: SL RDL 6 kg | SA Floor Press 9 kg | Row 6 kg | OHP 3 kg each | Carry 9 kg | Hip Thrust 9 kg | Calf 6 kg | Triceps 6 kg. Arm Block: 1 set.
+
+---
+
+### Phase 8 — Weeks 26–32
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB Single-Leg RDL | 4×6/leg | 15 kg | 3s lowering | 120 |
+| 2 | DB BSS | 4×6/leg | 12 kg each | 2s lowering | 90 |
+| 3 | DB Hip Thrust | 4×8 | 18 kg on hips | 2s pause | 90 |
+| 4 | SL Calf Raise | 4×15/leg | 12 kg | 2s lowering | 60 |
+| 5 | Suitcase Carry | 4×30 m/side | 21 kg | Walk | 90 |
+| 6 | Hollow Body Hold | 3×20s | Bodyweight | Static | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Handstand (facing wall) | 3×20s | Bodyweight | Static | 90 |
+| 2 | Single-Arm Floor Press | 4×6/side | 18 kg | 2s lowering | 120 |
+| 3 | Deficit Push-Up | 4×6 | Bodyweight | 2s lowering | 90 |
+| 4 | Seated DB OHP | 3×8 | 9 kg each | 2s lowering | 90 |
+| 5 | Lateral Raise | 3×15 | 3 kg each | 2s lowering | 60 |
+| 6 | OH Triceps Ext | 3×10 | 9 kg total | 2s lowering | 60 |
+| 7 | Band Pull-Apart | 3×20 | 30 kg band | 1s pause | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up | 4×4 | Bodyweight | 2s lowering | 120 |
+| 2 | Chin-Up | 3×4 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 4×8/side | 15 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 3) | 3×12 | Bodyweight | 2s lowering | 60 |
+| 5 | DB Curl | 3×10 | 6 kg each | 2s lowering | 60 |
+| 6 | Towel Hang | 3×40s | Bodyweight | Static | 60 |
+| 7 | L-sit (Tuck or 1-Leg) | 3×12s | Bodyweight | Static | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+---
+
+### Week 33: Deload Microcycle
+2 sets. **Loads**: SL RDL 9 kg | SA Floor Press 9 kg | Row 9 kg | OHP 3 kg each | Carry 12 kg | Hip Thrust 9 kg | Calf 6 kg | Triceps 6 kg | Curl 3 kg. Arm Block: 1 set.
+
+---
+
+### Phase 10 — Weeks 34–40
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB Single-Leg RDL | 4×8/leg | 12 kg | 3s lowering | 120 |
+| 2 | DB BSS (Goblet) | 4×8/leg | 15 kg | 1s bottom pause | 90 |
+| 3 | DB Hip Thrust | 4×10 | 21 kg on hips | 2s pause | 90 |
+| 4 | Reverse Lunge + DB | 3×10/leg | 9 kg each | 2s lowering | 90 |
+| 5 | SL Calf Raise | 4×20/leg | 15 kg | 2s lowering | 60 |
+| 6 | Pallof Press (Band 40) | 3×15/side | 40 kg band | 1s pause | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Handstand | 3×30s | Bodyweight | Static | 90 |
+| 2 | Single-Arm Floor Press | 4×8/side | 21 kg | 1s bottom pause | 120 |
+| 3 | Feet-Elevated Push-Up | 4×6 | Bodyweight | 2s lowering | 90 |
+| 4 | Seated DB OHP | 3×10 | 9 kg each | 2s lowering | 90 |
+| 5 | Lateral Raise | 3×20 | 3 kg each | 3s lowering | 60 |
+| 6 | OH Triceps Ext | 3×12 | 12 kg total | 2s lowering | 60 |
+| 7 | TRX Y-T-W (Angle 1) | 3×12/shape | Bodyweight | 1s pause | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up | 4×5 | Bodyweight | 2s lowering | 120 |
+| 2 | Chin-Up | 3×5 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 4×10/side | 18 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 3) | 3×15 | Bodyweight | 2s lowering | 60 |
+| 5 | DB Curl | 3×12 | 9 kg each | 2s lowering | 60 |
+| 6 | Towel Hang | 3×45s | Bodyweight | Static | 60 |
+| 7 | L-sit | 3×15s | Bodyweight | Static | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+---
+
+### Week 41: Deload Microcycle
+2 sets. **Loads**: SL RDL 6 kg | Goblet BSS 9 kg | SA Floor Press 12 kg | Row 9 kg | OHP 3 kg each | Hip Thrust 12 kg | Calf 9 kg | Triceps 6 kg | Curl 6 kg. Arm Block: 1 set.
+
+---
+
+### Phase 12 — Weeks 42–48
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pistol Squat to Chair | 3×5/leg | Bodyweight | 3s lowering | 120 |
+| 2 | DB Single-Leg RDL | 4×8/leg | 18 kg | 3s lowering | 120 |
+| 3 | DB Hip Thrust | 4×10 | 21 kg on hips | 2s pause | 90 |
+| 4 | Reverse Lunge + DB | 3×12/leg | 12 kg each | 2s lowering | 90 |
+| 5 | SL Calf Raise | 4×20/leg | 18 kg | 2s bottom pause | 60 |
+| 6 | Dead Bug | 3×12/side | Bodyweight | Slow | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Handstand | 3×30s | Bodyweight | Static | 90 |
+| 2 | Single-Arm Floor Press | 4×8/side | 24 kg | 2s lowering | 120 |
+| 3 | Elevated Pike Push-Up | 4×8 | Bodyweight | 2s lowering | 90 |
+| 4 | Seated DB OHP | 3×12 | 12 kg each | 2s lowering | 90 |
+| 5 | Lateral Raise | 3×20 | 6 kg each | 3s lowering | 60 |
+| 6 | OH Triceps Ext | 3×15 | 12 kg total | 2s lowering | 60 |
+| 7 | Band Pull-Apart | 3×20 | 30 kg band | 1s pause | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up | 4×5 | Bodyweight | 2s lowering | 120 |
+| 2 | Chin-Up | 3×5 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 4×10/side | 21 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 3) | 3×18 | Bodyweight | 2s lowering | 60 |
+| 5 | DB Curl | 3×15 | 9 kg each | 2s lowering | 60 |
+| 6 | Towel Hang | 3×45s | Bodyweight | Static | 60 |
+| 7 | L-sit | 3×15s | Bodyweight | Static | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+---
+
+### Week 49: Deload Microcycle
+2 sets. **Loads**: SL RDL 9 kg | SA Floor Press 12 kg | Row 12 kg | OHP 6 kg each | Hip Thrust 12 kg | Calf 9 kg | Triceps 6 kg | Curl 6 kg. Arm Block: 1 set.
+
+---
+
+### Phase 14 — Weeks 50–52
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pistol Squat to Chair | 3×8/leg | Bodyweight | 3s lowering | 120 |
+| 2 | DB Single-Leg RDL | 3×10/leg | 21 kg | 3s lowering | 120 |
+| 3 | DB Hip Thrust | 3×12 | 24 kg on hips | 2s pause | 90 |
+| 4 | Reverse Lunge + DB | 3×12/leg | 12 kg each | 2s lowering | 90 |
+| 5 | SL Calf Raise | 4×20/leg | 21 kg | 2s bottom pause | 60 |
+| 6 | Dead Bug | 3×12/side | Bodyweight | Slow | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Handstand | 3×30s | Bodyweight | Static | 90 |
+| 2 | Single-Arm Floor Press | 3×10/side | 24 kg | 2s lowering | 120 |
+| 3 | Feet-Elevated Push-Up | 4×10 | Bodyweight | 2s lowering | 90 |
+| 4 | Elevated Pike Push-Up | 3×10 | Bodyweight | 2s lowering | 90 |
+| 5 | Seated DB OHP | 3×12 | 12 kg each | 2s lowering | 90 |
+| 6 | Lateral Raise | 3×20 | 6 kg each | 3s lowering | 60 |
+| 7 | OH Triceps Ext | 3×15 | 15 kg total | 2s lowering | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up | 4×6 | Bodyweight | 2s lowering | 120 |
+| 2 | Chin-Up | 3×6 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 3×12/side | 21 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 3) | 3×18 | Bodyweight | 2s lowering | 60 |
+| 5 | DB Curl | 3×15 | 9 kg each | 2s lowering | 60 |
+| 6 | Towel Hang | 3×45s | Bodyweight | Static | 60 |
+| 7 | L-sit | 3×15s | Bodyweight | Static | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+---
+
+## Part 6 — Year 2 Master Workout Tables (Weeks 53–78)
+
+**Year 2 Warmup Protocol:** Same as Year 1 + gentle Wrist Rocks 1×10 on Day 3.
+
+---
+
+### Weeks 53–56
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB Single-Leg RDL | 4×8/leg | 24 kg | 3s lowering | 120 |
+| 2 | DB BSS (Goblet) | 4×8/leg | 18 kg | 2s lowering | 90 |
+| 3 | DB Hip Thrust | 4×10 | 24 kg on hips | 2s pause | 90 |
+| 4 | Reverse Lunge + DB | 3×10/leg | 12 kg each | 2s lowering | 90 |
+| 5 | SL Calf Raise | 4×20/leg | 21 kg | 2s lowering | 60 |
+| 6 | Suitcase Carry | 4×30 m/side | 24 kg | Walk | 90 |
+| 7 | Dead Bug | 3×12/side | Bodyweight | Slow | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Handstand | 3×30s | Bodyweight | Static | 90 |
+| 2 | Single-Arm Floor Press | 4×8/side | 24 kg | 2s lowering | 120 |
+| 3 | Deficit Push-Up | 4×8 | Bodyweight | 2s lowering | 90 |
+| 4 | Single-Arm Seated OHP | 4×8/side | 18 kg | 2s lowering | 90 |
+| 5 | Lateral Raise | 3×15 | 9 kg each | 2s lowering | 60 |
+| 6 | OH Triceps Ext | 3×12 | 18 kg total | 2s lowering | 60 |
+| 7 | Band Pull-Apart | 2×20 | 30 kg band | 1s pause | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up | 4×6 | Bodyweight | 2s lowering | 120 |
+| 2 | Chin-Up | 3×6 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 4×10/side | 24 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 3) | 3×15 | Bodyweight | 2s lowering | 60 |
+| 5 | Hammer Curl | 3×12 | 12 kg each | 2s lowering | 60 |
+| 6 | Towel Hang | 3×45s | Bodyweight | Static | 60 |
+| 7 | L-sit | 3×15s | Bodyweight | Static | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Week 57: Deload Microcycle** — 2 sets. **Loads**: SL RDL 12 kg | SA Floor Press 12 kg | Row 12 kg | SA OHP 9 kg | Carry 12 kg | Hip Thrust 12 kg | Calf 12 kg | Triceps 9 kg | Hammer 6 kg. Arm Block: 1 set.
+
+---
+
+### Weeks 58–60
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB Single-Leg RDL | 4×8/leg | 24 kg | 3s lowering | 120 |
+| 2 | BSS (Goblet) | 4×10/leg | 21 kg | 1s pause | 90 |
+| 3 | Hip Thrust | 4×12 | 24 kg | 2s pause | 90 |
+| 4 | Reverse Lunge + DB | 3×10/leg | 12 kg each | 2s lowering | 90 |
+| 5 | SL Calf Raise | 4×20/leg | 24 kg | 2s pause | 60 |
+| 6 | Pallof Press (Band 40) | 3×15/side | 40 kg band | 1s pause | 60 |
+| 7 | Hollow Body Hold | 3×20s | Bodyweight | Static | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Handstand | 3×35s | Bodyweight | Static | 90 |
+| 2 | SA Floor Press | 4×8/side | 24 kg | 2s lowering | 120 |
+| 3 | Feet-Elevated Push-Up | 4×10 | Bodyweight | 2s lowering | 90 |
+| 4 | SA Seated OHP | 4×10/side | 21 kg | 2s lowering | 90 |
+| 5 | Lateral Raise | 3×18 | 9 kg each | 3s lowering | 60 |
+| 6 | OH Triceps Ext | 3×12 | 21 kg total | 2s lowering | 60 |
+| 7 | TRX Y-T-W (Angle 1) | 3×10/shape | Bodyweight | 1s pause | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up | 4×6 | Bodyweight | 2s lowering | 120 |
+| 2 | Chin-Up | 3×6 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 4×10/side | 24 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 3) | 3×18 | Bodyweight | 2s lowering | 60 |
+| 5 | DB Curl | 3×12 | 12 kg each | 2s lowering | 60 |
+| 6 | Towel Hang | 3×50s | Bodyweight | Static | 60 |
+| 7 | L-sit | 3×18s | Bodyweight | Static | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Week 61: Deload Microcycle** — 2 sets. **Loads**: SL RDL 12 kg | SA Floor Press 12 kg | Row 12 kg | SA OHP 12 kg | Goblet BSS 12 kg | Calf 12 kg | Triceps 12 kg | Curl 6 kg. Arm Block: 1 set.
+
+---
+
+### Weeks 62–64
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB Single-Leg RDL | 4×6/leg | 24 kg | 3s lowering | 120 |
+| 2 | BSS (Goblet) | 4×8/leg | 24 kg | 1s pause | 90 |
+| 3 | Hip Thrust | 4×10 | 24 kg | 3s pause | 90 |
+| 4 | Walking Lunge (Goblet) | 3×12/leg | 18 kg | 2s lowering | 90 |
+| 5 | SL Calf Raise | 4×15/leg | 24 kg | 2s lowering | 60 |
+| 6 | Suitcase Carry | 4×40 m/side | 24 kg | Walk | 90 |
+| 7 | Hollow Body Hold | 3×25s | Bodyweight | Static | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Handstand | 3×35s | Bodyweight | Static | 90 |
+| 2 | SA Floor Press | 5×6/side | 24 kg | 2s lowering | 120 |
+| 3 | Weighted Deficit Push-Up | 4×6 | Bodyweight +5 kg | 2s lowering | 90 |
+| 4 | SA Seated OHP | 4×8/side | 24 kg | 2s lowering | 90 |
+| 5 | Lateral Raise | 4×15 | 9 kg each | 3s lowering | 60 |
+| 6 | OH Triceps Ext | 3×10 | 21 kg total | 2s lowering | 60 |
+| 7 | Band Pull-Apart | 3×20 | 30 kg band | 1s pause | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Weighted Pull-Up | 5×5 | Bodyweight +5 kg | 2s lowering | 120 |
+| 2 | Chin-Up | 4×5 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 4×8/side | 24 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 3) | 3×15 | Bodyweight | 2s lowering | 60 |
+| 5 | Single-Arm Curl | 4×10/side | 15 kg | 2s lowering | 60 |
+| 6 | Towel Hang | 3×50s | Bodyweight | Static | 60 |
+| 7 | L-sit | 3×20s | Bodyweight | Static | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Week 65: Deload Microcycle** — 2 sets. **Loads**: SL RDL 12 kg | SA Floor Press 12 kg | Row 12 kg | SA OHP 12 kg | Goblet 12 kg | Carry 12 kg | SA Curl 9 kg | Triceps 12 kg. Arm Block: 1 set.
+
+---
+
+### Weeks 66–68 (Peak Strength Phase)
+
+**Day 1 — Legs + Core**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB Single-Leg RDL | 4×6/leg | 24 kg | 3s lowering | 120 |
+| 2 | BSS (Goblet) | 4×6/leg | 24 kg | 2s pause | 90 |
+| 3 | Hip Thrust | 4×8 | 24 kg | 3s pause | 90 |
+| 4 | Pistol Squat to Chair | 3×5/leg | Bodyweight | 3s lowering | 120 |
+| 5 | SL Calf Raise | 4×12/leg | 24 kg | 2s lowering | 60 |
+| 6 | Suitcase Carry | 4×40 m/side | 24 kg | Walk | 90 |
+| 7 | Pallof Press (Band 40) | 3×12/side | 40 kg band | 1s pause | 60 |
+
+**Day 3 — Push**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Wall Handstand | 3×40s | Bodyweight | Static | 90 |
+| 2 | SA Floor Press | 5×6/side | 24 kg | 2s lowering | 120 |
+| 3 | Elevated Pike Push-Up | 4×8 | Bodyweight | 2s lowering | 90 |
+| 4 | SA Seated OHP | 4×6/side | 24 kg | 2s lowering | 90 |
+| 5 | Lateral Raise | 4×12 | 9 kg each | 3s lowering | 60 |
+| 6 | OH Triceps Ext | 3×8 | 24 kg total | 2s lowering | 60 |
+| 7 | TRX Y-T-W (Angle 1) | 3×12/shape | Bodyweight | 1s pause | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+**Day 5 — Pull**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Weighted Pull-Up | 5×5 | Bodyweight +5 kg | 2s lowering | 120 |
+| 2 | Weighted Chin-Up | 4×5 | Bodyweight +5 kg | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 4×8/side | 24 kg | 2s lowering | 90 |
+| 4 | TRX Face Pull (Angle 4) | 3×18 | Bodyweight | 2s lowering | 60 |
+| 5 | Single-Arm Curl | 4×8/side | 18 kg | 2s lowering | 60 |
+| 6 | Towel Hang | 3×60s | Bodyweight | Static | 60 |
+| 7 | L-sit | 3×20s | Bodyweight | Static | 60 |
+| 8 | Arm Block — Appendix B | Per Ladder | Per Ladder | Per Ladder | 60 |
+
+---
+
+### Weeks 69–72 (Transition Phase)
+VO2 Omitted. Zone 2: 3×/week (Days 2, 4, 6), 40 min, 4% incline, 5.5 km/h.  
+**Week 69: Deload** — 2 sets. **Loads**: SL RDL 12 kg | SA Floor Press 12 kg | Row 12 kg | SA OHP 12 kg | Goblet 12 kg | Carry 12 kg | SA Curl 9 kg | Triceps 12 kg. Arm Block: 1 set.
+
+**Weeks 70–72 Workout Execution:**
+- **Day 1**: SL RDL 3×8/leg @ 24 kg | BSS Goblet 3×8/leg @ 24 kg | Hip Thrust 3×10 @ 24 kg | SL Calf 3×15/leg @ 24 kg | Carry 3×30 m/side @ 24 kg.
+- **Day 3**: Handstand 3×30s | SA Floor Press 3×8/side @ 24 kg | Deficit Push-Up 3×8 | SA OHP 3×8/side @ 24 kg | Lateral Raise 3×15 @ 9 kg each | Triceps Ext 2×12 @ 24 kg | Arm Block.
+- **Day 5**: Pull-Up 3×6 | Chin-Up 3×5 | One-Arm Row 3×10/side @ 24 kg | Face Pull 3×15 | SA Curl 3×12/side @ 18 kg | Towel Hang 3×45s | L-sit 3×15s | Arm Block.
+
+---
+
+### Weeks 73–78 (Maintenance Phase, 2 Strength Days)
+Zone 2: 3×/week, 45 min, 4% incline, 5.5 km/h.  
+**Week 73: Deload** — 2 sets @ 70% load: SL RDL 15 kg | SA Floor Press 15 kg | Row 15 kg | SA OHP 15 kg | Goblet BSS 15 kg | Lateral 6 kg each | SA Curl 12 kg | Triceps 15 kg. Arm Block: 1 set.
+
+**Weeks 74–78 Workout Tables:**
+
+**Day 1 — Strength A**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | DB Single-Leg RDL | 3×8/leg | 24 kg | 3s lowering | 120 |
+| 2 | BSS (Goblet) | 3×8/leg | 24 kg | 2s lowering | 90 |
+| 3 | SA Floor Press | 3×8/side | 24 kg | 2s lowering | 120 |
+| 4 | Seated DB OHP | 3×8 | 12 kg each | 2s lowering | 90 |
+| 5 | Lateral Raise | 2×15 | 9 kg each | 2s lowering | 60 |
+| 6 | Dead Bug | 2×10/side | Bodyweight | Slow | 60 |
+| 7 | Arm Block (Lateral + Triceps) | 1 set | Current step | Per Ladder | 60 |
+
+**Day 4 — Strength B**
+
+| # | Exercise | Sets × Reps | Exact Load | Tempo | Rest (s) |
+|---|---|---|---|---|---|
+| 1 | Pull-Up | 3×6 | Bodyweight | 2s lowering | 120 |
+| 2 | Chin-Up | 2×5 | Bodyweight | 2s lowering | 120 |
+| 3 | One-Arm DB Row | 3×10/side | 24 kg | 2s lowering | 90 |
+| 4 | Wall Handstand | 3×30s | Bodyweight | Static | 90 |
+| 5 | Single-Arm Curl | 2×12/side | 18 kg | 2s lowering | 60 |
+| 6 | Towel Hang | 2×45s | Bodyweight | Static | 60 |
+| 7 | Arm Block (Curl) | 1 set | Current step | Per Ladder | 60 |
+
+---
+
+## Part 7 — Beyond Week 78: Permanent Lifetime Maintenance Protocol
+
+| Day | Activity | Target Duration | Specifics |
+| :--- | :--- | :--- | :--- |
+| **Day 1** | **Strength A + Arm Block (1 set)** | 35 min | Per Maintenance Table |
+| **Day 2** | **Zone 2 Base Walking** | 45 min | 4% incline, 5.5 km/h |
+| **Day 3** | **Active Rest / Mobility** | 10 min | Weekly macro-mobility sequence |
+| **Day 4** | **Strength B + Arm Block (1 set)** | 35 min | Per Maintenance Table |
+| **Day 5** | **Zone 2 Base Walking** | 45 min | 4% incline, 5.5 km/h |
+| **Day 6** | **Free Treadmill Walk** | 20–30 min | 0% incline, 4.5 km/h |
+| **Day 7** | **Complete Rest** | — | System recovery |
+
+**Lifetime Maintenance Rules:** Light deload every 8 weeks (2 sets, 70% loads, light Zone 2, 1 set Arm Block). Bi-annual checkup every 6 months: Are loads preserved? Are Pull-ups clean? Is Handstand stable? Yes → Continue schedule. No → Return to 4-week Transition Phase.
+
+---
+
+## Appendix A — Deload Summary (Weeks 9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73)
+
+- **Execution Protocol:** Exactly 2 sets per exercise | Loads set to 60% of phase (Week 73: 70%), **rounded DOWN to available increments: per hand 3/6/9/12 kg; single dumbbell 3 kg increments** | Standard tempos | Handstand 15–20s | VO2 Max omitted → replaced with 30 min light Zone 2 | Deep Mobility 15–20 min | **Arm Block: 1 set at current ladder step.**
+- **Prohibited:** No improvised finishers, no PR attempts, no sets to failure, no weight increases, no RIR calculations.
+
+---
+
+## Appendix B — Arm Block v5 (Double Progression) — Active from Week 10
+
+**Placement:** Executed at the end of Day 3 and Day 5, after all main table exercises and before micro-mobility.  
+**Core Principle:** Prescribed ladders. ✔ Completed all sets & reps at prescribed tempo → Advance 1 step up the ladder next workout. ✗ Incomplete reps → Repeat same step next workout. No subjective decisions.
+
+### Day 3 Finish (2 sets per exercise, 60s rest):
+
+| Step | DB Lateral Raise (2s lowering) | DB OH Triceps Ext — Single DB (2s lowering) |
+| :--- | :--- | :--- |
+| **1** | 3 kg each × 12 | 6 kg total × 12 |
+| **2** | 3 kg each × 15 | 6 kg total × 15 |
+| **3** | 3 kg each × 18 | 9 kg total × 10 |
+| **4** | 3 kg each × 20 | 9 kg total × 12 |
+| **5** | 6 kg each × 10 | 9 kg total × 15 |
+| **6** | 6 kg each × 12 | 12 kg total × 10 |
+| **7** | 6 kg each × 15 | 12 kg total × 12 |
+| **8** | 9 kg each × 10 | 15 kg total × 10 |
+| **9** | 9 kg each × 12 | 15 kg total × 12 |
+
+### Day 5 Finish (2 sets, 60s rest):
+
+| Step | DB Curl per hand (2s lowering + 1s peak contraction) |
+| :--- | :--- |
+| **1** | 3 kg each × 12 |
+| **2** | 3 kg each × 15 |
+| **3** | 6 kg each × 10 |
+| **4** | 6 kg each × 12 |
+| **5** | 6 kg each × 15 |
+| **6** | 9 kg each × 10 |
+| **7** | 9 kg each × 12 |
+| **8** | 12 kg each × 10 |
+
+**Edge of the Ladder:** Completing Step 9 (or Step 8 on Curls) twice consecutively → Add a 3rd set at the same weight × reps.
+
+**Block Governance Rules:**
+- **Mechanical Stop:** An uncompleted rep at tempo ends the set immediately. No extra reps or compensation.
+- **Deload Week:** Perform 1 set at current ladder step.
+- **Priority Rule:** If main table exercises are incomplete on a given day, the Arm Block is cancelled for that day.
+- **Cancellation Rule:** Two consecutive workouts showing strength decline on main exercises → Arm Block is cancelled until the next scheduled Deload week.
+- **Weeks 74+ Maintenance:** Perform 1 set per exercise at current ladder step.
+"""
+
+with open('/home/uns/fitup/PROGRAM_GUIDE.md', 'w', encoding='utf-8') as f:
+    f.write(content)
+
+print("PROGRAM_GUIDE.md written successfully in English!")
