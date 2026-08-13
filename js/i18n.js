@@ -94,6 +94,7 @@ const I18n = (() => {
       resistance: "Resistance:",
       progression: "Progression:",
       watch_gif: "▶ Watch Animation",
+      loading_gif: "Loading GIF animation...",
       category: "Category",
       difficulty: "Difficulty",
 
@@ -756,6 +757,7 @@ const I18n = (() => {
       resistance: "התנגדות:",
       progression: "התקדמות:",
       watch_gif: "▶ צפה ב-GIF",
+      loading_gif: "טוען אנימציית GIF...",
       category: "קטגוריה",
       difficulty: "רמת קושי",
 
@@ -1369,6 +1371,7 @@ const I18n = (() => {
       resistance: "المقاومة:",
       progression: "التطور:",
       watch_gif: "▶ مشاهدة الحركة",
+      loading_gif: "جاري تحميل صورة GIF...",
       category: "الفئة",
       difficulty: "مستوى الصعوبة",
 

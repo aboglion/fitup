@@ -115,10 +115,9 @@ const TodayPage = (() => {
    * Navigate to a specific day
    */
   function navigate(offset) {
-    // Days are displayed Right-to-Left (earlier days on right, later days on left).
-    // Left button (offset = -1) advances to Next Day (+1).
-    // Right button (offset = +1) goes back to Prev Day (-1).
-    const newIndex = currentDayIndex - offset;
+    // Left button (offset = -1) goes to Prev Day (-1).
+    // Right button (offset = +1) advances to Next Day (+1).
+    const newIndex = currentDayIndex + offset;
     if (newIndex >= 0 && newIndex < allPlanDays.length) {
       currentDayIndex = newIndex;
       render();
@@ -1117,14 +1116,19 @@ const TodayPage = (() => {
 
       return `
         <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="ex-card-${idx}" style="--glow-color: ${color};">
-          <div class="exercise-hero-container" style="position: relative;">
+          <div class="exercise-hero-container skeleton-loading" style="position: relative;">
+            <div class="skeleton-placeholder" style="gap: 4px;">
+              <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
+            </div>
             <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-weight: 800; font-family: 'Inter', sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid rgba(255,255,255,0.1);">
               #${idx + 1}
             </div>
             <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
-                 class="exercise-hero-image"
+                 class="exercise-hero-image skeleton-img"
                  loading="eager" decoding="async"
-                 alt="${ex.name}" onerror="UI.handleImageFallback(this, 'png')"
+                 alt="${ex.name}" 
+                 onload="UI.handleImageLoaded(this)"
+                 onerror="UI.handleImageFallback(this, 'png')"
                  onclick="TodayPage.handleImageClick(event, ${idx}, '${ex.name.replace(/'/g, "\\'")}')">
             ${newBadgeHTML}
           </div>

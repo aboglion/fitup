@@ -768,8 +768,11 @@ const ExercisesPage = (() => {
 
     return `
       <div class="guide-card" style="cursor: pointer;" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}')">
-        <div class="guide-card-image-container diff-${diffClass}">
-          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image" alt="${ex.name}" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'png')">
+        <div class="guide-card-image-container diff-${diffClass} skeleton-loading">
+          <div class="skeleton-placeholder" style="gap: 4px;">
+            <div class="skeleton-spinner" style="width: 18px; height: 18px; border-width: 2px;"></div>
+          </div>
+          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image skeleton-img" alt="${ex.name}" loading="eager" decoding="async" onload="UI.handleImageLoaded(this)" onerror="UI.handleImageFallback(this, 'png')">
         </div>
         <div class="guide-card-content">
           <div class="guide-card-title">
@@ -801,7 +804,20 @@ const ExercisesPage = (() => {
     const fullHtml = `
       <div style="display: flex; flex-direction: column; gap: 16px;">
         ${html}
-        <img src="${gifPath}" style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" alt="${ex.name} GIF" loading="eager" decoding="async" onerror="UI.handleImageFallback(this, 'gif')">
+        <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 200px; border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;">
+          <div class="skeleton-placeholder">
+            <div class="skeleton-spinner"></div>
+            <span class="skeleton-text">🎬 ${I18n.t('loading_gif')}</span>
+          </div>
+          <img src="${gifPath}" 
+               class="skeleton-img"
+               style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" 
+               alt="${ex.name} GIF" 
+               loading="eager" 
+               decoding="async" 
+               onload="UI.handleImageLoaded(this)"
+               onerror="UI.handleImageFallback(this, 'gif')">
+        </div>
       </div>
     `;
     UI.showModal(ex.name, fullHtml);

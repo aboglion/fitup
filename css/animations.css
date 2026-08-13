@@ -63,3 +63,101 @@
   0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 15px rgba(239, 68, 68, 0.8); }
   50% { opacity: 0.8; transform: scale(1.05); box-shadow: 0 0 25px rgba(239, 68, 68, 1); }
 }
+
+/* ===== Skeleton Loader Animations & Styles ===== */
+@keyframes skeletonShimmer {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(200%); }
+}
+
+@keyframes skeletonSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.skeleton-loading {
+  position: relative !important;
+  overflow: hidden !important;
+  background: var(--bg-elevated, rgba(255, 255, 255, 0.05)) !important;
+  min-height: 140px;
+}
+
+.skeleton-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.06) 30%,
+    rgba(59, 130, 246, 0.22) 50%,
+    rgba(255, 255, 255, 0.06) 70%,
+    transparent 100%
+  );
+  animation: skeletonShimmer 1.5s infinite ease-in-out;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.skeleton-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.skeleton-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(59, 130, 246, 0.2);
+  border-top-color: var(--accent-primary, #3b82f6);
+  border-radius: 50%;
+  animation: skeletonSpin 0.8s linear infinite;
+}
+
+.skeleton-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary, #9ca3af);
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  white-space: nowrap;
+}
+
+.skeleton-img {
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skeleton-loading .skeleton-img {
+  opacity: 0 !important;
+}
+
+.skeleton-loaded .skeleton-img,
+.skeleton-img.loaded {
+  opacity: 1 !important;
+}
+
+.skeleton-loaded .skeleton-placeholder,
+.skeleton-loaded::before {
+  display: none !important;
+}
+

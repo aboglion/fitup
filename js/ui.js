@@ -35,6 +35,17 @@ const UI = (() => {
     renderCurrentModal();
   }
 
+  function handleImageLoaded(imgEl) {
+    if (!imgEl) return;
+    imgEl.classList.add('loaded');
+    imgEl.style.opacity = '1';
+    const container = imgEl.closest('.skeleton-loading');
+    if (container) {
+      container.classList.remove('skeleton-loading');
+      container.classList.add('skeleton-loaded');
+    }
+  }
+
   function renderCurrentModal() {
     if (modalStack.length === 0) {
       document.getElementById('modal-overlay').classList.add('hidden');
@@ -44,6 +55,14 @@ const UI = (() => {
     document.getElementById('modal-title').innerHTML = current.title;
     document.getElementById('modal-body').innerHTML = current.bodyHTML;
     document.getElementById('modal-overlay').classList.remove('hidden');
+
+    setTimeout(() => {
+      document.querySelectorAll('#modal-body .skeleton-img, #modal-header .skeleton-img').forEach(img => {
+        if (img.complete && img.naturalWidth > 0) {
+          handleImageLoaded(img);
+        }
+      });
+    }, 15);
   }
 
   /**
@@ -193,6 +212,8 @@ const UI = (() => {
         const b = imgEl.parentElement.querySelector('.fb-gif-badge');
         if (b) b.style.display = 'none';
       }
+      const containerG = imgEl.closest('.skeleton-loading');
+      if (containerG) containerG.classList.remove('skeleton-loading');
       imgEl.style.display = 'none';
     } else if (type === 'png') {
       const match = urlDecoded.match(/images\/exercises\/([^/]+)$/);
@@ -235,6 +256,8 @@ const UI = (() => {
           return;
         }
       }
+      const containerP = imgEl.closest('.skeleton-loading');
+      if (containerP) containerP.classList.remove('skeleton-loading');
       if (imgEl.classList.contains('exercise-image') || imgEl.classList.contains('exercise-hero-image')) {
         if (imgEl.parentElement) imgEl.parentElement.style.display = 'none';
       } else {
@@ -277,13 +300,17 @@ const UI = (() => {
 
     const modalTitleHTML = `
       <div style="display: flex; align-items: center; gap: 16px; direction: rtl; width: 100%; padding-left: 48px; padding-right: 12px;">
-        <div style="width: 140px; height: 140px; min-width: 140px; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); flex-shrink: 0;">
+        <div class="skeleton-loading" style="width: 140px; height: 140px; min-width: 140px; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); flex-shrink: 0; position: relative;">
+          <div class="skeleton-placeholder" style="gap: 4px;">
+            <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
+          </div>
           <img src="${pngPath}" 
-               class="modal-title-img"
+               class="modal-title-img skeleton-img"
                style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px; mix-blend-mode: multiply;" 
                alt="${title}" 
                loading="eager" 
                decoding="async" 
+               onload="UI.handleImageLoaded(this)"
                onerror="UI.handleImageFallback(this, 'png')">
         </div>
         <div style="display: flex; flex-direction: column; gap: 6px; justify-content: center;">
@@ -297,23 +324,34 @@ const UI = (() => {
 
     if (gifExists) {
       mediaHTML = `
-        <div style="position: relative; width: 100%; min-height: 240px; background: rgba(0, 0, 0, 0.25); border-radius: 14px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); padding: 6px; box-shadow: inset 0 0 20px rgba(0,0,0,0.15);">
+        <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 240px; background: rgba(0, 0, 0, 0.25); border-radius: 14px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); padding: 6px; box-shadow: inset 0 0 20px rgba(0,0,0,0.15);">
+          <div class="skeleton-placeholder">
+            <div class="skeleton-spinner"></div>
+            <span class="skeleton-text">🎬 ${I18n.t('loading_gif')}</span>
+          </div>
           <img src="${gifPath}" 
+               class="skeleton-img"
                style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
                alt="${title} GIF" 
                loading="eager" 
                decoding="async" 
+               onload="UI.handleImageLoaded(this)"
                onerror="UI.handleImageFallback(this, 'gif')">
         </div>
       `;
     } else {
       mediaHTML = `
-        <div style="position: relative; width: 100%; border-radius: 14px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); padding: 6px;">
+        <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 240px; border-radius: 14px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); padding: 6px; display: flex; align-items: center; justify-content: center;">
+          <div class="skeleton-placeholder">
+            <div class="skeleton-spinner"></div>
+          </div>
           <img src="${pngPath}" 
+               class="skeleton-img"
                style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
                alt="${title}" 
                loading="eager" 
                decoding="async" 
+               onload="UI.handleImageLoaded(this)"
                onerror="UI.handleImageFallback(this, 'png')">
         </div>
       `;
@@ -748,6 +786,7 @@ const UI = (() => {
     hideModal,
     showImageModal,
     hasGif,
+    handleImageLoaded,
     handleImageFallback,
     getDayTypeInfo,
     getCategoryColor,
