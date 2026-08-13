@@ -435,6 +435,9 @@ const App = (() => {
     switch (pageName) {
       case 'today':
       case 'nutrition':
+        if (pageName === 'nutrition' && window.TodayPage && window.TodayPage.resetNutritionDateToToday) {
+          window.TodayPage.resetNutritionDateToToday();
+        }
         if (window.TodayPage && window.TodayPage.render) window.TodayPage.render();
         break;
       case 'exercises':
