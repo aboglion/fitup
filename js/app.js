@@ -399,6 +399,11 @@ const App = (() => {
    */
   function navigateTo(pageName, pushState = true) {
     if (pageName === 'calendar') pageName = 'today'; // Fallback for old cached URLs
+    
+    // Always hide any open modal overlay when switching views
+    const modalOverlay = document.getElementById('modal-overlay');
+    if (modalOverlay) modalOverlay.classList.add('hidden');
+
     if (pageName === currentPage) return;
     
     const pageEl = document.getElementById(`page-${pageName}`);

@@ -184,7 +184,7 @@ const AnatomyMap = (() => {
   /**
    * Show detailed modal when a muscle group is clicked
    */
-  function showMuscleDetails(muscleKey, muscleName, pct) {
+  async function showMuscleDetails(muscleKey, muscleName, pct) {
     const muscleExerciseMap = {
       chest: ['Dumbbell Floor Press', 'Push-Up', 'Deficit Push-Up', 'Single-Arm Floor Press'],
       shoulders: ['Seated Dumbbell OHP', 'Pike Push-Up', 'Dumbbell Lateral Raise', 'TRX Face Pull'],
@@ -202,38 +202,98 @@ const AnatomyMap = (() => {
       lowerBack: ['Dumbbell RDL', 'Single-Leg RDL', 'Hip Thrust']
     };
 
-    const exercises = muscleExerciseMap[muscleKey] || ['תרגילי התוכנית היחידיים המכוונים בקטגוריה זו'];
+    const exerciseNames = muscleExerciseMap[muscleKey] || ['תרגילי התוכנית היחידיים המכוונים בקטגוריה זו'];
+
+    let trackingMap = {};
+    let allPlanDays = [];
+    try {
+      if (typeof DB !== 'undefined') {
+        const trackingList = await DB.getAllTracking();
+        if (trackingList) {
+          trackingList.forEach(t => { trackingMap[t.dayIndex] = t; });
+        }
+        allPlanDays = await DB.getAllPlan();
+      }
+    } catch(e) {
+      console.warn('Could not load exercise stats:', e);
+    }
+
+    const exercises = exerciseNames.map(exName => {
+      let totalAppeared = 0;
+      let completedCount = 0;
+
+      if (allPlanDays && allPlanDays.length > 0) {
+        allPlanDays.forEach(day => {
+          if (day.exercises && Array.isArray(day.exercises)) {
+            const hasEx = day.exercises.some(e => e.name && e.name.toLowerCase().includes(exName.toLowerCase()));
+            if (hasEx) {
+              totalAppeared++;
+              if (trackingMap[day.dayIndex] && trackingMap[day.dayIndex].completed) {
+                completedCount++;
+              }
+            }
+          }
+        });
+      }
+
+      let exPct = pct;
+      if (totalAppeared > 0) {
+        exPct = Math.min(100, Math.round((completedCount / totalAppeared) * 100));
+      }
+
+      return {
+        name: exName,
+        pct: exPct,
+        completedCount,
+        totalAppeared
+      };
+    });
 
     const modalContent = `
       <div style="padding: 12px 4px; text-align: right;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-          <span style="font-size: 20px; font-weight: 800; color: var(--text-primary);">${muscleName}</span>
-          <span style="font-size: 14px; font-weight: 900; color: var(--accent-primary); background: var(--bg-elevated); padding: 4px 12px; border-radius: 20px;">
-            ${pct}% ${I18n.t('muscle_map_title')}
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <span style="font-size: 20px; font-weight: 900; color: var(--text-primary);">${muscleName}</span>
+          <span style="font-size: 14px; font-weight: 900; color: #38bdf8; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 4px 12px; border-radius: 20px;">
+            💪 ציון שריר: ${pct}%
           </span>
         </div>
-        <div style="width: 100%; height: 8px; background: var(--bg-input); border-radius: 4px; overflow: hidden; margin-bottom: 16px;">
-          <div style="height: 100%; width: ${pct}%; background: var(--accent-gradient);"></div>
+        <div style="width: 100%; height: 8px; background: var(--bg-input); border-radius: 4px; overflow: hidden; margin-bottom: 18px;">
+          <div style="height: 100%; width: ${pct}%; background: linear-gradient(90deg, #38bdf8, #34d399); border-radius: 4px; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);"></div>
         </div>
-        <h4 style="font-size: 14px; color: var(--text-secondary); margin-bottom: 8px;">תרגילים בתוכנית הפועלים על שריר זה:</h4>
-        <ul style="list-style: none; padding: 0; margin: 0 0 16px 0; display: flex; flex-direction: column; gap: 6px;">
+
+        <h4 style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px;">תרגילים בתוכנית והתקדמות אישית:</h4>
+
+        <ul style="list-style: none; padding: 0; margin: 0 0 18px 0; display: flex; flex-direction: column; gap: 8px;">
           ${exercises.map(ex => `
-            <li style="background: var(--bg-elevated); border: 1px solid var(--border-light); padding: 8px 12px; border-radius: 8px; font-size: 13px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-              <span>💪</span> <span>${ex}</span>
+            <li style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); padding: 10px 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+                  <span>🏋️‍♂️</span> <span>${ex.name}</span>
+                </span>
+                <span style="font-size: 12px; font-weight: 800; color: ${ex.pct > 50 ? '#34d399' : '#38bdf8'};">
+                  ${ex.pct}%
+                </span>
+              </div>
+              <div style="width: 100%; height: 5px; background: rgba(0,0,0,0.3); border-radius: 3px; overflow: hidden;">
+                <div style="height: 100%; width: ${ex.pct}%; background: ${ex.pct > 50 ? 'linear-gradient(90deg, #34d399, #10b981)' : 'linear-gradient(90deg, #38bdf8, #6366f1)'}; border-radius: 3px; transition: width 0.6s ease;"></div>
+              </div>
             </li>
           `).join('')}
         </ul>
-        <button id="view-ex-dir-btn" class="btn-primary" style="width: 100%;">
+
+        <button id="view-ex-dir-btn" class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; border-radius: 10px;">
           📖 פתח את מדריך התרגילים
         </button>
       </div>
     `;
 
     UI.showModal(`מפת שרירים - ${muscleName}`, modalContent);
+
     const btn = document.getElementById('view-ex-dir-btn');
     if (btn) {
       btn.onclick = () => {
-        UI.hideModal();
+        const overlay = document.getElementById('modal-overlay');
+        if (overlay) overlay.classList.add('hidden');
         if (typeof App !== 'undefined') App.navigateTo('exercises');
       };
     }
