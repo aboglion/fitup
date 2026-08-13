@@ -75,10 +75,10 @@ const AnatomyMap = (() => {
                 const midX = c.side === 'left' ? c.nodeX - 4 : c.nodeX + 4;
                 return `
                   <path d="M ${c.nodeX} ${c.nodeY} L ${midX} ${c.nodeY} L ${targetX} ${c.nodeY}" 
-                        stroke="${c.color}" stroke-width="0.8" fill="none" opacity="0.8" 
-                        stroke-dasharray="1.5 1" style="filter: drop-shadow(0 0 2px ${c.color});" />
-                  <circle cx="${c.nodeX}" cy="${c.nodeY}" r="1.2" fill="${c.color}" />
-                  <circle cx="${targetX}" cy="${c.nodeY}" r="1" fill="${c.color}" />
+                        stroke="${c.color}" stroke-width="0.35" fill="none" opacity="0.65" 
+                        stroke-dasharray="1 0.8" style="filter: drop-shadow(0 0 1px ${c.color});" />
+                  <circle cx="${c.nodeX}" cy="${c.nodeY}" r="0.7" fill="${c.color}" />
+                  <circle cx="${targetX}" cy="${c.nodeY}" r="0.6" fill="${c.color}" />
                 `;
               }).join('')}
             </svg>
@@ -191,14 +191,15 @@ const AnatomyMap = (() => {
         .callout-label {
           position: absolute; display: flex; flex-direction: column; gap: 2px;
           align-items: center; text-align: center; justify-content: center;
-          background: rgba(8, 12, 22, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.12);
+          background: rgba(5, 15, 10, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(0, 255, 102, 0.25);
           padding: 5px 10px; border-radius: 8px; transform: translateY(-50%);
-          z-index: 20; box-shadow: 0 4px 14px rgba(0,0,0,0.6);
-          width: max-content; min-width: 64px; white-space: nowrap; transition: transform 0.2s ease, border-color 0.2s ease;
+          z-index: 20; box-shadow: 0 4px 20px rgba(0,0,0,0.4), inset 0 0 15px rgba(0, 255, 102, 0.05);
+          width: max-content; min-width: 64px; white-space: nowrap; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
         }
         .callout-label:hover {
           transform: translateY(-50%) scale(1.06);
+          background: rgba(5, 25, 15, 0.6);
           border-color: #00ff66;
         }
         .callout-label.side-left {
