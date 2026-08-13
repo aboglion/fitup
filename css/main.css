@@ -101,7 +101,6 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
-  direction: rtl;
 }
 
 /* Scrollbar */
@@ -138,16 +137,24 @@ body {
 .main-nav {
   position: fixed;
   top: 0;
-  right: 0;
   width: var(--nav-width);
   height: 100vh;
   background: var(--bg-secondary);
-  border-left: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   padding: var(--space-lg);
   z-index: 100;
   transition: width var(--transition-slow);
+}
+
+html[dir="rtl"] .main-nav {
+  right: 0;
+  border-left: 1px solid var(--border-color);
+}
+
+html[dir="ltr"] .main-nav {
+  left: 0;
+  border-right: 1px solid var(--border-color);
 }
 
 .nav-brand {
@@ -193,7 +200,14 @@ body {
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-normal);
+}
+
+html[dir="rtl"] .nav-link {
   text-align: right;
+}
+
+html[dir="ltr"] .nav-link {
+  text-align: left;
 }
 
 .nav-link:hover {
@@ -407,9 +421,16 @@ body {
 .page-container {
   flex: 1;
   min-width: 0; /* Prevents horizontal scroll blowout from inner containers */
-  margin-right: var(--nav-width);
   padding: var(--space-xl) var(--space-xl) var(--space-2xl);
   max-width: 960px;
+}
+
+html[dir="rtl"] .page-container {
+  margin-right: var(--nav-width);
+}
+
+html[dir="ltr"] .page-container {
+  margin-left: var(--nav-width);
 }
 
 .page {
@@ -663,6 +684,7 @@ label {
 
   .page-container {
     margin-right: 0;
+    margin-left: 0;
     padding: var(--space-md) var(--space-md) calc(var(--bottom-nav-height) + var(--space-xl) + env(safe-area-inset-bottom, 0px));
   }
 

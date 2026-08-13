@@ -268,8 +268,7 @@ const TodayPage = (() => {
   async function renderNutritionSection(queryDateStr) {
     renderNutritionSectionRef = renderNutritionSection;
     if (!queryDateStr) {
-      const day = allPlanDays[currentDayIndex];
-      queryDateStr = (day && day.date) ? day.date.split('/').reverse().join('-') : UI.getLocalDateString();
+      queryDateStr = UI.getLocalDateString();
     }
 
     const parts = queryDateStr.split('-').map(Number);
@@ -356,10 +355,10 @@ const TodayPage = (() => {
     if (dateLabel) {
       const formattedDate = queryDateStr.split('-').reverse().join('/');
       dateLabel.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 4px;">
-          <button id="nut-prev-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_prev_nut_day')}">▶</button>
+        <div style="display: flex; align-items: center; gap: 4px; direction: ltr !important;">
+          <button id="nut-prev-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_prev_nut_day')}">◀</button>
           <span style="font-weight: 700; color: var(--text-primary); font-size: 12px; margin: 0 4px;">${I18n.t('nut_date_label')} ${formattedDate}</span>
-          <button id="nut-next-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_next_nut_day')}">◀</button>
+          <button id="nut-next-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_next_nut_day')}">▶</button>
         </div>
       `;
       const prevBtn = document.getElementById('nut-prev-day-btn');
