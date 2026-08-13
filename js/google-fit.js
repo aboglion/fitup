@@ -202,11 +202,12 @@ const GoogleFitService = (() => {
       `;
 
       if (showHP || fitData.heartPoints > 0) {
+        const estHRPrompt = fitData.heartPoints > 0 ? '~120-145 bpm במאמץ' : 'מאמץ אירובי';
         cardsHtml += `
-          <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
+          <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);" title="נקודות לב (Heart Points) שוות ערך לפעילות בדופק מאמץ ממוצע של ~120-145 פעימות לדקה">
             <div style="font-size: 16px;">💓</div>
             <div style="font-size: 15px; font-weight: 900; color: #ec4899;">${fitData.heartPoints.toLocaleString()}</div>
-            <div style="font-size: 10px; color: var(--text-muted);">נקודות לב</div>
+            <div style="font-size: 10px; color: var(--text-muted);" title="${estHRPrompt}">נקודות לב (${estHRPrompt})</div>
           </div>
         `;
       }
