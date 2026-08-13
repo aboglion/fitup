@@ -150,6 +150,13 @@ const I18n = (() => {
       welcome_sub: "Sync your workout and nutrition data safely to your Google Drive",
       offline_continue: "I am a new user / Continue offline only",
 
+      // Auth Prompt Floating Banner
+      auth_prompt_title: "Cloud Sync Offline ☁️",
+      auth_prompt_sub: "Sign in with Google to automatically back up your workouts & nutrition data!",
+      auth_prompt_reauth_title: "Google Token Expired ⚠️",
+      auth_prompt_reauth_sub: "Please re-authenticate to keep your Google Drive sync active.",
+      auth_prompt_btn: "Sign in with Google",
+
       // Toasts & Alerts
       saved_successfully: "Saved successfully! ",
       error_occurred: "An error occurred: ",
@@ -813,6 +820,13 @@ const I18n = (() => {
       welcome_sub: "סנכרן את נתוני האימונים והתזונה שלך בצורה בטוחה ישירות מול Google Drive",
       offline_continue: "אני משתמש חדש / המשך מקומית באופליין בלבד",
 
+      // Auth Prompt Floating Banner
+      auth_prompt_title: "סנכרון ענן כבוי ☁️",
+      auth_prompt_sub: "התחבר לגוגל לסנכרון וגיבוי אוטומטי של נתוני האימון והתזונה שלך!",
+      auth_prompt_reauth_title: "פג תוקף חיבור גוגל! ⚠️",
+      auth_prompt_reauth_sub: "אנא התחבר מחדש כדי להמשיך לסנכרן את ההתקדמות ב-Google Drive.",
+      auth_prompt_btn: "התחבר בלחיצה",
+
       // Toasts & Alerts
       saved_successfully: "הנתונים שנשמרו בהצלחה! ",
       error_occurred: "אירעה שגיאה: ",
@@ -1432,6 +1446,13 @@ const I18n = (() => {
       error_occurred: "حدث خطأ: ",
       language_changed: "تم تغيير اللغة إلى العربية 🇸🇦",
       guide_generated: "تم إنشاء الدليل وتحميله بنجاح! 📄",
+
+      // Auth Prompt Floating Banner
+      auth_prompt_title: "المزامنة السحابية معطلة ☁️",
+      auth_prompt_sub: "سجّل الدخول باستخدام Google لنسخ تدريباتك وتغذيتك تلقائيًا!",
+      auth_prompt_reauth_title: "انتهت صلاحية رمز Google ⚠️",
+      auth_prompt_reauth_sub: "يرجى تسجيل الدخول مرة أخرى لمواصلة مزامنة تقدمك في Google Drive.",
+      auth_prompt_btn: "تسجيل الدخول",
 
       equip_vest: "سترة ثقيلة +5 كجم",
       equip_trx: "أحزمة TRX",

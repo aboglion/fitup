@@ -115,9 +115,9 @@ const TodayPage = (() => {
    * Navigate to a specific day
    */
   function navigate(offset) {
-    // Left button (offset = -1) goes to Prev Day (-1).
-    // Right button (offset = +1) advances to Next Day (+1).
-    const newIndex = currentDayIndex + offset;
+    const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
+    const step = isRTL ? -offset : offset;
+    const newIndex = currentDayIndex + step;
     if (newIndex >= 0 && newIndex < allPlanDays.length) {
       currentDayIndex = newIndex;
       render();
@@ -361,10 +361,13 @@ const TodayPage = (() => {
           <button id="nut-next-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_next_nut_day')}">▶</button>
         </div>
       `;
+      const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
+      const leftDateStr = isRTL ? tomorrowStr : yesterdayStr;
+      const rightDateStr = isRTL ? yesterdayStr : tomorrowStr;
       const prevBtn = document.getElementById('nut-prev-day-btn');
       const nextBtn = document.getElementById('nut-next-day-btn');
-      if (prevBtn) prevBtn.onclick = () => renderNutritionSection(yesterdayStr);
-      if (nextBtn) nextBtn.onclick = () => renderNutritionSection(tomorrowStr);
+      if (prevBtn) prevBtn.onclick = () => renderNutritionSection(leftDateStr);
+      if (nextBtn) nextBtn.onclick = () => renderNutritionSection(rightDateStr);
     }
 
     // Load nutrition data from DB for queryDateStr
