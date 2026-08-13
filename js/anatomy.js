@@ -28,41 +28,41 @@ const AnatomyMap = (() => {
     // Body centered 50%.
     const frontCallouts = [
       // Left labels (User's left, Character's right)
-      { id: 'chest-l',    label: I18n.t('muscle_chest'),     pct: m.chest.pct,     color: m.chest.color,     nodeX: 45, nodeY: 25, side: 'left' },
+      { id: 'chest-l',    label: I18n.t('muscle_chest'),     pct: m.chest.pct,     color: m.chest.color,     nodeX: 44, nodeY: 27, side: 'left' },
       { id: 'core',       label: I18n.t('muscle_core'),      pct: m.core.pct,      color: m.core.color,      nodeX: 50, nodeY: 38, side: 'left' },
-      { id: 'obliques-l', label: I18n.t('muscle_obliques'),  pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 45, nodeY: 48, side: 'left' },
+      { id: 'obliques-l', label: I18n.t('muscle_obliques'),  pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 43, nodeY: 46, side: 'left' },
       // Right labels (User's right, Character's left)
-      { id: 'shoulders-r',label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 62, nodeY: 21, side: 'right' },
-      { id: 'biceps-r',   label: I18n.t('muscle_biceps'),    pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 64, nodeY: 32, side: 'right' },
-      { id: 'forearm-r',  label: I18n.t('muscle_forearms'),  pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 67, nodeY: 46, side: 'right' },
-      { id: 'quads-r',    label: I18n.t('muscle_quads'),     pct: m.quads.pct,     color: m.quads.color,     nodeX: 55, nodeY: 60, side: 'right' },
+      { id: 'shoulders-r',label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 65, nodeY: 22, side: 'right' },
+      { id: 'biceps-r',   label: I18n.t('muscle_biceps'),    pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 66, nodeY: 33, side: 'right' },
+      { id: 'forearm-r',  label: I18n.t('muscle_forearms'),  pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 70, nodeY: 45, side: 'right' },
+      { id: 'quads-r',    label: I18n.t('muscle_quads'),     pct: m.quads.pct,     color: m.quads.color,     nodeX: 56, nodeY: 62, side: 'right' },
       // Symmetric dots
-      { hideLabel: true, id: 'shoulders-l', color: m.shoulders.color, nodeX: 38, nodeY: 21 },
-      { hideLabel: true, id: 'chest-r',     color: m.chest.color,     nodeX: 55, nodeY: 25 },
-      { hideLabel: true, id: 'biceps-l',    color: m.biceps.color,    nodeX: 36, nodeY: 32 },
-      { hideLabel: true, id: 'quads-l',     color: m.quads.color,     nodeX: 45, nodeY: 60 },
-      { hideLabel: true, id: 'obliques-r',  color: m.obliques.color,  nodeX: 55, nodeY: 48 },
-      { hideLabel: true, id: 'forearm-l',   color: m.forearms.color,  nodeX: 33, nodeY: 46 },
+      { hideLabel: true, id: 'shoulders-l', color: m.shoulders.color, nodeX: 35, nodeY: 22 },
+      { hideLabel: true, id: 'chest-r',     color: m.chest.color,     nodeX: 56, nodeY: 27 },
+      { hideLabel: true, id: 'biceps-l',    color: m.biceps.color,    nodeX: 34, nodeY: 33 },
+      { hideLabel: true, id: 'quads-l',     color: m.quads.color,     nodeX: 44, nodeY: 62 },
+      { hideLabel: true, id: 'obliques-r',  color: m.obliques.color,  nodeX: 57, nodeY: 46 },
+      { hideLabel: true, id: 'forearm-l',   color: m.forearms.color,  nodeX: 30, nodeY: 45 },
     ];
 
     // ── BACK VIEW ──
     const backCallouts = [
       // Left labels (4)
-      { id: 'traps-l',     label: I18n.t('muscle_traps'),      pct: m.traps.pct,       color: m.traps.color,       nodeX: 47, nodeY: 19, side: 'left' },
-      { id: 'triceps-l',   label: I18n.t('muscle_triceps'),    pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 36, nodeY: 34, side: 'left' },
-      { id: 'lowerBack',   label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct,   color: m.lowerBack.color,   nodeX: 50, nodeY: 48, side: 'left' },
-      { id: 'hamstrings-l',label: I18n.t('muscle_hamstrings'),  pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 46, nodeY: 64, side: 'left' },
+      { id: 'traps-l',     label: I18n.t('muscle_traps'),      pct: m.traps.pct,       color: m.traps.color,       nodeX: 44, nodeY: 20, side: 'left' },
+      { id: 'triceps-l',   label: I18n.t('muscle_triceps'),    pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 34, nodeY: 33, side: 'left' },
+      { id: 'lowerBack',   label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct,   color: m.lowerBack.color,   nodeX: 50, nodeY: 45, side: 'left' },
+      { id: 'hamstrings-l',label: I18n.t('muscle_hamstrings'),  pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 44, nodeY: 66, side: 'left' },
       // Right labels (3)
-      { id: 'lats-r',      label: I18n.t('muscle_lats'),       pct: m.lats.pct,        color: m.lats.color,        nodeX: 56, nodeY: 31, side: 'right' },
-      { id: 'glutes-r',    label: I18n.t('muscle_glutes'),     pct: m.glutes.pct,      color: m.glutes.color,      nodeX: 54, nodeY: 53, side: 'right' },
-      { id: 'calves-r',    label: I18n.t('muscle_calves'),     pct: m.calves.pct,      color: m.calves.color,      nodeX: 54, nodeY: 78, side: 'right' },
+      { id: 'lats-r',      label: I18n.t('muscle_lats'),       pct: m.lats.pct,        color: m.lats.color,        nodeX: 58, nodeY: 34, side: 'right' },
+      { id: 'glutes-r',    label: I18n.t('muscle_glutes'),     pct: m.glutes.pct,      color: m.glutes.color,      nodeX: 56, nodeY: 54, side: 'right' },
+      { id: 'calves-r',    label: I18n.t('muscle_calves'),     pct: m.calves.pct,      color: m.calves.color,      nodeX: 56, nodeY: 79, side: 'right' },
       // Symmetric dots
-      { hideLabel: true, id: 'traps-r',     color: m.traps.color,       nodeX: 53, nodeY: 19 },
-      { hideLabel: true, id: 'lats-l',      color: m.lats.color,        nodeX: 44, nodeY: 31 },
-      { hideLabel: true, id: 'triceps-r',   color: m.triceps.color,     nodeX: 64, nodeY: 34 },
-      { hideLabel: true, id: 'glutes-l',    color: m.glutes.color,      nodeX: 46, nodeY: 53 },
-      { hideLabel: true, id: 'hamstrings-r',color: m.hamstrings.color,  nodeX: 54, nodeY: 64 },
-      { hideLabel: true, id: 'calves-l',    color: m.calves.color,      nodeX: 46, nodeY: 78 },
+      { hideLabel: true, id: 'traps-r',     color: m.traps.color,       nodeX: 56, nodeY: 20 },
+      { hideLabel: true, id: 'lats-l',      color: m.lats.color,        nodeX: 42, nodeY: 34 },
+      { hideLabel: true, id: 'triceps-r',   color: m.triceps.color,     nodeX: 66, nodeY: 33 },
+      { hideLabel: true, id: 'glutes-l',    color: m.glutes.color,      nodeX: 44, nodeY: 54 },
+      { hideLabel: true, id: 'hamstrings-r',color: m.hamstrings.color,  nodeX: 56, nodeY: 66 },
+      { hideLabel: true, id: 'calves-l',    color: m.calves.color,      nodeX: 44, nodeY: 79 },
       { hideLabel: true, id: 'midback',     color: m.traps.color,       nodeX: 50, nodeY: 26 },
     ];
 
@@ -75,8 +75,12 @@ const AnatomyMap = (() => {
             <div class="anatomy-image-bg" style="background-image: url('${imagePath}');"></div>
             <svg class="anatomy-svg-overlay" width="100%" height="100%">
               ${visible.map(c => {
-                const lineEnd = c.side === 'left' ? 24 : 76;
-                return `<line x1="${c.nodeX}%" y1="${c.nodeY}%" x2="${lineEnd}%" y2="${c.nodeY}%" stroke="${c.color}" stroke-dasharray="3,3" opacity="0.45" stroke-width="1"/>`;
+                const targetX = c.side === 'left' ? 23 : 77;
+                return `
+                  <line x1="${c.nodeX}%" y1="${c.nodeY}%" x2="${targetX}%" y2="${c.nodeY}%" stroke="${c.color}" stroke-width="2.5" stroke-linecap="round" opacity="0.95" style="filter: drop-shadow(0 0 5px ${c.color});" />
+                  <circle cx="${c.nodeX}%" cy="${c.nodeY}%" r="3" fill="${c.color}" style="filter: drop-shadow(0 0 5px ${c.color});" />
+                  <circle cx="${targetX}%" cy="${c.nodeY}%" r="2.5" fill="${c.color}" style="filter: drop-shadow(0 0 5px ${c.color});" />
+                `;
               }).join('')}
             </svg>
             ${visible.map(c => `
@@ -136,16 +140,56 @@ const AnatomyMap = (() => {
         }
         .anatomy-svg-overlay { position: absolute; inset: 0; z-index: 15; pointer-events: none; }
         .anatomy-node {
-          position: absolute; width: 6px; height: 6px; border-radius: 50%;
+          position: absolute; width: 8px; height: 8px; border-radius: 50%;
           transform: translate(-50%, -50%); z-index: 16;
-          box-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+          box-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+          animation: heartbeat-core 1.2s infinite ease-in-out;
         }
         .anatomy-node::after {
-          content: ''; position: absolute; inset: -3px; border-radius: 50%;
-          border: 1px solid currentColor;
-          animation: ping-pulse 2.5s cubic-bezier(0,0,0.2,1) infinite;
+          content: ''; position: absolute; inset: -4px; border-radius: 50%;
+          border: 2px solid currentColor;
+          animation: heartbeat-pulse 1.2s infinite ease-in-out;
         }
-        @keyframes ping-pulse { 75%,100% { transform: scale(2.5); opacity: 0; } }
+        @keyframes heartbeat-core {
+          0%, 100% {
+            transform: translate(-50%, -50%) scale(1);
+            box-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+          }
+          15% {
+            transform: translate(-50%, -50%) scale(1.5);
+            box-shadow: 0 0 18px currentColor, 0 0 32px currentColor;
+          }
+          30% {
+            transform: translate(-50%, -50%) scale(1.15);
+            box-shadow: 0 0 10px currentColor, 0 0 18px currentColor;
+          }
+          42% {
+            transform: translate(-50%, -50%) scale(1.7);
+            box-shadow: 0 0 22px currentColor, 0 0 40px currentColor;
+          }
+          70% {
+            transform: translate(-50%, -50%) scale(1);
+            box-shadow: 0 0 8px currentColor, 0 0 16px currentColor;
+          }
+        }
+        @keyframes heartbeat-pulse {
+          0% {
+            transform: scale(0.8);
+            opacity: 0.95;
+          }
+          15% {
+            transform: scale(2.3);
+            opacity: 0.8;
+          }
+          42% {
+            transform: scale(3.8);
+            opacity: 0;
+          }
+          100% {
+            transform: scale(0.8);
+            opacity: 0;
+          }
+        }
         .callout-label {
           position: absolute; display: flex; flex-direction: column; gap: 1px;
           background: rgba(8,12,22,0.92); backdrop-filter: blur(10px);
