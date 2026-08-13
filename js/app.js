@@ -176,6 +176,7 @@ const App = (() => {
       
       document.getElementById('app').classList.remove('hidden');
       checkPhotoReminder();
+      setupAuthPromptBanner();
 
     } catch (error) {
       console.error('Core init error:', error);
@@ -799,6 +800,93 @@ const App = (() => {
         };
       }
     }
+  }
+
+  /**
+   * Initialize and manage the Non-Intrusive Floating Auth Prompt Banner
+   */
+  async function setupAuthPromptBanner() {
+    const banner = document.getElementById('login-prompt-banner');
+    const bannerClose = document.getElementById('login-banner-close');
+    const bannerBtn = document.getElementById('login-banner-btn');
+    const bannerTitle = document.getElementById('login-banner-title');
+    const bannerSub = document.getElementById('login-banner-sub');
+
+    if (!banner) return;
+
+    let isDismissed = sessionStorage.getItem('authBannerDismissed') === 'true';
+
+    const updateBannerVisibility = async () => {
+      const loggedIn = await CloudSync.isLoggedIn();
+      const status = CloudSync.getStatus();
+
+      // If logged in and synced, hide banner immediately
+      if (loggedIn && status !== 'reauth_needed') {
+        banner.classList.add('hidden');
+        return;
+      }
+
+      // If re-auth is needed (session expired or token invalid)
+      if (status === 'reauth_needed') {
+        if (bannerTitle) bannerTitle.textContent = I18n.t('auth_prompt_reauth_title');
+        if (bannerSub) bannerSub.textContent = I18n.t('auth_prompt_reauth_sub');
+        banner.classList.remove('hidden');
+        return;
+      }
+
+      // If not logged in and not dismissed by user in this session
+      if (!loggedIn && !isDismissed) {
+        if (bannerTitle) bannerTitle.textContent = I18n.t('auth_prompt_title');
+        if (bannerSub) bannerSub.textContent = I18n.t('auth_prompt_sub');
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    };
+
+    // Close / Dismiss button handler
+    if (bannerClose) {
+      bannerClose.onclick = () => {
+        banner.classList.add('hidden');
+        sessionStorage.setItem('authBannerDismissed', 'true');
+        isDismissed = true;
+      };
+    }
+
+    // 1-Click Sign-In button handler
+    if (bannerBtn) {
+      bannerBtn.onclick = () => {
+        bannerBtn.disabled = true;
+        CloudSync.loginWithGoogle(
+          async (profile) => {
+            bannerBtn.disabled = false;
+            UI.toast(`${I18n.t('connected_as')} ${profile.name || I18n.t('google_user')}! 👋`, 'success');
+            banner.classList.add('hidden');
+            await CloudSync.pullData();
+            if (typeof updateGoogleUI === 'function') updateGoogleUI();
+          },
+          (err) => {
+            bannerBtn.disabled = false;
+            UI.toast(I18n.t('error_prefix') + (err.message || err), 'error');
+          }
+        );
+      };
+    }
+
+    // Initial check with brief delay after splash screen hides
+    setTimeout(() => {
+      updateBannerVisibility();
+    }, 1200);
+
+    // Listen to sync status changes
+    if (CloudSync.onSyncStatusChange) {
+      CloudSync.onSyncStatusChange(() => {
+        updateBannerVisibility();
+      });
+    }
+
+    // Expose for language updates
+    window.updateAuthPromptUI = updateBannerVisibility;
   }
 
   return {

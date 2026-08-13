@@ -1695,6 +1695,10 @@ const I18n = (() => {
       const hashPage = window.location.hash.replace('#', '') || 'today';
       window.App.navigateTo(hashPage, false);
     }
+
+    if (typeof window.updateAuthPromptUI === 'function') {
+      window.updateAuthPromptUI();
+    }
   }
 
   /**
