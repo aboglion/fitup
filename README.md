@@ -1,6 +1,6 @@
 # 🏋️‍♂️ FitUp Pro Ultimate v4.0
 
-> **A 78-Week Automated Training & Nutrition System with "Zero Decisions" Prescriptive Programming, AI Guidance, Dynamic Muscle Anatomy Tracking, and Multi-Language Support.**
+> **A 78-Week Automated Training & Nutrition System with "Zero Decisions" Prescriptive Programming, AI Guidance, Dynamic Muscle Anatomy Tracking, Google Fit & Drive Sync, and Multi-Language Support.**
 
 ---
 
@@ -25,18 +25,27 @@ Built on a strict **"Zero Decisions" Philosophy**, every single workout day acro
   - **Zone 2 Cardio & Micro-Mobility**: Dedicated active recovery days and dead hangs/thoracic extensions integrated into rest periods.
 
 ### 🧬 Dynamic 14-Muscle Anatomy Visualizer
-- Real-time front and back 2D character map rendering **14 distinct muscle groups** (Chest, Shoulders, Triceps, Biceps, Forearms, Lats, Traps, Quads, Hamstrings, Glutes, Calves, Core, Obliques, Lower Back).
+- Real-time front and back character map rendering **14 distinct muscle groups** (Chest, Shoulders, Triceps, Biceps, Forearms, Lats, Traps, Quads, Hamstrings, Glutes, Calves, Core, Obliques, Lower Back).
 - Weighted multi-exercise contribution model calculating live muscle activation percentages based on logged completions and exercise progression milestones.
 
+### ⌚ Google Fit Health & Activity Synchronization
+- Syncs daily step counts, active energy expenditure (burned calories), and heart rate intensity metrics directly from Google Fit APIs (`fitness.activity.read` and `fitness.body.read`).
+- Dynamically adjusts daily net caloric balance based on real-time step activity and cardiovascular strain.
+
 ### 🤖 Gemini AI Nutrition & Fitness Coach
-- Direct integration with Google Gemini AI for smart meal image analysis, macro estimations, RPE adjustments, and custom workout advice.
+- Direct integration with Google Gemini AI (`gemini-3.1-flash-lite` & models) for instant meal photo analysis, macro breakdowns (Calories, Protein, Carbs, Fats), sodium/fat warnings, and customized recovery advice.
+- Includes manual meal entry fallback and one-tap protein powder supplement tracking (+24g protein per scoop).
 
-### 🌳 Skill Tree & Gamification
-- RPG-style progression system with levels, XP calculation (500 XP per strength day, 200 XP for active recovery), streak tracking, and unlockable exercise skill nodes.
+### ☁️ Google Drive Cloud Backup & Client-Side Encryption
+- Seamless cloud synchronization across devices using private Google Drive storage (`drive.file` scope).
+- AES-256 GCM client-side key encryption ensuring user API keys and private workout logs remain strictly secure.
 
-### 📷 Progress Photo Tracker & Time-Lapse
-- In-app progress photo uploads with automatic client-side WebP image compression.
-- Interactive modal time-lapse animation to view physical transformations over time.
+### 🌳 RPG Skill Tree & Level Progression
+- Leveling and XP system (500 XP per completed strength day, 200 XP for active recovery walk/cardio days), streak tracking, and interactive exercise skill tree nodes unlocked week-by-week.
+
+### 📷 Progress Photo Tracker & 546-Day Consistency Map
+- In-app progress photo logging with automated client-side WebP image compression.
+- 546-day visual consistency matrix tracking adherence across 5 day classifications (Strength, Deload, Walk, Rest, Skipped).
 
 ### 🌐 Multi-Language & RTL Support (I18n)
 - Full internationalization supporting **English**, **Hebrew** (RTL), and **Arabic** (RTL).
@@ -44,6 +53,78 @@ Built on a strict **"Zero Decisions" Philosophy**, every single workout day acro
 
 ### 📱 Offline-First Architecture
 - Built with **IndexedDB** for zero-latency local data persistence (workout completions, actual RPE, body weight, notes, and photos).
+
+---
+
+## 📸 Application Interface & Feature Walkthrough
+
+FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tech Sci-Fi aesthetic. Below is a detailed visual walkthrough of the primary modules and features:
+
+### 1. Progress & Stats Dashboard & Interactive Muscle Map
+![Progress Dashboard, Google Fit Sync & Interactive Muscle Map](PICS/Pasted%20image.png)
+
+- **Google Fit Real-Time Sync**: Displays live data retrieved from Google Fit APIs (`fitness.activity.read` and `fitness.body.read`), including daily step counts (e.g., 2,343 steps), active activity calorie burn (e.g., 1,439 kcal), and heart rate monitoring (~120–145 BPM exertion zone). Step calorie expenditure automatically recalibrates daily net energy balances.
+- **Level & Gamification Engine**: Visual XP progression bar (Level 1, 0/500 XP). Users earn 500 XP per completed strength workout and 200 XP for active recovery walk days, with instant social sharing capabilities.
+- **14-Muscle Interactive Anatomy Map**: Real-time visual character model rendering activation across 14 target muscle groups (Chest, Shoulders, Biceps, Forearms, Core, Obliques, Quads, Hamstrings, Glutes, Lats, Traps, Triceps, Calves, and Lower Back). Live percentage indicators reflect cumulative volume, progressive overload milestones, and targeted stimulus distribution.
+
+---
+
+### 2. Gemini AI Nutrition Log & Daily Caloric Balance
+![Gemini AI Meal Entry & Daily Calorie Tracker](PICS/Pasted%20image%20%282%29.png)
+
+- **AI-Powered Photo Meal Analysis**: Snap a photo using the device camera ("Capture Food") or upload an image for instant nutritional analysis via Google Gemini AI (`gemini-3.1-flash-lite`). The AI extracts macro estimates (Calories, Protein, Carbs, Fats) and generates deep nutritional insights regarding energy density, sodium content, and post-workout muscle recovery suitability.
+- **Daily Calorie & Protein Counters**: Real-time progress bars comparing consumed calories against daily target limits (e.g., 1,150 / 1,980 kcal) and protein goals (e.g., 48 / 160g). Includes quick-add shortcuts for protein supplements (e.g., +24g protein powder per serving).
+- **Comprehensive Meal Log Feed**: Timeline of all logged meals with timestamps, macro tags, AI analysis boxes, and manual entry options for meals without photos.
+
+---
+
+### 3. RPG Skill Tree & Exercise Directory
+![RPG Skill Tree & Exercise Directory](PICS/Pasted%20image%20%283%29.png)
+
+- **Categorized Movement Domains**: Filterable exercise directory divided into four primary disciplines: **Legs + Core**, **Push + Skill**, **Pull + Grip**, and **Cardio & Recovery**.
+- **Interactive Progression Skill Tree**: Visual node tree displaying week-by-week exercise unlocks across the 78-week roadmap. Features dedicated warmups (High Knees, Deep Mobility Protocol) and locked future skill nodes (e.g., Week 53 Wrist Rocks, Pistol Squats to chair).
+
+---
+
+### 4. Anatomical Muscle Breakdown & Animated Execution
+![Exercise Detail Modal with Muscle Highlights and GIF Demo](PICS/Pasted%20image%20%284%29.png)
+
+- **Target Muscle Visualizer**: Every exercise card (e.g., Dumbbell Romanian Deadlift - DB RDL) opens a high-detail modal highlighting primary target muscle groups (glutes and hamstrings highlighted in vivid red on an anatomical body model).
+- **Looping Demonstration GIFs**: Embedded high-definition animation loops demonstrating proper biomechanical form, setup posture, movement cadence, and safety control.
+
+---
+
+### 5. Searchable Exercise Library & Muscle Filtering
+![Searchable Exercise Library with Category Filters](PICS/Pasted%20image%20%285%29.png)
+
+- **Instant Search & Multi-Category Filters**: Instant search engine with tag filters (All, Arms, Shoulders, Warmup, Pull, Push, Legs, Core) to find any movement in the 78-week dictionary.
+- **Detailed Card Metadata**: Shows required equipment (e.g., Dumbbells, Bodyweight, TRX), difficulty rating (Beginner, Intermediate, Advanced), schedule assignment badges, and primary target muscle diagrams (e.g., DB Biceps Curl, DB Lateral Raise, DB Overhead Triceps Extension).
+
+---
+
+### 6. Today View Workout Tracker & Prescriptive Set Execution
+![Today View Interactive Set Logger & Rest Timer](PICS/Pasted%20image%20%286%29.png)
+
+- **Prescriptive Workout Execution**: Displays the exact daily schedule generated by the 78-week training engine. Outlines exact exercise sequence, prescribed set counts, target reps, and tempo instructions (e.g., Bodyweight Squat with slow eccentric control, 2 sets of 8 reps, 30s rest interval).
+- **Interactive Logging Interface**: One-click completion checkboxes for completed sets, customizable rep and load fields, integrated rest timer countdowns, and per-exercise personal notes inputs.
+
+---
+
+### 7. Progress Photo Tracker, Consistency Map & Performance Metrics
+![Progress Photo Tracker, 546-Day Consistency Map & Analytics](PICS/Pasted%20image%20%287%29.png)
+
+- **Private Progress Photo Journal**: Client-side progress photo recorder (prompted every 4 weeks) compressed into lightweight WebP format and stored locally in IndexedDB for 100% private physical transformation tracking.
+- **546-Day Visual Consistency Map**: Grid-style calendar matrix tracking overall program adherence across all 546 days, color-coded by day type (Strength, Deload, Walk, Rest, Skipped).
+- **Summary Analytics Grid**: Live dashboard metrics displaying total Days Completed, Strength Workouts Logged, Walk Days Completed, Average Session RPE (Rate of Perceived Exertion), Monthly Completion Rate %, and Weekly Trend %.
+
+---
+
+### 8. Settings Hub, Encrypted Cloud Sync & Program Exporter
+![Settings Hub, Gemini AI Setup & Google Cloud Sync](PICS/Pasted%20image%20%288%29.png)
+
+- **Gemini AI API Configuration**: Secure setup interface for Google Gemini API key with AES-256 client-side encryption and model selector dropdown (`gemini-3.1-flash-lite`, `gemini-1.5-flash`, etc.).
+- **Google Drive & Local Data Backup/Restore**: One-click local JSON file export/import, alongside automatic background sync to Google Drive (`drive.file` scope) to preserve workout logs across all devices without central server data exposure.
+- **Full Program Guide Exporter**: Quick launcher to view, print, or export the complete 78-week master program guide and exercise manual in English, Hebrew, or Arabic.
 
 ---
 
@@ -123,6 +204,7 @@ The 78-week program is designed around a minimal yet complete home-gym setup:
 | **Data Engine** | Python 3 (`generate_program.py` script generating `js/data.js` and `training_data.json`) |
 | **Database & Storage** | Client-Side IndexedDB API (`js/db.js`) |
 | **AI Layer** | Google Gemini API (`js/gemini.js`) |
+| **Integrations** | Google Fit APIs & Google Drive Sync API (`drive.file`) |
 | **Automation & CLI** | `Makefile` (`make gp` workflow for data compilation and deployment) |
 
 ---
@@ -135,6 +217,7 @@ fitup/
 ├── generate_program.py     # Central Python engine generating 78-week program dataset
 ├── PROGRAM_GUIDE.md        # Source of truth program manual & methodology guide
 ├── Makefile                # Automation commands (make gp)
+├── PICS/                   # Interface screenshots and feature showcase images
 ├── css/                    # Modular stylesheet system
 │   ├── main.css            # Core CSS variables, typography, and base resets
 │   ├── components.css      # Stat cards, skill trees, modals, buttons
@@ -145,6 +228,7 @@ fitup/
 │   ├── db.js               # IndexedDB data access layer
 │   ├── anatomy.js          # SVG & CSS 14-muscle visualizer module
 │   ├── stats.js            # Progression metrics, XP, and muscle calculation
+│   ├── google-fit.js       # Google Fit OAuth & step/calorie/heart-rate sync
 │   ├── export-guide.js     # Multilingual PDF/HTML guide exporter
 │   ├── gemini.js           # Gemini AI coach integration
 │   ├── i18n.js             # Language translations dictionary

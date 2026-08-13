@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FitUp - Personal Training, Fitness & Health Tracker</title>
   <meta name="application-name" content="FitUp">
-  <meta name="description" content="FitUp is a comprehensive personal training, workout logging, nutrition tracking, and fitness PWA application with Google Drive and Google Fit integration.">
+  <meta name="description" content="FitUp is a comprehensive personal training, workout logging, AI nutrition tracking, and health PWA with Google Drive and Google Fit integration.">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -17,26 +17,26 @@
       padding: 2rem 1rem;
     }
     .container {
-      max-width: 780px;
+      max-width: 880px;
       margin: 0 auto;
       background: #111827;
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 2.5rem;
       border: 1px solid #1f2937;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 25px 35px -5px rgba(0, 0, 0, 0.6);
     }
     .header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
       border-bottom: 1px solid #1f2937;
-      padding-bottom: 1.5rem;
+      padding-bottom: 1.8rem;
     }
     .logo {
-      font-size: 3rem;
+      font-size: 3.2rem;
       margin-bottom: 0.5rem;
     }
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.6rem;
       font-weight: 800;
       margin-bottom: 0.5rem;
       background: linear-gradient(135deg, #38bdf8, #34d399);
@@ -44,51 +44,110 @@
       -webkit-text-fill-color: transparent;
       display: inline-block;
     }
-    .tagline { color: #94a3b8; font-size: 1.15rem; font-weight: 500; }
+    .tagline { color: #94a3b8; font-size: 1.2rem; font-weight: 500; }
     .content-section { text-align: left; margin: 1.8rem 0; }
-    h2 { font-size: 1.3rem; color: #38bdf8; margin: 1.5rem 0 0.6rem; font-weight: 700; }
-    p, li { font-size: 1rem; color: #cbd5e1; margin-bottom: 0.75rem; }
+    h2 { font-size: 1.45rem; color: #38bdf8; margin: 2rem 0 0.8rem; font-weight: 700; border-bottom: 1px solid rgba(56, 189, 248, 0.15); padding-bottom: 0.4rem; }
+    p, li { font-size: 1.02rem; color: #cbd5e1; margin-bottom: 0.85rem; }
     ul { padding-left: 1.5rem; }
     .badge {
       display: inline-block;
       background: rgba(56, 189, 248, 0.1);
       color: #38bdf8;
-      padding: 4px 12px;
+      padding: 5px 14px;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.25);
       margin-bottom: 1rem;
     }
+    
+    /* Feature Showcase Grid */
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin: 1.8rem 0 2.8rem;
+    }
+    .showcase-card {
+      background: #162032;
+      border: 1px solid #24334a;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.4);
+      transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+    .showcase-card:hover {
+      transform: translateY(-4px);
+      border-color: #38bdf8;
+    }
+    .showcase-img {
+      width: 100%;
+      height: auto;
+      max-height: 480px;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      border-bottom: 1px solid #24334a;
+      background: #0d131f;
+    }
+    .showcase-content {
+      padding: 1.4rem 1.6rem 1.6rem;
+    }
+    .showcase-badge {
+      display: inline-block;
+      background: rgba(52, 211, 153, 0.12);
+      color: #34d399;
+      padding: 4px 12px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.6rem;
+      border: 1px solid rgba(52, 211, 153, 0.25);
+    }
+    .showcase-card h3 {
+      font-size: 1.25rem;
+      color: #f8fafc;
+      margin-bottom: 0.6rem;
+      font-weight: 700;
+    }
+    .showcase-card p {
+      font-size: 0.96rem;
+      color: #94a3b8;
+      margin-bottom: 0;
+      line-height: 1.65;
+    }
+
     .scope-box {
       background: #1e293b;
       border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 1.25rem;
-      margin: 1rem 0;
+      border-radius: 14px;
+      padding: 1.4rem;
+      margin: 1.2rem 0;
     }
-    .scope-box h3 { color: #f43f5e; font-size: 1.05rem; margin-bottom: 0.5rem; }
+    .scope-box h3 { color: #f43f5e; font-size: 1.1rem; margin-bottom: 0.6rem; }
     a { color: #38bdf8; text-decoration: none; font-weight: 600; }
     a:hover { text-decoration: underline; }
-    .cta-container { text-align: center; margin-top: 2.5rem; }
+    .cta-container { text-align: center; margin-top: 2.8rem; }
     .cta {
       display: inline-block;
-      padding: 0.9rem 2.5rem;
+      padding: 1rem 2.8rem;
       background: linear-gradient(135deg, #38bdf8, #34d399);
       color: #0f172a;
       font-weight: 800;
-      border-radius: 14px;
-      font-size: 1.1rem;
-      box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
+      font-size: 1.15rem;
+      box-shadow: 0 10px 20px -4px rgba(56, 189, 248, 0.35);
       transition: transform 0.2s;
     }
     .cta:hover { transform: translateY(-2px); text-decoration: none; }
     .footer-links {
-      margin-top: 2.5rem;
-      padding-top: 1.5rem;
+      margin-top: 2.8rem;
+      padding-top: 1.8rem;
       border-top: 1px solid #1f2937;
       text-align: center;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
     .footer-links a { margin: 0 1rem; color: #94a3b8; }
   </style>
@@ -97,24 +156,112 @@
   <div class="container">
     <div class="header">
       <div class="logo">💪</div>
-      <h1>FitUp</h1>
-      <p class="tagline">Comprehensive Personal Training, Workout & Health Tracker</p>
+      <h1>FitUp Pro Ultimate v4.0</h1>
+      <p class="tagline">Comprehensive Personal Training, AI Nutrition & Health Tracker</p>
     </div>
 
     <div class="content-section">
-      <span class="badge">Application Purpose</span>
+      <span class="badge">Application Overview</span>
       <h2>What is FitUp?</h2>
-      <p><strong>FitUp</strong> is a non-commercial, private personal fitness tracking web application designed to help individuals follow structured 78-week prescriptive workout routines, log exercise volume, monitor daily caloric balances, and measure strength progression over time.</p>
+      <p><strong>FitUp Pro Ultimate v4.0</strong> is a non-commercial, private personal fitness tracking web application designed to help individuals follow structured 78-week (546-day) prescriptive workout routines, log exercise volume, monitor daily caloric & protein balances, analyze meals with AI, and track long-term body composition transformation over time.</p>
 
-      <h2>Core Features of FitUp</h2>
+      <h2>Core Features & Systems</h2>
       <ul>
-        <li><strong>78-Week Prescriptive Training Plan:</strong> Guided progressive overload program with target sets, reps, and tempo guidance.</li>
-        <li><strong>Interactive Muscle Progression Map:</strong> Visual anatomical breakdown of trained muscle groups and volume distribution.</li>
-        <li><strong>AI Nutrition Analysis:</strong> Automated meal logging and calorie tracking powered by Google Gemini AI.</li>
-        <li><strong>Strength Analytics & 1RM Prediction:</strong> Estimated One Rep Max tracking using the Epley formula.</li>
-        <li><strong>Google Fit Integration:</strong> Daily step count, active calorie sync, and heart rate monitoring.</li>
-        <li><strong>Google Drive Cloud Backup:</strong> Private JSON data synchronization across all user devices.</li>
+        <li><strong>78-Week Prescriptive Training Engine:</strong> Guided progressive overload program featuring 15 periodized phases, strict set/rep targets, and precise tempo guidance.</li>
+        <li><strong>Google Fit Health Integration:</strong> Real-time synchronization of daily step counts, active activity calories burned, and heart rate exertion metrics.</li>
+        <li><strong>Interactive 14-Muscle Anatomy Map:</strong> Sci-Fi character model tracking real-time muscle volume distribution and stimulus across 14 target muscle groups.</li>
+        <li><strong>Gemini AI Nutrition Coach:</strong> Automated meal photo recognition, calorie/macro estimations, sodium warnings, and personalized diet feedback using Google Gemini AI.</li>
+        <li><strong>RPG Skill Tree & Level Progression:</strong> Gamified level progression (500 XP per strength day, 200 XP per walk day) with interactive skill tree nodes unlocked week-by-week.</li>
+        <li><strong>Progress Photo Tracker & Consistency Map:</strong> On-device compressed progress photo journal and a 546-day visual consistency matrix.</li>
+        <li><strong>Google Drive Cloud Backup:</strong> Private JSON data synchronization (<code>drive.file</code> scope) with client-side AES-256 key encryption across all user devices.</li>
       </ul>
+
+      <h2>Application Modules & Feature Walkthrough</h2>
+      <p>Explore the visual interface and capabilities of each module in FitUp:</p>
+
+      <div class="showcase-grid">
+
+        <!-- Card 1 -->
+        <div class="showcase-card">
+          <img src="PICS/Pasted image.png" alt="Progress & Stats Dashboard with Google Fit and Muscle Map" class="showcase-img">
+          <div class="showcase-content">
+            <span class="showcase-badge">Dashboard & Health Sync</span>
+            <h3>Progress Stats, Google Fit Sync & Interactive 14-Muscle Map</h3>
+            <p>Monitors live activity metrics via Google Fit API integration (step counts, active calorie burn, heart rate BPM), calculates user level XP (500 XP per strength day, 200 XP per walk day), and features a Sci-Fi 14-muscle visual map tracking anatomical volume distribution.</p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="showcase-card">
+          <img src="PICS/Pasted image (2).png" alt="Gemini AI Nutrition Log and Daily Calorie Tracker" class="showcase-img">
+          <div class="showcase-content">
+            <span class="showcase-badge">AI Nutrition Engine</span>
+            <h3>Gemini AI Photo Meal Entry & Daily Caloric Balance</h3>
+            <p>Powered by Google Gemini AI (<code>gemini-3.1-flash-lite</code>) for instant meal photo recognition, automated calorie and protein estimates, ingredient breakdown, and customized nutritional recovery feedback alongside daily macro progress bars.</p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="showcase-card">
+          <img src="PICS/Pasted image (3).png" alt="RPG Skill Tree & Exercise Directory" class="showcase-img">
+          <div class="showcase-content">
+            <span class="showcase-badge">Progression System</span>
+            <h3>78-Week RPG Skill Tree & Movement Directory</h3>
+            <p>Organizes training into four core domains (Legs + Core, Push + Skill, Pull + Grip, Cardio). Features an interactive RPG skill node map unlocking exercises and warmup mobility protocols week-by-week over 78 weeks.</p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="showcase-card">
+          <img src="PICS/Pasted image (4).png" alt="Anatomical Muscle Details and Execution GIF" class="showcase-img">
+          <div class="showcase-content">
+            <span class="showcase-badge">Biomechanical Guidance</span>
+            <h3>Anatomical Muscle Diagrams & Video Execution</h3>
+            <p>Every exercise detail modal highlights specific primary muscle groups in red on an anatomical human model, accompanied by looping exercise demonstration GIFs for proper form and safety.</p>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="showcase-card">
+          <img src="PICS/Pasted image (5).png" alt="Searchable Exercise Library and Target Muscle Cards" class="showcase-img">
+          <div class="showcase-content">
+            <span class="showcase-badge">Exercise Library</span>
+            <h3>Searchable Exercise Library & Muscle Filtering</h3>
+            <p>Instant search engine and category tags (Arms, Shoulders, Warmup, Pull, Push, Legs, Core) with comprehensive exercise cards indicating equipment requirements, difficulty badges, and muscle maps.</p>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="showcase-card">
+          <img src="PICS/Pasted image (6).png" alt="Today View Prescriptive Set Logger and Rest Timer" class="showcase-img">
+          <div class="showcase-content">
+            <span class="showcase-badge">Workout Logging</span>
+            <h3>Today View Workout Tracker & Prescriptive Set Logging</h3>
+            <p>Guides daily workouts with prescriptive set/rep targets, tempo control notes, interactive completion checkmarks, customizable weight/rep entries, rest interval timers, and per-exercise notes.</p>
+          </div>
+        </div>
+
+        <!-- Card 7 -->
+        <div class="showcase-card">
+          <img src="PICS/Pasted image (7).png" alt="Progress Photo Tracker, Consistency Map and Analytics" class="showcase-img">
+          <div class="showcase-content">
+            <span class="showcase-badge">Analytics & Photos</span>
+            <h3>Progress Photo Tracker & 546-Day Consistency Map</h3>
+            <p>Local-first progress photo journal (compressed in WebP format), color-coded 546-day visual consistency matrix (Strength, Deload, Walk, Rest, Skipped), and performance summary metrics (RPE, completion %, weekly trends).</p>
+          </div>
+        </div>
+
+        <!-- Card 8 -->
+        <div class="showcase-card">
+          <img src="PICS/Pasted image (8).png" alt="Settings Hub, Gemini AI Config and Google Drive Backup" class="showcase-img">
+          <div class="showcase-content">
+            <span class="showcase-badge">Settings & Cloud Sync</span>
+            <h3>Settings Hub, Gemini AI Config & Google Drive Sync</h3>
+            <p>Client-side AES-256 encrypted Gemini API key setup, local JSON backup export/import, automated Google Drive cloud data synchronization (<code>drive.file</code> scope), and 78-week interactive master guide exporter.</p>
+          </div>
+        </div>
+
+      </div>
 
       <h2>Google OAuth & Data Use Policy</h2>
       <p>FitUp integrates with Google Services strictly to enhance user personal fitness tracking while protecting user privacy:</p>
