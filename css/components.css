@@ -1804,6 +1804,8 @@ html[dir="ltr"] .modal-close, [dir="ltr"] .modal-close {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   margin-bottom: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .rpg-level-badge {
@@ -1815,6 +1817,7 @@ html[dir="ltr"] .modal-close, [dir="ltr"] .modal-close {
   border-radius: 20px;
   white-space: nowrap;
   box-shadow: var(--accent-glow);
+  flex-shrink: 0;
 }
 
 .rpg-level-icon {

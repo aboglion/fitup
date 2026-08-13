@@ -87,17 +87,15 @@ self.addEventListener('fetch', (event) => {
               }
               return response;
             })
-            .catch((err) => {
-              console.warn('[SW] Fetch failed for image asset:', event.request.url, err);
-              return caches.match(event.request).then((fallback) => {
+            .catch(() => {
+              return caches.match(event.request, { ignoreSearch: true }).then((fallback) => {
                 if (fallback) return fallback;
                 return new Response('', { status: 404, statusText: 'Not Found' });
               });
             });
         })
-        .catch((err) => {
-          console.warn('[SW] Cache match error:', err);
-          return fetch(event.request).catch(() => new Response('', { status: 404, statusText: 'Not Found' }));
+        .catch(() => {
+          return new Response('', { status: 404, statusText: 'Not Found' });
         })
     );
     return;

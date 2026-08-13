@@ -22,6 +22,10 @@ const StatsPage = (() => {
    * Render statistics page
    */
   async function render() {
+    if (!allPlanDays || allPlanDays.length === 0) {
+      allPlanDays = await DB.getAllPlan();
+      allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
+    }
     const allTracking = await DB.getAllTracking();
 
     // Build tracking map
