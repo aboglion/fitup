@@ -44,19 +44,21 @@ const GoogleFitService = (() => {
     };
 
     try {
-      // Primary request: Steps, Calories, and Heart Rate
+      // Primary request: Steps, Calories, Heart Rate, and Heart Minutes (Heart Points)
       let response = await makeAggregateRequest([
         "com.google.step_count.delta",
         "com.google.calories.expended",
-        "com.google.heart_rate.bpm"
+        "com.google.heart_rate.bpm",
+        "com.google.heart_minutes"
       ]);
 
-      // Fallback: If heart_rate.bpm fails due to scope issue (403/401), request steps & calories only
+      // Fallback: Retry without heart rate if scope is restricted
       if (!response.ok && (response.status === 403 || response.status === 401)) {
         console.warn('Google Fit full aggregate request failed. Retrying without heart rate...');
         response = await makeAggregateRequest([
           "com.google.step_count.delta",
-          "com.google.calories.expended"
+          "com.google.calories.expended",
+          "com.google.heart_minutes"
         ]);
       }
 
@@ -81,6 +83,7 @@ const GoogleFitService = (() => {
     let calories = 0;
     let avgHeartRate = 0;
     let maxHeartRate = 0;
+    let heartPoints = 0;
     let hrCount = 0;
     let hrSum = 0;
 
@@ -92,6 +95,7 @@ const GoogleFitService = (() => {
         const isStep = typeName.includes('step_count') || streamId.includes('step_count');
         const isCal = typeName.includes('calories') || streamId.includes('calories');
         const isHR = typeName.includes('heart_rate') || streamId.includes('heart_rate');
+        const isHP = typeName.includes('heart_minutes') || streamId.includes('heart_minutes');
         const point = ds.point || [];
 
         point.forEach(pt => {
@@ -106,6 +110,8 @@ const GoogleFitService = (() => {
               hrSum += num;
               hrCount++;
               if (num > maxHeartRate) maxHeartRate = num;
+            } else if (isHP) {
+              heartPoints += num;
             }
           });
         });
@@ -120,7 +126,8 @@ const GoogleFitService = (() => {
       steps,
       calories,
       avgHeartRate,
-      maxHeartRate
+      maxHeartRate,
+      heartPoints
     };
   }
 
@@ -150,21 +157,6 @@ const GoogleFitService = (() => {
           טוען נתונים מ-Google Fit...
         </div>
         <div id="fit-metrics-content" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;">
-          <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
-            <div style="font-size: 16px;">👟</div>
-            <div id="fit-steps" style="font-size: 15px; font-weight: 900; color: var(--text-primary);">0</div>
-            <div style="font-size: 10px; color: var(--text-muted);" data-i18n="steps">צעדים</div>
-          </div>
-          <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
-            <div style="font-size: 16px;">🔥</div>
-            <div id="fit-cals" style="font-size: 15px; font-weight: 900; color: var(--warning);">0</div>
-            <div style="font-size: 10px; color: var(--text-muted);" data-i18n="burned_cals">נשרפו (kcal)</div>
-          </div>
-          <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
-            <div style="font-size: 16px;">❤️</div>
-            <div id="fit-hr" style="font-size: 15px; font-weight: 900; color: var(--danger);">0</div>
-            <div style="font-size: 10px; color: var(--text-muted);" data-i18n="avg_hr">דופק ממוצע</div>
-          </div>
         </div>
       </div>
     `;
@@ -191,13 +183,45 @@ const GoogleFitService = (() => {
       loading.style.display = 'none';
       content.style.display = 'grid';
 
-      const stepsEl = document.getElementById('fit-steps');
-      const calsEl = document.getElementById('fit-cals');
-      const hrEl = document.getElementById('fit-hr');
+      const showHR = fitData.avgHeartRate > 0;
+      const showHP = fitData.heartPoints > 0 || !showHR;
 
-      if (stepsEl) stepsEl.textContent = fitData.steps.toLocaleString();
-      if (calsEl) calsEl.textContent = fitData.calories.toLocaleString();
-      if (hrEl) hrEl.textContent = fitData.avgHeartRate > 0 ? `${fitData.avgHeartRate} bpm` : '—';
+      content.style.gridTemplateColumns = showHR && fitData.heartPoints > 0 ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)';
+
+      let cardsHtml = `
+        <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
+          <div style="font-size: 16px;">👟</div>
+          <div style="font-size: 15px; font-weight: 900; color: var(--text-primary);">${fitData.steps.toLocaleString()}</div>
+          <div style="font-size: 10px; color: var(--text-muted);" data-i18n="steps">צעדים</div>
+        </div>
+        <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
+          <div style="font-size: 16px;">🔥</div>
+          <div style="font-size: 15px; font-weight: 900; color: var(--warning);">${fitData.calories.toLocaleString()}</div>
+          <div style="font-size: 10px; color: var(--text-muted);" data-i18n="burned_cals">נשרפו (kcal)</div>
+        </div>
+      `;
+
+      if (showHP || fitData.heartPoints > 0) {
+        cardsHtml += `
+          <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
+            <div style="font-size: 16px;">💓</div>
+            <div style="font-size: 15px; font-weight: 900; color: #ec4899;">${fitData.heartPoints.toLocaleString()}</div>
+            <div style="font-size: 10px; color: var(--text-muted);">נקודות לב</div>
+          </div>
+        `;
+      }
+
+      if (showHR) {
+        cardsHtml += `
+          <div style="background: var(--bg-elevated); padding: 8px; border-radius: 8px; border: 1px solid var(--border-light);">
+            <div style="font-size: 16px;">❤️</div>
+            <div style="font-size: 15px; font-weight: 900; color: var(--danger);">${fitData.avgHeartRate} bpm</div>
+            <div style="font-size: 10px; color: var(--text-muted);" data-i18n="avg_hr">דופק ממוצע</div>
+          </div>
+        `;
+      }
+
+      content.innerHTML = cardsHtml;
     } else {
       loading.textContent = 'לא התקבלו נתונים מ-Google Fit (אם כבר התחברת, לחץ על "התחבר מחדש" בהגדרות לרענון הרשאות הדופק והצעדים)';
     }
