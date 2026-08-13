@@ -211,6 +211,12 @@ const I18n = (() => {
       nut_analyzing: "Analyzing meal with Gemini AI...",
       nut_select_image: "Please select an image to analyze",
       nut_kcal: "kcal",
+      move_meal_title: "Move meal to yesterday/today",
+      move_to_yesterday: "Yesterday",
+      move_to_today: "Today",
+      meal_moved_success: "Meal moved successfully! 📅",
+      nav_prev_nut_day: "Previous Day",
+      nav_next_nut_day: "Next Day",
 
       // Timer
       timer_rest_done: "Rest is over! 💪",
@@ -860,6 +866,12 @@ const I18n = (() => {
       nut_analyzing: "מנתח ארוחה ע״י Gemini AI...",
       nut_select_image: "נא לבחור תמונה לניתוח",
       nut_kcal: "קק\"ל",
+      move_meal_title: "העבר ארוחה לאתמול/להיום",
+      move_to_yesterday: "לאתמול",
+      move_to_today: "להיום",
+      meal_moved_success: "הארוחה הועברה בהצלחה! 📅",
+      nav_prev_nut_day: "יום קודם",
+      nav_next_nut_day: "יום הבא",
 
       timer_rest_done: "המנוחה הסתיימה! 💪",
       timer_title: "⏱️ טיימר מנוחה",
@@ -1467,6 +1479,12 @@ const I18n = (() => {
       nut_analyzing: "جاري تحليل الوجبة بواسطة Gemini AI...",
       nut_select_image: "يرجى اختيار صورة للتحليل",
       nut_kcal: "سعرة",
+      move_meal_title: "نقل الوجبة للأمس/اليوم",
+      move_to_yesterday: "إلى الأمس",
+      move_to_today: "إلى اليوم",
+      meal_moved_success: "تم نقل الوجبة بنجاح! 📅",
+      nav_prev_nut_day: "اليوم السابق",
+      nav_next_nut_day: "اليوم التالي",
 
       timer_rest_done: "انتهت الراحة! 💪",
       timer_title: "⏱️ مؤقت الراحة",

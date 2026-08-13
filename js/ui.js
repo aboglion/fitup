@@ -707,6 +707,47 @@ const UI = (() => {
     if (e.target === document.getElementById('modal-overlay')) hideModal();
   });
 
+  /**
+   * Compress and resize an image File or Data URL to lightweight Base64 string
+   */
+  function compressImage(fileOrDataUrl, maxDim = 500, quality = 0.65) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(dataUrl);
+      };
+      img.onerror = (err) => reject(err);
+
+      if (typeof fileOrDataUrl === 'string') {
+        img.src = fileOrDataUrl;
+      } else {
+        const reader = new FileReader();
+        reader.onload = (e) => { img.src = e.target.result; };
+        reader.onerror = (err) => reject(err);
+        reader.readAsDataURL(fileOrDataUrl);
+      }
+    });
+  }
+
   return {
     toast,
     showModal,
@@ -728,7 +769,8 @@ const UI = (() => {
     getEquipment,
     formatTempo,
     initTimer,
-    startTimer
+    startTimer,
+    compressImage
   };
 })();
 

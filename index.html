@@ -97,45 +97,38 @@
       </button>
       
       <!-- Center Progress Circle & Nutrition HUD -->
-      <div id="bottom-nav-progress" style="width: 140px; display: flex; flex-direction: column; align-items: center; justify-content: center; transform: translateY(-24px); z-index: 10; position: relative; flex-shrink: 0;">
+      <div id="bottom-nav-progress" class="bottom-nav-center-hub">
         
-        <!-- Progress Ring with Integrated Label & Percentage -->
-        <div style="background: var(--bg-secondary); border-radius: 50%; padding: 4px; box-shadow: 0 -4px 12px rgba(0,0,0,0.15); border: 1px solid var(--border-color); position: relative; z-index: 5;">
-          <div class="progress-ring" style="width: 54px; height: 54px; position: relative;">
-            <svg viewBox="0 0 100 100">
+        <!-- Protein (Left Stat) -->
+        <div class="nav-macro-stat protein-stat">
+          <span id="nav-protein-percent" class="macro-percent">0%</span>
+          <div class="macro-val-wrapper">
+            <span id="nav-protein-text" class="macro-val">0</span><span class="macro-unit">g</span>
+          </div>
+          <span class="macro-label" data-i18n="protein">Protein</span>
+        </div>
+
+        <!-- Hero Center Action Circle -->
+        <div class="nav-hero-wrapper">
+          <div class="hero-progress-badge">
+            <span class="js-progress-text">0%</span>
+          </div>
+          <button class="bottom-nav-hero-btn bottom-nav-link" data-page="nutrition" id="nav-mobile-food-btn" data-i18n-title="go_to_nutrition">
+            <svg class="hero-ring-svg" viewBox="0 0 100 100">
               <circle class="progress-ring-bg" cx="50" cy="50" r="42" stroke-width="8"/>
               <circle class="progress-ring-fill js-progress-circle" cx="50" cy="50" r="42" stroke-width="8"/>
             </svg>
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; line-height: 1.1;">
-              <span style="font-size: 8px; font-weight: 800; color: var(--text-muted); opacity: 0.9; margin-bottom: 1px; letter-spacing: -0.2px;" data-i18n="daily_progress">Progress</span>
-              <span class="progress-text js-progress-text" style="font-size: 13px; font-weight: 900; color: var(--text-primary); position: static !important; transform: none !important;">0%</span>
-            </div>
-          </div>
+            <span class="hero-icon">🍽️</span>
+          </button>
         </div>
 
-        <!-- Nutrition Cluster (Below circle) -->
-        <div style="position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; justify-content: center; z-index: 10; pointer-events: none;">
-          
-          <div style="position: relative; display: flex; align-items: center; justify-content: center; width: 38px; height: 38px;">
-            
-            <!-- Calories (Physical Right) -->
-            <div style="position: absolute; right: 0; top: 50%; transform: translate(calc(100% + 8px), -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; width: max-content;">
-              <span id="nav-cals-percent" style="color: var(--warning); font-size: 10px; font-weight: 800; line-height: 1; margin-bottom: 2px;">0%</span>
-              <span id="nav-cals-text" style="color: var(--warning); font-size: 13px; font-weight: 800;">0</span>
-              <span style="font-size: 10px; color: var(--text-muted); font-weight: 700;" data-i18n="calories">Calories</span>
-            </div>
-
-            <!-- Food Plate Button -->
-            <button class="bottom-nav-link" data-page="nutrition" id="nav-mobile-food-btn" style="pointer-events: auto; background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 50%; width: 38px; height: 38px; min-width: 38px; min-height: 38px; flex-shrink: 0; font-size: 18px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); z-index: 20;" data-i18n-title="go_to_nutrition">🍽️</button>
-
-            <!-- Protein (Physical Left) -->
-            <div style="position: absolute; left: 0; top: 50%; transform: translate(calc(-100% - 8px), -50%); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; width: max-content;">
-              <span id="nav-protein-percent" style="color: var(--success); font-size: 10px; font-weight: 800; line-height: 1; margin-bottom: 2px;">0%</span>
-              <span id="nav-protein-text" style="color: var(--success); font-size: 13px; font-weight: 800;">0</span>
-              <span style="font-size: 10px; color: var(--text-muted); font-weight: 700;" data-i18n="protein">Protein</span>
-            </div>
-
+        <!-- Calories (Right Stat) -->
+        <div class="nav-macro-stat cals-stat">
+          <span id="nav-cals-percent" class="macro-percent">0%</span>
+          <div class="macro-val-wrapper">
+            <span id="nav-cals-text" class="macro-val">0</span>
           </div>
+          <span class="macro-label" data-i18n="calories">Calories</span>
         </div>
 
       </div>

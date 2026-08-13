@@ -265,7 +265,18 @@ const TodayPage = (() => {
    */
   async function renderNutritionSection(queryDateStr) {
     renderNutritionSectionRef = renderNutritionSection;
-    if (!queryDateStr) queryDateStr = UI.getLocalDateString();
+    if (!queryDateStr) {
+      const day = allPlanDays[currentDayIndex];
+      queryDateStr = (day && day.date) ? day.date.split('/').reverse().join('-') : UI.getLocalDateString();
+    }
+
+    const parts = queryDateStr.split('-').map(Number);
+    const dObj = new Date(parts[0], parts[1] - 1, parts[2]);
+    const prevD = new Date(dObj); prevD.setDate(prevD.getDate() - 1);
+    const nextD = new Date(dObj); nextD.setDate(nextD.getDate() + 1);
+    const yesterdayStr = UI.getLocalDateString(prevD);
+    const tomorrowStr = UI.getLocalDateString(nextD);
+    const todayStr = UI.getLocalDateString();
 
     const setupCard = document.getElementById('gemini-setup-card');
     const mainContent = document.getElementById('nutrition-main-content');
@@ -338,10 +349,21 @@ const TodayPage = (() => {
       };
     }
 
-    // Set date label
+    // Set date label & nav controls
     const dateLabel = document.getElementById('nutrition-date-label');
     if (dateLabel) {
-      dateLabel.textContent = `${I18n.t('nut_date_label')} ${queryDateStr.split('-').reverse().join('/')}`;
+      const formattedDate = queryDateStr.split('-').reverse().join('/');
+      dateLabel.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <button id="nut-prev-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_prev_nut_day')}">▶</button>
+          <span style="font-weight: 700; color: var(--text-primary); font-size: 12px; margin: 0 4px;">${I18n.t('nut_date_label')} ${formattedDate}</span>
+          <button id="nut-next-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_next_nut_day')}">◀</button>
+        </div>
+      `;
+      const prevBtn = document.getElementById('nut-prev-day-btn');
+      const nextBtn = document.getElementById('nut-next-day-btn');
+      if (prevBtn) prevBtn.onclick = () => renderNutritionSection(yesterdayStr);
+      if (nextBtn) nextBtn.onclick = () => renderNutritionSection(tomorrowStr);
     }
 
     // Load nutrition data from DB for queryDateStr
@@ -465,6 +487,9 @@ const TodayPage = (() => {
             </div>
           ` : '';
 
+          const targetMoveDate = (queryDateStr === todayStr) ? yesterdayStr : todayStr;
+          const targetMoveLabel = (queryDateStr === todayStr) ? I18n.t('move_to_yesterday') : I18n.t('move_to_today');
+
           mealCard.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
               ${imgHtml}
@@ -476,12 +501,45 @@ const TodayPage = (() => {
                   <span style="font-size: 11px; color: var(--text-muted);">${meal.time || ''}</span>
                 </div>
               </div>
-              <button class="delete-meal-btn" data-id="${meal.id}" style="background: none; border: none; font-size: 16px; cursor: pointer; color: var(--danger); padding: 4px;" title="${I18n.t('delete_meal')}">🗑️</button>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <button class="move-meal-btn" data-id="${meal.id}" data-target="${targetMoveDate}" style="background: var(--bg-elevated); border: 1px solid var(--border-light); font-size: 11px; font-weight: 700; cursor: pointer; color: var(--accent-primary); padding: 4px 8px; border-radius: 6px; display: flex; align-items: center; gap: 4px;" title="${I18n.t('move_meal_title')}">
+                  📅 ${targetMoveLabel}
+                </button>
+                <button class="delete-meal-btn" data-id="${meal.id}" style="background: none; border: none; font-size: 16px; cursor: pointer; color: var(--danger); padding: 4px;" title="${I18n.t('delete_meal')}">🗑️</button>
+              </div>
             </div>
             ${analysisHtml}
           `;
 
           mealsContainer.appendChild(mealCard);
+        });
+
+        // Bind move handlers
+        mealsContainer.querySelectorAll('.move-meal-btn').forEach(btn => {
+          btn.onclick = async () => {
+            const id = btn.dataset.id;
+            const targetDateStr = btn.dataset.target;
+            let currentNut = await DB.getNutrition(queryDateStr);
+            if (currentNut && currentNut.meals) {
+              const mealToMove = currentNut.meals.find(m => m.id === id);
+              if (mealToMove) {
+                currentNut.meals = currentNut.meals.filter(m => m.id !== id);
+                await DB.saveNutrition(queryDateStr, currentNut);
+
+                let targetNut = await DB.getNutrition(targetDateStr);
+                if (!targetNut) targetNut = { meals: [], supplements_taken: [] };
+                if (!targetNut.meals) targetNut.meals = [];
+                targetNut.meals.push(mealToMove);
+                await DB.saveNutrition(targetDateStr, targetNut);
+
+                UI.toast(I18n.t('meal_moved_success'), 'success');
+                if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+                  CloudSync.scheduleSync();
+                }
+                renderNutritionSection(queryDateStr);
+              }
+            }
+          };
         });
 
         // Bind delete handlers
@@ -494,7 +552,9 @@ const TodayPage = (() => {
                 currentNut.meals = currentNut.meals.filter(m => m.id !== id);
                 await DB.saveNutrition(queryDateStr, currentNut);
                 UI.toast(I18n.t('meal_deleted'), 'info');
-                CloudSync.scheduleSync();
+                if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+                  CloudSync.scheduleSync();
+                }
                 renderNutritionSection(queryDateStr);
               }
             }
@@ -523,16 +583,24 @@ const TodayPage = (() => {
     let activeBase64Image = null;
     let activeMimeType = 'image/jpeg';
 
-    const handleFileSelect = (file) => {
+    const handleFileSelect = async (file) => {
       if (!file) return;
-      activeMimeType = file.type || 'image/jpeg';
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        activeBase64Image = e.target.result;
+      activeMimeType = 'image/jpeg';
+      try {
+        const compressedBase64 = await UI.compressImage(file, 500, 0.65);
+        activeBase64Image = compressedBase64;
         if (previewImg) previewImg.src = activeBase64Image;
         if (previewBox) previewBox.style.display = 'block';
-      };
-      reader.readAsDataURL(file);
+      } catch (err) {
+        console.error('Error compressing food image:', err);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          activeBase64Image = e.target.result;
+          if (previewImg) previewImg.src = activeBase64Image;
+          if (previewBox) previewBox.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
     };
 
     if (cameraInput && !cameraInput.hasAttribute('data-bound')) {
@@ -781,7 +849,8 @@ const TodayPage = (() => {
     if (nextBtn) nextBtn.disabled = currentDayIndex >= allPlanDays.length - 1;
 
     // --- Update Nutrition & AI System ---
-    await renderNutritionSection();
+    const dayDateStr = (day && day.date) ? day.date.split('/').reverse().join('-') : UI.getLocalDateString();
+    await renderNutritionSection(dayDateStr);
   }
 
 
