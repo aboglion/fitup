@@ -10,6 +10,10 @@ const App = (() => {
    */
   async function init() {
     try {
+      // Preload muscle map anatomy images immediately on startup
+      const imgFront = new Image(); imgFront.src = 'images/anatomy-front.webp';
+      const imgBack = new Image(); imgBack.src = 'images/anatomy-back.webp';
+
       // Safety timeout: ensure splash screen hides within max 2.5s if anything gets stuck
       setTimeout(() => {
         const splash = document.getElementById('splash-screen');
