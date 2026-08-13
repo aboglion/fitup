@@ -474,8 +474,11 @@ const StatsPage = (() => {
   function renderCharts(trackingMap, weightValues, metrics) {
     const container = document.getElementById('stats-charts');
 
-    // Progression Heatmap (all program days)
-    const heatmapDays = allPlanDays;
+    // Progression Heatmap (up to current active/tracked day)
+    const todayIdx = UI.findTodayIndex(allPlanDays);
+    const maxTrackedIdx = Object.keys(trackingMap).reduce((max, key) => Math.max(max, parseInt(key) || 0), 0);
+    const endIdx = Math.max(todayIdx, maxTrackedIdx);
+    const heatmapDays = allPlanDays.slice(0, Math.max(1, endIdx + 1));
     
     const heatmapCells = heatmapDays.map((day, index) => {
       const dIdx = day.dayIndex != null ? day.dayIndex : index;
