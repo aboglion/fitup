@@ -268,11 +268,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   position: relative;
   z-index: 10;
   flex-shrink: 0;
   padding: 0 4px;
+  direction: ltr !important;
 }
 
 .nav-macro-stat {
@@ -283,7 +284,8 @@ body {
   line-height: 1.15;
   font-family: var(--font-primary);
   text-align: center;
-  min-width: 38px;
+  min-width: 42px;
+  direction: ltr !important;
 }
 
 .macro-val-wrapper {
@@ -291,6 +293,7 @@ body {
   align-items: baseline;
   justify-content: center;
   gap: 1px;
+  direction: ltr !important;
 }
 
 .protein-stat .macro-percent,
@@ -332,51 +335,59 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transform: translateY(-2px);
+  margin: 0 2px;
 }
 
 .bottom-nav-hero-btn {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  max-width: 48px !important;
+  border-radius: 50% !important;
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 8px rgba(37, 99, 235, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
   cursor: pointer;
-  padding: 0;
+  padding: 0 !important;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
   outline: none;
+  flex: 0 0 48px !important;
 }
 
 .bottom-nav-hero-btn:hover,
 .bottom-nav-hero-btn:active {
-  transform: scale(1.05);
+  transform: scale(1.06);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), 0 0 14px rgba(37, 99, 235, 0.35);
 }
 
 .hero-ring-svg {
-  position: absolute;
-  top: -3px;
-  left: -3px;
-  width: 52px;
-  height: 52px;
+  position: absolute !important;
+  top: -4px !important;
+  left: -4px !important;
+  width: 56px !important;
+  height: 56px !important;
   pointer-events: none;
+  z-index: 5;
 }
 
 .hero-icon {
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1;
   display: block;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  position: relative;
+  z-index: 2;
 }
 
 .hero-progress-badge {
   position: absolute;
-  top: -8px;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--bg-secondary);
   border: 1px solid var(--border-light);
   border-radius: 10px;
@@ -388,6 +399,7 @@ body {
   z-index: 15;
   white-space: nowrap;
   letter-spacing: -0.2px;
+  direction: ltr !important;
 }
 
 

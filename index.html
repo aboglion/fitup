@@ -97,15 +97,15 @@
       </button>
       
       <!-- Center Progress Circle & Nutrition HUD -->
-      <div id="bottom-nav-progress" class="bottom-nav-center-hub">
+      <div id="bottom-nav-progress" class="bottom-nav-center-hub" style="direction: ltr !important;">
         
-        <!-- Protein (Left Stat) -->
-        <div class="nav-macro-stat protein-stat">
-          <span id="nav-protein-percent" class="macro-percent">0%</span>
+        <!-- Calories (Left Stat) -->
+        <div class="nav-macro-stat cals-stat">
+          <span id="nav-cals-percent" class="macro-percent">0%</span>
           <div class="macro-val-wrapper">
-            <span id="nav-protein-text" class="macro-val">0</span><span class="macro-unit">g</span>
+            <span id="nav-cals-text" class="macro-val">0</span>
           </div>
-          <span class="macro-label" data-i18n="protein">Protein</span>
+          <span class="macro-label" data-i18n="calories">Calories</span>
         </div>
 
         <!-- Hero Center Action Circle -->
@@ -122,13 +122,13 @@
           </button>
         </div>
 
-        <!-- Calories (Right Stat) -->
-        <div class="nav-macro-stat cals-stat">
-          <span id="nav-cals-percent" class="macro-percent">0%</span>
+        <!-- Protein (Right Stat) -->
+        <div class="nav-macro-stat protein-stat">
+          <span id="nav-protein-percent" class="macro-percent">0%</span>
           <div class="macro-val-wrapper">
-            <span id="nav-cals-text" class="macro-val">0</span>
+            <span id="nav-protein-text" class="macro-val">0</span><span class="macro-unit">g</span>
           </div>
-          <span class="macro-label" data-i18n="calories">Calories</span>
+          <span class="macro-label" data-i18n="protein">Protein</span>
         </div>
 
       </div>
@@ -157,10 +157,10 @@
           <!-- decorative background element -->
           <div style="position: absolute; top: -50px; left: -50px; width: 150px; height: 150px; background: var(--accent-primary); opacity: 0.05; border-radius: 50%; filter: blur(30px); pointer-events: none;"></div>
           
-          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; position: relative; z-index: 1;">
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; position: relative; z-index: 1; flex-wrap: wrap; gap: 12px;">
             
             <!-- Main Title and Badges -->
-            <div style="display: flex; flex-direction: column; gap: 6px; flex: 1;">
+            <div style="display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 160px;">
               <div id="day-type-container">
                 <span id="day-type" style="font-size: 20px !important;"></span>
               </div>
@@ -172,17 +172,17 @@
             </div>
 
             <!-- Nav, Dates, and Actions -->
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; margin-right: 12px;">
-              <!-- Day Nav -->
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <button id="nav-prev-day" class="day-nav-btn" data-i18n-title="prev_day_title" style="width: 32px; height: 32px; font-size: 12px; border-radius: 8px;">▶</button>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0;">
+              <!-- Day Nav (forced LTR: Left=Prev, Right=Next) -->
+              <div style="display: flex; align-items: center; gap: 8px; direction: ltr !important;">
+                <button id="nav-prev-day" class="day-nav-btn" data-i18n-title="prev_day_title" style="width: 32px; height: 32px; font-size: 12px; border-radius: 8px;">◀</button>
                 
                 <div style="display: flex; flex-direction: column; align-items: center; background: var(--bg-input); border: 1px solid var(--border-light); padding: 4px 10px; border-radius: 12px; font-weight: 600; line-height: 1.2;">
                   <span id="today-date-badge" style="color: var(--text-primary); font-size: 13px;"></span>
                   <span style="color: var(--text-secondary); font-size: 11px;"><span data-i18n="day_label">Day</span> <span id="day-number" style="color: var(--text-primary);" dir="ltr"></span></span>
                 </div>
                 
-                <button id="nav-next-day" class="day-nav-btn" data-i18n-title="next_day_title" style="width: 32px; height: 32px; font-size: 12px; border-radius: 8px;">◀</button>
+                <button id="nav-next-day" class="day-nav-btn" data-i18n-title="next_day_title" style="width: 32px; height: 32px; font-size: 12px; border-radius: 8px;">▶</button>
               </div>
               
               <!-- Action Buttons -->
@@ -224,11 +224,11 @@
           </div>
           
           <!-- Calendar Accordion Content -->
-          <div id="calendar-accordion-content" class="day-actions" style="display: none; margin-top: 0; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px;">
-            <div class="page-header" style="margin-bottom: 16px; margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
-              <button id="cal-prev-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">▶</button>
+          <div id="calendar-accordion-content" style="display: none; margin-top: 0; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; box-sizing: border-box;">
+            <div class="page-header" style="margin-bottom: 16px; margin-top: 0; display: flex; justify-content: space-between; align-items: center; direction: ltr !important;">
+              <button id="cal-prev-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">◀</button>
               <span id="cal-week-label" class="week-label" style="font-weight: 700; font-size: 16px; color: var(--text-primary);"></span>
-              <button id="cal-next-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">◀</button>
+              <button id="cal-next-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">▶</button>
             </div>
             <div id="calendar-grid" class="calendar-grid"></div>
           </div>
