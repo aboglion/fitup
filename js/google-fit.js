@@ -7,6 +7,9 @@ const GoogleFitService = (() => {
   /**
    * Fetch daily metrics (steps, calories, avg/max heart rate) for a given date or today
    */
+  /**
+   * Fetch daily metrics (steps, calories, avg/max heart rate) for a given date or today
+   */
   async function fetchDailyFitData(dateStr = null) {
     const token = await CloudSync.getAccessToken();
     if (!token) return null;
@@ -22,19 +25,15 @@ const GoogleFitService = (() => {
     const startOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0, 0);
     const endOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59, 999);
 
-    const requestBody = {
-      aggregateBy: [
-        { dataTypeName: "com.google.step_count.delta" },
-        { dataTypeName: "com.google.calories.expended" },
-        { dataTypeName: "com.google.heart_rate.bpm" }
-      ],
-      bucketByTime: { durationMillis: 86400000 },
-      startTimeMillis: startOfDay.getTime(),
-      endTimeMillis: endOfDay.getTime()
-    };
+    const makeAggregateRequest = async (types) => {
+      const requestBody = {
+        aggregateBy: types.map(t => ({ dataTypeName: t })),
+        bucketByTime: { durationMillis: 86400000 },
+        startTimeMillis: startOfDay.getTime(),
+        endTimeMillis: endOfDay.getTime()
+      };
 
-    try {
-      const response = await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
+      return await fetch('https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -42,11 +41,27 @@ const GoogleFitService = (() => {
         },
         body: JSON.stringify(requestBody)
       });
+    };
+
+    try {
+      // Primary request: Steps, Calories, and Heart Rate
+      let response = await makeAggregateRequest([
+        "com.google.step_count.delta",
+        "com.google.calories.expended",
+        "com.google.heart_rate.bpm"
+      ]);
+
+      // Fallback: If heart_rate.bpm fails due to scope issue (403/401), request steps & calories only
+      if (!response.ok && (response.status === 403 || response.status === 401)) {
+        console.warn('Google Fit full aggregate request failed. Retrying without heart rate...');
+        response = await makeAggregateRequest([
+          "com.google.step_count.delta",
+          "com.google.calories.expended"
+        ]);
+      }
 
       if (!response.ok) {
-        if (response.status === 401) {
-          console.warn('Google Fit API token expired or scope missing.');
-        }
+        console.warn('Google Fit API error:', response.status);
         return null;
       }
 
@@ -72,21 +87,25 @@ const GoogleFitService = (() => {
     if (data && data.bucket && data.bucket.length > 0) {
       const dataset = data.bucket[0].dataset || [];
       dataset.forEach(ds => {
+        const typeName = ds.dataTypeName || '';
         const streamId = ds.dataSourceId || '';
+        const isStep = typeName.includes('step_count') || streamId.includes('step_count');
+        const isCal = typeName.includes('calories') || streamId.includes('calories');
+        const isHR = typeName.includes('heart_rate') || streamId.includes('heart_rate');
         const point = ds.point || [];
 
         point.forEach(pt => {
           const value = pt.value || [];
           value.forEach(val => {
-            if (streamId.includes('step_count') && val.intVal) {
-              steps += val.intVal;
-            } else if (streamId.includes('calories') && val.fpVal) {
-              calories += Math.round(val.fpVal);
-            } else if (streamId.includes('heart_rate') && val.fpVal) {
-              const hr = Math.round(val.fpVal);
-              hrSum += hr;
+            const num = val.intVal != null ? val.intVal : (val.fpVal != null ? Math.round(val.fpVal) : 0);
+            if (isStep) {
+              steps += num;
+            } else if (isCal) {
+              calories += num;
+            } else if (isHR && num > 0) {
+              hrSum += num;
               hrCount++;
-              if (hr > maxHeartRate) maxHeartRate = hr;
+              if (num > maxHeartRate) maxHeartRate = num;
             }
           });
         });
@@ -180,7 +199,7 @@ const GoogleFitService = (() => {
       if (calsEl) calsEl.textContent = fitData.calories.toLocaleString();
       if (hrEl) hrEl.textContent = fitData.avgHeartRate > 0 ? `${fitData.avgHeartRate} bpm` : '—';
     } else {
-      loading.textContent = 'לא התקבלו נתונים מ-Google Fit (ודא שהתחברת והענקת הרשאות)';
+      loading.textContent = 'לא התקבלו נתונים מ-Google Fit (אם כבר התחברת, לחץ על "התחבר מחדש" בהגדרות לרענון הרשאות הדופק והצעדים)';
     }
   }
 
