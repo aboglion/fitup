@@ -63,10 +63,10 @@ const AnatomyMap = (() => {
                 const midX = c.side === 'left' ? Math.min(c.nodeX - 5, 34) : Math.max(c.nodeX + 5, 66);
                 return `
                   <path d="M ${c.nodeX} ${c.nodeY} L ${midX} ${labelY} L ${targetX} ${labelY}" 
-                        stroke="${c.color}" stroke-width="0.35" fill="none" opacity="0.65" 
-                        stroke-dasharray="1 0.8" style="filter: drop-shadow(0 0 1px ${c.color});" />
-                  <circle cx="${c.nodeX}" cy="${c.nodeY}" r="0.7" fill="${c.color}" />
-                  <circle cx="${targetX}" cy="${labelY}" r="0.6" fill="${c.color}" />
+                        stroke="${c.color}" stroke-width="0.85" fill="none" opacity="0.9" 
+                        stroke-dasharray="1.5 1" style="filter: drop-shadow(0 0 3px ${c.color});" />
+                  <circle cx="${c.nodeX}" cy="${c.nodeY}" r="1.1" fill="${c.color}" />
+                  <circle cx="${targetX}" cy="${labelY}" r="0.9" fill="${c.color}" />
                 `;
               }).join('')}
             </svg>
