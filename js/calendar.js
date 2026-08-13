@@ -30,9 +30,7 @@ const CalendarPage = (() => {
    * Navigate weeks
    */
   function navigateWeek(offset) {
-    const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
-    const step = isRTL ? -offset : offset;
-    const newWeek = currentWeekNum + step;
+    const newWeek = currentWeekNum + offset;
     if (newWeek >= 1 && newWeek <= totalWeeks) {
       currentWeekNum = newWeek;
       render();
@@ -43,6 +41,18 @@ const CalendarPage = (() => {
    * Render calendar page
    */
   async function render() {
+    const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
+    const prevWeekBtn = document.getElementById('cal-prev-week');
+    const nextWeekBtn = document.getElementById('cal-next-week');
+    if (prevWeekBtn) {
+      prevWeekBtn.disabled = currentWeekNum <= 1;
+      prevWeekBtn.textContent = isRTL ? '▶' : '◀';
+    }
+    if (nextWeekBtn) {
+      nextWeekBtn.disabled = currentWeekNum >= totalWeeks;
+      nextWeekBtn.textContent = isRTL ? '◀' : '▶';
+    }
+
     const weekLabel = `${I18n.t('week_label_full')} ${currentWeekNum}`;
     document.getElementById('cal-week-label').textContent = weekLabel;
 

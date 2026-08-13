@@ -10,6 +10,21 @@ const TodayPage = (() => {
 
   let renderNutritionSectionRef = null;
   let selectedNutritionDate = null;
+  let isEqBannerCollapsed = false;
+
+  function toggleEqBanner() {
+    isEqBannerCollapsed = !isEqBannerCollapsed;
+    const body = document.getElementById('eq-banner-body');
+    const header = document.getElementById('eq-banner-header');
+    if (body && header) {
+      const isHidden = isEqBannerCollapsed;
+      body.style.display = isHidden ? 'none' : 'flex';
+      header.style.paddingBottom = isHidden ? '0' : '10px';
+      header.style.borderBottom = isHidden ? 'none' : '1px solid var(--border-light)';
+      const arrow = document.getElementById('eq-banner-arrow');
+      if (arrow) arrow.style.transform = `rotate(${isHidden ? '180deg' : '0deg'})`;
+    }
+  }
 
   function isWeighted(ex) {
     if (!ex || !ex.weight) return false;
@@ -175,9 +190,7 @@ const TodayPage = (() => {
    * Navigate to a specific day
    */
   function navigate(offset) {
-    const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
-    const step = isRTL ? -offset : offset;
-    const newIndex = currentDayIndex + step;
+    const newIndex = currentDayIndex + offset;
     if (newIndex >= 0 && newIndex < allPlanDays.length) {
       currentDayIndex = newIndex;
       render();
@@ -427,22 +440,23 @@ const TodayPage = (() => {
       const isToday = queryDateStr === todayStr;
       const todayText = isToday ? ` (${I18n.t('nav_today')})` : '';
 
+      const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
+      const prevArrow = isRTL ? '▶' : '◀';
+      const nextArrow = isRTL ? '◀' : '▶';
+
       dateLabel.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 4px; direction: ltr !important; flex-wrap: wrap;">
-          <button id="nut-prev-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_prev_nut_day')}">◀</button>
+        <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
+          <button id="nut-prev-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_prev_nut_day')}">${prevArrow}</button>
           <span style="font-weight: 700; color: var(--text-primary); font-size: 12px; margin: 0 2px;">${I18n.t('nut_date_label')} ${formattedDate}${todayText}</span>
-          <button id="nut-next-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_next_nut_day')}">▶</button>
+          <button id="nut-next-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_next_nut_day')}">${nextArrow}</button>
           ${!isToday ? `<button id="nut-today-btn" style="background: var(--accent-primary); border: none; color: #fff; border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700; margin-left: 4px;" title="${I18n.t('back_to_today')}">📅 ${I18n.t('nav_today')}</button>` : ''}
         </div>
       `;
-      const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
-      const leftDateStr = isRTL ? tomorrowStr : yesterdayStr;
-      const rightDateStr = isRTL ? yesterdayStr : tomorrowStr;
       const prevBtn = document.getElementById('nut-prev-day-btn');
       const nextBtn = document.getElementById('nut-next-day-btn');
       const todayBtn = document.getElementById('nut-today-btn');
-      if (prevBtn) prevBtn.onclick = () => renderNutritionSection(leftDateStr);
-      if (nextBtn) nextBtn.onclick = () => renderNutritionSection(rightDateStr);
+      if (prevBtn) prevBtn.onclick = () => renderNutritionSection(yesterdayStr);
+      if (nextBtn) nextBtn.onclick = () => renderNutritionSection(tomorrowStr);
       if (todayBtn) todayBtn.onclick = () => renderNutritionSection(todayStr);
     }
 
@@ -798,49 +812,47 @@ const TodayPage = (() => {
     }
   }
     
-    // Bottom sheet interaction removed (Now handled by App router as a dedicated page)
-    // -------------------------------------
-
-    // Equipment Banner
+    // Equipment Banner (Accordion & Unified Equipment List)
     const eqBanner = document.getElementById('day-equipment-banner');
     if (eqBanner) {
       if (day.exercises && day.exercises.length > 0 && day.dayType !== 'Rest') {
-        const equipmentMap = new Map();
+        const unifiedRequirementsMap = new Map();
         let newExercisesList = [];
         let changedExercisesList = [];
-        let weightedExercisesList = [];
-        const requiredWeightsMap = new Map();
 
         day.exercises.forEach((ex, idx) => {
           const exNum = idx + 1;
-          const equip = UI.getEquipment(ex.name);
-          if (equip && equip.label !== I18n.t('equip_bodyweight') && equip.label !== I18n.t('equip_wall')) {
-            let labelText = equip.label;
-            if (labelText === I18n.t('equip_band') && isWeighted(ex)) {
-              labelText = `${I18n.t('equip_band')} (<bdi dir="ltr">${ex.weight}</bdi>)`;
-            }
-            if (!equipmentMap.has(labelText)) {
-              equipmentMap.set(labelText, { icon: equip.icon, label: labelText, exercises: [] });
-            }
-            equipmentMap.get(labelText).exercises.push(exNum);
-          }
+          const isW = isWeighted(ex);
 
-          if (isWeighted(ex)) {
+          if (isW) {
             const weightInfo = parseWeightDetails(ex.weight, ex.name);
             if (weightInfo) {
-              weightedExercisesList.push({ num: exNum, name: ex.name, weightInfo: weightInfo });
-
-              const reqKey = `${weightInfo.cleanWeight}_${weightInfo.isPerHand ? '2x' : '1x'}`;
-              if (!requiredWeightsMap.has(reqKey)) {
-                requiredWeightsMap.set(reqKey, {
-                  cleanWeight: weightInfo.cleanWeight,
-                  isPerHand: weightInfo.isPerHand,
-                  count: 0,
+              const reqKey = `weight_${weightInfo.isPerHand ? '2x' : '1x'}_${weightInfo.cleanWeight}`;
+              if (!unifiedRequirementsMap.has(reqKey)) {
+                unifiedRequirementsMap.set(reqKey, {
+                  type: 'weight',
+                  icon: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>`,
+                  label: weightInfo.isPerHand ? `${I18n.t('equip_db') || 'משקולות DB'} (זוג)` : `${I18n.t('equip_db') || 'משקולות DB'} (אחת)`,
+                  weightInfo: weightInfo,
                   exercises: []
                 });
               }
-              requiredWeightsMap.get(reqKey).count++;
-              requiredWeightsMap.get(reqKey).exercises.push(exNum);
+              unifiedRequirementsMap.get(reqKey).exercises.push(exNum);
+            }
+          } else {
+            const equip = UI.getEquipment(ex.name);
+            if (equip && equip.label !== I18n.t('equip_bodyweight') && equip.label !== I18n.t('equip_wall') && equip.label !== I18n.t('equip_db')) {
+              const reqKey = `equip_${equip.label}`;
+              if (!unifiedRequirementsMap.has(reqKey)) {
+                unifiedRequirementsMap.set(reqKey, {
+                  type: 'equipment',
+                  icon: equip.icon,
+                  label: equip.label,
+                  weightInfo: null,
+                  exercises: []
+                });
+              }
+              unifiedRequirementsMap.get(reqKey).exercises.push(exNum);
             }
           }
           
@@ -864,98 +876,45 @@ const TodayPage = (() => {
         const reportSvgs = {
           report: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>`,
           sparkles: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`,
-          trendUp: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`,
-          bodyweight: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>`
+          trendUp: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`
         };
 
-        let reportSections = [];
+        let bodyItems = [];
 
-        // Section 1: Dumbbells & Weights Required Summary
-        if (requiredWeightsMap.size > 0) {
-          let neededBadgesHTML = Array.from(requiredWeightsMap.values()).map(item => {
-            if (item.isPerHand) {
-              return `
-                <div style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 9px; padding: 6px 12px; font-size: 13px; font-weight: 800; color: var(--text-primary); display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(59, 130, 246, 0.1);">
-                  <span style="color: #3b82f6; font-size: 14px; font-weight: 900;">2×</span>
-                  <bdi dir="ltr">${item.cleanWeight}</bdi>
-                  <span style="font-size: 11px; background: #3b82f6; color: #ffffff; padding: 2px 7px; border-radius: 6px; font-weight: 900; display: inline-flex; align-items: center; gap: 3px;">
-                    🖐️ ${I18n.t('per_hand_tag') || 'כל יד'}
-                  </span>
+        // 1. Unified Equipment & Weight items
+        if (unifiedRequirementsMap.size > 0) {
+          Array.from(unifiedRequirementsMap.values()).forEach(item => {
+            const exercisesText = `${I18n.t(item.exercises.length > 1 ? 'required_for_exercises_plural' : 'required_for_exercises')} <b style="font-family: 'Inter', sans-serif;">${item.exercises.map(n => `#${n}`).join(', ')}</b>`;
+
+            if (item.type === 'weight') {
+              const badgeHTML = buildWeightBadgeHTML(item.weightInfo, true);
+              bodyItems.push(`
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 10px; background: var(--bg-input, rgba(255,255,255,0.03)); border: 1px solid var(--border-light); border-radius: 9px;">
+                  <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-primary);">
+                    <span style="font-size: 15px; color: #f97316; display: flex;">${item.icon}</span>
+                    <span><span style="font-weight: 700;">${item.label}:</span> ${exercisesText}</span>
+                  </div>
+                  <div style="flex-shrink: 0;">
+                    ${badgeHTML}
+                  </div>
                 </div>
-              `;
+              `);
             } else {
-              return `
-                <div style="background: var(--bg-input, rgba(255,255,255,0.04)); border: 1px solid var(--border-color); border-radius: 9px; padding: 6px 12px; font-size: 13px; font-weight: 800; color: var(--text-primary); display: inline-flex; align-items: center; gap: 8px;">
-                  <span style="color: var(--text-muted); font-size: 14px; font-weight: 900;">1×</span>
-                  <bdi dir="ltr">${item.cleanWeight}</bdi>
-                  <span style="font-size: 11px; background: var(--bg-hover, rgba(255,255,255,0.08)); color: var(--text-secondary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
-                    ${I18n.t('regular_weight_tag') || 'משקל רגיל'}
-                  </span>
+              bodyItems.push(`
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 10px; background: var(--bg-input, rgba(255,255,255,0.03)); border: 1px solid var(--border-light); border-radius: 9px;">
+                  <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-primary);">
+                    <span style="font-size: 15px; color: #f97316; display: flex;">${item.icon}</span>
+                    <span><span style="font-weight: 700;">${item.label}:</span> ${exercisesText}</span>
+                  </div>
                 </div>
-              `;
+              `);
             }
-          }).join('');
-
-          reportSections.push(`
-            <div style="background: var(--bg-input, rgba(255,255,255,0.03)); border: 1px solid var(--border-light); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px;">
-              <div style="font-size: 12px; font-weight: 800; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
-                🏋️‍♂️ <span>${I18n.t('dumbbells_needed_today') || 'משקולות וציוד נדרש לאימון היום'}</span>
-              </div>
-              <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
-                ${neededBadgesHTML}
-              </div>
-            </div>
-          `);
-        }
-
-        // Section 2: Per-exercise weight breakdown
-        if (weightedExercisesList.length > 0) {
-          let exerciseGridItems = weightedExercisesList.map(item => {
-            const badgeHTML = buildWeightBadgeHTML(item.weightInfo, true);
-            return `
-              <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 10px; padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
-                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
-                  <span style="font-size: 11px; font-weight: 900; color: var(--accent-primary); background: rgba(59, 130, 246, 0.1); padding: 2px 6px; border-radius: 6px; font-family: 'Inter', sans-serif; flex-shrink: 0;">#${item.num}</span>
-                  <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.name}</span>
-                </div>
-                <div style="flex-shrink: 0;">
-                  ${badgeHTML}
-                </div>
-              </div>
-            `;
-          }).join('');
-
-          reportSections.push(`
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              <div style="font-size: 12px; font-weight: 800; color: var(--text-secondary); display: flex; align-items: center; gap: 6px;">
-                📋 <span>${I18n.t('exercise_weights_breakdown') || 'פירוט משקולות ודרישות עבודה לפי תרגיל'}</span>
-              </div>
-              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px;">
-                ${exerciseGridItems}
-              </div>
-            </div>
-          `);
-        }
-
-        // Section 3: Equipment types (TRX, Band, Bars, etc.)
-        let otherItems = [];
-        if (equipmentMap.size > 0) {
-          Array.from(equipmentMap.values()).forEach(eq => {
-            otherItems.push(`
-              <div style="display: flex; align-items: flex-start; gap: 10px; padding: 4px 0;">
-                <span style="font-size: 16px; margin-top: 1px; display: flex; color: #f97316;">${eq.icon}</span>
-                <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
-                  <span style="font-weight: 700;">${eq.label}:</span> 
-                  ${I18n.t(eq.exercises.length > 1 ? 'required_for_exercises_plural' : 'required_for_exercises')} <b style="font-family: 'Inter', sans-serif;">${eq.exercises.map(n => `#${n}`).join(', ')}</b>
-                </div>
-              </div>
-            `);
           });
         }
 
-        // New exercises
+        // 2. New exercises
         if (newExercisesList.length > 0) {
-          otherItems.push(`
+          bodyItems.push(`
             <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 10px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 8px;">
               <span style="font-size: 16px; margin-top: 1px; animation: blinkRed 2s infinite; border-radius: 50%; display: flex;">${reportSvgs.sparkles}</span>
               <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
@@ -966,9 +925,9 @@ const TodayPage = (() => {
           `);
         }
 
-        // Changed exercises
+        // 3. Changed exercises
         if (changedExercisesList.length > 0) {
-          otherItems.push(`
+          bodyItems.push(`
             <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 10px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
               <span style="font-size: 16px; margin-top: 1px; display: flex;">${reportSvgs.trendUp}</span>
               <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
@@ -979,23 +938,21 @@ const TodayPage = (() => {
           `);
         }
 
-        if (otherItems.length > 0) {
-          reportSections.push(`
-            <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed var(--border-light); padding-top: 10px; margin-top: 4px;">
-              ${otherItems.join('')}
-            </div>
-          `);
-        }
-
-        if (reportSections.length > 0) {
+        if (bodyItems.length > 0) {
+          const isHidden = isEqBannerCollapsed;
           eqBanner.innerHTML = `
-            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); display: flex; flex-direction: column; gap: 14px;">
-              <div style="display: flex; align-items: center; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+            <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 14px 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); transition: all 0.3s ease;">
+              <div id="eq-banner-header" onclick="TodayPage.toggleEqBanner()" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; padding-bottom: ${isHidden ? '0' : '10px'}; border-bottom: ${isHidden ? 'none' : '1px solid var(--border-light)'};">
                 <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
                   <span style="display: flex; color: var(--accent-primary);">${reportSvgs.report}</span> ${I18n.t('workout_overview_title')}
                 </h3>
+                <span id="eq-banner-arrow" style="font-size: 12px; color: var(--text-muted); transition: transform 0.3s ease; transform: rotate(${isHidden ? '180deg' : '0deg'});">
+                  ▲
+                </span>
               </div>
-              ${reportSections.join('')}
+              <div id="eq-banner-body" style="display: ${isHidden ? 'none' : 'flex'}; flex-direction: column; gap: 8px; margin-top: ${isHidden ? '0' : '10px'};">
+                ${bodyItems.join('')}
+              </div>
             </div>
           `;
         } else {
@@ -1017,11 +974,20 @@ const TodayPage = (() => {
     document.getElementById('body-weight').value = currentTracking.bodyWeight || '';
     document.getElementById('day-notes').value = currentTracking.notes || '';
 
-    // Update navigation info
+    // Update navigation info and arrows direction according to language direction
+    const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
     const prevBtn = document.getElementById('nav-prev-day');
     const nextBtn = document.getElementById('nav-next-day');
-    if (prevBtn) prevBtn.disabled = currentDayIndex <= 0;
-    if (nextBtn) nextBtn.disabled = currentDayIndex >= allPlanDays.length - 1;
+    if (prevBtn) {
+      prevBtn.disabled = currentDayIndex <= 0;
+      prevBtn.textContent = isRTL ? '▶' : '◀';
+      prevBtn.title = I18n.t('prev_day_title');
+    }
+    if (nextBtn) {
+      nextBtn.disabled = currentDayIndex >= allPlanDays.length - 1;
+      nextBtn.textContent = isRTL ? '◀' : '▶';
+      nextBtn.title = I18n.t('next_day_title');
+    }
 
     // --- Update Nutrition & AI System ---
     if (!selectedNutritionDate) {
@@ -1983,7 +1949,8 @@ const TodayPage = (() => {
     startIntervalTimer,
     getCurrentDayIndex: () => currentDayIndex,
     parseWeightDetails,
-    buildWeightBadgeHTML
+    buildWeightBadgeHTML,
+    toggleEqBanner
   };
 })();
 

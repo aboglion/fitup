@@ -173,8 +173,8 @@
 
             <!-- Nav, Dates, and Actions -->
             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0;">
-              <!-- Day Nav (forced LTR: Left=Prev, Right=Next) -->
-              <div style="display: flex; align-items: center; gap: 8px; direction: ltr !important;">
+              <!-- Day Nav -->
+              <div style="display: flex; align-items: center; gap: 8px;">
                 <button id="nav-prev-day" class="day-nav-btn" data-i18n-title="prev_day_title" style="width: 32px; height: 32px; font-size: 12px; border-radius: 8px;">◀</button>
                 
                 <div style="display: flex; flex-direction: column; align-items: center; background: var(--bg-input); border: 1px solid var(--border-light); padding: 4px 10px; border-radius: 12px; font-weight: 600; line-height: 1.2;">
@@ -225,7 +225,7 @@
           
           <!-- Calendar Accordion Content -->
           <div id="calendar-accordion-content" style="display: none; margin-top: 0; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; box-sizing: border-box; overflow: hidden;">
-            <div class="page-header" style="margin-bottom: 16px; margin-top: 0; display: flex; justify-content: space-between; align-items: center; direction: ltr !important;">
+            <div class="page-header" style="margin-bottom: 16px; margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
               <button id="cal-prev-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">◀</button>
               <span id="cal-week-label" class="week-label" style="font-weight: 700; font-size: 16px; color: var(--text-primary);"></span>
               <button id="cal-next-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">▶</button>
