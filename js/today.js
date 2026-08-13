@@ -115,7 +115,9 @@ const TodayPage = (() => {
    * Navigate to a specific day
    */
   function navigate(offset) {
-    const newIndex = currentDayIndex + offset;
+    const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
+    const effectiveOffset = isRTL ? -offset : offset;
+    const newIndex = currentDayIndex + effectiveOffset;
     if (newIndex >= 0 && newIndex < allPlanDays.length) {
       currentDayIndex = newIndex;
       render();

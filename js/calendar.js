@@ -30,7 +30,9 @@ const CalendarPage = (() => {
    * Navigate weeks
    */
   function navigateWeek(offset) {
-    const newWeek = currentWeekNum + offset;
+    const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
+    const effectiveOffset = isRTL ? -offset : offset;
+    const newWeek = currentWeekNum + effectiveOffset;
     if (newWeek >= 1 && newWeek <= totalWeeks) {
       currentWeekNum = newWeek;
       render();
