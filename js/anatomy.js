@@ -26,14 +26,14 @@ const AnatomyMap = (() => {
     // Body centered 50%.
     const frontCallouts = [
       // Left labels (User's left, Character's right)
-      { id: 'chest-l',    label: I18n.t('muscle_chest'),     pct: m.chest.pct,     color: m.chest.color,     nodeX: 45, nodeY: 24, side: 'left' },
-      { id: 'core',       label: I18n.t('muscle_core'),      pct: m.core.pct,      color: m.core.color,      nodeX: 50, nodeY: 34, side: 'left' },
-      { id: 'obliques-l', label: I18n.t('muscle_obliques'),  pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 45, nodeY: 39, side: 'left' },
+      { id: 'chest-l',    label: I18n.t('muscle_chest'),     pct: m.chest.pct,     color: m.chest.color,     nodeX: 45, nodeY: 24, labelY: 18, side: 'left' },
+      { id: 'core',       label: I18n.t('muscle_core'),      pct: m.core.pct,      color: m.core.color,      nodeX: 50, nodeY: 34, labelY: 35, side: 'left' },
+      { id: 'obliques-l', label: I18n.t('muscle_obliques'),  pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 45, nodeY: 39, labelY: 52, side: 'left' },
       // Right labels (User's right, Character's left)
-      { id: 'shoulders-r',label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 60, nodeY: 19, side: 'right' },
-      { id: 'biceps-r',   label: I18n.t('muscle_biceps'),    pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 62, nodeY: 30, side: 'right' },
-      { id: 'forearm-r',  label: I18n.t('muscle_forearms'),  pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 65, nodeY: 40, side: 'right' },
-      { id: 'quads-r',    label: I18n.t('muscle_quads'),     pct: m.quads.pct,     color: m.quads.color,     nodeX: 55, nodeY: 55, side: 'right' },
+      { id: 'shoulders-r',label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 60, nodeY: 19, labelY: 15, side: 'right' },
+      { id: 'biceps-r',   label: I18n.t('muscle_biceps'),    pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 62, nodeY: 30, labelY: 31, side: 'right' },
+      { id: 'forearm-r',  label: I18n.t('muscle_forearms'),  pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 65, nodeY: 40, labelY: 47, side: 'right' },
+      { id: 'quads-r',    label: I18n.t('muscle_quads'),     pct: m.quads.pct,     color: m.quads.color,     nodeX: 55, nodeY: 55, labelY: 64, side: 'right' },
       // Symmetric dots
       { hideLabel: true, id: 'shoulders-l', color: m.shoulders.color, nodeX: 40, nodeY: 19 },
       { hideLabel: true, id: 'chest-r',     color: m.chest.color,     nodeX: 55, nodeY: 24 },
@@ -41,17 +41,19 @@ const AnatomyMap = (() => {
       { hideLabel: true, id: 'quads-l',     color: m.quads.color,     nodeX: 45, nodeY: 55 },
       { hideLabel: true, id: 'obliques-r',  color: m.obliques.color,  nodeX: 55, nodeY: 39 },
       { hideLabel: true, id: 'forearm-l',   color: m.forearms.color,  nodeX: 35, nodeY: 40 },
-    ];    // ── BACK VIEW ──
+    ];
+
+    // ── BACK VIEW ──
     const backCallouts = [
       // Left labels (4)
-      { id: 'traps-l',     label: I18n.t('muscle_traps'),      pct: m.traps.pct,       color: m.traps.color,       nodeX: 46, nodeY: 18, side: 'left' },
-      { id: 'triceps-l',   label: I18n.t('muscle_triceps'),    pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 39, nodeY: 30, side: 'left' },
-      { id: 'lowerBack',   label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct,   color: m.lowerBack.color,   nodeX: 50, nodeY: 42, side: 'left' },
-      { id: 'hamstrings-l',label: I18n.t('muscle_hamstrings'),  pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 46, nodeY: 63, side: 'left' },
+      { id: 'traps-l',     label: I18n.t('muscle_traps'),      pct: m.traps.pct,       color: m.traps.color,       nodeX: 46, nodeY: 18, labelY: 15, side: 'left' },
+      { id: 'triceps-l',   label: I18n.t('muscle_triceps'),    pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 39, nodeY: 30, labelY: 31, side: 'left' },
+      { id: 'lowerBack',   label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct,   color: m.lowerBack.color,   nodeX: 50, nodeY: 42, labelY: 47, side: 'left' },
+      { id: 'hamstrings-l',label: I18n.t('muscle_hamstrings'),  pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 46, nodeY: 63, labelY: 64, side: 'left' },
       // Right labels (3)
-      { id: 'lats-r',      label: I18n.t('muscle_lats'),       pct: m.lats.pct,        color: m.lats.color,        nodeX: 56, nodeY: 33, side: 'right' },
-      { id: 'glutes-r',    label: I18n.t('muscle_glutes'),     pct: m.glutes.pct,      color: m.glutes.color,      nodeX: 54, nodeY: 51, side: 'right' },
-      { id: 'calves-r',    label: I18n.t('muscle_calves'),     pct: m.calves.pct,      color: m.calves.color,      nodeX: 54, nodeY: 77, side: 'right' },
+      { id: 'lats-r',      label: I18n.t('muscle_lats'),       pct: m.lats.pct,        color: m.lats.color,        nodeX: 56, nodeY: 33, labelY: 30, side: 'right' },
+      { id: 'glutes-r',    label: I18n.t('muscle_glutes'),     pct: m.glutes.pct,      color: m.glutes.color,      nodeX: 54, nodeY: 51, labelY: 50, side: 'right' },
+      { id: 'calves-r',    label: I18n.t('muscle_calves'),     pct: m.calves.pct,      color: m.calves.color,      nodeX: 54, nodeY: 77, labelY: 72, side: 'right' },
       // Symmetric dots
       { hideLabel: true, id: 'traps-r',     color: m.traps.color,       nodeX: 54, nodeY: 18 },
       { hideLabel: true, id: 'lats-l',      color: m.lats.color,        nodeX: 44, nodeY: 33 },
@@ -71,24 +73,28 @@ const AnatomyMap = (() => {
             <div class="anatomy-image-bg" style="background-image: url('${imagePath}');"></div>
             <svg class="anatomy-svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%">
               ${visible.map(c => {
+                const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
                 const targetX = c.side === 'left' ? 22 : 78;
-                const midX = c.side === 'left' ? c.nodeX - 4 : c.nodeX + 4;
+                const midX = c.side === 'left' ? Math.min(c.nodeX - 5, 34) : Math.max(c.nodeX + 5, 66);
                 return `
-                  <path d="M ${c.nodeX} ${c.nodeY} L ${midX} ${c.nodeY} L ${targetX} ${c.nodeY}" 
+                  <path d="M ${c.nodeX} ${c.nodeY} L ${midX} ${labelY} L ${targetX} ${labelY}" 
                         stroke="${c.color}" stroke-width="0.35" fill="none" opacity="0.65" 
                         stroke-dasharray="1 0.8" style="filter: drop-shadow(0 0 1px ${c.color});" />
                   <circle cx="${c.nodeX}" cy="${c.nodeY}" r="0.7" fill="${c.color}" />
-                  <circle cx="${targetX}" cy="${c.nodeY}" r="0.6" fill="${c.color}" />
+                  <circle cx="${targetX}" cy="${labelY}" r="0.6" fill="${c.color}" />
                 `;
               }).join('')}
             </svg>
-            ${visible.map(c => `
-              <div class="callout-label side-${c.side}" style="top: ${c.nodeY}%; --color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${c.label.replace(/'/g, "\\'")}', ${c.pct})">
-                <div class="callout-title">${c.label}</div>
-                <div class="callout-value">${c.pct}%</div>
-                <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${c.pct}%; background: ${c.pct > 0 ? '#00ff66' : 'rgba(255,255,255,0.2)'};"></div></div>
-              </div>
-            `).join('')}
+            ${visible.map(c => {
+              const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
+              return `
+                <div class="callout-label side-${c.side}" style="top: ${labelY}%; --color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${c.label.replace(/'/g, "\\'")}', ${c.pct})">
+                  <div class="callout-title">${c.label}</div>
+                  <div class="callout-value">${c.pct}%</div>
+                  <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${c.pct}%; background: ${c.pct > 0 ? '#00ff66' : 'rgba(255,255,255,0.2)'};"></div></div>
+                </div>
+              `;
+            }).join('')}
             ${callouts.map(c => `
               <div class="anatomy-node" style="left: ${c.nodeX}%; top: ${c.nodeY}%; background-color: ${c.color}; color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${(c.label || c.id).replace(/'/g, "\\'")}', ${c.pct || 0})"></div>
             `).join('')}
