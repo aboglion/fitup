@@ -552,7 +552,9 @@ const UI = (() => {
       bodyweight: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>`
     };
 
-    if (n.includes('vest')) return { label: I18n.t('equip_vest'), icon: icons.vest };
+    if (n.startsWith('weighted')) return { label: I18n.t('equip_weighted'), icon: icons.vest };
+    if (n.includes('weighted')) return { label: I18n.t('equip_weighted'), icon: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="M3 7h2"/><path d="M19 7h2"/><path d="M3 17h2"/><path d="M19 17h2"/><rect x="5" y="9" width="2" height="6" rx="1"/><rect x="17" y="9" width="2" height="6" rx="1"/></svg>` };
+    if (n.includes('vest') || n.includes('weighted')) return { label: I18n.t('equip_vest'), icon: icons.vest };
     if (n.includes('trx')) return { label: I18n.t('equip_trx'), icon: icons.trx };
     if (n.includes('bars') || n.includes('push-up bars') || n.includes('parallettes')) return { label: I18n.t('equip_bars'), icon: icons.bars };
     if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row')) return { label: I18n.t('equip_db'), icon: icons.db };
