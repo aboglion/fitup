@@ -1688,6 +1688,20 @@ const TodayPage = (() => {
     } else {
       updateProgress(day);
       renderExercises(day);
+
+      // Start intra-workout adaptive rest timer if a set was completed
+      if (exData[`set_${setIdx}_done`]) {
+        let restTime = getRestTime(ex);
+        if (outcome === 'below') {
+          restTime += 30; // Intra-workout rest extension for BELOW outcome
+          if (window.UI && window.UI.showToast) {
+            UI.showToast(`${I18n.t('adaptive_rest_label')}: +30s (${restTime}s)`, 'warning');
+          }
+        }
+        if (restTime > 0 && window.UI && window.UI.startTimer) {
+          UI.startTimer(restTime, null);
+        }
+      }
     }
   }
 
