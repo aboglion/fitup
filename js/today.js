@@ -1552,46 +1552,13 @@ const TodayPage = (() => {
 
   function getRestTime(ex) {
     if (!ex || !ex.name) return 90;
-    
     if (ex.isWarmup) return 0;
 
     const lowerName = ex.name.toLowerCase();
-
-    // Active Recovery / Skill practice / Mobility (0s — no rest timer)
-    if (lowerName.includes('walking') || lowerName.includes('jogging')) {
-        return 0;
-    }
-    if (lowerName.includes('handstand practice') || lowerName.includes('l-sit practice')) {
-        return 0;
-    }
-    if (lowerName.includes('ankle dorsiflexion')) {
-        return 0;
+    if (lowerName.includes('walking') || lowerName.includes('jogging') || lowerName.includes('dorsiflexion')) {
+      return 0;
     }
 
-    // 180 Seconds — Heavy eccentrics and chin-ups
-    if (lowerName.includes('pull-up negative') || 
-        lowerName.includes('chin-up negative') || 
-        lowerName.includes('handstand push-up negative') ||
-        lowerName.includes('hspu negative') ||
-        lowerName === 'chin-up' || lowerName.includes('chin-up')) {
-        return 180;
-    }
-
-    // 120 Seconds — Compound movements, L-sit holds, Dragon Flag
-    const rules120 = ['squat', 'lunge', 'single-leg rdl', 'towel curl', 'push-up', 'pike push-up', 'wall handstand', 'wall walk', 'seated band row', 'l-sit on chair', 'l-sit on floor', 'dragon flag', 'pull-up (overhand)', 'explosive pull-up', 'tuck front lever'];
-    for (const r of rules120) {
-        if (lowerName.includes(r)) return 120;
-    }
-
-    // 90 Seconds — Isolation
-    const rules90 = ['band curl', 'towel grip hang'];
-    for (const r of rules90) {
-        if (lowerName.includes(r)) return 90;
-    }
-
-    // 60 Seconds — Prehab, light core, accessories
-    const rules60 = ['scapular pull-up', 'scapular push-up', 'band pull-apart', 'prone y-t-w', 'hollow rock', 'hollow-to-arch rock', 'dead bug', 'side plank hip dip', 'glute bridge', 'calf raise'];
-    for (const r of rules60) {
     if (window.ProgressionEngine && window.ProgressionEngine.calculateAdaptiveRest) {
       const rpe = (currentTracking && currentTracking.actualRPE) || 7;
       return window.ProgressionEngine.calculateAdaptiveRest(
@@ -1603,7 +1570,7 @@ const TodayPage = (() => {
         rpe
       );
     }
-    return ex.rest || 90; // Default fallback
+    return ex.rest || 90;
   }
 
   async function handleExerciseCompleted(idx, day) {
