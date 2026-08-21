@@ -1227,10 +1227,21 @@ const TodayPage = (() => {
             </div>
           ` : '';
 
+          const setResult = setData[`set_${s}_result`] || (setDone ? 'in_window' : null);
+
           setsHTML += `
-            <div class="set-row">
-              <button class="set-check ${setDone ? 'checked' : ''}" 
-                      onclick="TodayPage.toggleSet(${idx}, ${s}, this)" ${disabledAttr}>✓</button>
+            <div class="set-row ${setDone ? 'done-row' : ''}">
+              <div class="set-outcome-group">
+                <button type="button" class="set-outcome-btn outcome-above ${setResult === 'above' ? 'active' : ''}" 
+                        onclick="TodayPage.selectSetOutcome(${idx}, ${s}, 'above')" ${disabledAttr} 
+                        title="${I18n.t('set_outcome_above')}">🚀</button>
+                <button type="button" class="set-outcome-btn outcome-in-window ${setResult === 'in_window' ? 'active' : ''}" 
+                        onclick="TodayPage.selectSetOutcome(${idx}, ${s}, 'in_window')" ${disabledAttr} 
+                        title="${I18n.t('set_outcome_in_window')}">✅</button>
+                <button type="button" class="set-outcome-btn outcome-below ${setResult === 'below' ? 'active' : ''}" 
+                        onclick="TodayPage.selectSetOutcome(${idx}, ${s}, 'below')" ${disabledAttr} 
+                        title="${I18n.t('set_outcome_below')}">⚠️</button>
+              </div>
               <div class="set-inputs-group">
                 ${weightInput}
                 <div class="set-input-pill">
@@ -1640,6 +1651,47 @@ const TodayPage = (() => {
   }
 
   /**
+   * Select Set Outcome (ABOVE, IN_WINDOW, BELOW) for Zero Decisions progression engine
+   */
+  async function selectSetOutcome(exIdx, setIdx, outcome) {
+    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+
+    if (!currentTracking.setData) currentTracking.setData = {};
+    if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+
+    const exData = currentTracking.setData[exIdx];
+    const prevResult = exData[`set_${setIdx}_result`];
+
+    if (prevResult === outcome && exData[`set_${setIdx}_done`]) {
+      delete exData[`set_${setIdx}_result`];
+      delete exData[`set_${setIdx}_done`];
+    } else {
+      exData[`set_${setIdx}_result`] = outcome;
+      exData[`set_${setIdx}_done`] = true;
+    }
+
+    const day = allPlanDays[currentDayIndex];
+    await DB.saveDailyTracking(day.dateStr || UI.getTodayDateStr(), currentTracking);
+
+    const ex = day.exercises[exIdx];
+    const setsCount = UI.parseSetsCount(ex.sets);
+    let allSetsDone = true;
+    for (let s = 0; s < setsCount; s++) {
+      if (!exData[`set_${s}_done`]) {
+        allSetsDone = false;
+        break;
+      }
+    }
+
+    if (allSetsDone && !currentTracking.exerciseStatus[exIdx]) {
+      await handleExerciseCompleted(exIdx, day);
+    } else {
+      updateProgress(day);
+      renderExercises(day);
+    }
+  }
+
+  /**
    * Toggle set completion
    */
   async function toggleSet(exIdx, setIdx, btn) {
@@ -1992,6 +2044,7 @@ const TodayPage = (() => {
     toggleExercise,
     toggleRestDayComplete,
     toggleSet,
+    selectSetOutcome,
     updateSetData,
     updateExerciseNote,
     showExerciseImage,

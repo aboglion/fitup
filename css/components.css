@@ -637,7 +637,65 @@ input[type="number"] {
   box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
 }
 
+/* Zero Decisions Set Outcome Selector Buttons */
+.set-outcome-group {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 2px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.set-outcome-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  opacity: 0.5;
+  filter: grayscale(40%);
+}
+
+.set-outcome-btn:hover {
+  opacity: 0.95;
+  transform: scale(1.1);
+}
+
+.set-outcome-btn.active {
+  opacity: 1;
+  filter: none;
+  transform: scale(1.05);
+}
+
+.set-outcome-btn.outcome-above.active {
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.6);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+}
+
+.set-outcome-btn.outcome-in-window.active {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+}
+
+.set-outcome-btn.outcome-below.active {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
 /* Completed set row styling */
+.set-row.done-row,
 .set-row:has(.set-check.checked) {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.05));
   border-color: rgba(16, 185, 129, 0.2);

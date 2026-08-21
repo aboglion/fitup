@@ -721,7 +721,10 @@ const I18n = (() => {
       lean_pair_tag: "Lean Antagonistic Pair",
       lean_circuit_tag: "Core Citadel Circuit",
       lean_block_tag: "Calf Hypertrophy Block",
-      lean_toggle_tag: "Structural Toggle"
+      lean_toggle_tag: "Structural Toggle",
+      set_outcome_above: "🚀 Above Target",
+      set_outcome_in_window: "✅ In Window",
+      set_outcome_below: "⚠️ Mechanical Stop"
     },
     he: {
       // App & Nav
@@ -1382,7 +1385,10 @@ const I18n = (() => {
       lean_pair_tag: "זוג אנטגוניסטי Lean",
       lean_circuit_tag: "סבב קור סיטדל",
       lean_block_tag: "בלוק היפרטרופיה לתאומים",
-      lean_toggle_tag: "מחליף תרגיל מתוכנן"
+      lean_toggle_tag: "מחליף תרגיל מתוכנן",
+      set_outcome_above: "🚀 מעל היעד",
+      set_outcome_in_window: "✅ בתחום היעד",
+      set_outcome_below: "⚠️ כשל / עצירה מכנית"
     },
     ar: {
       // App & Nav
@@ -1768,7 +1774,10 @@ const I18n = (() => {
       lean_pair_tag: "زوج متضاد Lean",
       lean_circuit_tag: "دائرة Core Citadel",
       lean_block_tag: "كتلة تضخيم الساقين",
-      lean_toggle_tag: "تبديل هيكلي"
+      lean_toggle_tag: "تبديل هيكلي",
+      set_outcome_above: "🚀 أعلى من الهدف",
+      set_outcome_in_window: "✅ ضمن الهدف",
+      set_outcome_below: "⚠️ فشل / توقف ميكانيكي"
     }
   };
 
