@@ -315,6 +315,30 @@ const TodayPage = (() => {
     if (todayBtn) {
       todayBtn.style.display = isToday ? 'none' : 'flex';
     }
+
+    let nonTodayBanner = document.getElementById('non-today-mode-banner');
+    if (!isToday) {
+      if (!nonTodayBanner && summaryCard) {
+        nonTodayBanner = document.createElement('div');
+        nonTodayBanner.id = 'non-today-mode-banner';
+        nonTodayBanner.innerHTML = `
+          <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 18px;">👁️</span>
+              <div style="font-size: 13px; color: var(--warning, #f59e0b); font-weight: 700;">
+                ${I18n.t('view_only_mode_banner')}
+              </div>
+            </div>
+            <button type="button" class="btn-warning" style="padding: 6px 12px; font-size: 12px; font-weight: 700; white-space: nowrap; border-radius: 8px; border: none; cursor: pointer;" onclick="TodayPage.goToToday()">
+              ${I18n.t('back_to_today')}
+            </button>
+          </div>
+        `;
+        summaryCard.parentNode.insertBefore(nonTodayBanner, summaryCard);
+      }
+    } else if (nonTodayBanner) {
+      nonTodayBanner.remove();
+    }
     
 
     const typeBadge = document.getElementById('day-type');
@@ -1426,11 +1450,23 @@ const TodayPage = (() => {
     }
   }
 
+  function checkIsTodayOrWarn() {
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return false;
+    const realTodayIndex = UI.findTodayIndex(allPlanDays);
+    if (currentDayIndex !== realTodayIndex) {
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('not_today_warning'), 'warning');
+      }
+      return false;
+    }
+    return true;
+  }
+
   /**
    * Toggle exercise completion
    */
   async function toggleExercise(idx, btn) {
-    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    if (!checkIsTodayOrWarn()) return;
     
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     const isNowCompleted = !currentTracking.exerciseStatus[idx];
@@ -1466,7 +1502,7 @@ const TodayPage = (() => {
   }
 
   function openExerciseOutcomeModal(exIdx) {
-    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    if (!checkIsTodayOrWarn()) return;
     const day = allPlanDays[currentDayIndex];
     if (!day || !day.exercises) return;
     const ex = day.exercises[exIdx];
@@ -1523,7 +1559,7 @@ const TodayPage = (() => {
 
   async function confirmExerciseOutcome(exIdx, outcome) {
     UI.hideModal();
-    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    if (!checkIsTodayOrWarn()) return;
     const day = allPlanDays[currentDayIndex];
     if (!day || !day.exercises) return;
     const ex = day.exercises[exIdx];
@@ -1768,7 +1804,7 @@ const TodayPage = (() => {
    * Select Set Outcome (ABOVE, IN_WINDOW, BELOW) for Zero Decisions progression engine
    */
   async function selectSetOutcome(exIdx, setIdx, outcome) {
-    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    if (!checkIsTodayOrWarn()) return;
 
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
@@ -1823,7 +1859,7 @@ const TodayPage = (() => {
    * Open Set Outcome Modal ("How was Set #X?")
    */
   function openSetOutcomeModal(exIdx, setIdx) {
-    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    if (!checkIsTodayOrWarn()) return;
     const day = allPlanDays[currentDayIndex];
     if (!day || !day.exercises) return;
     const ex = day.exercises[exIdx];
@@ -1895,6 +1931,7 @@ const TodayPage = (() => {
 
   async function clearSetOutcomeFromModal(exIdx, setIdx) {
     UI.hideModal();
+    if (!checkIsTodayOrWarn()) return;
     if (currentTracking.setData && currentTracking.setData[exIdx]) {
       delete currentTracking.setData[exIdx][`set_${setIdx}_result`];
       delete currentTracking.setData[exIdx][`set_${setIdx}_done`];
@@ -1909,7 +1946,7 @@ const TodayPage = (() => {
    * Toggle set completion
    */
   async function toggleSet(exIdx, setIdx, btn) {
-    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    if (!checkIsTodayOrWarn()) return;
 
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
@@ -1971,7 +2008,7 @@ const TodayPage = (() => {
    * Update set data
    */
   async function updateSetData(exIdx, setIdx, field, value) {
-    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    if (!checkIsTodayOrWarn()) return;
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
     currentTracking.setData[exIdx][`set_${setIdx}_${field}`] = value;
@@ -1982,7 +2019,7 @@ const TodayPage = (() => {
    * Update exercise note
    */
   async function updateExerciseNote(exIdx, value) {
-    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    if (!checkIsTodayOrWarn()) return;
     if (!currentTracking.exerciseNotes) currentTracking.exerciseNotes = {};
     currentTracking.exerciseNotes[exIdx] = value;
     await autoSave();
@@ -2001,7 +2038,7 @@ const TodayPage = (() => {
   }
 
   async function toggleRestDayComplete() {
-    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    if (!checkIsTodayOrWarn()) return;
     
     currentTracking.completed = !currentTracking.completed;
     currentTracking.lastUpdated = new Date().toISOString();
