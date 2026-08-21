@@ -1962,25 +1962,34 @@ html[dir="ltr"] .modal-close, [dir="ltr"] .modal-close {
 /* ===== Rest Timer ===== */
 .rest-timer {
   position: fixed;
-  bottom: calc(var(--bottom-nav-height) + 16px);
-  left: 16px;
-  background: rgba(17, 24, 39, 0.95);
+  bottom: calc(var(--bottom-nav-height, 70px) + 20px);
+  left: 20px;
+  background: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
-  box-shadow: var(--shadow-lg);
-  z-index: 1000;
+  border: 1.5px solid rgba(59, 130, 246, 0.5);
+  border-radius: 16px;
+  padding: 14px 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+  z-index: 99999;
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
+  gap: 8px;
+  min-width: 180px;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s ease;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+html[dir="rtl"] .rest-timer {
+  left: auto;
+  right: 20px;
 }
 
 html.light-theme .rest-timer {
   background: rgba(255, 255, 255, 0.95);
-}
-  transition: all 0.3s ease;
+  border-color: rgba(59, 130, 246, 0.4);
 }
 
 @media (min-width: 769px) {
@@ -1988,10 +1997,15 @@ html.light-theme .rest-timer {
     bottom: 24px;
     left: 24px;
   }
+  html[dir="rtl"] .rest-timer {
+    left: auto;
+    right: 24px;
+  }
 }
 
 .rest-timer.hidden {
   opacity: 0;
+  visibility: hidden;
   transform: translateY(20px) scale(0.9);
   pointer-events: none;
 }

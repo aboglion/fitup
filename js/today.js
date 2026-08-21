@@ -1033,6 +1033,22 @@ const TodayPage = (() => {
 
     let completed = 0;
     day.exercises.forEach((ex, idx) => {
+      const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
+      const setsCount = UI.parseSetsCount(ex.sets);
+      if (setsCount > 0) {
+        let allSetsDone = true;
+        for (let s = 0; s < setsCount; s++) {
+          if (!setData[`set_${s}_done`]) {
+            allSetsDone = false;
+            break;
+          }
+        }
+        if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+        if (allSetsDone) {
+          currentTracking.exerciseStatus[idx] = true;
+        }
+      }
+
       if (currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx]) {
         completed++;
       }
@@ -1166,6 +1182,12 @@ const TodayPage = (() => {
     const disabledAttr = isToday ? '' : 'disabled style="opacity: 0.5; cursor: not-allowed;"';
 
     const container = document.getElementById('exercises-list');
+    if (!container) return;
+
+    // Preserve currently expanded exercise cards!
+    const expandedIds = new Set(
+      Array.from(container.querySelectorAll('.exercise-card.expanded')).map(card => card.id)
+    );
 
     if (day.exercises.length === 0) {
       // Rest day
@@ -1189,11 +1211,29 @@ const TodayPage = (() => {
       return;
     }
     container.innerHTML = day.exercises.map((ex, idx) => {
-      const isCompleted = currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx];
-      const color = UI.getCategoryColor(ex.slot);
       const setsCount = UI.parseSetsCount(ex.sets);
-      const reps = UI.parseReps(ex.sets);
       const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
+      
+      // Auto-evaluate exercise completion from set status:
+      if (setsCount > 0) {
+        let allDone = true;
+        for (let s = 0; s < setsCount; s++) {
+          if (!setData[`set_${s}_done`]) {
+            allDone = false;
+            break;
+          }
+        }
+        if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+        if (allDone) {
+          currentTracking.exerciseStatus[idx] = true;
+        }
+      }
+
+      const isCompleted = currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx];
+      const cardId = `ex-card-${idx}`;
+      const isExpanded = expandedIds.has(cardId) || (expandedIds.size === 0 && idx === 0);
+      const color = UI.getCategoryColor(ex.slot);
+      const reps = UI.parseReps(ex.sets);
       const exNote = (currentTracking.exerciseNotes && currentTracking.exerciseNotes[idx]) || '';
 
       // Check if exercise has weight data
@@ -1352,7 +1392,7 @@ const TodayPage = (() => {
       }
 
       return `
-        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="ex-card-${idx}" style="--glow-color: ${color};">
+        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isExpanded ? 'expanded' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
           <div class="exercise-hero-container skeleton-loading" style="position: relative;">
             <div class="skeleton-placeholder" style="gap: 4px;">
               <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
@@ -1591,6 +1631,15 @@ const TodayPage = (() => {
 
     await autoSave();
 
+    renderExercises(day);
+
+    // Start rest timer for exercise transition
+    let restTime = getRestTime(ex);
+    if (outcome === 'below') restTime += 30;
+    if (restTime > 0 && window.UI && window.UI.startTimer) {
+      UI.startTimer(restTime, null);
+    }
+
     if (currentTracking.completed) {
       showWorkoutCelebration(day);
     } else {
@@ -1821,8 +1870,6 @@ const TodayPage = (() => {
     }
 
     const day = allPlanDays[currentDayIndex];
-    await DB.saveDailyTracking(day.dateStr || UI.getTodayDateStr(), currentTracking);
-
     const ex = day.exercises[exIdx];
     const setsCount = UI.parseSetsCount(ex.sets);
     let allSetsDone = true;
@@ -1833,24 +1880,28 @@ const TodayPage = (() => {
       }
     }
 
-    if (allSetsDone && !currentTracking.exerciseStatus[exIdx]) {
-      await handleExerciseCompleted(exIdx, day);
-    } else {
-      updateProgress(day);
-      renderExercises(day);
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    currentTracking.exerciseStatus[exIdx] = allSetsDone;
 
-      // Start intra-workout adaptive rest timer if a set was completed
-      if (exData[`set_${setIdx}_done`]) {
-        let restTime = getRestTime(ex);
-        if (outcome === 'below') {
-          restTime += 30; // Intra-workout rest extension for BELOW outcome
-          if (window.UI && window.UI.showToast) {
-            UI.showToast(`${I18n.t('adaptive_rest_label')}: +30s (${restTime}s)`, 'warning');
-          }
+    await DB.saveDailyTracking(day.dateStr || UI.getTodayDateStr(), currentTracking);
+
+    updateProgress(day);
+    if (allSetsDone) {
+      await handleExerciseCompleted(exIdx, day);
+    }
+    renderExercises(day);
+
+    // Start intra-workout adaptive rest timer if a set was completed
+    if (exData[`set_${setIdx}_done`]) {
+      let restTime = getRestTime(ex);
+      if (outcome === 'below') {
+        restTime += 30; // Intra-workout rest extension for BELOW outcome
+        if (window.UI && window.UI.toast) {
+          UI.toast(`${I18n.t('adaptive_rest_label')}: +30s (${restTime}s)`, 'warning');
         }
-        if (restTime > 0 && window.UI && window.UI.startTimer) {
-          UI.startTimer(restTime, null);
-        }
+      }
+      if (restTime > 0 && window.UI && window.UI.startTimer) {
+        UI.startTimer(restTime, null);
       }
     }
   }
@@ -1935,6 +1986,9 @@ const TodayPage = (() => {
     if (currentTracking.setData && currentTracking.setData[exIdx]) {
       delete currentTracking.setData[exIdx][`set_${setIdx}_result`];
       delete currentTracking.setData[exIdx][`set_${setIdx}_done`];
+      if (currentTracking.exerciseStatus) {
+        currentTracking.exerciseStatus[exIdx] = false;
+      }
       const day = allPlanDays[currentDayIndex];
       await DB.saveDailyTracking(day.dateStr || UI.getTodayDateStr(), currentTracking);
       updateProgress(day);
@@ -1954,9 +2008,14 @@ const TodayPage = (() => {
     const key = `set_${setIdx}_done`;
     const isNowDone = !currentTracking.setData[exIdx][key];
     currentTracking.setData[exIdx][key] = isNowDone;
-    btn.classList.toggle('checked');
+    
+    // Auto-sync set outcome result if toggled
+    if (isNowDone && !currentTracking.setData[exIdx][`set_${setIdx}_result`]) {
+      currentTracking.setData[exIdx][`set_${setIdx}_result`] = 'in_window';
+    } else if (!isNowDone) {
+      delete currentTracking.setData[exIdx][`set_${setIdx}_result`];
+    }
 
-    // Check if all sets are done → auto-complete exercise
     const day = allPlanDays[currentDayIndex];
     const ex = day.exercises[exIdx];
     const setsCount = UI.parseSetsCount(ex.sets);
@@ -1968,38 +2027,31 @@ const TodayPage = (() => {
       }
     }
 
-    if (allSetsDone && !currentTracking.exerciseStatus[exIdx]) {
-      if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
-      currentTracking.exerciseStatus[exIdx] = true;
-      const card = document.getElementById(`ex-card-${exIdx}`);
-      card.classList.add('completed');
-      const checkBtn = card.querySelector('.exercise-check');
-      if (checkBtn) checkBtn.classList.add('checked');
-      updateProgress(day);
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    currentTracking.exerciseStatus[exIdx] = allSetsDone;
 
-      const total = day.exercises.length;
-      let completed = 0;
-      day.exercises.forEach((_, i) => {
-        if (currentTracking.exerciseStatus[i]) completed++;
-      });
-      currentTracking.completed = completed === total;
-      
-      await autoSave();
-      
+    updateProgress(day);
+
+    const total = day.exercises.length;
+    let completed = 0;
+    day.exercises.forEach((_, i) => {
+      if (currentTracking.exerciseStatus[i]) completed++;
+    });
+    currentTracking.completed = completed === total;
+    
+    await autoSave();
+    renderExercises(day);
+
+    if (allSetsDone) {
       if (currentTracking.completed) {
         showWorkoutCelebration(day);
       } else {
         handleExerciseCompleted(exIdx, day);
       }
-    } else {
-      await autoSave();
-      
-      // If we just marked a set as done (and not all sets are done), start a rest timer based on the exercise
-      if (isNowDone) {
-        const restTime = getRestTime(ex);
-        if (restTime > 0) {
-            UI.startTimer(restTime, null);
-        }
+    } else if (isNowDone) {
+      const restTime = getRestTime(ex);
+      if (restTime > 0 && window.UI && window.UI.startTimer) {
+        UI.startTimer(restTime, null);
       }
     }
   }
