@@ -708,7 +708,20 @@ const I18n = (() => {
       gemini_no_response: "Gemini did not return a response. Try taking a clearer photo.",
       unnamed_meal: "Unnamed Meal",
       meal_logged_success: "Meal logged successfully.",
-      ai_meal_name: "AI Meal"
+      ai_meal_name: "AI Meal",
+
+      // FitUp v15.6 Lean Program
+      lean_program_title: "v15.6 Lean Program",
+      myo_reps_title: "Myo-Reps Cluster",
+      tempo_loss_warning: "⚠️ Stop Rule: 2 Tempo Losses Reached!",
+      arm_block_limit_warning: "⚠️ Arm Block limit reached for this week (Max 2)",
+      biceps_heavy_phase: "Heavy Biceps Phase (8-10 reps)",
+      biceps_light_phase: "Light / Myo Biceps Phase (12-15 reps)",
+      adaptive_rest_label: "Dynamic Adaptive Rest",
+      lean_pair_tag: "Lean Antagonistic Pair",
+      lean_circuit_tag: "Core Citadel Circuit",
+      lean_block_tag: "Calf Hypertrophy Block",
+      lean_toggle_tag: "Structural Toggle"
     },
     he: {
       // App & Nav
@@ -1356,7 +1369,20 @@ const I18n = (() => {
       gemini_no_response: "Gemini לא החזיר תשובה. נסה לצלם שוב בבהירות.",
       unnamed_meal: "ארוחה ללא שם",
       meal_logged_success: "הארוחה הוקלדה בהצלחה.",
-      ai_meal_name: "ארוחת AI"
+      ai_meal_name: "ארוחת AI",
+
+      // FitUp v15.6 Lean Program
+      lean_program_title: "תוכנית v15.6 Lean",
+      myo_reps_title: "סט מיו-רפס (Myo-Reps)",
+      tempo_loss_warning: "⚠️ חוק עצירה: הגעת ל-2 אובדני קצב!",
+      arm_block_limit_warning: "⚠️ הגעת למגבלת בלוק זרועות לשבוע זה (מקסימום 2)",
+      biceps_heavy_phase: "שלב ביצפס כבד (8-10 חזרות)",
+      biceps_light_phase: "שלב ביצפס קל / מיו-רפס (12-15 חזרות)",
+      adaptive_rest_label: "מנוחה דינמית מותאמת",
+      lean_pair_tag: "זוג אנטגוניסטי Lean",
+      lean_circuit_tag: "סבב קור סיטדל",
+      lean_block_tag: "בלוק היפרטרופיה לתאומים",
+      lean_toggle_tag: "מחליף תרגיל מתוכנן"
     },
     ar: {
       // App & Nav
@@ -1729,7 +1755,20 @@ const I18n = (() => {
       tempo_pause_bottom: "{n} ث توقف في الأسفل",
       tempo_descent_squeeze: "{d} ث نزول + {s} ث انقباض",
       tempo_kmh: "{speed} كم/س",
-      tempo_kmh_effort_rest: "{effort} كم/س جهد / {rest} كم/س راحة"
+      tempo_kmh_effort_rest: "{effort} كم/س جهد / {rest} كم/س راحة",
+
+      // FitUp v15.6 Lean Program
+      lean_program_title: "برنامج v15.6 Lean",
+      myo_reps_title: "مجموعة Myo-Reps",
+      tempo_loss_warning: "⚠️ قاعدة التوقف: تم الوصول إلى فقدان الإيقاع مرتين!",
+      arm_block_limit_warning: "⚠️ تم الوصول إلى الحد الأقصى لحظر الذراع هذا الأسبوع (الحد الأقصى 2)",
+      biceps_heavy_phase: "مرحلة البايسبس الثقيلة (8-10 تكرارات)",
+      biceps_light_phase: "مرحلة البايسبس الخفيفة / מיו-רפס (12-15 تكرار)",
+      adaptive_rest_label: "راحة ديناميكية مجهزة",
+      lean_pair_tag: "زوج متضاد Lean",
+      lean_circuit_tag: "دائرة Core Citadel",
+      lean_block_tag: "كتلة تضخيم الساقين",
+      lean_toggle_tag: "تبديل هيكلي"
     }
   };
 

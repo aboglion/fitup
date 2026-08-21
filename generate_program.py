@@ -599,7 +599,52 @@ def generate_program():
             "setsProgression": "FitUp Pro Ultimate v4.0 Schedule"
         })
 
-    return {"daily": daily, "exercises": exercises_guide}
+    return {
+        "version": "15.6 Lean",
+        "progressionSettings": {
+            "myoRepsMaxTempoLoss": 2,
+            "bicepsMicrocycle": {"heavyWeeks": 2, "lightWeeks": 1},
+            "armBlockEligibilityWeek": 10,
+            "weeklyChestVolume": 8,
+            "weeklyBackVolume": 10,
+            "softenedProgression": True,
+            "zeroDecisionsMode": True
+        },
+        "leanStructures": {
+            "pairs": [
+                {"id": "P1", "name": "Row & Lateral Raise Pair", "ex1": "TRX Row", "ex2": "DB Lateral Raise", "restAfterEx2": 90},
+                {"id": "P2", "name": "Push-up & Biceps Pair", "ex1": "Push-up", "ex2": "DB Curl", "restAfterEx2": 90},
+                {"id": "P3", "name": "Grip & Core Pair", "ex1": "Towel Hang", "ex2": "L-sit Tuck (Bars)", "restAfterEx2": 60}
+            ],
+            "circuits": [
+                {"id": "C1", "name": "Core Citadel Circuit", "exercises": ["Pallof Press", "Dead Bug", "Hollow Body Hold"], "restAfterCircuit": 90}
+            ],
+            "blocks": [
+                {"id": "B1", "name": "Calf Hypertrophy Block", "exercises": ["Single-Leg Calf Raise", "Seated Calf Raise"], "rest": 60}
+            ],
+            "toggles": [
+                {
+                    "id": "T1_DAY1",
+                    "day": "Day 1",
+                    "name": "Day 1 Posterior/Quad Toggle",
+                    "optionA": "DB Single-Leg RDL",
+                    "optionB": "Lunge/Pistol Slot",
+                    "fallbackOption": "Reverse Lunge + DB",
+                    "unlockedOption": "Pistol Squat to Chair",
+                    "unlockCriteria": {"exercise": "DB Bulgarian Split Squat", "targetReps": 12, "targetWeightKg": 12}
+                },
+                {
+                    "id": "T2_DAY3",
+                    "day": "Day 3",
+                    "name": "Day 3 Rear Delt Toggle",
+                    "optionA": "TRX Y-T-W",
+                    "optionB": "Band Pull-Apart"
+                }
+            ]
+        },
+        "daily": daily,
+        "exercises": exercises_guide
+    }
 
 def to_training_data_json(program):
     rows = []

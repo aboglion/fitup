@@ -4,17 +4,24 @@
  */
 const DB = (() => {
   const DB_NAME = 'FitUpDB';
-  const DB_VERSION = 3;
+  const DB_VERSION = 9;
   let db = null;
 
   // Store names
   const STORES = {
-    PLAN: 'trainingPlan',        // The full training plan (365 days)
-    TRACKING: 'dayTracking',     // User's daily tracking data
-    EXERCISES: 'exerciseGuide',  // Exercise guide reference
-    SETTINGS: 'settings',        // App settings
-    PHOTOS: 'progressPhotos',    // Progress photos
-    NUTRITION: 'nutritionTracking' // Nutrition data
+    PLAN: 'trainingPlan',              // The full training plan (365 days)
+    TRACKING: 'dayTracking',           // User's daily tracking data
+    EXERCISES: 'exerciseGuide',        // Exercise guide reference
+    SETTINGS: 'settings',              // App settings
+    PHOTOS: 'progressPhotos',          // Progress photos
+    NUTRITION: 'nutritionTracking',     // Nutrition data
+    PROGRESSION_STATE: 'progressionState',     // Progression engine state per exercise
+    PROGRESSION_HISTORY: 'progressionHistory', // History of progression decisions
+    ADAPTIVE_REST: 'adaptiveRestHistory',       // Adaptive rest intervals
+    ARM_BLOCK_STATUS: 'armBlockStatus',         // Arm block status per muscle area
+    ARM_BLOCK_EXPOSURE: 'armBlockExposure',     // Weekly arm block exposure history
+    LEAN_SESSION: 'leanSessionState',           // Lean pairs & toggle states per session
+    MYO_CLUSTERS: 'myoClusterHistory'          // Myo-reps cluster performance logs
   };
 
   /**
@@ -64,6 +71,41 @@ const DB = (() => {
         // Nutrition store
         if (!database.objectStoreNames.contains(STORES.NUTRITION)) {
           database.createObjectStore(STORES.NUTRITION, { keyPath: 'date' });
+        }
+
+        // Progression state store
+        if (!database.objectStoreNames.contains(STORES.PROGRESSION_STATE)) {
+          database.createObjectStore(STORES.PROGRESSION_STATE, { keyPath: 'sessionKey' });
+        }
+
+        // Progression history store
+        if (!database.objectStoreNames.contains(STORES.PROGRESSION_HISTORY)) {
+          database.createObjectStore(STORES.PROGRESSION_HISTORY, { keyPath: 'id' });
+        }
+
+        // Adaptive rest history store
+        if (!database.objectStoreNames.contains(STORES.ADAPTIVE_REST)) {
+          database.createObjectStore(STORES.ADAPTIVE_REST, { keyPath: 'exerciseName' });
+        }
+
+        // Arm block status store
+        if (!database.objectStoreNames.contains(STORES.ARM_BLOCK_STATUS)) {
+          database.createObjectStore(STORES.ARM_BLOCK_STATUS, { keyPath: 'muscleArea' });
+        }
+
+        // Arm block exposure store
+        if (!database.objectStoreNames.contains(STORES.ARM_BLOCK_EXPOSURE)) {
+          database.createObjectStore(STORES.ARM_BLOCK_EXPOSURE, { keyPath: 'id' });
+        }
+
+        // Lean session state store
+        if (!database.objectStoreNames.contains(STORES.LEAN_SESSION)) {
+          database.createObjectStore(STORES.LEAN_SESSION, { keyPath: 'dayIndex' });
+        }
+
+        // Myo cluster history store
+        if (!database.objectStoreNames.contains(STORES.MYO_CLUSTERS)) {
+          database.createObjectStore(STORES.MYO_CLUSTERS, { keyPath: 'id' });
         }
       };
 
@@ -331,12 +373,19 @@ const DB = (() => {
   }
 
   /**
-   * Export all data as JSON (including tracking, settings, and progress photos)
+   * Export all data as JSON (including tracking, settings, progress photos, nutrition, and progression engine stores)
    */
   async function exportData() {
     const tracking = await getAll(STORES.TRACKING);
     const settings = await getAll(STORES.SETTINGS);
     const photos = await getAll(STORES.PHOTOS);
+    const progressionState = await getAll(STORES.PROGRESSION_STATE);
+    const progressionHistory = await getAll(STORES.PROGRESSION_HISTORY);
+    const adaptiveRestHistory = await getAll(STORES.ADAPTIVE_REST);
+    const armBlockStatus = await getAll(STORES.ARM_BLOCK_STATUS);
+    const armBlockExposure = await getAll(STORES.ARM_BLOCK_EXPOSURE);
+    const leanSessionState = await getAll(STORES.LEAN_SESSION);
+    const myoClusterHistory = await getAll(STORES.MYO_CLUSTERS);
     
     // Fetch nutrition in the format the backend expects
     const nutritionList = await getAll(STORES.NUTRITION);
@@ -349,12 +398,19 @@ const DB = (() => {
     }
     
     return {
-      version: 2,
+      version: 15.6,
       exportDate: new Date().toISOString(),
       tracking,
       settings,
       photos,
-      nutrition
+      nutrition,
+      progressionState,
+      progressionHistory,
+      adaptiveRestHistory,
+      armBlockStatus,
+      armBlockExposure,
+      leanSessionState,
+      myoClusterHistory
     };
   }
 
@@ -375,7 +431,6 @@ const DB = (() => {
           if (!localTrack) {
             trackingMap.set(cloudTrack.dayIndex, cloudTrack);
           } else {
-            // Compare timestamp or completion
             const localTime = new Date(localTrack.lastUpdated || 0).getTime();
             const cloudTime = new Date(cloudTrack.lastUpdated || 0).getTime();
             if (cloudTime >= localTime || (cloudTrack.completed && !localTrack.completed)) {
@@ -391,7 +446,6 @@ const DB = (() => {
     }
 
     if (data.settings) {
-      // Preserve local-only keys that should never be overwritten by cloud data
       const LOCAL_ONLY_KEYS = ['googleAccessToken', 'googleUserProfile', 'cloudSyncUrl'];
       const preservedSettings = {};
       for (const key of LOCAL_ONLY_KEYS) {
@@ -400,10 +454,8 @@ const DB = (() => {
       }
 
       if (!merge) await clear(STORES.SETTINGS);
-      // Import cloud settings
       await putBulk(STORES.SETTINGS, data.settings);
 
-      // Restore preserved local-only settings
       for (const key of LOCAL_ONLY_KEYS) {
         if (preservedSettings[key]) {
           await put(STORES.SETTINGS, preservedSettings[key]);
@@ -434,7 +486,6 @@ const DB = (() => {
           if (!localDay) {
             await put(STORES.NUTRITION, { date, ...cloudDay });
           } else {
-            // Merge meals
             const mergedMealsMap = new Map();
             (localDay.meals || []).forEach(m => mergedMealsMap.set(m.id || `${m.name}_${m.time}`, m));
             (cloudDay.meals || []).forEach(m => mergedMealsMap.set(m.id || `${m.name}_${m.time}`, m));
@@ -453,6 +504,32 @@ const DB = (() => {
           return { date, ...data.nutrition[date] };
         });
         await putBulk(STORES.NUTRITION, nutritionArray);
+      }
+    }
+
+    // Progression Engine Stores Import
+    const arrayStores = [
+      { key: 'progressionState', store: STORES.PROGRESSION_STATE, idProp: 'sessionKey' },
+      { key: 'progressionHistory', store: STORES.PROGRESSION_HISTORY, idProp: 'id' },
+      { key: 'adaptiveRestHistory', store: STORES.ADAPTIVE_REST, idProp: 'exerciseName' },
+      { key: 'armBlockStatus', store: STORES.ARM_BLOCK_STATUS, idProp: 'muscleArea' },
+      { key: 'armBlockExposure', store: STORES.ARM_BLOCK_EXPOSURE, idProp: 'id' },
+      { key: 'leanSessionState', store: STORES.LEAN_SESSION, idProp: 'dayIndex' },
+      { key: 'myoClusterHistory', store: STORES.MYO_CLUSTERS, idProp: 'id' }
+    ];
+
+    for (const item of arrayStores) {
+      if (data[item.key] && Array.isArray(data[item.key])) {
+        if (merge) {
+          const localItems = await getAll(item.store);
+          const map = new Map();
+          localItems.forEach(i => map.set(i[item.idProp], i));
+          data[item.key].forEach(i => map.set(i[item.idProp], i));
+          await putBulk(item.store, Array.from(map.values()));
+        } else {
+          await clear(item.store);
+          await putBulk(item.store, data[item.key]);
+        }
       }
     }
   }
@@ -655,6 +732,84 @@ const DB = (() => {
     return put(STORES.NUTRITION, { date: dateStr, ...data });
   }
 
+  // ============ Progression Engine Store Helpers ============
+
+  async function getProgressionState(sessionKey) {
+    return get(STORES.PROGRESSION_STATE, sessionKey);
+  }
+
+  async function saveProgressionState(data) {
+    return put(STORES.PROGRESSION_STATE, data);
+  }
+
+  async function getAllProgressionState() {
+    return getAll(STORES.PROGRESSION_STATE);
+  }
+
+  async function getProgressionHistory(id) {
+    return get(STORES.PROGRESSION_HISTORY, id);
+  }
+
+  async function saveProgressionHistory(data) {
+    return put(STORES.PROGRESSION_HISTORY, data);
+  }
+
+  async function getAllProgressionHistory() {
+    return getAll(STORES.PROGRESSION_HISTORY);
+  }
+
+  async function getAdaptiveRest(exerciseName) {
+    return get(STORES.ADAPTIVE_REST, exerciseName);
+  }
+
+  async function saveAdaptiveRest(exerciseName, data) {
+    return put(STORES.ADAPTIVE_REST, { exerciseName, ...data });
+  }
+
+  async function getAllAdaptiveRest() {
+    return getAll(STORES.ADAPTIVE_REST);
+  }
+
+  async function getArmBlockStatus(muscleArea) {
+    return get(STORES.ARM_BLOCK_STATUS, muscleArea);
+  }
+
+  async function saveArmBlockStatus(muscleArea, data) {
+    return put(STORES.ARM_BLOCK_STATUS, { muscleArea, ...data });
+  }
+
+  async function getAllArmBlockStatus() {
+    return getAll(STORES.ARM_BLOCK_STATUS);
+  }
+
+  async function getArmBlockExposure() {
+    return getAll(STORES.ARM_BLOCK_EXPOSURE);
+  }
+
+  async function saveArmBlockExposure(data) {
+    return put(STORES.ARM_BLOCK_EXPOSURE, data);
+  }
+
+  async function getLeanSessionState(dayIndex) {
+    return get(STORES.LEAN_SESSION, dayIndex);
+  }
+
+  async function saveLeanSessionState(dayIndex, data) {
+    return put(STORES.LEAN_SESSION, { dayIndex, ...data });
+  }
+
+  async function getAllLeanSessionState() {
+    return getAll(STORES.LEAN_SESSION);
+  }
+
+  async function getMyoClusterHistory() {
+    return getAll(STORES.MYO_CLUSTERS);
+  }
+
+  async function saveMyoClusterHistory(data) {
+    return put(STORES.MYO_CLUSTERS, data);
+  }
+
   return {
     init,
     loadTrainingPlan,
@@ -679,6 +834,25 @@ const DB = (() => {
     saveNutrition,
     count,
     swapWorkouts,
+    getProgressionState,
+    saveProgressionState,
+    getAllProgressionState,
+    getProgressionHistory,
+    saveProgressionHistory,
+    getAllProgressionHistory,
+    getAdaptiveRest,
+    saveAdaptiveRest,
+    getAllAdaptiveRest,
+    getArmBlockStatus,
+    saveArmBlockStatus,
+    getAllArmBlockStatus,
+    getArmBlockExposure,
+    saveArmBlockExposure,
+    getLeanSessionState,
+    saveLeanSessionState,
+    getAllLeanSessionState,
+    getMyoClusterHistory,
+    saveMyoClusterHistory,
     STORES
   };
 })();

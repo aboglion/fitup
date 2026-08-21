@@ -1089,6 +1089,50 @@ const TodayPage = (() => {
    */
 
 
+  function getLeanBadgesHTML(ex, weekNum) {
+    if (!ex) return '';
+    const name = ex.name.toLowerCase();
+    const badges = [];
+
+    // Lean Pairs
+    if (name.includes('trx row') || name.includes('lateral raise') || name.includes('push-up') || name.includes('curl') || name.includes('towel hang') || name.includes('l-sit')) {
+      if (name.includes('trx row') || (name.includes('lateral raise') && !name.includes('arm block'))) {
+        badges.push(`<span class="lean-structure-badge pair" style="background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.35); color: #c084fc; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">⚡ ${I18n.t('lean_pair_tag')}</span>`);
+      }
+    }
+
+    // Core Citadel Circuit
+    if (name.includes('pallof press') || name.includes('dead bug') || name.includes('hollow body hold')) {
+      badges.push(`<span class="lean-structure-badge circuit" style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.35); color: #4ade80; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🛡️ ${I18n.t('lean_circuit_tag')}</span>`);
+    }
+
+    // Calf Block
+    if (name.includes('calf raise')) {
+      badges.push(`<span class="lean-structure-badge block" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🦵 ${I18n.t('lean_block_tag')}</span>`);
+    }
+
+    // Structural Toggle
+    if (name.includes('single-leg rdl') || name.includes('pistol squat') || name.includes('y-t-w') || name.includes('pull-apart')) {
+      badges.push(`<span class="lean-structure-badge toggle" style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #60a5fa; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🔀 ${I18n.t('lean_toggle_tag')}</span>`);
+    }
+
+    // Biceps Microcycle
+    if (name.includes('curl') && !name.includes('arm block')) {
+      if (window.ProgressionEngine && window.ProgressionEngine.getBicepsMicrocyclePhase) {
+        const phase = window.ProgressionEngine.getBicepsMicrocyclePhase(weekNum || 1);
+        const color = phase.phase === 'LIGHT_MYO' ? '#ec4899' : '#3b82f6';
+        badges.push(`<span class="lean-microcycle-badge" style="background: rgba(236, 72, 153, 0.15); border: 1px solid ${color}; color: ${color}; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">💪 ${phase.phase === 'LIGHT_MYO' ? I18n.t('biceps_light_phase') : I18n.t('biceps_heavy_phase')}</span>`);
+      }
+    }
+
+    // Myo-Reps Indicator
+    if (name.includes('arm block') || name.includes('myo')) {
+      badges.push(`<span class="lean-myo-badge" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🔥 ${I18n.t('myo_reps_title')}</span>`);
+    }
+
+    return badges.length > 0 ? `<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; margin-bottom: 4px;">${badges.join('')}</div>` : '';
+  }
+
   /**
    * Render exercise cards
    */
@@ -1282,6 +1326,7 @@ const TodayPage = (() => {
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
                   ${equip ? `<span style="background: var(--bg-hover, rgba(255,255,255,0.05)); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: normal; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px;">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
+                ${getLeanBadgesHTML(ex, day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1)}
                 <div class="exercise-card-detail">
                   ${detailParts.join(' • ')}
                 </div>
@@ -1547,13 +1592,53 @@ const TodayPage = (() => {
     // 60 Seconds — Prehab, light core, accessories
     const rules60 = ['scapular pull-up', 'scapular push-up', 'band pull-apart', 'prone y-t-w', 'hollow rock', 'hollow-to-arch rock', 'dead bug', 'side plank hip dip', 'glute bridge', 'calf raise'];
     for (const r of rules60) {
-        if (lowerName.includes(r)) return 60;
+    if (window.ProgressionEngine && window.ProgressionEngine.calculateAdaptiveRest) {
+      const rpe = (currentTracking && currentTracking.actualRPE) || 7;
+      return window.ProgressionEngine.calculateAdaptiveRest(
+        ex.name,
+        ex.rest || 90,
+        UI.parseReps(ex.sets),
+        UI.parseReps(ex.sets),
+        0,
+        rpe
+      );
     }
-
-    return 90; // Default
+    return ex.rest || 90; // Default fallback
   }
 
-  function handleExerciseCompleted(idx, day) {
+  async function handleExerciseCompleted(idx, day) {
+    const ex = day.exercises[idx];
+    const weekNum = day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1;
+
+    // Commit progression state via ProgressionEngine
+    if (window.ProgressionEngine && window.ProgressionEngine.commitExerciseProgression) {
+      const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
+      const setsCount = UI.parseSetsCount(ex.sets);
+      let totalReps = 0;
+      let lastWeight = 0;
+      for (let s = 0; s < setsCount; s++) {
+        totalReps += parseInt(setData[`set_${s}_reps`]) || UI.parseReps(ex.sets);
+        if (setData[`set_${s}_weight`]) lastWeight = parseFloat(setData[`set_${s}_weight`]);
+      }
+      const avgReps = setsCount > 0 ? Math.round(totalReps / setsCount) : UI.parseReps(ex.sets);
+      const isArmBlock = ex.name.toLowerCase().includes('arm block');
+
+      await ProgressionEngine.commitExerciseProgression({
+        exerciseName: ex.name,
+        dayIndex: currentDayIndex,
+        weekNumber: weekNum,
+        targetReps: UI.parseReps(ex.sets),
+        actualReps: avgReps,
+        weightKg: lastWeight,
+        RPE: currentTracking.actualRPE || 7,
+        tempoLossCount: 0,
+        isMyoSet: isArmBlock,
+        isArmBlock: isArmBlock,
+        muscleArea: ex.name.toLowerCase().includes('curl') ? 'Biceps' : 'Triceps',
+        targetRest: ex.rest || 90
+      });
+    }
+
     // Find next incomplete exercise
     let nextIdx = -1;
     for (let i = idx + 1; i < day.exercises.length; i++) {
@@ -1569,7 +1654,6 @@ const TodayPage = (() => {
         if (restTime > 0) {
             // Start a timer for exercise transition
             UI.startTimer(restTime, () => {
-                // Expand next exercise when timer finishes
                 document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('expanded'));
                 const nextCard = document.getElementById(`ex-card-${nextIdx}`);
                 if (nextCard) {
@@ -1578,7 +1662,6 @@ const TodayPage = (() => {
                 }
             });
         } else {
-            // No rest needed, just expand next exercise
             document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('expanded'));
             const nextCard = document.getElementById(`ex-card-${nextIdx}`);
             if (nextCard) {
