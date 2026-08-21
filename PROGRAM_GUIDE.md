@@ -1,6 +1,6 @@
 import sys
 
-content = """# FitUp Pro Ultimate v4.0 — "3 kg Plates" Edition + Fixed Arm Block
+content = """# FitUp Pro v15.6 Lean Edition — Master Program Guide
 **Target Objective**: Sculpted Athletic Physique | V-Taper | Prominent Arms | Strong Back | Resilient Tendons | Anti-Aging | Aerobic Engine | Flexibility  
 **Starting Level**: Beginner (0 years formal training) | Clean Pull-Ups: 2 | Clean Push-Ups: 7  
 **Core Philosophy**: **Zero Decisions. Everything is prescriptive. You only execute.**
@@ -20,6 +20,11 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 ### 1.2 Iron Rules — Zero Decisions
 - **No Choices**: Exercise selection, load, set count, rep count, tempo, rest intervals, incline, and treadmill speed are 100% pre-determined.
 - **No Ambiguity**: No ranges or vague descriptions. Only exact numeric values.
+- **3-Button Set Outcome Classification**: Every set is logged using one of 3 objective buttons:
+  - **🚀 ABOVE**: Exceeded target rep window at prescribed tempo.
+  - **✅ IN_WINDOW**: Achieved target rep window at prescribed tempo.
+  - **⚠️ BELOW / Mechanical Stop**: Failed to reach minimum window or suffered tempo loss (triggers automatic +30s adaptive rest extension).
+- **Adaptive Intra-Workout Rest**: Rest timers adapt automatically (+30s extension following a BELOW / Mechanical Stop outcome) to guarantee full recovery before subsequent sets.
 - **No Improvised Finishers**: Nothing is added after sessions beyond table instructions. The Arm Block (starting Week 10) is an integral table component, not an optional finisher.
 - **No RIR, No Failure, No "In The Tank", No Feeling**: A set ends under only two factual conditions: (a) You completed all prescribed reps at tempo; (b) **Mechanical Stop** — a rep that cannot be completed at tempo. A mechanical stop is a factual boundary, not a subjective decision.
 - **Double Progression (Arm Block Only)**: Complete all reps at prescribed tempo → Advance one step up the ladder next workout. Incomplete reps → Repeat same step next workout. The ladder dictates progression, not feeling.
