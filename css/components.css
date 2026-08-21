@@ -610,88 +610,228 @@ input[type="number"] {
 }
 
 .set-check {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  border: 2px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.03);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  color: transparent;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-secondary);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0;
 }
 
 .set-check:hover {
-  border-color: rgba(16, 185, 129, 0.4);
-  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
 }
 
 .set-check.checked {
   background: linear-gradient(135deg, #10b981, #059669);
   border-color: transparent;
   color: white;
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
 }
 
 /* Zero Decisions Set Outcome Selector Buttons */
 .set-outcome-group {
   display: flex;
   align-items: center;
-  gap: 3px;
-  background: rgba(15, 23, 42, 0.6);
-  padding: 2px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 5px;
+  background: rgba(15, 23, 42, 0.7);
+  padding: 3px 5px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   flex-shrink: 0;
 }
 
 .set-outcome-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  background: transparent;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  transition: all 0.2s ease;
-  opacity: 0.5;
-  filter: grayscale(40%);
+  font-size: 17px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.7;
+  filter: grayscale(20%);
 }
 
 .set-outcome-btn:hover {
-  opacity: 0.95;
+  opacity: 1;
+  filter: none;
   transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .set-outcome-btn.active {
   opacity: 1;
   filter: none;
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .set-outcome-btn.outcome-above.active {
   background: rgba(34, 197, 94, 0.25);
   border-color: rgba(34, 197, 94, 0.6);
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.4);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
 }
 
 .set-outcome-btn.outcome-in-window.active {
   background: rgba(59, 130, 246, 0.25);
   border-color: rgba(59, 130, 246, 0.6);
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
 }
 
 .set-outcome-btn.outcome-below.active {
   background: rgba(239, 68, 68, 0.25);
   border-color: rgba(239, 68, 68, 0.6);
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+/* Single Clean Feedback Trigger Button in Set Row */
+.set-feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.set-feedback-btn.badge-pending {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: rgba(59, 130, 246, 0.35);
+  color: var(--accent-primary);
+}
+.set-feedback-btn.badge-pending:hover {
+  background: rgba(59, 130, 246, 0.22);
+  border-color: rgba(59, 130, 246, 0.6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.set-feedback-btn.badge-above {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #4ade80;
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+}
+
+.set-feedback-btn.badge-in-window {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #60a5fa;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
+}
+
+.set-feedback-btn.badge-below {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #f87171;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.2);
+}
+
+/* Modal Set Outcome Options */
+.set-modal-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card);
+  cursor: pointer;
+  text-align: right;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+html[dir="ltr"] .set-modal-option-btn {
+  text-align: left;
+}
+
+.set-modal-option-btn .option-icon {
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.set-modal-option-btn .option-content {
+  flex: 1;
+}
+
+.set-modal-option-btn .option-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.set-modal-option-btn .option-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.set-modal-option-btn.option-above:hover,
+.set-modal-option-btn.option-above.selected {
+  background: rgba(34, 197, 94, 0.12);
+  border-color: rgba(34, 197, 94, 0.6);
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.25);
+}
+.set-modal-option-btn.option-above:hover .option-icon,
+.set-modal-option-btn.option-above.selected .option-icon {
+  background: rgba(34, 197, 94, 0.25);
+  transform: scale(1.1);
+}
+
+.set-modal-option-btn.option-in-window:hover,
+.set-modal-option-btn.option-in-window.selected {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.6);
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
+}
+.set-modal-option-btn.option-in-window:hover .option-icon,
+.set-modal-option-btn.option-in-window.selected .option-icon {
+  background: rgba(59, 130, 246, 0.25);
+  transform: scale(1.1);
+}
+
+.set-modal-option-btn.option-below:hover,
+.set-modal-option-btn.option-below.selected {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+}
+.set-modal-option-btn.option-below:hover .option-icon,
+.set-modal-option-btn.option-below.selected .option-icon {
+  background: rgba(239, 68, 68, 0.25);
+  transform: scale(1.1);
 }
 
 /* Completed set row styling */

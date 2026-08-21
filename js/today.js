@@ -1227,21 +1227,38 @@ const TodayPage = (() => {
             </div>
           ` : '';
 
-          const setResult = setData[`set_${s}_result`] || (setDone ? 'in_window' : null);
+          const setResult = setData[`set_${s}_result`];
+          let outcomeBadgeHTML = '';
+
+          if (setResult === 'above') {
+            outcomeBadgeHTML = `
+              <button type="button" class="set-feedback-btn badge-above" 
+                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${disabledAttr} title="${I18n.t('set_outcome_above')}">
+                🚀 ${I18n.t('set_outcome_above')}
+              </button>`;
+          } else if (setResult === 'in_window') {
+            outcomeBadgeHTML = `
+              <button type="button" class="set-feedback-btn badge-in-window" 
+                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${disabledAttr} title="${I18n.t('set_outcome_in_window')}">
+                ✅ ${I18n.t('set_outcome_in_window')}
+              </button>`;
+          } else if (setResult === 'below') {
+            outcomeBadgeHTML = `
+              <button type="button" class="set-feedback-btn badge-below" 
+                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${disabledAttr} title="${I18n.t('set_outcome_below')}">
+                ⚠️ ${I18n.t('set_outcome_below')}
+              </button>`;
+          } else {
+            outcomeBadgeHTML = `
+              <button type="button" class="set-feedback-btn badge-pending" 
+                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${disabledAttr} title="${I18n.t('mark_set_complete')}">
+                ${I18n.t('how_was_it')}
+              </button>`;
+          }
 
           setsHTML += `
             <div class="set-row ${setDone ? 'done-row' : ''}">
-              <div class="set-outcome-group">
-                <button type="button" class="set-outcome-btn outcome-above ${setResult === 'above' ? 'active' : ''}" 
-                        onclick="TodayPage.selectSetOutcome(${idx}, ${s}, 'above')" ${disabledAttr} 
-                        title="${I18n.t('set_outcome_above')}">🚀</button>
-                <button type="button" class="set-outcome-btn outcome-in-window ${setResult === 'in_window' ? 'active' : ''}" 
-                        onclick="TodayPage.selectSetOutcome(${idx}, ${s}, 'in_window')" ${disabledAttr} 
-                        title="${I18n.t('set_outcome_in_window')}">✅</button>
-                <button type="button" class="set-outcome-btn outcome-below ${setResult === 'below' ? 'active' : ''}" 
-                        onclick="TodayPage.selectSetOutcome(${idx}, ${s}, 'below')" ${disabledAttr} 
-                        title="${I18n.t('set_outcome_below')}">⚠️</button>
-              </div>
+              <span class="set-label">${s + 1}</span>
               <div class="set-inputs-group">
                 ${weightInput}
                 <div class="set-input-pill">
@@ -1252,7 +1269,7 @@ const TodayPage = (() => {
                   <span class="set-unit">reps</span>
                 </div>
               </div>
-              <span class="set-label">${s + 1}</span>
+              ${outcomeBadgeHTML}
             </div>
           `;
         }
@@ -1413,24 +1430,122 @@ const TodayPage = (() => {
    * Toggle exercise completion
    */
   async function toggleExercise(idx, btn) {
-    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
     
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     const isNowCompleted = !currentTracking.exerciseStatus[idx];
-    currentTracking.exerciseStatus[idx] = isNowCompleted;
 
-    btn.classList.toggle('checked');
-    const card = document.getElementById(`ex-card-${idx}`);
-    card.classList.toggle('completed');
+    if (isNowCompleted) {
+      openExerciseOutcomeModal(idx);
+    } else {
+      currentTracking.exerciseStatus[idx] = false;
+      if (btn) btn.classList.remove('checked');
+      const card = document.getElementById(`ex-card-${idx}`);
+      if (card) card.classList.remove('completed');
 
-    // Haptic feedback
-    if (isNowCompleted && navigator.vibrate) navigator.vibrate(50);
+      const day = allPlanDays[currentDayIndex];
+      updateProgress(day);
+      await autoSave();
+      renderExercises(day);
+    }
+  }
 
-    // Update progress
+  function buildModalTargetBannerHTML(ex, exIdx) {
+    if (!ex) return '';
+    const setData = (currentTracking.setData && currentTracking.setData[exIdx]) || {};
+    const weightInfo = parseWeightDetails(ex, setData);
+    const weightBadge = weightInfo && weightInfo.suggestedWeightNum > 0 ? `<span style="color: #f59e0b; font-weight: 700; margin-inline-start: 4px;">• ${weightInfo.suggestedWeightNum} kg</span>` : '';
+    
+    return `
+      <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 10px 14px; margin: 10px 0 16px 0; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+        <span style="font-size: 13px; color: var(--text-secondary); font-weight: 600;">${I18n.t('planned_target')}</span>
+        <span style="font-size: 15px; color: var(--accent-primary); font-weight: 800;">${ex.sets || ''}</span>
+        ${weightBadge}
+      </div>
+    `;
+  }
+
+  function openExerciseOutcomeModal(exIdx) {
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
     const day = allPlanDays[currentDayIndex];
+    if (!day || !day.exercises) return;
+    const ex = day.exercises[exIdx];
+    if (!ex) return;
+
+    const title = `⚡ ${I18n.t('exercise_outcome_modal_title', '', { name: ex.name })}`;
+    
+    const modalHTML = `
+      <div style="text-align: center; padding: 4px 0;">
+        <div style="font-size: 16px; font-weight: 800; color: var(--accent-primary); margin-bottom: 4px;">
+          ${ex.name}
+        </div>
+        ${buildModalTargetBannerHTML(ex, exIdx)}
+        <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
+          ${I18n.t('set_outcome_prompt')}
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+          <!-- Option 1: Above Target -->
+          <button type="button" class="set-modal-option-btn option-above"
+                  onclick="TodayPage.confirmExerciseOutcome(${exIdx}, 'above')">
+            <div class="option-icon">🚀</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_above')}</div>
+              <div class="option-desc">${I18n.t('set_outcome_above_desc')}</div>
+            </div>
+          </button>
+
+          <!-- Option 2: In Window -->
+          <button type="button" class="set-modal-option-btn option-in-window"
+                  onclick="TodayPage.confirmExerciseOutcome(${exIdx}, 'in_window')">
+            <div class="option-icon">✅</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_in_window')}</div>
+              <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
+            </div>
+          </button>
+
+          <!-- Option 3: Below Target -->
+          <button type="button" class="set-modal-option-btn option-below"
+                  onclick="TodayPage.confirmExerciseOutcome(${exIdx}, 'below')">
+            <div class="option-icon">⚠️</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_below')}</div>
+              <div class="option-desc">${I18n.t('set_outcome_below_desc')}</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    `;
+
+    UI.showModal(title, modalHTML);
+  }
+
+  async function confirmExerciseOutcome(exIdx, outcome) {
+    UI.hideModal();
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    const day = allPlanDays[currentDayIndex];
+    if (!day || !day.exercises) return;
+    const ex = day.exercises[exIdx];
+    if (!ex) return;
+
+    if (!currentTracking.setData) currentTracking.setData = {};
+    if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+    const exData = currentTracking.setData[exIdx];
+
+    const setsCount = UI.parseSetsCount(ex.sets);
+    for (let s = 0; s < setsCount; s++) {
+      exData[`set_${s}_result`] = outcome;
+      exData[`set_${s}_done`] = true;
+    }
+
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    currentTracking.exerciseStatus[exIdx] = true;
+
+    if (navigator.vibrate) navigator.vibrate(50);
+
     updateProgress(day);
 
-    // Check if all exercises are done
     const total = day.exercises.length;
     let completed = 0;
     day.exercises.forEach((_, i) => {
@@ -1440,11 +1555,10 @@ const TodayPage = (() => {
 
     await autoSave();
 
-    if (currentTracking.completed && isNowCompleted) {
-      // All exercises done! Celebrate!
+    if (currentTracking.completed) {
       showWorkoutCelebration(day);
-    } else if (isNowCompleted && !currentTracking.completed) {
-      handleExerciseCompleted(idx, day);
+    } else {
+      handleExerciseCompleted(exIdx, day);
     }
   }
 
@@ -1654,7 +1768,7 @@ const TodayPage = (() => {
    * Select Set Outcome (ABOVE, IN_WINDOW, BELOW) for Zero Decisions progression engine
    */
   async function selectSetOutcome(exIdx, setIdx, outcome) {
-    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
 
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
@@ -1706,10 +1820,96 @@ const TodayPage = (() => {
   }
 
   /**
+   * Open Set Outcome Modal ("How was Set #X?")
+   */
+  function openSetOutcomeModal(exIdx, setIdx) {
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
+    const day = allPlanDays[currentDayIndex];
+    if (!day || !day.exercises) return;
+    const ex = day.exercises[exIdx];
+    if (!ex) return;
+
+    const setData = (currentTracking.setData && currentTracking.setData[exIdx]) || {};
+    const currentResult = setData[`set_${setIdx}_result`];
+
+    const title = `⚡ ${I18n.t('set_outcome_modal_title', '', { set: setIdx + 1 })}`;
+    
+    const modalHTML = `
+      <div style="text-align: center; padding: 4px 0;">
+        <div style="font-size: 15px; font-weight: 800; color: var(--accent-primary); margin-bottom: 4px;">
+          ${ex.name}
+        </div>
+        ${buildModalTargetBannerHTML(ex, exIdx)}
+        <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
+          ${I18n.t('set_outcome_prompt')}
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+          <!-- Option 1: Above Target -->
+          <button type="button" class="set-modal-option-btn option-above ${currentResult === 'above' ? 'selected' : ''}"
+                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'above')">
+            <div class="option-icon">🚀</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_above')}</div>
+              <div class="option-desc">${I18n.t('set_outcome_above_desc')}</div>
+            </div>
+          </button>
+
+          <!-- Option 2: In Window -->
+          <button type="button" class="set-modal-option-btn option-in-window ${currentResult === 'in_window' ? 'selected' : ''}"
+                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'in_window')">
+            <div class="option-icon">✅</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_in_window')}</div>
+              <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
+            </div>
+          </button>
+
+          <!-- Option 3: Below Target -->
+          <button type="button" class="set-modal-option-btn option-below ${currentResult === 'below' ? 'selected' : ''}"
+                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'below')">
+            <div class="option-icon">⚠️</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_below')}</div>
+              <div class="option-desc">${I18n.t('set_outcome_below_desc')}</div>
+            </div>
+          </button>
+        </div>
+
+        ${currentResult ? `
+          <button type="button" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px; color: var(--danger); border-color: rgba(239, 68, 68, 0.3);"
+                  onclick="TodayPage.clearSetOutcomeFromModal(${exIdx}, ${setIdx})">
+            🗑️ ${I18n.t('clear_set_status')}
+          </button>
+        ` : ''}
+      </div>
+    `;
+
+    UI.showModal(title, modalHTML);
+  }
+
+  async function selectSetOutcomeFromModal(exIdx, setIdx, outcome) {
+    UI.hideModal();
+    await selectSetOutcome(exIdx, setIdx, outcome);
+  }
+
+  async function clearSetOutcomeFromModal(exIdx, setIdx) {
+    UI.hideModal();
+    if (currentTracking.setData && currentTracking.setData[exIdx]) {
+      delete currentTracking.setData[exIdx][`set_${setIdx}_result`];
+      delete currentTracking.setData[exIdx][`set_${setIdx}_done`];
+      const day = allPlanDays[currentDayIndex];
+      await DB.saveDailyTracking(day.dateStr || UI.getTodayDateStr(), currentTracking);
+      updateProgress(day);
+      renderExercises(day);
+    }
+  }
+
+  /**
    * Toggle set completion
    */
   async function toggleSet(exIdx, setIdx, btn) {
-    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
 
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
@@ -1771,7 +1971,7 @@ const TodayPage = (() => {
    * Update set data
    */
   async function updateSetData(exIdx, setIdx, field, value) {
-    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
     currentTracking.setData[exIdx][`set_${setIdx}_${field}`] = value;
@@ -1782,7 +1982,7 @@ const TodayPage = (() => {
    * Update exercise note
    */
   async function updateExerciseNote(exIdx, value) {
-    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
     if (!currentTracking.exerciseNotes) currentTracking.exerciseNotes = {};
     currentTracking.exerciseNotes[exIdx] = value;
     await autoSave();
@@ -1801,7 +2001,7 @@ const TodayPage = (() => {
   }
 
   async function toggleRestDayComplete() {
-    if (currentDayIndex !== UI.findTodayIndex(allPlanDays)) return;
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return;
     
     currentTracking.completed = !currentTracking.completed;
     currentTracking.lastUpdated = new Date().toISOString();
@@ -2056,9 +2256,14 @@ const TodayPage = (() => {
     toggleExpand,
     handleImageClick,
     toggleExercise,
+    openExerciseOutcomeModal,
+    confirmExerciseOutcome,
     toggleRestDayComplete,
     toggleSet,
     selectSetOutcome,
+    openSetOutcomeModal,
+    selectSetOutcomeFromModal,
+    clearSetOutcomeFromModal,
     updateSetData,
     updateExerciseNote,
     showExerciseImage,
