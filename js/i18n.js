@@ -725,7 +725,7 @@ const I18n = (() => {
       lean_block_tag: "Calf Hypertrophy Block",
       lean_toggle_tag: "Structural Toggle",
       set_outcome_above: "🚀 Exceeded Target",
-      set_outcome_in_window: "🎯 Target Achieved",
+      set_outcome_in_window: "✅ Target Achieved (Optimal)",
       set_outcome_below: "⚠️ Mechanical Stop",
       set_outcome_modal_title: "Effort Rating – Set #{set}",
       exercise_outcome_modal_title: "Performance Assessment – {name}",
@@ -735,7 +735,7 @@ const I18n = (() => {
       set_outcome_below_desc: "Maximal effort • Stopped before target (+30s rest)",
       clear_set_status: "Reset Set Rating",
       mark_set_complete: "Rate Performance",
-      how_was_it: "📊 Rate Effort",
+      how_was_it: "✓ Log Set",
       planned_target: "🎯 Planned Target:"
     },
     he: {
@@ -1401,8 +1401,8 @@ const I18n = (() => {
       lean_block_tag: "בלוק היפרטרופיה לתאומים",
       lean_toggle_tag: "מחליף תרגיל מתוכנן",
       set_outcome_above: "🚀 מעל היעד",
-      set_outcome_in_window: "🎯 היעד הושג",
-      set_outcome_below: "⚠️ כשל מכני",
+      set_outcome_in_window: "✅ בוצע תקין (היעד הושג)",
+      set_outcome_below: "⚠️ עצירה מכנית",
       set_outcome_modal_title: "דירוג עומס – סט #{set}",
       exercise_outcome_modal_title: "הערכת ביצוע – {name}",
       set_outcome_prompt: "דרג את עצימות הסט לכיוונון אדפטיבי של זמני המנוחה והעומס:",
@@ -1411,7 +1411,7 @@ const I18n = (() => {
       set_outcome_below_desc: "מאמץ מרבי • עצירה לפני היעד (+30 שנ' מנוחה)",
       clear_set_status: "איפוס דירוג סט",
       mark_set_complete: "הערכת ביצוע",
-      how_was_it: "📊 דירוג מאמץ",
+      how_was_it: "✓ סימון ביצוע",
       planned_target: "🎯 יעד מתוכנן:"
     },
     ar: {
@@ -1812,7 +1812,7 @@ const I18n = (() => {
       set_outcome_below_desc: "جهد أقصى • توقف قبل الهدف (+30 ثانية راحة)",
       clear_set_status: "إعادة ضبط تقييم المجموعة",
       mark_set_complete: "تقييم الأداء",
-      how_was_it: "📊 تقييم الجهد",
+      how_was_it: "✓ تسجيل المجموعة",
       planned_target: "🎯 الهدف المخطط:"
     }
   };

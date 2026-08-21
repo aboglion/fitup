@@ -1521,7 +1521,17 @@ const TodayPage = (() => {
         </p>
 
         <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
-          <!-- Option 1: Above Target -->
+          <!-- Option 1 (PRIMARY HERO): Target Achieved / In Window -->
+          <button type="button" class="set-modal-option-btn option-in-window hero-primary-option"
+                  onclick="TodayPage.confirmExerciseOutcome(${exIdx}, 'in_window')">
+            <div class="option-icon">✅</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_in_window')}</div>
+              <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
+            </div>
+          </button>
+
+          <!-- Option 2: Above Target -->
           <button type="button" class="set-modal-option-btn option-above"
                   onclick="TodayPage.confirmExerciseOutcome(${exIdx}, 'above')">
             <div class="option-icon">🚀</div>
@@ -1531,17 +1541,7 @@ const TodayPage = (() => {
             </div>
           </button>
 
-          <!-- Option 2: In Window -->
-          <button type="button" class="set-modal-option-btn option-in-window"
-                  onclick="TodayPage.confirmExerciseOutcome(${exIdx}, 'in_window')">
-            <div class="option-icon">✅</div>
-            <div class="option-content">
-              <div class="option-title">${I18n.t('set_outcome_in_window')}</div>
-              <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
-            </div>
-          </button>
-
-          <!-- Option 3: Below Target -->
+          <!-- Option 3: Below Target / Mechanical Stop -->
           <button type="button" class="set-modal-option-btn option-below"
                   onclick="TodayPage.confirmExerciseOutcome(${exIdx}, 'below')">
             <div class="option-icon">⚠️</div>
@@ -1881,7 +1881,17 @@ const TodayPage = (() => {
         </p>
 
         <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
-          <!-- Option 1: Above Target -->
+          <!-- Option 1 (PRIMARY HERO): Target Achieved / In Window -->
+          <button type="button" class="set-modal-option-btn option-in-window hero-primary-option ${currentResult === 'in_window' ? 'selected' : ''}"
+                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'in_window')">
+            <div class="option-icon">✅</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_in_window')}</div>
+              <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
+            </div>
+          </button>
+
+          <!-- Option 2: Above Target -->
           <button type="button" class="set-modal-option-btn option-above ${currentResult === 'above' ? 'selected' : ''}"
                   onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'above')">
             <div class="option-icon">🚀</div>
@@ -1891,17 +1901,7 @@ const TodayPage = (() => {
             </div>
           </button>
 
-          <!-- Option 2: In Window -->
-          <button type="button" class="set-modal-option-btn option-in-window ${currentResult === 'in_window' ? 'selected' : ''}"
-                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'in_window')">
-            <div class="option-icon">✅</div>
-            <div class="option-content">
-              <div class="option-title">${I18n.t('set_outcome_in_window')}</div>
-              <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
-            </div>
-          </button>
-
-          <!-- Option 3: Below Target -->
+          <!-- Option 3: Below Target / Mechanical Stop -->
           <button type="button" class="set-modal-option-btn option-below ${currentResult === 'below' ? 'selected' : ''}"
                   onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'below')">
             <div class="option-icon">⚠️</div>
