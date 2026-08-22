@@ -822,7 +822,7 @@ const TodayPage = (() => {
     const refreshAiBtn = document.getElementById('refresh-ai-advice-btn');
 
     if (aiCard && aiContent) {
-      const currentStateFingerprint = `${queryDateStr}_cals${totalCals}_prot${totalProtein}_meals${(nutData.meals || []).length}_burn${workoutBurn}_comp${workoutInfo.isCompleted ? 1 : 0}`;
+      const currentStateFingerprint = `${queryDateStr}_cals${totalCals}_prot${totalProtein}_meals${(nutrition.meals || []).length}_burn${workoutBurn}_comp${workoutInfo.completedSets > 0 ? 1 : 0}`;
       const adviceCacheKey = `fitup_ai_advice_cache_${queryDateStr}`;
 
       const fetchAdvice = async (forceRefresh = false) => {
