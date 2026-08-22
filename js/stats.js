@@ -520,6 +520,46 @@ const StatsPage = (() => {
     return [];
   }
 
+  function getCompletedSetsForExercise(track, exIdx, setMultiplier) {
+    if (!track) return 0;
+    if (track.completed) return setMultiplier;
+
+    // Check exerciseStatus
+    if (track.exerciseStatus) {
+      if (track.exerciseStatus[exIdx] === true || track.exerciseStatus[String(exIdx)] === true) {
+        return setMultiplier;
+      }
+    }
+
+    if (!track.setData) return 0;
+
+    // Format A: Nested object by exIdx (e.g. track.setData[0] or track.setData["0"])
+    const nestedData = track.setData[exIdx] || track.setData[String(exIdx)];
+    if (nestedData && typeof nestedData === 'object') {
+      let count = 0;
+      for (let s = 0; s < setMultiplier; s++) {
+        if (nestedData[`set_${s}_done`] || nestedData[`set_${s}_result`] || nestedData[`set_${s}_reps`] || nestedData[`set_${s}_weight`]) {
+          count++;
+        }
+      }
+      if (count > 0) return count;
+    }
+
+    // Format B: Flat keys e.g. track.setData["ex_0_set_0_done"] or track.setData["ex_0_set_0_reps"]
+    let flatCount = 0;
+    for (let s = 0; s < setMultiplier; s++) {
+      if (
+        track.setData[`ex_${exIdx}_set_${s}_done`] ||
+        track.setData[`ex_${exIdx}_set_${s}_result`] ||
+        track.setData[`ex_${exIdx}_set_${s}_reps`] ||
+        track.setData[`ex_${exIdx}_set_${s}_weight`]
+      ) {
+        flatCount++;
+      }
+    }
+    return flatCount;
+  }
+
   /**
    * Calculate per-muscle progression percentages across the full 78-week program timeline.
    * Compares exact completed sets/volume for each muscle group against total planned sets/volume.
@@ -535,7 +575,6 @@ const StatsPage = (() => {
     (allPlanDays || []).forEach((day, index) => {
       const dIdx = day.dayIndex != null ? day.dayIndex : index;
       const track = trackingMap[dIdx];
-      const isDayCompleted = track && track.completed;
 
       (day.exercises || []).forEach((ex, exIdx) => {
         let setMultiplier = 3;
@@ -550,18 +589,7 @@ const StatsPage = (() => {
           }
         }
 
-        let completedSets = 0;
-        if (track) {
-          if (isDayCompleted) {
-            completedSets = setMultiplier;
-          } else if (track.setData) {
-            for (let s = 0; s < setMultiplier; s++) {
-              if (track.setData[`ex_${exIdx}_set_${s}_reps`]) completedSets++;
-            }
-          } else if (track.exerciseStatus && (track.exerciseStatus[exIdx] || track.exerciseStatus[ex.id])) {
-            completedSets = setMultiplier;
-          }
-        }
+        const completedSets = getCompletedSetsForExercise(track, exIdx, setMultiplier);
 
         const contribs = getExerciseContributions(ex);
         contribs.forEach(c => {
@@ -896,13 +924,7 @@ const StatsPage = (() => {
               }
             }
 
-            let completedSets = 0;
-            for (let s = 0; s < setsCount; s++) {
-              if (setData[`ex_${exIdx}_set_${s}_reps`]) completedSets++;
-            }
-            if (completedSets === 0 && tracking.completed) {
-              completedSets = setsCount;
-            }
+            const completedSets = getCompletedSetsForExercise(tracking, exIdx, setsCount);
             muscleVolumes[muscle] += Number(completedSets) || 0;
           }
         });
