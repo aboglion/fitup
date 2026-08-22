@@ -110,8 +110,11 @@ const StatsPage = (() => {
       lastPct
     };
 
+    // Fetch plan start date
+    const planStartDateStr = await DB.getSetting('planStartDate');
+
     // Render charts & compact stats
-    renderCharts(trackingMap, weightValues, metrics);
+    renderCharts(trackingMap, weightValues, metrics, currentWeekNum, planStartDateStr);
 
     // Render anatomy map
     renderAnatomy(trackingMap);
@@ -201,46 +204,9 @@ const StatsPage = (() => {
       <div id="stats-google-fit-container" style="grid-column: 1 / -1; margin-bottom: 0;"></div>
     `;
 
-    const leanDashboardHTML = `
-      <div class="xp-container" style="grid-column: 1 / -1; background: var(--bg-card); padding: var(--space-lg); border-radius: var(--radius-lg); border: 1px solid rgba(59, 130, 246, 0.3); display: flex; flex-direction: column; gap: var(--space-md); margin-top: 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 22px;">⚡</span>
-            <div>
-              <div style="font-weight: 800; font-size: 16px; color: var(--accent-primary, #3b82f6);">${I18n.t('lean_program_title')} (Zero Decisions Engine)</div>
-              <div style="font-size: 12px; color: var(--text-secondary);">Week ${currentWeekNum} • Dynamic Progression & Adaptive Rest</div>
-            </div>
-          </div>
-          <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">Active v15.6</span>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
-          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">💪 Biceps Microcycle</div>
-            <div style="font-size: 13px; font-weight: 800; color: #ec4899; margin-top: 2px;">${(window.ProgressionEngine && window.ProgressionEngine.getBicepsMicrocyclePhase) ? window.ProgressionEngine.getBicepsMicrocyclePhase(currentWeekNum).label : 'Heavy Progressive (8-10 reps)'}</div>
-          </div>
-
-          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">📊 Weekly Volume Target</div>
-            <div style="font-size: 13px; font-weight: 800; color: #3b82f6; margin-top: 2px;">Chest: 8 sets • Back: 10 sets</div>
-          </div>
-
-          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">🛡️ Arm Block Exposure Guard</div>
-            <div style="font-size: 13px; font-weight: 800; color: #10b981; margin-top: 2px;">Max 2/wk per area (Active)</div>
-          </div>
-
-          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
-            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">🔄 Progression Policy</div>
-            <div style="font-size: 13px; font-weight: 800; color: #f59e0b; margin-top: 2px;">Softened (Deload @ 2 Fails -15%)</div>
-          </div>
-        </div>
-      </div>
-    `;
-
     container.innerHTML = `
       <style>
-        #stats-overview .xp-container, #stats-charts .chart-card {
+        #stats-overview .xp-container, #stats-charts .xp-container, #stats-charts .chart-card {
           border: 1px solid rgba(0, 255, 102, 0.25) !important;
           box-shadow: inset 0 0 20px rgba(0, 255, 102, 0.03), 0 4px 16px rgba(0,0,0,0.3) !important;
           background-color: var(--bg-card);
@@ -258,7 +224,6 @@ const StatsPage = (() => {
       </style>
       ${xpHTML}
       ${fitContainerHTML}
-      ${leanDashboardHTML}
       ${streakHTML}
       ${anatomyHTML}
     `;
@@ -526,13 +491,35 @@ const StatsPage = (() => {
   /**
    * Render charts
    */
-  function renderCharts(trackingMap, weightValues, metrics) {
+  function renderCharts(trackingMap, weightValues, metrics, currentWeekNum, planStartDateStr) {
     const container = document.getElementById('stats-charts');
+    const weekNum = currentWeekNum || 1;
 
-    // Progression Heatmap (up to current active/tracked day)
-    const todayIdx = UI.findTodayIndex(allPlanDays);
-    const maxTrackedIdx = Object.keys(trackingMap).reduce((max, key) => Math.max(max, parseInt(key) || 0), 0);
-    const endIdx = Math.max(todayIdx, maxTrackedIdx);
+    // Progression Heatmap: Show ONLY days that have actually passed or been completed
+    let maxCompletedIdx = -1;
+    Object.values(trackingMap).forEach(t => {
+      if (t && t.completed && t.dayIndex != null) {
+        if (t.dayIndex > maxCompletedIdx) maxCompletedIdx = t.dayIndex;
+      }
+    });
+
+    let daysPassedIdx = -1;
+    if (planStartDateStr) {
+      const startDateObj = new Date(planStartDateStr + 'T00:00:00');
+      const todayObj = new Date(UI.getLocalDateString() + 'T00:00:00');
+      const diffTime = Math.max(0, todayObj - startDateObj);
+      daysPassedIdx = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    const activePlanIdx = window.appCurrentPlanIndex != null ? window.appCurrentPlanIndex : 0;
+
+    let endIdx = Math.max(maxCompletedIdx, daysPassedIdx, activePlanIdx);
+    if (!planStartDateStr && maxCompletedIdx < 0) {
+      endIdx = 0; // Program hasn't started yet: show Day 1 only
+    } else {
+      endIdx = Math.min(endIdx, allPlanDays.length - 1);
+    }
+
     const heatmapDays = allPlanDays.slice(0, Math.max(1, endIdx + 1));
     
     const heatmapCells = heatmapDays.map((day, index) => {
@@ -656,10 +643,48 @@ const StatsPage = (() => {
       `;
     }
 
+    const leanDashboardHTML = `
+      <div class="xp-container" style="grid-column: 1 / -1; background: var(--bg-card); padding: var(--space-lg); border-radius: var(--radius-lg); border: 1px solid rgba(59, 130, 246, 0.3); display: flex; flex-direction: column; gap: var(--space-md); margin-top: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 22px;">⚡</span>
+            <div>
+              <div style="font-weight: 800; font-size: 16px; color: var(--accent-primary, #3b82f6);">${I18n.t('lean_program_title')} (Zero Decisions Engine)</div>
+              <div style="font-size: 12px; color: var(--text-secondary);">Week ${weekNum} • Dynamic Progression & Adaptive Rest</div>
+            </div>
+          </div>
+          <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">Active v15.6</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">💪 Biceps Microcycle</div>
+            <div style="font-size: 13px; font-weight: 800; color: #ec4899; margin-top: 2px;">${(window.ProgressionEngine && window.ProgressionEngine.getBicepsMicrocyclePhase) ? window.ProgressionEngine.getBicepsMicrocyclePhase(weekNum).label : 'Heavy Progressive (8-10 reps)'}</div>
+          </div>
+
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">📊 Weekly Volume Target</div>
+            <div style="font-size: 13px; font-weight: 800; color: #3b82f6; margin-top: 2px;">Chest: 8 sets • Back: 10 sets</div>
+          </div>
+
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">🛡️ Arm Block Exposure Guard</div>
+            <div style="font-size: 13px; font-weight: 800; color: #10b981; margin-top: 2px;">Max 2/wk per area (Active)</div>
+          </div>
+
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">🔄 Progression Policy</div>
+            <div style="font-size: 13px; font-weight: 800; color: #f59e0b; margin-top: 2px;">Softened (Deload @ 2 Fails -15%)</div>
+          </div>
+        </div>
+      </div>
+    `;
+
     container.innerHTML = `
       ${heatmapHtml}
       ${weightChart}
       ${compactStatsHtml}
+      ${leanDashboardHTML}
     `;
   }
 

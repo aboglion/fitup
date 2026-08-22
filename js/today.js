@@ -1184,10 +1184,21 @@ const TodayPage = (() => {
     const container = document.getElementById('exercises-list');
     if (!container) return;
 
-    // Preserve currently expanded exercise cards!
+    // Preserve currently expanded exercise cards or default to first incomplete unlocked exercise!
     const expandedIds = new Set(
       Array.from(container.querySelectorAll('.exercise-card.expanded')).map(card => card.id)
     );
+
+    let defaultExpandedIdx = 0;
+    if (day.exercises && day.exercises.length > 0) {
+      for (let i = 0; i < day.exercises.length; i++) {
+        const isDone = currentTracking.exerciseStatus && currentTracking.exerciseStatus[i];
+        if (!isDone && isExerciseUnlocked(i)) {
+          defaultExpandedIdx = i;
+          break;
+        }
+      }
+    }
 
     if (day.exercises.length === 0) {
       // Rest day
@@ -1230,8 +1241,13 @@ const TodayPage = (() => {
       }
 
       const isCompleted = currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx];
+      const isExUnlocked = isToday && isExerciseUnlocked(idx);
+      const checkDisabledAttr = isExUnlocked ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"';
+      const exCheckContent = isExUnlocked ? '✓' : '🔒';
+      const exCheckTitle = isExUnlocked ? '' : I18n.t('exercise_locked');
+
       const cardId = `ex-card-${idx}`;
-      const isExpanded = expandedIds.has(cardId) || (expandedIds.size === 0 && idx === 0);
+      const isExpanded = expandedIds.has(cardId) || (expandedIds.size === 0 && idx === defaultExpandedIdx);
       const color = UI.getCategoryColor(ex.slot);
       const reps = UI.parseReps(ex.sets);
       const exNote = (currentTracking.exerciseNotes && currentTracking.exerciseNotes[idx]) || '';
@@ -1246,7 +1262,7 @@ const TodayPage = (() => {
       const prevPerf = findPrevPerformance(ex.name, currentDayIndex);
 
       let setsHTML = '';
-      if (!isTime && setsCount > 0) {
+      if (setsCount > 0) {
         // Previous performance summary
         let prevPerfHTML = '';
         if (prevPerf && prevPerf.setData) {
@@ -1276,15 +1292,35 @@ const TodayPage = (() => {
           const setReps = setData[`set_${s}_reps`] || '';
           const setWeight = setData[`set_${s}_weight`] || '';
 
+          const isSetRowUnlocked = isToday && isSetUnlocked(idx, s);
+          const setDisabledAttr = isSetRowUnlocked ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"';
+
           // Use previous performance as placeholder hint
           const prevReps = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_reps`]) || reps;
           const suggestedWeightNum = getSuggestedWeightForSet(ex, s, setsCount, prevPerf);
+
+          // Dynamic unit label for time vs reps
+          let unitLabel = 'reps';
+          if (isTime) {
+            if (ex.sets && ex.sets.includes('mins')) {
+              unitLabel = 'mins';
+            } else if (ex.sets && ex.sets.includes('secs')) {
+              unitLabel = 'secs';
+            } else {
+              unitLabel = '';
+            }
+          }
+
+          let placeholderText = prevReps;
+          if (isTime && prevReps) {
+            placeholderText = prevReps.toString().replace(/\s*(secs?|mins?|seconds?|minutes?)/gi, '').trim();
+          }
 
           // Weight input - only show if exercise has weight data
           const weightInput = hasWeight ? `
             <div class="set-input-pill">
               <input type="number" class="set-input" placeholder="${suggestedWeightNum}" 
-                     value="${setWeight}" ${disabledAttr}
+                     value="${setWeight}" ${setDisabledAttr}
                      data-ex="${idx}" data-set="${s}" data-field="weight"
                      onchange="TodayPage.updateSetData(${idx}, ${s}, 'weight', this.value)">
               <span class="set-unit">kg</span>
@@ -1297,40 +1333,40 @@ const TodayPage = (() => {
           if (setResult === 'above') {
             outcomeBadgeHTML = `
               <button type="button" class="set-feedback-btn badge-above" 
-                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${disabledAttr} title="${I18n.t('set_outcome_above')}">
-                🚀 ${I18n.t('set_outcome_above')}
+                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${setDisabledAttr} title="${I18n.t('set_outcome_above')}">
+                🚀
               </button>`;
           } else if (setResult === 'in_window') {
             outcomeBadgeHTML = `
               <button type="button" class="set-feedback-btn badge-in-window" 
-                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${disabledAttr} title="${I18n.t('set_outcome_in_window')}">
-                ✅ ${I18n.t('set_outcome_in_window')}
+                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${setDisabledAttr} title="${I18n.t('set_outcome_in_window')}">
+                ✅
               </button>`;
           } else if (setResult === 'below') {
             outcomeBadgeHTML = `
               <button type="button" class="set-feedback-btn badge-below" 
-                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${disabledAttr} title="${I18n.t('set_outcome_below')}">
-                ⚠️ ${I18n.t('set_outcome_below')}
+                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${setDisabledAttr} title="${I18n.t('set_outcome_below')}">
+                ⚠️
               </button>`;
           } else {
             outcomeBadgeHTML = `
               <button type="button" class="set-feedback-btn badge-pending" 
-                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${disabledAttr} title="${I18n.t('mark_set_complete')}">
-                ${I18n.t('how_was_it')}
+                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${setDisabledAttr} title="${I18n.t('how_was_it')}">
+                ✓
               </button>`;
           }
 
           setsHTML += `
-            <div class="set-row ${setDone ? 'done-row' : ''}">
+            <div class="set-row ${setDone ? 'done-row' : ''} ${!isSetRowUnlocked ? 'locked-set-row' : ''}">
               <span class="set-label">${s + 1}</span>
               <div class="set-inputs-group">
                 ${weightInput}
                 <div class="set-input-pill">
-                  <input type="text" inputmode="numeric" pattern="[0-9]*" class="set-input" placeholder="${prevReps}" 
-                         value="${setReps}" ${disabledAttr} dir="ltr"
+                  <input type="text" inputmode="numeric" pattern="[0-9]*" class="set-input" placeholder="${placeholderText}" 
+                         value="${setReps}" ${setDisabledAttr} dir="ltr"
                          data-ex="${idx}" data-set="${s}" data-field="reps"
                          onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
-                  <span class="set-unit">reps</span>
+                  ${unitLabel ? `<span class="set-unit">${unitLabel}</span>` : ''}
                 </div>
               </div>
               ${outcomeBadgeHTML}
@@ -1392,7 +1428,7 @@ const TodayPage = (() => {
       }
 
       return `
-        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isExpanded ? 'expanded' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
+        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
           <div class="exercise-hero-container skeleton-loading" style="position: relative;">
             <div class="skeleton-placeholder" style="gap: 4px;">
               <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
@@ -1416,6 +1452,7 @@ const TodayPage = (() => {
                 <div class="exercise-card-name" style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
                   ${ex.name}
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
+                  ${!isExUnlocked ? `<span class="locked-badge">🔒 ${I18n.t('exercise_locked')}</span>` : ''}
                   ${equip ? `<span style="background: var(--bg-hover, rgba(255,255,255,0.05)); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: normal; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px;">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
                 ${getLeanBadgesHTML(ex, day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1)}
@@ -1427,14 +1464,14 @@ const TodayPage = (() => {
             <div class="exercise-card-actions">
               ${cardioTimerBtn}
               ${videoBtn}
-              <button class="exercise-check ${isCompleted ? 'checked' : ''}" 
-                      onclick="event.stopPropagation(); TodayPage.toggleExercise(${idx}, this)" ${disabledAttr}>✓</button>
+              <button class="exercise-check ${isCompleted ? 'checked' : ''} ${!isExUnlocked ? 'locked-btn' : ''}" 
+                      onclick="event.stopPropagation(); TodayPage.toggleExercise(${idx}, this)" ${checkDisabledAttr} title="${exCheckTitle}">${exCheckContent}</button>
             </div>
           </div>
           <div class="exercise-card-body">
             ${setsHTML}
             <div class="exercise-note">
-              <textarea placeholder="${I18n.t('exercise_notes_placeholder')}" rows="2" ${disabledAttr}
+              <textarea placeholder="${I18n.t('exercise_notes_placeholder')}" rows="2" ${checkDisabledAttr}
                         onchange="TodayPage.updateExerciseNote(${idx}, this.value)">${exNote}</textarea>
             </div>
           </div>
@@ -1473,20 +1510,18 @@ const TodayPage = (() => {
   }
 
   /**
-   * Handle image click: expand if dimmed, else show modal
+   * Handle image click: expand accordion if closed, show GIF modal if already expanded
    */
   function handleImageClick(event, idx, exName) {
     event.stopPropagation();
-    const listContainer = document.getElementById('exercises-list');
     const card = document.getElementById(`ex-card-${idx}`);
     
-    if (listContainer && listContainer.classList.contains('has-focus') && card && !card.classList.contains('focused')) {
+    if (card && !card.classList.contains('expanded')) {
+      // Accordion is closed - expand it (don't show GIF)
       toggleExpand(idx);
     } else {
+      // Accordion is already open - show GIF modal
       UI.showImageModal(exName, '');
-      if (card && !card.classList.contains('expanded')) {
-        toggleExpand(idx);
-      }
     }
   }
 
@@ -1502,11 +1537,66 @@ const TodayPage = (() => {
     return true;
   }
 
+  function isExerciseUnlocked(exIdx) {
+    if (exIdx <= 0) return true;
+    if (!currentTracking.exerciseStatus) return false;
+    for (let i = 0; i < exIdx; i++) {
+      if (!currentTracking.exerciseStatus[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function checkExerciseUnlockedOrWarn(exIdx) {
+    if (!checkIsTodayOrWarn()) return false;
+    if (exIdx <= 0) return true;
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    const day = allPlanDays[currentDayIndex];
+    for (let i = 0; i < exIdx; i++) {
+      if (!currentTracking.exerciseStatus[i]) {
+        const prevExName = (day && day.exercises && day.exercises[i]) ? day.exercises[i].name : `Exercise #${i + 1}`;
+        if (window.UI && window.UI.toast) {
+          UI.toast(I18n.t('must_complete_prev_exercise', '', { num: i + 1, name: prevExName }), 'warning');
+        }
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function isSetUnlocked(exIdx, setIdx) {
+    if (!isExerciseUnlocked(exIdx)) return false;
+    if (setIdx <= 0) return true;
+    const setData = (currentTracking.setData && currentTracking.setData[exIdx]) || {};
+    for (let s = 0; s < setIdx; s++) {
+      if (!setData[`set_${s}_done`]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function checkSetUnlockedOrWarn(exIdx, setIdx) {
+    if (!checkExerciseUnlockedOrWarn(exIdx)) return false;
+    if (setIdx <= 0) return true;
+    const setData = (currentTracking.setData && currentTracking.setData[exIdx]) || {};
+    for (let s = 0; s < setIdx; s++) {
+      if (!setData[`set_${s}_done`]) {
+        if (window.UI && window.UI.toast) {
+          UI.toast(I18n.t('must_complete_prev_set', '', { num: s + 1 }), 'warning');
+        }
+        return false;
+      }
+    }
+    return true;
+  }
+
   /**
    * Toggle exercise completion
    */
   async function toggleExercise(idx, btn) {
-    if (!checkIsTodayOrWarn()) return;
+    if (!checkExerciseUnlockedOrWarn(idx)) return;
     
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     const isNowCompleted = !currentTracking.exerciseStatus[idx];
@@ -1541,12 +1631,26 @@ const TodayPage = (() => {
     `;
   }
 
+  function isNoModalExercise(ex) {
+    if (!ex) return false;
+    if (ex.isWarmup || ex.rest === 0) return true;
+    if (ex.slot && ex.slot.startsWith('W')) return true;
+    const name = (ex.name || '').toLowerCase();
+    if (name.includes('walking') || name.includes('deep mobility')) return true;
+    return false;
+  }
+
   function openExerciseOutcomeModal(exIdx) {
-    if (!checkIsTodayOrWarn()) return;
+    if (!checkExerciseUnlockedOrWarn(exIdx)) return;
     const day = allPlanDays[currentDayIndex];
     if (!day || !day.exercises) return;
     const ex = day.exercises[exIdx];
     if (!ex) return;
+
+    if (isNoModalExercise(ex)) {
+      confirmExerciseOutcome(exIdx, 'in_window');
+      return;
+    }
 
     const title = `⚡ ${I18n.t('exercise_outcome_modal_title', '', { name: ex.name })}`;
     
@@ -1599,7 +1703,7 @@ const TodayPage = (() => {
 
   async function confirmExerciseOutcome(exIdx, outcome) {
     UI.hideModal();
-    if (!checkIsTodayOrWarn()) return;
+    if (!checkExerciseUnlockedOrWarn(exIdx)) return;
     const day = allPlanDays[currentDayIndex];
     if (!day || !day.exercises) return;
     const ex = day.exercises[exIdx];
@@ -1641,6 +1745,8 @@ const TodayPage = (() => {
       handleExerciseCompleted(exIdx, day);
     }
   }
+
+
 
   /**
    * Show celebration modal when workout is fully completed
@@ -1757,14 +1863,14 @@ const TodayPage = (() => {
 
   function getRestTime(ex) {
     if (!ex || !ex.name) return 90;
-    if (ex.isWarmup) return 0;
-
+    
     const lowerName = ex.name.toLowerCase();
     if (lowerName.includes('walking') || lowerName.includes('jogging') || lowerName.includes('dorsiflexion')) {
       return 0;
     }
+    if (ex.rest === 0) return 0;
 
-    if (window.ProgressionEngine && window.ProgressionEngine.calculateAdaptiveRest) {
+    if (window.ProgressionEngine && window.ProgressionEngine.calculateAdaptiveRest && !ex.isWarmup) {
       const rpe = (currentTracking && currentTracking.actualRPE) || 7;
       return window.ProgressionEngine.calculateAdaptiveRest(
         ex.name,
@@ -1775,17 +1881,53 @@ const TodayPage = (() => {
         rpe
       );
     }
-    return ex.rest || 90;
+    return ex.rest !== undefined ? parseInt(ex.rest) : 90;
   }
 
   async function handleExerciseCompleted(idx, day) {
     const ex = day.exercises[idx];
     const weekNum = day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1;
+    const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
+    const setsCount = UI.parseSetsCount(ex.sets);
 
-    // Commit progression state via ProgressionEngine
+    // Find next incomplete exercise (search forward from idx, then from start)
+    let nextIdx = -1;
+    for (let i = idx + 1; i < day.exercises.length; i++) {
+      if (!currentTracking.exerciseStatus[i]) {
+        nextIdx = i;
+        break;
+      }
+    }
+    if (nextIdx === -1) {
+      for (let i = 0; i < idx; i++) {
+        if (!currentTracking.exerciseStatus[i]) {
+          nextIdx = i;
+          break;
+        }
+      }
+    }
+
+    let restTime = getRestTime(day.exercises[idx]);
+    
+    // Apply intra-workout adaptive rest extension (+30s) if any set was BELOW
+    let hasBelow = false;
+    for (let s = 0; s < setsCount; s++) {
+      if (setData[`set_${s}_result`] === 'below') { hasBelow = true; break; }
+    }
+    if (hasBelow) {
+      restTime += 30;
+      if (window.UI && window.UI.toast) {
+        UI.toast(`${I18n.t('adaptive_rest_label')}: +30s (${restTime}s)`, 'warning');
+      }
+    }
+    
+    // Start rest timer IMMEDIATELY for zero delay on exercise completion
+    if (restTime > 0 && window.UI && window.UI.startTimer) {
+      UI.startTimer(restTime, null);
+    }
+
+    // Commit progression state via ProgressionEngine in background
     if (window.ProgressionEngine && window.ProgressionEngine.commitExerciseProgression) {
-      const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
-      const setsCount = UI.parseSetsCount(ex.sets);
       let totalReps = 0;
       let lastWeight = 0;
       for (let s = 0; s < setsCount; s++) {
@@ -1803,53 +1945,12 @@ const TodayPage = (() => {
         actualReps: avgReps,
         weightKg: lastWeight,
         RPE: currentTracking.actualRPE || 7,
-        tempoLossCount: 0,
+        tempoLossCount: hasBelow ? 2 : 0,
         isMyoSet: isArmBlock,
         isArmBlock: isArmBlock,
         muscleArea: ex.name.toLowerCase().includes('curl') ? 'Biceps' : 'Triceps',
         targetRest: ex.rest || 90
       });
-    }
-
-    // Find next incomplete exercise
-    let nextIdx = -1;
-    for (let i = idx + 1; i < day.exercises.length; i++) {
-        if (!currentTracking.exerciseStatus[i]) {
-            nextIdx = i;
-            break;
-        }
-    }
-
-    if (nextIdx !== -1) {
-        let restTime = getRestTime(day.exercises[idx]);
-        
-        // Apply intra-workout adaptive rest extension (+30s) if any set was BELOW
-        const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
-        const setsCount = UI.parseSetsCount(ex.sets);
-        let hasBelow = false;
-        for (let s = 0; s < setsCount; s++) {
-          if (setData[`set_${s}_result`] === 'below') { hasBelow = true; break; }
-        }
-        if (hasBelow) restTime += 30;
-        
-        if (restTime > 0) {
-            // Start a timer for exercise transition
-            UI.startTimer(restTime, () => {
-                document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('expanded'));
-                const nextCard = document.getElementById(`ex-card-${nextIdx}`);
-                if (nextCard) {
-                    nextCard.classList.add('expanded');
-                    nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            });
-        } else {
-            document.querySelectorAll('.exercise-card').forEach(c => c.classList.remove('expanded'));
-            const nextCard = document.getElementById(`ex-card-${nextIdx}`);
-            if (nextCard) {
-                nextCard.classList.add('expanded');
-                nextCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
     }
   }
 
@@ -1857,22 +1958,14 @@ const TodayPage = (() => {
    * Select Set Outcome (ABOVE, IN_WINDOW, BELOW) for Zero Decisions progression engine
    */
   async function selectSetOutcome(exIdx, setIdx, outcome) {
-    if (!checkIsTodayOrWarn()) return;
+    if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
 
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
 
     const exData = currentTracking.setData[exIdx];
-    const prevResult = exData[`set_${setIdx}_result`];
-    const wasAlreadyDone = exData[`set_${setIdx}_done`];
-
-    if (prevResult === outcome && wasAlreadyDone) {
-      delete exData[`set_${setIdx}_result`];
-      delete exData[`set_${setIdx}_done`];
-    } else {
-      exData[`set_${setIdx}_result`] = outcome;
-      exData[`set_${setIdx}_done`] = true;
-    }
+    exData[`set_${setIdx}_result`] = outcome;
+    exData[`set_${setIdx}_done`] = true;
 
     const day = allPlanDays[currentDayIndex];
     const ex = day.exercises[exIdx];
@@ -1902,10 +1995,9 @@ const TodayPage = (() => {
 
     if (allSetsDone) {
       // Exercise fully completed — start exercise-transition timer and handle progression
+      handleExerciseCompleted(exIdx, day);
       if (currentTracking.completed) {
         showWorkoutCelebration(day);
-      } else {
-        handleExerciseCompleted(exIdx, day);
       }
     } else if (exData[`set_${setIdx}_done`]) {
       // Individual set completed (not all sets yet) — start intra-workout rest timer
@@ -1926,67 +2018,111 @@ const TodayPage = (() => {
    * Open Set Outcome Modal ("How was Set #X?")
    */
   function openSetOutcomeModal(exIdx, setIdx) {
-    if (!checkIsTodayOrWarn()) return;
+    if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
+
     const day = allPlanDays[currentDayIndex];
-    if (!day || !day.exercises) return;
     const ex = day.exercises[exIdx];
-    if (!ex) return;
+
+    if (isNoModalExercise(ex)) {
+      const setData = (currentTracking.setData && currentTracking.setData[exIdx]) || {};
+      const isAlreadyDone = setData[`set_${setIdx}_done`];
+      if (isAlreadyDone) {
+        clearSetOutcomeFromModal(exIdx, setIdx, false);
+      } else {
+        selectSetOutcome(exIdx, setIdx, 'in_window');
+      }
+      return;
+    }
 
     const setData = (currentTracking.setData && currentTracking.setData[exIdx]) || {};
     const currentResult = setData[`set_${setIdx}_result`];
+    const isAlreadyDone = setData[`set_${setIdx}_done`];
 
     const title = `⚡ ${I18n.t('set_outcome_modal_title', '', { set: setIdx + 1 })}`;
     
-    const modalHTML = `
-      <div style="text-align: center; padding: 4px 0;">
-        <div style="font-size: 15px; font-weight: 800; color: var(--accent-primary); margin-bottom: 4px;">
-          ${ex.name}
-        </div>
-        ${buildModalTargetBannerHTML(ex, exIdx)}
-        <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
-          ${I18n.t('set_outcome_prompt')}
-        </p>
+    let modalHTML = '';
 
-        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
-          <!-- Option 1 (PRIMARY HERO): Target Achieved / In Window -->
-          <button type="button" class="set-modal-option-btn option-in-window hero-primary-option ${currentResult === 'in_window' ? 'selected' : ''}"
-                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'in_window')">
-            <div class="option-icon">✅</div>
-            <div class="option-content">
-              <div class="option-title">${I18n.t('set_outcome_in_window')}</div>
-              <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
-            </div>
-          </button>
+    if (isAlreadyDone || currentResult) {
+      // IF ALREADY MARKED: Show ONLY the Reset button!
+      let currentResultText = I18n.t('how_was_it');
+      let badgeClass = 'badge-in-window';
+      if (currentResult === 'above') {
+        currentResultText = I18n.t('set_outcome_above');
+        badgeClass = 'badge-above';
+      } else if (currentResult === 'in_window') {
+        currentResultText = I18n.t('set_outcome_in_window');
+        badgeClass = 'badge-in-window';
+      } else if (currentResult === 'below') {
+        currentResultText = I18n.t('set_outcome_below');
+        badgeClass = 'badge-below';
+      }
 
-          <!-- Option 2: Above Target -->
-          <button type="button" class="set-modal-option-btn option-above ${currentResult === 'above' ? 'selected' : ''}"
-                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'above')">
-            <div class="option-icon">🚀</div>
-            <div class="option-content">
-              <div class="option-title">${I18n.t('set_outcome_above')}</div>
-              <div class="option-desc">${I18n.t('set_outcome_above_desc')}</div>
-            </div>
-          </button>
+      modalHTML = `
+        <div style="text-align: center; padding: 12px 0;">
+          <div style="font-size: 15px; font-weight: 800; color: var(--accent-primary); margin-bottom: 6px;">
+            ${ex.name}
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>${I18n.t('set_label', 'סט')} ${setIdx + 1}</span> • <span class="set-feedback-btn ${badgeClass}" style="display: inline-flex; pointer-events: none; width: auto; padding: 4px 12px;">${currentResultText}</span>
+          </div>
 
-          <!-- Option 3: Below Target / Mechanical Stop -->
-          <button type="button" class="set-modal-option-btn option-below ${currentResult === 'below' ? 'selected' : ''}"
-                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'below')">
-            <div class="option-icon">⚠️</div>
-            <div class="option-content">
-              <div class="option-title">${I18n.t('set_outcome_below')}</div>
-              <div class="option-desc">${I18n.t('set_outcome_below_desc')}</div>
-            </div>
+          <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
+            ${I18n.t('set_already_completed_prompt')}
+          </p>
+
+          <button type="button" class="btn-secondary hero-reset-option" 
+                  style="width: 100%; padding: 14px; font-size: 15px; font-weight: 700; color: var(--danger, #ef4444); border: 2px dashed rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08); border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;"
+                  onclick="TodayPage.clearSetOutcomeFromModal(${exIdx}, ${setIdx}, true)">
+            🔄 ${I18n.t('clear_set_status')}
           </button>
         </div>
+      `;
+    } else {
+      // IF NOT MARKED (OR POST-RESET): Show the 3 outcome choices!
+      modalHTML = `
+        <div style="text-align: center; padding: 4px 0;">
+          <div style="font-size: 15px; font-weight: 800; color: var(--accent-primary); margin-bottom: 4px;">
+            ${ex.name}
+          </div>
+          ${buildModalTargetBannerHTML(ex, exIdx)}
+          <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
+            ${I18n.t('set_outcome_prompt')}
+          </p>
 
-        ${currentResult ? `
-          <button type="button" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px; color: var(--danger); border-color: rgba(239, 68, 68, 0.3);"
-                  onclick="TodayPage.clearSetOutcomeFromModal(${exIdx}, ${setIdx})">
-            🗑️ ${I18n.t('clear_set_status')}
-          </button>
-        ` : ''}
-      </div>
-    `;
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
+            <!-- Option 1: In Window -->
+            <button type="button" class="set-modal-option-btn option-in-window hero-primary-option"
+                    onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'in_window')">
+              <div class="option-icon">✅</div>
+              <div class="option-content">
+                <div class="option-title">${I18n.t('set_outcome_in_window')}</div>
+                <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
+              </div>
+            </button>
+
+            <!-- Option 2: Above Target -->
+            <button type="button" class="set-modal-option-btn option-above"
+                    onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'above')">
+              <div class="option-icon">🚀</div>
+              <div class="option-content">
+                <div class="option-title">${I18n.t('set_outcome_above')}</div>
+                <div class="option-desc">${I18n.t('set_outcome_above_desc')}</div>
+              </div>
+            </button>
+
+            <!-- Option 3: Below Target / Mechanical Stop -->
+            <button type="button" class="set-modal-option-btn option-below"
+                    onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'below')">
+              <div class="option-icon">⚠️</div>
+              <div class="option-content">
+                <div class="option-title">${I18n.t('set_outcome_below')}</div>
+                <div class="option-desc">${I18n.t('set_outcome_below_desc')}</div>
+              </div>
+            </button>
+          </div>
+        </div>
+      `;
+    }
 
     UI.showModal(title, modalHTML);
   }
@@ -1996,21 +2132,33 @@ const TodayPage = (() => {
     await selectSetOutcome(exIdx, setIdx, outcome);
   }
 
-  async function clearSetOutcomeFromModal(exIdx, setIdx) {
+  async function clearSetOutcomeFromModal(exIdx, setIdx, reopenModal = false) {
     UI.hideModal();
-    if (!checkIsTodayOrWarn()) return;
+    if (!checkExerciseUnlockedOrWarn(exIdx)) return;
     if (currentTracking.setData && currentTracking.setData[exIdx]) {
-      delete currentTracking.setData[exIdx][`set_${setIdx}_result`];
-      delete currentTracking.setData[exIdx][`set_${setIdx}_done`];
-      if (currentTracking.exerciseStatus) {
-        currentTracking.exerciseStatus[exIdx] = false;
-      }
-      // Update day completion status
-      currentTracking.completed = false;
       const day = allPlanDays[currentDayIndex];
+      const ex = day ? day.exercises[exIdx] : null;
+      const setsCount = ex ? UI.parseSetsCount(ex.sets) : 10;
+      
+      // Cascading reset: clear current set and all subsequent sets for this exercise
+      for (let s = setIdx; s < setsCount; s++) {
+        delete currentTracking.setData[exIdx][`set_${s}_result`];
+        delete currentTracking.setData[exIdx][`set_${s}_done`];
+      }
+      
+      if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+      currentTracking.exerciseStatus[exIdx] = false;
+      currentTracking.completed = false;
+
       updateProgress(day);
       await autoSave();
       renderExercises(day);
+
+      if (reopenModal) {
+        setTimeout(() => {
+          openSetOutcomeModal(exIdx, setIdx);
+        }, 150);
+      }
     }
   }
 
@@ -2018,7 +2166,7 @@ const TodayPage = (() => {
    * Toggle set completion
    */
   async function toggleSet(exIdx, setIdx, btn) {
-    if (!checkIsTodayOrWarn()) return;
+    if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
 
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
@@ -2031,7 +2179,14 @@ const TodayPage = (() => {
     if (isNowDone && !currentTracking.setData[exIdx][`set_${setIdx}_result`]) {
       currentTracking.setData[exIdx][`set_${setIdx}_result`] = 'in_window';
     } else if (!isNowDone) {
-      delete currentTracking.setData[exIdx][`set_${setIdx}_result`];
+      // Cascading reset of subsequent sets if toggled off
+      const day = allPlanDays[currentDayIndex];
+      const ex = day ? day.exercises[exIdx] : null;
+      const setsCount = ex ? UI.parseSetsCount(ex.sets) : 10;
+      for (let s = setIdx; s < setsCount; s++) {
+        delete currentTracking.setData[exIdx][`set_${s}_result`];
+        delete currentTracking.setData[exIdx][`set_${s}_done`];
+      }
     }
 
     const day = allPlanDays[currentDayIndex];
@@ -2078,7 +2233,7 @@ const TodayPage = (() => {
    * Update set data
    */
   async function updateSetData(exIdx, setIdx, field, value) {
-    if (!checkIsTodayOrWarn()) return;
+    if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
     currentTracking.setData[exIdx][`set_${setIdx}_${field}`] = value;
@@ -2089,7 +2244,7 @@ const TodayPage = (() => {
    * Update exercise note
    */
   async function updateExerciseNote(exIdx, value) {
-    if (!checkIsTodayOrWarn()) return;
+    if (!checkExerciseUnlockedOrWarn(exIdx)) return;
     if (!currentTracking.exerciseNotes) currentTracking.exerciseNotes = {};
     currentTracking.exerciseNotes[exIdx] = value;
     await autoSave();
