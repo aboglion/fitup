@@ -722,26 +722,111 @@ const UI = (() => {
     }
   }
 
-  function speakVoiceCue() {
+  // Cache of loaded voices
+  let cachedVoices = [];
+  function loadVoices() {
+    if ('speechSynthesis' in window) {
+      cachedVoices = window.speechSynthesis.getVoices() || [];
+    }
+  }
+
+  if ('speechSynthesis' in window) {
+    loadVoices();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }
+
+  /**
+   * Find best matching female voice for a given language code ('he', 'ar', 'en')
+   */
+  function findBestFemaleVoice(langCode) {
+    if (!('speechSynthesis' in window)) return null;
+    const voices = cachedVoices.length ? cachedVoices : (window.speechSynthesis.getVoices() || []);
+    if (!voices || voices.length === 0) return null;
+
+    const targetPrefix = (langCode || 'he').toLowerCase().substring(0, 2);
+    const matching = voices.filter(v => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith(targetPrefix));
+
+    if (!matching.length) return null;
+
+    // Female voice indicators & high quality names
+    const femaleKeywords = [
+      'female', 'woman', 'girl', 'נקבה', 'أنثى',
+      'carmit', 'hila', 'עברית',
+      'laila', 'mona', 'zariyah', 'salma', 'neda', 'عربي',
+      'samantha', 'victoria', 'karen', 'zira', 'aria', 'jenny', 'susan', 'hazel', 'natural', 'google us english', 'google uk english female', 'siri'
+    ];
+
+    // Male voice indicators to strictly avoid/penalize
+    const maleKeywords = [
+      'male', 'man', 'זכר', 'ذكر',
+      'maged', 'tarik', 'george', 'david', 'mark', 'guy', 'alex', 'fred', 'richard', 'james', 'daniel', 'stephan', 'michael'
+    ];
+
+    let bestVoice = null;
+    let highestScore = -9999;
+
+    for (const voice of matching) {
+      const vName = (voice.name || '').toLowerCase();
+      let score = 0;
+
+      // Penalize male names
+      if (maleKeywords.some(m => vName.includes(m))) {
+        score -= 1000;
+      }
+
+      // Reward female keywords & names
+      if (femaleKeywords.some(f => vName.includes(f))) {
+        score += 500;
+      }
+
+      // Quality bonuses (Google, Neural, Premium, Natural, Enhanced)
+      if (vName.includes('google')) score += 200;
+      if (vName.includes('neural') || vName.includes('natural') || vName.includes('enhanced') || vName.includes('premium')) score += 150;
+      if (voice.default) score += 50;
+
+      if (score > highestScore) {
+        highestScore = score;
+        bestVoice = voice;
+      }
+    }
+
+    return bestVoice;
+  }
+
+  function speakVoiceCue(customMessage = null) {
     if (!('speechSynthesis' in window)) return;
     try {
       window.speechSynthesis.cancel();
       const lang = window.I18n ? window.I18n.getLang() : 'he';
-      let message = 'הפסקה הסתיימה! הסט הבא מחכה';
+      
+      // Vocalized messages (Niqqud for Hebrew, Harakat for Arabic) for 100% crystal-clear pronunciation
+      let message = customMessage || 'זְמַן הַמְּנוּחָה הִסְתַּיֵּם! הַסֶּט הַבָּא מַמְתִּין לָךְ, בְּהַצְלָחָה!';
       let speechLang = 'he-IL';
 
       if (lang === 'en') {
-        message = 'Rest complete! Next set is ready.';
+        message = customMessage || 'Rest time is up! Get ready for your next set!';
         speechLang = 'en-US';
       } else if (lang === 'ar') {
-        message = 'انتهت الاستراحة! المجموعة التالية جاهزة.';
+        message = customMessage || 'انْتَهَتْ فَتْرَةُ الرَّاحَةِ! الْمَجْمُوعَةُ التَّالِيَةُ جَاهِزَةٌ.';
         speechLang = 'ar-SA';
       }
 
       const utterance = new SpeechSynthesisUtterance(message);
       utterance.lang = speechLang;
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
+
+      // Assign the best female voice if available
+      const femaleVoice = findBestFemaleVoice(lang);
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
+
+      // Expressive female pitch & natural articulation rate
+      utterance.pitch = 1.22; // Feminine, warm, energetic inflection
+      utterance.rate = 0.92;  // Relaxed pace to prevent rushing or slurred pronunciation
+      utterance.volume = 1.0;
+
       window.speechSynthesis.speak(utterance);
     } catch (e) {
       console.warn('Speech synthesis failed:', e);
@@ -829,6 +914,7 @@ const UI = (() => {
     initTimer,
     startTimer,
     stopTimer,
+    speakVoiceCue,
     compressImage
   };
 })();

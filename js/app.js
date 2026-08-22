@@ -798,6 +798,15 @@ const App = (() => {
       });
     }
 
+    const testVoiceBtn = document.getElementById('test-voice-btn');
+    if (testVoiceBtn) {
+      testVoiceBtn.addEventListener('click', () => {
+        if (window.UI && window.UI.speakVoiceCue) {
+          window.UI.speakVoiceCue();
+        }
+      });
+    }
+
     if (toggleEffects3dBtn) {
       toggleEffects3dBtn.addEventListener('click', () => {
         if (window.Effects3D) {
