@@ -322,7 +322,7 @@ const App = (() => {
    */
   async function loadAppCore() {
     try {
-      const currentDataVersion = '15.6.1'; // FitUp v15.6.1 Lean update
+      const currentDataVersion = '15.6.2'; // FitUp v15.6.2 complete catalog update
       const savedDataVersion = await DB.getSetting('dataVersion');
       
       let planStartDate = await DB.getSetting('planStartDate');
