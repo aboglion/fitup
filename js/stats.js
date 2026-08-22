@@ -485,7 +485,36 @@ const StatsPage = (() => {
     'l-sit-progression': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }],
     'suitcase-carry': [{ m: 'core', w: 0.8 }, { m: 'obliques', w: 1.0 }, { m: 'forearms', w: 0.8 }, { m: 'lowerBack', w: 0.5 }],
     'towel-hang': [{ m: 'forearms', w: 1.0 }],
-    'dead-hang': [{ m: 'forearms', w: 1.0 }]
+    'dead-hang': [{ m: 'forearms', w: 1.0 }],
+    'pistol-squat-progression': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'core', w: 0.4 }],
+    'bulgarian-split-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
+    'push-up-progression': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'db-oh-triceps-extension': [{ m: 'triceps', w: 1.0 }],
+    'arm-block-lateral-raise': [{ m: 'shoulders', w: 1.0 }],
+    'arm-block-triceps-ext': [{ m: 'triceps', w: 1.0 }],
+    'chin-up-progression': [{ m: 'lats', w: 0.8 }, { m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.4 }],
+    'push-up-volume': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'arm-block-biceps-curl': [{ m: 'biceps', w: 1.0 }],
+    'high-knees': [{ m: 'quads', w: 0.5 }, { m: 'core', w: 0.5 }],
+    'arm-circles': [{ m: 'shoulders', w: 0.5 }],
+    'wall-slides': [{ m: 'traps', w: 0.5 }, { m: 'shoulders', w: 0.5 }],
+    'brisk-walking': [{ m: 'calves', w: 0.3 }, { m: 'quads', w: 0.3 }],
+    'relaxed-walking': [{ m: 'calves', w: 0.2 }, { m: 'quads', w: 0.2 }],
+    'vo2-max-norwegian-4x4': [{ m: 'calves', w: 0.5 }, { m: 'quads', w: 0.5 }],
+    'micro-mobility-protocol': [],
+    'deep-mobility-protocol': [],
+    'single-arm-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'weighted-deficit-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'weighted-diamond-push-up': [{ m: 'triceps', w: 1.0 }, { m: 'chest', w: 0.6 }],
+    'wall-walk-partial': [{ m: 'shoulders', w: 1.0 }, { m: 'core', w: 0.5 }],
+    'wall-walk-full': [{ m: 'shoulders', w: 1.0 }, { m: 'core', w: 0.5 }],
+    'wall-handstand': [{ m: 'shoulders', w: 1.0 }, { m: 'core', w: 0.5 }],
+    'elevated-pike-push-up': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'single-arm-seated-ohp': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'obliques', w: 0.3 }],
+    'pull-up-overhand': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.4 }],
+    'weighted-chin-up': [{ m: 'lats', w: 0.8 }, { m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.5 }],
+    'walking-lunge-goblet': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
+    'wrist-rocks': [{ m: 'forearms', w: 0.5 }]
   };
 
   function getExerciseContributions(ex) {
@@ -551,7 +580,7 @@ const StatsPage = (() => {
     'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
     'db-rdl': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'db-hip-thrust': 'glutes',
     'single-leg-calf-raise': 'calves', 'standing-single-leg-calf-raise': 'calves', 'seated-single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves', 'seated-calf-raise': 'calves',
-    'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'core', 'dead-hang': 'forearms', 'towel-hang': 'forearms'
+    'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'core', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat-progression': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'triceps', 'chin-up-progression': 'biceps', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': null, 'deep-mobility-protocol': null, 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'biceps', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
   };
 
   function getMuscleForExercise(ex) {
