@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate FitUp Pro Ultimate v4.0 — 78-week training program."""
+"""Generate FitUp Pro v15.6 Lean Edition — 52-week training program."""
 import json, os, shutil
 from datetime import datetime, timedelta
 
@@ -45,7 +45,7 @@ def get_pull_warmup():
         ex("W5", "Seated Band Row", "1×12", "Band 30 kg", isWarmup=True, rest=30),
     ]
 
-DELOAD_WEEKS = {9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73}
+DELOAD_WEEKS = {8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73}
 
 def get_vo2_incline(week):
     if week in DELOAD_WEEKS or week >= 69:
@@ -122,36 +122,36 @@ def get_day_workout(dow, week):
 
     # STRENGTH DAYS (DOW 1, 3, 5)
 
-    # DELOAD WEEKS (9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73)
+    # DELOAD WEEKS (8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73)
     if is_deload:
         if dow == 1: # Day 1 Deload
-            if week == 9: raw = [("DB RDL", "2×8", "3 kg each", "3s descent", 120), ("DB BSS", "2×8/leg", "Bodyweight", "2s descent", 90), ("DB Hip Thrust", "2×10", "6 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week == 17: raw = [("DB RDL", "2×8", "6 kg each", "3s descent", 120), ("DB BSS", "2×8/leg", "3 kg each", "2s descent", 90), ("DB Hip Thrust", "2×10", "6 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week == 25: raw = [("DB Single-Leg RDL", "2×8/leg", "6 kg", "3s descent", 120), ("DB BSS", "2×8/leg", "6 kg each", "2s descent", 90), ("DB Hip Thrust", "2×10", "9 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week == 33: raw = [("DB Single-Leg RDL", "2×8/leg", "9 kg", "3s descent", 120), ("DB BSS", "2×8/leg", "6 kg each", "2s descent", 90), ("DB Hip Thrust", "2×10", "9 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "12 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week == 41: raw = [("DB Single-Leg RDL", "2×8/leg", "6 kg", "3s descent", 120), ("DB BSS (Goblet)", "2×8/leg", "9 kg", "1s pause", 90), ("DB Hip Thrust", "2×10", "12 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "9 kg", "2s descent", 60), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week in (49, 57, 61, 65, 69): raw = [("DB Single-Leg RDL", "2×8/leg", "12 kg", "3s descent", 120), ("DB BSS (Goblet)", "2×8/leg", "12 kg", "1s pause", 90), ("DB Hip Thrust", "2×10", "12 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "12 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "12 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
+            if week == 8: raw = [("DB RDL", "2×8", "3 kg each", "3s descent", 120), ("DB BSS", "2×8/leg", "Bodyweight", "2s descent", 90), ("DB Hip Thrust", "2×10", "6 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
+            elif week == 16: raw = [("DB RDL", "2×8", "6 kg each", "3s descent", 120), ("DB BSS", "2×8/leg", "3 kg each", "2s descent", 90), ("DB Hip Thrust", "2×10", "6 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
+            elif week == 24: raw = [("DB Single-Leg RDL", "2×8/leg", "6 kg", "3s descent", 120), ("DB BSS", "2×8/leg", "6 kg each", "2s descent", 90), ("DB Hip Thrust", "2×10", "9 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
+            elif week == 32: raw = [("DB Single-Leg RDL", "2×8/leg", "9 kg", "3s descent", 120), ("DB BSS", "2×8/leg", "6 kg each", "2s descent", 90), ("DB Hip Thrust", "2×10", "9 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "12 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
+            elif week == 40: raw = [("DB Single-Leg RDL", "2×8/leg", "6 kg", "3s descent", 120), ("DB BSS (Goblet)", "2×8/leg", "9 kg", "1s pause", 90), ("DB Hip Thrust", "2×10", "12 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "9 kg", "2s descent", 60), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
+            elif week in (48, 56, 61, 65, 69): raw = [("DB Single-Leg RDL", "2×8/leg", "12 kg", "3s descent", 120), ("DB BSS (Goblet)", "2×8/leg", "12 kg", "1s pause", 90), ("DB Hip Thrust", "2×10", "12 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "12 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "12 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
             else: raw = [("DB Single-Leg RDL", "2×8/leg", "15 kg", "3s descent", 120), ("DB BSS (Goblet)", "2×8/leg", "15 kg", "1s pause", 90), ("DB Hip Thrust", "2×10", "15 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "15 kg", "2s descent", 60), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
             return "Legs + Core (Deload)", "5-6", build_exercises(raw, get_leg_warmup())
 
         elif dow == 3: # Day 3 Deload
-            if week == 9: raw = [("Pike Hold", "2×15 secs", "Bodyweight", "static", 90), ("DB Floor Press", "2×8", "3 kg each", "2s descent", 120), ("Push-up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "3 kg total", "2s descent", 60)]
-            elif week == 17: raw = [("Wall Walk (Partial)", "2×2", "Bodyweight", "slow", 90), ("DB Floor Press", "2×6", "6 kg each", "2s descent", 120), ("Push-up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
-            elif week == 25: raw = [("Single-Arm Floor Press", "2×8/side", "9 kg", "2s descent", 120), ("Feet-Elevated Push-Up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
-            elif week == 33: raw = [("Single-Arm Floor Press", "2×8/side", "9 kg", "2s descent", 120), ("Deficit Push-Up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
-            elif week == 41: raw = [("Single-Arm Floor Press", "2×8/side", "12 kg", "2s descent", 120), ("Elevated Pike Push-Up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
-            elif week in (49, 57, 61, 65, 69): raw = [("Single-Arm Floor Press", "2×8/side", "12 kg", "2s descent", 120), ("Single-Arm Seated OHP", "2×8/side", "9 kg", "2s descent", 90), ("DB Lateral Raise", "2×12", "6 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "9 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "6 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "9 kg total", "2s descent", 60)]
+            if week == 8: raw = [("Pike Hold", "2×15 secs", "Bodyweight", "static", 90), ("DB Floor Press", "2×8", "3 kg each", "2s descent", 120), ("Push-up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "3 kg total", "2s descent", 60)]
+            elif week == 16: raw = [("Wall Walk (Partial)", "2×2", "Bodyweight", "slow", 90), ("DB Floor Press", "2×6", "6 kg each", "2s descent", 120), ("Push-up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
+            elif week == 24: raw = [("Single-Arm Floor Press", "2×8/side", "9 kg", "2s descent", 120), ("Feet-Elevated Push-Up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
+            elif week == 32: raw = [("Single-Arm Floor Press", "2×8/side", "9 kg", "2s descent", 120), ("Deficit Push-Up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
+            elif week == 40: raw = [("Single-Arm Floor Press", "2×8/side", "12 kg", "2s descent", 120), ("Elevated Pike Push-Up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
+            elif week in (48, 56, 61, 65, 69): raw = [("Single-Arm Floor Press", "2×8/side", "12 kg", "2s descent", 120), ("Single-Arm Seated OHP", "2×8/side", "9 kg", "2s descent", 90), ("DB Lateral Raise", "2×12", "6 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "9 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "6 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "9 kg total", "2s descent", 60)]
             else: raw = [("Single-Arm Floor Press", "2×8/side", "15 kg", "2s descent", 120), ("Single-Arm Seated OHP", "2×8/side", "15 kg", "2s descent", 90), ("DB Lateral Raise", "2×12", "6 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "15 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "6 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "15 kg total", "2s descent", 60)]
             return "Push + Skill (Deload)", "5-6", build_exercises(raw, get_push_warmup(is_year2))
 
         elif dow == 5: # Day 5 Deload
-            if week == 9: raw = [("Pull-Up Negative", "2×2", "Bodyweight", "3s descent", 120), ("One-Arm DB Row", "2×8/side", "3 kg", "2s descent", 90), ("TRX Face Pull (Angle 1)", "2×10", "Bodyweight", "2s descent", 60), ("DB Curl", "2×10", "3 kg each", "2s descent", 60)]
-            elif week == 17: raw = [("Pull-Up Negative", "2×2", "Bodyweight", "3s descent", 120), ("One-Arm DB Row", "2×8/side", "6 kg", "2s descent", 90), ("TRX Face Pull (Angle 2)", "2×10", "Bodyweight", "2s descent", 60), ("DB Curl", "2×10", "3 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2s descent", 60)]
-            elif week == 25: raw = [("Pull-Up (Overhand)", "2×2", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "6 kg", "2s descent", 90), ("TRX Face Pull (Angle 2)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "2×10", "3 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2s descent", 60)]
-            elif week == 33: raw = [("Pull-Up (Overhand)", "2×3", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "9 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Curl", "2×10", "3 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2s descent", 60)]
-            elif week == 41: raw = [("Pull-Up (Overhand)", "2×3", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "9 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Curl", "2×10", "6 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "6 kg each", "2s descent", 60)]
-            elif week in (49, 57, 61, 65, 69): raw = [("Pull-Up (Overhand)", "2×4", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "12 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("Single-Arm Curl", "2×10/side", "9 kg", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "9 kg each", "2s descent", 60)]
-            else: raw = [("Pull-Up (Overhand)", "2×4", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "15 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("Single-Arm Curl", "2×10/side", "12 kg", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "12 kg each", "2s descent", 60)]
+            if week == 8: raw = [("Pull-Up Negative", "2×2", "Bodyweight", "3s descent", 120), ("One-Arm DB Row", "2×8/side", "3 kg", "2s descent", 90), ("TRX Face Pull (Angle 1)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "3 kg each", "2s descent", 60)]
+            elif week == 16: raw = [("Pull-Up Negative", "2×2", "Bodyweight", "3s descent", 120), ("One-Arm DB Row", "2×8/side", "6 kg", "2s descent", 90), ("TRX Face Pull (Angle 2)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "3 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2s descent", 60)]
+            elif week == 24: raw = [("Pull-Up (Overhand)", "2×2", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "6 kg", "2s descent", 90), ("TRX Face Pull (Angle 2)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "3 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2s descent", 60)]
+            elif week == 32: raw = [("Pull-Up (Overhand)", "2×3", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "9 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "3 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2s descent", 60)]
+            elif week == 40: raw = [("Pull-Up (Overhand)", "2×3", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "9 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "6 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "6 kg each", "2s descent", 60)]
+            elif week in (48, 56, 61, 65, 69): raw = [("Pull-Up (Overhand)", "2×4", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "12 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "9 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "9 kg each", "2s descent", 60)]
+            else: raw = [("Pull-Up (Overhand)", "2×4", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "15 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "12 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "12 kg each", "2s descent", 60)]
             return "Pull + Grip (Deload)", "5-6", build_exercises(raw, get_pull_warmup())
 
     # REGULAR WEEKS (Non-Deload, Non-Maintenance)
@@ -225,8 +225,8 @@ def get_day_workout(dow, week):
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
-    # Phase 4: Weeks 10–16 (Arm block starts!)
-    if 10 <= week <= 16:
+    # Phase 4: Weeks 9–16 (Arm block starts!)
+    if 9 <= week <= 16:
         if dow == 1:
             raw = [
                 ("DB RDL", "4×8", "12 kg each", "3s descent", 120),
@@ -263,8 +263,8 @@ def get_day_workout(dow, week):
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
-    # Phase 6: Weeks 18–24
-    if 18 <= week <= 24:
+    # Phase 6: Weeks 17–24
+    if 17 <= week <= 24:
         if dow == 1:
             raw = [
                 ("DB Bulgarian Split Squat", "4×10/leg", "9 kg each", "2s descent", 90),
@@ -301,8 +301,8 @@ def get_day_workout(dow, week):
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
-    # Phase 8: Weeks 26–32
-    if 26 <= week <= 32:
+    # Phase 8: Weeks 25–32
+    if 25 <= week <= 32:
         if dow == 1:
             raw = [
                 ("DB Single-Leg RDL", "4×6/leg", "15 kg", "3s descent", 120),
@@ -339,8 +339,8 @@ def get_day_workout(dow, week):
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
-    # Phase 10: Weeks 34–40
-    if 34 <= week <= 40:
+    # Phase 10: Weeks 33–40
+    if 33 <= week <= 40:
         if dow == 1:
             raw = [
                 ("DB Single-Leg RDL", "4×8/leg", "12 kg", "3s descent", 120),
@@ -377,8 +377,8 @@ def get_day_workout(dow, week):
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
-    # Phase 12: Weeks 42–48
-    if 42 <= week <= 48:
+    # Phase 12: Weeks 41–48
+    if 41 <= week <= 48:
         if dow == 1:
             raw = [
                 ("Pistol Squat to Chair", "3×5/leg", "Bodyweight", "3s descent", 120),
@@ -415,8 +415,8 @@ def get_day_workout(dow, week):
             ]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
-    # Phase 14: Weeks 50–52
-    if 50 <= week <= 52:
+    # Phase 14: Weeks 49–52
+    if 49 <= week <= 52:
         if dow == 1:
             raw = [
                 ("Pistol Squat to Chair", "3×8/leg", "Bodyweight", "3s descent", 120),
@@ -454,7 +454,7 @@ def get_day_workout(dow, week):
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
     # YEAR 2 WEEKS (53–73)
-    if 53 <= week <= 56:
+    if 53 <= week <= 57:
         if dow == 1:
             raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×8/leg", "18 kg", "2s descent", 90), ("DB Hip Thrust", "4×10", "24 kg on hips", "2s pause", 90), ("Reverse Lunge + DB", "3×10/leg", "12 kg each", "2s descent", 90), ("Single-Leg Calf Raise", "4×20/leg", "21 kg", "2s descent", 60), ("Suitcase Carry", "4×30m/side", "24 kg", "walk", 90), ("Dead Bug", "3×12/side", "Bodyweight", "slow", 60)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
@@ -465,7 +465,7 @@ def get_day_workout(dow, week):
             raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×6", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("DB Hammer Curl", "2×12", "12 kg each", "2s descent", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
             return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
 
-    if 58 <= week <= 60:
+    if 57 <= week <= 60:
         if dow == 1:
             raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×10/leg", "21 kg", "1s pause", 90), ("DB Hip Thrust", "4×12", "24 kg on hips", "2s pause", 90), ("Reverse Lunge + DB", "3×10/leg", "12 kg each", "2s descent", 90), ("Single-Leg Calf Raise", "4×20/leg", "24 kg", "2s pause", 60), ("Pallof Press", "3×15/side", "Band 40 kg", "1s pause", 60), ("Hollow Body Hold", "3×20 secs", "Bodyweight", "static", 60)]
             return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
@@ -527,12 +527,14 @@ def build_exercises(raw_tuple_list, warmups):
         
         out.append(ex(f"A{idx}", name, sets, weight=weight, tempo=tempo, rest=rest))
         idx += 1
+
+    out.append(ex(f"A{idx}", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
     return out
 
 def generate_program():
     daily = []
     day_num = 0
-    total_weeks = 78
+    total_weeks = 52
     
     for week in range(1, total_weeks + 1):
         # DOW order: 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday, 0=Sunday
@@ -699,4 +701,4 @@ if __name__ == "__main__":
             if not os.path.exists(path) and os.path.exists(fallback):
                 shutil.copy(fallback, path)
 
-    print(f"Done — FitUp Pro Ultimate v4.0 generated! {len(program['daily'])} days, {len(program['exercises'])} exercise types.")
+    print("Done — FitUp Pro v15.6 Lean Edition generated! 364 days, 60 exercise types.")

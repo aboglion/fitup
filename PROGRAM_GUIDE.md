@@ -1,6 +1,4 @@
-import sys
-
-content = """# FitUp Pro v15.6 Lean Edition — Master Program Guide
+# FitUp Pro v15.6 Lean Edition — Master Program Guide
 **Target Objective**: Sculpted Athletic Physique | V-Taper | Prominent Arms | Strong Back | Resilient Tendons | Anti-Aging | Aerobic Engine | Flexibility  
 **Starting Level**: Beginner (0 years formal training) | Clean Pull-Ups: 2 | Clean Push-Ups: 7  
 **Core Philosophy**: **Zero Decisions. Everything is prescriptive. You only execute.**
@@ -183,7 +181,7 @@ Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase inclin
 
 ---
 
-### Week 9: Deload Microcycle
+### Week 8: Deload Microcycle
 VO2 Omitted; Zone 2 light 30 min. 2 sets per exercise. Mobility 15 min.  
 **Loads**: RDL 3 kg each | Floor Press 3 kg each | Row 3 kg | OHP 3 kg each | Carry 9 kg | Hip Thrust 6 kg | Calf 6 kg | Triceps 3 kg | Hammer 3 kg | Lateral 3 kg | Curl 3 kg. No Arm Block.
 
@@ -230,7 +228,7 @@ VO2 Omitted; Zone 2 light 30 min. 2 sets per exercise. Mobility 15 min.
 
 ---
 
-### Week 17: Deload Microcycle
+### Week 16: Deload Microcycle
 2 sets per exercise. **Loads**: RDL 6 kg each | Floor Press 6 kg each | Row 6 kg | OHP 3 kg each | Carry 9 kg | Hip Thrust 6 kg | Calf 6 kg | Triceps 6 kg | Curl 3 kg. **Arm Block**: 1 set at current ladder step.
 
 ---
@@ -276,7 +274,7 @@ VO2 Omitted; Zone 2 light 30 min. 2 sets per exercise. Mobility 15 min.
 
 ---
 
-### Week 25: Deload Microcycle
+### Week 24: Deload Microcycle
 2 sets. **Loads**: SL RDL 6 kg | SA Floor Press 9 kg | Row 6 kg | OHP 3 kg each | Carry 9 kg | Hip Thrust 9 kg | Calf 6 kg | Triceps 6 kg. Arm Block: 1 set.
 
 ---
@@ -322,7 +320,7 @@ VO2 Omitted; Zone 2 light 30 min. 2 sets per exercise. Mobility 15 min.
 
 ---
 
-### Week 33: Deload Microcycle
+### Week 32: Deload Microcycle
 2 sets. **Loads**: SL RDL 9 kg | SA Floor Press 9 kg | Row 9 kg | OHP 3 kg each | Carry 12 kg | Hip Thrust 9 kg | Calf 6 kg | Triceps 6 kg | Curl 3 kg. Arm Block: 1 set.
 
 ---
@@ -368,7 +366,7 @@ VO2 Omitted; Zone 2 light 30 min. 2 sets per exercise. Mobility 15 min.
 
 ---
 
-### Week 41: Deload Microcycle
+### Week 40: Deload Microcycle
 2 sets. **Loads**: SL RDL 6 kg | Goblet BSS 9 kg | SA Floor Press 12 kg | Row 9 kg | OHP 3 kg each | Hip Thrust 12 kg | Calf 9 kg | Triceps 6 kg | Curl 6 kg. Arm Block: 1 set.
 
 ---
@@ -414,7 +412,7 @@ VO2 Omitted; Zone 2 light 30 min. 2 sets per exercise. Mobility 15 min.
 
 ---
 
-### Week 49: Deload Microcycle
+### Week 48: Deload Microcycle
 2 sets. **Loads**: SL RDL 9 kg | SA Floor Press 12 kg | Row 12 kg | OHP 6 kg each | Hip Thrust 12 kg | Calf 9 kg | Triceps 6 kg | Curl 6 kg. Arm Block: 1 set.
 
 ---
@@ -460,7 +458,7 @@ VO2 Omitted; Zone 2 light 30 min. 2 sets per exercise. Mobility 15 min.
 
 ---
 
-## Part 6 — Year 2 Master Workout Tables (Weeks 53–78)
+## Part 6 — Year 2 Master Workout Tables (Weeks 53–52)
 
 **Year 2 Warmup Protocol:** Same as Year 1 + gentle Wrist Rocks 1×10 on Day 3.
 
@@ -683,7 +681,7 @@ Zone 2: 3×/week, 45 min, 4% incline, 5.5 km/h.
 
 ---
 
-## Part 7 — Beyond Week 78: Permanent Lifetime Maintenance Protocol
+## Part 7 — Beyond Week 52: Permanent Lifetime Maintenance Protocol
 
 | Day | Activity | Target Duration | Specifics |
 | :--- | :--- | :--- | :--- |
@@ -699,7 +697,7 @@ Zone 2: 3×/week, 45 min, 4% incline, 5.5 km/h.
 
 ---
 
-## Appendix A — Deload Summary (Weeks 9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73)
+## Appendix A — Deload Summary (Weeks 8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73)
 
 - **Execution Protocol:** Exactly 2 sets per exercise | Loads set to 60% of phase (Week 73: 70%), **rounded DOWN to available increments: per hand 3/6/9/12 kg; single dumbbell 3 kg increments** | Standard tempos | Handstand 15–20s | VO2 Max omitted → replaced with 30 min light Zone 2 | Deep Mobility 15–20 min | **Arm Block: 1 set at current ladder step.**
 - **Prohibited:** No improvised finishers, no PR attempts, no sets to failure, no weight increases, no RIR calculations.
@@ -746,9 +744,3 @@ Zone 2: 3×/week, 45 min, 4% incline, 5.5 km/h.
 - **Priority Rule:** If main table exercises are incomplete on a given day, the Arm Block is cancelled for that day.
 - **Cancellation Rule:** Two consecutive workouts showing strength decline on main exercises → Arm Block is cancelled until the next scheduled Deload week.
 - **Weeks 74+ Maintenance:** Perform 1 set per exercise at current ladder step.
-"""
-
-with open('/home/uns/fitup/PROGRAM_GUIDE.md', 'w', encoding='utf-8') as f:
-    f.write(content)
-
-print("PROGRAM_GUIDE.md written successfully in English!")

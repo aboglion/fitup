@@ -411,28 +411,36 @@ const StatsPage = (() => {
     'db-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'db-single-arm-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'push-up-bars-progression': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'push-up-volume-day-5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'deficit-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'incline-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.4 }],
     'feet-elevated-push-up': [{ m: 'chest', w: 1.0 }, { m: 'shoulders', w: 0.5 }, { m: 'triceps', w: 0.5 }],
     'weighted-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.4 }],
+    'scapular-push-up': [{ m: 'chest', w: 0.5 }, { m: 'shoulders', w: 0.5 }, { m: 'core', w: 0.3 }],
 
     'seated-db-ohp': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'seated-db-overhead-press': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'seated-single-arm-ohp': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'obliques', w: 0.3 }],
     'db-lateral-raise': [{ m: 'shoulders', w: 1.0 }],
     'pike-push-up': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'pike-progression': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'trx-face-pull': [{ m: 'shoulders', w: 0.8 }, { m: 'traps', w: 0.8 }],
     'wall-walk': [{ m: 'shoulders', w: 1.0 }, { m: 'core', w: 0.5 }],
     'wall-handstand-hold': [{ m: 'shoulders', w: 1.0 }, { m: 'core', w: 0.5 }],
 
+    'db-overhead-triceps-extension': [{ m: 'triceps', w: 1.0 }],
     'overhead-triceps-ext': [{ m: 'triceps', w: 1.0 }],
     'single-arm-overhead-triceps-ext': [{ m: 'triceps', w: 1.0 }],
     'diamond-push-up': [{ m: 'triceps', w: 1.0 }, { m: 'chest', w: 0.6 }],
 
     'pull-up': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.4 }],
+    'pull-up-progression': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.4 }],
     'chin-up': [{ m: 'lats', w: 0.8 }, { m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.4 }],
     'weighted-pull-up': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.5 }],
     'one-arm-db-row': [{ m: 'lats', w: 1.0 }, { m: 'traps', w: 0.5 }, { m: 'biceps', w: 0.5 }, { m: 'forearms', w: 0.4 }],
     'trx-row': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.5 }],
+    'seated-band-row': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.5 }, { m: 'forearms', w: 0.4 }],
     'scapular-pull-up': [{ m: 'lats', w: 0.6 }, { m: 'traps', w: 0.6 }],
     'inverted-row': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.5 }],
 
@@ -449,21 +457,30 @@ const StatsPage = (() => {
     'goblet-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }, { m: 'core', w: 0.3 }],
     'bodyweight-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.4 }],
     'reverse-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
+    'reverse-lunge-pistol-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'walking-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'pistol-squat-to-chair': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'core', w: 0.4 }],
 
     'db-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.6 }],
+    'db-romanian-deadlift': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.6 }],
     'single-leg-db-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.8 }, { m: 'lowerBack', w: 0.6 }],
+    'single-leg-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.8 }, { m: 'lowerBack', w: 0.6 }],
     'db-glute-bridge': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }],
+    'glute-bridge': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }],
     'db-hip-thrust': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }, { m: 'lowerBack', w: 0.4 }],
 
     'single-leg-calf-raise': [{ m: 'calves', w: 1.0 }],
+    'standing-single-leg-calf-raise': [{ m: 'calves', w: 1.0 }],
+    'seated-single-leg-calf-raise': [{ m: 'calves', w: 1.0 }],
+    'seated-calf-raise': [{ m: 'calves', w: 1.0 }],
     'double-leg-calf-raise': [{ m: 'calves', w: 1.0 }],
 
     'dead-bug': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }],
     'hollow-body-hold': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.4 }],
     'pallof-press-band': [{ m: 'obliques', w: 1.0 }, { m: 'core', w: 0.8 }],
+    'pallof-press-progression': [{ m: 'obliques', w: 1.0 }, { m: 'core', w: 0.8 }],
     'l-sit-tuck-hold': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }],
+    'l-sit-progression': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }],
     'suitcase-carry': [{ m: 'core', w: 0.8 }, { m: 'obliques', w: 1.0 }, { m: 'forearms', w: 0.8 }, { m: 'lowerBack', w: 0.5 }],
     'towel-hang': [{ m: 'forearms', w: 1.0 }],
     'dead-hang': [{ m: 'forearms', w: 1.0 }]
@@ -480,14 +497,17 @@ const StatsPage = (() => {
     }
 
     const name = (ex.name || '').toLowerCase();
+    if (name.includes('pallof') || name.includes('oblique') || name.includes('carry')) {
+      return [{ m: 'obliques', w: 1.0 }, { m: 'core', w: 0.8 }, { m: 'forearms', w: 0.5 }];
+    }
+    if (name.includes('ohp') || name.includes('overhead press') || name.includes('raise') || name.includes('shoulder') || name.includes('pike')) {
+      return [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.4 }];
+    }
     if (name.includes('press') || name.includes('push-up') || name.includes('chest')) {
       return [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }];
     }
     if (name.includes('pull-up') || name.includes('row') || name.includes('chin-up') || name.includes('lat')) {
       return [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.5 }, { m: 'forearms', w: 0.4 }];
-    }
-    if (name.includes('ohp') || name.includes('raise') || name.includes('shoulder') || name.includes('pike')) {
-      return [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.4 }];
     }
     if (name.includes('face pull') || name.includes('y-t-w') || name.includes('pull-apart')) {
       return [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }];
@@ -501,7 +521,7 @@ const StatsPage = (() => {
     if (name.includes('squat') || name.includes('lunge')) {
       return [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }];
     }
-    if (name.includes('rdl') || name.includes('hinge') || name.includes('deadlift')) {
+    if (name.includes('rdl') || name.includes('hinge') || name.includes('deadlift') || name.includes('romanian')) {
       return [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.5 }];
     }
     if (name.includes('bridge') || name.includes('thrust') || name.includes('glute')) {
@@ -513,11 +533,49 @@ const StatsPage = (() => {
     if (name.includes('bug') || name.includes('hollow') || name.includes('l-sit') || name.includes('core')) {
       return [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }];
     }
-    if (name.includes('carry') || name.includes('pallof') || name.includes('oblique')) {
-      return [{ m: 'obliques', w: 1.0 }, { m: 'core', w: 0.8 }, { m: 'forearms', w: 0.5 }];
+    if (name.includes('hang')) {
+      return [{ m: 'forearms', w: 1.0 }];
     }
 
     return [];
+  }
+
+  const EXERCISE_MUSCLE_MAP = {
+    'db-floor-press': 'chest', 'db-single-arm-floor-press': 'chest', 'push-up': 'chest', 'deficit-push-up': 'chest', 'incline-push-up': 'chest', 'feet-elevated-push-up': 'chest', 'weighted-push-up': 'chest', 'push-up-bars-progression': 'chest', 'push-up-volume-day-5': 'chest', 'scapular-push-up': 'chest',
+    'seated-db-ohp': 'shoulders', 'seated-db-overhead-press': 'shoulders', 'seated-single-arm-ohp': 'shoulders', 'db-lateral-raise': 'shoulders', 'pike-push-up': 'shoulders', 'pike-progression': 'shoulders', 'trx-face-pull': 'shoulders', 'wall-walk': 'shoulders', 'wall-handstand-hold': 'shoulders', 'band-pull-apart': 'shoulders', 'trx-y-t-w': 'traps',
+    'overhead-triceps-ext': 'triceps', 'db-overhead-triceps-extension': 'triceps', 'single-arm-overhead-triceps-ext': 'triceps', 'diamond-push-up': 'triceps',
+    'pull-up': 'lats', 'pull-up-progression': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'seated-band-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
+    'db-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
+    'db-bulgarian-split-squat': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
+    'db-rdl': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'db-hip-thrust': 'glutes',
+    'single-leg-calf-raise': 'calves', 'standing-single-leg-calf-raise': 'calves', 'seated-single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves', 'seated-calf-raise': 'calves',
+    'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'core', 'dead-hang': 'forearms', 'towel-hang': 'forearms'
+  };
+
+  function getMuscleForExercise(ex) {
+    if (!ex) return null;
+    if (ex.id && EXERCISE_MUSCLE_MAP[ex.id]) return EXERCISE_MUSCLE_MAP[ex.id];
+    if (ex.exerciseId && EXERCISE_MUSCLE_MAP[ex.exerciseId]) return EXERCISE_MUSCLE_MAP[ex.exerciseId];
+    
+    const slug = (ex.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    for (const [key, muscle] of Object.entries(EXERCISE_MUSCLE_MAP)) {
+      if (slug.includes(key) || key.includes(slug)) return muscle;
+    }
+    
+    const name = (ex.name || '').toLowerCase();
+    if (name.includes('pallof') || name.includes('oblique') || name.includes('carry')) return 'core';
+    if (name.includes('ohp') || name.includes('overhead press') || name.includes('raise') || name.includes('shoulder') || name.includes('pike') || name.includes('face pull')) return 'shoulders';
+    if (name.includes('press') || name.includes('push-up') || name.includes('chest')) return 'chest';
+    if (name.includes('pull-up') || name.includes('row') || name.includes('chin-up') || name.includes('lat')) return 'lats';
+    if (name.includes('curl')) return 'biceps';
+    if (name.includes('triceps') || name.includes('diamond')) return 'triceps';
+    if (name.includes('squat') || name.includes('lunge')) return 'quads';
+    if (name.includes('rdl') || name.includes('bridge') || name.includes('thrust') || name.includes('glute') || name.includes('deadlift') || name.includes('romanian')) return 'hamstrings';
+    if (name.includes('calf') || name.includes('calves')) return 'calves';
+    if (name.includes('bug') || name.includes('hollow') || name.includes('l-sit') || name.includes('hold') || name.includes('core')) return 'core';
+    if (name.includes('hang')) return 'forearms';
+    
+    return null;
   }
 
   function getCompletedSetsForExercise(track, exIdx, setMultiplier) {
@@ -866,41 +924,7 @@ const StatsPage = (() => {
       </div>
     `;
 
-    const EXERCISE_MUSCLE_MAP = {
-      'db-floor-press': 'chest', 'db-single-arm-floor-press': 'chest', 'push-up': 'chest', 'deficit-push-up': 'chest', 'incline-push-up': 'chest', 'feet-elevated-push-up': 'chest', 'weighted-push-up': 'chest',
-      'seated-db-ohp': 'shoulders', 'seated-single-arm-ohp': 'shoulders', 'db-lateral-raise': 'shoulders', 'pike-push-up': 'shoulders', 'trx-face-pull': 'shoulders', 'wall-walk': 'shoulders', 'wall-handstand-hold': 'shoulders',
-      'overhead-triceps-ext': 'triceps', 'single-arm-overhead-triceps-ext': 'triceps', 'diamond-push-up': 'triceps',
-      'pull-up': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
-      'db-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
-      'db-bulgarian-split-squat': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
-      'db-rdl': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'db-glute-bridge': 'hamstrings', 'db-hip-thrust': 'hamstrings',
-      'single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves',
-      'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'l-sit-tuck-hold': 'core', 'suitcase-carry': 'core'
-    };
 
-    function getMuscleForExercise(ex) {
-      if (!ex) return null;
-      if (ex.id && EXERCISE_MUSCLE_MAP[ex.id]) return EXERCISE_MUSCLE_MAP[ex.id];
-      if (ex.exerciseId && EXERCISE_MUSCLE_MAP[ex.exerciseId]) return EXERCISE_MUSCLE_MAP[ex.exerciseId];
-      
-      const slug = (ex.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      for (const [key, muscle] of Object.entries(EXERCISE_MUSCLE_MAP)) {
-        if (slug.includes(key) || key.includes(slug)) return muscle;
-      }
-      
-      const name = (ex.name || '').toLowerCase();
-      if (name.includes('press') || name.includes('push-up') || name.includes('chest')) return 'chest';
-      if (name.includes('pull-up') || name.includes('row') || name.includes('chin-up') || name.includes('lat')) return 'lats';
-      if (name.includes('ohp') || name.includes('raise') || name.includes('shoulder') || name.includes('pike') || name.includes('face pull')) return 'shoulders';
-      if (name.includes('curl')) return 'biceps';
-      if (name.includes('triceps') || name.includes('diamond')) return 'triceps';
-      if (name.includes('squat') || name.includes('lunge')) return 'quads';
-      if (name.includes('rdl') || name.includes('bridge') || name.includes('thrust') || name.includes('glute')) return 'hamstrings';
-      if (name.includes('calf') || name.includes('calves')) return 'calves';
-      if (name.includes('bug') || name.includes('hold') || name.includes('carry') || name.includes('press-band') || name.includes('core')) return 'core';
-      
-      return null;
-    }
 
     function renderHypertrophyVolumeChart(trackingMap, weekNum) {
       const muscleVolumes = { chest: 0, lats: 0, shoulders: 0, biceps: 0, triceps: 0, quads: 0, hamstrings: 0, calves: 0, core: 0 };
@@ -1283,6 +1307,8 @@ const StatsPage = (() => {
     init,
     render,
     calculateMuscleProgressions,
+    getExerciseContributions,
+    getMuscleForExercise,
     shareProgressCard
   };
 })();

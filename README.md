@@ -1,6 +1,6 @@
 # 🏋️‍♂️ FitUp Pro v15.6 Lean Edition
 
-> **A 78-Week Automated Prescriptive Lean Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Myo-Reps Clusters, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
+> **A 52-Week Automated Prescriptive Lean Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Myo-Reps Clusters, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
 
 ---
 
@@ -8,7 +8,7 @@
 
 **FitUp Pro v15.6 Lean Edition** is an advanced, offline-first Web Application designed for long-term physical progression, hypertrophic gains, cardiovascular conditioning, and precision workout tracking.
 
-Built on a strict **"Zero Decisions" Philosophy**, every single workout day across the 78-week (546-day) period is fully prescribed—down to exact exercise ordering, target rep ranges, weight progressions, tempo control, rest intervals, structural tags, and micro-mobility integration.
+Built on a strict **"Zero Decisions" Philosophy**, every single workout day across the 52-week (364-day) period is fully prescribed—down to exact exercise ordering, target rep ranges, weight progressions, tempo control, rest intervals, structural tags, and micro-mobility integration.
 
 Set completion operates under an objective **3-Button Outcome Classifier** (🚀 **ABOVE**, ✅ **IN_WINDOW**, ⚠️ **BELOW** / Mechanical Stop), which feeds the atomic progression engine and adjusts intra-workout rest timers dynamically (+30s extension on mechanical stop).
 
@@ -16,8 +16,8 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ## ✨ Key Features
 
-### 🏋️‍♂️ Prescriptive 78-Week Lean Training Engine
-- **Periodized Progression**: Structured across 15 distinct training phases over 78 weeks (Year 1 Foundation & Peak + Year 2 Mastery).
+### 🏋️‍♂️ Prescriptive 52-Week Lean Training Engine
+- **Periodized Progression**: Structured across 15 distinct training phases over 52 weeks (Year 1 Foundation & Peak + Year 2 Mastery).
 - **Zero Decisions 3-Button Outcome Selector**: Objective set classification (🚀 Above Target, ✅ In Window, ⚠️ Mechanical Stop / Failure) replacing guesswork.
 - **Myo-Reps & Arm Block Integration**: High-density cluster reps and double-progression ladder protocols for maximal hypertrophy.
 - **Adaptive Intra-Workout Rest Engine**: Dynamically calculates rest timers with automatic +30s extensions following a mechanical stop (`BELOW` outcome).
@@ -48,9 +48,9 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 ### 🌳 RPG Skill Tree & Level Progression
 - Leveling and XP system (500 XP per completed strength day, 200 XP for active recovery walk/cardio days), streak tracking, and interactive exercise skill tree nodes unlocked week-by-week.
 
-### 📷 Progress Photo Tracker & 546-Day Consistency Map
+### 📷 Progress Photo Tracker & 364-Day Consistency Map
 - In-app progress photo logging with automated client-side WebP image compression.
-- 546-day visual consistency matrix tracking adherence across 5 day classifications (Strength, Deload, Walk, Rest, Skipped).
+- 364-day visual consistency matrix tracking adherence across 5 day classifications (Strength, Deload, Walk, Rest, Skipped).
 
 ### 🌐 Multi-Language & RTL Support (I18n)
 - Full internationalization supporting **English**, **Hebrew** (RTL), and **Arabic** (RTL).
@@ -63,7 +63,7 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ## 📸 Application Interface & Feature Walkthrough
 
-FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tech Sci-Fi aesthetic. Below is a detailed visual walkthrough of the primary modules and features:
+FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a high-tech Sci-Fi aesthetic. Below is a detailed visual walkthrough of the primary modules and features:
 
 ### 1. Progress & Stats Dashboard & Interactive Muscle Map
 <img src="PICS/Pasted%20image.png" alt="Progress Dashboard, Google Fit Sync & Interactive Muscle Map" width="380" />
@@ -87,7 +87,7 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 <img src="PICS/Pasted%20image%20%283%29.png" alt="RPG Skill Tree & Exercise Directory" width="380" />
 
 - **Categorized Movement Domains**: Filterable exercise directory divided into four primary disciplines: **Legs + Core**, **Push + Skill**, **Pull + Grip**, and **Cardio & Recovery**.
-- **Interactive Progression Skill Tree**: Visual node tree displaying week-by-week exercise unlocks across the 78-week roadmap. Features dedicated warmups (High Knees, Deep Mobility Protocol) and locked future skill nodes (e.g., Week 53 Wrist Rocks, Pistol Squats to chair).
+- **Interactive Progression Skill Tree**: Visual node tree displaying week-by-week exercise unlocks across the 52-week roadmap. Features dedicated warmups (High Knees, Deep Mobility Protocol) and locked future skill nodes (e.g., Week 53 Wrist Rocks, Pistol Squats to chair).
 
 ---
 
@@ -102,7 +102,7 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 ### 5. Searchable Exercise Library & Muscle Filtering
 <img src="PICS/Pasted%20image%20%285%29.png" alt="Searchable Exercise Library with Category Filters" width="380" />
 
-- **Instant Search & Multi-Category Filters**: Instant search engine with tag filters (All, Arms, Shoulders, Warmup, Pull, Push, Legs, Core) to find any movement in the 78-week dictionary.
+- **Instant Search & Multi-Category Filters**: Instant search engine with tag filters (All, Arms, Shoulders, Warmup, Pull, Push, Legs, Core) to find any movement in the 52-week dictionary.
 - **Detailed Card Metadata**: Shows required equipment (e.g., Dumbbells, Bodyweight, TRX), difficulty rating (Beginner, Intermediate, Advanced), schedule assignment badges, and primary target muscle diagrams (e.g., DB Biceps Curl, DB Lateral Raise, DB Overhead Triceps Extension).
 
 ---
@@ -110,16 +110,16 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 ### 6. Today View Workout Tracker & 3-Button Set Outcome Execution
 <img src="PICS/Pasted%20image%20%286%29.png" alt="Today View Interactive Set Logger & Rest Timer" width="380" />
 
-- **Prescriptive Workout Execution**: Displays the exact daily schedule generated by the 78-week training engine. Outlines exact exercise sequence, prescribed set counts, target reps, structural Lean tags, and tempo instructions (e.g., Bodyweight Squat with slow eccentric control, 2 sets of 8 reps, 30s rest interval).
+- **Prescriptive Workout Execution**: Displays the exact daily schedule generated by the 52-week training engine. Outlines exact exercise sequence, prescribed set counts, target reps, structural Lean tags, and tempo instructions (e.g., Bodyweight Squat with slow eccentric control, 2 sets of 8 reps, 30s rest interval).
 - **3-Button Outcome Logger**: Objective set completion buttons (🚀 **ABOVE**, ✅ **IN_WINDOW**, ⚠️ **BELOW** / Mechanical Stop) replacing guesswork and automatically triggering adaptive rest timers (+30s extension on mechanical stop).
 
 ---
 
 ### 7. Progress Photo Tracker, Consistency Map & Performance Metrics
-<img src="PICS/Pasted%20image%20%287%29.png" alt="Progress Photo Tracker, 546-Day Consistency Map & Analytics" width="380" />
+<img src="PICS/Pasted%20image%20%287%29.png" alt="Progress Photo Tracker, 364-Day Consistency Map & Analytics" width="380" />
 
 - **Private Progress Photo Journal**: Client-side progress photo recorder (prompted every 4 weeks) compressed into lightweight WebP format and stored locally in IndexedDB for 100% private physical transformation tracking.
-- **546-Day Visual Consistency Map**: Grid-style calendar matrix tracking overall program adherence across all 546 days, color-coded by day type (Strength, Deload, Walk, Rest, Skipped).
+- **364-Day Visual Consistency Map**: Grid-style calendar matrix tracking overall program adherence across all 364 days, color-coded by day type (Strength, Deload, Walk, Rest, Skipped).
 - **Summary Analytics Grid**: Live dashboard metrics displaying total Days Completed, Strength Workouts Logged, Walk Days Completed, Average Session RPE (Rate of Perceived Exertion), Monthly Completion Rate %, and Weekly Trend %.
 
 ---
@@ -129,13 +129,13 @@ FitUp Pro Ultimate v4.0 combines advanced athletic periodization with a high-tec
 
 - **Gemini AI API Configuration**: Secure setup interface for Google Gemini API key with AES-256 client-side encryption and model selector dropdown (`gemini-3.1-flash-lite`, `gemini-1.5-flash`, etc.).
 - **Google Drive & Local Data Backup/Restore**: One-click local JSON file export/import, alongside automatic background sync to Google Drive (`drive.file` scope) to preserve workout logs across all devices without central server data exposure.
-- **Full Program Guide Exporter**: Quick launcher to view, print, or export the complete 78-week master program guide and exercise manual in English, Hebrew, or Arabic.
+- **Full Program Guide Exporter**: Quick launcher to view, print, or export the complete 52-week master program guide and exercise manual in English, Hebrew, or Arabic.
 
 ---
 
 ## 📋 Training Program Deep Dive
 
-The **FitUp Pro Ultimate v4.0** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 78 weeks.
+The **FitUp Pro Ultimate v15.6 Lean** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 52 weeks.
 
 ### 🗓️ Weekly Microcycle Architecture (7 Days)
 Each week follows a strictly optimized 7-day routine designed to balance muscular stimulus, joint recovery, and metabolic conditioning:
@@ -161,18 +161,18 @@ Starting from Week 34 (Phases 10–15), workout volume peaks while strict durati
 
 ---
 
-### 📈 78-Week Macrocycle Periodization (15 Phases)
+### 📈 52-Week Macrocycle Periodization (15 Phases)
 The program is split into two primary macrocycles designed to ensure progressive overload and prevent adaptation plateaus:
 
 - **Year 1 (Weeks 1–52: Foundation, Hypertrophy & Peak)**
   - *Phase 1–3 (Weeks 1–16)*: Anatomical Adaptation, Unilateral Balance & Push-Up/Pull-Up Progression. Introduction of Arm Block v5 at Week 10.
   - *Phase 4–6 (Weeks 18–32)*: Heavy Single-Arm Floor Pressing, Pistol Squat Progressions, Elevated TRX Work.
   - *Phase 7–9 (Weeks 34–52)*: Peak Strength & Volume Density. Time Efficiency Protocol active. Single-Arm OHP & Vest Push-Ups.
-- **Year 2 (Weeks 53–78: Advanced Mastery & Weighted Calisthenics)**
+- **Year 2 (Weeks 53–52: Advanced Mastery & Weighted Calisthenics)**
   - *Phase 10–13 (Weeks 53–68)*: Weighted Calisthenics (+5 kg Vest Pull-Ups/Push-Ups), Single-Arm Dumbbell Row at 24 kg max capacity, Pistol Squats to chair.
   - *Phase 14–15 (Weeks 70–78)*: Peak Strength Testing & Tapered Transition.
 - **Scheduled Deload Microcycles (Every 8 Weeks)**:
-  - Occur on Weeks 8, 17, 25, 33, 41, 49, 57, 65, and 73.
+  - Occur on Weeks 8, 16, 24, 32, 40, 48, 56, 61, 65, 69, and 73.
   - Volume is reduced by 40–50% with RPE target lowered to 6–7 for full central nervous system (CNS) and joint recovery.
 
 ---
@@ -185,7 +185,7 @@ The program is split into two primary macrocycles designed to ensure progressive
 ---
 
 ### 🏋️‍♂️ Required Equipment & Home Setup
-The 78-week program is designed around a minimal yet complete home-gym setup:
+The 52-week program is designed around a minimal yet complete home-gym setup:
 
 | Equipment Item | Specifications & Usage | Purpose in Program |
 | :--- | :--- | :--- |
@@ -219,7 +219,7 @@ The 78-week program is designed around a minimal yet complete home-gym setup:
 ```text
 fitup/
 ├── index.html              # Main Single-Page Application (SPA) entry point
-├── generate_program.py     # Central Python engine generating 78-week program dataset
+├── generate_program.py     # Central Python engine generating 52-week program dataset
 ├── PROGRAM_GUIDE.md        # Source of truth program manual & methodology guide
 ├── Makefile                # Automation commands (make gp)
 ├── PICS/                   # Interface screenshots and feature showcase images
@@ -229,7 +229,7 @@ fitup/
 │   └── responsive.css      # Mobile, tablet, and desktop breakpoints
 ├── js/                     # Application logic modules
 │   ├── app.js              # Application lifecycle & router
-│   ├── data.js             # Serialized 78-week training dataset (generated)
+│   ├── data.js             # Serialized 52-week training dataset (generated)
 │   ├── db.js               # IndexedDB data access layer
 │   ├── anatomy.js          # SVG & CSS 14-muscle visualizer module
 │   ├── stats.js            # Progression metrics, XP, and muscle calculation
@@ -239,7 +239,7 @@ fitup/
 │   ├── i18n.js             # Language translations dictionary
 │   └── UI.js               # UI renderers, toast notifications, modals
 ├── images/                 # App assets, exercise thumbnails, and anatomy backgrounds
-└── training_data.json      # Structured JSON dump of the 78-week program
+└── training_data.json      # Structured JSON dump of the 52-week program
 ```
 
 ---
@@ -272,7 +272,7 @@ make gp
 
 ## 📖 Methodology & Training Guidelines
 
-For complete details regarding the 78-week periodization scheme, exercise substitutions, RPE target guidelines, and the Time Efficiency Protocol, refer to [PROGRAM_GUIDE.md](PROGRAM_GUIDE.md).
+For complete details regarding the 52-week periodization scheme, exercise substitutions, RPE target guidelines, and the Time Efficiency Protocol, refer to [PROGRAM_GUIDE.md](PROGRAM_GUIDE.md).
 
 ---
 

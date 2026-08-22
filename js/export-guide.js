@@ -10,7 +10,7 @@ window.ExporterGuide = (() => {
       zero_decisions_desc: "The program eliminates guesswork with 3 objective set outcome selectors across all 78 weeks:",
       mental_load: "<strong>Zero Decisions & 3 Outcome Buttons:</strong> Predefined weights, sets, reps, tempo, and rest. Every set is logged as 🚀 <strong>ABOVE</strong>, ✅ <strong>IN_WINDOW</strong>, or ⚠️ <strong>BELOW</strong> (Mechanical Stop). Reaching a mechanical stop automatically extends adaptive rest by +30s.",
       strength_cardio: "<strong>Fixed 7-Day Weekly Structure:</strong> 3 strength days, Zone 2 cardio day, VO2 Max 4x4 day, Active Recovery day, and Rest day.",
-      deload_cycles: "<strong>Scientific Recovery (Deload Cycles):</strong> Scheduled deload weeks (Weeks 9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73) reduce volume to 2 sets (~60% load) for neural and joint recovery.",
+      deload_cycles: "<strong>Scientific Recovery (Deload Cycles):</strong> Scheduled deload weeks (Weeks 8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73) reduce volume to 2 sets (~60% load) for neural and joint recovery.",
       time_efficiency_title: "⏱️ Time Efficiency & Antagonistic Supersets Protocol (45–50 min target)",
       time_efficiency_list: [
         "<strong>Antagonistic Supersets:</strong> Pair non-competing isolation exercises (e.g., Lateral Raise + Triceps Ext on Day 3). Perform Ex A → 45s rest → Ex B → 45s rest. Target muscle gets 120s full recovery while cutting clock time by 50%.",
@@ -67,7 +67,7 @@ window.ExporterGuide = (() => {
       zero_decisions_desc: "התוכנית נבנתה במכוון סביב הרעיון של <strong>אפס החלטות מצד המתאמן</strong> באמצעות דיווח 3 תוצאות אובייקטיביות בלבד:",
       mental_load: "<strong>אפס החלטות ודירוג 3 כפתורים:</strong> כל תרגיל, משקל, סטים, חזרות, קצב (Tempo) וזמני מנוחה קבועים מראש. בסיום סט בוחרים: 🚀 <strong>מעל היעד</strong>, ✅ <strong>בתחום היעד</strong>, או ⚠️ <strong>כשל / עצירה מכנית</strong> (מפעיל אוטומטית +30 שנ' מנוחה אדפטיבית).",
       strength_cardio: "<strong>מבנה שבועי קבוע (7 ימים):</strong> יום 1 (רגליים+ליבה+אחיזה), יום 2 (Zone 2+מוביליות), יום 3 (דחיפה+עמידת ידיים+בלוק זרועות), יום 4 (התאוששות פעילה), יום 5 (משיכה+אחיזה+בלוק זרועות), יום 6 (VO2 Max 4x4), יום 7 (מנוחה מלאה).",
-      deload_cycles: "<strong>התאוששות מדעית (Deload Cycles):</strong> שבועות דילואד מוגדרים מראש (שבועות 9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73) שבהם הנפח יורד ל-2 סטים (~60% משקל) להורדת עומס מעצבים ומפרקים.",
+      deload_cycles: "<strong>התאוששות מדעית (Deload Cycles):</strong> שבועות דילואד מוגדרים מראש (שבועות 8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73) שבהם הנפח יורד ל-2 סטים (~60% משקל) להורדת עומס מעצבים ומפרקים.",
       time_efficiency_title: "⏱️ פרוטוקול ייעול זמנים וסופר-סטים (אימון ב-45–50 דקות)",
       time_efficiency_list: [
         "<strong>סופר-סטים אנטגוניסטיים (Antagonistic Supersets):</strong> בתרגילי בידוד (כמו Lateral Raise + Triceps Ext ביום 3, או Curl + Core ביום 5), בצע את תרגיל א' ← מנוחה 45 שנ' ← תרגיל ב' ← מנוחה 45 שנ'. השריר מרוויח 120 שנ' מנוחה מלאה, והזמן הכללי נחתך ב-50%.",
@@ -124,7 +124,7 @@ window.ExporterGuide = (() => {
       zero_decisions_desc: "يلغي البرنامج التخمين كلياً عبر اختيار واحدة من 3 نتائج محددة للمجموعة:",
       mental_load: "<strong>صفر قرارات وتقييم 3 أزرار:</strong> الأوزان والمجموعات والتكرارات محددة مسبقاً. عند نهاية المجموعة تختار: 🚀 <strong>أعلى من الهدف</strong>, ✅ <strong>ضمن الهدف</strong>, أو ⚠️ <strong>فشل / توقف ميكانيكي</strong> (يزيد الراحة تلقائياً +30 ثانية).",
       strength_cardio: "<strong>الهيكل الأسبوعي (7 أيام):</strong> اليوم 1 (الأرجل+الظهر/الكتف), اليوم 2 (Zone 2+مرونة), اليوم 3 (الدفع+المهارة+بلوك الذراعين), اليوم 4 (التعافي النشط), اليوم 5 (السحب+القبضة+بلوك الذراعين), اليوم 6 (VO2 Max 4x4), اليوم 7 (راحة كاملة).",
-      deload_cycles: "<strong>التعافي العلمي (أسابيع Deload):</strong> أسابيع تعافي محددة (الأسابيع 9, 17, 25, 33, 41, 49, 57, 61, 65, 69, 73) يقل فيها الحجم إلى مجموعتين (~60% وزن).",
+      deload_cycles: "<strong>التعافي العلمي (أسابيع Deload):</strong> أسابيع تعافي محددة (الأسابيع 8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73) يقل فيها الحجم إلى مجموعتين (~60% وزن).",
       time_efficiency_title: "⏱️ بروتوكول تحسين الوقت والمجموعات الفائقة (45-50 دقيقة)",
       time_efficiency_list: [
         "<strong>المجموعات الفائقة (Antagonistic Supersets):</strong> في تمارين العزل (مثل Lateral Raise + Triceps Ext)، قم بالتمرين أ ← راحة 45 ثانية ← التمرين ب ← راحة 45 ثانية. تحصل العضلة على 120 ثانية راحة كاملة.",

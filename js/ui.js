@@ -94,24 +94,32 @@ const UI = (() => {
     'CHIN-UP': 'Chin-up.gif',
     'CHIN-UP NEGATIVE': 'Chin-up Negative.gif',
     'PULL-UP (OVERHAND)': 'Pull-up (Overhand).gif',
+    'PULL-UP PROGRESSION': 'Pull-up (Overhand).gif',
     'PULL-UP NEGATIVE': 'Pull-Up Negative.gif',
     'ELEVATED PIKE PUSH-UP': 'Elevated Pike Push-up.gif',
+    'PIKE PROGRESSION': 'Pike Hold.gif',
     'PUSH-UP': 'Push-up.gif',
     'PUSH-UP (BARS)': 'Push-up.gif',
+    'PUSH-UP BARS PROGRESSION': 'Push-up.gif',
+    'PUSH-UP VOLUME (DAY 5)': 'Push-up.gif',
     'DEFICIT PUSH-UP': 'Deficit Push-Up.gif',
     'FEET-ELEVATED PUSH-UP': 'Feet-Elevated Push-Up.gif',
     'WEIGHTED DEFICIT PUSH-UP': 'Weighted Deficit Push-Up.gif',
     'WEIGHTED CHIN-UP': 'Weighted Chin-Up.gif',
     'WEIGHTED PULL-UP': 'Weighted Pull-Up.gif',
     'DB RDL': 'Dumbbell Romanian Deadlift (RDL).gif',
+    'DB ROMANIAN DEADLIFT': 'Dumbbell Romanian Deadlift (RDL).gif',
     'DB SINGLE-LEG RDL': 'Dumbbell Single-Leg RDL.gif',
+    'SINGLE-LEG RDL': 'Dumbbell Single-Leg RDL.gif',
     'DB CURL': 'Dumbbell Biceps Curl.gif',
+    'HAMMER CURL': 'Dumbbell Hammer Curl.gif',
     'SINGLE-ARM CURL': 'Single-Arm Curl.gif',
     'ARM BLOCK - DB CURL': 'Arm Block - DB Curl.gif',
     'DB LATERAL RAISE': 'Dumbbell Lateral Raise.gif',
     'ARM BLOCK - DB LATERAL RAISE': 'Arm Block - DB Lateral Raise.gif',
     'ARM BLOCK - DB OH TRICEPS EXT': 'DB OH Triceps Ext.gif',
     'DB OH TRICEPS EXT': 'DB OH Triceps Ext.gif',
+    'DB OVERHEAD TRICEPS EXTENSION': 'DB OH Triceps Ext.gif',
     'DB BULGARIAN SPLIT SQUAT': 'DB Bulgarian Split Squat.gif',
     'DB BSS': 'DB Bulgarian Split Squat.gif',
     'DB BSS (GOBLET)': 'DB BSS (Goblet).gif',
@@ -120,12 +128,22 @@ const UI = (() => {
     'DB HIP THRUST': 'DB Glute Bridge.gif',
     'ONE-ARM DB ROW': 'Dumbbell One-Arm Row.gif',
     'PALLOF PRESS': 'Pallof Press (Band).gif',
+    'PALLOF PRESS PROGRESSION': 'Pallof Press (Band).gif',
+    'REVERSE LUNGE': 'Reverse Lunge + DB.gif',
     'REVERSE LUNGE + DB': 'Reverse Lunge + DB.gif',
+    'REVERSE LUNGE / PISTOL SQUAT': 'Reverse Lunge + DB.gif',
+    'REVERSE LUNGE - PISTOL SQUAT': 'Reverse Lunge + DB.gif',
+    'PISTOL SQUAT PROGRESSION': 'Pistol Squat to Chair.gif',
+    'PISTOL SQUAT TO CHAIR': 'Pistol Squat to Chair.gif',
     'SEATED DB OHP': 'Seated DB OHP.gif',
+    'SEATED DB OVERHEAD PRESS': 'Seated DB OHP.gif',
     'SINGLE-ARM SEATED OHP': 'Single-Arm Seated OHP.gif',
     'SINGLE-ARM FLOOR PRESS': 'Single-Arm Floor Press.gif',
     'DB FLOOR PRESS': 'Dumbbell Floor Press.gif',
     'DB HAMMER CURL': 'Dumbbell Hammer Curl.gif',
+    'STANDING SINGLE-LEG CALF RAISE': 'Single-Leg Calf Raise.gif',
+    'SEATED SINGLE-LEG CALF RAISE': 'Single-Leg Calf Raise.gif',
+    'SINGLE-LEG CALF RAISE': 'Single-Leg Calf Raise.gif',
     'SUITCASE CARRY': 'Suitcase Carry.gif',
     'WALKING LUNGE (GOBLET)': 'Walking Lunge (Goblet).gif',
     'WALL WALK (PARTIAL)': 'Wall Walk (Partial).gif',
@@ -134,11 +152,43 @@ const UI = (() => {
     'TRX FACE PULL (ANGLE 2)': 'TRX Face Pull (Angle 2).gif',
     'TRX FACE PULL (ANGLE 3)': 'TRX Face Pull (Angle 3).gif',
     'TRX Y-T-W': 'TRX Y-T-W.gif',
+    'L-SIT PROGRESSION': 'L-sit Tuck (Bars).gif',
     'L-SIT TUCK (BARS)': 'L-sit Tuck (Bars).gif',
     'HOLLOW BODY HOLD': 'Hollow Body Hold.gif',
     'PIKE HOLD': 'Pike Hold.gif',
     'DEEP MOBILITY PROTOCOL': 'Deep Mobility Protocol.gif',
+    'MICRO MOBILITY PROTOCOL': 'Deep Mobility Protocol.gif',
+    'BRISK WALKING': 'High Knees.gif',
+    'BRISK WALKING (ZONE 2)': 'High Knees.gif',
+    'RELAXED WALKING': 'High Knees.gif',
+    'ACTIVE RECOVERY WALK': 'High Knees.gif',
+    'ZONE 2 LIGHT WALK': 'High Knees.gif',
+    'VO2 MAX NORWEGIAN 4X4': 'High Knees.gif',
     'WRIST ROCKS': 'Wrist Rocks.gif'
+  };
+
+  const EXERCISE_PNG_ALIASES = {
+    'DB ROMANIAN DEADLIFT': 'DB RDL.png',
+    'SINGLE-LEG RDL': 'DB SINGLE-LEG RDL.png',
+    'SEATED DB OVERHEAD PRESS': 'SEATED DB OHP.png',
+    'DB OVERHEAD TRICEPS EXTENSION': 'DB OH TRICEPS EXT.png',
+    'STANDING SINGLE-LEG CALF RAISE': 'SINGLE-LEG CALF RAISE.png',
+    'SEATED SINGLE-LEG CALF RAISE': 'SINGLE-LEG CALF RAISE.png',
+    'PALLOF PRESS PROGRESSION': 'PALLOF PRESS.png',
+    'PIKE PROGRESSION': 'PIKE HOLD.png',
+    'PUSH-UP BARS PROGRESSION': 'PUSH-UP (BARS).png',
+    'PUSH-UP VOLUME (DAY 5)': 'PUSH-UP.png',
+    'PULL-UP PROGRESSION': 'PULL-UP (OVERHAND).png',
+    'HAMMER CURL': 'DB HAMMER CURL.png',
+    'L-SIT PROGRESSION': 'L-SIT TUCK (BARS).png',
+    'REVERSE LUNGE': 'REVERSE LUNGE + DB.png',
+    'PISTOL SQUAT PROGRESSION': 'PISTOL SQUAT TO CHAIR.png',
+    'REVERSE LUNGE / PISTOL SQUAT': 'REVERSE LUNGE + DB.png',
+    'REVERSE LUNGE - PISTOL SQUAT': 'REVERSE LUNGE + DB.png',
+    'BRISK WALKING (ZONE 2)': 'BRISK WALKING.png',
+    'ACTIVE RECOVERY WALK': 'RELAXED WALKING.png',
+    'ZONE 2 LIGHT WALK': 'BRISK WALKING.png',
+    'MICRO MOBILITY PROTOCOL': 'DEEP MOBILITY PROTOCOL.png'
   };
 
   function handleImageFallback(imgEl, type) {
@@ -235,13 +285,14 @@ const UI = (() => {
           dbVariant = 'DUMBBELL ' + upperBase.slice(3);
         }
 
-        // Prioritize uppercase disk filenames with spaces to match actual asset files
+        // Prioritize explicit PNG aliases & uppercase disk filenames with spaces
         const variations = [
+          EXERCISE_PNG_ALIASES[upperBase] || null,
           upperBase + '.png',
           dbVariant + '.png',
           upperBase.replace(/\s*\([^)]*\)/g, '').trim() + '.png',
           dbVariant.replace(/\s*\([^)]*\)/g, '').trim() + '.png'
-        ];
+        ].filter(Boolean);
 
         const uniqueVariations = Array.from(new Set(variations)).filter(v => v !== rawFilename);
 
@@ -914,7 +965,9 @@ const UI = (() => {
     startTimer,
     stopTimer,
     speakVoiceCue,
-    compressImage
+    compressImage,
+    EXERCISE_GIF_ALIASES,
+    EXERCISE_PNG_ALIASES
   };
 })();
 

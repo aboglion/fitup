@@ -67,6 +67,7 @@
         "Dumbbell Lateral Raise.gif", "Dumbbell One-Arm Row.gif", "Dumbbell Romanian Deadlift (RDL).gif",
         "Dumbbell Single-Leg RDL.gif", "Dumbbell Standing Overhead Press (OHP).gif", "Dumbbell Suitcase Hold.gif",
         "Elevated Pike Push-Up.gif", "Elevated Pike Push-up.gif", "Feet-Elevated Push-Up.gif", "Glute Bridge.gif",
+        "Diamond Push-Up.gif", "TRX Row.gif",
         "High Knees.gif", "Hollow Body Hold.gif", "Hollow Body Rock.gif", "L-sit Tuck (Bars).gif",
         "L-sit on Chair.gif", "One-Arm DB Row.gif", "PULL-UP NEGATIVE..gif", "Pallof Press (Band).gif",
         "Pallof Press.gif", "Pike Hold.gif", "Pike Push-up.gif", "Pistol Squat to Chair.gif", "Prone Y-T-W.gif",
@@ -92,7 +93,7 @@
         "CHIN-UP NEGATIVE.png", "CHIN-UP.png", "DB BSS (GOBLET).png", "DB BSS.png", "DB BULGARIAN SPLIT SQUAT.png",
         "DB CURL.png", "DB FLOOR PRESS.png", "DB GLUTE BRIDGE.png", "DB HAMMER CURL.png", "DB HIP THRUST.png",
         "DB LATERAL RAISE.png", "DB OH TRICEPS EXT.png", "DB RDL.png", "DB SINGLE-LEG RDL.png", "DEAD BUG.png",
-        "DEAD HANG.png", "DEEP MOBILITY PROTOCOL.png", "DEFICIT PUSH-UP.png", "ELEVATED PIKE PUSH-UP.png",
+        "DEAD HANG.png", "DEEP MOBILITY PROTOCOL.png", "DEFICIT PUSH-UP.png", "DIAMOND PUSH-UP.png", "ELEVATED PIKE PUSH-UP.png",
         "FEET-ELEVATED PUSH-UP.png", "GLUTE BRIDGE.png", "HIGH KNEES.png", "HOLLOW BODY HOLD.png",
         "L-SIT TUCK (BARS).png", "ONE-ARM DB ROW.png", "PALLOF PRESS.png", "PIKE HOLD.png",
         "PISTOL SQUAT TO CHAIR.png", "PULL-UP (OVERHAND).png", "PULL-UP NEGATIVE.png", "PUSH-UP (BARS).png",
@@ -100,7 +101,7 @@
         "SCAPULAR PUSH-UP.png", "SEATED BAND ROW.png", "SEATED DB OHP.png", "SINGLE-ARM CURL.png",
         "SINGLE-ARM FLOOR PRESS.png", "SINGLE-ARM SEATED OHP.png", "SINGLE-LEG CALF RAISE.png", "SUITCASE CARRY.png",
         "TOWEL HANG.png", "TRX FACE PULL (ANGLE 1).png", "TRX FACE PULL (ANGLE 2).png", "TRX FACE PULL (ANGLE 3).png",
-        "TRX FACE PULL.png", "TRX Y-T-W.png", "VO2 MAX NORWEGIAN 4X4.png", "WALKING LUNGE (GOBLET).png",
+        "TRX FACE PULL.png", "TRX ROW.png", "TRX Y-T-W.png", "VO2 MAX NORWEGIAN 4X4.png", "WALKING LUNGE (GOBLET).png",
         "WALL HANDSTAND.png", "WALL SLIDES.png", "WALL WALK (FULL).png", "WALL WALK (PARTIAL).png",
         "WEIGHTED CHIN-UP.png", "WEIGHTED DEFICIT PUSH-UP.png", "WEIGHTED PULL-UP.png", "WRIST ROCKS.png"
       ];

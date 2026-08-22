@@ -310,7 +310,7 @@ const App = (() => {
    */
   async function loadAppCore() {
     try {
-      const currentDataVersion = 40; // FitUp Pro Ultimate v4.0 78-week update
+      const currentDataVersion = '15.6'; // FitUp v15.6 Lean update
       const savedDataVersion = await DB.getSetting('dataVersion');
       
       let planStartDate = await DB.getSetting('planStartDate');
