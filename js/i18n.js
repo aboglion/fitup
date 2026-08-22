@@ -266,6 +266,7 @@ const I18n = (() => {
       briefing_momentum: "Momentum & Recovery Status",
       briefing_mission: "Today's Workout Mission",
       briefing_tactical_tip: "Tactical Key to Success",
+      refresh_advice: "Refresh Briefing",
 
       // Timer
       timer_rest_done: "Rest is over! 💪",
@@ -1048,6 +1049,7 @@ const I18n = (() => {
       briefing_momentum: "מומנטום ואינטנסיביות",
       briefing_mission: "המשימה להיום",
       briefing_tactical_tip: "טיפ טקטי להצלחה",
+      refresh_advice: "רענן תדריך",
 
       timer_rest_done: "המנוחה הסתיימה! 💪",
       timer_title: "⏱️ טיימר מנוחה",
@@ -1758,6 +1760,7 @@ const I18n = (() => {
       briefing_momentum: "الزخم والتعافي",
       briefing_mission: "مهمة تمرين اليوم",
       briefing_tactical_tip: "نصيحة تكتيكية للنجاح",
+      refresh_advice: "تحديث الإحاطة",
 
       timer_rest_done: "انتهت الراحة! 💪",
       timer_title: "⏱️ مؤقت الراحة",
