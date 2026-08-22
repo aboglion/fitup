@@ -16,6 +16,7 @@
       let state = await DB.getProgressionState(exerciseName);
       if (!state) {
         state = {
+          sessionKey: exerciseName,
           exerciseName,
           currentWeightKg: 0,
           currentReps: 8,
@@ -24,6 +25,8 @@
           isDeloading: false,
           lastUpdated: new Date().toISOString()
         };
+      } else if (!state.sessionKey) {
+        state.sessionKey = exerciseName;
       }
       return state;
     },

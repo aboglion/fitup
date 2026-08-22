@@ -739,6 +739,14 @@ const DB = (() => {
   }
 
   async function saveProgressionState(data) {
+    if (data) {
+      if (!data.sessionKey && data.exerciseName) {
+        data.sessionKey = data.exerciseName;
+      }
+      if (!data.sessionKey) {
+        data.sessionKey = 'default_session';
+      }
+    }
     return put(STORES.PROGRESSION_STATE, data);
   }
 

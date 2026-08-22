@@ -156,7 +156,7 @@ const Effects3D = (() => {
         sub.frequency.setValueAtTime(110, now);
         sub.frequency.exponentialRampToValueAtTime(55, now + 0.15);
         subGain.gain.setValueAtTime(0.3, now);
-        subGain.exponentialRampToValueAtTime(0.001, now + 0.15);
+        subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
         sub.connect(subGain);
         subGain.connect(masterGain);
         sub.start(now);
@@ -224,7 +224,7 @@ const Effects3D = (() => {
       bass.type = 'triangle';
       bass.frequency.setValueAtTime(130.81, now);
       bassGain.gain.setValueAtTime(0.4, now);
-      bassGain.exponentialRampToValueAtTime(0.001, now + 0.7);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
       bass.connect(bassGain);
       bassGain.connect(masterGain);
       bass.start(now);
