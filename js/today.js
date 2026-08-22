@@ -134,6 +134,11 @@ const TodayPage = (() => {
       const closeX = document.getElementById('close-daily-briefing-x');
       if (!modal || !content) return;
 
+      // Ensure modal is attached directly to body to avoid inheriting display:none from hidden parents
+      if (modal.parentElement && modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+      }
+
       const todayStr = (typeof UI !== 'undefined' && UI.getLocalDateString) ? UI.getLocalDateString() : new Date().toISOString().split('T')[0];
       const lastSeenDate = localStorage.getItem('fitup_last_daily_briefing_date');
 
