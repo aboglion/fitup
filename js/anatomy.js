@@ -17,7 +17,7 @@ const AnatomyMap = (() => {
     const formatPct = (val) => {
       if (val == null || isNaN(val) || val <= 0) return '0%';
       if (val >= 100) return '100%';
-      return (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) + '%';
+      return val.toFixed(1) + '%';
     };
 
     // Safe fallback for all muscle keys
@@ -287,7 +287,7 @@ const AnatomyMap = (() => {
       const formatScore = (val) => {
         if (val == null || isNaN(val) || val <= 0) return '0%';
         if (val >= 100) return '100%';
-        return (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) + '%';
+        return val.toFixed(1) + '%';
       };
 
       return {
@@ -302,7 +302,7 @@ const AnatomyMap = (() => {
     const formatModalScore = (val) => {
       if (val == null || isNaN(val) || val <= 0) return '0%';
       if (val >= 100) return '100%';
-      return (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) + '%';
+      return val.toFixed(1) + '%';
     };
 
     const modalContent = `
