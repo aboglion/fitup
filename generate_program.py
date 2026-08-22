@@ -634,8 +634,8 @@ EXERCISES_CATALOG = [
 
 def make_ex_obj(slot, ex_id, name, sets_str, rep_window=None, weight=None, tempo=None, rest=90, is_warmup=False,
                 structure="straight", pair_id=None, circuit_id=None, block_id=None, block_order=None,
-                circuit_order=None, toggle_group=None, toggle_active_on=None, microcycle=None, arm_block=False):
-    return {
+                circuit_order=None, toggle_group=None, toggle_active_on=None, microcycle=None, active_weeks=None, arm_block=False):
+    obj = {
         "slot": slot,
         "id": ex_id,
         "name": name,
@@ -657,6 +657,9 @@ def make_ex_obj(slot, ex_id, name, sets_str, rep_window=None, weight=None, tempo
         "microcycle": microcycle,
         "armBlock": arm_block or ex_id.startswith("arm-block")
     }
+    if active_weeks is not None:
+        obj["activeWeeks"] = active_weeks
+    return obj
 
 def get_leg_warmup():
     return [
@@ -773,27 +776,31 @@ def generate_day_exercises(dow, week):
         rpe = "5-6" if is_deload else "7-8"
         exs = get_push_warmup()
 
-        exs.append(make_ex_obj("A1", "pike-progression", "Pike Progression", "2×15 secs" if is_deload else "3×15-30 secs", rep_window="6-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        exs.append(make_ex_obj("A1", "pike-progression", "Pike Progression", "2×15 secs" if is_deload else "2×15-30 secs", rep_window="6-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
         exs.append(make_ex_obj("A2", "db-floor-press", "DB Floor Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="3 kg each" if is_deload else "6 kg each", tempo="2s descent", rest=105, structure="straight"))
         exs.append(make_ex_obj("A3", "push-up-progression", "Push-up Bars Progression", "2×6" if is_deload else "3×8-15", rep_window="8-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
         exs.append(make_ex_obj("A4", "seated-db-ohp", "Seated DB Overhead Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="3 kg each" if is_deload else "3 kg each", tempo="2s descent", rest=82, structure="straight"))
+        exs.append(make_ex_obj("A5", "db-oh-triceps-extension", "DB Overhead Triceps Extension", "2×10" if is_deload else "4×10-15", rep_window="10-15", weight="3 kg total" if is_deload else "6 kg total", tempo="2s descent", rest=45, structure="straight"))
+        exs.append(make_ex_obj("A6", "diamond-push-up", "Diamond Push-Up", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=45, structure="straight"))
+
+        # Pair: TRX Row ↔ DB Lateral Raise
+        trx_row_sets = "2×10" if is_deload else "2×10-15"
+        lat_raise_sets = "2×12" if is_deload else "2×12-20"
+        exs.append(make_ex_obj("A7", "trx-row", "TRX Row", trx_row_sets, rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral"))
+        exs.append(make_ex_obj("A8", "db-lateral-raise", "DB Lateral Raise", lat_raise_sets, rep_window="12-20", weight="3 kg each", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral"))
 
         # Rear Delt Toggle (TRX Y-T-W odd vs Band Pull-Apart even)
         if is_odd:
-            exs.append(make_ex_obj("A5", "trx-y-t-w", "TRX Y-T-W", "2×8/shape", rep_window="8-12/shape", weight="Bodyweight", tempo="1s pause", rest=45, structure="straight", toggle_group="day3-rear-delt", toggle_active_on="odd"))
+            exs.append(make_ex_obj("A9", "trx-y-t-w", "TRX Y-T-W", "2×8/shape", rep_window="8-12/shape", weight="Bodyweight", tempo="1s pause", rest=45, structure="straight", toggle_group="day3-rear-delt", toggle_active_on="odd"))
         else:
-            exs.append(make_ex_obj("A5", "band-pull-apart", "Band Pull-Apart", "3×15", rep_window="15-25", weight="Band 30 kg", tempo="1s squeeze", rest=45, structure="straight", toggle_group="day3-rear-delt", toggle_active_on="even"))
-
-        # Pair: DB Lateral Raise ↔ TRX Row (or standalone)
-        exs.append(make_ex_obj("A6", "db-lateral-raise", "DB Lateral Raise", "2×12" if is_deload else "2×12-20", rep_window="12-20", weight="3 kg each", tempo="2s descent", rest=45, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral"))
-        exs.append(make_ex_obj("A7", "db-oh-triceps-extension", "DB Overhead Triceps Extension", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="3 kg total" if is_deload else "6 kg total", tempo="2s descent", rest=45, structure="straight"))
+            exs.append(make_ex_obj("A9", "band-pull-apart", "Band Pull-Apart", "2×15" if is_deload else "3×15", rep_window="15-25", weight="Band 30 kg", tempo="1s squeeze", rest=45, structure="straight", toggle_group="day3-rear-delt", toggle_active_on="even"))
 
         # Arm Block (Myo-Reps)
-        if week >= 10:
-            exs.append(make_ex_obj("A8", "arm-block-lateral-raise", "Arm Block - DB Lateral Raise", "1×15 (Activation)" if is_deload else "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
-            exs.append(make_ex_obj("A9", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "1×10 (Activation)" if is_deload else "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="6 kg total", tempo="2s descent", rest=15, structure="myo-reps"))
+        if week >= 10 and not is_deload:
+            exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - DB Lateral Raise", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
+            exs.append(make_ex_obj("A11", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="6 kg total", tempo="2s descent", rest=15, structure="myo-reps"))
 
-        exs.append(make_ex_obj("A10", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
+        exs.append(make_ex_obj("A12", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
         return day_title, rpe, exs
 
     # ---------------- DOW 5: PULL + GRIP + BICEPS ----------------
@@ -804,23 +811,23 @@ def generate_day_exercises(dow, week):
 
         exs.append(make_ex_obj("A1", "pull-up-progression", "Pull-Up Progression", "2×2" if is_deload else "3×3-8", rep_window="3-8", weight="Bodyweight", tempo="2s descent", rest=105, structure="straight"))
         exs.append(make_ex_obj("A2", "one-arm-db-row", "One-Arm DB Row", "2×8/side" if is_deload else "3×8-12/side", rep_window="8-12/side", weight="3 kg" if is_deload else "6 kg", tempo="2s descent", rest=82, structure="straight"))
-        exs.append(make_ex_obj("A3", "trx-face-pull", "TRX Face Pull", "2×10" if is_deload else "3×12-20", rep_window="12-20", weight="Bodyweight", tempo="2s descent", rest=45, structure="straight"))
+        exs.append(make_ex_obj("A3", "trx-face-pull", "TRX Face Pull", "2×10" if is_deload else "2×12-20", rep_window="12-20", weight="Bodyweight", tempo="2s descent", rest=45, structure="straight"))
 
         # Pair: Push-Up Volume ↔ DB Curl
         biceps_cycle_week = ((week - 1) % 3) + 1
         is_biceps_light = (biceps_cycle_week == 3)
         if not is_biceps_light and not is_deload:
             exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-20", rep_window="10-20", weight="Bodyweight", tempo="2s descent", rest=75, structure="pair", pair_id="d5-pushup-curl"))
-            exs.append(make_ex_obj("A5", "db-curl", "DB Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="pair", pair_id="d5-pushup-curl", microcycle="biceps-microcycle"))
+            exs.append(make_ex_obj("A5", "db-curl", "DB Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="pair", pair_id="d5-pushup-curl", microcycle="biceps-microcycle", active_weeks=[1, 2]))
         else:
             exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10", rep_window="10-20", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
 
         # Hammer Curl (microcycle)
-        exs.append(make_ex_obj("A6", "hammer-curl", "Hammer Curl", "1×10" if is_deload else "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle"))
+        exs.append(make_ex_obj("A6", "hammer-curl", "Hammer Curl", "1×10" if is_deload else "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[1, 2, 3]))
 
         # Pair: Towel Hang ↔ L-Sit Tuck
-        exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "3×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-core"))
-        exs.append(make_ex_obj("A8", "l-sit-progression", "L-sit Tuck (Bars)", "3×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-core"))
+        exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-core"))
+        exs.append(make_ex_obj("A8", "l-sit-progression", "L-sit Tuck (Bars)", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-core"))
 
         if week >= 10 and not is_deload:
             exs.append(make_ex_obj("A9", "arm-block-biceps-curl", "Arm Block - DB Curl", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
