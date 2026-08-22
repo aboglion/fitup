@@ -405,91 +405,183 @@ const StatsPage = (() => {
   };
 
   /**
-   * Calculate per-muscle progression percentages using weighted contributions.
-   * Stage progress is based on current week progression in the 78-week plan.
-   * Completion rate is calculated per category (Push, Pull, Legs, Cardio).
-   * Formula: muscleProgress = Σ (exerciseStageProgress × weight) × categoryCompletionRate
+   * Exercise-to-muscle group mapping with primary and secondary contribution weights.
+   */
+  const EXERCISE_MUSCLE_MAPPING = {
+    'db-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'db-single-arm-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'deficit-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'incline-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.4 }],
+    'feet-elevated-push-up': [{ m: 'chest', w: 1.0 }, { m: 'shoulders', w: 0.5 }, { m: 'triceps', w: 0.5 }],
+    'weighted-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.4 }],
+
+    'seated-db-ohp': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'seated-single-arm-ohp': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'obliques', w: 0.3 }],
+    'db-lateral-raise': [{ m: 'shoulders', w: 1.0 }],
+    'pike-push-up': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'trx-face-pull': [{ m: 'shoulders', w: 0.8 }, { m: 'traps', w: 0.8 }],
+    'wall-walk': [{ m: 'shoulders', w: 1.0 }, { m: 'core', w: 0.5 }],
+    'wall-handstand-hold': [{ m: 'shoulders', w: 1.0 }, { m: 'core', w: 0.5 }],
+
+    'overhead-triceps-ext': [{ m: 'triceps', w: 1.0 }],
+    'single-arm-overhead-triceps-ext': [{ m: 'triceps', w: 1.0 }],
+    'diamond-push-up': [{ m: 'triceps', w: 1.0 }, { m: 'chest', w: 0.6 }],
+
+    'pull-up': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.4 }],
+    'chin-up': [{ m: 'lats', w: 0.8 }, { m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.4 }],
+    'weighted-pull-up': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.5 }],
+    'one-arm-db-row': [{ m: 'lats', w: 1.0 }, { m: 'traps', w: 0.5 }, { m: 'biceps', w: 0.5 }, { m: 'forearms', w: 0.4 }],
+    'trx-row': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.5 }],
+    'scapular-pull-up': [{ m: 'lats', w: 0.6 }, { m: 'traps', w: 0.6 }],
+    'inverted-row': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.5 }],
+
+    'db-curl': [{ m: 'biceps', w: 1.0 }],
+    'hammer-curl': [{ m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.5 }],
+    'single-arm-curl': [{ m: 'biceps', w: 1.0 }],
+    'biceps-curl-ladder': [{ m: 'biceps', w: 1.0 }],
+
+    'trx-y-t-w': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }],
+    'band-pull-apart': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.5 }],
+
+    'db-bulgarian-split-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
+    'goblet-bulgarian-split-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
+    'goblet-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'bodyweight-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.4 }],
+    'reverse-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
+    'walking-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
+    'pistol-squat-to-chair': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'core', w: 0.4 }],
+
+    'db-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.6 }],
+    'single-leg-db-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.8 }, { m: 'lowerBack', w: 0.6 }],
+    'db-glute-bridge': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }],
+    'db-hip-thrust': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }, { m: 'lowerBack', w: 0.4 }],
+
+    'single-leg-calf-raise': [{ m: 'calves', w: 1.0 }],
+    'double-leg-calf-raise': [{ m: 'calves', w: 1.0 }],
+
+    'dead-bug': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }],
+    'hollow-body-hold': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.4 }],
+    'pallof-press-band': [{ m: 'obliques', w: 1.0 }, { m: 'core', w: 0.8 }],
+    'l-sit-tuck-hold': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }],
+    'suitcase-carry': [{ m: 'core', w: 0.8 }, { m: 'obliques', w: 1.0 }, { m: 'forearms', w: 0.8 }, { m: 'lowerBack', w: 0.5 }],
+    'towel-hang': [{ m: 'forearms', w: 1.0 }],
+    'dead-hang': [{ m: 'forearms', w: 1.0 }]
+  };
+
+  function getExerciseContributions(ex) {
+    if (!ex) return [];
+    const exId = (ex.id || ex.exerciseId || '').toLowerCase();
+    if (EXERCISE_MUSCLE_MAPPING[exId]) return EXERCISE_MUSCLE_MAPPING[exId];
+
+    const slug = (ex.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    for (const [key, map] of Object.entries(EXERCISE_MUSCLE_MAPPING)) {
+      if (slug.includes(key) || key.includes(slug)) return map;
+    }
+
+    const name = (ex.name || '').toLowerCase();
+    if (name.includes('press') || name.includes('push-up') || name.includes('chest')) {
+      return [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }];
+    }
+    if (name.includes('pull-up') || name.includes('row') || name.includes('chin-up') || name.includes('lat')) {
+      return [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.5 }, { m: 'forearms', w: 0.4 }];
+    }
+    if (name.includes('ohp') || name.includes('raise') || name.includes('shoulder') || name.includes('pike')) {
+      return [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.4 }];
+    }
+    if (name.includes('face pull') || name.includes('y-t-w') || name.includes('pull-apart')) {
+      return [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }];
+    }
+    if (name.includes('curl')) {
+      return [{ m: 'biceps', w: 1.0 }];
+    }
+    if (name.includes('triceps') || name.includes('diamond')) {
+      return [{ m: 'triceps', w: 1.0 }];
+    }
+    if (name.includes('squat') || name.includes('lunge')) {
+      return [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }];
+    }
+    if (name.includes('rdl') || name.includes('hinge') || name.includes('deadlift')) {
+      return [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.5 }];
+    }
+    if (name.includes('bridge') || name.includes('thrust') || name.includes('glute')) {
+      return [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }];
+    }
+    if (name.includes('calf') || name.includes('calves')) {
+      return [{ m: 'calves', w: 1.0 }];
+    }
+    if (name.includes('bug') || name.includes('hollow') || name.includes('l-sit') || name.includes('core')) {
+      return [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }];
+    }
+    if (name.includes('carry') || name.includes('pallof') || name.includes('oblique')) {
+      return [{ m: 'obliques', w: 1.0 }, { m: 'core', w: 0.8 }, { m: 'forearms', w: 0.5 }];
+    }
+
+    return [];
+  }
+
+  /**
+   * Calculate per-muscle progression percentages across the full 78-week program timeline.
+   * Compares exact completed sets/volume for each muscle group against total planned sets/volume.
+   * Formula: muscleProgress = (completedVolume_m / totalPlannedVolume_m) * 100
    */
   function calculateMuscleProgressions(trackingMap) {
-    const currentIdx = window.appCurrentPlanIndex != null 
-      ? window.appCurrentPlanIndex 
-      : (typeof UI !== 'undefined' ? UI.findTodayIndex(allPlanDays) : 0);
-    const currentWeek = Math.floor(currentIdx / 7) + 1;
-    const result = {};
+    const muscles = ['chest','shoulders','triceps','lats','traps','biceps','forearms',
+                     'quads','hamstrings','glutes','calves','core','obliques','lowerBack'];
+    const plannedVolume = {};
+    const completedVolume = {};
+    muscles.forEach(m => { plannedVolume[m] = 0; completedVolume[m] = 0; });
 
-    // Pre-calculate completion rates per category (Push, Pull, Legs, Cardio)
-    const categoryStats = {
-      Push: { total: 0, completed: 0 },
-      Pull: { total: 0, completed: 0 },
-      Legs: { total: 0, completed: 0 },
-      Cardio: { total: 0, completed: 0 }
-    };
-
-    allPlanDays.forEach((day, index) => {
+    (allPlanDays || []).forEach((day, index) => {
       const dIdx = day.dayIndex != null ? day.dayIndex : index;
-      if (dIdx <= currentIdx) {
-        const dt = day.dayType || '';
-        const isPush = dt.includes('Push') || dt.includes('Strength A');
-        const isPull = dt.includes('Pull') || dt.includes('Strength B');
-        const isLegs = dt.includes('Legs');
-        const isCardio = dt.includes('Recovery') || dt.includes('Zone') || dt.includes('VO2');
+      const track = trackingMap[dIdx];
+      const isDayCompleted = track && track.completed;
 
-        const track = trackingMap[dIdx];
-        let dayRatio = 0;
-        if (track) {
-          if (track.completed) {
-            dayRatio = 1.0;
-          } else if (track.exerciseStatus && day.exercises && day.exercises.length > 0) {
-            const completedCount = Object.values(track.exerciseStatus).filter(Boolean).length;
-            dayRatio = completedCount / day.exercises.length;
+      (day.exercises || []).forEach((ex, exIdx) => {
+        let setMultiplier = 3;
+        if (typeof ex.sets === 'number') {
+          setMultiplier = ex.sets;
+        } else if (typeof ex.sets === 'string') {
+          if (ex.sets.includes('sec') || ex.sets.includes('min') || ex.sets.includes('hold')) {
+            setMultiplier = 1;
+          } else {
+            const parsed = parseInt(ex.sets, 10);
+            setMultiplier = isNaN(parsed) ? 3 : parsed;
           }
         }
 
-        if (isPush) {
-          categoryStats.Push.total++;
-          categoryStats.Push.completed += dayRatio;
+        let completedSets = 0;
+        if (track) {
+          if (isDayCompleted) {
+            completedSets = setMultiplier;
+          } else if (track.setData) {
+            for (let s = 0; s < setMultiplier; s++) {
+              if (track.setData[`ex_${exIdx}_set_${s}_reps`]) completedSets++;
+            }
+          } else if (track.exerciseStatus && (track.exerciseStatus[exIdx] || track.exerciseStatus[ex.id])) {
+            completedSets = setMultiplier;
+          }
         }
-        if (isPull) {
-          categoryStats.Pull.total++;
-          categoryStats.Pull.completed += dayRatio;
-        }
-        if (isLegs) {
-          categoryStats.Legs.total++;
-          categoryStats.Legs.completed += dayRatio;
-        }
-        if (isCardio) {
-          categoryStats.Cardio.total++;
-          categoryStats.Cardio.completed += dayRatio;
-        }
-      }
+
+        const contribs = getExerciseContributions(ex);
+        contribs.forEach(c => {
+          if (plannedVolume[c.m] !== undefined) {
+            plannedVolume[c.m] += setMultiplier * c.w;
+            completedVolume[c.m] += completedSets * c.w;
+          }
+        });
+      });
     });
 
-    const completionRates = {};
-    for (const [cat, stat] of Object.entries(categoryStats)) {
-      completionRates[cat] = stat.total > 0 ? stat.completed / stat.total : 0;
-    }
-
-    for (const [muscle, contributions] of Object.entries(MUSCLE_CONTRIBUTIONS)) {
-      let weightedProgress = 0;
-      let weightedCompletion = 0;
-
-      for (const contrib of contributions) {
-        // Stage progress for this contributing exercise
-        let reached = 0;
-        for (const week of contrib.stages) {
-          if (currentWeek >= week) reached++;
-        }
-        const stageProgress = reached / contrib.stages.length;
-
-        weightedProgress += stageProgress * contrib.weight;
-
-        const cat = contrib.category || 'Push';
-        const rate = completionRates[cat] != null ? completionRates[cat] : 0;
-        weightedCompletion += rate * contrib.weight;
+    const result = {};
+    muscles.forEach(m => {
+      if (plannedVolume[m] > 0) {
+        const ratio = (completedVolume[m] / plannedVolume[m]) * 100;
+        result[m] = Math.max(0, Math.min(100, Number(ratio.toFixed(1))));
+      } else {
+        result[m] = 0;
       }
-
-      result[muscle] = Math.round(weightedProgress * 100 * weightedCompletion);
-    }
+    });
 
     return result;
   }

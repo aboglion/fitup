@@ -14,39 +14,45 @@ const AnatomyMap = (() => {
       return '#00ffaa';
     };
 
+    const formatPct = (val) => {
+      if (val == null || isNaN(val) || val <= 0) return '0%';
+      if (val >= 100) return '100%';
+      return (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) + '%';
+    };
+
     // Safe fallback for all muscle keys
     const keys = ['chest','shoulders','triceps','lats','traps','biceps','forearms',
                   'quads','hamstrings','glutes','calves','core','obliques','lowerBack'];
     const m = {};
     keys.forEach(k => {
-      const pct = muscleData[k] != null ? Math.round(muscleData[k]) : 0;
-      m[k] = { pct, color: getColor(pct) };
+      const rawPct = muscleData[k] != null ? Math.max(0, Math.min(100, Number(muscleData[k]))) : 0;
+      m[k] = { pct: rawPct, formatted: formatPct(rawPct), color: getColor(rawPct) };
     });
 
     // Body centered 50%.
     const frontCallouts = [
       // Left labels (User's left, Character's right)
-      { id: 'chest-l',    label: I18n.t('muscle_chest'),     pct: m.chest.pct,     color: m.chest.color,     nodeX: 45, nodeY: 24, labelY: 18, side: 'left' },
-      { id: 'core',       label: I18n.t('muscle_core'),      pct: m.core.pct,      color: m.core.color,      nodeX: 50, nodeY: 34, labelY: 38, side: 'left' },
-      { id: 'obliques-l', label: I18n.t('muscle_obliques'),  pct: m.obliques.pct,  color: m.obliques.color,  nodeX: 45, nodeY: 39, labelY: 58, side: 'left' },
+      { id: 'chest-l',    label: I18n.t('muscle_chest'),     pct: m.chest.pct,     formatted: m.chest.formatted,     color: m.chest.color,     nodeX: 45, nodeY: 24, labelY: 18, side: 'left' },
+      { id: 'core',       label: I18n.t('muscle_core'),      pct: m.core.pct,      formatted: m.core.formatted,      color: m.core.color,      nodeX: 50, nodeY: 34, labelY: 38, side: 'left' },
+      { id: 'obliques-l', label: I18n.t('muscle_obliques'),  pct: m.obliques.pct,  formatted: m.obliques.formatted,  color: m.obliques.color,  nodeX: 45, nodeY: 39, labelY: 58, side: 'left' },
       // Right labels (User's right, Character's left)
-      { id: 'shoulders-r',label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, color: m.shoulders.color, nodeX: 60, nodeY: 19, labelY: 12, side: 'right' },
-      { id: 'biceps-r',   label: I18n.t('muscle_biceps'),    pct: m.biceps.pct,    color: m.biceps.color,    nodeX: 62, nodeY: 30, labelY: 31, side: 'right' },
-      { id: 'forearm-r',  label: I18n.t('muscle_forearms'),  pct: m.forearms.pct,  color: m.forearms.color,  nodeX: 65, nodeY: 40, labelY: 50, side: 'right' },
-      { id: 'quads-r',    label: I18n.t('muscle_quads'),     pct: m.quads.pct,     color: m.quads.color,     nodeX: 55, nodeY: 55, labelY: 69, side: 'right' },
+      { id: 'shoulders-r',label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, formatted: m.shoulders.formatted, color: m.shoulders.color, nodeX: 60, nodeY: 19, labelY: 12, side: 'right' },
+      { id: 'biceps-r',   label: I18n.t('muscle_biceps'),    pct: m.biceps.pct,    formatted: m.biceps.formatted,    color: m.biceps.color,    nodeX: 62, nodeY: 30, labelY: 31, side: 'right' },
+      { id: 'forearm-r',  label: I18n.t('muscle_forearms'),  pct: m.forearms.pct,  formatted: m.forearms.formatted,  color: m.forearms.color,  nodeX: 65, nodeY: 40, labelY: 50, side: 'right' },
+      { id: 'quads-r',    label: I18n.t('muscle_quads'),     pct: m.quads.pct,     formatted: m.quads.formatted,     color: m.quads.color,     nodeX: 55, nodeY: 55, labelY: 69, side: 'right' },
     ];
 
     // ── BACK VIEW ──
     const backCallouts = [
       // Left labels (4)
-      { id: 'traps-l',     label: I18n.t('muscle_traps'),      pct: m.traps.pct,       color: m.traps.color,       nodeX: 46, nodeY: 18, labelY: 14, side: 'left' },
-      { id: 'triceps-l',   label: I18n.t('muscle_triceps'),    pct: m.triceps.pct,     color: m.triceps.color,     nodeX: 39, nodeY: 30, labelY: 33, side: 'left' },
-      { id: 'lowerBack',   label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct,   color: m.lowerBack.color,   nodeX: 50, nodeY: 42, labelY: 52, side: 'left' },
-      { id: 'hamstrings-l',label: I18n.t('muscle_hamstrings'),  pct: m.hamstrings.pct,  color: m.hamstrings.color,  nodeX: 46, nodeY: 63, labelY: 71, side: 'left' },
+      { id: 'traps-l',     label: I18n.t('muscle_traps'),      pct: m.traps.pct,       formatted: m.traps.formatted,       color: m.traps.color,       nodeX: 46, nodeY: 18, labelY: 14, side: 'left' },
+      { id: 'triceps-l',   label: I18n.t('muscle_triceps'),    pct: m.triceps.pct,     formatted: m.triceps.formatted,     color: m.triceps.color,     nodeX: 39, nodeY: 30, labelY: 33, side: 'left' },
+      { id: 'lowerBack',   label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct,   formatted: m.lowerBack.formatted,   color: m.lowerBack.color,   nodeX: 50, nodeY: 42, labelY: 52, side: 'left' },
+      { id: 'hamstrings-l',label: I18n.t('muscle_hamstrings'),  pct: m.hamstrings.pct,  formatted: m.hamstrings.formatted,  color: m.hamstrings.color,  nodeX: 46, nodeY: 63, labelY: 71, side: 'left' },
       // Right labels (3)
-      { id: 'lats-r',      label: I18n.t('muscle_lats'),       pct: m.lats.pct,        color: m.lats.color,        nodeX: 56, nodeY: 33, labelY: 28, side: 'right' },
-      { id: 'glutes-r',    label: I18n.t('muscle_glutes'),     pct: m.glutes.pct,      color: m.glutes.color,      nodeX: 54, nodeY: 51, labelY: 49, side: 'right' },
-      { id: 'calves-r',    label: I18n.t('muscle_calves'),     pct: m.calves.pct,      color: m.calves.color,      nodeX: 54, nodeY: 77, labelY: 70, side: 'right' },
+      { id: 'lats-r',      label: I18n.t('muscle_lats'),       pct: m.lats.pct,        formatted: m.lats.formatted,        color: m.lats.color,        nodeX: 56, nodeY: 33, labelY: 28, side: 'right' },
+      { id: 'glutes-r',    label: I18n.t('muscle_glutes'),     pct: m.glutes.pct,      formatted: m.glutes.formatted,      color: m.glutes.color,      nodeX: 54, nodeY: 51, labelY: 49, side: 'right' },
+      { id: 'calves-r',    label: I18n.t('muscle_calves'),     pct: m.calves.pct,      formatted: m.calves.formatted,      color: m.calves.color,      nodeX: 54, nodeY: 77, labelY: 70, side: 'right' },
     ];
 
     const generatePaneHTML = (callouts, title, imagePath) => {
@@ -74,8 +80,8 @@ const AnatomyMap = (() => {
               return `
                 <div class="callout-label side-${c.side}" style="top: ${labelY}%; --color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${c.label.replace(/'/g, "\\'")}', ${c.pct})">
                   <div class="callout-title">${c.label}</div>
-                  <div class="callout-value">${c.pct}%</div>
-                  <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${c.pct}%; background: ${c.pct > 0 ? '#00ff66' : 'rgba(255,255,255,0.2)'};"></div></div>
+                  <div class="callout-value">${c.formatted}</div>
+                  <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${Math.min(100, c.pct)}%; background: ${c.pct > 0 ? '#00ff66' : 'rgba(255,255,255,0.2)'};"></div></div>
                 </div>
               `;
             }).join('')}
@@ -275,16 +281,29 @@ const AnatomyMap = (() => {
 
       let exPct = pct;
       if (totalAppeared > 0) {
-        exPct = Math.min(100, Math.round((completedCount / totalAppeared) * 100));
+        exPct = Math.min(100, (completedCount / totalAppeared) * 100);
       }
+
+      const formatScore = (val) => {
+        if (val == null || isNaN(val) || val <= 0) return '0%';
+        if (val >= 100) return '100%';
+        return (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) + '%';
+      };
 
       return {
         name: exName,
         pct: exPct,
+        formatted: formatScore(exPct),
         completedCount,
         totalAppeared
       };
     });
+
+    const formatModalScore = (val) => {
+      if (val == null || isNaN(val) || val <= 0) return '0%';
+      if (val >= 100) return '100%';
+      return (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) + '%';
+    };
 
     const modalContent = `
       <style>
@@ -304,11 +323,11 @@ const AnatomyMap = (() => {
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
           <span style="font-size: 20px; font-weight: 900; color: var(--text-primary);">${muscleName}</span>
           <span style="font-size: 14px; font-weight: 900; color: #00ff66; background: rgba(0, 255, 102, 0.1); border: 1px solid rgba(0, 255, 102, 0.3); padding: 4px 12px; border-radius: 20px; text-shadow: 0 0 8px rgba(0, 255, 102, 0.5); box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.05);">
-            💪 ${I18n.t('anatomy_muscle_score')}: ${pct}%
+            💪 ${I18n.t('anatomy_muscle_score')}: ${formatModalScore(pct)}
           </span>
         </div>
         <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 18px;">
-          <div style="height: 100%; width: ${pct}%; background: #00ff66; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 255, 102, 0.6);"></div>
+          <div style="height: 100%; width: ${Math.min(100, pct)}%; background: #00ff66; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 255, 102, 0.6);"></div>
         </div>
 
         <h4 style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px;">${I18n.t('anatomy_program_exercises')}</h4>
@@ -321,11 +340,11 @@ const AnatomyMap = (() => {
                   <span>🏋️‍♂️</span> <span>${ex.name}</span>
                 </span>
                 <span style="font-size: 12px; font-weight: 900; color: #00ff66; text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);">
-                  ${ex.pct}%
+                  ${ex.formatted}
                 </span>
               </div>
               <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
-                <div style="height: 100%; width: ${ex.pct}%; background: #00ff66; border-radius: 3px; transition: width 0.6s ease; box-shadow: 0 0 8px #00ff66;"></div>
+                <div style="height: 100%; width: ${Math.min(100, ex.pct)}%; background: #00ff66; border-radius: 3px; transition: width 0.6s ease; box-shadow: 0 0 8px #00ff66;"></div>
               </div>
             </li>
           `).join('')}
