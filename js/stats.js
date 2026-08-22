@@ -94,7 +94,7 @@ const StatsPage = (() => {
 
     // Render overview
     renderOverview(completedDays, totalDays, completedStrength, strengthDays.length,
-                   completedWalk, walkDays.length, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currPct, lastPct, monthPct);
+                   completedWalk, walkDays.length, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct);
 
     // Metrics for compact cards at the bottom
     const metrics = {
@@ -152,11 +152,8 @@ const StatsPage = (() => {
    * Render overview stats
    */
   function renderOverview(completed, total, strength, totalStrength,
-                          walk, totalWalk, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currPct, lastPct, monthPct) {
+                          walk, totalWalk, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct) {
     const container = document.getElementById('stats-overview');
-// Determine current week number for lean dashboard
-const todayIdx = UI.findTodayIndex(allPlanDays);
-const currentWeekNum = Math.floor(todayIdx / 7) + 1;
 
     const streakHTML = streak > 0 ? `
       <div class="streak-display" style="grid-column: 1 / -1; margin-bottom: 0;">
