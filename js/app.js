@@ -195,7 +195,19 @@ const App = (() => {
           UI.toast(I18n.t('pwa_ios_instructions'), 'info');
         }
       } else {
-        if (window.UI && window.UI.toast) {
+        if (window.UI && window.UI.showModal) {
+          window.UI.showModal(
+            I18n.t('pwa_card_title'),
+            `<div style="text-align: start; padding: 10px 0;">
+               <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5; font-weight: 700;">${I18n.t('pwa_android_instructions_title')}</p>
+               <ol style="margin: 0; padding-inline-start: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+                 <li style="margin-bottom: 6px;">1️⃣ ${I18n.t('pwa_android_step1')}</li>
+                 <li style="margin-bottom: 6px;">2️⃣ ${I18n.t('pwa_android_step2')}</li>
+                 <li style="margin-bottom: 6px;">3️⃣ ${I18n.t('pwa_android_step3')}</li>
+               </ol>
+             </div>`
+          );
+        } else if (window.UI && window.UI.toast) {
           UI.toast(I18n.t('pwa_card_desc'), 'info');
         }
       }
