@@ -1633,16 +1633,11 @@ const TodayPage = (() => {
 
     renderExercises(day);
 
-    // Start rest timer for exercise transition
-    let restTime = getRestTime(ex);
-    if (outcome === 'below') restTime += 30;
-    if (restTime > 0 && window.UI && window.UI.startTimer) {
-      UI.startTimer(restTime, null);
-    }
-
     if (currentTracking.completed) {
       showWorkoutCelebration(day);
     } else {
+      // handleExerciseCompleted starts the rest timer with outcome-based extension
+      // and scrolls to the next incomplete exercise
       handleExerciseCompleted(exIdx, day);
     }
   }
@@ -1826,7 +1821,16 @@ const TodayPage = (() => {
     }
 
     if (nextIdx !== -1) {
-        const restTime = getRestTime(day.exercises[idx]);
+        let restTime = getRestTime(day.exercises[idx]);
+        
+        // Apply intra-workout adaptive rest extension (+30s) if any set was BELOW
+        const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
+        const setsCount = UI.parseSetsCount(ex.sets);
+        let hasBelow = false;
+        for (let s = 0; s < setsCount; s++) {
+          if (setData[`set_${s}_result`] === 'below') { hasBelow = true; break; }
+        }
+        if (hasBelow) restTime += 30;
         
         if (restTime > 0) {
             // Start a timer for exercise transition
@@ -1860,8 +1864,9 @@ const TodayPage = (() => {
 
     const exData = currentTracking.setData[exIdx];
     const prevResult = exData[`set_${setIdx}_result`];
+    const wasAlreadyDone = exData[`set_${setIdx}_done`];
 
-    if (prevResult === outcome && exData[`set_${setIdx}_done`]) {
+    if (prevResult === outcome && wasAlreadyDone) {
       delete exData[`set_${setIdx}_result`];
       delete exData[`set_${setIdx}_done`];
     } else {
@@ -1883,16 +1888,27 @@ const TodayPage = (() => {
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     currentTracking.exerciseStatus[exIdx] = allSetsDone;
 
-    await DB.saveDailyTracking(day.dateStr || UI.getTodayDateStr(), currentTracking);
+    // Update day completion status (check if ALL exercises are done)
+    const total = day.exercises.length;
+    let completedCount = 0;
+    day.exercises.forEach((_, i) => {
+      if (currentTracking.exerciseStatus[i]) completedCount++;
+    });
+    currentTracking.completed = completedCount === total;
 
     updateProgress(day);
-    if (allSetsDone) {
-      await handleExerciseCompleted(exIdx, day);
-    }
+    await autoSave();
     renderExercises(day);
 
-    // Start intra-workout adaptive rest timer if a set was completed
-    if (exData[`set_${setIdx}_done`]) {
+    if (allSetsDone) {
+      // Exercise fully completed — start exercise-transition timer and handle progression
+      if (currentTracking.completed) {
+        showWorkoutCelebration(day);
+      } else {
+        handleExerciseCompleted(exIdx, day);
+      }
+    } else if (exData[`set_${setIdx}_done`]) {
+      // Individual set completed (not all sets yet) — start intra-workout rest timer
       let restTime = getRestTime(ex);
       if (outcome === 'below') {
         restTime += 30; // Intra-workout rest extension for BELOW outcome
@@ -1989,9 +2005,11 @@ const TodayPage = (() => {
       if (currentTracking.exerciseStatus) {
         currentTracking.exerciseStatus[exIdx] = false;
       }
+      // Update day completion status
+      currentTracking.completed = false;
       const day = allPlanDays[currentDayIndex];
-      await DB.saveDailyTracking(day.dateStr || UI.getTodayDateStr(), currentTracking);
       updateProgress(day);
+      await autoSave();
       renderExercises(day);
     }
   }

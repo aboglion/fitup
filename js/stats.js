@@ -154,6 +154,9 @@ const StatsPage = (() => {
   function renderOverview(completed, total, strength, totalStrength,
                           walk, totalWalk, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currPct, lastPct, monthPct) {
     const container = document.getElementById('stats-overview');
+// Determine current week number for lean dashboard
+const todayIdx = UI.findTodayIndex(allPlanDays);
+const currentWeekNum = Math.floor(todayIdx / 7) + 1;
 
     const streakHTML = streak > 0 ? `
       <div class="streak-display" style="grid-column: 1 / -1; margin-bottom: 0;">
