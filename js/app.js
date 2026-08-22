@@ -4,6 +4,169 @@
 const App = (() => {
   let allPlanDays = [];
   let currentPage = 'today';
+  let wakeLock = null;
+  let isWakeLockUserEnabled = true;
+  let deferredInstallPrompt = null;
+
+  /**
+   * Request Wake Lock to prevent screen from turning off
+   */
+  async function requestWakeLock() {
+    if (!isWakeLockUserEnabled) return false;
+    try {
+      if ('wakeLock' in navigator) {
+        if (wakeLock !== null && !wakeLock.released) return true;
+        wakeLock = await navigator.wakeLock.request('screen');
+        console.log('Wake Lock activated');
+        
+        wakeLock.addEventListener('release', () => {
+          console.log('Wake Lock released');
+          wakeLock = null;
+          updateWakeLockUI();
+        });
+        
+        updateWakeLockUI();
+        return true;
+      }
+    } catch (err) {
+      console.warn('Wake Lock failed:', err.name, err.message);
+    }
+    updateWakeLockUI();
+    return false;
+  }
+
+  /**
+   * Release Wake Lock
+   */
+  function releaseWakeLock() {
+    if (wakeLock) {
+      wakeLock.release().then(() => {
+        wakeLock = null;
+        updateWakeLockUI();
+      }).catch(err => {
+        console.warn('Wake Lock release failed:', err);
+        wakeLock = null;
+        updateWakeLockUI();
+      });
+    }
+  }
+
+  /**
+   * Toggle Wake Lock user setting
+   */
+  async function toggleWakeLock() {
+    if (!('wakeLock' in navigator)) {
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('wakelock_not_supported'), 'warning');
+      }
+      return;
+    }
+    isWakeLockUserEnabled = !isWakeLockUserEnabled;
+    if (window.DB && window.DB.setSetting) {
+      await DB.setSetting('wakeLockEnabled', isWakeLockUserEnabled);
+    }
+    if (isWakeLockUserEnabled) {
+      const ok = await requestWakeLock();
+      if (ok && window.UI && window.UI.toast) {
+        UI.toast(I18n.t('wakelock_toast_on'), 'success');
+      }
+    } else {
+      releaseWakeLock();
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('wakelock_toast_off'), 'info');
+      }
+    }
+    updateWakeLockUI();
+  }
+
+  /**
+   * Update Wake Lock status text in UI
+   */
+  function updateWakeLockUI() {
+    const textEl = document.getElementById('wakelock-btn-text');
+    if (textEl && window.I18n) {
+      if (!('wakeLock' in navigator)) {
+        textEl.textContent = I18n.t('wakelock_not_supported');
+      } else if (wakeLock !== null || isWakeLockUserEnabled) {
+        textEl.textContent = I18n.t('wakelock_enabled');
+      } else {
+        textEl.textContent = I18n.t('wakelock_disabled');
+      }
+    }
+  }
+
+  /**
+   * Setup PWA install prompt & event listeners
+   */
+  function setupInstallPrompt() {
+    const installBtn = document.getElementById('pwa-install-btn');
+    const installedBadge = document.getElementById('pwa-installed-badge');
+    const iosGuide = document.getElementById('pwa-ios-guide');
+    
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                         window.navigator.standalone === true ||
+                         document.referrer.includes('android-app://');
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+    function updatePwaUI() {
+      if (isStandalone) {
+        if (installBtn) installBtn.style.display = 'none';
+        if (installedBadge) installedBadge.style.display = 'flex';
+        if (iosGuide) iosGuide.style.display = 'none';
+      } else if (isIOS) {
+        if (installBtn) installBtn.style.display = 'none';
+        if (installedBadge) installedBadge.style.display = 'none';
+        if (iosGuide) iosGuide.style.display = 'block';
+      } else if (deferredInstallPrompt) {
+        if (installBtn) installBtn.style.display = 'flex';
+        if (installedBadge) installedBadge.style.display = 'none';
+        if (iosGuide) iosGuide.style.display = 'none';
+      } else {
+        if (installBtn) installBtn.style.display = 'flex';
+        if (installedBadge) installedBadge.style.display = 'none';
+        if (iosGuide) iosGuide.style.display = 'none';
+      }
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('PWA beforeinstallprompt event captured!');
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      updatePwaUI();
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('PWA appinstalled event!');
+      deferredInstallPrompt = null;
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('pwa_installed_toast'), 'success');
+      }
+      updatePwaUI();
+    });
+
+    if (installBtn) {
+      installBtn.onclick = async () => {
+        if (deferredInstallPrompt) {
+          deferredInstallPrompt.prompt();
+          const choice = await deferredInstallPrompt.userChoice;
+          if (choice && choice.outcome === 'accepted') {
+            if (window.UI && window.UI.toast) {
+              UI.toast(I18n.t('pwa_installed_toast'), 'success');
+            }
+          }
+          deferredInstallPrompt = null;
+          updatePwaUI();
+        } else {
+          if (window.UI && window.UI.toast) {
+            UI.toast(I18n.t('pwa_card_desc'), 'info');
+          }
+        }
+      };
+    }
+
+    updatePwaUI();
+  }
 
   /**
    * Initialize the application
@@ -35,6 +198,9 @@ const App = (() => {
           .catch(err => console.error('SW failed', err));
       }
 
+      // Setup PWA install prompt
+      setupInstallPrompt();
+
       // Initialize IndexedDB with self-healing v15.6 Lean schema check
       await DB.init();
       await DB.ensureV15LeanSchema();
@@ -42,6 +208,15 @@ const App = (() => {
       // Initialize i18n
       if (window.I18n) {
         await window.I18n.init();
+      }
+
+      // Load Wake Lock settings and activate if enabled
+      const savedWakeLock = await DB.getSetting('wakeLockEnabled');
+      if (savedWakeLock !== undefined && savedWakeLock !== null) {
+        isWakeLockUserEnabled = savedWakeLock;
+      }
+      if (isWakeLockUserEnabled) {
+        requestWakeLock();
       }
 
       // Check if this is a new installation but we have an encrypted URL in config
@@ -633,6 +808,15 @@ const App = (() => {
       });
     }
 
+    // Wake Lock toggle
+    const toggleWakeLockBtn = document.getElementById('toggle-wakelock-btn');
+    if (toggleWakeLockBtn) {
+      toggleWakeLockBtn.addEventListener('click', () => {
+        toggleWakeLock();
+      });
+    }
+    updateWakeLockUI();
+
     // Theme toggle
     const currentTheme = localStorage.getItem('theme') || 'dark';
     if (currentTheme === 'light') {
@@ -978,7 +1162,10 @@ const App = (() => {
     navigateTo,
     updatePlanDates,
     recalculatePlanIndex,
-    shareBackup
+    shareBackup,
+    requestWakeLock,
+    releaseWakeLock,
+    toggleWakeLock
   };
 })();
 
@@ -994,6 +1181,11 @@ if (document.readyState === 'loading') {
 // Pull latest data when the app comes back to the foreground
 document.addEventListener('visibilitychange', async () => {
   if (document.visibilityState === 'visible') {
+    // 0. Re-request Wake Lock if user enabled it to prevent screen sleep during workouts
+    if (window.App && window.App.requestWakeLock) {
+      await window.App.requestWakeLock();
+    }
+
     // 1. Update dates and active index since the day might have changed
     if (window.App && window.App.recalculatePlanIndex) {
       await window.App.recalculatePlanIndex();

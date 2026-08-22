@@ -131,32 +131,133 @@ const GeminiService = (() => {
   }
 
   /**
-   * Test API key validity
+   * Dynamically query Google Gemini API for currently available models.
+   * Keeps model list updated even if Google deprecates or changes version numbers.
+   * @param {string} apiKey 
+   * @returns {Promise<Array<{id: string, name: string}>>}
+   */
+  async function discoverAvailableModels(apiKey) {
+    const key = apiKey || await getApiKey();
+    if (!key) return AVAILABLE_MODELS;
+
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`;
+      const res = await fetch(url);
+      if (!res.ok) return AVAILABLE_MODELS;
+
+      const data = await res.json();
+      if (!data.models || !Array.isArray(data.models)) return AVAILABLE_MODELS;
+
+      // Filter generateContent models suitable for vision/multimodal text
+      const validModels = data.models
+        .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+        .map(m => m.name.replace(/^models\//, ''))
+        .filter(id => id.startsWith('gemini-') && !id.includes('embedding') && !id.includes('aqa') && !id.includes('imagen') && !id.includes('tts') && !id.includes('bison'));
+
+      if (validModels.length === 0) return AVAILABLE_MODELS;
+
+      // Sort models: Flash Lite / Flash first (most cost-effective & fast), then Pro, higher version numbers top
+      validModels.sort((a, b) => {
+        const getScore = (id) => {
+          let score = 0;
+          if (id.includes('flash-lite')) score += 1000;
+          else if (id.includes('flash')) score += 800;
+          else if (id.includes('pro')) score += 500;
+          
+          const verMatch = id.match(/\d+(\.\d+)?/);
+          if (verMatch) score += parseFloat(verMatch[0]) * 100;
+          return score;
+        };
+        return getScore(b) - getScore(a);
+      });
+
+      const updatedModels = validModels.map(id => {
+        let label = id;
+        if (id.includes('3.1-flash-lite')) label = 'Gemini 3.1 Flash Lite (Recommended - Fast & Free)';
+        else if (id.includes('flash-lite')) label = `${id} (Flash Lite - Free Tier)`;
+        else if (id.includes('flash')) label = `${id} (Flash - Fast)`;
+        else if (id.includes('pro')) label = `${id} (Pro - Detailed)`;
+        return { id, name: label };
+      });
+
+      // Update in-memory AVAILABLE_MODELS registry
+      AVAILABLE_MODELS.length = 0;
+      AVAILABLE_MODELS.push(...updatedModels);
+
+      // Refresh any UI dropdown selects in DOM
+      initSelects();
+
+      return AVAILABLE_MODELS;
+    } catch (err) {
+      console.warn('Could not fetch dynamic models list from Google API:', err);
+      return AVAILABLE_MODELS;
+    }
+  }
+
+  /**
+   * Test API key validity with dynamic model fallback
    */
   async function testApiKey(key, modelId = DEFAULT_MODEL) {
     const apiKey = key || await getApiKey();
     if (!apiKey) throw new Error(I18n.t('enter_api_key'));
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelId)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: 'Valid config! Reply in one word: OK' }] }]
-      })
-    });
-
-    if (!response.ok) {
-      const errJson = await response.json().catch(() => ({}));
-      throw new Error(errJson.error?.message || `HTTP ${response.status}: Invalid API key`);
+    // Attempt to refresh available models list dynamically first
+    let candidateModels = [modelId, DEFAULT_MODEL, 'gemini-3.1-flash-lite', 'gemini-3.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    try {
+      const dynamic = await discoverAvailableModels(apiKey);
+      if (dynamic && dynamic.length > 0) {
+        candidateModels = Array.from(new Set([modelId, ...dynamic.map(m => m.id), ...candidateModels]));
+      }
+    } catch (e) {
+      console.warn('API test dynamic discovery fallback:', e);
     }
 
-    return true;
+    let lastError = null;
+    let verifiedModel = null;
+
+    for (const candidate of candidateModels) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(candidate)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: 'Valid config! Reply in one word: OK' }] }]
+          })
+        });
+
+        if (response.ok) {
+          verifiedModel = candidate;
+          if (verifiedModel !== modelId) {
+            console.log(`Model ${modelId} unavailable. Auto-selected working model: ${verifiedModel}`);
+            await setModel(verifiedModel);
+            if (typeof UI !== 'undefined' && UI.toast && window.I18n) {
+              UI.toast(I18n.t('model_auto_updated', { model: verifiedModel }), 'info');
+            }
+          }
+          return { success: true, model: verifiedModel };
+        }
+
+        const errJson = await response.json().catch(() => ({}));
+        lastError = errJson.error?.message || `HTTP ${response.status}: Invalid API key`;
+
+        // If error is authentication/quota (401/403/429), stop looping models immediately
+        if (response.status === 401 || response.status === 403 || response.status === 429) {
+          throw new Error(lastError);
+        }
+      } catch (err) {
+        if (err.message && (err.message.includes('API key') || err.message.includes('quota'))) {
+          throw err;
+        }
+        lastError = err.message;
+      }
+    }
+
+    throw new Error(lastError || 'Invalid API key or model unavailable');
   }
 
   /**
-   * Analyze food image with Gemini AI Vision
+   * Analyze food image with Gemini AI Vision using strict upper-bound estimation
    * @param {string} base64Image - Base64 encoded image string (with or without data URI header)
    * @param {string} mimeType - e.g. 'image/jpeg' or 'image/png'
    * @param {string} userNotes - optional user comments about the meal
@@ -168,7 +269,6 @@ const GeminiService = (() => {
     }
 
     const model = await getModel();
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
     // Ensure raw base64 without prefix
     let rawBase64 = base64Image;
@@ -204,26 +304,28 @@ Instructions for AI Analysis insight: Consider the user's live physical activity
       }
     }
 
-    const systemPrompt = `You are a professional sports nutritionist and encouraging RPG AI system.
-Your job is to analyze the attached meal photo and estimate its nutritional values.
+    const systemPrompt = `You are an elite sports nutritionist and rigorous calorie tracking system.
+Your goal is to analyze the attached meal photo and provide a STRICT, UPPER-BOUND (WORST-CASE) nutritional estimate.
 
 ${langPrompt}
 ${fitContext}
 
-CRITICAL ESTIMATION RULE (Worst-case / Strict estimation):
-- Calculate calories and fat conservatively at the upper end of reasonable estimate range.
-- Account for hidden uncounted ingredients (cooking oil, butter, dressings, sauces).
+CRITICAL ESTIMATION RULES (STRICT UPPER-BOUND / CONSERVATIVE CALORIE COUNTING):
+1. ALWAYS ESTIMATE AT THE HIGH END / UPPER BOUND of reasonable calorie, protein, carb, and fat ranges. NEVER UNDERESTIMATE OR BE FORGIVING.
+2. ACCOUNT FOR HIDDEN FATS & OILS: Factor in cooking oils, butter, salad dressings, heavy sauces, and frying fats that are not visually obvious (+100 to +250 kcal margin for added fats/oils).
+3. PORTION SIZING: Assume generous upper-limit portion sizes unless notes specify otherwise.
+4. IN THE ANALYSIS TEXT: Briefly explain the high-end estimation logic in 2-3 professional sentences (mentioning hidden oils, portion upper bounds, or food density factors).
 
 User Notes (if provided): "${userNotes}"
 
 Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO surrounding text):
 {
   "meal_name": "Short accurate name of meal",
-  "calories": 550,
+  "calories": 650,
   "protein": 42,
-  "carbs": 50,
-  "fat": 12,
-  "analysis": "Short professional nutritional insight (2-3 sentences)",
+  "carbs": 55,
+  "fat": 25,
+  "analysis": "Short upper-bound analysis explaining calorie & macro choices (2-3 sentences)",
   "confidence": "high/medium/low"
 }`;
 
@@ -250,35 +352,55 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
         parts: parts
       }],
       generationConfig: {
-        temperature: 0.4,
+        temperature: 0.3,
         maxOutputTokens: 800
       }
     };
 
-    const fallbackList = Array.from(new Set([model, DEFAULT_MODEL, 'gemini-2.5-flash', 'gemini-2.0-flash']));
+    // Dynamically compile candidate fallback list starting with selected model & dynamic API discovery
+    let fallbackList = [model, DEFAULT_MODEL, 'gemini-3.1-flash-lite', 'gemini-3.0-flash', 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    try {
+      const dynamicModels = await discoverAvailableModels(apiKey);
+      if (dynamicModels && dynamicModels.length > 0) {
+        fallbackList = Array.from(new Set([model, ...dynamicModels.map(m => m.id), ...fallbackList]));
+      }
+    } catch (e) {
+      console.warn('Dynamic model discovery fallback error:', e);
+    }
+
     let response;
     let successfulModel = model;
 
     for (const modelCandidate of fallbackList) {
       const candidateUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelCandidate)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-      response = await fetch(candidateUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      try {
+        response = await fetch(candidateUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-      if (response.ok) {
-        successfulModel = modelCandidate;
-        if (successfulModel !== model) {
-          console.warn(`Model ${model} was unavailable (404/deprecated). Automatically switched to ${successfulModel}.`);
-          await setModel(successfulModel);
+        if (response.ok) {
+          successfulModel = modelCandidate;
+          if (successfulModel !== model) {
+            console.warn(`Model ${model} was unavailable (deprecated/blocked). Auto-switched to working model ${successfulModel}.`);
+            await setModel(successfulModel);
+            if (typeof UI !== 'undefined' && UI.toast && window.I18n) {
+              UI.toast(I18n.t('model_auto_updated', { model: successfulModel }), 'info');
+            }
+          }
+          break;
         }
-        break;
-      }
 
-      // If error is not 404, break early (e.g. invalid API key or quota exceeded)
-      if (response.status !== 404) {
-        break;
+        // If error is 404 or 400 (invalid model / deprecated model), continue loop to find active working model
+        if (response.status === 404 || response.status === 400) {
+          continue;
+        } else {
+          // Other errors (401 invalid key, 429 quota) shouldn't cycle models
+          break;
+        }
+      } catch (err) {
+        console.warn(`Model candidate ${modelCandidate} failed:`, err);
       }
     }
 
@@ -331,13 +453,13 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
     if (!apiKey) return null;
 
     const model = await getModel();
-    let fitDataText = 'אין מדדי Google Fit שנרשמו היום';
+    let fitDataText = 'No Google Fit metrics recorded today';
 
     if (window.GoogleFitService) {
       try {
         const fitData = await window.GoogleFitService.fetchDailyFitData();
         if (fitData && (fitData.steps > 0 || fitData.calories > 0 || fitData.heartPoints > 0)) {
-          fitDataText = `צעדים: ${fitData.steps.toLocaleString()}, קלוריות שנשרפו במאמץ: ${fitData.calories} kcal, נקודות לב: ${fitData.heartPoints}`;
+          fitDataText = `Steps: ${fitData.steps.toLocaleString()}, Active Calories Expended: ${fitData.calories} kcal, Heart Points: ${fitData.heartPoints}`;
         }
       } catch (e) {
         console.warn('Google Fit context fetch error:', e);
@@ -404,6 +526,7 @@ Give a personalized 2-sentence tactical recommendation for optimal recovery and 
     setModel,
     isConfigured,
     testApiKey,
+    discoverAvailableModels,
     analyzeFood,
     getDailyAdvice,
     populateSelect,

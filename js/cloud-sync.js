@@ -418,6 +418,80 @@ const CloudSync = (() => {
     setStatus('offline');
   });
 
+  /**
+   * Display Sync Conflict Resolution Modal
+   */
+  function showConflictModal(localData, cloudData, onChoice) {
+    const localCompleted = (localData.tracking || []).filter(t => t.completed).length;
+    const cloudCompleted = (cloudData.tracking || []).filter(t => t.completed).length;
+    const localDate = localData.lastSyncDate ? new Date(localData.lastSyncDate).toLocaleString() : '—';
+    const cloudDate = cloudData.lastSyncDate ? new Date(cloudData.lastSyncDate).toLocaleString() : '—';
+
+    const title = (window.I18n && window.I18n.t('sync_conflict_title')) || 'Cloud Sync Conflict Detected ☁️';
+    const desc = (window.I18n && window.I18n.t('sync_conflict_desc')) || 'The workout data on your device differs from the backup saved in Google Drive. Please choose which version to retain:';
+
+    const bodyHTML = `
+      <div style="padding: 10px 0; text-align: start;">
+        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5;">${desc}</p>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+          <div style="background: var(--bg-card); border: 2px solid var(--accent-primary); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 14px; font-weight: 800; color: var(--accent-primary); display: flex; align-items: center; gap: 6px;">
+              📱 Local Device
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Updated: ${localDate}</div>
+            <div style="font-size: 16px; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${localCompleted} Workouts</div>
+          </div>
+
+          <div style="background: var(--bg-card); border: 2px solid #10b981; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 14px; font-weight: 800; color: #10b981; display: flex; align-items: center; gap: 6px;">
+              ☁️ Google Drive
+            </div>
+            <div style="font-size: 11px; color: var(--text-muted);">Updated: ${cloudDate}</div>
+            <div style="font-size: 16px; font-weight: 900; color: var(--text-primary); margin-top: 4px;">${cloudCompleted} Workouts</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button id="btn-keep-local" class="btn-primary" style="padding: 12px; font-size: 14px; font-weight: 800; width: 100%;">
+            ${(window.I18n && window.I18n.t('keep_local_data')) || '📱 Keep Device Data (Overwrite Cloud)'}
+          </button>
+          <button id="btn-keep-cloud" class="btn-secondary" style="padding: 12px; font-size: 14px; font-weight: 800; width: 100%; border-color: #10b981; color: #10b981;">
+            ${(window.I18n && window.I18n.t('keep_cloud_data')) || '☁️ Restore Cloud Data (Overwrite Device)'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    if (typeof UI !== 'undefined' && UI.showModal) {
+      UI.showModal(title, bodyHTML);
+      const btnLocal = document.getElementById('btn-keep-local');
+      const btnCloud = document.getElementById('btn-keep-cloud');
+      if (btnLocal) btnLocal.onclick = () => { UI.closeModal(); onChoice('local'); };
+      if (btnCloud) btnCloud.onclick = () => { UI.closeModal(); onChoice('cloud'); };
+    }
+  }
+
+  /**
+   * Check for sync conflicts between local DB and cloud data, prompting user if mismatch exists.
+   */
+  async function checkAndResolveConflict(cloudData) {
+    if (!cloudData) return 'local';
+    const localData = await DB.exportData();
+    const localCompleted = (localData.tracking || []).filter(t => t.completed).length;
+    const cloudCompleted = (cloudData.tracking || []).filter(t => t.completed).length;
+
+    if (localCompleted !== cloudCompleted && localCompleted > 0 && cloudCompleted > 0) {
+      return new Promise((resolve) => {
+        showConflictModal(localData, cloudData, (choice) => {
+          resolve(choice);
+        });
+      });
+    }
+
+    return 'local';
+  }
+
   return {
     syncData,
     pullData,
@@ -430,7 +504,9 @@ const CloudSync = (() => {
     logout,
     loginWithGoogle,
     getStatus,
-    onSyncStatusChange
+    onSyncStatusChange,
+    showConflictModal,
+    checkAndResolveConflict
   };
 })();
 

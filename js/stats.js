@@ -746,9 +746,138 @@ const StatsPage = (() => {
       </div>
     `;
 
+    const EXERCISE_MUSCLE_MAP = {
+      'db-floor-press': 'chest', 'db-single-arm-floor-press': 'chest', 'push-up': 'chest', 'deficit-push-up': 'chest', 'incline-push-up': 'chest', 'feet-elevated-push-up': 'chest', 'weighted-push-up': 'chest',
+      'seated-db-ohp': 'shoulders', 'seated-single-arm-ohp': 'shoulders', 'db-lateral-raise': 'shoulders', 'pike-push-up': 'shoulders', 'trx-face-pull': 'shoulders', 'wall-walk': 'shoulders', 'wall-handstand-hold': 'shoulders',
+      'overhead-triceps-ext': 'triceps', 'single-arm-overhead-triceps-ext': 'triceps', 'diamond-push-up': 'triceps',
+      'pull-up': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
+      'db-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
+      'db-bulgarian-split-squat': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
+      'db-rdl': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'db-glute-bridge': 'hamstrings', 'db-hip-thrust': 'hamstrings',
+      'single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves',
+      'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'l-sit-tuck-hold': 'core', 'suitcase-carry': 'core'
+    };
+
+    function getMuscleForExercise(ex) {
+      if (!ex) return null;
+      if (ex.id && EXERCISE_MUSCLE_MAP[ex.id]) return EXERCISE_MUSCLE_MAP[ex.id];
+      if (ex.exerciseId && EXERCISE_MUSCLE_MAP[ex.exerciseId]) return EXERCISE_MUSCLE_MAP[ex.exerciseId];
+      
+      const slug = (ex.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      for (const [key, muscle] of Object.entries(EXERCISE_MUSCLE_MAP)) {
+        if (slug.includes(key) || key.includes(slug)) return muscle;
+      }
+      
+      const name = (ex.name || '').toLowerCase();
+      if (name.includes('press') || name.includes('push-up') || name.includes('chest')) return 'chest';
+      if (name.includes('pull-up') || name.includes('row') || name.includes('chin-up') || name.includes('lat')) return 'lats';
+      if (name.includes('ohp') || name.includes('raise') || name.includes('shoulder') || name.includes('pike') || name.includes('face pull')) return 'shoulders';
+      if (name.includes('curl')) return 'biceps';
+      if (name.includes('triceps') || name.includes('diamond')) return 'triceps';
+      if (name.includes('squat') || name.includes('lunge')) return 'quads';
+      if (name.includes('rdl') || name.includes('bridge') || name.includes('thrust') || name.includes('glute')) return 'hamstrings';
+      if (name.includes('calf') || name.includes('calves')) return 'calves';
+      if (name.includes('bug') || name.includes('hold') || name.includes('carry') || name.includes('press-band') || name.includes('core')) return 'core';
+      
+      return null;
+    }
+
+    function renderHypertrophyVolumeChart(trackingMap, weekNum) {
+      const muscleVolumes = { chest: 0, lats: 0, shoulders: 0, biceps: 0, triceps: 0, quads: 0, hamstrings: 0, calves: 0, core: 0 };
+      const currentWeekDays = allPlanDays.filter(d => d.week === `Week ${weekNum}`);
+      currentWeekDays.forEach(day => {
+        const tracking = trackingMap[day.dayIndex];
+        if (!tracking) return;
+        const setData = tracking.setData || {};
+        (day.exercises || []).forEach((ex, exIdx) => {
+          const muscle = getMuscleForExercise(ex);
+          if (muscle && muscleVolumes[muscle] !== undefined) {
+            let setsCount = 3;
+            if (typeof ex.sets === 'number') {
+              setsCount = ex.sets;
+            } else if (typeof ex.sets === 'string') {
+              if (ex.sets.includes('sec') || ex.sets.includes('min') || ex.sets.includes('hold')) {
+                setsCount = 1;
+              } else {
+                const parsed = parseInt(ex.sets, 10);
+                setsCount = isNaN(parsed) ? 3 : parsed;
+              }
+            }
+
+            let completedSets = 0;
+            for (let s = 0; s < setsCount; s++) {
+              if (setData[`ex_${exIdx}_set_${s}_reps`]) completedSets++;
+            }
+            if (completedSets === 0 && tracking.completed) {
+              completedSets = setsCount;
+            }
+            muscleVolumes[muscle] += Number(completedSets) || 0;
+          }
+        });
+      });
+
+      const muscleLabels = {
+        chest: I18n.t('muscle_chest') || 'Chest',
+        lats: I18n.t('muscle_lats') || 'Back / Lats',
+        shoulders: I18n.t('muscle_shoulders') || 'Shoulders',
+        biceps: I18n.t('muscle_biceps') || 'Biceps',
+        triceps: I18n.t('muscle_triceps') || 'Triceps',
+        quads: I18n.t('muscle_quads') || 'Quads',
+        hamstrings: I18n.t('muscle_hamstrings') || 'Hamstrings & Glutes',
+        calves: I18n.t('muscle_calves') || 'Calves',
+        core: I18n.t('muscle_core') || 'Core'
+      };
+
+      const volumeItems = Object.entries(muscleVolumes).map(([mKey, sets]) => {
+        let zoneTag = '🔵 MV';
+        let zoneColor = '#3b82f6';
+        if (sets >= 12 && sets <= 18) {
+          zoneTag = '🎯 MAV (Optimal)';
+          zoneColor = '#10b981';
+        } else if (sets >= 8 && sets < 12) {
+          zoneTag = '🟢 MEV (Effective)';
+          zoneColor = '#22c55e';
+        } else if (sets > 18) {
+          zoneTag = '⚠️ MRV (High Load)';
+          zoneColor = '#f59e0b';
+        }
+        const pct = Math.min(100, Math.round((sets / 20) * 100));
+
+        return `
+          <div style="margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 4px;">
+              <span style="font-weight: 800; color: var(--text-primary);">${muscleLabels[mKey] || mKey}</span>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,0.06); color: ${zoneColor};">${zoneTag}</span>
+                <span style="font-weight: 900; color: ${zoneColor}; font-size: 13px;">${sets} sets/wk</span>
+              </div>
+            </div>
+            <div style="width: 100%; height: 8px; background: var(--bg-input); border-radius: 4px; overflow: hidden;">
+              <div style="height: 100%; width: ${Math.max(4, pct)}%; background: ${zoneColor}; border-radius: 4px; transition: width 0.8s ease;"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      return `
+        <div class="chart-card" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
+          <div class="chart-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>💪 ${I18n.t('hypertrophy_analytics_title') || 'Hypertrophy Volume Analysis (Direct Sets/Wk)'}</span>
+            <span style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Week ${weekNum}</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-top: 10px;">
+            ${volumeItems}
+          </div>
+        </div>
+      `;
+    }
+
+    const hypertrophyVolumeHTML = renderHypertrophyVolumeChart(trackingMap, weekNum);
+
     container.innerHTML = `
       ${heatmapHtml}
       ${weightChart}
+      ${hypertrophyVolumeHTML}
       ${compactStatsHtml}
       ${leanDashboardHTML}
     `;

@@ -61,6 +61,9 @@ const I18n = (() => {
       ai_model_label: "AI Model",
       save_ai_scanner: "✨ Save & Enable AI Scanner",
       get_free_key_tip: "💡 Don't have a key? Get one for free in a minute at",
+      get_free_key_btn: "🔑 Get Free API Key on Google AI Studio ↗",
+      get_free_key_steps: "1️⃣ Click the link above & log in with Google.<br>2️⃣ Click 'Create API key'.<br>3️⃣ Copy key and paste below. 100% Free!",
+      model_auto_updated: "Model automatically updated to {model}! 🚀",
       add_meal_ai: "📸 Add Meal with AI Scanner",
       snap_food: "Snap Food",
       upload_image: "Upload Photo",
@@ -750,7 +753,27 @@ const I18n = (() => {
       sound_enabled: "Sound Feedback: Enabled 🔊",
       sound_disabled: "Sound Feedback: Disabled 🔇",
       effects3d_enabled: "3D Animations: Enabled ✨",
-      effects3d_disabled: "3D Animations: Disabled 🚫"
+      effects3d_disabled: "3D Animations: Disabled 🚫",
+      hypertrophy_analytics_title: "Hypertrophy Volume Analysis (Direct Sets/Wk)",
+      sync_conflict_title: "Cloud Sync Conflict Detected ☁️",
+      sync_conflict_desc: "The workout data on your device differs from the backup saved in Google Drive. Please choose which version to retain:",
+      keep_local_data: "📱 Keep Device Data (Overwrite Cloud)",
+      keep_cloud_data: "☁️ Restore Cloud Data (Overwrite Device)",
+
+      // PWA & Screen Wake Lock
+      pwa_card_title: "📱 App Installation (PWA)",
+      pwa_card_desc: "Install FitUp as an app on your phone or computer for instant access and full offline support.",
+      pwa_install_btn: "📥 Install App Now",
+      pwa_installed_status: "📱 Installed & Running as App (PWA)",
+      pwa_ios_instructions: "To install on iPhone/iPad: tap the Share button ⎋ in Safari and select 'Add to Home Screen' ➕",
+      pwa_installed_toast: "FitUp installed successfully as an app! 🎉",
+      wakelock_card_title: "💡 Keep Screen Awake During Workout",
+      wakelock_card_desc: "Prevents screen from turning off or dimming while exercising and rest timers are active.",
+      wakelock_enabled: "Keep Screen Awake: Active 💡",
+      wakelock_disabled: "Keep Screen Awake: Disabled 💤",
+      wakelock_not_supported: "Screen Wake Lock is not supported on this browser.",
+      wakelock_toast_on: "Screen will stay awake during workout 💡",
+      wakelock_toast_off: "Screen sleep restored 💤"
     },
     he: {
       // App & Nav
@@ -800,6 +823,9 @@ const I18n = (() => {
       ai_model_label: "מודל בינה מלאכותית (AI Model)",
       save_ai_scanner: "✨ שמור והפעל סורק AI",
       get_free_key_tip: "💡 אין לך מפתח? ניתן להנפיק מפתח בחינם דרך",
+      get_free_key_btn: "🔑 לחץ כאן לקבלת מפתח API בחינם ב-Google AI Studio ↗",
+      get_free_key_steps: "1️⃣ לחץ על הלינק למעלה והתחבר עם חשבון Google.<br>2️⃣ לחץ על 'Create API key' ב-Google AI Studio.<br>3️⃣ העתק את המפתח והדבק אותו בשדה למטה. חינם לחלוטין!",
+      model_auto_updated: "המודל עודכן אוטומטית ל-{model} לביצועים מיטביים! 🚀",
       add_meal_ai: "📸 הוספת ארוחה מבוססת AI",
       snap_food: "צלם אוכל",
       upload_image: "העלה תמונה",
@@ -817,6 +843,21 @@ const I18n = (() => {
       meals_count_zero: "0 ארוחות",
       consumed_protein_powder: "🥛 צרכתי {amount}ג חלבון אבקתי",
       delete_api_key_confirm: "האם למחוק את מפתח ה-Gemini API השמור?",
+
+      // PWA & Screen Wake Lock
+      pwa_card_title: "📱 התקנה כאפליקציה (PWA)",
+      pwa_card_desc: "התקן את FitUp כאפליקציה בנייד או במחשב לגישה מהירה ועבודה מלאה באופליין.",
+      pwa_install_btn: "📥 התקן כאפליקציה עכשיו",
+      pwa_installed_status: "📱 מותקן ופועל כאפליקציה (PWA)",
+      pwa_ios_instructions: "להתקנה ב-iPhone/iPad: לחץ על כפתור השיתוף ⎋ ב-Safari ובחר 'הוסף למסך הבית' ➕",
+      pwa_installed_toast: "FitUp הותקנה בהצלחה כאפליקציה! 🎉",
+      wakelock_card_title: "💡 מניעת כיבוי מסך באימון (Wake Lock)",
+      wakelock_card_desc: "שומר על המסך דלוק ולא מחשיך במהלך ביצוע אימונים וטיימר מנוחה.",
+      wakelock_enabled: "מסך פעיל באימון: מופעל 💡",
+      wakelock_disabled: "מסך פעיל באימון: כבוי 💤",
+      wakelock_not_supported: "תכונת מניעת כיבוי מסך אינה נתמכת בדפדפן זה.",
+      wakelock_toast_on: "המסך יישאר דלוק במהלך האימון 💡",
+      wakelock_toast_off: "מצב שנת מסך חזר לפעילות 💤",
 
       // Exercises Page
       exercise_list_title: "רשימת תרגילים",
@@ -1439,8 +1480,13 @@ const I18n = (() => {
       toggle_effects3d_enabled: "אנימציות 3D: פעיל",
       sound_enabled: "אפקטי שמע: פעיל 🔊",
       sound_disabled: "אפקטי שמע: מבוטל 🔇",
-      effects3d_enabled: "אנימציות 3D: פעיל ✨",
-      effects3d_disabled: "אנימציות 3D: מבוטל 🚫"
+      effects3d_enabled: "אנימציות 3D: מופעל ✨",
+      effects3d_disabled: "אנימציות 3D: מנוטרל 🚫",
+      hypertrophy_analytics_title: "ניתוח נפחי היפרטרופיה (סטים אפקטיביים בשבוע)",
+      sync_conflict_title: "נמצא קונפליקט בסנכרון ענן ☁️",
+      sync_conflict_desc: "יומן האימונים במכשיר זה שונה מהגיבוי השמור ב-Google Drive. אנא בחר באיזו גרסה להשתמש:",
+      keep_local_data: "📱 שמור נתונים מקומיים (דרוס את הענן)",
+      keep_cloud_data: "☁️ טען נתונים מהענן (דרוס את המכשיר)"
     },
     ar: {
       // App & Nav
@@ -1490,6 +1536,9 @@ const I18n = (() => {
       ai_model_label: "نموذج الذكاء الاصطناعي",
       save_ai_scanner: "✨ حفظ وتفعيل ماسح AI",
       get_free_key_tip: "💡 ليس لديك مفتاح؟ يمكنك الحصول على مفتاح مجاني خلال دقيقة عبر",
+      get_free_key_btn: "🔑 انقر هنا للحصول على مفتاح API مجاناً من Google AI Studio ↗",
+      get_free_key_steps: "1️⃣ انقر على الرابط أعلاه وسجل الدخول بحساب Google.<br>2️⃣ انقر على 'Create API key' في Google AI Studio.<br>3️⃣ انسخ المفتاح والصقه في الحقل أدناه. مجاني تماماً!",
+      model_auto_updated: "تم تحديث النموذج تلقائياً إلى {model} للحصول على أفضل أداء! 🚀",
       add_meal_ai: "📸 إضافة وجبة بالذكاء الاصطناعي",
       snap_food: "التقط صورة",
       upload_image: "رفع صورة",
@@ -1854,7 +1903,22 @@ const I18n = (() => {
       sound_enabled: "المؤثرات الصوتية: مفعل 🔊",
       sound_disabled: "المؤثرات الصوتية: معطل 🔇",
       effects3d_enabled: "رسوم 3D: مفعل ✨",
-      effects3d_disabled: "رسوم 3D: معطل 🚫"
+      effects3d_disabled: "رسوم 3D: معطل 🚫",
+
+      // PWA & Screen Wake Lock
+      pwa_card_title: "📱 تثبيت كتطبيق (PWA)",
+      pwa_card_desc: "قم بتثبيت FitUp كتطبيق على هاتفك أو جهازك للوصول السريع والعمل الكامل بدون إنترنت.",
+      pwa_install_btn: "📥 تثبيت التطبيق الآن",
+      pwa_installed_status: "📱 مثبت ويعمل كتطبيق (PWA)",
+      pwa_ios_instructions: "للتثبيت على iPhone/iPad: اضغط على زر المشاركة ⎋ في Safari واختر 'إضافة إلى الشاشة الرئيسية' ➕",
+      pwa_installed_toast: "تم تثبيت FitUp بنجاح كتطبيق! 🎉",
+      wakelock_card_title: "💡 منع إيقاف الشاشة أثناء التمرين",
+      wakelock_card_desc: "يمنع إيقاف تشغيل الشاشة أو إعتامها أثناء أداء التمارين ومؤقت الراحة.",
+      wakelock_enabled: "إبقاء الشاشة نشطة: مفعل 💡",
+      wakelock_disabled: "إبقاء الشاشة نشطة: معطل 💤",
+      wakelock_not_supported: "ميزة منع إيقاف الشاشة غير مدعومة في هذا المتصفح.",
+      wakelock_toast_on: "ستظل الشاشة نشطة أثناء التمرين 💡",
+      wakelock_toast_off: "تم استعادة وضع سكون الشاشة 💤"
     }
   };
 

@@ -412,6 +412,9 @@ const TodayPage = (() => {
     
     if (typeof GeminiService === 'undefined') return;
     if (GeminiService.initSelects) GeminiService.initSelects();
+    GeminiService.getApiKey().then(key => {
+      if (key && GeminiService.discoverAvailableModels) GeminiService.discoverAvailableModels(key);
+    });
 
     const isConfigured = await GeminiService.isConfigured();
 
