@@ -124,6 +124,149 @@ const TodayPage = (() => {
   }
 
   /**
+   * Check and auto-display once-per-day AI Smart Daily Briefing modal (or manual trigger)
+   */
+  async function checkAndShowDailyBriefing(forceOpen = false, forceRefresh = false) {
+    const modal = document.getElementById('daily-briefing-modal');
+    const content = document.getElementById('daily-briefing-content');
+    const closeBtn = document.getElementById('close-daily-briefing-btn');
+    const closeX = document.getElementById('close-daily-briefing-x');
+    if (!modal || !content) return;
+
+    const todayStr = UI.getLocalDateString();
+    const lastSeenDate = localStorage.getItem('fitup_last_daily_briefing_date');
+
+    // Bind close handlers once
+    if (!modal.hasAttribute('data-bound')) {
+      modal.setAttribute('data-bound', 'true');
+      const hideModal = () => { modal.style.display = 'none'; };
+      if (closeBtn) closeBtn.onclick = hideModal;
+      if (closeX) closeX.onclick = hideModal;
+      modal.onclick = (e) => { if (e.target === modal) hideModal(); };
+    }
+
+    if (!forceOpen && lastSeenDate === todayStr) {
+      return; // Already auto-shown today
+    }
+
+    modal.style.display = 'flex';
+    localStorage.setItem('fitup_last_daily_briefing_date', todayStr);
+
+    const cacheKey = `fitup_briefing_cache_${todayStr}`;
+    const cachedBriefing = localStorage.getItem(cacheKey);
+
+    if (cachedBriefing && !forceRefresh) {
+      content.innerHTML = cachedBriefing;
+      return;
+    }
+
+    content.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">${I18n.t('briefing_loading')}</div>`;
+
+    // Gather History Context
+    const allTracking = await DB.getAllTracking();
+    let completedDays = 0;
+    let rpeSum = 0;
+    let rpeCount = 0;
+    let bodyWeight = null;
+
+    Object.values(allTracking || {}).forEach(tr => {
+      if (tr.completed) completedDays++;
+      if (tr.actualRPE) {
+        rpeSum += parseFloat(tr.actualRPE);
+        rpeCount++;
+      }
+      if (tr.bodyWeight) bodyWeight = tr.bodyWeight;
+    });
+
+    const streak = completedDays;
+    const avgRPE = rpeCount > 0 ? (rpeSum / rpeCount).toFixed(1) : null;
+
+    const historyContext = {
+      streak,
+      completedDays,
+      avgRPE,
+      bodyWeight
+    };
+
+    // Gather Today's Workout Context
+    const day = allPlanDays[currentDayIndex] || {};
+    let totalSets = 0;
+    let requiredEquipment = [];
+
+    (day.exercises || []).forEach(ex => {
+      totalSets += UI.parseSetsCount(ex.sets);
+      if (ex.weight && isWeighted(ex)) {
+        requiredEquipment.push(`${ex.name}: ${ex.weight}`);
+      }
+    });
+
+    const todayContext = {
+      title: day.title || `Day ${day.day || (currentDayIndex + 1)}`,
+      dayNum: day.day || (currentDayIndex + 1),
+      dayType: day.dayType || 'Strength',
+      muscles: day.targetMuscles || 'Full Body',
+      exerciseCount: (day.exercises || []).length,
+      totalSets: totalSets,
+      plannedRPE: day.plannedRPE || 8,
+      equipment: requiredEquipment.length > 0 ? requiredEquipment.join(', ') : 'Standard / Bodyweight'
+    };
+
+    // Gather Google Fit Context
+    let fitContext = {};
+    if (window.GoogleFitService) {
+      try {
+        const fitData = await window.GoogleFitService.fetchDailyFitData();
+        if (fitData) fitContext = fitData;
+      } catch (e) {
+        console.warn('Google Fit context for briefing error:', e);
+      }
+    }
+
+    try {
+      if (typeof GeminiService !== 'undefined' && GeminiService.getDailySmartBriefing) {
+        const briefingText = await GeminiService.getDailySmartBriefing(historyContext, todayContext, fitContext);
+        if (briefingText) {
+          const formattedHtml = briefingText
+            .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--accent-primary);">$1</strong>')
+            .replace(/\n\n/g, '<br><br>')
+            .replace(/\n/g, '<br>');
+
+          const htmlContainer = `
+            <div style="background: var(--bg-elevated); padding: 16px; border-radius: 14px; border: 1px solid var(--border-light); line-height: 1.7;">
+              ${formattedHtml}
+            </div>
+            <div style="text-align: right; margin-top: 10px;">
+              <button onclick="TodayPage.openDailyBriefing(true)" style="background: none; border: none; color: var(--text-muted); font-size: 11px; cursor: pointer; text-decoration: underline;">🔄 ${I18n.t('refresh_advice') || 'רענן תדריך'}</button>
+            </div>
+          `;
+          content.innerHTML = htmlContainer;
+          localStorage.setItem(cacheKey, htmlContainer);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Gemini briefing error, falling back to local smart summary:', e);
+    }
+
+    // Local Rule-Based Fallback Briefing
+    const fallbackHtml = `
+      <div style="background: var(--bg-elevated); padding: 16px; border-radius: 14px; border: 1px solid var(--border-light); line-height: 1.7;">
+        <div style="margin-bottom: 10px;">
+          🏆 <strong style="color: var(--accent-primary);">${I18n.t('briefing_momentum')}:</strong> ${completedDays > 0 ? `Great momentum with ${completedDays} completed workouts!` : 'Welcome to Day 1! Ready to build momentum!'}
+        </div>
+        <div style="margin-bottom: 10px;">
+          🎯 <strong style="color: var(--accent-primary);">${I18n.t('briefing_mission')}:</strong> ${todayContext.title} (${todayContext.dayType}). Target: ${todayContext.exerciseCount} exercises, ${todayContext.totalSets} total sets. Planned RPE: ${todayContext.plannedRPE}.
+        </div>
+        <div>
+          💡 <strong style="color: var(--accent-primary);">${I18n.t('briefing_tactical_tip')}:</strong> ${todayContext.equipment !== 'Standard / Bodyweight' ? `Required weights today: ${todayContext.equipment}. Focus on strict tempo & recovery!` : 'Focus on strict execution tempo and log each set accurately.'}
+        </div>
+      </div>
+    `;
+    content.innerHTML = fallbackHtml;
+    localStorage.setItem(cacheKey, fallbackHtml);
+  }
+
+  /**
    * Initialize the today page
    */
   async function init(planDays) {
@@ -390,141 +533,7 @@ const TodayPage = (() => {
 
 
 
-  /**
-   * Check and auto-display once-per-day AI Smart Daily Briefing modal (or manual trigger)
-   */
-  async function checkAndShowDailyBriefing(forceOpen = false) {
-    const modal = document.getElementById('daily-briefing-modal');
-    const content = document.getElementById('daily-briefing-content');
-    const closeBtn = document.getElementById('close-daily-briefing-btn');
-    const closeX = document.getElementById('close-daily-briefing-x');
-    if (!modal || !content) return;
 
-    const todayStr = UI.getLocalDateString();
-    const lastSeenDate = localStorage.getItem('fitup_last_daily_briefing_date');
-
-    // Bind close handlers once
-    if (!modal.hasAttribute('data-bound')) {
-      modal.setAttribute('data-bound', 'true');
-      const hideModal = () => { modal.style.display = 'none'; };
-      if (closeBtn) closeBtn.onclick = hideModal;
-      if (closeX) closeX.onclick = hideModal;
-      modal.onclick = (e) => { if (e.target === modal) hideModal(); };
-    }
-
-    if (!forceOpen && lastSeenDate === todayStr) {
-      return; // Already auto-shown today
-    }
-
-    modal.style.display = 'flex';
-    localStorage.setItem('fitup_last_daily_briefing_date', todayStr);
-
-    const cacheKey = `fitup_briefing_cache_${todayStr}`;
-    const cachedBriefing = localStorage.getItem(cacheKey);
-
-    if (cachedBriefing && !forceOpen) {
-      content.innerHTML = cachedBriefing;
-      return;
-    }
-
-    content.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">${I18n.t('briefing_loading')}</div>`;
-
-    // Gather History Context
-    const allTracking = await DB.getAllTracking();
-    let completedDays = 0;
-    let rpeSum = 0;
-    let rpeCount = 0;
-    let bodyWeight = null;
-
-    Object.values(allTracking || {}).forEach(tr => {
-      if (tr.completed) completedDays++;
-      if (tr.actualRPE) {
-        rpeSum += parseFloat(tr.actualRPE);
-        rpeCount++;
-      }
-      if (tr.bodyWeight) bodyWeight = tr.bodyWeight;
-    });
-
-    const streak = completedDays;
-    const avgRPE = rpeCount > 0 ? (rpeSum / rpeCount).toFixed(1) : null;
-
-    const historyContext = {
-      streak,
-      completedDays,
-      avgRPE,
-      bodyWeight
-    };
-
-    // Gather Today's Workout Context
-    const day = allPlanDays[currentDayIndex] || {};
-    let totalSets = 0;
-    let requiredEquipment = [];
-
-    (day.exercises || []).forEach(ex => {
-      totalSets += UI.parseSetsCount(ex.sets);
-      if (ex.weight && isWeighted(ex)) {
-        requiredEquipment.push(`${ex.name}: ${ex.weight}`);
-      }
-    });
-
-    const todayContext = {
-      title: day.title || `Day ${day.day || (currentDayIndex + 1)}`,
-      dayNum: day.day || (currentDayIndex + 1),
-      dayType: day.dayType || 'Strength',
-      muscles: day.targetMuscles || 'Full Body',
-      exerciseCount: (day.exercises || []).length,
-      totalSets: totalSets,
-      plannedRPE: day.plannedRPE || 8,
-      equipment: requiredEquipment.length > 0 ? requiredEquipment.join(', ') : 'Standard / Bodyweight'
-    };
-
-    // Gather Google Fit Context
-    let fitContext = {};
-    if (window.GoogleFitService) {
-      try {
-        const fitData = await window.GoogleFitService.fetchDailyFitData();
-        if (fitData) fitContext = fitData;
-      } catch (e) {
-        console.warn('Google Fit context for briefing error:', e);
-      }
-    }
-
-    try {
-      if (typeof GeminiService !== 'undefined' && GeminiService.getDailySmartBriefing) {
-        const briefingText = await GeminiService.getDailySmartBriefing(historyContext, todayContext, fitContext);
-        if (briefingText) {
-          const formattedHtml = briefingText
-            .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--accent-primary);">$1</strong>')
-            .replace(/\n\n/g, '<br><br>')
-            .replace(/\n/g, '<br>');
-
-          const htmlContainer = `<div style="background: var(--bg-elevated); padding: 16px; border-radius: 14px; border: 1px solid var(--border-light); line-height: 1.7;">${formattedHtml}</div>`;
-          content.innerHTML = htmlContainer;
-          localStorage.setItem(cacheKey, htmlContainer);
-          return;
-        }
-      }
-    } catch (e) {
-      console.warn('Gemini briefing error, falling back to local smart summary:', e);
-    }
-
-    // Local Rule-Based Fallback Briefing
-    const fallbackHtml = `
-      <div style="background: var(--bg-elevated); padding: 16px; border-radius: 14px; border: 1px solid var(--border-light); line-height: 1.7;">
-        <div style="margin-bottom: 10px;">
-          🏆 <strong style="color: var(--accent-primary);">${I18n.t('briefing_momentum')}:</strong> ${completedDays > 0 ? `Great momentum with ${completedDays} completed workouts!` : 'Welcome to Day 1! Ready to build momentum!'}
-        </div>
-        <div style="margin-bottom: 10px;">
-          🎯 <strong style="color: var(--accent-primary);">${I18n.t('briefing_mission')}:</strong> ${todayContext.title} (${todayContext.dayType}). Target: ${todayContext.exerciseCount} exercises, ${todayContext.totalSets} total sets. Planned RPE: ${todayContext.plannedRPE}.
-        </div>
-        <div>
-          💡 <strong style="color: var(--accent-primary);">${I18n.t('briefing_tactical_tip')}:</strong> ${todayContext.equipment !== 'Standard / Bodyweight' ? `Required weights today: ${todayContext.equipment}. Focus on strict tempo & recovery!` : 'Focus on strict execution tempo and log each set accurately.'}
-        </div>
-      </div>
-    `;
-    content.innerHTML = fallbackHtml;
-    localStorage.setItem(cacheKey, fallbackHtml);
-  }
 
 
 
@@ -796,7 +805,30 @@ const TodayPage = (() => {
     const refreshAiBtn = document.getElementById('refresh-ai-advice-btn');
 
     if (aiCard && aiContent) {
-      const fetchAdvice = async () => {
+      const currentStateFingerprint = `${queryDateStr}_cals${totalCals}_prot${totalProtein}_meals${(nutData.meals || []).length}_burn${workoutBurn}_comp${workoutInfo.isCompleted ? 1 : 0}`;
+      const adviceCacheKey = `fitup_ai_advice_cache_${queryDateStr}`;
+
+      const fetchAdvice = async (forceRefresh = false) => {
+        let cachedData = null;
+        try {
+          const raw = localStorage.getItem(adviceCacheKey);
+          if (raw) {
+            if (raw.startsWith('{')) {
+              cachedData = JSON.parse(raw);
+            } else {
+              // Legacy plain string cache - clear
+              localStorage.removeItem(adviceCacheKey);
+            }
+          }
+        } catch (e) {
+          localStorage.removeItem(adviceCacheKey);
+        }
+
+        if (cachedData && cachedData.fingerprint === currentStateFingerprint && !forceRefresh) {
+          aiContent.textContent = cachedData.text;
+          return;
+        }
+
         aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('ai_advice_loading')}</span>`;
         try {
           const adviceText = await GeminiService.getDailyAdvice(
@@ -806,6 +838,10 @@ const TodayPage = (() => {
           );
           if (adviceText) {
             aiContent.textContent = adviceText;
+            localStorage.setItem(adviceCacheKey, JSON.stringify({
+              fingerprint: currentStateFingerprint,
+              text: adviceText
+            }));
           } else {
             aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('gemini_key_not_set')}</span>`;
           }
@@ -818,10 +854,10 @@ const TodayPage = (() => {
       if (refreshAiBtn) {
         refreshAiBtn.onclick = (e) => {
           e.stopPropagation();
-          fetchAdvice();
+          fetchAdvice(true);
         };
       }
-      fetchAdvice();
+      fetchAdvice(false);
     }
 
     // Update Quick Protein Powder Completion Button
@@ -1304,11 +1340,9 @@ const TodayPage = (() => {
       nextBtn.title = I18n.t('next_day_title');
     }
 
-    // --- Update Nutrition & AI System ---
-    if (!selectedNutritionDate) {
-      selectedNutritionDate = UI.getLocalDateString();
-    }
-    checkAndShowDailyBriefing(false);
+    setTimeout(() => {
+      checkAndShowDailyBriefing(false);
+    }, 400);
     await renderNutritionSection(selectedNutritionDate);
   }
 
@@ -2997,6 +3031,8 @@ const TodayPage = (() => {
   return {
     init,
     render,
+    openDailyBriefing: (forceRefresh = false) => checkAndShowDailyBriefing(true, forceRefresh),
+    checkAndShowDailyBriefing,
     renderNutritionSection: (dateStr) => renderNutritionSectionRef ? renderNutritionSectionRef(dateStr) : Promise.resolve(),
     resetNutritionDateToToday,
     navigate,
