@@ -165,6 +165,12 @@ const I18n = (() => {
       auth_prompt_reauth_sub: "Please re-authenticate to keep your Google Drive sync active.",
       auth_prompt_btn: "Sign in with Google",
 
+      // PWA Install Floating Banner
+      pwa_banner_title: "Install FitUp App 📱",
+      pwa_banner_sub: "Add FitUp to your home screen for fast access & full offline support!",
+      pwa_banner_ios_sub: "To install on iPhone/iPad: tap Share ⎋ in Safari and select 'Add to Home Screen' ➕",
+      pwa_banner_btn: "Install App",
+
       // Google Fit
       fit_sync_title: "Fitness Metrics Sync (Google Fit)",
       fit_sync_desc: "Connect your Google account to sync and view steps, calories, heart rate, and heart points in real-time.",
@@ -956,6 +962,12 @@ const I18n = (() => {
       auth_prompt_reauth_sub: "אנא התחבר מחדש כדי להמשיך לסנכרן את ההתקדמות ב-Google Drive.",
       auth_prompt_btn: "התחבר בלחיצה",
 
+      // PWA Install Floating Banner
+      pwa_banner_title: "התקנת אפליקציית FitUp 📱",
+      pwa_banner_sub: "הוסף את FitUp למסך הבית לגישה מהירה ותמיכה מלאה באופליין!",
+      pwa_banner_ios_sub: "להתקנה באייפון/אייפד: לחץ על שיתוף ⎋ בדפדפן Safari ובחר 'הוסף למסך הבית' ➕",
+      pwa_banner_btn: "התקן אפליקציה",
+
       // Google Fit
       fit_sync_title: "סנכרון מדדי כושר (Google Fit)",
       fit_sync_desc: "התחבר לחשבון גוגל כדי לסנכרן ולהציג צעדים, קלוריות, דופק ונקודות לב בזמן אמת.",
@@ -1689,6 +1701,12 @@ const I18n = (() => {
       auth_prompt_reauth_title: "انتهت صلاحية رمز Google ⚠️",
       auth_prompt_reauth_sub: "يرجى تسجيل الدخول مرة أخرى لمواصلة مزامنة تقدمك في Google Drive.",
       auth_prompt_btn: "تسجيل الدخول",
+
+      // PWA Install Floating Banner
+      pwa_banner_title: "تثبيت تطبيق FitUp 📱",
+      pwa_banner_sub: "أضف FitUp إلى الشاشة الرئيسية للوصول السريع والدعم الكامل دون اتصال!",
+      pwa_banner_ios_sub: "للتثبيت على iPhone/iPad: اضغط مشاركة ⎋ في Safari واختر 'إضافة إلى الشاشة الرئيسية' ➕",
+      pwa_banner_btn: "تثبيت التطبيق",
 
       equip_vest: "سترة ثقيلة +5 كجم",
       equip_trx: "أحزمة TRX",

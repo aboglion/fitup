@@ -60,6 +60,7 @@ const CloudSync = (() => {
    */
   async function setAccessToken(token, userProfile = null) {
     await DB.setSetting('googleAccessToken', token);
+    await DB.setSetting('googleTokenExpired', false);
     if (userProfile) {
       await DB.setSetting('googleUserProfile', userProfile);
     }
@@ -67,11 +68,71 @@ const CloudSync = (() => {
   }
 
   /**
-   * Check if logged in with Google
+   * Check if user is identified / logged in with Google profile
    */
   async function isLoggedIn() {
+    const profile = await getUserProfile();
     const token = await getAccessToken();
-    return Boolean(token && token.length > 10);
+    return Boolean((profile && (profile.name || profile.email)) || (token && token.length > 10));
+  }
+
+  /**
+   * Check if active valid token is ready for API calls
+   */
+  async function hasValidToken() {
+    const token = await getAccessToken();
+    const isExpired = await DB.getSetting('googleTokenExpired');
+    return Boolean(token && token.length > 10 && !isExpired);
+  }
+
+  /**
+   * Handle Expired Token without deleting user profile (preserves login session identity)
+   */
+  async function handleTokenExpired() {
+    await DB.setSetting('googleAccessToken', null);
+    await DB.setSetting('googleTokenExpired', true);
+    setStatus('reauth_needed');
+    promptReauth();
+  }
+
+  /**
+   * Attempt silent token renewal via GIS OAuth token client if profile exists
+   */
+  async function trySilentRefresh() {
+    const profile = await getUserProfile();
+    if (!profile || !profile.email) return false;
+
+    const clientId = await getClientId();
+    if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+      return new Promise((resolve) => {
+        try {
+          const client = window.google.accounts.oauth2.initTokenClient({
+            client_id: clientId,
+            scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.heart_rate.read',
+            hint: profile.email,
+            prompt: '',
+            callback: async (response) => {
+              if (response.access_token) {
+                await setAccessToken(response.access_token, profile);
+                await DB.setSetting('googleTokenExpired', false);
+                setStatus('synced');
+                console.log('Silent token refresh succeeded for:', profile.email);
+                resolve(true);
+              } else {
+                console.log('Silent token refresh required user interaction.');
+                setStatus('reauth_needed');
+                resolve(false);
+              }
+            }
+          });
+          client.requestAccessToken({ prompt: '' });
+        } catch (e) {
+          console.warn('Silent refresh error:', e);
+          resolve(false);
+        }
+      });
+    }
+    return false;
   }
 
   /**
@@ -87,6 +148,7 @@ const CloudSync = (() => {
   async function logout() {
     await DB.setSetting('googleAccessToken', null);
     await DB.setSetting('googleUserProfile', null);
+    await DB.setSetting('googleTokenExpired', false);
     setStatus('idle');
     if (typeof UI !== 'undefined' && UI.toast) UI.toast('התנתקת מחשבון גוגל', 'info');
   }
@@ -169,9 +231,7 @@ const CloudSync = (() => {
       // Direct Google Drive REST API
       const fileIdResult = await findDriveFileId(token);
       if (fileIdResult && fileIdResult.error === 401) {
-        await logout();
-        setStatus('reauth_needed');
-        promptReauth();
+        await handleTokenExpired();
         throw new Error('פג תוקף אסימון הגישה של גוגל. נא להתחבר מחדש.');
       }
 
@@ -219,9 +279,7 @@ const CloudSync = (() => {
 
       if (!res.ok) {
         if (res.status === 401) {
-          await logout();
-          setStatus('reauth_needed');
-          promptReauth();
+          await handleTokenExpired();
           throw new Error('פג תוקף אסימון הגישה של גוגל. נא להתחבר מחדש.');
         }
         throw new Error(`שגיאת Google Drive (HTTP ${res.status})`);
@@ -279,9 +337,7 @@ const CloudSync = (() => {
 
       const fileIdResult = await findDriveFileId(token);
       if (fileIdResult && fileIdResult.error === 401) {
-        await logout();
-        setStatus('reauth_needed');
-        promptReauth();
+        await handleTokenExpired();
         return { success: false, error: 'Token expired' };
       }
 
@@ -297,9 +353,7 @@ const CloudSync = (() => {
 
       if (!res.ok) {
         if (res.status === 401) {
-          await logout();
-          setStatus('reauth_needed');
-          promptReauth();
+          await handleTokenExpired();
           return { success: false, error: 'Token expired' };
         }
         throw new Error(`HTTP ${res.status}`);
@@ -348,24 +402,32 @@ const CloudSync = (() => {
    */
   async function loginWithGoogle(onSuccess, onError) {
     const clientId = await getClientId();
+    const profile = await getUserProfile();
 
     if (window.google && window.google.accounts && window.google.accounts.oauth2) {
       try {
-        const client = window.google.accounts.oauth2.initTokenClient({
+        const clientOptions = {
           client_id: clientId,
           scope: 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.heart_rate.read',
           callback: async (response) => {
             if (response.access_token) {
-              const profile = await fetchGoogleProfile(response.access_token);
-              await setAccessToken(response.access_token, profile);
+              const fetchedProfile = await fetchGoogleProfile(response.access_token);
+              const finalProfile = (fetchedProfile && fetchedProfile.email) ? fetchedProfile : profile;
+              await setAccessToken(response.access_token, finalProfile);
               setStatus('synced');
-              if (onSuccess) onSuccess(profile);
+              if (onSuccess) onSuccess(finalProfile);
             } else if (response.error) {
               console.warn('Google OAuth error:', response.error);
               if (onError) onError(response.error_description || response.error);
             }
           }
-        });
+        };
+
+        if (profile && profile.email) {
+          clientOptions.hint = profile.email;
+        }
+
+        const client = window.google.accounts.oauth2.initTokenClient(clientOptions);
         client.requestAccessToken();
         return;
       } catch (e) {
@@ -500,6 +562,8 @@ const CloudSync = (() => {
     getAccessToken,
     setAccessToken,
     isLoggedIn,
+    hasValidToken,
+    trySilentRefresh,
     getUserProfile,
     logout,
     loginWithGoogle,

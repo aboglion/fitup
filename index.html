@@ -714,6 +714,25 @@
     </div>
   </div>
 
+  <!-- Non-Intrusive Floating PWA Install Banner -->
+  <div id="pwa-install-banner" class="login-prompt-banner pwa-install-banner hidden">
+    <button id="pwa-banner-close" class="login-banner-close" aria-label="Close">✕</button>
+    <div class="login-banner-content">
+      <div class="login-banner-icon-wrapper" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.15)); border-color: rgba(16, 185, 129, 0.4);">
+        <span class="login-banner-pulse" style="animation-name: pulseRingGreen;"></span>
+        <span class="login-banner-icon">📱</span>
+      </div>
+      <div class="login-banner-text">
+        <h4 id="pwa-banner-title" class="login-banner-title" data-i18n="pwa_banner_title">Install FitUp App 📱</h4>
+        <p id="pwa-banner-sub" class="login-banner-sub" data-i18n="pwa_banner_sub">Add FitUp to your home screen for fast access & full offline support!</p>
+      </div>
+      <button id="pwa-banner-install-btn" class="login-banner-btn" style="background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);">
+        <span>📥</span>
+        <span data-i18n="pwa_banner_btn">Install App</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Modal -->
   <div id="modal-overlay" class="modal-overlay hidden">
     <div id="modal" class="modal">

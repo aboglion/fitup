@@ -98,18 +98,29 @@ const App = (() => {
   /**
    * Setup PWA install prompt & event listeners
    */
+  /**
+   * Setup PWA install prompt & floating banner
+   */
   function setupInstallPrompt() {
     const installBtn = document.getElementById('pwa-install-btn');
     const installedBadge = document.getElementById('pwa-installed-badge');
     const iosGuide = document.getElementById('pwa-ios-guide');
-    
+
+    const pwaBanner = document.getElementById('pwa-install-banner');
+    const pwaBannerClose = document.getElementById('pwa-banner-close');
+    const pwaBannerInstallBtn = document.getElementById('pwa-banner-install-btn');
+    const pwaBannerTitle = document.getElementById('pwa-banner-title');
+    const pwaBannerSub = document.getElementById('pwa-banner-sub');
+
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
                          window.navigator.standalone === true ||
                          document.referrer.includes('android-app://');
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    let isBannerDismissed = localStorage.getItem('pwaBannerDismissed') === 'true';
 
     function updatePwaUI() {
+      // 1. Settings Card Elements
       if (isStandalone) {
         if (installBtn) installBtn.style.display = 'none';
         if (installedBadge) installedBadge.style.display = 'flex';
@@ -118,15 +129,87 @@ const App = (() => {
         if (installBtn) installBtn.style.display = 'none';
         if (installedBadge) installedBadge.style.display = 'none';
         if (iosGuide) iosGuide.style.display = 'block';
-      } else if (deferredInstallPrompt) {
-        if (installBtn) installBtn.style.display = 'flex';
-        if (installedBadge) installedBadge.style.display = 'none';
-        if (iosGuide) iosGuide.style.display = 'none';
       } else {
         if (installBtn) installBtn.style.display = 'flex';
         if (installedBadge) installedBadge.style.display = 'none';
         if (iosGuide) iosGuide.style.display = 'none';
       }
+
+      // 2. Floating PWA Banner Elements
+      if (!pwaBanner) return;
+
+      const loginScreen = document.getElementById('login-screen');
+      const splashScreen = document.getElementById('splash-screen');
+      const isIntroScreenActive = (loginScreen && !loginScreen.classList.contains('hidden')) ||
+                                  (splashScreen && !splashScreen.classList.contains('hidden'));
+
+      if (isStandalone || isBannerDismissed || isIntroScreenActive) {
+        pwaBanner.classList.add('hidden');
+        return;
+      }
+
+      if (isIOS) {
+        if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
+        if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_ios_sub');
+        pwaBanner.classList.remove('hidden');
+      } else if (deferredInstallPrompt) {
+        if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
+        if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_sub');
+        pwaBanner.classList.remove('hidden');
+      } else {
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        if (isMobile) {
+          if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
+          if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_sub');
+          pwaBanner.classList.remove('hidden');
+        } else {
+          pwaBanner.classList.add('hidden');
+        }
+      }
+    }
+
+    const triggerInstall = async () => {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        if (choice && choice.outcome === 'accepted') {
+          if (window.UI && window.UI.toast) {
+            UI.toast(I18n.t('pwa_installed_toast'), 'success');
+          }
+          if (pwaBanner) pwaBanner.classList.add('hidden');
+        }
+        deferredInstallPrompt = null;
+        updatePwaUI();
+      } else if (isIOS) {
+        if (window.UI && window.UI.showModal) {
+          window.UI.showModal(
+            I18n.t('pwa_card_title'),
+            `<div style="text-align: start; padding: 10px 0;">
+               <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5;">${I18n.t('pwa_banner_ios_sub')}</p>
+               <ol style="margin: 0; padding-inline-start: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+                 <li>1️⃣ ${I18n.t('pwa_ios_instructions')}</li>
+               </ol>
+             </div>`
+          );
+        } else if (window.UI && window.UI.toast) {
+          UI.toast(I18n.t('pwa_ios_instructions'), 'info');
+        }
+      } else {
+        if (window.UI && window.UI.toast) {
+          UI.toast(I18n.t('pwa_card_desc'), 'info');
+        }
+      }
+    };
+
+    if (installBtn) installBtn.onclick = triggerInstall;
+    if (pwaBannerInstallBtn) pwaBannerInstallBtn.onclick = triggerInstall;
+
+    if (pwaBannerClose) {
+      pwaBannerClose.onclick = () => {
+        if (pwaBanner) pwaBanner.classList.add('hidden');
+        localStorage.setItem('pwaBannerDismissed', 'true');
+        isBannerDismissed = true;
+      };
     }
 
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -142,30 +225,15 @@ const App = (() => {
       if (window.UI && window.UI.toast) {
         UI.toast(I18n.t('pwa_installed_toast'), 'success');
       }
+      if (pwaBanner) pwaBanner.classList.add('hidden');
       updatePwaUI();
     });
 
-    if (installBtn) {
-      installBtn.onclick = async () => {
-        if (deferredInstallPrompt) {
-          deferredInstallPrompt.prompt();
-          const choice = await deferredInstallPrompt.userChoice;
-          if (choice && choice.outcome === 'accepted') {
-            if (window.UI && window.UI.toast) {
-              UI.toast(I18n.t('pwa_installed_toast'), 'success');
-            }
-          }
-          deferredInstallPrompt = null;
-          updatePwaUI();
-        } else {
-          if (window.UI && window.UI.toast) {
-            UI.toast(I18n.t('pwa_card_desc'), 'info');
-          }
-        }
-      };
-    }
-
     updatePwaUI();
+    setTimeout(updatePwaUI, 800);
+    setTimeout(updatePwaUI, 2000);
+
+    window.updatePwaBannerUI = updatePwaUI;
   }
 
   /**
@@ -257,11 +325,17 @@ const App = (() => {
         await DB.setSetting('dataVersion', currentDataVersion);
       }
 
-      // Non-blocking background pull from cloud
+      // Non-blocking background pull from cloud & silent token refresh
       const savedUrl = await DB.getSetting('cloudSyncUrl');
       const hasOAuthToken = await CloudSync.isLoggedIn();
       if (savedUrl || hasOAuthToken) {
         console.log("Pulling latest data from cloud (background)...");
+        if (CloudSync.hasValidToken && CloudSync.trySilentRefresh) {
+          const hasValid = await CloudSync.hasValidToken();
+          if (!hasValid) {
+            await CloudSync.trySilentRefresh();
+          }
+        }
         CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
       }
 
@@ -1208,6 +1282,14 @@ document.addEventListener('visibilitychange', async () => {
     }
     if (window.TodayPage && window.TodayPage.render) {
       window.TodayPage.render();
+    }
+
+    // 3. Silent token refresh if profile exists and token expired
+    if (window.CloudSync && window.CloudSync.hasValidToken && window.CloudSync.trySilentRefresh) {
+      const hasValid = await window.CloudSync.hasValidToken();
+      if (!hasValid) {
+        await window.CloudSync.trySilentRefresh();
+      }
     }
 
     const savedUrl = await DB.getSetting('cloudSyncUrl');
