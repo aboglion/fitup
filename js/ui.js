@@ -673,7 +673,7 @@ const UI = (() => {
         }, 1500);
       } else {
         if (remaining <= 3 && remaining >= 1) {
-          playBeepSound(600, 0.1);
+          playTimerSound(false);
         }
         updateTimerDisplay(remaining);
       }
@@ -709,9 +709,16 @@ const UI = (() => {
   }
 
   function playTimerSound(isFinal = false) {
-    playBeepSound(1000, 0.4);
+    if (window.Effects3D && window.Effects3D.playTimerBeep) {
+      window.Effects3D.playTimerBeep(isFinal);
+    } else {
+      playBeepSound(isFinal ? 1000 : 880, isFinal ? 0.4 : 0.08);
+    }
     if (isFinal) {
+      if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
       speakVoiceCue();
+    } else {
+      if (navigator.vibrate) navigator.vibrate(40);
     }
   }
 

@@ -1472,6 +1472,7 @@ const TodayPage = (() => {
               <div>
                 <div class="exercise-card-name" style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
                   ${ex.name}
+                  <button type="button" class="form-rule-info-btn" onclick="event.stopPropagation(); TodayPage.showFormRuleModal('${ex.name.replace(/'/g, "\\'")}')" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-primary); border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 2px;" title="${I18n.t('form_rules_title') || 'חוקי טכניקה'}">ℹ️</button>
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
                   ${!isExUnlocked ? `<span class="locked-badge">🔒 ${I18n.t('exercise_locked')}</span>` : ''}
                   ${equip ? `<span style="background: var(--bg-hover, rgba(255,255,255,0.05)); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: normal; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px;">${equip.icon} ${equip.label}</span>` : ''}
@@ -2581,6 +2582,147 @@ const TodayPage = (() => {
     bindEvents();
   }
 
+  const EXERCISE_FORM_RULES = {
+    'DB RDL': {
+      rule: 'גב ניטרלי לגמרי לאורך כל התנועה, ציר ירך (Hip Hinge) הדוק ומתיחה מבוקרת בהמסטרינג.',
+      belowTrigger: 'עגלת גב (Lumbopelvic flexion), כיפוף ברכיים מוגזם למצב סקואט, או חוסר מתיחה.'
+    },
+    'DB BULGARIAN SPLIT SQUAT': {
+      rule: 'חזה זקוף, ירידה מבוקרת (2-3 שניות) עם ברך קדמית יציבה ומרכז כובד על קדמת כף הרגל.',
+      belowTrigger: 'איבוד שיווי משקל חמור, קריסת ברך פנימה (Valgus), או עילוי עקב קדמי.'
+    },
+    'SINGLE-LEG RDL': {
+      rule: 'אגן אופקי ומקביל לרצפה, רגל אחורית מתוחה קדימה/אחורה בקו ישר.',
+      belowTrigger: 'סיבוב אגן צידי מופרז, איבוד יציבות מוחלט, או עגלת גב.'
+    },
+    'DB HIP THRUST': {
+      rule: 'כיווץ מלא ונעילה של הגלוטאוס בשיא התנועה, מבט קדימה וסנטר אסוף (Posterior tilt).',
+      belowTrigger: 'פשיטת יתר של הגב התחתון (Hyper-extension) או אי-הגעה לנעילה מלאה בשיא.'
+    },
+    'SUITCASE CARRY': {
+      rule: 'עמידה והליכה זקופה לחלוטין ללא נטייה צידית, הליכה בקצב מדוד ורגוע.',
+      belowTrigger: 'נטיית גוף צידית בולטת לעבר המשקולת או צעדים ממהרים ללא שליטה.'
+    },
+    'SINGLE-LEG CALF RAISE': {
+      rule: 'ירידה מבוקרת (2 שניות), עצירה של 1 שניה בתחתית למניעת אלסטיות, כיווץ מלא בשיא.',
+      belowTrigger: 'קפיצה/מומנטום בתחתית, או קיצור טווח העלייה על קצות האצבעות.'
+    },
+    'PALLOF PRESS': {
+      rule: 'אגן וכתפיים נעולים קדימה ללא פיתול בעת הרחקת הידיים מהחזה.',
+      belowTrigger: 'סיבוב גו, כיפוף מרפקים מוקדם, או סחף של הגומייה/כבל.'
+    },
+    'DEAD BUG': {
+      rule: 'גב תחתון דחוס וצמוד לרצפה ללא רווח לאורך כל הסט, תנועה נגדית איטית.',
+      belowTrigger: 'הקשתת גב תחתון וניתוק מהרצפה במהלך התנועה.'
+    },
+    'HOLLOW BODY HOLD': {
+      rule: 'גב תחתון שטוח לחלוטין על הרצפה, שכמות מורמות, רגליים מתוחות לפנים.',
+      belowTrigger: 'שבירת מנח הליבה והקשתת גב תחתון.'
+    },
+    'PIKE HOLD / PIKE PUSH-UP': {
+      rule: 'זווית אגן גבוהה (Pike), ראש יורד קדימה ליצירת משולש בין הראש לידיים.',
+      belowTrigger: 'נפילת מרפקים לצדדים או אובדן זווית האגן הגבוהה.'
+    },
+    'DB FLOOR PRESS': {
+      rule: 'מרפקים ב-45 מעלות לגוף, עצירה קלה ורגועה של הזרוע על הרצפה בכל חזרה.',
+      belowTrigger: 'הקפצת מרפקים מהרצפה או פתיחת מרפקים ל-90 מעלות (כתפיים).'
+    },
+    'PUSH-UP BARS PROGRESSION': {
+      rule: 'גוף ישר כפלנק קשיח, מתיחה עמוקה בתחתית ונעילה מלאה למעלה.',
+      belowTrigger: 'קריסת אגן כלפי מטה או קיצור טווח התנועה בתחתית.'
+    },
+    'SEATED DB OHP': {
+      rule: 'גב נתמך בספסל/כיסא, מסלול לחיצה מעט קדימה (Scaption plane), נעילה בטוחה.',
+      belowTrigger: 'הקשתת גב תחתון מוגזמת או זריקת משקל מוחלטת.'
+    },
+    'DB OH TRICEPS EXT': {
+      rule: 'מרפקים מצביעים קדימה ונעולים במקום, פשיטה מלאה של זרוע אחורית למעלה.',
+      belowTrigger: 'פתיחת מרפקים לצדדים או שימוש במומנטום של הגב.'
+    },
+    'DIAMOND PUSH-UP': {
+      rule: 'אגודלים ואצבעות קרובות במרכז החזה, מרפקים צמודים לגוף בירידה.',
+      belowTrigger: 'קריסת אגן או מרפקים נפתחים לצדדים.'
+    },
+    'TRX ROW': {
+      rule: 'גוף ישר כחץ, משיכה לחזה התחתון תוך כיווץ חזק של השכמות בסוף התנועה.',
+      belowTrigger: 'שבירת אגן (כיפוף ירך) או מומנטום של התנדנדות.'
+    },
+    'DB LATERAL RAISE': {
+      rule: 'עצירה קצרה בשיא בגובה הכתף, הרמה דרך הכתף הצידית ללא הנפת גו.',
+      belowTrigger: 'הנפת גב (Cheating) או הרמת המשקולת מעל גובה הכתפיים במומנטום.'
+    },
+    'TRX Y-T-W': {
+      rule: 'זרועות כמעט ישרות, תנועה מבוקרת וטהורה מהכתף האחורית והשכמות.',
+      belowTrigger: 'כיפוף מרפקים מוגזם במקום עבודת כתף אחורית.'
+    },
+    'BAND PULL-APART': {
+      rule: 'מתיחת הגומייה עד לנגיעה קלה בחזה עם שכמות אסופות מאחור.',
+      belowTrigger: 'שימוש בתנופת גב או כיפוף מרפקים.'
+    },
+    'PULL-UP PROGRESSION': {
+      rule: 'סנטר עובר בבירור את המוט בעלייה, ירידה מלאה לנעילה (Dead hang).',
+      belowTrigger: 'בעיטות רגליים (Kipping), או חצי טווח תנועה בירידה/בעלייה.'
+    },
+    'ONE-ARM DB ROW': {
+      rule: 'משיכה לכיוון המותג/אגן, שכמה נמשכת לאחור, גב מקביל ומיוצב.',
+      belowTrigger: 'סובב גו מוגזם (Torso rotation) או הנפת המשקולת עם מומנטום.'
+    },
+    'TRX FACE PULL': {
+      rule: 'משיכה לכיוון המצח עם סיבוב חיצוני של הכתף (Hands high, elbows wide).',
+      belowTrigger: 'משיכה לבטן/חזה במקום למצח, או שמיטת מרפקים.'
+    },
+    'DB CURL': {
+      rule: 'מרפקים מצמודים לצדי הגוף, כיווץ מלא בשיא ללא תנועת כתף/גב.',
+      belowTrigger: 'תנופה של הגב (Body swing) או הזזת מרפקים קדימה.'
+    },
+    'HAMMER CURL': {
+      rule: 'אחיזה ניטרלית (אגודלים למעלה), עבודה אקסצנטרית איטית ומבוקרת בהורדה.',
+      belowTrigger: 'זריקת המשקולת מומנטומטית.'
+    },
+    'TOWEL HANG': {
+      rule: 'אחיזה חזקה במגבת, כתפיים אקטיביות (Scapular engagement) ללא צניחה.',
+      belowTrigger: 'שמיטת אחיזה מוקדמת או הרפיית כתפיים סבילית.'
+    },
+    'L-SIT PROGRESSION': {
+      rule: 'דחיפה חזקה של הרצפה/מקבילים כלפי מטה, ברכיים אסופות ואגן מורם.',
+      belowTrigger: 'נגיעת עקבים/אגן ברצפה במהלך הזמן המתוכנן.'
+    }
+  };
+
+  function showFormRuleModal(exName) {
+    if (!exName) return;
+    const cleanName = exName.trim().toUpperCase();
+    const ruleObj = EXERCISE_FORM_RULES[cleanName] || EXERCISE_FORM_RULES[exName] || {
+      rule: 'שמור על טכניקה נקייה, טווח תנועה מלא ושליטה בקצב (2 שניות בהורדה).',
+      belowTrigger: 'איבוד טכניקה, אובדן קצב (Tempo Loss), או חוסר יכולת להשלים חזרה מלאה.'
+    };
+
+    const ruleText = typeof ruleObj === 'string' ? ruleObj : ruleObj.rule;
+    const belowTriggerText = typeof ruleObj === 'object' ? ruleObj.belowTrigger : 'איבוד טכניקה חמור או אובדן קצב (Tempo Loss > 2 שניות).';
+
+    UI.showModal(`ℹ️ ${exName} — ${I18n.t('form_rules_title') || 'חוקי טכניקה'}`, `
+      <div style="padding: 12px; display: flex; flex-direction: column; gap: 14px; text-align: start;">
+        <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 12px 14px;">
+          <strong style="color: var(--accent-primary); display: flex; align-items: center; gap: 6px; font-size: 14px; margin-bottom: 6px;">
+            🎯 ${I18n.t('form_rule_gold_standard') || 'תקן ביצוע זהב:'}
+          </strong>
+          <div style="font-size: 13px; color: var(--text-primary); line-height: 1.5;">${ruleText}</div>
+        </div>
+
+        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 12px 14px;">
+          <strong style="color: var(--warning); display: flex; align-items: center; gap: 6px; font-size: 14px; margin-bottom: 6px;">
+            ⚠️ ${I18n.t('form_rule_below_trigger') || 'קריטריון לסימון BELOW (⚠️):'}
+          </strong>
+          <div style="font-size: 13px; color: var(--text-primary); line-height: 1.5;">${belowTriggerText}</div>
+        </div>
+
+        <button type="button" class="btn-primary" onclick="UI.hideModal()" style="width: 100%; padding: 12px; margin-top: 6px;">
+          ${I18n.t('modal_got_it') || 'הבנתי, תודה!'}
+        </button>
+      </div>
+    `);
+  }
+
   return {
     init,
     render,
@@ -2605,6 +2747,7 @@ const TodayPage = (() => {
     showExerciseImage,
     performSwap,
     startIntervalTimer,
+    showFormRuleModal,
     getCurrentDayIndex: () => currentDayIndex,
     parseWeightDetails,
     buildWeightBadgeHTML,

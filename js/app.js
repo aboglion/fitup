@@ -35,8 +35,9 @@ const App = (() => {
           .catch(err => console.error('SW failed', err));
       }
 
-      // Initialize IndexedDB
+      // Initialize IndexedDB with self-healing v15.6 Lean schema check
       await DB.init();
+      await DB.ensureV15LeanSchema();
 
       // Initialize i18n
       if (window.I18n) {

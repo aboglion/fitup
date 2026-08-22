@@ -117,9 +117,10 @@ const CloudSync = (() => {
    */
   async function syncData(manual = false) {
     if (!navigator.onLine) {
+      await DB.setSetting('pendingSyncQueue', true);
       setStatus('offline');
       if (manual && typeof UI !== 'undefined' && UI.toast) {
-        UI.toast('אין חיבור לאינטרנט (מצב אופליין)', 'warning');
+        UI.toast('אין חיבור לאינטרנט. השינויים נשמרו מקומית ויסונכרנו אוטומטית ברגע שתתחבר! 📶', 'warning');
       }
       return { success: false, error: 'Offline' };
     }
@@ -228,6 +229,7 @@ const CloudSync = (() => {
 
       const timestamp = new Date().toISOString();
       await DB.setSetting('lastSyncDate', timestamp);
+      await DB.setSetting('pendingSyncQueue', false);
       setStatus('synced');
 
       if (manual && typeof UI !== 'undefined' && UI.toast) UI.toast('הנתונים נשמרו בהצלחה ב-Google Drive! ☁️', 'success');
@@ -397,11 +399,18 @@ const CloudSync = (() => {
     return { name: 'משתמש גוגל', email: '' };
   }
 
-  // Listener for regaining internet connection to auto-retry sync
+  // Listener for regaining internet connection to auto-retry pending sync
   window.addEventListener('online', async () => {
-    console.log('Network connection restored. Triggering cloud sync...');
-    if (await isLoggedIn()) {
-      await syncData(false);
+    console.log('Network connection restored. Processing offline sync queue...');
+    const hasPendingSync = await DB.getSetting('pendingSyncQueue');
+    if ((hasPendingSync || (await isLoggedIn())) && navigator.onLine) {
+      const res = await syncData(false);
+      if (res && res.success) {
+        await DB.setSetting('pendingSyncQueue', false);
+        if (typeof UI !== 'undefined' && UI.toast) {
+          UI.toast('התחברת לרשת! נתוני האימון האופליין סונכרנו בהצלחה ☁️✅', 'success');
+        }
+      }
     }
   });
 

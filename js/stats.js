@@ -695,8 +695,14 @@ const StatsPage = (() => {
       `;
     }
 
+    const currentWeekDays = allPlanDays.filter(d => d.week === `Week ${weekNum}`);
+    const isDeloadWeek = currentWeekDays.some(d => d.dayType && d.dayType.toLowerCase().includes('deload'));
+    const deloadBadgeHTML = isDeloadWeek 
+      ? `<span class="badge deload-week-badge" style="background: rgba(20, 184, 166, 0.2); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.4); padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">🌿 Deload Week</span>`
+      : '';
+
     const leanDashboardHTML = `
-      <div class="xp-container" style="grid-column: 1 / -1; background: var(--bg-card); padding: var(--space-lg); border-radius: var(--radius-lg); border: 1px solid rgba(59, 130, 246, 0.3); display: flex; flex-direction: column; gap: var(--space-md); margin-top: 12px;">
+      <div class="xp-container" style="grid-column: 1 / -1; background: var(--bg-card); padding: var(--space-lg); border-radius: var(--radius-lg); border: 1px solid ${isDeloadWeek ? 'rgba(20, 184, 166, 0.4)' : 'rgba(59, 130, 246, 0.3)'}; display: flex; flex-direction: column; gap: var(--space-md); margin-top: 12px;">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 22px;">⚡</span>
@@ -705,10 +711,18 @@ const StatsPage = (() => {
               <div style="font-size: 12px; color: var(--text-secondary);">Week ${weekNum} • Dynamic Progression & Adaptive Rest</div>
             </div>
           </div>
-          <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">Active v15.6</span>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            ${deloadBadgeHTML}
+            <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">Active v15.6</span>
+          </div>
         </div>
 
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+          <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid ${isDeloadWeek ? 'rgba(20, 184, 166, 0.4)' : 'var(--border-color)'}; border-radius: 8px; padding: 10px;">
+            <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">🌿 Deload Status</div>
+            <div style="font-size: 13px; font-weight: 800; color: ${isDeloadWeek ? '#2dd4bf' : '#10b981'}; margin-top: 2px;">${isDeloadWeek ? '🌿 Deload Active (-20% Vol)' : '✅ Full Training Volume'}</div>
+          </div>
+
           <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
             <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">💪 Biceps Microcycle</div>
             <div style="font-size: 13px; font-weight: 800; color: #ec4899; margin-top: 2px;">${(window.ProgressionEngine && window.ProgressionEngine.getBicepsMicrocyclePhase) ? window.ProgressionEngine.getBicepsMicrocyclePhase(weekNum).label : 'Heavy Progressive (8-10 reps)'}</div>
@@ -716,7 +730,7 @@ const StatsPage = (() => {
 
           <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
             <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">📊 Weekly Volume Target</div>
-            <div style="font-size: 13px; font-weight: 800; color: #3b82f6; margin-top: 2px;">Chest: 8 sets • Back: 10 sets</div>
+            <div style="font-size: 13px; font-weight: 800; color: #3b82f6; margin-top: 2px;">Chest: ${isDeloadWeek ? '6' : '8'} sets • Back: ${isDeloadWeek ? '8' : '10'} sets</div>
           </div>
 
           <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">

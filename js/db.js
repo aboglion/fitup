@@ -810,8 +810,75 @@ const DB = (() => {
     return put(STORES.MYO_CLUSTERS, data);
   }
 
+  /**
+   * Self-healing database migration function to ensure v15.6 Lean schema and stores exist.
+   */
+  async function ensureV15LeanSchema() {
+    if (!db) {
+      await init();
+    }
+
+    const requiredStores = Object.values(STORES);
+    const existingStores = Array.from(db.objectStoreNames);
+    const missingStores = requiredStores.filter(store => !existingStores.includes(store));
+
+    const currentSchemaVer = await getSetting('v15LeanSchemaVersion');
+    let needsPlanReload = false;
+
+    // Check if training plan is missing or empty
+    const planCount = await count(STORES.PLAN).catch(() => 0);
+    if (planCount === 0 || currentSchemaVer !== '15.6') {
+      needsPlanReload = true;
+    }
+
+    if (missingStores.length > 0) {
+      console.log(`[DB] Missing stores detected: ${missingStores.join(', ')}. Triggering auto-upgrade...`);
+      db.close();
+      const nextVer = db.version + 1;
+      await new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, nextVer);
+        req.onerror = () => reject(req.error);
+        req.onupgradeneeded = (e) => {
+          const database = e.target.result;
+          requiredStores.forEach(s => {
+            if (!database.objectStoreNames.contains(s)) {
+              if (s === STORES.PLAN) database.createObjectStore(s, { keyPath: 'dayIndex' });
+              else if (s === STORES.TRACKING) database.createObjectStore(s, { keyPath: 'dayIndex' });
+              else if (s === STORES.EXERCISES) database.createObjectStore(s, { keyPath: 'name' });
+              else if (s === STORES.SETTINGS) database.createObjectStore(s, { keyPath: 'key' });
+              else if (s === STORES.PHOTOS) database.createObjectStore(s, { keyPath: 'id' });
+              else if (s === STORES.NUTRITION) database.createObjectStore(s, { keyPath: 'date' });
+              else if (s === STORES.PROGRESSION_STATE) database.createObjectStore(s, { keyPath: 'sessionKey' });
+              else if (s === STORES.PROGRESSION_HISTORY) database.createObjectStore(s, { keyPath: 'id' });
+              else if (s === STORES.ADAPTIVE_REST) database.createObjectStore(s, { keyPath: 'exerciseName' });
+              else if (s === STORES.ARM_BLOCK_STATUS) database.createObjectStore(s, { keyPath: 'muscleArea' });
+              else if (s === STORES.ARM_BLOCK_EXPOSURE) database.createObjectStore(s, { keyPath: 'id' });
+              else if (s === STORES.LEAN_SESSION) database.createObjectStore(s, { keyPath: 'dayIndex' });
+              else if (s === STORES.MYO_CLUSTERS) database.createObjectStore(s, { keyPath: 'id' });
+              else database.createObjectStore(s);
+            }
+          });
+        };
+        req.onsuccess = (e) => {
+          db = e.target.result;
+          resolve();
+        };
+      });
+    }
+
+    if (needsPlanReload && window.TRAINING_DATA) {
+      await loadTrainingPlan();
+      await setSetting('v15LeanSchemaVersion', '15.6');
+      return { migrated: true, version: '15.6' };
+    }
+
+    await setSetting('v15LeanSchemaVersion', '15.6');
+    return { migrated: false, version: '15.6' };
+  }
+
   return {
     init,
+    ensureV15LeanSchema,
     loadTrainingPlan,
     getDayPlan,
     getDayTracking,
