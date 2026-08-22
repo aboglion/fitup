@@ -339,12 +339,46 @@ const UI = (() => {
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes('chin-up') || lowerTitle.includes('pull-up')) {
       extraNote = `
-        <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 12px;">
+        <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 4px;">
           <p style="font-size: 13px; margin-bottom: 6px; color: var(--text-primary);"><strong>${I18n.t('grip_tip_title')}</strong></p>
           <ul style="font-size: 12px; color: var(--text-secondary); padding-inline-start: 18px; margin: 0; line-height: 1.5;">
             <li style="margin-bottom: 4px;"><strong>Chin-up:</strong> ${I18n.t('grip_chin')}</li>
             <li><strong>Pull-up:</strong> ${I18n.t('grip_pull')}</li>
           </ul>
+        </div>
+      `;
+    }
+
+    const cleanTitle = (title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const exData = (window.TRAINING_DATA?.exercises || []).find(e => {
+      const eClean = (e.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const idClean = (e.id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      return eClean === cleanTitle || idClean === cleanTitle || eClean.includes(cleanTitle) || cleanTitle.includes(eClean);
+    });
+
+    let metadataHTML = '';
+    if (exData) {
+      const restText = exData.restRange ? `${exData.restRange[0]}-${exData.restRange[1]} שניות` : (exData.restSeconds ? `${exData.restSeconds} שניות` : null);
+      const repText = (exData.windowMin && exData.windowMax) ? `${exData.windowMin}-${exData.windowMax} חזרות` : null;
+      const weightText = exData.startingWeight != null ? `${exData.startingWeight} ק״ג (${exData.loadType || 'לכל צד'}) [מינ׳ ${exData.minWeight || 3}ק״ג | מקס׳ ${exData.maxWeight || 24}ק״ג]` : null;
+
+      metadataHTML = `
+        <div style="background: var(--bg-hover, rgba(255,255,255,0.05)); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light, rgba(255,255,255,0.1)); display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 13px; font-weight: 800; color: var(--accent-primary, #3b82f6); display: flex; align-items: center; gap: 6px;">
+            <span>📋</span> <span>מפרט ופרוטוקול ביצוע ("Zero Decisions")</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; font-size: 12px;">
+            ${exData.tempo ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">⏱️ <b>טמפו:</b> ${exData.tempo}</div>` : ''}
+            ${restText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">⏳ <b>מנוחה:</b> ${restText}</div>` : ''}
+            ${repText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">🎯 <b>חלון חזרות:</b> ${repText}</div>` : ''}
+            ${exData.structure ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">🏗️ <b>מבנה:</b> ${exData.structure}</div>` : ''}
+            ${weightText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px; grid-column: 1/-1;">⚖️ <b>משקל התחלתי:</b> ${weightText}</div>` : ''}
+          </div>
+          ${exData.rule ? `
+            <div style="margin-top: 4px; padding: 8px 10px; background: rgba(245, 158, 11, 0.12); border-right: 3px solid #f59e0b; border-radius: 6px; font-size: 12px; color: var(--text-primary);">
+              <b>⚠️ כלל טכניקה / Mechanical Stop:</b> ${exData.rule}
+            </div>
+          ` : ''}
         </div>
       `;
     }
@@ -411,6 +445,7 @@ const UI = (() => {
     showModal(modalTitleHTML, `
       <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
         ${mediaHTML}
+        ${metadataHTML}
         ${extraNote}
       </div>
     `);

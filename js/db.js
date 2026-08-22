@@ -835,7 +835,7 @@ const DB = (() => {
 
     // Check if training plan is missing or empty
     const planCount = await count(STORES.PLAN).catch(() => 0);
-    if (planCount === 0 || currentSchemaVer !== '15.6') {
+    if (planCount === 0 || currentSchemaVer !== '15.6.1') {
       needsPlanReload = true;
     }
 
@@ -876,12 +876,12 @@ const DB = (() => {
 
     if (needsPlanReload && window.TRAINING_DATA) {
       await loadTrainingPlan();
-      await setSetting('v15LeanSchemaVersion', '15.6');
-      return { migrated: true, version: '15.6' };
+      await setSetting('v15LeanSchemaVersion', '15.6.1');
+      return { migrated: true, version: '15.6.1' };
     }
 
-    await setSetting('v15LeanSchemaVersion', '15.6');
-    return { migrated: false, version: '15.6' };
+    await setSetting('v15LeanSchemaVersion', '15.6.1');
+    return { migrated: false, version: '15.6.1' };
   }
 
   return {

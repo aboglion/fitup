@@ -611,7 +611,7 @@ EXERCISES_CATALOG = [
 
 def make_ex_obj(slot, ex_id, name, sets_str, rep_window=None, weight=None, tempo=None, rest=90, is_warmup=False,
                 structure="straight", pair_id=None, circuit_id=None, block_id=None, block_order=None,
-                circuit_order=None, toggle_group=None, toggle_active_on=None, microcycle=None):
+                circuit_order=None, toggle_group=None, toggle_active_on=None, microcycle=None, arm_block=False):
     return {
         "slot": slot,
         "id": ex_id,
@@ -631,7 +631,8 @@ def make_ex_obj(slot, ex_id, name, sets_str, rep_window=None, weight=None, tempo
         "circuitOrder": circuit_order,
         "toggleGroup": toggle_group,
         "toggleActiveOn": toggle_active_on,
-        "microcycle": microcycle
+        "microcycle": microcycle,
+        "armBlock": arm_block or ex_id.startswith("arm-block")
     }
 
 def get_leg_warmup():
@@ -817,6 +818,7 @@ def generate_program():
             date = START_DATE + timedelta(days=day_num - 1)
             day_type, rpe, exercises = generate_day_exercises(dow, week)
 
+            is_deload = week in DELOAD_WEEKS
             daily.append({
                 "dayNum": day_num,
                 "week": f"Week {week}",
@@ -824,6 +826,7 @@ def generate_program():
                 "date": date.strftime("%d/%m/%Y"),
                 "dayType": day_type,
                 "plannedRPE": rpe,
+                "isDeload": is_deload,
                 "exercises": exercises
             })
 

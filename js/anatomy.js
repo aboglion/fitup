@@ -229,20 +229,20 @@ const AnatomyMap = (() => {
    */
   async function showMuscleDetails(muscleKey, muscleName, pct) {
     const muscleExerciseMap = {
-      chest: ['DB Floor Press', 'Push-Up', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Single-Arm Floor Press', 'Weighted Deficit Push-Up', 'Diamond Push-Up', 'Push-Up Volume'],
-      shoulders: ['Seated DB OHP', 'Pike Push-Up', 'DB Lateral Raise', 'TRX Face Pull', 'TRX Face Pull (Angle 1)', 'TRX Face Pull (Angle 2)', 'TRX Face Pull (Angle 3)', 'Single-Arm Seated OHP', 'Arm Block - DB Lateral Raise'],
-      triceps: ['DB OH Triceps Ext', 'Arm Block - DB OH Triceps Ext', 'DB Floor Press', 'Push-Up', 'Diamond Push-Up'],
-      biceps: ['DB Curl', 'DB Hammer Curl', 'Arm Block - DB Curl', 'Single-Arm Curl', 'Pull-Up', 'Chin-Up', 'One-Arm DB Row', 'TRX Row'],
+      chest: ['DB Floor Press', 'Push-up Bars Progression', 'Push-Up Volume (Day 5)', 'Push-Up', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Single-Arm Floor Press', 'Weighted Deficit Push-Up', 'Diamond Push-Up', 'Scapular Push-up'],
+      shoulders: ['Seated DB Overhead Press', 'Pike Progression', 'DB Lateral Raise', 'TRX Y-T-W', 'TRX Face Pull', 'Band Pull-Apart', 'Single-Arm Seated OHP', 'Arm Block - DB Lateral Raise', 'Scapular Push-up'],
+      triceps: ['DB Overhead Triceps Extension', 'Arm Block - DB Overhead Triceps Ext', 'DB Floor Press', 'Push-up Bars Progression', 'Single-Arm Floor Press', 'Diamond Push-Up'],
+      biceps: ['DB Curl', 'Hammer Curl', 'Arm Block - DB Curl', 'Single-Arm Curl', 'Pull-Up Progression', 'Chin-Up Progression', 'One-Arm DB Row', 'TRX Row'],
       forearms: ['Towel Hang', 'Suitcase Carry', 'Dead Hang', 'One-Arm DB Row', 'TRX Row'],
-      lats: ['Pull-Up', 'Chin-Up', 'Weighted Pull-Up', 'Weighted Chin-Up', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row'],
-      traps: ['TRX Face Pull', 'TRX Face Pull (Angle 1)', 'TRX Face Pull (Angle 2)', 'TRX Face Pull (Angle 3)', 'TRX Y-T-W', 'Band Pull-Apart', 'One-Arm DB Row', 'TRX Row'],
-      quads: ['DB Bulgarian Split Squat', 'DB BSS', 'DB BSS (Goblet)', 'Reverse Lunge + DB', 'Walking Lunge (Goblet)', 'Pistol Squat to Chair', 'Bodyweight Squat'],
-      hamstrings: ['DB RDL', 'DB Single-Leg RDL', 'Glute Bridge', 'DB Glute Bridge', 'DB Hip Thrust'],
-      glutes: ['DB Hip Thrust', 'DB Glute Bridge', 'DB Bulgarian Split Squat', 'DB BSS', 'DB Single-Leg RDL'],
-      calves: ['Single-Leg Calf Raise', 'Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4'],
-      core: ['Dead Bug', 'Hollow Body Hold', 'L-sit Tuck', 'Suitcase Carry', 'Pallof Press'],
-      obliques: ['Suitcase Carry', 'Pallof Press', 'Dead Bug'],
-      lowerBack: ['DB RDL', 'DB Single-Leg RDL', 'DB Hip Thrust', 'Suitcase Carry']
+      lats: ['Pull-Up Progression', 'Chin-Up Progression', 'Weighted Pull-Up', 'Weighted Chin-Up', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row', 'Scapular Pull-up'],
+      traps: ['TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'One-Arm DB Row', 'TRX Row', 'Scapular Pull-up'],
+      quads: ['DB Bulgarian Split Squat', 'Reverse Lunge + DB', 'Pistol Squat Progression', 'Bodyweight Squat', 'DB BSS (Goblet)', 'Walking Lunge (Goblet)'],
+      hamstrings: ['DB Romanian Deadlift', 'Single-Leg RDL', 'Glute Bridge', 'DB Hip Thrust'],
+      glutes: ['DB Hip Thrust', 'DB Glute Bridge', 'DB Bulgarian Split Squat', 'Single-Leg RDL', 'Reverse Lunge + DB'],
+      calves: ['Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise', 'Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4'],
+      core: ['Dead Bug', 'Hollow Body Hold', 'L-sit Tuck (Bars)', 'Suitcase Carry', 'Pallof Press Progression'],
+      obliques: ['Suitcase Carry', 'Pallof Press Progression', 'Dead Bug'],
+      lowerBack: ['DB Romanian Deadlift', 'Single-Leg RDL', 'DB Hip Thrust', 'Suitcase Carry']
     };
 
     const exerciseNames = muscleExerciseMap[muscleKey] || [I18n.t('anatomy_only_exercises')];
@@ -261,14 +261,21 @@ const AnatomyMap = (() => {
       console.warn('Could not load exercise stats:', e);
     }
 
+    const cleanStr = str => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
     const exercises = exerciseNames.map(exName => {
       let totalAppeared = 0;
       let completedCount = 0;
+      const targetClean = cleanStr(exName);
 
       if (allPlanDays && allPlanDays.length > 0) {
         allPlanDays.forEach(day => {
           if (day.exercises && Array.isArray(day.exercises)) {
-            const hasEx = day.exercises.some(e => e.name && e.name.toLowerCase().includes(exName.toLowerCase()));
+            const hasEx = day.exercises.some(e => {
+              const nameClean = cleanStr(e.name);
+              const idClean = cleanStr(e.id);
+              return nameClean.includes(targetClean) || targetClean.includes(nameClean) || (idClean && idClean === targetClean);
+            });
             if (hasEx) {
               totalAppeared++;
               if (trackingMap[day.dayIndex] && trackingMap[day.dayIndex].completed) {

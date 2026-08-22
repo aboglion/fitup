@@ -139,14 +139,14 @@ const ExercisesPage = (() => {
           { name: 'DB Bulgarian Split Squat', unlockWeek: 1, parentId: 'squat-1', id: 'squat-2' },
           { name: 'Reverse Lunge + DB', unlockWeek: 18, parentId: 'squat-2', id: 'squat-3' },
           { name: 'DB BSS (Goblet)', unlockWeek: 34, parentId: 'squat-2', id: 'squat-3b' },
-          { name: 'Pistol Squat to Chair', unlockWeek: 42, parentId: 'squat-3b', id: 'squat-4' },
+          { name: 'Pistol Squat Progression', unlockWeek: 42, parentId: 'squat-3b', id: 'squat-4' },
           { name: 'Walking Lunge (Goblet)', unlockWeek: 62, parentId: 'squat-4', id: 'squat-5' }
         ]
       },
       {
         title: 'hamstring_chain', icon: '🦵', exercises: [
-          { name: 'DB RDL', unlockWeek: 1, id: 'rdl-1' },
-          { name: 'DB Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2' }
+          { name: 'DB Romanian Deadlift', unlockWeek: 1, id: 'rdl-1' },
+          { name: 'Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2' }
         ]
       },
       {
@@ -154,9 +154,8 @@ const ExercisesPage = (() => {
           { name: 'Glute Bridge', unlockWeek: 1, id: 'glute-1' },
           { name: 'DB Glute Bridge', unlockWeek: 1, parentId: 'glute-1', id: 'glute-2' },
           { name: 'DB Hip Thrust', unlockWeek: 5, parentId: 'glute-2', id: 'glute-3' },
-          { name: 'Single-Leg Calf Raise', unlockWeek: 1, id: 'calf-1' },
-          { name: 'Standing Single-Leg Calf Raise', unlockWeek: 1, parentId: 'calf-1', id: 'calf-2a' },
-          { name: 'Seated Single-Leg Calf Raise', unlockWeek: 1, parentId: 'calf-1', id: 'calf-2b' }
+          { name: 'Standing Single-Leg Calf Raise', unlockWeek: 1, id: 'calf-1' },
+          { name: 'Seated Single-Leg Calf Raise', unlockWeek: 1, parentId: 'calf-1', id: 'calf-2' }
         ]
       },
       {
@@ -164,7 +163,7 @@ const ExercisesPage = (() => {
           { name: 'Dead Bug', unlockWeek: 1, id: 'core-1' },
           { name: 'Hollow Body Hold', unlockWeek: 5, parentId: 'core-1', id: 'core-2' },
           { name: 'Suitcase Carry', unlockWeek: 1, id: 'carry-1' },
-          { name: 'Pallof Press', unlockWeek: 10, parentId: 'carry-1', id: 'carry-2' }
+          { name: 'Pallof Press Progression', unlockWeek: 10, parentId: 'carry-1', id: 'carry-2' }
         ]
       }
     ],
@@ -179,8 +178,9 @@ const ExercisesPage = (() => {
       },
       {
         title: 'push_tree', icon: '💥', exercises: [
-          { name: 'Push-up', unlockWeek: 1, id: 'push-1' },
+          { name: 'Push-up Bars Progression', unlockWeek: 1, id: 'push-1' },
           { name: 'DB Floor Press', unlockWeek: 1, id: 'floor-1' },
+          { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol' },
           { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'push-1c' },
           { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a' },
           { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b' },
@@ -191,8 +191,8 @@ const ExercisesPage = (() => {
       },
       {
         title: 'overhead_skill', icon: '🎯', exercises: [
-          { name: 'Pike Hold', unlockWeek: 1, id: 'pike-1' },
-          { name: 'Seated DB OHP', unlockWeek: 1, id: 'ohp-1' },
+          { name: 'Pike Progression', unlockWeek: 1, id: 'pike-1' },
+          { name: 'Seated DB Overhead Press', unlockWeek: 1, id: 'ohp-1' },
           { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2' },
           { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3' },
           { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4' },
@@ -203,10 +203,10 @@ const ExercisesPage = (() => {
       {
         title: 'accessory_prehab', icon: '🩹', exercises: [
           { name: 'DB Lateral Raise', unlockWeek: 1, id: 'lat-1' },
-          { name: 'DB OH Triceps Ext', unlockWeek: 1, id: 'tri-1' },
+          { name: 'DB Overhead Triceps Extension', unlockWeek: 1, id: 'tri-1' },
           { name: 'TRX Y-T-W', unlockWeek: 1 },
           { name: 'Arm Block - DB Lateral Raise', unlockWeek: 10, parentId: 'lat-1', id: 'lat-2' },
-          { name: 'Arm Block - DB OH Triceps Ext', unlockWeek: 10, parentId: 'tri-1', id: 'tri-2' }
+          { name: 'Arm Block - DB Overhead Triceps Ext', unlockWeek: 10, parentId: 'tri-1', id: 'tri-2' }
         ]
       }
     ],
@@ -220,8 +220,8 @@ const ExercisesPage = (() => {
       },
       {
         title: 'pullup_tree', icon: '🧗', exercises: [
-          { name: 'Pull-Up Negative', unlockWeek: 1, id: 'pull-1' },
-          { name: 'Chin-Up Negative', unlockWeek: 5, parentId: 'pull-1', id: 'pull-1b' },
+          { name: 'Pull-Up Progression', unlockWeek: 1, id: 'pull-1' },
+          { name: 'Chin-Up Progression', unlockWeek: 5, parentId: 'pull-1', id: 'pull-1b' },
           { name: 'Pull-Up (Overhand)', unlockWeek: 10, parentId: 'pull-1', id: 'pull-2a' },
           { name: 'Chin-Up', unlockWeek: 10, parentId: 'pull-1b', id: 'pull-2b' },
           { name: 'Weighted Pull-Up', unlockWeek: 62, parentId: 'pull-2a', id: 'pull-3a' },
@@ -239,7 +239,7 @@ const ExercisesPage = (() => {
       {
         title: 'biceps_grip', icon: '✊', exercises: [
           { name: 'DB Curl', unlockWeek: 1, id: 'curl-1' },
-          { name: 'DB Hammer Curl', unlockWeek: 5, parentId: 'curl-1', id: 'curl-2' },
+          { name: 'Hammer Curl', unlockWeek: 5, parentId: 'curl-1', id: 'curl-2' },
           { name: 'Arm Block - DB Curl', unlockWeek: 10, parentId: 'curl-1', id: 'curl-2b' },
           { name: 'Single-Arm Curl', unlockWeek: 49, parentId: 'curl-2', id: 'curl-3' },
           { name: 'Towel Hang', unlockWeek: 1, id: 'towel-1' }
