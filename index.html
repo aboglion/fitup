@@ -159,7 +159,7 @@
         </button>
 
         <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
-          <button id="open-daily-briefing-btn" onclick="TodayPage.openDailyBriefing(false)" style="padding: 6px 12px; font-size: 12px; font-weight: 800; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.15)); color: var(--accent-primary); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+          <button id="open-daily-briefing-btn" onclick="if(window.TodayPage && window.TodayPage.openDailyBriefing){window.TodayPage.openDailyBriefing(true);}else if(window.checkAndShowDailyBriefing){window.checkAndShowDailyBriefing(true, true);}" style="padding: 6px 12px; font-size: 12px; font-weight: 800; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.15)); color: var(--accent-primary); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
             <span data-i18n="daily_briefing_btn">🤖 Daily AI Briefing</span>
           </button>
         </div>
@@ -772,28 +772,28 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script src="js/data.js?v=135"></script>
-  <script src="js/preloader.js?v=135"></script>
-  <script src="js/i18n.js?v=135"></script>
-  <script src="js/effects3d.js?v=135"></script>
-  <script src="js/ui.js?v=135"></script>
-  <script src="js/db.js?v=135"></script>
-  <script src="js/progression.js?v=135"></script>
-  <script src="js/crypto.js?v=135"></script>
-  <script src="js/config.js?v=135"></script>
-  <script src="js/cloud-sync.js?v=135"></script>
-  <script src="js/google-fit.js?v=135"></script>
-  <script src="js/notifications.js?v=135"></script>
-  <script src="js/gemini.js?v=135"></script>
-  <script src="js/set-logger.js?v=135"></script>
-  <script src="js/rest-timer.js?v=135"></script>
-  <script src="js/workout-summary.js?v=135"></script>
-  <script src="js/today.js?v=135"></script>
-  <script src="js/calendar.js?v=135"></script>
-  <script src="js/exercises.js?v=135"></script>
-  <script src="js/anatomy.js?v=135"></script>
-  <script src="js/stats.js?v=135"></script>
-  <script src="js/export-guide.js?v=135"></script>
-  <script src="js/app.js?v=135"></script>
+  <script src="js/data.js?v=136"></script>
+  <script src="js/preloader.js?v=136"></script>
+  <script src="js/i18n.js?v=136"></script>
+  <script src="js/effects3d.js?v=136"></script>
+  <script src="js/ui.js?v=136"></script>
+  <script src="js/db.js?v=136"></script>
+  <script src="js/progression.js?v=136"></script>
+  <script src="js/crypto.js?v=136"></script>
+  <script src="js/config.js?v=136"></script>
+  <script src="js/cloud-sync.js?v=136"></script>
+  <script src="js/google-fit.js?v=136"></script>
+  <script src="js/notifications.js?v=136"></script>
+  <script src="js/gemini.js?v=136"></script>
+  <script src="js/set-logger.js?v=136"></script>
+  <script src="js/rest-timer.js?v=136"></script>
+  <script src="js/workout-summary.js?v=136"></script>
+  <script src="js/today.js?v=136"></script>
+  <script src="js/calendar.js?v=136"></script>
+  <script src="js/exercises.js?v=136"></script>
+  <script src="js/anatomy.js?v=136"></script>
+  <script src="js/stats.js?v=136"></script>
+  <script src="js/export-guide.js?v=136"></script>
+  <script src="js/app.js?v=136"></script>
 </body>
 </html>

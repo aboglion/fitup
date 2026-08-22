@@ -127,40 +127,44 @@ const TodayPage = (() => {
    * Check and auto-display once-per-day AI Smart Daily Briefing modal (or manual trigger)
    */
   async function checkAndShowDailyBriefing(forceOpen = false, forceRefresh = false) {
-    const modal = document.getElementById('daily-briefing-modal');
-    const content = document.getElementById('daily-briefing-content');
-    const closeBtn = document.getElementById('close-daily-briefing-btn');
-    const closeX = document.getElementById('close-daily-briefing-x');
-    if (!modal || !content) return;
+    try {
+      const modal = document.getElementById('daily-briefing-modal');
+      const content = document.getElementById('daily-briefing-content');
+      const closeBtn = document.getElementById('close-daily-briefing-btn');
+      const closeX = document.getElementById('close-daily-briefing-x');
+      if (!modal || !content) return;
 
-    const todayStr = UI.getLocalDateString();
-    const lastSeenDate = localStorage.getItem('fitup_last_daily_briefing_date');
+      const todayStr = (typeof UI !== 'undefined' && UI.getLocalDateString) ? UI.getLocalDateString() : new Date().toISOString().split('T')[0];
+      const lastSeenDate = localStorage.getItem('fitup_last_daily_briefing_date');
 
-    // Bind close handlers once
-    if (!modal.hasAttribute('data-bound')) {
-      modal.setAttribute('data-bound', 'true');
-      const hideModal = () => { modal.style.display = 'none'; };
+      const hideModal = () => {
+        modal.style.display = 'none';
+        modal.classList.add('hidden');
+        modal.classList.remove('active');
+      };
       if (closeBtn) closeBtn.onclick = hideModal;
       if (closeX) closeX.onclick = hideModal;
       modal.onclick = (e) => { if (e.target === modal) hideModal(); };
-    }
 
-    if (!forceOpen && lastSeenDate === todayStr) {
-      return; // Already auto-shown today
-    }
+      if (!forceOpen && lastSeenDate === todayStr) {
+        return; // Already auto-shown today
+      }
 
-    modal.style.display = 'flex';
-    localStorage.setItem('fitup_last_daily_briefing_date', todayStr);
+      modal.style.setProperty('display', 'flex', 'important');
+      modal.style.zIndex = '100000';
+      modal.classList.remove('hidden');
+      modal.classList.add('active');
+      localStorage.setItem('fitup_last_daily_briefing_date', todayStr);
 
-    const cacheKey = `fitup_briefing_cache_${todayStr}`;
-    const cachedBriefing = localStorage.getItem(cacheKey);
+      const cacheKey = `fitup_briefing_cache_${todayStr}`;
+      const cachedBriefing = localStorage.getItem(cacheKey);
 
-    if (cachedBriefing && !forceRefresh && !cachedBriefing.includes('briefing_loading') && cachedBriefing.length > 50) {
-      content.innerHTML = cachedBriefing;
-      return;
-    }
+      if (cachedBriefing && !forceRefresh && !cachedBriefing.includes('briefing_loading') && cachedBriefing.length > 50) {
+        content.innerHTML = cachedBriefing;
+        return;
+      }
 
-    content.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">${I18n.t('briefing_loading')}</div>`;
+      content.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">${(typeof I18n !== 'undefined' && I18n.t('briefing_loading')) || 'Generating today\'s AI tactical briefing...'}</div>`;
 
     // Gather History Context
     let allTracking = [];
@@ -280,7 +284,9 @@ const TodayPage = (() => {
     `;
     content.innerHTML = fallbackHtml;
     localStorage.setItem(cacheKey, fallbackHtml);
-    localStorage.setItem(cacheKey, fallbackHtml);
+    } catch (err) {
+      console.error('checkAndShowDailyBriefing error:', err);
+    }
   }
 
   /**
