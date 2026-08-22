@@ -16,10 +16,81 @@ const ExercisesPage = (() => {
     { id: 'cardio', label: 'Cardio', subtitleKey: 'cat_cardio_sub', icon: '<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 1.2em; height: 1.2em;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>', color: '#10b981', bgColor: 'rgba(16, 185, 129, 0.15)', dayTypes: ['Active Recovery'] }
   ];
 
-  // Band weight progression tiers (exercise name → sorted tiers)
-  const BAND_WEIGHT_PROGRESSION = {
+  // Exercise weight progression tiers (exercise name → sorted weight tiers)
+  const EXERCISE_WEIGHT_PROGRESSION = {
+    // Resistance Bands
     'Seated Band Row': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 13 }],
-    'Band Pull-Apart': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 9 }]
+    'Band Pull-Apart': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 9 }],
+    'Pallof Press': [{ weight: '30 kg', fromWeek: 10 }, { weight: '40 kg', fromWeek: 34 }],
+
+    // Dumbbell Lower Body
+    'DB Bulgarian Split Squat': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '3 kg', fromWeek: 5 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 26 }],
+    'Reverse Lunge + DB': [{ weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }],
+    'DB BSS (Goblet)': [{ weight: '15 kg', fromWeek: 34 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 62 }],
+    'Walking Lunge (Goblet)': [{ weight: '18 kg', fromWeek: 62 }],
+    'DB RDL': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }],
+    'DB Single-Leg RDL': [{ weight: '12 kg', fromWeek: 18 }, { weight: '15 kg', fromWeek: 26 }, { weight: '18 kg', fromWeek: 42 }, { weight: '21 kg', fromWeek: 50 }, { weight: '24 kg', fromWeek: 53 }],
+    'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }],
+    'DB Hip Thrust': [{ weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
+    'Single-Leg Calf Raise': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 18 }, { weight: '15 kg', fromWeek: 34 }, { weight: '18 kg', fromWeek: 42 }, { weight: '21 kg', fromWeek: 50 }, { weight: '24 kg', fromWeek: 58 }],
+    'Suitcase Carry': [{ weight: '12 kg', fromWeek: 1 }, { weight: '15 kg', fromWeek: 5 }, { weight: '18 kg', fromWeek: 18 }, { weight: '21 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 53 }],
+
+    // Dumbbell Upper Body - Push
+    'DB Floor Press': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }],
+    'Single-Arm Floor Press': [{ weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 42 }],
+    'Seated DB OHP': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 5 }, { weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }],
+    'Single-Arm Seated OHP': [{ weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 62 }],
+    'DB Lateral Raise': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 42 }, { weight: '9 kg', fromWeek: 53 }],
+    'DB OH Triceps Ext': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 34 }, { weight: '15 kg', fromWeek: 50 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 66 }],
+    'Arm Block - DB Lateral Raise': [{ weight: '3-9 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 74 }],
+    'Arm Block - DB OH Triceps Ext': [{ weight: '6-15 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 74 }],
+
+    // Dumbbell Upper Body - Pull & Biceps
+    'One-Arm DB Row': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 26 }, { weight: '18 kg', fromWeek: 34 }, { weight: '21 kg', fromWeek: 42 }, { weight: '24 kg', fromWeek: 53 }],
+    'DB Curl': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 34 }, { weight: '12 kg', fromWeek: 58 }],
+    'DB Hammer Curl': [{ weight: '6 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 53 }],
+    'Arm Block - DB Curl': [{ weight: '3-12 kg', fromWeek: 10 }, { weight: '18 kg', fromWeek: 74 }],
+    'Single-Arm Curl': [{ weight: '15 kg', fromWeek: 62 }, { weight: '18 kg', fromWeek: 66 }],
+
+    // Weighted Bodyweight
+    'Weighted Deficit Push-Up': [{ weight: '+5 kg', fromWeek: 62 }],
+    'Weighted Pull-Up': [{ weight: '+5 kg', fromWeek: 62 }],
+    'Weighted Chin-Up': [{ weight: '+5 kg', fromWeek: 66 }]
+  };
+
+  /**
+   * Helper to retrieve weight tiers for any exercise (using map or dynamic plan extraction)
+   */
+  const getWeightTiers = (name) => {
+    if (EXERCISE_WEIGHT_PROGRESSION[name]) {
+      return EXERCISE_WEIGHT_PROGRESSION[name];
+    }
+    const plan = window.TRAINING_DATA?.daily;
+    if (!plan || !Array.isArray(plan)) return null;
+
+    const weekMap = new Map();
+    plan.forEach(d => {
+      const weekNum = typeof d.week === 'number' ? d.week : parseInt(String(d.week).replace(/\D/g, '')) || 1;
+      const isDeload = d.dayType && String(d.dayType).includes('Deload');
+      (d.exercises || []).forEach(e => {
+        if (e.name === name && e.weight && !e.isWarmup && !isDeload) {
+          if (!weekMap.has(weekNum)) {
+            weekMap.set(weekNum, e.weight);
+          }
+        }
+      });
+    });
+
+    const tiers = [];
+    let lastWeight = null;
+    Array.from(weekMap.entries()).sort((a, b) => a[0] - b[0]).forEach(([w, weight]) => {
+      if (weight !== lastWeight) {
+        tiers.push({ weight, fromWeek: w });
+        lastWeight = weight;
+      }
+    });
+
+    return tiers.length > 0 ? tiers : null;
   };
 
   const SKILL_TREES = {
@@ -569,9 +640,12 @@ const ExercisesPage = (() => {
                   ${equip && equip.label !== I18n.t('equip_bodyweight') ? `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; unicode-bidi: isolate; max-width: 100%; white-space: normal; word-break: break-word;">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
                 ${(() => {
-                  const tiers = BAND_WEIGHT_PROGRESSION[node.name];
+                  const tiers = getWeightTiers(node.name);
                   if (!tiers || tiers.length === 0) return '';
-                  const wClass = (w) => 'evo-w' + parseInt(w);
+                  const wClass = (w) => {
+                    const num = String(w || '').match(/\d+/);
+                    return num ? 'evo-w' + num[0] : '';
+                  };
                   if (tiers.length === 1) {
                     const t = tiers[0];
                     const tierActive = currentWeek >= t.fromWeek;
@@ -828,7 +902,10 @@ const ExercisesPage = (() => {
     render,
     setFilter,
     showExerciseDetails,
-    switchTab
+    switchTab,
+    BAND_WEIGHT_PROGRESSION: EXERCISE_WEIGHT_PROGRESSION,
+    EXERCISE_WEIGHT_PROGRESSION,
+    getWeightTiers
   };
 })();
 

@@ -208,7 +208,8 @@ const I18n = (() => {
       celebration_exercises: "Exercises",
       celebration_sets: "Sets",
       celebration_reps_total: "Total Reps",
-      celebration_continue: "🏆 Excellent! Continue",
+      celebration_continue: "🏆 Finish Workout & Close",
+      workout_completed_today_banner: "Today's workout completed! 💪 Time to rest & recover",
       celebration_backup: "📤 Back up your data now",
 
       // Equipment banner
@@ -405,6 +406,7 @@ const I18n = (() => {
       view_only_mode_banner: "👁️ Preview Mode: This is not today's active workout.",
       must_complete_prev_exercise: "⚠️ Must complete exercise #{num} ({name}) first!",
       must_complete_prev_set: "⚠️ Must complete Set #{num} first!",
+      complete_sets_individually: "⚠️ For exercises with multiple sets, complete each set individually!",
       exercise_locked: "Locked",
       vo2_timer_btn: "⏱️ 4×4 Timer",
       sets_changed_title: "Sets/reps changed!",
@@ -740,7 +742,15 @@ const I18n = (() => {
       clear_set_status: "Reset Set Rating",
       mark_set_complete: "Rate Performance",
       how_was_it: "✓ Log Set",
-      planned_target: "🎯 Planned Target:"
+      planned_target: "🎯 Planned Target:",
+      effects3d_card_title: "✨ 3D Animations & Audio Feedback",
+      effects3d_card_desc: "Enable 3D visual particle animations and audio synthesizer feedback on set & exercise completion.",
+      toggle_sound_enabled: "Sound Feedback: Enabled",
+      toggle_effects3d_enabled: "3D Animations: Enabled",
+      sound_enabled: "Sound Feedback: Enabled 🔊",
+      sound_disabled: "Sound Feedback: Disabled 🔇",
+      effects3d_enabled: "3D Animations: Enabled ✨",
+      effects3d_disabled: "3D Animations: Disabled 🚫"
     },
     he: {
       // App & Nav
@@ -934,7 +944,8 @@ const I18n = (() => {
       celebration_exercises: "תרגילים",
       celebration_sets: "סטים",
       celebration_reps_total: "חזרות בסה\"כ",
-      celebration_continue: "🏆 מעולה! המשך הלאה",
+      celebration_continue: "🏆 סיום אימון וסגירה",
+      workout_completed_today_banner: "אימון היום הושלם בהצלחה! 💪 התאוששות ומנוחה נעימה",
       celebration_backup: "📤 גבה את הנתונים כעת",
 
       equip_banner_title: "סקירת אימון ודרישות",
@@ -1108,6 +1119,7 @@ const I18n = (() => {
       view_only_mode_banner: "👁️ מצב צפייה בלבד: אימון זה אינו אימון היום הפעיל.",
       must_complete_prev_exercise: "⚠️ יש להשלים את תרגיל #{num} ({name}) תחילה!",
       must_complete_prev_set: "⚠️ יש להשלים את סט #{num} תחילה!",
+      complete_sets_individually: "⚠️ בתרגיל עם מספר סטים, יש לסמן כל סט בנפרד!",
       exercise_locked: "נעול",
       vo2_timer_btn: "⏱️ טיימר 4×4",
       sets_changed_title: "שינוי בסטים/חזרות!",
@@ -1420,7 +1432,15 @@ const I18n = (() => {
       clear_set_status: "איפוס דירוג סט",
       mark_set_complete: "הערכת ביצוע",
       how_was_it: "✓ סימון ביצוע",
-      planned_target: "🎯 יעד מתוכנן:"
+      planned_target: "🎯 יעד מתוכנן:",
+      effects3d_card_title: "✨ אנימציות 3D ואפקטי שמע",
+      effects3d_card_desc: "הפעל אנימציות תלת-ממד מרהיבות ופידבק שמע מוזיקלי בעת סיום סט ואימון.",
+      toggle_sound_enabled: "אפקטי שמע: פעיל",
+      toggle_effects3d_enabled: "אנימציות 3D: פעיל",
+      sound_enabled: "אפקטי שמע: פעיל 🔊",
+      sound_disabled: "אפקטי שמע: מבוטל 🔇",
+      effects3d_enabled: "אנימציות 3D: פעיל ✨",
+      effects3d_disabled: "אנימציות 3D: מבוטל 🚫"
     },
     ar: {
       // App & Nav
@@ -1614,7 +1634,8 @@ const I18n = (() => {
       celebration_exercises: "تمارين",
       celebration_sets: "مجموعات",
       celebration_reps_total: "إجمالي التكرارات",
-      celebration_continue: "🏆 ممتاز! استمر",
+      celebration_continue: "🏆 إنهاء التمرين وإغلاق",
+      workout_completed_today_banner: "تم إكمال تمرين اليوم بنجاح! 💪 حان وقت الراحة والاستشفاء",
       celebration_backup: "📤 انسخ بياناتك احتياطياً الآن",
 
       equip_banner_title: "مراجعة التمرين والمتطلبات",
@@ -1745,6 +1766,7 @@ const I18n = (() => {
       view_only_mode_banner: "👁️ وضع العرض فقط: هذا ليس تمرين اليوم النشط.",
       must_complete_prev_exercise: "⚠️ يجب إكمال التمرين #{num} ({name}) أولاً!",
       must_complete_prev_set: "⚠️ يجب إكمال المجموعة #{num} أولاً!",
+      complete_sets_individually: "⚠️ للتمارين ذات المجموعات المتعددة، يجب إكمال كل مجموعة على حدة!",
       exercise_locked: "مغلق",
 
       warmup_mobility: "إحماء وحركة",
@@ -1824,7 +1846,15 @@ const I18n = (() => {
       clear_set_status: "إعادة ضبط تقييم المجموعة",
       mark_set_complete: "تقييم الأداء",
       how_was_it: "✓ تسجيل المجموعة",
-      planned_target: "🎯 الهدف المخطط:"
+      planned_target: "🎯 الهدف المخطط:",
+      effects3d_card_title: "✨ الرسوم المتحركة ثلاثية الأبعاد والمؤثرات الصوتية",
+      effects3d_card_desc: "تفعيل الرسوم المتحركة ثلاثية الأبعاد والملاحظات الصوتية عند إكمال المجموعات والتمارين.",
+      toggle_sound_enabled: "المؤثرات الصوتية: مفعل",
+      toggle_effects3d_enabled: "رسوم 3D: مفعل",
+      sound_enabled: "المؤثرات الصوتية: مفعل 🔊",
+      sound_disabled: "المؤثرات الصوتية: معطل 🔇",
+      effects3d_enabled: "رسوم 3D: مفعل ✨",
+      effects3d_disabled: "رسوم 3D: معطل 🚫"
     }
   };
 

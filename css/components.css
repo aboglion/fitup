@@ -1617,23 +1617,53 @@ html[dir="ltr"] .set-modal-option-btn {
 }
 
 /* Heatmap */
+.heatmap-grid {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  .heatmap-grid {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+}
+
 .heat-cell {
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--bg-elevated);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  user-select: none;
+  overflow: hidden;
+  padding: 2px;
+  box-sizing: border-box;
 }
 
 .heat-cell:hover {
-  transform: scale(1.2);
-  opacity: 0.8;
+  transform: scale(1.15);
+  opacity: 0.95;
+  z-index: 2;
 }
 
 .heat-empty {
   background: var(--bg-input);
   border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  text-shadow: none;
 }
 
 .heat-strength {
@@ -2622,20 +2652,20 @@ html.light-theme .rest-timer {
 }
 
 .rpg-node.locked {
-  opacity: 0.35;
-  filter: grayscale(0.9) brightness(0.7);
-  background: rgba(13, 19, 33, 0.35);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
+  opacity: 0.6;
+  filter: grayscale(0.4) brightness(0.85);
+  background: rgba(13, 19, 33, 0.5);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
   cursor: pointer;
 }
 
 .rpg-node.locked.rpg-animate-in {
-  opacity: 0.35;
+  opacity: 0.6;
 }
 
 .rpg-node.locked:hover {
-  opacity: 0.5;
-  filter: grayscale(0.7) brightness(0.85);
+  opacity: 0.8;
+  filter: grayscale(0.2) brightness(0.95);
 }
 
 /* --- Hex Node Image Wrap --- */
@@ -2970,8 +3000,35 @@ html.light-theme .rest-timer {
 /* Locked tier */
 .rpg-evo-card.locked {
   border-style: dashed;
-  opacity: 0.4;
-  filter: grayscale(0.6);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.5);
+  opacity: 0.85;
+  filter: none;
+}
+
+.rpg-evo-card.locked .rpg-evo-weight {
+  color: #cbd5e1;
+  opacity: 0.95;
+  font-weight: 800;
+}
+
+.rpg-evo-card.locked .rpg-evo-week {
+  color: #94a3b8;
+  opacity: 0.85;
+}
+
+.rpg-evo-card.locked .rpg-evo-phase {
+  color: #94a3b8;
+  opacity: 0.75;
+}
+
+.rpg-node.locked .rpg-evo-card {
+  opacity: 0.9;
+}
+
+.rpg-node.locked .rpg-evo-card .rpg-evo-weight {
+  color: #e2e8f0;
+  opacity: 0.95;
 }
 
 /* Evolution connector line + arrow */

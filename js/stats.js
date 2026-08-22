@@ -10,6 +10,50 @@ const StatsPage = (() => {
     return true;
   };
 
+  const formatCellDate = (rawDateStr) => {
+    if (!rawDateStr) return '';
+    let day = null, month = null, year = null;
+
+    if (typeof rawDateStr === 'string') {
+      if (rawDateStr.includes('/')) {
+        const parts = rawDateStr.split('/');
+        if (parts.length >= 2) {
+          day = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10);
+          if (parts[2]) {
+            year = parseInt(parts[2], 10) % 100;
+          }
+        }
+      } else if (rawDateStr.includes('-')) {
+        const datePart = rawDateStr.split('T')[0];
+        const parts = datePart.split('-');
+        if (parts.length === 3) {
+          year = parseInt(parts[0], 10) % 100;
+          month = parseInt(parts[1], 10);
+          day = parseInt(parts[2], 10);
+        }
+      }
+    }
+
+    if (day === null || month === null || isNaN(day) || isNaN(month)) {
+      const d = new Date(rawDateStr);
+      if (!isNaN(d.getTime())) {
+        day = d.getDate();
+        month = d.getMonth() + 1;
+        year = d.getFullYear() % 100;
+      }
+    }
+
+    if (day !== null && month !== null && !isNaN(day) && !isNaN(month)) {
+      if (year === null || isNaN(year)) {
+        year = new Date().getFullYear() % 100;
+      }
+      const yy = String(year).padStart(2, '0');
+      return `${day}/${month}/${yy}`;
+    }
+    return '';
+  };
+
 
   /**
    * Initialize
@@ -534,9 +578,17 @@ const StatsPage = (() => {
         else if (day.dayType === 'Active Recovery') colorClass = 'heat-walk';
         else if (day.dayType === 'Rest') colorClass = 'heat-rest';
       }
-      
-      const tooltip = `Day ${dIdx + 1} (${day.dayType}) - ${isCompleted ? '✓' : I18n.t('heat_skipped')}`;
-      return `<div class="heat-cell ${colorClass}" title="${tooltip}"></div>`;
+
+      let rawDate = (tracking && (tracking.date || tracking.lastUpdated)) || day.date;
+      if (!rawDate && planStartDateStr) {
+        const startDateObj = new Date(planStartDateStr + 'T00:00:00');
+        startDateObj.setDate(startDateObj.getDate() + dIdx);
+        rawDate = UI.getLocalDateString(startDateObj);
+      }
+
+      const displayDate = formatCellDate(rawDate);
+      const tooltip = `Day ${dIdx + 1} (${day.dayType}) ${displayDate ? '[' + displayDate + '] ' : ''}- ${isCompleted ? '✓' : I18n.t('heat_skipped')}`;
+      return `<div class="heat-cell ${colorClass}" title="${tooltip}">${displayDate}</div>`;
     }).join('');
 
     const heatmapHtml = `
@@ -552,7 +604,7 @@ const StatsPage = (() => {
           </div>
         </div>
         <div style="width: 100%; padding: var(--space-sm) 0; max-height: 340px; overflow-y: auto;">
-          <div style="display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px; width: 100%;">
+          <div class="heatmap-grid">
             ${heatmapCells}
           </div>
         </div>

@@ -339,6 +339,27 @@ const TodayPage = (() => {
     } else if (nonTodayBanner) {
       nonTodayBanner.remove();
     }
+
+    let workoutCompletedBanner = document.getElementById('workout-completed-today-banner');
+    if (isToday && currentTracking && currentTracking.completed) {
+      if (!workoutCompletedBanner && summaryCard) {
+        workoutCompletedBanner = document.createElement('div');
+        workoutCompletedBanner.id = 'workout-completed-today-banner';
+        workoutCompletedBanner.innerHTML = `
+          <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; animation: fadeIn 0.4s ease;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 22px;">🏆</span>
+              <div style="font-size: 13px; color: var(--success, #10b981); font-weight: 700;">
+                ${I18n.t('workout_completed_today_banner')}
+              </div>
+            </div>
+          </div>
+        `;
+        summaryCard.parentNode.insertBefore(workoutCompletedBanner, summaryCard);
+      }
+    } else if (workoutCompletedBanner) {
+      workoutCompletedBanner.remove();
+    }
     
 
     const typeBadge = document.getElementById('day-type');
@@ -1244,7 +1265,7 @@ const TodayPage = (() => {
       const isExUnlocked = isToday && isExerciseUnlocked(idx);
       const checkDisabledAttr = isExUnlocked ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"';
       const exCheckContent = isExUnlocked ? '✓' : '🔒';
-      const exCheckTitle = isExUnlocked ? '' : I18n.t('exercise_locked');
+      const exCheckTitle = !isExUnlocked ? I18n.t('exercise_locked') : (setsCount > 1 && !isCompleted ? I18n.t('complete_sets_individually') : '');
 
       const cardId = `ex-card-${idx}`;
       const isExpanded = expandedIds.has(cardId) || (expandedIds.size === 0 && idx === defaultExpandedIdx);
@@ -1598,8 +1619,19 @@ const TodayPage = (() => {
   async function toggleExercise(idx, btn) {
     if (!checkExerciseUnlockedOrWarn(idx)) return;
     
+    const day = allPlanDays[currentDayIndex];
+    const ex = (day && day.exercises) ? day.exercises[idx] : null;
+    const setsCount = ex ? UI.parseSetsCount(ex.sets) : 0;
+
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     const isNowCompleted = !currentTracking.exerciseStatus[idx];
+
+    if (setsCount > 1) {
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('complete_sets_individually'), 'warning');
+      }
+      return;
+    }
 
     if (isNowCompleted) {
       openExerciseOutcomeModal(idx);
@@ -1609,7 +1641,6 @@ const TodayPage = (() => {
       const card = document.getElementById(`ex-card-${idx}`);
       if (card) card.classList.remove('completed');
 
-      const day = allPlanDays[currentDayIndex];
       updateProgress(day);
       await autoSave();
       renderExercises(day);
@@ -1737,6 +1768,10 @@ const TodayPage = (() => {
 
     renderExercises(day);
 
+    if (window.Effects3D) {
+      window.Effects3D.triggerExerciseEffect(ex.name);
+    }
+
     if (currentTracking.completed) {
       showWorkoutCelebration(day);
     } else {
@@ -1752,6 +1787,9 @@ const TodayPage = (() => {
    * Show celebration modal when workout is fully completed
    */
   async function showWorkoutCelebration(day) {
+    if (window.UI && window.UI.stopTimer) {
+      window.UI.stopTimer();
+    }
     // Count total sets done
     let totalSets = 0;
     let totalReps = 0;
@@ -1857,8 +1895,12 @@ const TodayPage = (() => {
       }
     }
 
-    // Haptic celebration
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+    // Haptic & 3D celebration
+    if (window.Effects3D) {
+      window.Effects3D.triggerWorkoutEffect();
+    } else if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 100, 50, 200]);
+    }
   }
 
   function getRestTime(ex) {
@@ -1921,8 +1963,8 @@ const TodayPage = (() => {
       }
     }
     
-    // Start rest timer IMMEDIATELY for zero delay on exercise completion
-    if (restTime > 0 && window.UI && window.UI.startTimer) {
+    // Start rest timer IMMEDIATELY for zero delay on exercise completion (only if workout is not fully completed)
+    if (!currentTracking.completed && restTime > 0 && window.UI && window.UI.startTimer) {
       UI.startTimer(restTime, null);
     }
 
@@ -1957,7 +1999,7 @@ const TodayPage = (() => {
   /**
    * Select Set Outcome (ABOVE, IN_WINDOW, BELOW) for Zero Decisions progression engine
    */
-  async function selectSetOutcome(exIdx, setIdx, outcome) {
+  async function selectSetOutcome(exIdx, setIdx, outcome, triggerEl = null) {
     if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
 
     if (!currentTracking.setData) currentTracking.setData = {};
@@ -1966,6 +2008,11 @@ const TodayPage = (() => {
     const exData = currentTracking.setData[exIdx];
     exData[`set_${setIdx}_result`] = outcome;
     exData[`set_${setIdx}_done`] = true;
+
+    // Trigger 3D Visual Particle & Synthesizer Audio Effect for Set Completion
+    if (window.Effects3D) {
+      window.Effects3D.triggerSetEffect(triggerEl, outcome);
+    }
 
     const day = allPlanDays[currentDayIndex];
     const ex = day.exercises[exIdx];
@@ -1994,7 +2041,10 @@ const TodayPage = (() => {
     renderExercises(day);
 
     if (allSetsDone) {
-      // Exercise fully completed — start exercise-transition timer and handle progression
+      // Trigger 3D Stage & Fanfare Effect for Exercise Completion
+      if (window.Effects3D) {
+        window.Effects3D.triggerExerciseEffect(ex.name);
+      }
       handleExerciseCompleted(exIdx, day);
       if (currentTracking.completed) {
         showWorkoutCelebration(day);
@@ -2008,7 +2058,7 @@ const TodayPage = (() => {
           UI.toast(`${I18n.t('adaptive_rest_label')}: +30s (${restTime}s)`, 'warning');
         }
       }
-      if (restTime > 0 && window.UI && window.UI.startTimer) {
+      if (!currentTracking.completed && restTime > 0 && window.UI && window.UI.startTimer) {
         UI.startTimer(restTime, null);
       }
     }
@@ -2189,6 +2239,11 @@ const TodayPage = (() => {
       }
     }
 
+    if (isNowDone && window.Effects3D) {
+      const outcome = currentTracking.setData[exIdx][`set_${setIdx}_result`] || 'in_window';
+      window.Effects3D.triggerSetEffect(btn, outcome);
+    }
+
     const day = allPlanDays[currentDayIndex];
     const ex = day.exercises[exIdx];
     const setsCount = UI.parseSetsCount(ex.sets);
@@ -2216,6 +2271,9 @@ const TodayPage = (() => {
     renderExercises(day);
 
     if (allSetsDone) {
+      if (window.Effects3D) {
+        window.Effects3D.triggerExerciseEffect(ex.name);
+      }
       if (currentTracking.completed) {
         showWorkoutCelebration(day);
       } else {
@@ -2223,7 +2281,7 @@ const TodayPage = (() => {
       }
     } else if (isNowDone) {
       const restTime = getRestTime(ex);
-      if (restTime > 0 && window.UI && window.UI.startTimer) {
+      if (!currentTracking.completed && restTime > 0 && window.UI && window.UI.startTimer) {
         UI.startTimer(restTime, null);
       }
     }
@@ -2303,11 +2361,27 @@ const TodayPage = (() => {
     // --- Update the active plan index based on sequential progress ---
     let newActiveIndex = 0;
     const allTracking = await DB.getAllTracking();
+    const todayStr = UI.getLocalDateString();
     for (let i = 0; i < allPlanDays.length; i++) {
       const track = allTracking.find(t => t.dayIndex === i);
       if (!track || !track.completed) {
         newActiveIndex = i;
         break;
+      }
+      const isCompletedToday = track.completed && (
+        track.date === todayStr ||
+        (track.lastUpdated && track.lastUpdated.startsWith(todayStr))
+      );
+      if (isCompletedToday) {
+        newActiveIndex = i;
+        const nextTrack = allTracking.find(t => t.dayIndex === i + 1);
+        const nextCompletedToday = nextTrack && nextTrack.completed && (
+          nextTrack.date === todayStr ||
+          (nextTrack.lastUpdated && nextTrack.lastUpdated.startsWith(todayStr))
+        );
+        if (!nextCompletedToday) {
+          break;
+        }
       }
     }
     

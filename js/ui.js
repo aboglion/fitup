@@ -788,6 +788,16 @@ const UI = (() => {
     });
   }
 
+  function stopTimer() {
+    const timerEl = document.getElementById('rest-timer');
+    if (timerEl) timerEl.classList.add('hidden');
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    timerOnComplete = null;
+  }
+
   return {
     toast,
     showModal,
@@ -811,6 +821,7 @@ const UI = (() => {
     formatTempo,
     initTimer,
     startTimer,
+    stopTimer,
     compressImage
   };
 })();

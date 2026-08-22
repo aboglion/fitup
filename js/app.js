@@ -97,14 +97,30 @@ const App = (() => {
       await DB.syncRestDays(allPlanDays);
 
       // --- Sequential Progress-Based Alignment ---
-      // Find the first incomplete day index
+      // Find the active plan index (first incomplete or completed today)
       let planIndex = 0;
       const allTracking = await DB.getAllTracking();
+      const todayStr = UI.getLocalDateString();
       for (let i = 0; i < allPlanDays.length; i++) {
         const track = allTracking.find(t => t.dayIndex === i);
         if (!track || !track.completed) {
           planIndex = i;
           break;
+        }
+        const isCompletedToday = track.completed && (
+          track.date === todayStr ||
+          (track.lastUpdated && track.lastUpdated.startsWith(todayStr))
+        );
+        if (isCompletedToday) {
+          planIndex = i;
+          const nextTrack = allTracking.find(t => t.dayIndex === i + 1);
+          const nextCompletedToday = nextTrack && nextTrack.completed && (
+            nextTrack.date === todayStr ||
+            (nextTrack.lastUpdated && nextTrack.lastUpdated.startsWith(todayStr))
+          );
+          if (!nextCompletedToday) {
+            break;
+          }
         }
       }
       
@@ -117,7 +133,6 @@ const App = (() => {
       // Update dynamic dates and day names in-memory
       updatePlanDaysDates(allPlanDays, planIndex);
 
-      const todayStr = UI.getLocalDateString();
       await DB.setSetting('lastActiveDate', todayStr);
       await DB.setSetting('currentPlanIndex', planIndex);
       window.appCurrentPlanIndex = planIndex;
@@ -362,11 +377,27 @@ const App = (() => {
   async function recalculatePlanIndex() {
     let planIndex = 0;
     const allTracking = await DB.getAllTracking();
+    const todayStr = UI.getLocalDateString();
     for (let i = 0; i < allPlanDays.length; i++) {
       const track = allTracking.find(t => t.dayIndex === i);
       if (!track || !track.completed) {
         planIndex = i;
         break;
+      }
+      const isCompletedToday = track.completed && (
+        track.date === todayStr ||
+        (track.lastUpdated && track.lastUpdated.startsWith(todayStr))
+      );
+      if (isCompletedToday) {
+        planIndex = i;
+        const nextTrack = allTracking.find(t => t.dayIndex === i + 1);
+        const nextCompletedToday = nextTrack && nextTrack.completed && (
+          nextTrack.date === todayStr ||
+          (nextTrack.lastUpdated && nextTrack.lastUpdated.startsWith(todayStr))
+        );
+        if (!nextCompletedToday) {
+          break;
+        }
       }
     }
     
@@ -395,7 +426,6 @@ const App = (() => {
     window.appCurrentPlanIndex = planIndex;
     await DB.setSetting('currentPlanIndex', planIndex);
     
-    const todayStr = UI.getLocalDateString();
     await DB.setSetting('lastActiveDate', todayStr);
   }
 
@@ -560,6 +590,47 @@ const App = (() => {
         }
       }
     });
+
+    // 3D Effects & Sound Toggles
+    const toggleSoundBtn = document.getElementById('toggle-sound-btn');
+    const toggleEffects3dBtn = document.getElementById('toggle-effects3d-btn');
+    const soundTextEl = document.getElementById('sound-btn-text');
+    const effects3dTextEl = document.getElementById('effects3d-btn-text');
+
+    const updateEffectsUI = () => {
+      if (window.Effects3D) {
+        const soundOn = window.Effects3D.isSoundActive();
+        const effectsOn = window.Effects3D.isEffectsActive();
+        if (soundTextEl) {
+          soundTextEl.textContent = soundOn ? I18n.t('sound_enabled') : I18n.t('sound_disabled');
+        }
+        if (effects3dTextEl) {
+          effects3dTextEl.textContent = effectsOn ? I18n.t('effects3d_enabled') : I18n.t('effects3d_disabled');
+        }
+      }
+    };
+    updateEffectsUI();
+
+    if (toggleSoundBtn) {
+      toggleSoundBtn.addEventListener('click', () => {
+        if (window.Effects3D) {
+          const current = window.Effects3D.isSoundActive();
+          window.Effects3D.setSoundEnabled(!current);
+          updateEffectsUI();
+          if (!current) window.Effects3D.playSetSound('above');
+        }
+      });
+    }
+
+    if (toggleEffects3dBtn) {
+      toggleEffects3dBtn.addEventListener('click', () => {
+        if (window.Effects3D) {
+          const current = window.Effects3D.isEffectsActive();
+          window.Effects3D.setEffects3dEnabled(!current);
+          updateEffectsUI();
+        }
+      });
+    }
 
     // Theme toggle
     const currentTheme = localStorage.getItem('theme') || 'dark';
