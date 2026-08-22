@@ -155,7 +155,7 @@ const TodayPage = (() => {
     const cacheKey = `fitup_briefing_cache_${todayStr}`;
     const cachedBriefing = localStorage.getItem(cacheKey);
 
-    if (cachedBriefing && !forceRefresh) {
+    if (cachedBriefing && !forceRefresh && !cachedBriefing.includes('briefing_loading') && cachedBriefing.length > 50) {
       content.innerHTML = cachedBriefing;
       return;
     }
@@ -163,7 +163,12 @@ const TodayPage = (() => {
     content.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">${I18n.t('briefing_loading')}</div>`;
 
     // Gather History Context
-    const allTracking = await DB.getAllTracking();
+    let allTracking = [];
+    try {
+      allTracking = await DB.getAllTracking();
+    } catch (e) {
+      console.warn('Briefing DB fetch tracking error:', e);
+    }
     let completedDays = 0;
     let rpeSum = 0;
     let rpeCount = 0;
@@ -189,7 +194,13 @@ const TodayPage = (() => {
     };
 
     // Gather Today's Workout Context
-    const day = allPlanDays[currentDayIndex] || {};
+    let planDaysList = allPlanDays;
+    if (!planDaysList || planDaysList.length === 0) {
+      try {
+        planDaysList = await DB.getAllPlan();
+      } catch (e) {}
+    }
+    const day = (planDaysList || [])[currentDayIndex] || {};
     let totalSets = 0;
     let requiredEquipment = [];
 
@@ -211,11 +222,13 @@ const TodayPage = (() => {
       equipment: requiredEquipment.length > 0 ? requiredEquipment.join(', ') : 'Standard / Bodyweight'
     };
 
-    // Gather Google Fit Context
+    // Gather Google Fit Context silently with timeout race to prevent popup blocking
     let fitContext = {};
-    if (window.GoogleFitService) {
+    if (window.GoogleFitService && window.GoogleFitService.fetchDailyFitData) {
       try {
-        const fitData = await window.GoogleFitService.fetchDailyFitData();
+        const fitPromise = window.GoogleFitService.fetchDailyFitData();
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 400));
+        const fitData = await Promise.race([fitPromise, timeoutPromise]);
         if (fitData) fitContext = fitData;
       } catch (e) {
         console.warn('Google Fit context for briefing error:', e);
@@ -261,8 +274,12 @@ const TodayPage = (() => {
           💡 <strong style="color: var(--accent-primary);">${I18n.t('briefing_tactical_tip')}:</strong> ${todayContext.equipment !== 'Standard / Bodyweight' ? `Required weights today: ${todayContext.equipment}. Focus on strict tempo & recovery!` : 'Focus on strict execution tempo and log each set accurately.'}
         </div>
       </div>
+      <div style="text-align: right; margin-top: 10px;">
+        <button onclick="TodayPage.openDailyBriefing(true)" style="background: none; border: none; color: var(--text-muted); font-size: 11px; cursor: pointer; text-decoration: underline;">🔄 ${I18n.t('refresh_advice') || 'רענן תדריך'}</button>
+      </div>
     `;
     content.innerHTML = fallbackHtml;
+    localStorage.setItem(cacheKey, fallbackHtml);
     localStorage.setItem(cacheKey, fallbackHtml);
   }
 
