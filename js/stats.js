@@ -453,6 +453,8 @@ const StatsPage = (() => {
     'band-pull-apart': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.5 }],
 
     'db-bulgarian-split-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
+    'db-bss': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
+    'db-bss-goblet': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
     'goblet-bulgarian-split-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
     'goblet-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }, { m: 'core', w: 0.3 }],
     'bodyweight-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.4 }],
@@ -546,7 +548,7 @@ const StatsPage = (() => {
     'overhead-triceps-ext': 'triceps', 'db-overhead-triceps-extension': 'triceps', 'single-arm-overhead-triceps-ext': 'triceps', 'diamond-push-up': 'triceps',
     'pull-up': 'lats', 'pull-up-progression': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'seated-band-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
     'db-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
-    'db-bulgarian-split-squat': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
+    'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
     'db-rdl': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'db-hip-thrust': 'glutes',
     'single-leg-calf-raise': 'calves', 'standing-single-leg-calf-raise': 'calves', 'seated-single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves', 'seated-calf-raise': 'calves',
     'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'core', 'dead-hang': 'forearms', 'towel-hang': 'forearms'

@@ -52,9 +52,10 @@ const ExercisesPage = (() => {
     'DB Overhead Triceps Extension': [{ weight: '6 kg total', fromWeek: 1 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 34 }, { weight: '15 kg', fromWeek: 50 }, { weight: '18 kg', fromWeek: 53 }],
     'Arm Block - DB Lateral Raise': [{ weight: '3-9 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 74 }],
     'Arm Block - DB OH Triceps Ext': [{ weight: '6-15 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 74 }],
-
-    // Dumbbell Upper Body - Pull & Biceps
-    'One-Arm DB Row': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 26 }, { weight: '18 kg', fromWeek: 34 }, { weight: '21 kg', fromWeek: 42 }, { weight: '24 kg', fromWeek: 53 }],
+    'One-Arm DB Row': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 42 }, { weight: '24 kg', fromWeek: 53 }],
+    'TRX Row': [{ weight: 'Bodyweight', fromWeek: 1 }],
+    'Diamond Push-Up': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '+5 kg', fromWeek: 62 }],
+    'Push-Up Volume': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'DB Curl': [{ weight: '3 kg each', fromWeek: 1 }, { weight: '6 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 34 }, { weight: '12 kg', fromWeek: 58 }],
     'DB Hammer Curl': [{ weight: '3 kg each', fromWeek: 1 }, { weight: '6 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 53 }],
     'Hammer Curl': [{ weight: '3 kg each', fromWeek: 1 }, { weight: '6 kg', fromWeek: 5 }],
@@ -63,6 +64,7 @@ const ExercisesPage = (() => {
 
     // Weighted Bodyweight
     'Weighted Deficit Push-Up': [{ weight: '+5 kg', fromWeek: 62 }],
+    'Weighted Diamond Push-Up': [{ weight: '+5 kg', fromWeek: 62 }],
     'Weighted Pull-Up': [{ weight: '+5 kg', fromWeek: 62 }],
     'Weighted Chin-Up': [{ weight: '+5 kg', fromWeek: 66 }]
   };
@@ -71,9 +73,19 @@ const ExercisesPage = (() => {
    * Helper to retrieve weight tiers for any exercise (using map or dynamic plan extraction)
    */
   const getWeightTiers = (name) => {
+    if (!name) return null;
+    let lookupName = name;
+    if (lookupName.startsWith('TRX Face Pull')) lookupName = 'TRX Face Pull';
+    if (lookupName === 'DB BSS') lookupName = 'DB Bulgarian Split Squat';
+    if (lookupName.includes('Calf Raise')) lookupName = 'Single-Leg Calf Raise';
+
     if (EXERCISE_WEIGHT_PROGRESSION[name]) {
       return EXERCISE_WEIGHT_PROGRESSION[name];
     }
+    if (EXERCISE_WEIGHT_PROGRESSION[lookupName]) {
+      return EXERCISE_WEIGHT_PROGRESSION[lookupName];
+    }
+
     const cleanName = (name || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
     for (const [key, tiers] of Object.entries(EXERCISE_WEIGHT_PROGRESSION)) {
       const cleanKey = key.toLowerCase().replace(/[^a-z0-9]+/g, '');
@@ -142,7 +154,9 @@ const ExercisesPage = (() => {
           { name: 'Glute Bridge', unlockWeek: 1, id: 'glute-1' },
           { name: 'DB Glute Bridge', unlockWeek: 1, parentId: 'glute-1', id: 'glute-2' },
           { name: 'DB Hip Thrust', unlockWeek: 5, parentId: 'glute-2', id: 'glute-3' },
-          { name: 'Single-Leg Calf Raise', unlockWeek: 1, id: 'calf-1' }
+          { name: 'Single-Leg Calf Raise', unlockWeek: 1, id: 'calf-1' },
+          { name: 'Standing Single-Leg Calf Raise', unlockWeek: 1, parentId: 'calf-1', id: 'calf-2a' },
+          { name: 'Seated Single-Leg Calf Raise', unlockWeek: 1, parentId: 'calf-1', id: 'calf-2b' }
         ]
       },
       {
@@ -167,10 +181,12 @@ const ExercisesPage = (() => {
         title: 'push_tree', icon: '💥', exercises: [
           { name: 'Push-up', unlockWeek: 1, id: 'push-1' },
           { name: 'DB Floor Press', unlockWeek: 1, id: 'floor-1' },
+          { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'push-1c' },
           { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a' },
           { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b' },
           { name: 'Single-Arm Floor Press', unlockWeek: 18, parentId: 'floor-1', id: 'floor-2' },
-          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3' }
+          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3' },
+          { name: 'Weighted Diamond Push-Up', unlockWeek: 62, parentId: 'push-1c', id: 'push-3c' }
         ]
       },
       {
@@ -214,6 +230,7 @@ const ExercisesPage = (() => {
       },
       {
         title: 'rows_horizontal', icon: '↔️', exercises: [
+          { name: 'TRX Row', unlockWeek: 1, id: 'row-0' },
           { name: 'Seated Band Row', unlockWeek: 1, id: 'row-1' },
           { name: 'One-Arm DB Row', unlockWeek: 1, id: 'row-2' },
           { name: 'TRX Face Pull', unlockWeek: 1, id: 'row-3' }
@@ -296,6 +313,16 @@ const ExercisesPage = (() => {
    */
   async function init() {
     allExercises = await DB.getExerciseGuide();
+    if (!allExercises || allExercises.length === 0) {
+      allExercises = window.TRAINING_DATA?.exercises || [];
+    } else if (window.TRAINING_DATA?.exercises) {
+      const existingNames = new Set(allExercises.map(e => e.name));
+      window.TRAINING_DATA.exercises.forEach(e => {
+        if (!existingNames.has(e.name)) {
+          allExercises.push(e);
+        }
+      });
+    }
 
     // Extract unique categories
     const catSet = new Set(allExercises.map(e => e.category));

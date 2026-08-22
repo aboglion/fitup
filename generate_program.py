@@ -1,548 +1,822 @@
 #!/usr/bin/env python3
-"""Generate FitUp Pro v15.6 Lean Edition — 52-week training program."""
+"""Generate FitUp Pro v15.6 Lean Edition — 52-week training program matching UPDATE_PROGRAM.md schema."""
 import json, os, shutil
 from datetime import datetime, timedelta
 
 START_DATE = datetime(2026, 7, 6)
 DAYS_ENG = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
-def ex(slot, name, sets, weight=None, tempo=None, rest=90, isWarmup=False):
+# Deload occurs every 8 weeks: 8, 16, 24, 32, 40, 48, 56, 64, 72
+DELOAD_WEEKS = set(range(8, 79, 8))
+
+# ---------------------------------------------------------
+# 1. Master Exercise Catalog Metadata Definition
+# ---------------------------------------------------------
+EXERCISES_CATALOG = [
+    # Day 1 - Legs, Posterior Chain, Calves, Core, Carry
+    {
+        "id": "db-rdl",
+        "name": "DB Romanian Deadlift",
+        "category": "Legs",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 105,
+        "restRange": [90, 120],
+        "windowMin": 6,
+        "windowMax": 12,
+        "tempo": "3s descent",
+        "compound": True,
+        "structure": "straight",
+        "rule": "neutral spine קשיח; אם הגב מתעגל, BELOW"
+    },
+    {
+        "id": "single-leg-rdl",
+        "name": "Single-Leg RDL",
+        "category": "Legs",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 20,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "windowMin": 8,
+        "windowMax": 10,
+        "tempo": "3s descent",
+        "compound": True,
+        "structure": "straight",
+        "toggleGroup": "day1-posterior-quad",
+        "toggleActiveOn": "odd",
+        "rule": "neutral spine; אם מאבד שיווי משקל, BELOW"
+    },
+    {
+        "id": "reverse-lunge",
+        "name": "Reverse Lunge + DB",
+        "category": "Legs",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 20,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "windowMin": 10,
+        "windowMax": 12,
+        "tempo": "2s descent",
+        "compound": True,
+        "structure": "straight",
+        "toggleGroup": "day1-posterior-quad",
+        "toggleActiveOn": "even"
+    },
+    {
+        "id": "pistol-squat-progression",
+        "name": "Pistol Squat Progression",
+        "category": "Legs",
+        "type": "variation",
+        "restSeconds": 105,
+        "restRange": [90, 120],
+        "windowMin": 3,
+        "windowMax": 8,
+        "tempo": "slow descent",
+        "compound": True,
+        "structure": "straight",
+        "toggleGroup": "day1-posterior-quad",
+        "toggleActiveOn": "even",
+        "unlocked": False,
+        "stages": [
+            "Assisted Pistol", "Pistol to High Box", "Pistol to Chair",
+            "Pistol to Low Box", "Full Pistol", "Weighted 3kg", "Weighted 6kg"
+        ],
+        "unlockCriteria": {
+            "exercise": "bulgarian-split-squat",
+            "targetReps": 12,
+            "targetWeightKg": 12
+        },
+        "rule": "ירידה איטית; אם הברך קורסת פנימה (valgus), BELOW"
+    },
+    {
+        "id": "bulgarian-split-squat",
+        "name": "DB Bulgarian Split Squat",
+        "category": "Legs",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 82,
+        "restRange": [75, 90],
+        "windowMin": 6,
+        "windowMax": 12,
+        "tempo": "2s descent",
+        "compound": True,
+        "structure": "straight"
+    },
+    {
+        "id": "db-hip-thrust",
+        "name": "DB Hip Thrust",
+        "category": "Glutes",
+        "type": "weighted",
+        "startingWeight": 9,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "total",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "windowMin": 10,
+        "windowMax": 15,
+        "tempo": "1s pause at top",
+        "compound": True,
+        "structure": "straight",
+        "rule": "כתפיים על ספסל; כפות רגליים רחבות; squeeze glutes"
+    },
+    {
+        "id": "suitcase-carry",
+        "name": "Suitcase Carry",
+        "category": "Grip",
+        "type": "weighted",
+        "startingWeight": 12,
+        "minWeight": 6,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "total",
+        "restSeconds": 60,
+        "windowMin": 25,
+        "windowMax": 40,
+        "tempo": "controlled walk",
+        "compound": False,
+        "structure": "straight"
+    },
+    {
+        "id": "standing-single-leg-calf-raise",
+        "name": "Standing Single-Leg Calf Raise",
+        "category": "Legs",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "single_hand",
+        "restSeconds": 45,
+        "windowMin": 12,
+        "windowMax": 20,
+        "tempo": "2s descent, 1s pause, 1s squeeze",
+        "compound": False,
+        "structure": "block",
+        "blockId": "d1-calf-block",
+        "blockOrder": 1
+    },
+    {
+        "id": "seated-single-leg-calf-raise",
+        "name": "Seated Single-Leg Calf Raise",
+        "category": "Legs",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "on_knee",
+        "restSeconds": 45,
+        "windowMin": 15,
+        "windowMax": 25,
+        "tempo": "2s descent, 1s pause, 1s squeeze",
+        "compound": False,
+        "structure": "block",
+        "blockId": "d1-calf-block",
+        "blockOrder": 2
+    },
+    {
+        "id": "pallof-press-progression",
+        "name": "Pallof Press Progression",
+        "category": "Core",
+        "type": "variation",
+        "restSeconds": 45,
+        "windowMin": 10,
+        "windowMax": 12,
+        "tempo": "1s pause",
+        "compound": False,
+        "structure": "circuit",
+        "circuitId": "d1-core-circuit",
+        "circuitOrder": 1,
+        "stages": [
+            "Pallof Hold (2h,30kg)", "Pallof Press (2h,30kg)", "Single-Arm (30kg)",
+            "Single-Arm (40kg)", "Single-Arm Split Stance (40kg)", "Single-Arm (50kg)", "Single-Arm One Leg (50kg)"
+        ],
+        "rule": "אין תנועה בגב; אם הגוף מסתובב, BELOW"
+    },
+    {
+        "id": "dead-bug",
+        "name": "Dead Bug",
+        "category": "Core",
+        "type": "variation",
+        "restSeconds": 30,
+        "windowMin": 12,
+        "windowMax": 20,
+        "tempo": "slow",
+        "compound": False,
+        "structure": "circuit",
+        "circuitId": "d1-core-circuit",
+        "circuitOrder": 2,
+        "stages": ["Bodyweight", "1 kg", "2 kg", "3 kg"]
+    },
+    {
+        "id": "hollow-body-hold",
+        "name": "Hollow Body Hold",
+        "category": "Core",
+        "type": "timebased",
+        "restSeconds": 30,
+        "windowMin": 20,
+        "windowMax": 30,
+        "tempo": "static hold",
+        "compound": False,
+        "structure": "circuit",
+        "circuitId": "d1-core-circuit",
+        "circuitOrder": 3,
+        "stages": ["Tuck Hold", "One-Leg Extended", "Hollow Hold"]
+    },
+
+    # Day 3 - Push, Shoulders, Rear Delts, Triceps
+    {
+        "id": "pike-progression",
+        "name": "Pike Progression",
+        "category": "Shoulders",
+        "type": "variation",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "windowMin": 6,
+        "windowMax": 12,
+        "tempo": "2s descent",
+        "compound": True,
+        "structure": "straight",
+        "stages": ["Pike Hold", "Feet-Elevated Pike Hold", "Pike Push-Up", "Elevated Pike Push-Up"]
+    },
+    {
+        "id": "db-floor-press",
+        "name": "DB Floor Press",
+        "category": "Push",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 105,
+        "restRange": [90, 120],
+        "windowMin": 6,
+        "windowMax": 12,
+        "tempo": "2s descent",
+        "compound": True,
+        "structure": "straight"
+    },
+    {
+        "id": "push-up-progression",
+        "name": "Push-up Bars Progression",
+        "category": "Push",
+        "type": "variation",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "windowMin": 8,
+        "windowMax": 15,
+        "tempo": "2s descent",
+        "compound": True,
+        "structure": "straight",
+        "stages": ["Incline Push-Up", "Push-Up", "Deficit Push-Up", "Weighted Deficit (Vest 5kg)"]
+    },
+    {
+        "id": "seated-db-ohp",
+        "name": "Seated DB Overhead Press",
+        "category": "Shoulders",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 82,
+        "restRange": [75, 90],
+        "windowMin": 6,
+        "windowMax": 12,
+        "tempo": "2s descent",
+        "compound": True,
+        "structure": "straight"
+    },
+    {
+        "id": "trx-y-t-w",
+        "name": "TRX Y-T-W",
+        "category": "Shoulders",
+        "type": "variation",
+        "restSeconds": 45,
+        "windowMin": 8,
+        "windowMax": 12,
+        "tempo": "1s pause",
+        "compound": False,
+        "structure": "straight",
+        "toggleGroup": "day3-rear-delt",
+        "toggleActiveOn": "odd",
+        "stages": ["Angle 1 (Gentle)", "Angle 2 (Moderate)", "Angle 3 (Steep)"]
+    },
+    {
+        "id": "band-pull-apart",
+        "name": "Band Pull-Apart",
+        "category": "Shoulders",
+        "type": "variation",
+        "restSeconds": 45,
+        "windowMin": 15,
+        "windowMax": 25,
+        "tempo": "1s squeeze",
+        "compound": False,
+        "structure": "straight",
+        "toggleGroup": "day3-rear-delt",
+        "toggleActiveOn": "even",
+        "stages": ["Light Band 30kg", "Band 40kg", "Band 50kg"]
+    },
+    {
+        "id": "db-lateral-raise",
+        "name": "DB Lateral Raise",
+        "category": "Shoulders",
+        "type": "weighted",
+        "startingWeight": 3,
+        "minWeight": 3,
+        "maxWeight": 12,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 45,
+        "windowMin": 12,
+        "windowMax": 20,
+        "tempo": "2s descent",
+        "compound": False,
+        "pairId": "d3-row-lateral",
+        "pairType": "non-competing"
+    },
+    {
+        "id": "db-oh-triceps-extension",
+        "name": "DB Overhead Triceps Extension",
+        "category": "Arms",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "total",
+        "restSeconds": 45,
+        "windowMin": 10,
+        "windowMax": 15,
+        "tempo": "2s descent",
+        "compound": False,
+        "structure": "straight"
+    },
+    {
+        "id": "arm-block-lateral-raise",
+        "name": "Arm Block - DB Lateral Raise",
+        "category": "Shoulders",
+        "type": "myo-reps",
+        "startingWeight": 3,
+        "minWeight": 3,
+        "maxWeight": 12,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 15,
+        "windowMin": 12,
+        "windowMax": 20,
+        "structure": "myo-reps",
+        "myoConfig": {
+            "activationReps": 15,
+            "miniSets": 3,
+            "miniReps": 5,
+            "stopRule": "two_consecutive_tempo_losses"
+        }
+    },
+    {
+        "id": "arm-block-triceps-ext",
+        "name": "Arm Block - DB Overhead Triceps Ext",
+        "category": "Arms",
+        "type": "myo-reps",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "total",
+        "restSeconds": 15,
+        "windowMin": 10,
+        "windowMax": 15,
+        "structure": "myo-reps",
+        "myoConfig": {
+            "activationReps": 12,
+            "miniSets": 3,
+            "miniReps": 5,
+            "stopRule": "two_consecutive_tempo_losses"
+        }
+    },
+
+    # Day 5 - Pull, Grip, Core, Biceps
+    {
+        "id": "pull-up-progression",
+        "name": "Pull-Up Progression",
+        "category": "Pull",
+        "type": "variation",
+        "restSeconds": 105,
+        "restRange": [90, 120],
+        "windowMin": 3,
+        "windowMax": 8,
+        "tempo": "2s descent",
+        "compound": True,
+        "structure": "straight",
+        "stages": [
+            "Scapular Pull-Up", "Pull-Up Negative (3s)", "Pull-Up Negative (5s)",
+            "Full Pull-Up", "Weighted Pull-Up (2kg)", "Weighted Pull-Up (4kg)", "Weighted Pull-Up (5kg)"
+        ]
+    },
+    {
+        "id": "chin-up-progression",
+        "name": "Chin-Up Progression",
+        "category": "Pull",
+        "type": "variation",
+        "restSeconds": 105,
+        "restRange": [90, 120],
+        "windowMin": 3,
+        "windowMax": 8,
+        "tempo": "2s descent",
+        "compound": True,
+        "structure": "straight",
+        "stages": [
+            "Chin-Up Negative (3s)", "Full Chin-Up", "Weighted Chin-Up (2kg)",
+            "Weighted Chin-Up (4kg)", "Weighted Chin-Up (5kg)"
+        ]
+    },
+    {
+        "id": "one-arm-db-row",
+        "name": "One-Arm DB Row",
+        "category": "Pull",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 82,
+        "restRange": [75, 90],
+        "windowMin": 8,
+        "windowMax": 12,
+        "tempo": "2s descent",
+        "compound": True,
+        "structure": "straight"
+    },
+    {
+        "id": "trx-row",
+        "name": "TRX Row",
+        "category": "Pull",
+        "type": "variation",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "windowMin": 10,
+        "windowMax": 15,
+        "tempo": "2s descent",
+        "compound": True,
+        "pairId": "d3-row-lateral",
+        "stages": ["Angle 1 (Gentle)", "Angle 2 (Moderate)", "Angle 3 (Steep)", "Feet Elevated"]
+    },
+    {
+        "id": "trx-face-pull",
+        "name": "TRX Face Pull",
+        "category": "Shoulders",
+        "type": "variation",
+        "restSeconds": 45,
+        "windowMin": 12,
+        "windowMax": 20,
+        "tempo": "2s descent",
+        "compound": False,
+        "structure": "straight",
+        "stages": ["Angle 1 (Gentle)", "Angle 2 (Moderate)", "Angle 3 (Steep)"]
+    },
+    {
+        "id": "push-up-volume",
+        "name": "Push-Up Volume (Day 5)",
+        "category": "Push",
+        "type": "variation",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "windowMin": 10,
+        "windowMax": 20,
+        "tempo": "2s descent",
+        "compound": True,
+        "pairId": "d5-pushup-curl",
+        "stages": ["Incline Push-Up", "Push-Up", "Deficit Push-Up", "Diamond Push-Up"]
+    },
+    {
+        "id": "db-curl",
+        "name": "DB Curl",
+        "category": "Arms",
+        "type": "weighted",
+        "startingWeight": 3,
+        "minWeight": 3,
+        "maxWeight": 18,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 45,
+        "windowMin": 10,
+        "windowMax": 15,
+        "tempo": "2s descent",
+        "compound": False,
+        "pairId": "d5-pushup-curl",
+        "microcycle": "biceps-microcycle"
+    },
+    {
+        "id": "hammer-curl",
+        "name": "Hammer Curl",
+        "category": "Arms",
+        "type": "weighted",
+        "startingWeight": 3,
+        "minWeight": 3,
+        "maxWeight": 18,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 45,
+        "windowMin": 10,
+        "windowMax": 15,
+        "tempo": "2s descent",
+        "compound": False,
+        "structure": "straight",
+        "microcycle": "biceps-microcycle"
+    },
+    {
+        "id": "arm-block-biceps-curl",
+        "name": "Arm Block - DB Curl",
+        "category": "Arms",
+        "type": "myo-reps",
+        "startingWeight": 3,
+        "minWeight": 3,
+        "maxWeight": 18,
+        "increment": 1,
+        "loadType": "each",
+        "restSeconds": 15,
+        "windowMin": 10,
+        "windowMax": 15,
+        "structure": "myo-reps",
+        "myoConfig": {
+            "activationReps": 12,
+            "miniSets": 3,
+            "miniReps": 5,
+            "stopRule": "two_consecutive_tempo_losses"
+        }
+    },
+    {
+        "id": "towel-hang",
+        "name": "Towel Hang",
+        "category": "Grip",
+        "type": "timebased",
+        "restSeconds": 45,
+        "windowMin": 15,
+        "windowMax": 45,
+        "tempo": "static hold",
+        "compound": False,
+        "pairId": "d5-grip-core",
+        "stages": ["15s Hold", "25s Hold", "35s Hold", "45s Hold"]
+    },
+    {
+        "id": "l-sit-progression",
+        "name": "L-sit Tuck (Bars)",
+        "category": "Core",
+        "type": "timebased",
+        "restSeconds": 45,
+        "windowMin": 8,
+        "windowMax": 20,
+        "tempo": "static hold",
+        "compound": False,
+        "pairId": "d5-grip-core",
+        "stages": ["Tuck Hold (Chair)", "Tuck Hold (Bars)", "One Leg Extended", "Full L-Sit"]
+    },
+
+    # Warmup & Cardio Utilities
+    { "id": "high-knees", "name": "High Knees", "category": "Warmup", "type": "timebased", "restSeconds": 0, "windowMin": 30, "windowMax": 30 },
+    { "id": "bodyweight-squat", "name": "Bodyweight Squat", "category": "Warmup", "type": "variation", "restSeconds": 30, "windowMin": 8, "windowMax": 8 },
+    { "id": "arm-circles", "name": "Arm Circles", "category": "Warmup", "type": "variation", "restSeconds": 0, "windowMin": 10, "windowMax": 10 },
+    { "id": "wall-slides", "name": "Wall Slides", "category": "Warmup", "type": "variation", "restSeconds": 30, "windowMin": 8, "windowMax": 8 },
+    { "id": "scapular-push-up", "name": "Scapular Push-up", "category": "Warmup", "type": "variation", "restSeconds": 30, "windowMin": 10, "windowMax": 10 },
+    { "id": "scapular-pull-up", "name": "Scapular Pull-up", "category": "Warmup", "type": "variation", "restSeconds": 30, "windowMin": 6, "windowMax": 6 },
+    { "id": "dead-hang", "name": "Dead Hang", "category": "Warmup", "type": "timebased", "restSeconds": 30, "windowMin": 15, "windowMax": 15 },
+    { "id": "seated-band-row", "name": "Seated Band Row", "category": "Warmup", "type": "variation", "restSeconds": 30, "windowMin": 12, "windowMax": 12 },
+    { "id": "brisk-walking", "name": "Brisk Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "windowMin": 30, "windowMax": 45 },
+    { "id": "relaxed-walking", "name": "Relaxed Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "windowMin": 25, "windowMax": 30 },
+    { "id": "vo2-max-norwegian-4x4", "name": "VO2 Max Norwegian 4x4", "category": "Cardio", "type": "interval", "restSeconds": 0, "windowMin": 16, "windowMax": 16 },
+    { "id": "micro-mobility-protocol", "name": "Micro Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "windowMin": 5, "windowMax": 5 },
+    { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "windowMin": 10, "windowMax": 10 }
+]
+
+def make_ex_obj(slot, ex_id, name, sets_str, rep_window=None, weight=None, tempo=None, rest=90, is_warmup=False,
+                structure="straight", pair_id=None, circuit_id=None, block_id=None, block_order=None,
+                circuit_order=None, toggle_group=None, toggle_active_on=None, microcycle=None):
     return {
         "slot": slot,
+        "id": ex_id,
         "name": name,
-        "sets": sets,
+        "sets": sets_str,
+        "repWindow": rep_window or sets_str,
         "weight": weight,
         "tempo": tempo,
         "rest": rest,
-        "isWarmup": isWarmup
+        "restRange": [max(30, rest - 15), rest + 30] if rest >= 45 else [rest, rest],
+        "isWarmup": is_warmup,
+        "structure": structure,
+        "pairId": pair_id,
+        "circuitId": circuit_id,
+        "blockId": block_id,
+        "blockOrder": block_order,
+        "circuitOrder": circuit_order,
+        "toggleGroup": toggle_group,
+        "toggleActiveOn": toggle_active_on,
+        "microcycle": microcycle
     }
 
 def get_leg_warmup():
     return [
-        ex("W1", "High Knees", "30 secs", isWarmup=True, rest=0),
-        ex("W2", "Bodyweight Squat", "2×8 (Slow)", isWarmup=True, rest=30),
-        ex("W3", "Dead Bug", "1×6 each side", isWarmup=True, rest=30),
-        ex("W4", "Glute Bridge", "1×12", isWarmup=True, rest=30),
+        make_ex_obj("W1", "high-knees", "High Knees", "30 secs", is_warmup=True, rest=0),
+        make_ex_obj("W2", "bodyweight-squat", "Bodyweight Squat", "2×8 (Slow)", is_warmup=True, rest=30),
+        make_ex_obj("W3", "dead-bug", "Dead Bug", "1×6 each side", is_warmup=True, rest=30),
+        make_ex_obj("W4", "glute-bridge", "Glute Bridge", "1×12", is_warmup=True, rest=30),
     ]
 
-def get_push_warmup(is_year2=False):
-    warmups = [
-        ex("W1", "Arm Circles", "10 forward, 10 backward", isWarmup=True, rest=0),
-        ex("W2", "Wall Slides", "1×8 (Slow)", isWarmup=True, rest=30),
-        ex("W3", "Scapular Push-up", "2×10", isWarmup=True, rest=30),
-        ex("W4", "Band Pull-Apart", "1×15", "Band 30 kg", isWarmup=True, rest=30),
+def get_push_warmup():
+    return [
+        make_ex_obj("W1", "arm-circles", "Arm Circles", "10 forward, 10 backward", is_warmup=True, rest=0),
+        make_ex_obj("W2", "wall-slides", "Wall Slides", "1×8 (Slow)", is_warmup=True, rest=30),
+        make_ex_obj("W3", "scapular-push-up", "Scapular Push-up", "2×10", is_warmup=True, rest=30),
+        make_ex_obj("W4", "band-pull-apart", "Band Pull-Apart", "1×15", weight="Band 30 kg", is_warmup=True, rest=30),
     ]
-    if is_year2:
-        warmups.append(ex("W5", "Wrist Rocks", "1×10", isWarmup=True, rest=30))
-    return warmups
 
 def get_pull_warmup():
     return [
-        ex("W1", "Arm Circles", "10 forward, 10 backward", isWarmup=True, rest=0),
-        ex("W2", "Wall Slides", "1×8", isWarmup=True, rest=30),
-        ex("W3", "Scapular Pull-up", "2×6", isWarmup=True, rest=30),
-        ex("W4", "Dead Hang", "1×15 secs", isWarmup=True, rest=30),
-        ex("W5", "Seated Band Row", "1×12", "Band 30 kg", isWarmup=True, rest=30),
+        make_ex_obj("W1", "arm-circles", "Arm Circles", "10 forward, 10 backward", is_warmup=True, rest=0),
+        make_ex_obj("W2", "wall-slides", "Wall Slides", "1×8", is_warmup=True, rest=30),
+        make_ex_obj("W3", "scapular-pull-up", "Scapular Pull-up", "2×6", is_warmup=True, rest=30),
+        make_ex_obj("W4", "dead-hang", "Dead Hang", "1×15 secs", is_warmup=True, rest=30),
+        make_ex_obj("W5", "seated-band-row", "Seated Band Row", "1×12", weight="Band 30 kg", is_warmup=True, rest=30),
     ]
 
-DELOAD_WEEKS = {8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73}
-
-def get_vo2_incline(week):
-    if week in DELOAD_WEEKS or week >= 69:
-        return None
-    if 1 <= week <= 4: return "3%"
-    if 5 <= week <= 8: return "4%"
-    if 10 <= week <= 16: return "5%"
-    if 18 <= week <= 68: return "6%"
-    return "4%"
-
-def get_day_workout(dow, week):
-    # dow: 1=Monday(Legs), 2=Tuesday(Zone2), 3=Wednesday(Push), 4=Thursday(Active Recovery), 5=Friday(Pull), 6=Saturday(VO2 Max), 0=Sunday(Rest)
+def generate_day_exercises(dow, week):
     is_deload = week in DELOAD_WEEKS
-    is_year2 = week >= 53
+    is_odd = (week % 2 != 0)
+    parity = "odd" if is_odd else "even"
 
-    # MAINTENANCE PHASE (Weeks 74–78)
-    if week >= 74:
-        if dow == 1: # Strength A
-            raw = [
-                ("DB Single-Leg RDL", "3×8/leg", "24 kg", "3s descent", 120),
-                ("DB BSS (Goblet)", "3×8/leg", "24 kg", "2s descent", 90),
-                ("Single-Arm Floor Press", "3×8/side", "24 kg", "2s descent", 120),
-                ("Seated DB OHP", "3×8", "12 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "2×15", "9 kg each", "2s descent", 60),
-                ("Dead Bug", "2×10/side", "Bodyweight", "slow", 60),
-                ("Arm Block - DB Lateral Raise", "1×15", "9 kg each", "2s descent", 60),
-                ("Arm Block - DB OH Triceps Ext", "1×12", "24 kg total", "2s descent", 60),
-            ]
-            return "Legs + Push (Strength A)", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 2:
-            return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "45 mins", "Incline 4%", "5.5 km/h", 0)]
-        elif dow == 3:
-            return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30 mins", "Incline 0%", "4.5 km/h", 0)]
-        elif dow == 4: # Strength B
-            raw = [
-                ("Pull-Up (Overhand)", "3×6", "Bodyweight", "2s descent", 120),
-                ("Chin-Up", "2×5", "Bodyweight", "2s descent", 120),
-                ("One-Arm DB Row", "3×10/side", "24 kg", "2s descent", 90),
-                ("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90),
-                ("Single-Arm Curl", "2×12/side", "18 kg", "2s descent", 60),
-                ("Towel Hang", "2×45 secs", "Bodyweight", "static", 60),
-                ("Arm Block - DB Curl", "1×12", "18 kg each", "2s descent", 60),
-            ]
-            return "Pull + Skill (Strength B)", "7-8", build_exercises(raw, get_pull_warmup())
-        elif dow == 5:
-            return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "45 mins", "Incline 4%", "5.5 km/h", 0)]
-        elif dow == 6:
-            return "Active Recovery", "—", [ex("A1", "Relaxed Walking", "30 mins", "Incline 0%", "4.5 km/h", 0)]
-        else:
-            return "Rest", "—", []
-
-    # CARDIO / RECOVERY DAYS (DOW 2, 4, 6, 0)
-    if dow == 2:
-        if is_deload:
-            return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "30 mins", "Incline 2%", "5.0 km/h", 0)]
-        return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "45 mins", "Incline 4%", "5.5 km/h", 0)]
-
-    if dow == 4:
-        return "Active Recovery", "—", [
-            ex("A1", "Relaxed Walking", "25 mins", "Incline 0%", "4.5 km/h", 0),
-            ex("A2", "Deep Mobility Protocol", "10 mins", "Bodyweight", "slow", 0)
-        ]
-
-    if dow == 6:
-        if is_deload or week >= 69:
-            return "Zone 2 Cardio", "—", [ex("A1", "Brisk Walking", "30 mins", "Incline 2%", "5.0 km/h", 0)]
-        incline = get_vo2_incline(week)
-        return "VO2 Max", "9-10", [
-            ex("A1", "VO2 Max Norwegian 4x4", "4x4 mins (3 min rest)", f"Incline {incline}", "6.5 km/h effort / 4.5 km/h rest", 0)
-        ]
-
-    if dow == 0:
+    if dow == 0:  # Sunday - Rest
         return "Rest", "—", []
 
-    # STRENGTH DAYS (DOW 1, 3, 5)
+    if dow == 2:  # Tuesday - Zone 2 Cardio
+        walking_time = "30 mins" if is_deload else "45 mins"
+        incline = "Incline 2%" if is_deload else "Incline 4%"
+        speed = "5.0 km/h" if is_deload else "5.5 km/h"
+        return "Zone 2 Cardio", "—", [
+            make_ex_obj("A1", "brisk-walking", "Brisk Walking", walking_time, weight=incline, tempo=speed, rest=0)
+        ]
 
-    # DELOAD WEEKS (8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73)
-    if is_deload:
-        if dow == 1: # Day 1 Deload
-            if week == 8: raw = [("DB RDL", "2×8", "3 kg each", "3s descent", 120), ("DB BSS", "2×8/leg", "Bodyweight", "2s descent", 90), ("DB Hip Thrust", "2×10", "6 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week == 16: raw = [("DB RDL", "2×8", "6 kg each", "3s descent", 120), ("DB BSS", "2×8/leg", "3 kg each", "2s descent", 90), ("DB Hip Thrust", "2×10", "6 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week == 24: raw = [("DB Single-Leg RDL", "2×8/leg", "6 kg", "3s descent", 120), ("DB BSS", "2×8/leg", "6 kg each", "2s descent", 90), ("DB Hip Thrust", "2×10", "9 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "9 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week == 32: raw = [("DB Single-Leg RDL", "2×8/leg", "9 kg", "3s descent", 120), ("DB BSS", "2×8/leg", "6 kg each", "2s descent", 90), ("DB Hip Thrust", "2×10", "9 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "6 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "12 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week == 40: raw = [("DB Single-Leg RDL", "2×8/leg", "6 kg", "3s descent", 120), ("DB BSS (Goblet)", "2×8/leg", "9 kg", "1s pause", 90), ("DB Hip Thrust", "2×10", "12 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "9 kg", "2s descent", 60), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            elif week in (48, 56, 61, 65, 69): raw = [("DB Single-Leg RDL", "2×8/leg", "12 kg", "3s descent", 120), ("DB BSS (Goblet)", "2×8/leg", "12 kg", "1s pause", 90), ("DB Hip Thrust", "2×10", "12 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "12 kg", "2s descent", 60), ("Suitcase Carry", "2×25m/side", "12 kg", "walk", 90), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            else: raw = [("DB Single-Leg RDL", "2×8/leg", "15 kg", "3s descent", 120), ("DB BSS (Goblet)", "2×8/leg", "15 kg", "1s pause", 90), ("DB Hip Thrust", "2×10", "15 kg", "2s pause", 90), ("Single-Leg Calf Raise", "2×15/leg", "15 kg", "2s descent", 60), ("Dead Bug", "2×8/side", "Bodyweight", "slow", 60)]
-            return "Legs + Core (Deload)", "5-6", build_exercises(raw, get_leg_warmup())
+    if dow == 4:  # Thursday - Active Recovery
+        return "Active Recovery", "—", [
+            make_ex_obj("A1", "relaxed-walking", "Relaxed Walking", "25 mins", weight="Incline 0%", tempo="4.5 km/h", rest=0),
+            make_ex_obj("A2", "deep-mobility-protocol", "Deep Mobility Protocol", "10 mins", weight="Bodyweight", tempo="slow", rest=0)
+        ]
 
-        elif dow == 3: # Day 3 Deload
-            if week == 8: raw = [("Pike Hold", "2×15 secs", "Bodyweight", "static", 90), ("DB Floor Press", "2×8", "3 kg each", "2s descent", 120), ("Push-up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "3 kg total", "2s descent", 60)]
-            elif week == 16: raw = [("Wall Walk (Partial)", "2×2", "Bodyweight", "slow", 90), ("DB Floor Press", "2×6", "6 kg each", "2s descent", 120), ("Push-up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
-            elif week == 24: raw = [("Single-Arm Floor Press", "2×8/side", "9 kg", "2s descent", 120), ("Feet-Elevated Push-Up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
-            elif week == 32: raw = [("Single-Arm Floor Press", "2×8/side", "9 kg", "2s descent", 120), ("Deficit Push-Up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
-            elif week == 40: raw = [("Single-Arm Floor Press", "2×8/side", "12 kg", "2s descent", 120), ("Elevated Pike Push-Up", "2×6", "Bodyweight", "2s descent", 90), ("Seated DB OHP", "2×8", "3 kg each", "2s descent", 90), ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "6 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "3 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "6 kg total", "2s descent", 60)]
-            elif week in (48, 56, 61, 65, 69): raw = [("Single-Arm Floor Press", "2×8/side", "12 kg", "2s descent", 120), ("Single-Arm Seated OHP", "2×8/side", "9 kg", "2s descent", 90), ("DB Lateral Raise", "2×12", "6 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "9 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "6 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "9 kg total", "2s descent", 60)]
-            else: raw = [("Single-Arm Floor Press", "2×8/side", "15 kg", "2s descent", 120), ("Single-Arm Seated OHP", "2×8/side", "15 kg", "2s descent", 90), ("DB Lateral Raise", "2×12", "6 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×10", "15 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "1×12", "6 kg each", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "1×10", "15 kg total", "2s descent", 60)]
-            return "Push + Skill (Deload)", "5-6", build_exercises(raw, get_push_warmup(is_year2))
+    if dow == 6:  # Saturday - VO2 Max / Cardio
+        if is_deload:
+            return "Zone 2 Cardio", "—", [
+                make_ex_obj("A1", "brisk-walking", "Brisk Walking", "30 mins", weight="Incline 2%", tempo="5.0 km/h", rest=0)
+            ]
+        incline_val = "3%" if week <= 4 else ("4%" if week <= 8 else ("5%" if week <= 16 else "6%"))
+        return "VO2 Max", "9-10", [
+            make_ex_obj("A1", "vo2-max-norwegian-4x4", "VO2 Max Norwegian 4x4", "4x4 mins (3 min rest)", weight=f"Incline {incline_val}", tempo="6.5 km/h effort / 4.5 km/h rest", rest=0)
+        ]
 
-        elif dow == 5: # Day 5 Deload
-            if week == 8: raw = [("Pull-Up Negative", "2×2", "Bodyweight", "3s descent", 120), ("One-Arm DB Row", "2×8/side", "3 kg", "2s descent", 90), ("TRX Face Pull (Angle 1)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "3 kg each", "2s descent", 60)]
-            elif week == 16: raw = [("Pull-Up Negative", "2×2", "Bodyweight", "3s descent", 120), ("One-Arm DB Row", "2×8/side", "6 kg", "2s descent", 90), ("TRX Face Pull (Angle 2)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "3 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2s descent", 60)]
-            elif week == 24: raw = [("Pull-Up (Overhand)", "2×2", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "6 kg", "2s descent", 90), ("TRX Face Pull (Angle 2)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "3 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2s descent", 60)]
-            elif week == 32: raw = [("Pull-Up (Overhand)", "2×3", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "9 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "3 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "3 kg each", "2s descent", 60)]
-            elif week == 40: raw = [("Pull-Up (Overhand)", "2×3", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "9 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "6 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "6 kg each", "2s descent", 60)]
-            elif week in (48, 56, 61, 65, 69): raw = [("Pull-Up (Overhand)", "2×4", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "12 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "9 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "9 kg each", "2s descent", 60)]
-            else: raw = [("Pull-Up (Overhand)", "2×4", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "2×8/side", "15 kg", "2s descent", 90), ("TRX Face Pull (Angle 3)", "2×10", "Bodyweight", "2s descent", 60), ("DB Hammer Curl", "1×10", "12 kg each", "2s descent", 60), ("Arm Block - DB Curl", "1×10", "12 kg each", "2s descent", 60)]
-            return "Pull + Grip (Deload)", "5-6", build_exercises(raw, get_pull_warmup())
+    # STRENGTH DAYS: DOW 1 (Legs), DOW 3 (Push), DOW 5 (Pull)
 
-    # REGULAR WEEKS (Non-Deload, Non-Maintenance)
+    # ---------------- DOW 1: LEGS + CORE ----------------
+    if dow == 1:
+        day_title = "Legs + Core (Deload)" if is_deload else "Legs + Core"
+        rpe = "5-6" if is_deload else "7-8"
+        exs = get_leg_warmup()
 
-    # Phase 1: Weeks 1–4
-    if 1 <= week <= 4:
-        if dow == 1:
-            raw = [
-                ("DB RDL", "3×8", "6 kg each", "3s descent", 120),
-                ("DB Bulgarian Split Squat", "3×8/leg", "Bodyweight", "2s descent", 90),
-                ("DB Glute Bridge", "3×12", "9 kg on hips", "1s pause", 90),
-                ("Single-Leg Calf Raise", "3×15/leg", "Bodyweight", "2s descent", 60),
-                ("Suitcase Carry", "3×25m/side", "12 kg", "walk", 90),
-                ("Dead Bug", "3×8/side", "Bodyweight", "slow", 60),
-            ]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [
-                ("Pike Hold", "3×15 secs", "Bodyweight", "static", 90),
-                ("DB Floor Press", "3×8", "6 kg each", "2s descent", 120),
-                ("Push-up", "3×6", "Bodyweight", "2s descent", 90),
-                ("Seated DB OHP", "3×8", "3 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "2×12", "3 kg each", "2s descent", 60),
-                ("DB OH Triceps Ext", "2×12", "6 kg total", "2s descent", 60),
-                ("TRX Y-T-W", "2×8/shape", "Bodyweight (Angle 1)", "1s pause", 60),
-            ]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
-        elif dow == 5:
-            raw = [
-                ("Pull-Up Negative", "3×2", "Bodyweight", "3s descent", 120),
-                ("One-Arm DB Row", "3×8/side", "6 kg", "2s descent", 90),
-                ("TRX Face Pull", "3×12", "Bodyweight (Angle 1)", "2s descent", 60),
-                ("DB Curl", "2×10", "3 kg each", "2s descent", 60),
-                ("Towel Hang", "3×15 secs", "Bodyweight", "static", 60),
-                ("L-sit Tuck (Bars)", "3×8 secs", "Bodyweight", "static", 60),
-            ]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        # A1: DB RDL
+        rdl_sets = "2×8" if is_deload else ("4×10" if 5 <= week <= 8 else "3×8")
+        rdl_weight = "3 kg each" if is_deload else "6 kg each"
+        exs.append(make_ex_obj("A1", "db-rdl", "DB Romanian Deadlift", rdl_sets, rep_window="6-12", weight=rdl_weight, tempo="3s descent", rest=105, structure="straight"))
 
-    # Phase 2: Weeks 5–8
-    if 5 <= week <= 8:
-        if dow == 1:
-            raw = [
-                ("DB RDL", "4×10", "9 kg each", "3s descent", 120),
-                ("DB Bulgarian Split Squat", "3×10/leg", "3 kg each", "2s descent", 90),
-                ("DB Hip Thrust", "3×15", "9 kg on hips", "2s pause", 90),
-                ("Single-Leg Calf Raise", "3×18/leg", "9 kg in hand", "2s descent", 60),
-                ("Suitcase Carry", "3×30m/side", "15 kg", "walk", 90),
-                ("Hollow Body Hold", "3×15 secs", "Bodyweight", "static", 60),
-            ]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [
-                ("Pike Hold", "3×20 secs", "Bodyweight (Feet on chair)", "static", 90),
-                ("DB Floor Press", "4×10", "9 kg each", "2s descent", 120),
-                ("Push-up", "4×5", "Bodyweight", "2s descent", 90),
-                ("Seated DB OHP", "3×10", "6 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "3×15", "3 kg each", "2s descent", 60),
-                ("DB OH Triceps Ext", "3×12", "6 kg total", "2s descent", 60),
-                ("TRX Y-T-W", "2×10/shape", "Bodyweight (Angle 1)", "1s pause", 60),
-            ]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
-        elif dow == 5:
-            raw = [
-                ("Pull-Up Negative", "4×3", "Bodyweight", "4s descent", 120),
-                ("Chin-Up Negative", "3×3", "Bodyweight", "4s descent", 120),
-                ("One-Arm DB Row", "3×10/side", "9 kg", "2s descent", 90),
-                ("TRX Face Pull", "3×15", "Bodyweight (Angle 2)", "2s descent", 60),
-                ("DB Hammer Curl", "3×12", "6 kg each", "2s descent", 60),
-                ("Towel Hang", "3×25 secs", "Bodyweight", "static", 60),
-                ("L-sit Tuck (Bars)", "3×10 secs", "Bodyweight", "static", 60),
-            ]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        # A2: Toggle Group - Single-Leg RDL (odd) or Reverse Lunge/Pistol (even)
+        if is_odd:
+            sl_sets = "2×8/leg" if is_deload else "2×8-10/leg"
+            sl_weight = "3 kg" if is_deload else "6 kg each"
+            exs.append(make_ex_obj("A2", "single-leg-rdl", "Single-Leg RDL", sl_sets, rep_window="8-10/leg", weight=sl_weight, tempo="3s descent", rest=75, structure="straight", toggle_group="day1-posterior-quad", toggle_active_on="odd"))
+        else:
+            rl_sets = "2×8/leg" if is_deload else "2×10-12/leg"
+            rl_weight = "3 kg" if is_deload else "6 kg each"
+            exs.append(make_ex_obj("A2", "reverse-lunge", "Reverse Lunge + DB", rl_sets, rep_window="10-12/leg", weight=rl_weight, tempo="2s descent", rest=75, structure="straight", toggle_group="day1-posterior-quad", toggle_active_on="even"))
 
-    # Phase 4: Weeks 9–16 (Arm block starts!)
-    if 9 <= week <= 16:
-        if dow == 1:
-            raw = [
-                ("DB RDL", "4×8", "12 kg each", "3s descent", 120),
-                ("DB Bulgarian Split Squat", "4×8/leg", "9 kg each", "2s descent", 90),
-                ("DB Hip Thrust", "4×10", "12 kg on hips", "2s pause", 90),
-                ("Single-Leg Calf Raise", "3×20/leg", "9 kg", "2s descent", 60),
-                ("Pallof Press", "3×12/side", "Band 30 kg", "1s pause", 60),
-                ("Dead Bug", "3×10/side", "Bodyweight", "slow", 60),
-            ]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [
-                ("Wall Walk (Partial)", "3×3", "Bodyweight", "slow", 90),
-                ("DB Floor Press", "4×6", "12 kg each", "2s descent", 120),
-                ("Deficit Push-Up", "3×6", "Bodyweight", "2s descent", 90),
-                ("Seated DB OHP", "3×8", "6 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "2×18", "3 kg each", "2s descent", 60),
-                ("DB OH Triceps Ext", "2×10", "9 kg total", "2s descent", 60),
-                ("Band Pull-Apart", "2×20", "Band 30 kg", "1s pause", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "3-9 kg each (Ladder)", "2s descent", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6-15 kg total (Ladder)", "2s descent", 60),
-            ]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
-        elif dow == 5:
-            raw = [
-                ("Pull-Up (Overhand)", "3×1", "Bodyweight", "2s descent", 120),
-                ("Chin-Up", "3×1", "Bodyweight", "2s descent", 120),
-                ("One-Arm DB Row", "4×8/side", "12 kg", "2s descent", 90),
-                ("TRX Face Pull", "3×12", "Bodyweight (Angle 2)", "2s descent", 60),
-                ("DB Curl", "2×10", "6 kg each", "2s descent", 60),
-                ("Towel Hang", "3×30 secs", "Bodyweight", "static", 60),
-                ("L-sit Tuck (Bars)", "3×10 secs", "Bodyweight", "static", 60),
-                ("Arm Block - DB Curl", "2×10-15", "3-12 kg each (Ladder)", "2s descent + 1s squeeze", 60),
-            ]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        # A3: Bulgarian Split Squat
+        bss_sets = "2×8/leg" if is_deload else "3×6-12/leg"
+        bss_weight = "Bodyweight" if is_deload else "6 kg each"
+        exs.append(make_ex_obj("A3", "bulgarian-split-squat", "DB Bulgarian Split Squat", bss_sets, rep_window="6-12/leg", weight=bss_weight, tempo="2s descent", rest=82, structure="straight"))
 
-    # Phase 6: Weeks 17–24
-    if 17 <= week <= 24:
-        if dow == 1:
-            raw = [
-                ("DB Bulgarian Split Squat", "4×10/leg", "9 kg each", "2s descent", 90),
-                ("DB Single-Leg RDL", "4×10/leg", "12 kg", "3s descent", 120),
-                ("DB Hip Thrust", "4×12", "15 kg on hips", "2s pause", 90),
-                ("Reverse Lunge + DB", "3×10/leg", "9 kg each", "2s descent", 90),
-                ("Single-Leg Calf Raise", "4×18/leg", "12 kg", "2s descent", 60),
-                ("Suitcase Carry", "3×40m/side", "18 kg", "walk", 90),
-            ]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [
-                ("Wall Walk (Full)", "3×3", "Bodyweight", "slow", 90),
-                ("Single-Arm Floor Press", "4×8/side", "15 kg", "2s descent", 120),
-                ("Feet-Elevated Push-Up", "4×6", "Bodyweight", "2s descent", 90),
-                ("Seated DB OHP", "3×10", "9 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "2×20", "3 kg each", "3s descent", 60),
-                ("DB OH Triceps Ext", "2×12", "9 kg total", "2s descent", 60),
-                ("TRX Y-T-W", "3×10/shape", "Bodyweight (Angle 1)", "1s pause", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "3-9 kg each (Ladder)", "2s descent", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6-15 kg total (Ladder)", "2s descent", 60),
-            ]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
-        elif dow == 5:
-            raw = [
-                ("Pull-Up (Overhand)", "4×3", "Bodyweight", "2s descent", 120),
-                ("Chin-Up", "3×3", "Bodyweight", "2s descent", 120),
-                ("One-Arm DB Row", "4×10/side", "12 kg", "2s descent", 90),
-                ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Hammer Curl", "2×12", "6 kg each", "2s descent", 60),
-                ("Towel Hang", "3×35 secs", "Bodyweight", "static", 60),
-                ("L-sit Tuck (Bars)", "3×12 secs", "Bodyweight", "static", 60),
-                ("Arm Block - DB Curl", "2×10-15", "3-12 kg each (Ladder)", "2s descent", 60),
-            ]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        # A4: DB Hip Thrust
+        ht_sets = "2×10" if is_deload else "3×10-15"
+        ht_weight = "6 kg" if is_deload else "9 kg total"
+        exs.append(make_ex_obj("A4", "db-hip-thrust", "DB Hip Thrust", ht_sets, rep_window="10-15", weight=ht_weight, tempo="1s pause", rest=75, structure="straight"))
 
-    # Phase 8: Weeks 25–32
-    if 25 <= week <= 32:
-        if dow == 1:
-            raw = [
-                ("DB Single-Leg RDL", "4×6/leg", "15 kg", "3s descent", 120),
-                ("DB Bulgarian Split Squat", "4×6/leg", "12 kg each", "2s descent", 90),
-                ("DB Hip Thrust", "4×8", "18 kg on hips", "2s pause", 90),
-                ("Single-Leg Calf Raise", "4×15/leg", "12 kg", "2s descent", 60),
-                ("Suitcase Carry", "4×30m/side", "21 kg", "walk", 90),
-                ("Hollow Body Hold", "3×20 secs", "Bodyweight", "static", 60),
-            ]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [
-                ("Wall Handstand", "3×20 secs", "Bodyweight (Face to wall)", "static", 90),
-                ("Single-Arm Floor Press", "4×6/side", "18 kg", "2s descent", 120),
-                ("Deficit Push-Up", "4×6", "Bodyweight", "2s descent", 90),
-                ("Seated DB OHP", "3×8", "9 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "2×15", "3 kg each", "2s descent", 60),
-                ("DB OH Triceps Ext", "2×10", "9 kg total", "2s descent", 60),
-                ("Band Pull-Apart", "3×20", "Band 30 kg", "1s pause", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60),
-            ]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
-        elif dow == 5:
-            raw = [
-                ("Pull-Up (Overhand)", "4×4", "Bodyweight", "2s descent", 120),
-                ("Chin-Up", "3×4", "Bodyweight", "2s descent", 120),
-                ("One-Arm DB Row", "4×8/side", "15 kg", "2s descent", 90),
-                ("TRX Face Pull", "3×12", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Curl", "2×10", "6 kg each", "2s descent", 60),
-                ("Towel Hang", "3×40 secs", "Bodyweight", "static", 60),
-                ("L-sit Tuck (Bars)", "3×12 secs", "Bodyweight", "static", 60),
-                ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60),
-            ]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        # A5: Suitcase Carry
+        sc_sets = "2×25m/side" if is_deload else "3×25-40m/side"
+        sc_weight = "9 kg" if is_deload else "12 kg"
+        exs.append(make_ex_obj("A5", "suitcase-carry", "Suitcase Carry", sc_sets, rep_window="25-40m/side", weight=sc_weight, tempo="walk", rest=60, structure="straight"))
 
-    # Phase 10: Weeks 33–40
-    if 33 <= week <= 40:
-        if dow == 1:
-            raw = [
-                ("DB Single-Leg RDL", "4×8/leg", "12 kg", "3s descent", 120),
-                ("DB BSS (Goblet)", "4×8/leg", "15 kg", "1s pause at bottom", 90),
-                ("DB Hip Thrust", "4×10", "21 kg on hips", "2s pause", 90),
-                ("Reverse Lunge + DB", "3×10/leg", "9 kg each", "2s descent", 90),
-                ("Single-Leg Calf Raise", "4×20/leg", "15 kg", "2s descent", 60),
-                ("Pallof Press", "3×15/side", "Band 40 kg", "1s pause", 60),
-            ]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [
-                ("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90),
-                ("Single-Arm Floor Press", "4×8/side", "21 kg", "1s pause at bottom", 120),
-                ("Feet-Elevated Push-Up", "4×6", "Bodyweight", "2s descent", 90),
-                ("Seated DB OHP", "3×10", "9 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "2×20", "3 kg each", "3s descent", 60),
-                ("DB OH Triceps Ext", "2×12", "12 kg total", "2s descent", 60),
-                ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1s pause", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60),
-            ]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
-        elif dow == 5:
-            raw = [
-                ("Pull-Up (Overhand)", "4×5", "Bodyweight", "2s descent", 120),
-                ("Chin-Up", "3×5", "Bodyweight", "2s descent", 120),
-                ("One-Arm DB Row", "4×10/side", "18 kg", "2s descent", 90),
-                ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Curl", "2×12", "9 kg each", "2s descent", 60),
-                ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60),
-                ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60),
-                ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60),
-            ]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        # Calf Block (Standing + Seated Calf Raise)
+        calf_standing_sets = "2×15/leg" if is_deload else "3×12-20/leg"
+        calf_seated_sets = "2×15/leg" if is_deload else "2×15-25/leg"
+        exs.append(make_ex_obj("A6", "standing-single-leg-calf-raise", "Standing Single-Leg Calf Raise", calf_standing_sets, rep_window="12-20/leg", weight="6 kg in hand", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=1))
+        exs.append(make_ex_obj("A7", "seated-single-leg-calf-raise", "Seated Single-Leg Calf Raise", calf_seated_sets, rep_window="15-25/leg", weight="6 kg on knee", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=2))
 
-    # Phase 12: Weeks 41–48
-    if 41 <= week <= 48:
-        if dow == 1:
-            raw = [
-                ("Pistol Squat to Chair", "3×5/leg", "Bodyweight", "3s descent", 120),
-                ("DB Single-Leg RDL", "4×8/leg", "18 kg", "3s descent", 120),
-                ("DB Hip Thrust", "4×10", "21 kg on hips", "2s pause", 90),
-                ("Reverse Lunge + DB", "3×12/leg", "12 kg each", "2s descent", 90),
-                ("Single-Leg Calf Raise", "4×20/leg", "18 kg", "2s pause at bottom", 60),
-                ("Dead Bug", "3×12/side", "Bodyweight", "slow", 60),
-            ]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [
-                ("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90),
-                ("Single-Arm Floor Press", "4×8/side", "24 kg", "2s descent", 120),
-                ("Elevated Pike Push-Up", "4×8", "Bodyweight", "2s descent", 90),
-                ("Seated DB OHP", "3×12", "12 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "2×20", "6 kg each", "3s descent", 60),
-                ("DB OH Triceps Ext", "2×15", "12 kg total", "2s descent", 60),
-                ("Band Pull-Apart", "3×20", "Band 30 kg", "1s pause", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60),
-            ]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
-        elif dow == 5:
-            raw = [
-                ("Pull-Up (Overhand)", "4×5", "Bodyweight", "2s descent", 120),
-                ("Chin-Up", "3×5", "Bodyweight", "2s descent", 120),
-                ("One-Arm DB Row", "4×10/side", "21 kg", "2s descent", 90),
-                ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Curl", "2×15", "9 kg each", "2s descent", 60),
-                ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60),
-                ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60),
-                ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60),
-            ]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        # Core Circuit (Pallof, Dead Bug, Hollow Body)
+        exs.append(make_ex_obj("A8", "pallof-press-progression", "Pallof Press Progression", "2×10-12/side", rep_window="10-12/side", weight="Band 30 kg", tempo="1s pause", rest=45, structure="straight" if is_deload else "circuit", circuit_id="d1-core-circuit", circuit_order=1))
+        exs.append(make_ex_obj("A9", "dead-bug", "Dead Bug", "2×8/side" if is_deload else "3×12-20/side", rep_window="12-20/side", weight="Bodyweight", tempo="slow", rest=30, structure="straight" if is_deload else "circuit", circuit_id="d1-core-circuit", circuit_order=2))
+        exs.append(make_ex_obj("A10", "hollow-body-hold", "Hollow Body Hold", "2×15 secs" if is_deload else "2×20-30 secs", rep_window="20-30s", weight="Bodyweight", tempo="static", rest=30, structure="straight" if is_deload else "circuit", circuit_id="d1-core-circuit", circuit_order=3))
 
-    # Phase 14: Weeks 49–52
-    if 49 <= week <= 52:
-        if dow == 1:
-            raw = [
-                ("Pistol Squat to Chair", "3×8/leg", "Bodyweight", "3s descent", 120),
-                ("DB Single-Leg RDL", "3×10/leg", "21 kg", "3s descent", 120),
-                ("DB Hip Thrust", "3×12", "24 kg on hips", "2s pause", 90),
-                ("Reverse Lunge + DB", "3×12/leg", "12 kg each", "2s descent", 90),
-                ("Single-Leg Calf Raise", "4×20/leg", "21 kg", "2s pause at bottom", 60),
-                ("Dead Bug", "3×12/side", "Bodyweight", "slow", 60),
-            ]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [
-                ("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90),
-                ("Single-Arm Floor Press", "3×10/side", "24 kg", "2s descent", 120),
-                ("Feet-Elevated Push-Up", "4×10", "Bodyweight", "2s descent", 90),
-                ("Elevated Pike Push-Up", "3×10", "Bodyweight", "2s descent", 90),
-                ("Seated DB OHP", "3×12", "12 kg each", "2s descent", 90),
-                ("DB Lateral Raise", "2×20", "6 kg each", "3s descent", 60),
-                ("DB OH Triceps Ext", "2×15", "15 kg total", "2s descent", 60),
-                ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60),
-                ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60),
-            ]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup())
-        elif dow == 5:
-            raw = [
-                ("Pull-Up (Overhand)", "4×6", "Bodyweight", "2s descent", 120),
-                ("Chin-Up", "3×6", "Bodyweight", "2s descent", 120),
-                ("One-Arm DB Row", "3×12/side", "21 kg", "2s descent", 90),
-                ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2s descent", 60),
-                ("DB Curl", "2×15", "9 kg each", "2s descent", 60),
-                ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60),
-                ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60),
-                ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60),
-            ]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        exs.append(make_ex_obj("A11", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
+        return day_title, rpe, exs
 
-    # YEAR 2 WEEKS (53–73)
-    if 53 <= week <= 57:
-        if dow == 1:
-            raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×8/leg", "18 kg", "2s descent", 90), ("DB Hip Thrust", "4×10", "24 kg on hips", "2s pause", 90), ("Reverse Lunge + DB", "3×10/leg", "12 kg each", "2s descent", 90), ("Single-Leg Calf Raise", "4×20/leg", "21 kg", "2s descent", 60), ("Suitcase Carry", "4×30m/side", "24 kg", "walk", 90), ("Dead Bug", "3×12/side", "Bodyweight", "slow", 60)]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2s descent", 120), ("Deficit Push-Up", "4×8", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "4×8/side", "18 kg", "2s descent", 90), ("DB Lateral Raise", "2×15", "9 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×12", "18 kg total", "2s descent", 60), ("Band Pull-Apart", "2×20", "Band 30 kg", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
-        elif dow == 5:
-            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×6", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("DB Hammer Curl", "2×12", "12 kg each", "2s descent", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+    # ---------------- DOW 3: PUSH + SHOULDERS ----------------
+    if dow == 3:
+        day_title = "Push + Skill (Deload)" if is_deload else "Push + Skill"
+        rpe = "5-6" if is_deload else "7-8"
+        exs = get_push_warmup()
 
-    if 57 <= week <= 60:
-        if dow == 1:
-            raw = [("DB Single-Leg RDL", "4×8/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×10/leg", "21 kg", "1s pause", 90), ("DB Hip Thrust", "4×12", "24 kg on hips", "2s pause", 90), ("Reverse Lunge + DB", "3×10/leg", "12 kg each", "2s descent", 90), ("Single-Leg Calf Raise", "4×20/leg", "24 kg", "2s pause", 60), ("Pallof Press", "3×15/side", "Band 40 kg", "1s pause", 60), ("Hollow Body Hold", "3×20 secs", "Bodyweight", "static", 60)]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "4×8/side", "24 kg", "2s descent", 120), ("Feet-Elevated Push-Up", "4×10", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "4×10/side", "21 kg", "2s descent", 90), ("DB Lateral Raise", "2×18", "9 kg each", "3s descent", 60), ("DB OH Triceps Ext", "2×12", "21 kg total", "2s descent", 60), ("TRX Y-T-W", "3×10/shape", "Bodyweight (Angle 1)", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
-        elif dow == 5:
-            raw = [("Pull-Up (Overhand)", "4×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×6", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 3)", "2s descent", 60), ("DB Curl", "2×12", "12 kg each", "2s descent", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×18 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        exs.append(make_ex_obj("A1", "pike-progression", "Pike Progression", "2×15 secs" if is_deload else "3×15-30 secs", rep_window="6-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        exs.append(make_ex_obj("A2", "db-floor-press", "DB Floor Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="3 kg each" if is_deload else "6 kg each", tempo="2s descent", rest=105, structure="straight"))
+        exs.append(make_ex_obj("A3", "push-up-progression", "Push-up Bars Progression", "2×6" if is_deload else "3×8-15", rep_window="8-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        exs.append(make_ex_obj("A4", "seated-db-ohp", "Seated DB Overhead Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="3 kg each" if is_deload else "3 kg each", tempo="2s descent", rest=82, structure="straight"))
 
-    if 62 <= week <= 64:
-        if dow == 1:
-            raw = [("DB Single-Leg RDL", "4×6/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×8/leg", "24 kg", "1s pause", 90), ("DB Hip Thrust", "4×10", "24 kg on hips", "3s pause", 90), ("Walking Lunge (Goblet)", "3×12/leg", "18 kg", "2s descent", 90), ("Single-Leg Calf Raise", "4×15/leg", "24 kg", "2s descent", 60), ("Suitcase Carry", "4×40m/side", "24 kg", "walk", 90), ("Hollow Body Hold", "3×25 secs", "Bodyweight", "static", 60)]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [("Wall Handstand", "3×35 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2s descent", 120), ("Weighted Deficit Push-Up", "4×6", "Vest +5 kg", "2s descent", 90), ("Single-Arm Seated OHP", "4×8/side", "24 kg", "2s descent", 90), ("DB Lateral Raise", "2×15", "9 kg each", "3s descent", 60), ("DB OH Triceps Ext", "2×10", "21 kg total", "2s descent", 60), ("Band Pull-Apart", "3×20", "Band 30 kg", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
-        elif dow == 5:
-            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2s descent", 120), ("Chin-Up", "4×5", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("Single-Arm Curl", "2×10/side", "15 kg", "2s descent", 60), ("Towel Hang", "3×50 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        # Rear Delt Toggle (TRX Y-T-W odd vs Band Pull-Apart even)
+        if is_odd:
+            exs.append(make_ex_obj("A5", "trx-y-t-w", "TRX Y-T-W", "2×8/shape", rep_window="8-12/shape", weight="Bodyweight", tempo="1s pause", rest=45, structure="straight", toggle_group="day3-rear-delt", toggle_active_on="odd"))
+        else:
+            exs.append(make_ex_obj("A5", "band-pull-apart", "Band Pull-Apart", "3×15", rep_window="15-25", weight="Band 30 kg", tempo="1s squeeze", rest=45, structure="straight", toggle_group="day3-rear-delt", toggle_active_on="even"))
 
-    if 66 <= week <= 68: # PEAK
-        if dow == 1:
-            raw = [("DB Single-Leg RDL", "4×6/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "4×6/leg", "24 kg", "2s pause", 90), ("DB Hip Thrust", "4×8", "24 kg on hips", "3s pause", 90), ("Pistol Squat to Chair", "3×5/leg", "Bodyweight", "3s descent", 120), ("Single-Leg Calf Raise", "4×12/leg", "24 kg", "2s descent", 60), ("Suitcase Carry", "4×40m/side", "24 kg", "walk", 90), ("Pallof Press", "3×12/side", "Band 40 kg", "1s pause", 60)]
-            return "Legs + Core", "8-9", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [("Wall Handstand", "3×40 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "5×6/side", "24 kg", "2s descent", 120), ("Elevated Pike Push-Up", "4×8", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "4×6/side", "24 kg", "2s descent", 90), ("DB Lateral Raise", "2×12", "9 kg each", "3s descent", 60), ("DB OH Triceps Ext", "2×8", "24 kg total", "2s descent", 60), ("TRX Y-T-W", "3×12/shape", "Bodyweight (Angle 1)", "1s pause", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
-            return "Push + Skill", "8-9", build_exercises(raw, get_push_warmup(is_year2=True))
-        elif dow == 5:
-            raw = [("Weighted Pull-Up", "5×5", "Vest +5 kg", "2s descent", 120), ("Weighted Chin-Up", "4×5", "Vest +5 kg", "2s descent", 120), ("One-Arm DB Row", "4×8/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×18", "Bodyweight (Angle 4)", "2s descent", 60), ("Single-Arm Curl", "2×8/side", "18 kg", "2s descent", 60), ("Towel Hang", "3×60 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×20 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
-            return "Pull + Grip", "8-9", build_exercises(raw, get_pull_warmup())
+        # Pair: DB Lateral Raise ↔ TRX Row (or standalone)
+        exs.append(make_ex_obj("A6", "db-lateral-raise", "DB Lateral Raise", "2×12" if is_deload else "2×12-20", rep_window="12-20", weight="3 kg each", tempo="2s descent", rest=45, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral"))
+        exs.append(make_ex_obj("A7", "db-oh-triceps-extension", "DB Overhead Triceps Extension", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="3 kg total" if is_deload else "6 kg total", tempo="2s descent", rest=45, structure="straight"))
 
-    if 70 <= week <= 72: # TRANSITION
-        if dow == 1:
-            raw = [("DB Single-Leg RDL", "3×8/leg", "24 kg", "3s descent", 120), ("DB BSS (Goblet)", "3×8/leg", "24 kg", "2s descent", 90), ("DB Hip Thrust", "3×10", "24 kg on hips", "2s pause", 90), ("Single-Leg Calf Raise", "3×15/leg", "24 kg", "2s descent", 60), ("Suitcase Carry", "3×30m/side", "24 kg", "walk", 90)]
-            return "Legs + Core", "7-8", build_exercises(raw, get_leg_warmup())
-        elif dow == 3:
-            raw = [("Wall Handstand", "3×30 secs", "Bodyweight", "static", 90), ("Single-Arm Floor Press", "3×8/side", "24 kg", "2s descent", 120), ("Deficit Push-Up", "3×8", "Bodyweight", "2s descent", 90), ("Single-Arm Seated OHP", "3×8/side", "24 kg", "2s descent", 90), ("DB Lateral Raise", "2×15", "9 kg each", "2s descent", 60), ("DB OH Triceps Ext", "2×12", "24 kg total", "2s descent", 60), ("Arm Block - DB Lateral Raise", "2×12-20", "3 kg each (Ladder)", "2s descent", 60), ("Arm Block - DB OH Triceps Ext", "2×10-15", "6 kg total (Ladder)", "2s descent", 60)]
-            return "Push + Skill", "7-8", build_exercises(raw, get_push_warmup(is_year2=True))
-        elif dow == 5:
-            raw = [("Pull-Up (Overhand)", "3×6", "Bodyweight", "2s descent", 120), ("Chin-Up", "3×5", "Bodyweight", "2s descent", 120), ("One-Arm DB Row", "3×10/side", "24 kg", "2s descent", 90), ("TRX Face Pull", "3×15", "Bodyweight (Angle 3)", "2s descent", 60), ("Single-Arm Curl", "2×12/side", "18 kg", "2s descent", 60), ("Towel Hang", "3×45 secs", "Bodyweight", "static", 60), ("L-sit Tuck (Bars)", "3×15 secs", "Bodyweight", "static", 60), ("Arm Block - DB Curl", "2×10-15", "3 kg each (Ladder)", "2s descent", 60)]
-            return "Pull + Grip", "7-8", build_exercises(raw, get_pull_warmup())
+        # Arm Block (Myo-Reps)
+        if week >= 10:
+            exs.append(make_ex_obj("A8", "arm-block-lateral-raise", "Arm Block - DB Lateral Raise", "1×15 (Activation)" if is_deload else "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
+            exs.append(make_ex_obj("A9", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "1×10 (Activation)" if is_deload else "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="6 kg total", tempo="2s descent", rest=15, structure="myo-reps"))
 
-    # Fallback default
+        exs.append(make_ex_obj("A10", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
+        return day_title, rpe, exs
+
+    # ---------------- DOW 5: PULL + GRIP + BICEPS ----------------
+    if dow == 5:
+        day_title = "Pull + Grip (Deload)" if is_deload else "Pull + Grip"
+        rpe = "5-6" if is_deload else "7-8"
+        exs = get_pull_warmup()
+
+        exs.append(make_ex_obj("A1", "pull-up-progression", "Pull-Up Progression", "2×2" if is_deload else "3×3-8", rep_window="3-8", weight="Bodyweight", tempo="2s descent", rest=105, structure="straight"))
+        exs.append(make_ex_obj("A2", "one-arm-db-row", "One-Arm DB Row", "2×8/side" if is_deload else "3×8-12/side", rep_window="8-12/side", weight="3 kg" if is_deload else "6 kg", tempo="2s descent", rest=82, structure="straight"))
+        exs.append(make_ex_obj("A3", "trx-face-pull", "TRX Face Pull", "2×10" if is_deload else "3×12-20", rep_window="12-20", weight="Bodyweight", tempo="2s descent", rest=45, structure="straight"))
+
+        # Pair: Push-Up Volume ↔ DB Curl
+        biceps_cycle_week = ((week - 1) % 3) + 1
+        is_biceps_light = (biceps_cycle_week == 3)
+        if not is_biceps_light and not is_deload:
+            exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-20", rep_window="10-20", weight="Bodyweight", tempo="2s descent", rest=75, structure="pair", pair_id="d5-pushup-curl"))
+            exs.append(make_ex_obj("A5", "db-curl", "DB Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="pair", pair_id="d5-pushup-curl", microcycle="biceps-microcycle"))
+        else:
+            exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10", rep_window="10-20", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+
+        # Hammer Curl (microcycle)
+        exs.append(make_ex_obj("A6", "hammer-curl", "Hammer Curl", "1×10" if is_deload else "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle"))
+
+        # Pair: Towel Hang ↔ L-Sit Tuck
+        exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "3×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-core"))
+        exs.append(make_ex_obj("A8", "l-sit-progression", "L-sit Tuck (Bars)", "3×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-core"))
+
+        if week >= 10 and not is_deload:
+            exs.append(make_ex_obj("A9", "arm-block-biceps-curl", "Arm Block - DB Curl", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
+
+        exs.append(make_ex_obj("A10", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
+        return day_title, rpe, exs
+
     return "Rest", "—", []
-
-def build_exercises(raw_tuple_list, warmups):
-    out = []
-    for w in warmups:
-        out.append(w)
-    
-    idx = 1
-    for item in raw_tuple_list:
-        name = item[0]
-        sets = item[1]
-        weight = item[2]
-        tempo = item[3] if len(item) > 3 else "2s descent"
-        rest = item[4] if len(item) > 4 else 90
-        
-        out.append(ex(f"A{idx}", name, sets, weight=weight, tempo=tempo, rest=rest))
-        idx += 1
-
-    out.append(ex(f"A{idx}", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
-    return out
 
 def generate_program():
     daily = []
     day_num = 0
     total_weeks = 52
-    
+
     for week in range(1, total_weeks + 1):
-        # DOW order: 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday, 0=Sunday
         for dow in [1, 2, 3, 4, 5, 6, 0]:
             day_num += 1
             date = START_DATE + timedelta(days=day_num - 1)
-            day_type, rpe, exercises = get_day_workout(dow, week)
-            
+            day_type, rpe, exercises = generate_day_exercises(dow, week)
+
             daily.append({
                 "dayNum": day_num,
                 "week": f"Week {week}",
@@ -553,99 +827,122 @@ def generate_program():
                 "exercises": exercises
             })
 
-    # Catalog of all exercises for exercises guide / DB
-    all_exercise_names = set()
-    for day in daily:
-        for e in day["exercises"]:
-            all_exercise_names.add(e["name"])
+    # Master Lean Structures definition matching UPDATE_PROGRAM.md spec
+    lean_structures = {
+        "pairs": [
+            {
+                "id": "d3-row-lateral",
+                "dayIndex": 3,
+                "name": "TRX Row ↔ DB Lateral Raise",
+                "type": "non-competing",
+                "restAfterPairSeconds": 75,
+                "members": ["trx-row", "db-lateral-raise"]
+            },
+            {
+                "id": "d5-pushup-curl",
+                "dayIndex": 5,
+                "name": "Push-Up Volume ↔ DB Curl",
+                "type": "antagonistic",
+                "restAfterPairSeconds": 75,
+                "members": ["push-up-volume", "db-curl"]
+            },
+            {
+                "id": "d5-grip-core",
+                "dayIndex": 5,
+                "name": "Towel Hang ↔ L-Sit Tuck",
+                "type": "non-competing",
+                "restAfterPairSeconds": 60,
+                "members": ["towel-hang", "l-sit-progression"]
+            }
+        ],
+        "circuits": [
+            {
+                "id": "d1-core-circuit",
+                "dayIndex": 1,
+                "name": "Core Citadel Circuit",
+                "restAfterCircuitSeconds": 90,
+                "exercises": ["pallof-press-progression", "dead-bug", "hollow-body-hold"]
+            }
+        ],
+        "blocks": [
+            {
+                "id": "d1-calf-block",
+                "dayIndex": 1,
+                "name": "Calf Hypertrophy Block",
+                "restAfterBlockSeconds": 60,
+                "exercises": ["standing-single-leg-calf-raise", "seated-single-leg-calf-raise"]
+            }
+        ],
+        "toggles": [
+            {
+                "id": "T1_DAY1",
+                "toggleGroup": "day1-posterior-quad",
+                "dayIndex": 1,
+                "name": "Day 1 Posterior / Quad Toggle",
+                "members": [
+                    { "exerciseId": "single-leg-rdl", "activeOn": "odd" },
+                    { "slotId": "lunge-pistol-slot", "activeOn": "even", "fallbackExerciseId": "reverse-lunge", "unlockedExerciseId": "pistol-squat-progression" }
+                ]
+            },
+            {
+                "id": "T2_DAY3",
+                "toggleGroup": "day3-rear-delt",
+                "dayIndex": 3,
+                "name": "Day 3 Rear Delt Toggle",
+                "members": [
+                    { "exerciseId": "trx-y-t-w", "activeOn": "odd" },
+                    { "exerciseId": "band-pull-apart", "activeOn": "even" }
+                ]
+            }
+        ]
+    }
 
-    exercises_guide = []
-    for name in sorted(all_exercise_names):
-        cat = "Legs"
-        diff = "Intermediate"
-        weight = "Dumbbells / Bodyweight"
-        
-        n_lower = name.lower()
-        if "warmup" in n_lower or name in ["High Knees", "Arm Circles", "Wall Slides", "Scapular Push-up", "Scapular Pull-up", "Wrist Rocks"]:
-            cat = "Warmup"
-            diff = "Beginner"
-            weight = "Bodyweight"
-        elif "press" in n_lower or "push" in n_lower or "dip" in n_lower:
-            cat = "Push"
-            if "one-arm" in n_lower or "weighted" in n_lower: diff = "Advanced"
-        elif "row" in n_lower or "pull" in n_lower or "chin" in n_lower:
-            cat = "Pull"
-            if "weighted" in n_lower: diff = "Advanced"
-        elif "ohp" in n_lower or "raise" in n_lower or "handstand" in n_lower or "y-t-w" in n_lower:
-            cat = "Shoulders"
-        elif "curl" in n_lower or "triceps" in n_lower or "arm block" in n_lower:
-            cat = "Arms"
-        elif "rdl" in n_lower or "squat" in n_lower or "lunge" in n_lower or "calf" in n_lower:
-            cat = "Legs"
-        elif "glute" in n_lower or "hip thrust" in n_lower:
-            cat = "Glutes"
-        elif "bug" in n_lower or "hold" in n_lower or "hollow" in n_lower or "l-sit" in n_lower or "pallof" in n_lower:
-            cat = "Core"
-        elif "carry" in n_lower or "hang" in n_lower:
-            cat = "Grip"
-        elif "walking" in n_lower or "vo2" in n_lower:
-            cat = "Cardio"
-            diff = "Beginner"
-            weight = "Bodyweight"
-
-        exercises_guide.append({
-            "name": name,
-            "category": cat,
-            "difficulty": diff,
-            "weight": weight,
-            "setsProgression": "FitUp Pro Ultimate v4.0 Schedule"
-        })
+    progression_settings = {
+        "deloadEveryWeeks": 8,
+        "deloadWeightReductionKg": 2,
+        "deloadTimeTargetPercent": 70,
+        "deloadSetsCeiling": 2,
+        "legalWeights": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+        "allowUndoLastDecision": True,
+        "zeroDecisions": True,
+        "adaptiveRest": True,
+        "armBlockConditional": True,
+        "armBlock": {
+            "enabledFromWeek": 10,
+            "maxArmBlockExposurePerMusclePerWeek": 1,
+            "muscleAreaMap": {
+                "3": { "db-lateral-raise": "lateral-shoulder", "db-oh-triceps-extension": "triceps" },
+                "5": { "db-curl": "biceps", "hammer-curl": "biceps" }
+            }
+        },
+        "bicepsMicrocycle": {
+            "heavyWeeks": 2,
+            "lightWeeks": 1,
+            "lightWeekExercise": "hammer-curl",
+            "lightWeekSets": 2
+        },
+        "softenedProgression": {
+            "enabled": True,
+            "conditions": ["all_in_window", "all_reps_ge_max_minus_1", "previous_session_all_reps_ge_max"]
+        },
+        "frequencyAdditions": {
+            "chestVolume": "Push-Up Volume on Day 5",
+            "backVolume": "TRX Row on Day 3"
+        },
+        "leanMode": {
+            "enabled": True,
+            "dissolvePairsOnDeload": True,
+            "dissolvePairsOnBelow": True,
+            "adaptiveRestExtensionOnBelowSecs": 30
+        }
+    }
 
     return {
         "version": "15.6 Lean",
-        "progressionSettings": {
-            "myoRepsMaxTempoLoss": 2,
-            "bicepsMicrocycle": {"heavyWeeks": 2, "lightWeeks": 1},
-            "armBlockEligibilityWeek": 10,
-            "weeklyChestVolume": 8,
-            "weeklyBackVolume": 10,
-            "softenedProgression": True,
-            "zeroDecisionsMode": True
-        },
-        "leanStructures": {
-            "pairs": [
-                {"id": "P1", "name": "Row & Lateral Raise Pair", "ex1": "TRX Row", "ex2": "DB Lateral Raise", "restAfterEx2": 90},
-                {"id": "P2", "name": "Push-up & Biceps Pair", "ex1": "Push-up", "ex2": "DB Curl", "restAfterEx2": 90},
-                {"id": "P3", "name": "Grip & Core Pair", "ex1": "Towel Hang", "ex2": "L-sit Tuck (Bars)", "restAfterEx2": 60}
-            ],
-            "circuits": [
-                {"id": "C1", "name": "Core Citadel Circuit", "exercises": ["Pallof Press", "Dead Bug", "Hollow Body Hold"], "restAfterCircuit": 90}
-            ],
-            "blocks": [
-                {"id": "B1", "name": "Calf Hypertrophy Block", "exercises": ["Single-Leg Calf Raise", "Seated Calf Raise"], "rest": 60}
-            ],
-            "toggles": [
-                {
-                    "id": "T1_DAY1",
-                    "day": "Day 1",
-                    "name": "Day 1 Posterior/Quad Toggle",
-                    "optionA": "DB Single-Leg RDL",
-                    "optionB": "Lunge/Pistol Slot",
-                    "fallbackOption": "Reverse Lunge + DB",
-                    "unlockedOption": "Pistol Squat to Chair",
-                    "unlockCriteria": {"exercise": "DB Bulgarian Split Squat", "targetReps": 12, "targetWeightKg": 12}
-                },
-                {
-                    "id": "T2_DAY3",
-                    "day": "Day 3",
-                    "name": "Day 3 Rear Delt Toggle",
-                    "optionA": "TRX Y-T-W",
-                    "optionB": "Band Pull-Apart"
-                }
-            ]
-        },
+        "progressionSettings": progression_settings,
+        "leanStructures": lean_structures,
         "daily": daily,
-        "exercises": exercises_guide
+        "exercises": EXERCISES_CATALOG
     }
 
 def to_training_data_json(program):
@@ -667,7 +964,7 @@ def to_training_data_json(program):
             else:
                 mapped[f"A{idx}"] = e
                 idx += 1
-        for slot in ["W1","W2","W3","W4","W5","W6","W7","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10"]:
+        for slot in ["W1","W2","W3","W4","W5","W6","W7","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11"]:
             e = mapped.get(slot)
             row[f"{slot} - Exercise"] = e["name"] if e else None
             row[f"{slot} - Sets×reps"] = e["sets"] if e else None
@@ -701,4 +998,5 @@ if __name__ == "__main__":
             if not os.path.exists(path) and os.path.exists(fallback):
                 shutil.copy(fallback, path)
 
-    print("Done — FitUp Pro v15.6 Lean Edition generated! 364 days, 60 exercise types.")
+    print(f"Done — FitUp Pro v15.6 Lean Edition generated successfully!")
+    print(f"Total days: {len(program['daily'])}, Master exercises in catalog: {len(program['exercises'])}")

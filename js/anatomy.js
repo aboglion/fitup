@@ -229,17 +229,17 @@ const AnatomyMap = (() => {
    */
   async function showMuscleDetails(muscleKey, muscleName, pct) {
     const muscleExerciseMap = {
-      chest: ['DB Floor Press', 'Push-Up', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Single-Arm Floor Press', 'Weighted Deficit Push-Up'],
-      shoulders: ['Seated DB OHP', 'Pike Push-Up', 'DB Lateral Raise', 'TRX Face Pull', 'Single-Arm Seated OHP', 'Arm Block - DB Lateral Raise'],
-      triceps: ['DB OH Triceps Ext', 'Arm Block - DB OH Triceps Ext', 'DB Floor Press', 'Push-Up'],
-      biceps: ['DB Curl', 'DB Hammer Curl', 'Arm Block - DB Curl', 'Single-Arm Curl', 'Pull-Up', 'Chin-Up', 'One-Arm DB Row'],
-      forearms: ['Towel Hang', 'Suitcase Carry', 'Dead Hang', 'One-Arm DB Row'],
-      lats: ['Pull-Up', 'Chin-Up', 'Weighted Pull-Up', 'Weighted Chin-Up', 'One-Arm DB Row', 'Seated Band Row'],
-      traps: ['TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'One-Arm DB Row'],
-      quads: ['DB Bulgarian Split Squat', 'DB BSS (Goblet)', 'Reverse Lunge + DB', 'Walking Lunge (Goblet)', 'Pistol Squat to Chair', 'Bodyweight Squat'],
+      chest: ['DB Floor Press', 'Push-Up', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Single-Arm Floor Press', 'Weighted Deficit Push-Up', 'Diamond Push-Up', 'Push-Up Volume'],
+      shoulders: ['Seated DB OHP', 'Pike Push-Up', 'DB Lateral Raise', 'TRX Face Pull', 'TRX Face Pull (Angle 1)', 'TRX Face Pull (Angle 2)', 'TRX Face Pull (Angle 3)', 'Single-Arm Seated OHP', 'Arm Block - DB Lateral Raise'],
+      triceps: ['DB OH Triceps Ext', 'Arm Block - DB OH Triceps Ext', 'DB Floor Press', 'Push-Up', 'Diamond Push-Up'],
+      biceps: ['DB Curl', 'DB Hammer Curl', 'Arm Block - DB Curl', 'Single-Arm Curl', 'Pull-Up', 'Chin-Up', 'One-Arm DB Row', 'TRX Row'],
+      forearms: ['Towel Hang', 'Suitcase Carry', 'Dead Hang', 'One-Arm DB Row', 'TRX Row'],
+      lats: ['Pull-Up', 'Chin-Up', 'Weighted Pull-Up', 'Weighted Chin-Up', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row'],
+      traps: ['TRX Face Pull', 'TRX Face Pull (Angle 1)', 'TRX Face Pull (Angle 2)', 'TRX Face Pull (Angle 3)', 'TRX Y-T-W', 'Band Pull-Apart', 'One-Arm DB Row', 'TRX Row'],
+      quads: ['DB Bulgarian Split Squat', 'DB BSS', 'DB BSS (Goblet)', 'Reverse Lunge + DB', 'Walking Lunge (Goblet)', 'Pistol Squat to Chair', 'Bodyweight Squat'],
       hamstrings: ['DB RDL', 'DB Single-Leg RDL', 'Glute Bridge', 'DB Glute Bridge', 'DB Hip Thrust'],
-      glutes: ['DB Hip Thrust', 'DB Glute Bridge', 'DB Bulgarian Split Squat', 'DB Single-Leg RDL'],
-      calves: ['Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4'],
+      glutes: ['DB Hip Thrust', 'DB Glute Bridge', 'DB Bulgarian Split Squat', 'DB BSS', 'DB Single-Leg RDL'],
+      calves: ['Single-Leg Calf Raise', 'Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4'],
       core: ['Dead Bug', 'Hollow Body Hold', 'L-sit Tuck', 'Suitcase Carry', 'Pallof Press'],
       obliques: ['Suitcase Carry', 'Pallof Press', 'Dead Bug'],
       lowerBack: ['DB RDL', 'DB Single-Leg RDL', 'DB Hip Thrust', 'Suitcase Carry']
