@@ -581,7 +581,7 @@ EXERCISES_CATALOG = [
     },
     {
         "id": "l-sit-progression",
-        "name": "L-sit Tuck (Bars)",
+        "name": "L-Sit Progression",
         "category": "Core",
         "type": "timebased",
         "restSeconds": 45,
@@ -609,12 +609,12 @@ EXERCISES_CATALOG = [
     { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "windowMin": 10, "windowMax": 10 },
 
     # Progressive Variation Stage Exercises (Skill Tree & Stage Parity)
-    { "id": "diamond-push-up", "name": "Diamond Push-Up", "category": "Push", "type": "variation", "restSeconds": 90, "restRange": [60, 90], "windowMin": 8, "windowMax": 15, "tempo": "2s descent", "compound": False, "rule": "ידיים בצורת מעוין מתחת לחזה; מרפקים צמודים לגוף" },
+    { "id": "diamond-push-up", "name": "Diamond Push-Up", "category": "Push", "type": "variation", "restSeconds": 90, "restRange": [60, 90], "windowMin": 8, "windowMax": 15, "tempo": "2s descent", "compound": False, "stages": ["Incline Diamond", "Diamond Push-Up", "Weighted Diamond (Vest 5kg)"], "rule": "ידיים בצורת מעוין מתחת לחזה; מרפקים צמודים לגוף" },
     { "id": "deficit-push-up", "name": "Deficit Push-Up", "category": "Push", "type": "variation", "restSeconds": 90, "restRange": [60, 90], "windowMin": 8, "windowMax": 15, "tempo": "2s descent", "compound": True, "rule": "ירידה עמוקה בין הידיות עד מתיחה בחזה" },
     { "id": "feet-elevated-push-up", "name": "Feet-Elevated Push-Up", "category": "Push", "type": "variation", "restSeconds": 90, "restRange": [60, 90], "windowMin": 8, "windowMax": 15, "tempo": "2s descent", "compound": True, "rule": "רגליים על ספסל/כיסא; גוף ישר כמו קרש" },
     { "id": "single-arm-floor-press", "name": "Single-Arm Floor Press", "category": "Push", "type": "weighted", "startingWeight": 9, "minWeight": 6, "maxWeight": 24, "increment": 3, "loadType": "each", "restSeconds": 120, "restRange": [90, 120], "windowMin": 6, "windowMax": 10, "tempo": "2s descent", "compound": True, "rule": "גב ומרפק נוגעים ברצפה; עבודה חד-צדדית עם ליבה קשיחה" },
     { "id": "weighted-deficit-push-up", "name": "Weighted Deficit Push-Up", "category": "Push", "type": "weighted", "startingWeight": 5, "minWeight": 5, "maxWeight": 10, "increment": 5, "loadType": "vest", "restSeconds": 90, "restRange": [60, 90], "windowMin": 6, "windowMax": 10, "tempo": "2s descent", "compound": True, "rule": "וסט משקולות 5-10 ק״ג; ביצוע על ידיות push-up" },
-    { "id": "weighted-diamond-push-up", "name": "Weighted Diamond Push-Up", "category": "Push", "type": "weighted", "startingWeight": 5, "minWeight": 5, "maxWeight": 10, "increment": 5, "loadType": "vest", "restSeconds": 90, "restRange": [60, 90], "windowMin": 6, "windowMax": 10, "tempo": "2s descent", "compound": False, "rule": "וסט משקולות 5-10 ק״ג; אחיזת מעוין צמודה" },
+
     { "id": "wall-walk-partial", "name": "Wall Walk (Partial)", "category": "Shoulders", "type": "variation", "restSeconds": 90, "restRange": [60, 90], "windowMin": 3, "windowMax": 5, "tempo": "slow", "compound": True, "rule": "טיפוס חלקי על הקיר; שמירה על ליבה מתוחה" },
     { "id": "wall-walk-full", "name": "Wall Walk (Full)", "category": "Shoulders", "type": "variation", "restSeconds": 90, "restRange": [60, 90], "windowMin": 3, "windowMax": 5, "tempo": "slow", "compound": True, "rule": "טיפוס מלא עד שבית החזה נוגע קרוב לקיר" },
     { "id": "wall-handstand", "name": "Wall Handstand", "category": "Shoulders", "type": "timebased", "restSeconds": 90, "restRange": [60, 90], "windowMin": 15, "windowMax": 40, "tempo": "static hold", "compound": True, "rule": "עמידת ידיים סטטית מול הקיר; דחיפה חזקה של הכתפיים" },

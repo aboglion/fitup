@@ -138,7 +138,7 @@ Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase inclin
 | 3 | TRX Face Pull (Angle 1) | 3×12 | Bodyweight | 2s lowering | 60 |
 | 4 | DB Curl | 2×10 | 3 kg each | 2s lowering | 60 |
 | 5 | Towel Hang | 3×15s | Bodyweight | Static | 60 |
-| 6 | L-sit Tuck (Bars) | 3×8s | Bodyweight | Static | 60 |
+| 6 | L-Sit Progression | 3×8s | Bodyweight | Static | 60 |
 
 ---
 

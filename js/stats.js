@@ -157,11 +157,15 @@ const StatsPage = (() => {
     // Fetch plan start date
     const planStartDateStr = await DB.getSetting('planStartDate');
 
+    // Fetch progression states for muscle progression calculation
+    const allProgressionStates = await DB.getAllProgressionState();
+    const exerciseGuide = await DB.getExerciseGuide();
+
     // Render charts & compact stats
     renderCharts(trackingMap, weightValues, metrics, currentWeekNum, planStartDateStr);
 
     // Render anatomy map
-    renderAnatomy(trackingMap);
+    renderAnatomy(trackingMap, allProgressionStates, exerciseGuide);
 
     // Render photos
     await renderPhotos();
@@ -578,7 +582,7 @@ const StatsPage = (() => {
     'pull-up': 'lats', 'pull-up-progression': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'seated-band-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
     'db-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
     'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
-    'db-rdl': 'hamstrings', 'db-romanian-deadlift': 'lowerBack', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'db-hip-thrust': 'glutes',
+    'db-rdl': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'db-hip-thrust': 'glutes',
     'single-leg-calf-raise': 'calves', 'standing-single-leg-calf-raise': 'calves', 'seated-single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves', 'seated-calf-raise': 'calves',
     'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'obliques', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat-progression': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'triceps', 'chin-up-progression': 'lats', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': null, 'deep-mobility-protocol': null, 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'lats', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
   };
@@ -651,50 +655,57 @@ const StatsPage = (() => {
 
   /**
    * Calculate per-muscle progression percentages across the full 78-week program timeline.
-   * Compares exact completed sets/volume for each muscle group against total planned sets/volume.
-   * Formula: muscleProgress = (completedVolume_m / totalPlannedVolume_m) * 100
+   * Compares unlocked weight and stages against maximum weight/stages to reflect strength gains.
+   * Formula: muscleProgress = Σ(exerciseProgress_i × weight_i) / Σ(weight_i)
+   * where exerciseProgress = (currentWeight - minWeight) / (maxWeight - minWeight) * 100
    */
-  function calculateMuscleProgressions(trackingMap) {
+  function calculateMuscleProgressions(trackingMap, allProgressionStates, exerciseGuide) {
     const muscles = ['chest','shoulders','triceps','lats','traps','biceps','forearms',
                      'quads','hamstrings','glutes','calves','core','obliques','lowerBack'];
-    const plannedVolume = {};
-    const completedVolume = {};
-    muscles.forEach(m => { plannedVolume[m] = 0; completedVolume[m] = 0; });
+    
+    if (!allProgressionStates || !exerciseGuide) {
+      const result = {};
+      muscles.forEach(m => { result[m] = 0; });
+      return result;
+    }
 
-    (allPlanDays || []).forEach((day, index) => {
-      const dIdx = day.dayIndex != null ? day.dayIndex : index;
-      const track = trackingMap[dIdx];
+    const muscleScores = {};
+    const muscleWeights = {};
+    muscles.forEach(m => { muscleScores[m] = 0; muscleWeights[m] = 0; });
 
-      (day.exercises || []).forEach((ex, exIdx) => {
-        let setMultiplier = 3;
-        if (typeof ex.sets === 'number') {
-          setMultiplier = ex.sets;
-        } else if (typeof ex.sets === 'string') {
-          if (ex.sets.includes('sec') || ex.sets.includes('min') || ex.sets.includes('hold')) {
-            setMultiplier = 1;
-          } else {
-            const parsed = parseInt(ex.sets, 10);
-            setMultiplier = isNaN(parsed) ? 3 : parsed;
-          }
+    allProgressionStates.forEach(state => {
+      const exDef = exerciseGuide.find(e => e.id === state.exerciseId);
+      if (!exDef) return;
+
+      let score = 0;
+      if (exDef.type === 'weighted') {
+        const minW = exDef.minWeight || 0;
+        const maxW = exDef.maxWeight || 24;
+        const curW = state.currentWeightKg || minW;
+        if (maxW > minW) {
+          score = Math.max(0, Math.min(100, ((curW - minW) / (maxW - minW)) * 100));
         }
+      } else {
+        const stages = exDef.stages || [];
+        const maxStage = Math.max(1, stages.length - 1);
+        const curStage = state.currentStageIndex || 0;
+        score = Math.max(0, Math.min(100, (curStage / maxStage) * 100));
+      }
 
-        const completedSets = getCompletedSetsForExercise(track, exIdx, setMultiplier);
-
-        const contribs = getExerciseContributions(ex);
-        contribs.forEach(c => {
-          if (plannedVolume[c.m] !== undefined) {
-            plannedVolume[c.m] += setMultiplier * c.w;
-            completedVolume[c.m] += completedSets * c.w;
-          }
-        });
+      const contribs = getExerciseContributions(exDef);
+      contribs.forEach(c => {
+        if (muscleScores[c.m] !== undefined) {
+          muscleScores[c.m] += score * c.w;
+          muscleWeights[c.m] += c.w;
+        }
       });
     });
 
     const result = {};
     muscles.forEach(m => {
-      if (plannedVolume[m] > 0) {
-        const ratio = (completedVolume[m] / plannedVolume[m]) * 100;
-        result[m] = Math.max(0, Math.min(100, Number(ratio.toFixed(1))));
+      if (muscleWeights[m] > 0) {
+        const avg = muscleScores[m] / muscleWeights[m];
+        result[m] = Math.max(0, Math.min(100, Number(avg.toFixed(1))));
       } else {
         result[m] = 0;
       }
@@ -706,7 +717,7 @@ const StatsPage = (() => {
   /**
    * Render anatomy map
    */
-  function renderAnatomy(trackingMap) {
+  function renderAnatomy(trackingMap, allProgressionStates, exerciseGuide) {
     const container = document.getElementById('stats-overview');
     
     // Create anatomy wrapper if it doesn't exist
@@ -736,7 +747,7 @@ const StatsPage = (() => {
     }
     
     if (typeof AnatomyMap !== 'undefined') {
-      const muscleData = calculateMuscleProgressions(trackingMap);
+      const muscleData = calculateMuscleProgressions(trackingMap, allProgressionStates, exerciseGuide);
       AnatomyMap.render(document.getElementById('anatomy-map-container'), muscleData);
     }
   }

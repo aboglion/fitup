@@ -181,12 +181,11 @@ const ExercisesPage = (() => {
           { name: 'Push-up Bars Progression', unlockWeek: 1, id: 'push-1' },
           { name: 'DB Floor Press', unlockWeek: 1, id: 'floor-1' },
           { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol' },
-          { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'push-1c' },
+          { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up' },
           { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a' },
           { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b' },
           { name: 'Single-Arm Floor Press', unlockWeek: 18, parentId: 'floor-1', id: 'floor-2' },
-          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3' },
-          { name: 'Weighted Diamond Push-Up', unlockWeek: 62, parentId: 'push-1c', id: 'push-3c' }
+          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3' }
         ]
       },
       {
@@ -247,7 +246,7 @@ const ExercisesPage = (() => {
       },
       {
         title: 'hanging_core', icon: '🧱', exercises: [
-          { name: 'L-sit Tuck (Bars)', unlockWeek: 1 }
+          { name: 'L-Sit Progression', unlockWeek: 1, id: 'l-sit-progression' }
         ]
       }
     ],
