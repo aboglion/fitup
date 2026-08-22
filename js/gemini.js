@@ -448,7 +448,7 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
   /**
    * Get personalized AI daily nutrition & activity advice based on Google Fit & workout progress
    */
-  async function getDailyAdvice(totals = {}, goals = {}) {
+  async function getDailyAdvice(totals = {}, goals = {}, workoutContext = {}) {
     const apiKey = await getApiKey();
     if (!apiKey) return null;
 
@@ -466,6 +466,11 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
       }
     }
 
+    let workoutText = 'No workout logged today yet';
+    if (workoutContext && workoutContext.burnedCals > 0) {
+      workoutText = `${workoutContext.dayType || 'Workout'}: ${workoutContext.completedSets} sets completed, total volume ${workoutContext.volumeKg || 0}kg, estimated burn ${workoutContext.burnedCals} kcal`;
+    }
+
     const currentLang = window.I18n ? window.I18n.getLang() : 'en';
     const langInstructions = {
       en: "Respond EXCLUSIVELY in English in 2 crisp encouraging sentences.",
@@ -476,9 +481,11 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
 
     const prompt = `You are an elite AI sports nutritionist. Analyze the user's daily metrics:
 - Activity Context (Google Fit): ${fitDataText}
-- Today's Nutrition Consumed: ${totals.calories || 0}/${goals.calories || 2000} kcal, ${totals.protein || 0}/${goals.protein || 140}g Protein.
+- Today's Completed Workout: ${workoutText}
+- Nutrition Consumed: ${totals.calories || 0}/${goals.calories || 1980} kcal, ${totals.protein || 0}/${goals.protein || 160}g Protein.
+- Net Calories (Consumed - Workout Burn): ${(totals.calories || 0) - (workoutContext.burnedCals || 0)} kcal.
 ${langPrompt}
-Give a personalized 2-sentence tactical recommendation for optimal recovery and remaining calorie/protein targets.`;
+Give a personalized 2-sentence tactical recommendation for optimal recovery, muscle synthesis, and remaining net calorie/protein targets.`;
 
     try {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
@@ -496,6 +503,75 @@ Give a personalized 2-sentence tactical recommendation for optimal recovery and 
       return data.candidates?.[0]?.content?.parts?.map(p => p.text).join('').trim() || null;
     } catch (e) {
       console.warn('AI Daily Advice fetch error:', e);
+      return null;
+    }
+  }
+
+  /**
+   * Get personalized AI Smart Daily Briefing synthesizing streak, recent performance, today's workout targets, and recovery.
+   */
+  async function getDailySmartBriefing(historyContext = {}, todayContext = {}, fitContext = {}) {
+    const apiKey = await getApiKey();
+    const model = await getModel();
+
+    const currentLang = window.I18n ? window.I18n.getLang() : 'en';
+    const langInstructions = {
+      en: "Respond EXCLUSIVELY in English. Use clear, professional, ultra-motivating tone.",
+      he: "החזר תשובה בעברית בלבד. השתמש בטון מקצועי, מעצים, ומדויק.",
+      ar: "قدم الرد باللغة العربية فقط. استخدم نبرة احترافية ومشجعة للغاية."
+    };
+    const langPrompt = langInstructions[currentLang] || langInstructions['en'];
+
+    const prompt = `You are FitUp's AI Master Performance Coach. Generate a sharp, highly motivating 3-bullet Daily Tactical Briefing for the user.
+
+${langPrompt}
+
+USER CONTEXT DATA:
+1. Training History & Momentum:
+   - Current Streak: ${historyContext.streak || 0} days
+   - Total Days Completed: ${historyContext.completedDays || 0} / 546
+   - Recent Average RPE: ${historyContext.avgRPE || 'N/A'}
+   - Body Weight: ${historyContext.bodyWeight ? historyContext.bodyWeight + ' kg' : 'N/A'}
+
+2. Today's Workout Mission:
+   - Program Day Title: ${todayContext.title || 'Day ' + (todayContext.dayNum || 1)}
+   - Session Type: ${todayContext.dayType || 'Strength'}
+   - Target Muscles: ${todayContext.muscles || 'Full Body'}
+   - Planned Volume: ${todayContext.exerciseCount || 0} exercises (${todayContext.totalSets || 0} sets total)
+   - Planned Target RPE: ${todayContext.plannedRPE || '8'}
+   - Required Dumbbell Weights & Equipment: ${todayContext.equipment || 'Standard'}
+
+3. Activity & Fitness (Google Fit):
+   - Steps: ${fitContext.steps ? fitContext.steps.toLocaleString() : 'N/A'}
+   - Expended Calories: ${fitContext.calories ? fitContext.calories + ' kcal' : 'N/A'}
+   - Heart Points: ${fitContext.heartPoints || 0}
+
+INSTRUCTIONS:
+Provide a 3-bullet structured response with exact emojis matching this structure:
+🏆 **[Momentum & Recovery]**: (1 energetic sentence acknowledging streak, past performance & physical readiness)
+🎯 **[Today's Mission]**: (1 crisp sentence summarizing today's workout focus, key exercises, weights/equipment needed, and target intensity)
+💡 **[Tactical Key]**: (1 actionable pro tip regarding execution tempo, rest timer adherence, or nutrition/protein target)
+
+Keep total response concise, professional, and powerful!`;
+
+    if (!apiKey) return null;
+
+    try {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.4, maxOutputTokens: 350 }
+        })
+      });
+
+      if (!res.ok) return null;
+      const data = await res.json();
+      return data.candidates?.[0]?.content?.parts?.map(p => p.text).join('').trim() || null;
+    } catch (e) {
+      console.warn('AI Daily Smart Briefing fetch error:', e);
       return null;
     }
   }
@@ -529,6 +605,7 @@ Give a personalized 2-sentence tactical recommendation for optimal recovery and 
     discoverAvailableModels,
     analyzeFood,
     getDailyAdvice,
+    getDailySmartBriefing,
     populateSelect,
     initSelects
   };

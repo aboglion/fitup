@@ -169,6 +169,11 @@ const TodayPage = (() => {
       swapWorkoutBtn.addEventListener('click', showSwapModal);
     }
 
+    const openBriefingBtn = document.getElementById('open-daily-briefing-btn');
+    if (openBriefingBtn) {
+      openBriefingBtn.addEventListener('click', () => checkAndShowDailyBriefing(true));
+    }
+
     // Auto-save inputs on change
     const actualRpe = document.getElementById('actual-rpe');
     if (actualRpe) actualRpe.addEventListener('change', autoSave);
@@ -386,6 +391,194 @@ const TodayPage = (() => {
 
 
   /**
+   * Check and auto-display once-per-day AI Smart Daily Briefing modal (or manual trigger)
+   */
+  async function checkAndShowDailyBriefing(forceOpen = false) {
+    const modal = document.getElementById('daily-briefing-modal');
+    const content = document.getElementById('daily-briefing-content');
+    const closeBtn = document.getElementById('close-daily-briefing-btn');
+    const closeX = document.getElementById('close-daily-briefing-x');
+    if (!modal || !content) return;
+
+    const todayStr = UI.getLocalDateString();
+    const lastSeenDate = localStorage.getItem('fitup_last_daily_briefing_date');
+
+    // Bind close handlers once
+    if (!modal.hasAttribute('data-bound')) {
+      modal.setAttribute('data-bound', 'true');
+      const hideModal = () => { modal.style.display = 'none'; };
+      if (closeBtn) closeBtn.onclick = hideModal;
+      if (closeX) closeX.onclick = hideModal;
+      modal.onclick = (e) => { if (e.target === modal) hideModal(); };
+    }
+
+    if (!forceOpen && lastSeenDate === todayStr) {
+      return; // Already auto-shown today
+    }
+
+    modal.style.display = 'flex';
+    localStorage.setItem('fitup_last_daily_briefing_date', todayStr);
+
+    const cacheKey = `fitup_briefing_cache_${todayStr}`;
+    const cachedBriefing = localStorage.getItem(cacheKey);
+
+    if (cachedBriefing && !forceOpen) {
+      content.innerHTML = cachedBriefing;
+      return;
+    }
+
+    content.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">${I18n.t('briefing_loading')}</div>`;
+
+    // Gather History Context
+    const allTracking = await DB.getAllTracking();
+    let completedDays = 0;
+    let rpeSum = 0;
+    let rpeCount = 0;
+    let bodyWeight = null;
+
+    Object.values(allTracking || {}).forEach(tr => {
+      if (tr.completed) completedDays++;
+      if (tr.actualRPE) {
+        rpeSum += parseFloat(tr.actualRPE);
+        rpeCount++;
+      }
+      if (tr.bodyWeight) bodyWeight = tr.bodyWeight;
+    });
+
+    const streak = completedDays;
+    const avgRPE = rpeCount > 0 ? (rpeSum / rpeCount).toFixed(1) : null;
+
+    const historyContext = {
+      streak,
+      completedDays,
+      avgRPE,
+      bodyWeight
+    };
+
+    // Gather Today's Workout Context
+    const day = allPlanDays[currentDayIndex] || {};
+    let totalSets = 0;
+    let requiredEquipment = [];
+
+    (day.exercises || []).forEach(ex => {
+      totalSets += UI.parseSetsCount(ex.sets);
+      if (ex.weight && isWeighted(ex)) {
+        requiredEquipment.push(`${ex.name}: ${ex.weight}`);
+      }
+    });
+
+    const todayContext = {
+      title: day.title || `Day ${day.day || (currentDayIndex + 1)}`,
+      dayNum: day.day || (currentDayIndex + 1),
+      dayType: day.dayType || 'Strength',
+      muscles: day.targetMuscles || 'Full Body',
+      exerciseCount: (day.exercises || []).length,
+      totalSets: totalSets,
+      plannedRPE: day.plannedRPE || 8,
+      equipment: requiredEquipment.length > 0 ? requiredEquipment.join(', ') : 'Standard / Bodyweight'
+    };
+
+    // Gather Google Fit Context
+    let fitContext = {};
+    if (window.GoogleFitService) {
+      try {
+        const fitData = await window.GoogleFitService.fetchDailyFitData();
+        if (fitData) fitContext = fitData;
+      } catch (e) {
+        console.warn('Google Fit context for briefing error:', e);
+      }
+    }
+
+    try {
+      if (typeof GeminiService !== 'undefined' && GeminiService.getDailySmartBriefing) {
+        const briefingText = await GeminiService.getDailySmartBriefing(historyContext, todayContext, fitContext);
+        if (briefingText) {
+          const formattedHtml = briefingText
+            .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--accent-primary);">$1</strong>')
+            .replace(/\n\n/g, '<br><br>')
+            .replace(/\n/g, '<br>');
+
+          const htmlContainer = `<div style="background: var(--bg-elevated); padding: 16px; border-radius: 14px; border: 1px solid var(--border-light); line-height: 1.7;">${formattedHtml}</div>`;
+          content.innerHTML = htmlContainer;
+          localStorage.setItem(cacheKey, htmlContainer);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Gemini briefing error, falling back to local smart summary:', e);
+    }
+
+    // Local Rule-Based Fallback Briefing
+    const fallbackHtml = `
+      <div style="background: var(--bg-elevated); padding: 16px; border-radius: 14px; border: 1px solid var(--border-light); line-height: 1.7;">
+        <div style="margin-bottom: 10px;">
+          🏆 <strong style="color: var(--accent-primary);">${I18n.t('briefing_momentum')}:</strong> ${completedDays > 0 ? `Great momentum with ${completedDays} completed workouts!` : 'Welcome to Day 1! Ready to build momentum!'}
+        </div>
+        <div style="margin-bottom: 10px;">
+          🎯 <strong style="color: var(--accent-primary);">${I18n.t('briefing_mission')}:</strong> ${todayContext.title} (${todayContext.dayType}). Target: ${todayContext.exerciseCount} exercises, ${todayContext.totalSets} total sets. Planned RPE: ${todayContext.plannedRPE}.
+        </div>
+        <div>
+          💡 <strong style="color: var(--accent-primary);">${I18n.t('briefing_tactical_tip')}:</strong> ${todayContext.equipment !== 'Standard / Bodyweight' ? `Required weights today: ${todayContext.equipment}. Focus on strict tempo & recovery!` : 'Focus on strict execution tempo and log each set accurately.'}
+        </div>
+      </div>
+    `;
+    content.innerHTML = fallbackHtml;
+    localStorage.setItem(cacheKey, fallbackHtml);
+  }
+
+
+
+  /**
+   * Calculate burned calories from today's workout based on completed exercises, sets, volume, and body weight
+   */
+  function calculateWorkoutBurn(day, tracking) {
+    if (!day || !day.exercises || day.dayType === 'Rest') return 0;
+
+    let userWeightKg = 70;
+    if (tracking && tracking.bodyWeight) {
+      const bw = parseFloat(tracking.bodyWeight);
+      if (!isNaN(bw) && bw > 30) userWeightKg = bw;
+    }
+
+    const setData = (tracking && tracking.setData) || {};
+    let totalCompletedSets = 0;
+    let totalVolumeKg = 0;
+
+    day.exercises.forEach((ex, exIndex) => {
+      const setsCount = UI.parseSetsCount(ex.sets);
+      for (let s = 0; s < setsCount; s++) {
+        if (setData[`ex_${exIndex}_set_${s}_done`]) {
+          totalCompletedSets++;
+          const weight = parseFloat(setData[`ex_${exIndex}_set_${s}_weight`]) || 0;
+          const reps = parseInt(setData[`ex_${exIndex}_set_${s}_reps`], 10) || 0;
+          if (reps > 0) {
+            totalVolumeKg += (weight * reps);
+          }
+        }
+      }
+    });
+
+    if (totalCompletedSets === 0) return 0;
+
+    const dayType = String(day.dayType || '').toLowerCase();
+    let caloriesBurned = 0;
+
+    if (dayType.includes('zone 2') || dayType.includes('cardio') || dayType.includes('vo2 max')) {
+      const totalPlannedSets = day.exercises.reduce((sum, ex) => sum + UI.parseSetsCount(ex.sets), 0) || 1;
+      const completionRatio = totalCompletedSets / totalPlannedSets;
+      caloriesBurned = Math.round(350 * completionRatio * (userWeightKg / 70));
+    } else if (dayType.includes('active recovery')) {
+      caloriesBurned = Math.round(totalCompletedSets * 8 * (userWeightKg / 70));
+    } else {
+      const baseSetBurn = totalCompletedSets * 11 * (userWeightKg / 70);
+      const volumeBonus = (totalVolumeKg / 100) * 1.5;
+      caloriesBurned = Math.round(baseSetBurn + volumeBonus);
+    }
+
+    return Math.max(0, caloriesBurned);
+  }
+
+  /**
    * Render Nutrition Section with Gemini AI & Photo Scanner
    */
   async function renderNutritionSection(queryDateStr) {
@@ -400,7 +593,7 @@ const TodayPage = (() => {
     }
 
     const parts = queryDateStr.split('-').map(Number);
-    const dObj = new Date(parts[0], parts[1] - 1, parts[2]);
+    const dObj = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
     const prevD = new Date(dObj); prevD.setDate(prevD.getDate() - 1);
     const nextD = new Date(dObj); nextD.setDate(nextD.getDate() + 1);
     const yesterdayStr = UI.getLocalDateString(prevD);
@@ -525,13 +718,53 @@ const TodayPage = (() => {
     const targetCals = 1980; // 2200 with 10% reduction
     const targetProtein = 160;
 
+    // Calculate Workout Burn & Info
+    let workoutBurn = 0;
+    let workoutInfo = { dayType: '', completedSets: 0, volumeKg: 0, burnedCals: 0 };
+    if (allPlanDays && allPlanDays[currentDayIndex]) {
+      const activeDay = allPlanDays[currentDayIndex];
+      const tracking = currentTracking || {};
+      workoutBurn = calculateWorkoutBurn(activeDay, tracking);
+
+      const setData = tracking.setData || {};
+      let setsDone = 0;
+      let vol = 0;
+      (activeDay.exercises || []).forEach((ex, exIndex) => {
+        const count = UI.parseSetsCount(ex.sets);
+        for (let s = 0; s < count; s++) {
+          if (setData[`ex_${exIndex}_set_${s}_done`]) {
+            setsDone++;
+            const weight = parseFloat(setData[`ex_${exIndex}_set_${s}_weight`]) || 0;
+            const reps = parseInt(setData[`ex_${exIndex}_set_${s}_reps`], 10) || 0;
+            vol += (weight * reps);
+          }
+        }
+      });
+
+      workoutInfo = {
+        dayType: activeDay.dayType,
+        completedSets: setsDone,
+        volumeKg: vol,
+        burnedCals: workoutBurn
+      };
+    }
+
     // Update HUD
     const nutCalsEl = document.getElementById('nut-calories-total');
     const nutProtEl = document.getElementById('nut-protein-total');
     const nutCalsTargetEl = document.getElementById('nut-calories-target');
+    const nutBurnEl = document.getElementById('nut-workout-burned');
+    const nutNetEl = document.getElementById('nut-net-calories');
+    const nutNetTargetEl = document.getElementById('nut-net-target');
+
     if (nutCalsEl) nutCalsEl.textContent = totalCals;
     if (nutProtEl) nutProtEl.textContent = totalProtein;
     if (nutCalsTargetEl) nutCalsTargetEl.textContent = targetCals;
+
+    const netCals = totalCals - workoutBurn;
+    if (nutBurnEl) nutBurnEl.textContent = workoutBurn;
+    if (nutNetEl) nutNetEl.textContent = netCals;
+    if (nutNetTargetEl) nutNetTargetEl.textContent = targetCals;
 
     const calsPercent = Math.round((totalCals / targetCals) * 100);
     const proteinPercent = Math.round((totalProtein / targetProtein) * 100);
@@ -555,6 +788,40 @@ const TodayPage = (() => {
     const desktopNavNut = document.getElementById('desktop-nav-nutrition');
     if (desktopNavNut) {
       desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} ${I18n.t('nut_kcal_label')} (${calsPercent}%)</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}g ${I18n.t('nut_protein_label')} (${proteinPercent}%)</span>`;
+    }
+
+    // Render AI Daily Advice Card
+    const aiCard = document.getElementById('ai-advice-card');
+    const aiContent = document.getElementById('ai-advice-content');
+    const refreshAiBtn = document.getElementById('refresh-ai-advice-btn');
+
+    if (aiCard && aiContent) {
+      const fetchAdvice = async () => {
+        aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('ai_advice_loading')}</span>`;
+        try {
+          const adviceText = await GeminiService.getDailyAdvice(
+            { calories: totalCals, protein: totalProtein },
+            { calories: targetCals, protein: targetProtein },
+            workoutInfo
+          );
+          if (adviceText) {
+            aiContent.textContent = adviceText;
+          } else {
+            aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('gemini_key_not_set')}</span>`;
+          }
+        } catch (err) {
+          console.warn('AI advice fetch error:', err);
+          aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('gemini_no_response')}</span>`;
+        }
+      };
+
+      if (refreshAiBtn) {
+        refreshAiBtn.onclick = (e) => {
+          e.stopPropagation();
+          fetchAdvice();
+        };
+      }
+      fetchAdvice();
     }
 
     // Update Quick Protein Powder Completion Button
@@ -1041,6 +1308,7 @@ const TodayPage = (() => {
     if (!selectedNutritionDate) {
       selectedNutritionDate = UI.getLocalDateString();
     }
+    checkAndShowDailyBriefing(false);
     await renderNutritionSection(selectedNutritionDate);
   }
 
