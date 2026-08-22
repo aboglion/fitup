@@ -801,7 +801,9 @@ const App = (() => {
     const testVoiceBtn = document.getElementById('test-voice-btn');
     if (testVoiceBtn) {
       testVoiceBtn.addEventListener('click', () => {
-        if (window.UI && window.UI.speakVoiceCue) {
+        if (window.Effects3D && window.Effects3D.playCompletionMelody) {
+          window.Effects3D.playCompletionMelody();
+        } else if (window.UI && window.UI.speakVoiceCue) {
           window.UI.speakVoiceCue();
         }
       });

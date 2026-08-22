@@ -292,11 +292,89 @@ const Effects3D = (() => {
   }
 
   /**
+   * Play Uplifting Rest Completion Musical Chime Melody
+   */
+  function playCompletionMelody() {
+    if (!isSoundActive()) return;
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    try {
+      const now = ctx.currentTime;
+      const masterGain = ctx.createGain();
+      masterGain.gain.setValueAtTime(0.35, now);
+      masterGain.connect(ctx.destination);
+
+      // Uplifting 4-note melodic sequence: C5 -> E5 -> G5 -> C6
+      const melodyNotes = [
+        { freq: 523.25, time: 0, dur: 0.25 },   // C5
+        { freq: 659.25, time: 0.12, dur: 0.25 }, // E5
+        { freq: 783.99, time: 0.24, dur: 0.3 },  // G5
+        { freq: 1046.50, time: 0.38, dur: 0.6 }  // C6 (Final resolving note)
+      ];
+
+      melodyNotes.forEach(n => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle'; // Soft, rich musical waveform
+        osc.frequency.setValueAtTime(n.freq, now + n.time);
+
+        gain.gain.setValueAtTime(0, now + n.time);
+        gain.gain.linearRampToValueAtTime(0.4, now + n.time + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + n.time + n.dur);
+
+        osc.connect(gain);
+        gain.connect(masterGain);
+
+        osc.start(now + n.time);
+        osc.stop(now + n.time + n.dur);
+      });
+
+      // High sparkling bell chime accent on final note (E6 & G6)
+      const chimes = [1318.51, 1567.98];
+      chimes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + 0.38 + idx * 0.06);
+
+        gain.gain.setValueAtTime(0.18, now + 0.38 + idx * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38 + idx * 0.06 + 0.45);
+
+        osc.connect(gain);
+        gain.connect(masterGain);
+
+        osc.start(now + 0.38 + idx * 0.06);
+        osc.stop(now + 0.38 + idx * 0.06 + 0.45);
+      });
+
+      // Warm bass foundation (C3 = 130.81Hz)
+      const bass = ctx.createOscillator();
+      const bassGain = ctx.createGain();
+      bass.type = 'sine';
+      bass.frequency.setValueAtTime(130.81, now);
+      bassGain.gain.setValueAtTime(0.25, now);
+      bassGain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+      bass.connect(bassGain);
+      bassGain.connect(masterGain);
+      bass.start(now);
+      bass.stop(now + 0.7);
+
+    } catch (e) {
+      console.warn('Melody audio synthesis warning:', e);
+    }
+  }
+
+  /**
    * Play Rest Timer Countdown Tick or Completion Chime
    * @param {boolean} isFinal - True if timer completed (0s), false for countdown ticks (3s, 2s, 1s)
    */
   function playTimerBeep(isFinal = false) {
     if (!isSoundActive()) return;
+    if (isFinal) {
+      playCompletionMelody();
+      return;
+    }
     const ctx = getAudioContext();
     if (!ctx) return;
 
@@ -306,42 +384,21 @@ const Effects3D = (() => {
       masterGain.gain.setValueAtTime(0.3, now);
       masterGain.connect(ctx.destination);
 
-      if (isFinal) {
-        // Triumphant 2-tone completion chime (A5 -> E6)
-        const notes = [880.00, 1318.51];
-        notes.forEach((freq, idx) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+      // Subtle countdown tick (880Hz high woodblock tick)
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880.00, now);
 
-          gain.gain.setValueAtTime(0, now + idx * 0.08);
-          gain.gain.linearRampToValueAtTime(0.4, now + idx * 0.08 + 0.01);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.35);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.25, now + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
 
-          osc.connect(gain);
-          gain.connect(masterGain);
+      osc.connect(gain);
+      gain.connect(masterGain);
 
-          osc.start(now + idx * 0.08);
-          osc.stop(now + idx * 0.08 + 0.35);
-        });
-      } else {
-        // Subtle countdown tick (880Hz high woodblock tick)
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880.00, now);
-
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.25, now + 0.005);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-
-        osc.connect(gain);
-        gain.connect(masterGain);
-
-        osc.start(now);
-        osc.stop(now + 0.08);
-      }
+      osc.start(now);
+      osc.stop(now + 0.08);
     } catch (e) {
       console.warn('Timer beep audio synthesis warning:', e);
     }
@@ -674,6 +731,7 @@ const Effects3D = (() => {
     playExerciseSound,
     playWorkoutSound,
     playTimerBeep,
+    playCompletionMelody,
     triggerSetEffect,
     triggerExerciseEffect,
     triggerWorkoutEffect

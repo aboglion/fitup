@@ -716,7 +716,6 @@ const UI = (() => {
     }
     if (isFinal) {
       if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-      speakVoiceCue();
     } else {
       if (navigator.vibrate) navigator.vibrate(40);
     }
