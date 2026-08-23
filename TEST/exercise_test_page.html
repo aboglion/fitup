@@ -333,6 +333,108 @@
       font-weight: 700;
     }
 
+    /* Sub-Exercises Mini Cards */
+    .sub-exercises-section {
+      margin-top: 1rem;
+      padding: 1rem 1.4rem;
+      background: rgba(17, 24, 39, 0.95);
+      border-top: 1px dashed var(--border-highlight);
+    }
+
+    .sub-exercises-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--accent-purple);
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mini-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 0.8rem;
+    }
+
+    .mini-ex-card {
+      background: var(--card-inner);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 12px;
+      padding: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .mini-ex-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-purple);
+      box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+    }
+
+    .mini-ex-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .mini-ex-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .mini-ex-badge {
+      background: rgba(168, 85, 247, 0.2);
+      color: var(--accent-purple);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .mini-ex-media {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      height: 95px;
+    }
+
+    .mini-media-thumb {
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .mini-media-thumb img {
+      width: 100%;
+      height: 90px;
+      object-fit: contain;
+      padding: 4px;
+    }
+
+    .mini-ex-footer {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
     /* Media Visuals Section */
     .media-section {
       display: grid;
@@ -1465,15 +1567,44 @@
         }
 
         // Children HTML (Sub-Exercises derived from this exercise)
-        let childrenHTML = '';
+        let subExercisesSectionHTML = '';
         const children = parentToChildrenMap[ex.name] || [];
         if (children.length > 0) {
-          const chips = children.map(c => `<span class="child-chip">➔ ${c.name} (שבוע ${c.unlockWeek})</span>`).join('');
-          childrenHTML = `
-            <div class="condition-row" style="margin-top: 0.6rem;">
-              <span class="condition-icon">🌿</span>
-              <span class="condition-label">תת-תרגילים הנגזרים מתרגיל זה:</span>
-              <div class="children-list">${chips}</div>
+          const miniCards = children.map(c => {
+            const cPng = `../images/exercises/${c.name.replace(/\//g, '-').toUpperCase()}.png`;
+            const cGif = `../images/gifs/${c.name}.gif`;
+            return `
+              <div class="mini-ex-card">
+                <div class="mini-ex-header">
+                  <span class="mini-ex-title">${c.name}</span>
+                  <span class="mini-ex-badge">🔒 שבוע ${c.unlockWeek}</span>
+                </div>
+                <div class="mini-ex-media">
+                  <div class="mini-media-thumb" title="${c.name} Image">
+                    <img src="${cPng}" alt="${c.name} PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <span style="display:none; font-size: 10px; color: var(--text-muted);">🖼️ PNG</span>
+                  </div>
+                  <div class="mini-media-thumb" title="${c.name} GIF">
+                    <img src="${cGif}" alt="${c.name} GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <span style="display:none; font-size: 10px; color: var(--text-muted);">🎬 GIF</span>
+                  </div>
+                </div>
+                <div class="mini-ex-footer">
+                  <span>🔗 תנאי קדם: ${ex.name}</span>
+                  <span>💪 משבוע ${c.unlockWeek}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          subExercisesSectionHTML = `
+            <div class="sub-exercises-section">
+              <div class="sub-exercises-title">
+                <span>🌿 תת-תרגילים ו-Variations הנגזרים מתרגיל זה (${children.length}):</span>
+              </div>
+              <div class="mini-card-grid">
+                ${miniCards}
+              </div>
             </div>
           `;
         }
@@ -1512,7 +1643,6 @@
               <span class="condition-label">תנאי פתיחה ודרישות:</span>
               ${prereqHTML}
             </div>
-            ${childrenHTML}
           </div>
 
           <div class="media-section">
@@ -1538,6 +1668,8 @@
               </div>
             </div>
           </div>
+
+          ${subExercisesSectionHTML}
 
           <div class="card-footer">
             <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; margin-bottom: 4px;">
