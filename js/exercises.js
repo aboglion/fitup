@@ -729,10 +729,10 @@ const ExercisesPage = (() => {
         const isLatestUnlock = isLevelUnlocked && 
           (levelIndex === sortedWeeks.length - 1 || currentWeek < sortedWeeks[levelIndex + 1]);
 
-        // Vertical spacer between rows (replacing old fallback connector lines)
+        // Vertical spacer between rows to leave room for SVG connector badges
         if (levelIndex > 0) {
           html += `
-            <div style="height: 42px; width: 100%; margin: 4px 0;"></div>
+            <div style="height: 64px; width: 100%; margin: 8px 0;"></div>
           `;
         }
 
