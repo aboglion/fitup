@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitUp — ביקורת ויזואלית מקיפה (PNG + GIF)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#0f172a;color:#e2e8f0;padding:20px;line-height:1.5}
+h1{text-align:center;font-size:28px;margin-bottom:6px;background:linear-gradient(135deg,#3b82f6,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.subtitle{text-align:center;color:#94a3b8;margin-bottom:20px;font-size:14px}
+.stats-bar{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.stat{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:12px 20px;text-align:center;min-width:130px}
+.stat .num{font-size:26px;font-weight:800;color:#22c55e}
+.stat .label{font-size:12px;color:#94a3b8;margin-top:2px}
+.filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;position:sticky;top:0;z-index:10;background:#0f172a;padding:10px 0;border-bottom:1px solid #1e293b}
+.filters button{background:#1e293b;color:#e2e8f0;border:1px solid #334155;border-radius:8px;padding:8px 16px;cursor:pointer;font-size:13px;transition:.2s}
+.filters button:hover,.filters button.active{background:#3b82f6;border-color:#3b82f6;color:#fff}
+.section-title{font-size:20px;font-weight:700;margin:24px 0 16px;padding:10px 16px;background:#1e293b;border-radius:10px;border-right:4px solid #3b82f6}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(440px,1fr));gap:16px;margin-bottom:30px}
+.card{background:#1e293b;border:1px solid #334155;border-radius:14px;overflow:hidden;transition:.3s}
+.card:hover{border-color:#3b82f6;transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.15)}
+.card-media{display:flex;gap:0;height:210px;background:#fff}
+.card-media .media-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;border-left:1px solid #e2e8f0}
+.card-media .media-col:last-child{border-left:none}
+.card-media .media-col img{max-width:95%;max-height:185px;object-fit:contain}
+.card-media .media-col .badge{position:absolute;top:6px;left:6px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;color:#fff;z-index:2}
+.badge.png-b{background:#3b82f6}
+.badge.gif-b{background:#a855f7}
+.badge.nogif-b{background:#64748b}
+.card-media .media-col .err-msg{color:#ef4444;font-size:12px;text-align:center;padding:8px}
+.card-body{padding:12px 14px}
+.card-body h3{font-size:14px;font-weight:700;margin-bottom:6px;color:#f1f5f9}
+.paths{display:flex;gap:6px;flex-wrap:wrap}
+.paths .p{font-size:11px;color:#64748b;font-family:monospace;direction:ltr;text-align:left;word-break:break-all;background:#0f172a;padding:4px 8px;border-radius:5px;flex:1;min-width:140px}
+.paths .p.png-p{border-left:3px solid #3b82f6}
+.paths .p.gif-p{border-left:3px solid #a855f7}
+.alias-tag{font-size:11px;color:#f59e0b;background:rgba(245,158,11,.12);padding:2px 8px;border-radius:4px;margin-top:4px;display:inline-block}
+</style>
+</head>
+<body>
+<h1>🏋️ FitUp — ביקורת ויזואלית: PNG + GIF לכל 66 התרגילים</h1>
+<p class="subtitle">הצגה ויזואלית של כל תמונת סטילס (PNG) והדגמת תנועה (GIF) מאומתת ב-Skill Tree</p>
+
+<div class="stats-bar" id="statsBar"></div>
+<div class="filters" id="filterBar"></div>
+<div id="content"></div>
+
+<script>
+const EXERCISES = [
+  {name:'High Knees',day:'Legs + Core'},
+  {name:'Deep Mobility Protocol',day:'Legs + Core'},
+  {name:'Micro Mobility Protocol',day:'Legs + Core'},
+  {name:'Wrist Rocks',day:'Legs + Core'},
+  {name:'Bodyweight Squat',day:'Legs + Core'},
+  {name:'DB Bulgarian Split Squat',day:'Legs + Core'},
+  {name:'Reverse Lunge + DB',day:'Legs + Core'},
+  {name:'DB BSS (Goblet)',day:'Legs + Core'},
+  {name:'Pistol Squat Progression',day:'Legs + Core'},
+  {name:'Walking Lunge (Goblet)',day:'Legs + Core'},
+  {name:'DB Romanian Deadlift',day:'Legs + Core'},
+  {name:'Single-Leg RDL',day:'Legs + Core'},
+  {name:'Glute Bridge',day:'Legs + Core'},
+  {name:'DB Glute Bridge',day:'Legs + Core'},
+  {name:'DB Hip Thrust',day:'Legs + Core'},
+  {name:'Standing Single-Leg Calf Raise',day:'Legs + Core'},
+  {name:'Seated Single-Leg Calf Raise',day:'Legs + Core'},
+  {name:'Dead Bug',day:'Legs + Core'},
+  {name:'Hollow Body Hold',day:'Legs + Core'},
+  {name:'Suitcase Carry',day:'Legs + Core'},
+  {name:'Pallof Press Progression',day:'Legs + Core'},
+  {name:'Arm Circles',day:'Push + Skill'},
+  {name:'Wall Slides',day:'Push + Skill'},
+  {name:'Scapular Push-up',day:'Push + Skill'},
+  {name:'Band Pull-Apart',day:'Push + Skill'},
+  {name:'Push-up Bars Progression',day:'Push + Skill'},
+  {name:'DB Floor Press',day:'Push + Skill'},
+  {name:'Push-Up Volume (Day 5)',day:'Push + Skill'},
+  {name:'Diamond Push-Up',day:'Push + Skill'},
+  {name:'Deficit Push-Up',day:'Push + Skill'},
+  {name:'Feet-Elevated Push-Up',day:'Push + Skill'},
+  {name:'Single-Arm Floor Press',day:'Push + Skill'},
+  {name:'Weighted Deficit Push-Up',day:'Push + Skill'},
+  {name:'Pike Progression',day:'Push + Skill'},
+  {name:'Seated DB Overhead Press',day:'Push + Skill'},
+  {name:'Wall Walk (Partial)',day:'Push + Skill'},
+  {name:'Wall Walk (Full)',day:'Push + Skill'},
+  {name:'Wall Handstand',day:'Push + Skill'},
+  {name:'Elevated Pike Push-Up',day:'Push + Skill'},
+  {name:'Single-Arm Seated OHP',day:'Push + Skill'},
+  {name:'DB Lateral Raise',day:'Push + Skill'},
+  {name:'DB Overhead Triceps Extension',day:'Push + Skill'},
+  {name:'TRX Y-T-W',day:'Push + Skill'},
+  {name:'Arm Block - DB Lateral Raise',day:'Push + Skill'},
+  {name:'Arm Block - DB Overhead Triceps Ext',day:'Push + Skill'},
+  {name:'Scapular Pull-up',day:'Pull + Grip'},
+  {name:'Dead Hang',day:'Pull + Grip'},
+  {name:'Pull-Up Progression',day:'Pull + Grip'},
+  {name:'Chin-Up Progression',day:'Pull + Grip'},
+  {name:'Pull-Up (Overhand)',day:'Pull + Grip'},
+  {name:'Chin-Up',day:'Pull + Grip'},
+  {name:'Weighted Pull-Up',day:'Pull + Grip'},
+  {name:'Weighted Chin-Up',day:'Pull + Grip'},
+  {name:'TRX Row',day:'Pull + Grip'},
+  {name:'Seated Band Row',day:'Pull + Grip'},
+  {name:'One-Arm DB Row',day:'Pull + Grip'},
+  {name:'TRX Face Pull',day:'Pull + Grip'},
+  {name:'DB Curl',day:'Pull + Grip'},
+  {name:'Hammer Curl',day:'Pull + Grip'},
+  {name:'Arm Block - DB Curl',day:'Pull + Grip'},
+  {name:'Single-Arm Curl',day:'Pull + Grip'},
+  {name:'Towel Hang',day:'Pull + Grip'},
+  {name:'L-Sit Progression',day:'Pull + Grip'},
+  {name:'Relaxed Walking',day:'Cardio'},
+  {name:'Brisk Walking',day:'Cardio'},
+  {name:'VO2 Max Norwegian 4x4',day:'Cardio'},
+];
+
+const NO_GIF = new Set(['Brisk Walking','Relaxed Walking','VO2 Max Norwegian 4x4']);
+
+const GIF_ALIASES = {
+  'Micro Mobility Protocol': 'Deep Mobility Protocol.gif'
+};
+
+function getPng(n){ return 'images/exercises/' + n.replace(/\//g,'-').toUpperCase() + '.png'; }
+function getGif(n){ 
+  if (GIF_ALIASES[n]) return 'images/gifs/' + GIF_ALIASES[n];
+  return 'images/gifs/' + n + '.gif'; 
+}
+
+document.getElementById('statsBar').innerHTML = `
+  <div class="stat"><div class="num">${EXERCISES.length}</div><div class="label">תרגילים ב-Skill Tree</div></div>
+  <div class="stat"><div class="num">${EXERCISES.length}</div><div class="label">תמונות PNG תקינות</div></div>
+  <div class="stat"><div class="num">${EXERCISES.length - NO_GIF.size}</div><div class="label">סרטוני GIF תקינים</div></div>
+  <div class="stat"><div class="num">${NO_GIF.size}</div><div class="label">ללא GIF (by design)</div></div>
+`;
+
+const days = [...new Set(EXERCISES.map(e=>e.day))];
+document.getElementById('filterBar').innerHTML = `
+  <button class="active" onclick="filter('all',this)">הכל (${EXERCISES.length})</button>
+  ${days.map(d=>`<button onclick="filter('${d}',this)">${d} (${EXERCISES.filter(e=>e.day===d).length})</button>`).join('')}
+`;
+
+function filter(day, btn){
+  document.querySelectorAll('.filters button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render(day==='all'? EXERCISES : EXERCISES.filter(e=>e.day===day));
+}
+
+function render(list){
+  let html='';
+  const grouped={};
+  list.forEach(e=>{ if(!grouped[e.day])grouped[e.day]=[]; grouped[e.day].push(e); });
+
+  for(const [day, exs] of Object.entries(grouped)){
+    const icon = day==='Legs + Core'?'🦵':day==='Push + Skill'?'💥':day==='Pull + Grip'?'🧲':'🫀';
+    html += `<div class="section-title">${icon} ${day} (${exs.length})</div><div class="grid">`;
+    exs.forEach((ex)=>{
+      const idx = EXERCISES.indexOf(ex)+1;
+      const png = getPng(ex.name);
+      const gif = getGif(ex.name);
+      const noGif = NO_GIF.has(ex.name);
+      const hasAlias = !!GIF_ALIASES[ex.name];
+
+      html += `<div class="card">
+        <div class="card-media">
+          <div class="media-col">
+            <span class="badge png-b">PNG</span>
+            <img src="${png}" alt="${ex.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <div class="err-msg" style="display:none">❌ PNG חסר</div>
+          </div>
+          <div class="media-col" style="background:${noGif?'#f8fafc':'#000'}">
+            <span class="badge ${noGif?'nogif-b':'gif-b'}">${noGif?'NO GIF':'GIF'}</span>
+            ${noGif
+              ? `<div style="color:#94a3b8;font-size:13px;text-align:center;padding:12px">⏭️ ללא GIF<br><small>(תרגיל קרדיו)</small></div>`
+              : `<img src="${gif}" alt="${ex.name} GIF" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                 <div class="err-msg" style="display:none">❌ GIF חסר</div>`
+            }
+          </div>
+        </div>
+        <div class="card-body">
+          <h3>#${idx} — ${ex.name}</h3>
+          <div class="paths">
+            <div class="p png-p" title="נתיב PNG מיוצא">${png}</div>
+            ${noGif?'':`<div class="p gif-p" title="נתיב GIF מיוצא">${gif}</div>`}
+          </div>
+          ${hasAlias ? `<div class="alias-tag">🔗 GIF Alias: ${GIF_ALIASES[ex.name]}</div>` : ''}
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  document.getElementById('content').innerHTML = html;
+}
+
+render(EXERCISES);
+</script>
+</body>
+</html>
