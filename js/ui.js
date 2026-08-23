@@ -111,7 +111,7 @@ const UI = (() => {
     'FEET ELEVATED PIKE HOLD': 'Pike Hold.gif',
     'PUSH UP': 'Push-up.gif',
     'PUSH UP VOLUME (DAY 5)': 'Push-up.gif',
-    'DEFICIT PUSH UP': 'Push-up Bars Progression.gif',
+    'DEFICIT PUSH UP': 'Deficit Push-Up.gif',
     'FEET ELEVATED PUSH UP': 'Feet-Elevated Push-Up.gif',
     'WEIGHTED DEFICIT PUSH UP': 'Weighted Deficit Push-Up.gif',
     'DB RDL': 'Dumbbell Romanian Deadlift (RDL).gif',
@@ -176,6 +176,8 @@ const UI = (() => {
     'ACTIVE RECOVERY WALK': 'High Knees.gif',
     'ZONE 2 LIGHT WALK': 'High Knees.gif',
     'VO2 MAX NORWEGIAN 4X4': 'High Knees.gif',
+    'SCAPULAR PULL UP': 'Scapular Pull-up.gif',
+    'FULL PULL UP': 'Chin-up.gif',
     'WRIST ROCKS': 'Wrist Rocks.gif'
   };
 
@@ -210,7 +212,8 @@ const UI = (() => {
     'ACTIVE RECOVERY WALK': 'RELAXED WALKING.png',
     'ZONE 2 LIGHT WALK': 'BRISK WALKING.png',
     'MICRO MOBILITY PROTOCOL': 'DEEP MOBILITY PROTOCOL.png',
-    'DEFICIT PUSH UP': 'PUSH-UP (BARS).png',
+    'DEFICIT PUSH UP': 'DEFICIT PUSH-UP.png',
+    'INCLINE PUSH UP': 'INCLINE PUSH-UP.png',
     'WEIGHTED DIAMOND PUSH UP': 'DIAMOND PUSH-UP.png',
     '1 KG': 'DEAD BUG.png',
     '2 KG': 'DEAD BUG.png',
