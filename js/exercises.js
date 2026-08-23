@@ -945,17 +945,22 @@ const ExercisesPage = (() => {
 
         let dStr, midX, midY;
 
-        // Route vertically in the empty space between parent card bottom & child card top
           const centerChannelX = pathRect.width / 2;
           let channelX = centerChannelX;
-          const isSkipping = Math.abs(cNodeTop - pNodeBottom) > 80;
+          // Spacer is 64 + margins + fork group = ~100px gap for adjacent rows. >130px means it's skipping a row.
+          const isSkipping = Math.abs(cNodeTop - pNodeBottom) > 130;
 
-          if (pCenterX < centerChannelX - 20 && cCenterX < centerChannelX - 20) {
-            channelX = Math.min(pNodeLeft, cNodeLeft) - 15;
-          } else if (pCenterX > centerChannelX + 20 && cCenterX > centerChannelX + 20) {
-            channelX = Math.max(pNodeRight, cNodeRight) + 15;
-          } else if (isSkipping) {
-            channelX = (cCenterX >= centerChannelX) ? pathRect.width - 15 : 15;
+          if (isSkipping) {
+            if (pCenterX < centerChannelX - 20 && cCenterX < centerChannelX - 20) {
+              channelX = Math.min(pNodeLeft, cNodeLeft) - 15;
+            } else if (pCenterX > centerChannelX + 20 && cCenterX > centerChannelX + 20) {
+              channelX = Math.max(pNodeRight, cNodeRight) + 15;
+            } else {
+              channelX = (cCenterX >= centerChannelX) ? pathRect.width - 15 : 15;
+            }
+          } else {
+            // Adjacent rows: just use the midpoint horizontally for a smooth curve
+            channelX = (pCenterX + cCenterX) / 2;
           }
 
           if (channelX < 15) channelX = 15;
@@ -966,7 +971,8 @@ const ExercisesPage = (() => {
           const endX = cCenterX;
           const endY = cNodeTop;
           
-          midY = isSkipping ? endY - 26 : (startY + endY) / 2;
+          // Badge is positioned slightly higher if skipping so it rests on the incoming horizontal line segment
+          midY = isSkipping ? endY - 45 : (startY + endY) / 2;
           midX = channelX;
 
           const deltaY = endY - startY;
