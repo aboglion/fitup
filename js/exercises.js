@@ -910,20 +910,32 @@ const ExercisesPage = (() => {
         const childUnlockBadge = childNode.querySelector('.rpg-unlock-badge')?.textContent || '';
         const unlockWeekNum = childUnlockBadge.match(/\d+/) ? childUnlockBadge.match(/\d+/)[0] : '';
 
-        const parentCardRect = parentNode.getBoundingClientRect();
-        const childCardRect = childNode.getBoundingClientRect();
+        const getOffsetPos = (el) => {
+          let top = 0;
+          let left = 0;
+          let current = el;
+          while (current && current !== pathEl) {
+            top += current.offsetTop;
+            left += current.offsetLeft;
+            current = current.offsetParent;
+          }
+          return { top, left, width: el.offsetWidth, height: el.offsetHeight };
+        };
 
-        const pNodeLeft = parentCardRect.left - pathRect.left;
-        const pNodeRight = parentCardRect.right - pathRect.left;
-        const pNodeTop = parentCardRect.top - pathRect.top;
-        const pNodeBottom = parentCardRect.bottom - pathRect.top;
-        const pCenterX = (pNodeLeft + pNodeRight) / 2;
+        const pRect = getOffsetPos(parentNode);
+        const cRect = getOffsetPos(childNode);
 
-        const cNodeLeft = childCardRect.left - pathRect.left;
-        const cNodeRight = childCardRect.right - pathRect.left;
-        const cNodeTop = childCardRect.top - pathRect.top;
-        const cNodeBottom = childCardRect.bottom - pathRect.top;
-        const cCenterX = (cNodeLeft + cNodeRight) / 2;
+        const pNodeLeft = pRect.left;
+        const pNodeRight = pRect.left + pRect.width;
+        const pNodeTop = pRect.top;
+        const pNodeBottom = pRect.top + pRect.height;
+        const pCenterX = pNodeLeft + (pRect.width / 2);
+
+        const cNodeLeft = cRect.left;
+        const cNodeRight = cRect.left + cRect.width;
+        const cNodeTop = cRect.top;
+        const cNodeBottom = cRect.top + cRect.height;
+        const cCenterX = cNodeLeft + (cRect.width / 2);
 
         const isSameRow = Math.abs(pNodeTop - cNodeTop) < 40;
         
