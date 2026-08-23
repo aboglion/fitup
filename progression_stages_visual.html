@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FitUp — השוואת נכס ויזואלי: מציאות נוכחית מעודכנת מול אפשרויות להחלפה</title>
+<title>FitUp — השוואת נכס ויזואלי: מציאות נוכחית עם תמונות שורש וגרסאות GIT היסטוריות</title>
 <style>
   :root {
     --bg-main: #0b1329;
@@ -257,6 +257,7 @@
   .cand-badge.png-only { background: #8b5cf6; }
   .cand-badge.gif-only { background: #06b6d4; }
   .cand-badge.combined { background: #ec4899; }
+  .cand-badge.root-asset { background: #eab308; }
   .cand-badge.archive { background: #64748b; }
 
   .prop-id-box {
@@ -400,26 +401,26 @@
 <body>
 
 <div class="header">
-  <h1>🔍 FitUp — השוואת נכסים ויזואליים: מציאות מעודכנת מול מגוון הצעות להחלפה</h1>
-  <p class="subtitle">החלפות שאושרו עודכנו בעמודה הכחולה! להלן הצעות נוספות מופרדות לפי תמונה (PNG), סרטון (GIF), שילוב, וארכיון היסטורי</p>
+  <h1>🔍 FitUp — השוואת נכסים ויזואליים: תמונות שורש + גרסאות GIT היסטוריות</h1>
+  <p class="subtitle">הוספנו את תמונת ה-Root של Tuck Hold (Chair), תמונה מעוצבת ל-One Leg Extended וגרסאות GIT היסטוריות בתיקייה זמנית</p>
 </div>
 
 <div class="legend-bar">
   <div class="legend-item legend-updated">
-    <span>✅ 13 החלפות עודכנו בהצלחה באפליקציה בסיבוב הזה</span>
+    <span>✅ Tuck Hold (Chair) עודכן לתמונת השורש + One Leg Extended לתמונה המעוצבת</span>
   </div>
   <div class="legend-item legend-current">
     <span>🟦 מה שמוצג כרגע באפליקציה (מעודכן)</span>
   </div>
   <div class="legend-item legend-suggested">
-    <span>🟧 הצעות נוספות להחלפה (תמונה בלבד / GIF בלבד / שילוב / ארכיון)</span>
+    <span>🟧 גרסאות היסטוריות מ-GIT ואפשרויות חלופיות בדיסק</span>
   </div>
 </div>
 
 <div class="filter-bar" id="filterBar"></div>
 <div id="contentContainer"></div>
 
-<h2 style="margin: 40px 0 16px; font-size: 20px; text-align: center; color: #fb923c;">📋 טבלת הצעות נוספות להחזרת קוד (Action Plan)</h2>
+<h2 style="margin: 40px 0 16px; font-size: 20px; text-align: center; color: #fb923c;">📋 טבלת הצעות וגרסאות היסטוריות (Action Plan)</h2>
 <div style="overflow-x: auto;">
   <table class="summary-table" id="summaryTable">
     <thead>
@@ -440,30 +441,30 @@
 <div class="toast" id="toast">✅ הקוד הועתק בהצלחה! הדבק בצ׳אט לבקשת החלפה</div>
 
 <script>
-const EXPANDED_COMPARISON_DATA = [
+const GIT_HISTORICAL_DATA = [
   {
     masterName: "L-Sit Progression",
     stages: [
       {
         stageName: "Stage 1: Tuck Hold (Chair)",
         status: "UPDATED",
-        current: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-sit on Chair.gif" },
+        current: { png: "images/exercises/TUCK HOLD (CHAIR).png", gif: "images/gifs/L-sit on Chair.gif" },
         candidates: [
           {
-            id: "PROP_LSIT_S1_ALT_PNG",
-            type: "png-only",
-            label: "📷 תמונה בלבד: מנח מקבילים",
-            png: "images/exercises/L-SIT TUCK (BARS).png",
+            id: "PROP_LSIT_S1_ROOT_IMAGE",
+            type: "root-asset",
+            label: "🖼️ תמונת שורש: Tuck Hold (Chair).jpeg",
+            png: "images/temp_archive/TUCK_HOLD_CHAIR_ROOT.png",
             gif: "images/gifs/L-sit on Chair.gif",
-            note: "שימוש בתמונת Tuck Bars המקורית עם GIF הכיסא"
+            note: "תמונת JPEG המקורית משורש הפרויקט"
           },
           {
-            id: "PROP_LSIT_S1_ALT_GIF",
-            type: "gif-only",
-            label: "🎬 סרטון בלבד: L-sit Tuck Bars",
-            png: "images/exercises/L-SIT PROGRESSION.png",
-            gif: "images/gifs/L-sit Tuck (Bars).gif",
-            note: "שימוש ב-GIF מקבילים הישן"
+            id: "PROP_LSIT_S1_GIT_ARCHIVE",
+            type: "archive",
+            label: "📁 גרסת GIT היסטורית: Tuck Bars",
+            png: "images/temp_archive/376bfce_L-SIT_TUCK_(BARS).png",
+            gif: "images/temp_archive/7a83194_L-sit_on_Chair.gif",
+            note: "גרסת Commit 376bfce"
           }
         ]
       },
@@ -473,50 +474,58 @@ const EXPANDED_COMPARISON_DATA = [
         current: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-Sit Progression.gif" },
         candidates: [
           {
-            id: "PROP_LSIT_S2_ALT_PNG",
-            type: "png-only",
-            label: "📷 תמונה בלבד: L-Sit Tuck Bars",
-            png: "images/exercises/L-SIT TUCK (BARS).png",
-            gif: "images/gifs/L-Sit Progression.gif",
-            note: "החלפת PNG לתמונת Tuck Bars הספציפית"
-          },
-          {
-            id: "PROP_LSIT_S2_ALT_GIF",
-            type: "gif-only",
-            label: "🎬 סרטון בלבד: L-sit Tuck Bars GIF",
-            png: "images/exercises/L-SIT PROGRESSION.png",
-            gif: "images/gifs/L-sit Tuck (Bars).gif",
-            note: "שימוש ב-GIF של Tuck Bars"
+            id: "PROP_LSIT_S2_GIT_BARS",
+            type: "archive",
+            label: "📁 גרסת GIT היסטורית: L-SIT TUCK (BARS)",
+            png: "images/temp_archive/376bfce_L-SIT_TUCK_(BARS).png",
+            gif: "images/temp_archive/aa40944_L-sit_Tuck_(Bars).gif",
+            note: "קובץ מקבילים היסטורי מ-GIT"
           }
         ]
       },
       {
         stageName: "Stage 3: One Leg Extended",
-        status: "RECOMMENDED",
-        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
+        status: "UPDATED",
+        current: { png: "images/exercises/ONE LEG EXTENDED.png", gif: "images/gifs/L-Sit Progression.gif" },
         candidates: [
           {
-            id: "PROP_LSIT_S3_OPT_A",
-            type: "combined",
-            label: "📷+🎬 שילוב: L-Sit Progression",
-            png: "images/exercises/L-SIT PROGRESSION.png",
+            id: "PROP_LSIT_S3_GEN_IMAGE",
+            type: "png-only",
+            label: "🎨 תמונה מעוצבת חדשה: ONE LEG EXTENDED",
+            png: "images/exercises/ONE LEG EXTENDED.png",
             gif: "images/gifs/L-Sit Progression.gif",
-            note: "GIF ו-PNG של פרוגרסיה מתקדמת"
+            note: "איור וקטורי מותאם אישית ברקע נקי"
+          },
+          {
+            id: "PROP_LSIT_S3_GIT_PROGRESSION",
+            type: "archive",
+            label: "📁 גרסת GIT היסטורית: Progression PNG",
+            png: "images/temp_archive/5929f4b_L-SIT_PROGRESSION.png",
+            gif: "images/gifs/L-Sit Progression.gif",
+            note: "גרסת Commit 5929f4b"
           }
         ]
       },
       {
         stageName: "Stage 4: Full L-Sit",
-        status: "RECOMMENDED",
-        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
+        status: "UPDATED",
+        current: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-Sit Progression.gif" },
         candidates: [
           {
-            id: "PROP_LSIT_S4_OPT_A",
-            type: "combined",
-            label: "📷+🎬 שילוב: L-Sit Progression",
-            png: "images/exercises/L-SIT PROGRESSION.png",
+            id: "PROP_LSIT_S4_GIT_FULL",
+            type: "archive",
+            label: "📁 גרסת GIT היסטורית: L-SIT PROGRESSION.png",
+            png: "images/temp_archive/5929f4b_L-SIT_PROGRESSION.png",
             gif: "images/gifs/L-Sit Progression.gif",
-            note: "L-Sit מלא חופשי"
+            note: "תמונת L-Sit מלאה היסטורית מ-GIT"
+          },
+          {
+            id: "PROP_LSIT_S4_GIT_BARS",
+            type: "archive",
+            label: "📁 גרסת GIT היסטורית: Tuck Bars",
+            png: "images/temp_archive/376bfce_L-SIT_TUCK_(BARS).png",
+            gif: "images/temp_archive/aa40944_L-sit_Tuck_(Bars).gif",
+            note: "גרסת מקבילים"
           }
         ]
       }
@@ -537,14 +546,6 @@ const EXPANDED_COMPARISON_DATA = [
             png: "images/exercises/SCAPULAR PULL-UP.png",
             gif: "images/gifs/Scapular Pull-up.gif",
             note: "נמצא GIF ייעודי לעליות שכמות!"
-          },
-          {
-            id: "PROP_PULLUP_S1_OPT_B",
-            type: "combined",
-            label: "📷+🎬 שילוב: Dead Hang",
-            png: "images/exercises/DEAD HANG.png",
-            gif: "images/gifs/Dead Hang.gif",
-            note: "הדגמת Dead Hang מתאים להכנה"
           }
         ]
       },
@@ -556,7 +557,7 @@ const EXPANDED_COMPARISON_DATA = [
           {
             id: "PROP_PULLUP_S2_ALT_ARCHIVE",
             type: "archive",
-            label: "📁 ארכיון היסטורי: Negative Pull-Up",
+            label: "📁 גרסת GIT היסטורית: Negative Pull-Up",
             png: "images/temp_archive/NEGATIVE_PULL-UP_HISTORICAL.png",
             gif: "images/gifs/Pull-Up Negative.gif",
             note: "תמונת ארכיון היסטורית של מתח שלילי"
@@ -746,7 +747,7 @@ const EXPANDED_COMPARISON_DATA = [
 ];
 
 // Filter setup
-const categories = ['הכל', ...EXPANDED_COMPARISON_DATA.map(p => p.masterName)];
+const categories = ['הכל', ...GIT_HISTORICAL_DATA.map(p => p.masterName)];
 document.getElementById('filterBar').innerHTML = categories.map((cat, i) => `
   <button class="filter-btn ${i === 0 ? 'active' : ''}" onclick="filterCategory('${cat}', this)">${cat}</button>
 `).join('');
@@ -756,8 +757,8 @@ function filterCategory(cat, btn) {
   btn.classList.add('active');
 
   const filtered = cat === 'הכל' 
-    ? EXPANDED_COMPARISON_DATA 
-    : EXPANDED_COMPARISON_DATA.filter(p => p.masterName === cat);
+    ? GIT_HISTORICAL_DATA 
+    : GIT_HISTORICAL_DATA.filter(p => p.masterName === cat);
     
   render(filtered);
 }
@@ -780,7 +781,7 @@ function copyProposal(id, masterName, stageName, sugPng, sugGif) {
 
 function copyAllProposals() {
   const allReplacements = [];
-  EXPANDED_COMPARISON_DATA.forEach(prog => {
+  GIT_HISTORICAL_DATA.forEach(prog => {
     prog.stages.forEach(s => {
       if (s.candidates.length > 0) {
         const cand = s.candidates[0];
@@ -846,7 +847,7 @@ function render(catalog) {
             <div class="box-current">
               <div class="box-header">
                 <span>🟦 מה שמוצג כרגע באפליקציה (Current App State)</span>
-                ${isUpdated ? '<span class="tag-green">✅ מעודכן ב-100% לפי ההוראה שלך</span>' : ''}
+                ${isUpdated ? '<span class="tag-green">✅ מעודכן 100% לפי הנכסים החדשים</span>' : ''}
               </div>
               <div class="media-box">
                 <div class="media-item">
@@ -857,7 +858,7 @@ function render(catalog) {
                 <div class="media-item gif-box">
                   <span class="media-label">GIF</span>
                   <img src="${stage.current.gif}" alt="Current GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                  <div class="err-msg">❌ חsר</div>
+                  <div class="err-msg">❌ חסר</div>
                 </div>
               </div>
               <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;">
@@ -869,7 +870,7 @@ function render(catalog) {
             <!-- SUGGESTED CANDIDATES (ORANGE GRID) -->
             ${hasCandidates ? `
               <div class="candidates-header">
-                <span>🟧 אפשרויות והצעות נוספות לבחירתך (${stage.candidates.length} הצעות):</span>
+                <span>🟧 אפשרויות וגרסאות GIT היסטוריות לבחירתך (${stage.candidates.length} הצעות):</span>
               </div>
               
               <div class="candidates-grid">
@@ -926,7 +927,7 @@ function render(catalog) {
 }
 
 // Initial render
-render(EXPANDED_COMPARISON_DATA);
+render(GIT_HISTORICAL_DATA);
 </script>
 
 </body>
