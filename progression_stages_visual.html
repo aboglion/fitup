@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FitUp — השוואת נכס ויזואלי: מציאות נוכחית מול מגוון הצעות להחלפה</title>
+<title>FitUp — השוואת נכס ויזואלי: מציאות נוכחית מעודכנת מול אפשרויות להחלפה</title>
 <style>
   :root {
     --bg-main: #0b1329;
@@ -20,6 +20,10 @@
     --suggested-bg: #3b1803;
     --suggested-border: #ea580c;
     --suggested-badge: #f97316;
+
+    /* Green for Updated/Matched */
+    --updated-bg: #064e3b;
+    --updated-border: #10b981;
 
     --border-color: #2a365c;
   }
@@ -40,7 +44,7 @@
     font-size: 28px;
     font-weight: 900;
     margin-bottom: 8px;
-    background: linear-gradient(135deg, #3b82f6, #f97316);
+    background: linear-gradient(135deg, #10b981, #3b82f6, #f97316);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -73,6 +77,11 @@
     background: rgba(234, 88, 12, 0.2);
     border: 2px solid var(--suggested-border);
     color: #fb923c;
+  }
+  .legend-updated {
+    background: rgba(16, 185, 129, 0.2);
+    border: 2px solid var(--updated-border);
+    color: #34d399;
   }
 
   .copy-all-container {
@@ -176,9 +185,9 @@
     border: 1px solid #ea580c;
   }
   .match-ok {
-    background: rgba(34, 197, 94, 0.2);
-    color: #4ade80;
-    border: 1px solid #22c55e;
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    border: 1px solid #10b981;
   }
 
   .stage-body {
@@ -205,7 +214,7 @@
     margin-bottom: 10px;
   }
   .box-current .box-header { color: #60a5fa; }
-  .box-suggested .box-header { color: #fb923c; }
+  .cand-card .box-header { color: #fb923c; }
 
   /* CANDIDATES GRID */
   .candidates-header {
@@ -219,7 +228,7 @@
   }
   .candidates-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 14px;
   }
 
@@ -245,9 +254,10 @@
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   }
-  .cand-badge.best {
-    background: #22c55e;
-  }
+  .cand-badge.png-only { background: #8b5cf6; }
+  .cand-badge.gif-only { background: #06b6d4; }
+  .cand-badge.combined { background: #ec4899; }
+  .cand-badge.archive { background: #64748b; }
 
   .prop-id-box {
     display: inline-flex;
@@ -383,42 +393,42 @@
   .summary-table tr:last-child td { border-bottom: none; }
   .tag-blue { color: #60a5fa; font-weight: 700; }
   .tag-orange { color: #fb923c; font-weight: 700; }
+  .tag-green { color: #34d399; font-weight: 700; }
   .err-msg { color: #ef4444; font-size: 11px; font-weight: 700; display: none; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🔍 FitUp — השוואת נכסים ויזואליים: מציאות מול מגוון הצעות להחלפה</h1>
-  <p class="subtitle">לכל תרגיל ושלב מוצגים **מספר מועמדים והצעות שונות** שנמצאו בדיסק (בכתום), מול המצב הנוכחי באפליקציה (בכחול)</p>
+  <h1>🔍 FitUp — השוואת נכסים ויזואליים: מציאות מעודכנת מול מגוון הצעות להחלפה</h1>
+  <p class="subtitle">החלפות שאושרו עודכנו בעמודה הכחולה! להלן הצעות נוספות מופרדות לפי תמונה (PNG), סרטון (GIF), שילוב, וארכיון היסטורי</p>
 </div>
 
 <div class="legend-bar">
+  <div class="legend-item legend-updated">
+    <span>✅ 13 החלפות עודכנו בהצלחה באפליקציה בסיבוב הזה</span>
+  </div>
   <div class="legend-item legend-current">
-    <span>🟦 מה שמוצג כרגע באפליקציה (רקע כחול)</span>
+    <span>🟦 מה שמוצג כרגע באפליקציה (מעודכן)</span>
   </div>
   <div class="legend-item legend-suggested">
-    <span>🟧 הצעות שונות להחלפה מהקבצים הקיימים בדיסק (רקע כתום)</span>
+    <span>🟧 הצעות נוספות להחלפה (תמונה בלבד / GIF בלבד / שילוב / ארכיון)</span>
   </div>
-</div>
-
-<div class="copy-all-container">
-  <button class="btn-copy-all" onclick="copyAllProposals()">📋 העתק את כל ההצעות המומלצות (הצעה א') בצ׳אט</button>
 </div>
 
 <div class="filter-bar" id="filterBar"></div>
 <div id="contentContainer"></div>
 
-<h2 style="margin: 40px 0 16px; font-size: 20px; text-align: center; color: #fb923c;">📋 טבלת הצעות נבחרות להחזרת קוד (Action Plan)</h2>
+<h2 style="margin: 40px 0 16px; font-size: 20px; text-align: center; color: #fb923c;">📋 טבלת הצעות נוספות להחזרת קוד (Action Plan)</h2>
 <div style="overflow-x: auto;">
   <table class="summary-table" id="summaryTable">
     <thead>
       <tr>
         <th>קוד הצעה (ID)</th>
         <th>תרגיל ושלב</th>
-        <th>תמונה נוכחית (כחול)</th>
+        <th>תמונה נוכחית באפליקציה (כחול)</th>
         <th>תמונה מוצעת (כתום)</th>
-        <th>GIF נוכחי (כחול)</th>
+        <th>GIF נוכחי באפליקציה (כחול)</th>
         <th>GIF מוצע (כתום)</th>
         <th>פעולה</th>
       </tr>
@@ -430,92 +440,80 @@
 <div class="toast" id="toast">✅ הקוד הועתק בהצלחה! הדבק בצ׳אט לבקשת החלפה</div>
 
 <script>
-const MULTI_CANDIDATE_DATA = [
+const EXPANDED_COMPARISON_DATA = [
   {
     masterName: "L-Sit Progression",
     stages: [
       {
         stageName: "Stage 1: Tuck Hold (Chair)",
-        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
+        status: "UPDATED",
+        current: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-sit on Chair.gif" },
         candidates: [
           {
-            id: "PROP_LSIT_S1_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/L-SIT PROGRESSION.png",
-            gif: "images/gifs/L-sit on Chair.gif",
-            note: "נמצא GIF מדויק לתלייה מכיסא (L-sit on Chair.gif)!"
-          },
-          {
-            id: "PROP_LSIT_S1_OPT_B",
-            label: "הצעה ב' (מנח מקבילים)",
-            isBest: false,
+            id: "PROP_LSIT_S1_ALT_PNG",
+            type: "png-only",
+            label: "📷 תמונה בלבד: מנח מקבילים",
             png: "images/exercises/L-SIT TUCK (BARS).png",
-            gif: "images/gifs/L-sit Tuck (Bars).gif",
-            note: "שימוש ב-GIF מקבילים המוכר"
+            gif: "images/gifs/L-sit on Chair.gif",
+            note: "שימוש בתמונת Tuck Bars המקורית עם GIF הכיסא"
           },
           {
-            id: "PROP_LSIT_S1_OPT_C",
-            label: "הצעה ג' (ליבה סטטית)",
-            isBest: false,
-            png: "images/exercises/HOLLOW BODY HOLD.png",
-            gif: "images/gifs/Hollow Body Hold.gif",
-            note: "תצוגת הולו בודי כהכנה"
+            id: "PROP_LSIT_S1_ALT_GIF",
+            type: "gif-only",
+            label: "🎬 סרטון בלבד: L-sit Tuck Bars",
+            png: "images/exercises/L-SIT PROGRESSION.png",
+            gif: "images/gifs/L-sit Tuck (Bars).gif",
+            note: "שימוש ב-GIF מקבילים הישן"
           }
         ]
       },
       {
         stageName: "Stage 2: Tuck Hold (Bars)",
-        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
+        status: "UPDATED",
+        current: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-Sit Progression.gif" },
         candidates: [
           {
-            id: "PROP_LSIT_S2_OPT_A",
-            label: "הצעה א' (תואם 100%)",
-            isBest: true,
+            id: "PROP_LSIT_S2_ALT_PNG",
+            type: "png-only",
+            label: "📷 תמונה בלבד: L-Sit Tuck Bars",
             png: "images/exercises/L-SIT TUCK (BARS).png",
-            gif: "images/gifs/L-sit Tuck (Bars).gif",
-            note: "תואם בדיוק למקבילים"
+            gif: "images/gifs/L-Sit Progression.gif",
+            note: "החלפת PNG לתמונת Tuck Bars הספציפית"
           },
           {
-            id: "PROP_LSIT_S2_OPT_B",
-            label: "הצעה ב' (פרוגרסיה כללית)",
-            isBest: false,
+            id: "PROP_LSIT_S2_ALT_GIF",
+            type: "gif-only",
+            label: "🎬 סרטון בלבד: L-sit Tuck Bars GIF",
             png: "images/exercises/L-SIT PROGRESSION.png",
-            gif: "images/gifs/L-Sit Progression.gif",
-            note: "שימוש בקובץ הפרוגרסיה הכללי"
+            gif: "images/gifs/L-sit Tuck (Bars).gif",
+            note: "שימוש ב-GIF של Tuck Bars"
           }
         ]
       },
       {
         stageName: "Stage 3: One Leg Extended",
+        status: "RECOMMENDED",
         current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
         candidates: [
           {
             id: "PROP_LSIT_S3_OPT_A",
-            label: "הצעה א' (מומלצת)",
-            isBest: true,
+            type: "combined",
+            label: "📷+🎬 שילוב: L-Sit Progression",
             png: "images/exercises/L-SIT PROGRESSION.png",
             gif: "images/gifs/L-Sit Progression.gif",
-            note: "GIF של פרוגרסיית L-Sit מתקדמת"
-          },
-          {
-            id: "PROP_LSIT_S3_OPT_B",
-            label: "הצעה ב' (מקבילים)",
-            isBest: false,
-            png: "images/exercises/L-SIT TUCK (BARS).png",
-            gif: "images/gifs/L-sit Tuck (Bars).gif",
-            note: "המשכיות של Tuck Bars"
+            note: "GIF ו-PNG של פרוגרסיה מתקדמת"
           }
         ]
       },
       {
         stageName: "Stage 4: Full L-Sit",
+        status: "RECOMMENDED",
         current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
         candidates: [
           {
             id: "PROP_LSIT_S4_OPT_A",
-            label: "הצעה א' (מומלצת)",
-            isBest: true,
+            type: "combined",
+            label: "📷+🎬 שילוב: L-Sit Progression",
             png: "images/exercises/L-SIT PROGRESSION.png",
             gif: "images/gifs/L-Sit Progression.gif",
             note: "L-Sit מלא חופשי"
@@ -529,20 +527,21 @@ const MULTI_CANDIDATE_DATA = [
     stages: [
       {
         stageName: "Stage 1: Scapular Pull-Up",
+        status: "RECOMMENDED",
         current: { png: "images/exercises/SCAPULAR PULL-UP.png", gif: "images/gifs/Pull-up (Overhand).gif" },
         candidates: [
           {
             id: "PROP_PULLUP_S1_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
+            type: "gif-only",
+            label: "🎬 סרטון בלבד: Scapular Pull-up",
             png: "images/exercises/SCAPULAR PULL-UP.png",
             gif: "images/gifs/Scapular Pull-up.gif",
             note: "נמצא GIF ייעודי לעליות שכמות!"
           },
           {
             id: "PROP_PULLUP_S1_OPT_B",
-            label: "הצעה ב' (תלייה פסיבית)",
-            isBest: false,
+            type: "combined",
+            label: "📷+🎬 שילוב: Dead Hang",
             png: "images/exercises/DEAD HANG.png",
             gif: "images/gifs/Dead Hang.gif",
             note: "הדגמת Dead Hang מתאים להכנה"
@@ -551,53 +550,30 @@ const MULTI_CANDIDATE_DATA = [
       },
       {
         stageName: "Stage 2: Pull-Up Negative (3s / 5s)",
-        current: { png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-up (Overhand).gif" },
+        status: "UPDATED",
+        current: { png: "images/exercises/PULL-UP NEGATIVE.png", gif: "images/gifs/Pull-Up Negative.gif" },
         candidates: [
           {
-            id: "PROP_PULLUP_S2_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/PULL-UP NEGATIVE.png",
+            id: "PROP_PULLUP_S2_ALT_ARCHIVE",
+            type: "archive",
+            label: "📁 ארכיון היסטורי: Negative Pull-Up",
+            png: "images/temp_archive/NEGATIVE_PULL-UP_HISTORICAL.png",
             gif: "images/gifs/Pull-Up Negative.gif",
-            note: "נמצאו PNG ו-GIF ייעודיים למתח שלילי!"
-          },
-          {
-            id: "PROP_PULLUP_S2_OPT_B",
-            label: "הצעה ב' (סולם פרוגרסיה)",
-            isBest: false,
-            png: "images/exercises/PULL-UP PROGRESSION.png",
-            gif: "images/gifs/Pull-Up Progression.gif",
-            note: "שימוש בקובץ ה-Progression הכללי"
+            note: "תמונת ארכיון היסטורית של מתח שלילי"
           }
         ]
       },
       {
         stageName: "Stage 3: Full Pull-Up",
+        status: "UPDATED",
         current: { png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-up (Overhand).gif" },
-        candidates: [
-          {
-            id: "PROP_PULLUP_S3_OPT_A",
-            label: "הצעה א' (תואם 100%)",
-            isBest: true,
-            png: "images/exercises/PULL-UP (OVERHAND).png",
-            gif: "images/gifs/Pull-up (Overhand).gif",
-            note: "מתח עילי מלא"
-          }
-        ]
+        candidates: []
       },
       {
         stageName: "Stage 4: Weighted Pull-Up",
-        current: { png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-up (Overhand).gif" },
-        candidates: [
-          {
-            id: "PROP_PULLUP_S4_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/WEIGHTED PULL-UP.png",
-            gif: "images/gifs/Weighted Pull-Up.gif",
-            note: "נמצאו PNG ו-GIF ייעודיים למתח עם וסט משקולות!"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/WEIGHTED PULL-UP.png", gif: "images/gifs/Weighted Pull-Up.gif" },
+        candidates: []
       }
     ]
   },
@@ -606,53 +582,30 @@ const MULTI_CANDIDATE_DATA = [
     stages: [
       {
         stageName: "Stage 1: Chin-Up Negative (3s)",
-        current: { png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Chin-up.gif" },
-        candidates: [
-          {
-            id: "PROP_CHINUP_S1_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/CHIN-UP NEGATIVE.png",
-            gif: "images/gifs/Chin-up Negative.gif",
-            note: "נמצאו PNG ו-GIF ייעודיים למתח אחיזה הפוכה שלילי!"
-          },
-          {
-            id: "PROP_CHINUP_S1_OPT_B",
-            label: "הצעה ב' (סולם פרוגרסיה)",
-            isBest: false,
-            png: "images/exercises/CHIN-UP PROGRESSION.png",
-            gif: "images/gifs/Chin-Up Progression.gif",
-            note: "שימוש בקובץ הפרוגרסיה"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/CHIN-UP NEGATIVE.png", gif: "images/gifs/Chin-up Negative.gif" },
+        candidates: []
       },
       {
         stageName: "Stage 2: Full Chin-Up",
-        current: { png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Chin-up.gif" },
+        status: "UPDATED",
+        current: { png: "images/exercises/CHIN-UP NEGATIVE.png", gif: "images/gifs/Chin-up.gif" },
         candidates: [
           {
-            id: "PROP_CHINUP_S2_OPT_A",
-            label: "הצעה א' (תואם 100%)",
-            isBest: true,
+            id: "PROP_CHINUP_S2_ALT_PNG",
+            type: "png-only",
+            label: "📷 תמונה בלבד: CHIN-UP.png",
             png: "images/exercises/CHIN-UP.png",
             gif: "images/gifs/Chin-up.gif",
-            note: "מתח אחיזה הפוכה מלא"
+            note: "חזרה לתמונה הרגילה של Chin-Up"
           }
         ]
       },
       {
         stageName: "Stage 3: Weighted Chin-Up",
-        current: { png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Chin-up.gif" },
-        candidates: [
-          {
-            id: "PROP_CHINUP_S3_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/WEIGHTED CHIN-UP.png",
-            gif: "images/gifs/Weighted Chin-Up.gif",
-            note: "נמצאו PNG ו-GIF ייעודיים למתח הפוך עם וסט!"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/WEIGHTED CHIN-UP.png", gif: "images/gifs/Weighted Chin-Up.gif" },
+        candidates: []
       }
     ]
   },
@@ -661,67 +614,36 @@ const MULTI_CANDIDATE_DATA = [
     stages: [
       {
         stageName: "Stage 1: Pike Hold",
+        status: "UPDATED",
         current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
-        candidates: [
-          {
-            id: "PROP_PIKE_S1_OPT_A",
-            label: "הצעה א' (תואם 100%)",
-            isBest: true,
-            png: "images/exercises/PIKE HOLD.png",
-            gif: "images/gifs/Pike Hold.gif",
-            note: "פייק הולד סטטי"
-          }
-        ]
+        candidates: []
       },
       {
         stageName: "Stage 2: Feet-Elevated Pike Hold",
+        status: "RECOMMENDED",
         current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
         candidates: [
           {
             id: "PROP_PIKE_S2_OPT_A",
-            label: "הצעה א' (מומלצת)",
-            isBest: true,
+            type: "png-only",
+            label: "📷 תמונה בלבד: FEET-ELEVATED PIKE HOLD",
             png: "images/exercises/FEET-ELEVATED PIKE HOLD.png",
             gif: "images/gifs/Pike Hold.gif",
-            note: "נמצא PNG ייעודי לפייק מוגבה!"
+            note: "תמונה ייעודית לפייק מוגבה"
           }
         ]
       },
       {
         stageName: "Stage 3: Pike Push-Up",
-        current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
-        candidates: [
-          {
-            id: "PROP_PIKE_S3_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/PIKE PUSH-UP.png",
-            gif: "images/gifs/Pike Push-up.gif",
-            note: "נמצאו PNG ו-GIF ייעודיים לשכיבות סמיכה פייק בתנועה!"
-          },
-          {
-            id: "PROP_PIKE_S3_OPT_B",
-            label: "הצעה ב' (פרוגרסיה)",
-            isBest: false,
-            png: "images/exercises/PIKE PROGRESSION.png",
-            gif: "images/gifs/Pike Progression.gif",
-            note: "סולם פייק כללי"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/PIKE PUSH-UP.png", gif: "images/gifs/Pike Push-up.gif" },
+        candidates: []
       },
       {
         stageName: "Stage 4: Elevated Pike Push-Up",
-        current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
-        candidates: [
-          {
-            id: "PROP_PIKE_S4_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/ELEVATED PIKE PUSH-UP.png",
-            gif: "images/gifs/Elevated Pike Push-Up.gif",
-            note: "נמצאו PNG ו-GIF ייעודיים לפייק מוגבה בתנועה!"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/ELEVATED PIKE PUSH-UP.png", gif: "images/gifs/Elevated Pike Push-Up.gif" },
+        candidates: []
       }
     ]
   },
@@ -730,75 +652,45 @@ const MULTI_CANDIDATE_DATA = [
     stages: [
       {
         stageName: "Stage 1: Incline Push-Up",
+        status: "RECOMMENDED",
         current: { png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif" },
         candidates: [
           {
             id: "PROP_PUSHUP_S1_OPT_A",
-            label: "הצעה א' (מומלצת)",
-            isBest: true,
+            type: "png-only",
+            label: "📷 תמונה בלבד: INCLINE PUSH-UP.png",
             png: "images/exercises/INCLINE PUSH-UP.png",
             gif: "images/gifs/Push-up.gif",
-            note: "נמצא PNG ייעודי לשכיבות סמיכה בשיפוע חיובי"
-          },
-          {
-            id: "PROP_PUSHUP_S1_OPT_B",
-            label: "הצעה ב' (ידיות סמיכה)",
-            isBest: false,
-            png: "images/exercises/PUSH-UP (BARS).png",
-            gif: "images/gifs/Push-up Bars Progression.gif",
-            note: "שימוש ב-GIF ידיות סמיכה"
+            note: "PNG ייעודי לשכיבות סמיכה בשיפוע"
           }
         ]
       },
       {
         stageName: "Stage 2: Push-Up",
-        current: { png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif" },
-        candidates: [
-          {
-            id: "PROP_PUSHUP_S2_OPT_A",
-            label: "הצעה א' (מומלצת)",
-            isBest: true,
-            png: "images/exercises/PUSH-UP.png",
-            gif: "images/gifs/Push-up.gif",
-            note: "שכיבות סמיכה רגילות תואם"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/PUSH-UP.png", gif: "images/gifs/Push-up.gif" },
+        candidates: []
       },
       {
         stageName: "Stage 3: Deficit Push-Up",
+        status: "RECOMMENDED",
         current: { png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif" },
         candidates: [
           {
             id: "PROP_PUSHUP_S3_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
+            type: "combined",
+            label: "📷+🎬 שילוב: Deficit Push-Up",
             png: "images/exercises/DEFICIT PUSH-UP.png",
             gif: "images/gifs/Deficit Push-Up.gif",
-            note: "נמצאו PNG ו-GIF ייעודיים לשכיבות סמיכה עמוקות!"
-          },
-          {
-            id: "PROP_PUSHUP_S3_OPT_B",
-            label: "הצעה ב' (ידיות סמיכה)",
-            isBest: false,
-            png: "images/exercises/PUSH-UP (BARS).png",
-            gif: "images/gifs/Push-up Bars Progression.gif",
-            note: "קובץ ידיות סמיכה כללי"
+            note: "PNG ו-GIF ייעודיים לשכיבות סמיכה עמוקות"
           }
         ]
       },
       {
         stageName: "Stage 4: Weighted Deficit Push-Up",
-        current: { png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif" },
-        candidates: [
-          {
-            id: "PROP_PUSHUP_S4_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/WEIGHTED DEFICIT PUSH-UP.png",
-            gif: "images/gifs/Weighted Deficit Push-Up.gif",
-            note: "נמצאו PNG ו-GIF ייעודיים לשכיבות סמיכה עמוקות עם וסט!"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/WEIGHTED DEFICIT PUSH-UP.png", gif: "images/gifs/Weighted Deficit Push-Up.gif" },
+        candidates: []
       }
     ]
   },
@@ -807,37 +699,22 @@ const MULTI_CANDIDATE_DATA = [
     stages: [
       {
         stageName: "Stage 1: Assisted / Chair Pistol",
+        status: "UPDATED",
         current: { png: "images/exercises/PISTOL SQUAT TO CHAIR.png", gif: "images/gifs/Pistol Squat to Chair.gif" },
-        candidates: [
-          {
-            id: "PROP_PISTOL_S1_OPT_A",
-            label: "הצעה א' (תואם 100%)",
-            isBest: true,
-            png: "images/exercises/PISTOL SQUAT TO CHAIR.png",
-            gif: "images/gifs/Pistol Squat to Chair.gif",
-            note: "סקווט לכיסא על רגל אחת תואם"
-          },
-          {
-            id: "PROP_PISTOL_S1_OPT_B",
-            label: "הצעה ב' (סולם סקווט רגל אחת)",
-            isBest: false,
-            png: "images/exercises/PISTOL SQUAT PROGRESSION.png",
-            gif: "images/gifs/Pistol Squat Progression.gif",
-            note: "שימוש ב-GIF הפרוגרסיה הכללי"
-          }
-        ]
+        candidates: []
       },
       {
         stageName: "Stage 2: Full Pistol Squat",
+        status: "RECOMMENDED",
         current: { png: "images/exercises/PISTOL SQUAT TO CHAIR.png", gif: "images/gifs/Pistol Squat to Chair.gif" },
         candidates: [
           {
             id: "PROP_PISTOL_S2_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
+            type: "combined",
+            label: "📷+🎬 שילוב: Pistol Squat Progression",
             png: "images/exercises/PISTOL SQUAT PROGRESSION.png",
             gif: "images/gifs/Pistol Squat Progression.gif",
-            note: "נמצאו PNG ו-GIF ייעודיים לסרגל סקווט מלא חופשי!"
+            note: "סרגל סקווט מלא חופשי"
           }
         ]
       }
@@ -848,60 +725,28 @@ const MULTI_CANDIDATE_DATA = [
     stages: [
       {
         stageName: "Stage 1: Angle 1 (Gentle)",
-        current: { png: "images/exercises/TRX FACE PULL.png", gif: "images/gifs/TRX Face Pull.gif" },
-        candidates: [
-          {
-            id: "PROP_TRXFP_S1_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/TRX FACE PULL (ANGLE 1).png",
-            gif: "images/gifs/TRX Face Pull (Angle 1).gif",
-            note: "נמצאו PNG ו-GIF ייעודיים מזווית 1!"
-          },
-          {
-            id: "PROP_TRXFP_S1_OPT_B",
-            label: "הצעה ב' (כללי)",
-            isBest: false,
-            png: "images/exercises/TRX FACE PULL.png",
-            gif: "images/gifs/TRX Face Pull.gif",
-            note: "שימוש בקובץ הכללי"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/TRX FACE PULL (ANGLE 1).png", gif: "images/gifs/TRX Face Pull (Angle 1).gif" },
+        candidates: []
       },
       {
         stageName: "Stage 2: Angle 2 (Moderate)",
-        current: { png: "images/exercises/TRX FACE PULL.png", gif: "images/gifs/TRX Face Pull.gif" },
-        candidates: [
-          {
-            id: "PROP_TRXFP_S2_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/TRX FACE PULL (ANGLE 2).png",
-            gif: "images/gifs/TRX Face Pull (Angle 2).gif",
-            note: "נמצאו PNG ו-GIF ייעודיים מזווית 2!"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/TRX FACE PULL (ANGLE 2).png", gif: "images/gifs/TRX Face Pull (Angle 2).gif" },
+        candidates: []
       },
       {
         stageName: "Stage 3: Angle 3 (Steep)",
-        current: { png: "images/exercises/TRX FACE PULL.png", gif: "images/gifs/TRX Face Pull.gif" },
-        candidates: [
-          {
-            id: "PROP_TRXFP_S3_OPT_A",
-            label: "הצעה א' (מומלצת ביותר)",
-            isBest: true,
-            png: "images/exercises/TRX FACE PULL (ANGLE 3).png",
-            gif: "images/gifs/TRX Face Pull (Angle 3).gif",
-            note: "נמצאו PNG ו-GIF ייעודיים מזווית 3!"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/TRX FACE PULL (ANGLE 3).png", gif: "images/gifs/TRX Face Pull (Angle 3).gif" },
+        candidates: []
       }
     ]
   }
 ];
 
 // Filter setup
-const categories = ['הכל', ...MULTI_CANDIDATE_DATA.map(p => p.masterName)];
+const categories = ['הכל', ...EXPANDED_COMPARISON_DATA.map(p => p.masterName)];
 document.getElementById('filterBar').innerHTML = categories.map((cat, i) => `
   <button class="filter-btn ${i === 0 ? 'active' : ''}" onclick="filterCategory('${cat}', this)">${cat}</button>
 `).join('');
@@ -911,8 +756,8 @@ function filterCategory(cat, btn) {
   btn.classList.add('active');
 
   const filtered = cat === 'הכל' 
-    ? MULTI_CANDIDATE_DATA 
-    : MULTI_CANDIDATE_DATA.filter(p => p.masterName === cat);
+    ? EXPANDED_COMPARISON_DATA 
+    : EXPANDED_COMPARISON_DATA.filter(p => p.masterName === cat);
     
   render(filtered);
 }
@@ -925,7 +770,7 @@ function showToast(msg) {
 }
 
 function copyProposal(id, masterName, stageName, sugPng, sugGif) {
-  const textToCopy = `אשר החלפה: [${id}] ${masterName} - ${stageName} -> PNG: "${sugPng.replace('images/exercises/', '')}", GIF: "${sugGif.replace('images/gifs/', '')}"`;
+  const textToCopy = `אשר החלפה: [${id}] ${masterName} - ${stageName} -> PNG: "${sugPng.replace('images/exercises/', '').replace('images/temp_archive/', '')}", GIF: "${sugGif.replace('images/gifs/', '').replace('images/temp_archive/', '')}"`;
   navigator.clipboard.writeText(textToCopy).then(() => {
     showToast(`✅ הועתק ${id}! הדבק בצ׳אט`);
   }).catch(err => {
@@ -935,19 +780,18 @@ function copyProposal(id, masterName, stageName, sugPng, sugGif) {
 
 function copyAllProposals() {
   const allReplacements = [];
-  MULTI_CANDIDATE_DATA.forEach(prog => {
+  EXPANDED_COMPARISON_DATA.forEach(prog => {
     prog.stages.forEach(s => {
-      const best = s.candidates.find(c => c.isBest) || s.candidates[0];
-      const isDiff = (s.current.png !== best.png) || (s.current.gif !== best.gif);
-      if (isDiff) {
-        allReplacements.push(`• [${best.id}] ${prog.masterName} (${s.stageName}) -> PNG: "${best.png.replace('images/exercises/', '')}", GIF: "${best.gif.replace('images/gifs/', '')}"`);
+      if (s.candidates.length > 0) {
+        const cand = s.candidates[0];
+        allReplacements.push(`• [${cand.id}] ${prog.masterName} (${s.stageName}) -> PNG: "${cand.png.replace('images/exercises/', '')}", GIF: "${cand.gif.replace('images/gifs/', '')}"`);
       }
     });
   });
 
-  const fullText = `בצע החלפת נכסים מלאה עבור ההצעות המומלצות (הצעה א'):\n` + allReplacements.join('\n');
+  const fullText = `בצע החלפת נכסים מלאה עבור ההצעות הבאות:\n` + allReplacements.join('\n');
   navigator.clipboard.writeText(fullText).then(() => {
-    showToast(`✅ כל ${allReplacements.length} הצעות ההחלפה המומלצות הועתקו! הדבק בצ׳אט`);
+    showToast(`✅ כל ההצעות הועתקו! הדבק בצ׳אט`);
   }).catch(err => {
     prompt('העתק את כל ההצעות:', fullText);
   });
@@ -967,33 +811,33 @@ function render(catalog) {
     `;
 
     prog.stages.forEach(stage => {
-      const bestCand = stage.candidates.find(c => c.isBest) || stage.candidates[0];
-      const isDifferent = (stage.current.png !== bestCand.png) || (stage.current.gif !== bestCand.gif);
+      const isUpdated = stage.status === "UPDATED";
+      const hasCandidates = stage.candidates.length > 0;
 
-      tbodyHtml += `
-        <tr>
-          <td><span class="prop-id-box">${bestCand.id}</span></td>
-          <td><b>${prog.masterName}</b><br><small style="color:#94a3b8;">${stage.stageName}</small></td>
-          <td class="tag-blue">${stage.current.png.replace('images/exercises/', '')}</td>
-          <td class="tag-orange">${bestCand.png.replace('images/exercises/', '')}</td>
-          <td class="tag-blue">${stage.current.gif.replace('images/gifs/', '')}</td>
-          <td class="tag-orange">${bestCand.gif.replace('images/gifs/', '')}</td>
-          <td>
-            ${isDifferent ? `
-              <button class="btn-copy-proposal" onclick="copyProposal('${bestCand.id}', '${prog.masterName}', '${stage.stageName}', '${bestCand.png}', '${bestCand.gif}')">
-                📋 העתק ID (${bestCand.id})
+      stage.candidates.forEach(cand => {
+        tbodyHtml += `
+          <tr>
+            <td><span class="prop-id-box">${cand.id}</span></td>
+            <td><b>${prog.masterName}</b><br><small style="color:#94a3b8;">${stage.stageName}</small></td>
+            <td class="tag-blue">${stage.current.png.replace('images/exercises/', '')}</td>
+            <td class="tag-orange">${cand.png.replace('images/exercises/', '').replace('images/temp_archive/', '')}</td>
+            <td class="tag-blue">${stage.current.gif.replace('images/gifs/', '')}</td>
+            <td class="tag-orange">${cand.gif.replace('images/gifs/', '').replace('images/temp_archive/', '')}</td>
+            <td>
+              <button class="btn-copy-proposal" onclick="copyProposal('${cand.id}', '${prog.masterName}', '${stage.stageName}', '${cand.png}', '${cand.gif}')">
+                📋 העתק ID (${cand.id})
               </button>
-            ` : '<span style="color:#4ade80;">✅ תואם 100%</span>'}
-          </td>
-        </tr>
-      `;
+            </td>
+          </tr>
+        `;
+      });
 
       html += `
         <div class="stage-comparison-card">
           <div class="stage-header">
             <span class="stage-title">${stage.stageName}</span>
-            <span class="match-badge ${isDifferent ? 'match-needed' : 'match-ok'}">
-              ${isDifferent ? `⚡ מוצעות ${stage.candidates.length} אפשרויות להחלפה` : '✅ תואם כרגע באפליקציה'}
+            <span class="match-badge ${isUpdated ? 'match-ok' : 'match-needed'}">
+              ${isUpdated ? '✅ עודכן באפליקציה בסיבוב הזה' : '⚡ קיימות אפשרויות נוספות להחלפה'}
             </span>
           </div>
 
@@ -1001,7 +845,8 @@ function render(catalog) {
             <!-- CURRENT (BLUE) -->
             <div class="box-current">
               <div class="box-header">
-                <span>🟦 מה שמוצג כרגע באפליקציה (Current Mapping)</span>
+                <span>🟦 מה שמוצג כרגע באפליקציה (Current App State)</span>
+                ${isUpdated ? '<span class="tag-green">✅ מעודכן ב-100% לפי ההוראה שלך</span>' : ''}
               </div>
               <div class="media-box">
                 <div class="media-item">
@@ -1012,7 +857,7 @@ function render(catalog) {
                 <div class="media-item gif-box">
                   <span class="media-label">GIF</span>
                   <img src="${stage.current.gif}" alt="Current GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-                  <div class="err-msg">❌ חסר</div>
+                  <div class="err-msg">❌ חsר</div>
                 </div>
               </div>
               <div style="display:flex; gap:10px; margin-top:8px; flex-wrap:wrap;">
@@ -1022,20 +867,22 @@ function render(catalog) {
             </div>
 
             <!-- SUGGESTED CANDIDATES (ORANGE GRID) -->
-            <div class="candidates-header">
-              <span>🟧 מועמדים והצעות שונות להחלפה בדיסק (${stage.candidates.length} הצעות):</span>
-            </div>
-            
-            <div class="candidates-grid">
+            ${hasCandidates ? `
+              <div class="candidates-header">
+                <span>🟧 אפשרויות והצעות נוספות לבחירתך (${stage.candidates.length} הצעות):</span>
+              </div>
+              
+              <div class="candidates-grid">
+            ` : '<div style="font-size:12px; color:#4ade80; font-weight:700; text-align:center; padding:6px;">✅ אין הצעות שינוי נוספות - השלב מעודכן ב-100%!</div>'}
       `;
 
       stage.candidates.forEach(cand => {
-        const candPngName = cand.png.replace('images/exercises/', '');
-        const candGifName = cand.gif.replace('images/gifs/', '');
+        const candPngName = cand.png.replace('images/exercises/', '').replace('images/temp_archive/', '');
+        const candGifName = cand.gif.replace('images/gifs/', '').replace('images/temp_archive/', '');
 
         html += `
           <div class="cand-card">
-            <span class="cand-badge ${cand.isBest ? 'best' : ''}">${cand.label}</span>
+            <span class="cand-badge ${cand.type}">${cand.label}</span>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
               <span class="prop-id-box">${cand.id}</span>
               <span style="font-size:11px; color:#fb923c; font-weight:700;">${cand.note}</span>
@@ -1061,8 +908,11 @@ function render(catalog) {
         `;
       });
 
+      if (hasCandidates) {
+        html += `</div>`;
+      }
+
       html += `
-            </div>
           </div>
         </div>
       `;
@@ -1076,7 +926,7 @@ function render(catalog) {
 }
 
 // Initial render
-render(MULTI_CANDIDATE_DATA);
+render(EXPANDED_COMPARISON_DATA);
 </script>
 
 </body>
