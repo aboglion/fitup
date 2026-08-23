@@ -178,6 +178,8 @@ const UI = (() => {
     'ZONE 2 LIGHT WALK': 'High Knees.gif',
     'VO2 MAX NORWEGIAN 4X4': 'High Knees.gif',
     'ONE LEG EXTENDED': 'One Leg Extended.gif',
+    'FULL L SIT': 'Full L-Sit.gif',
+    'L SIT PROGRESSION': 'Full L-Sit.gif',
     'SCAPULAR PULL UP': 'Scapular Pull-up.gif',
     'FULL PULL UP': 'Chin-up.gif',
     'WRIST ROCKS': 'Wrist Rocks.gif'
