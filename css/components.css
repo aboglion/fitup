@@ -2648,6 +2648,7 @@ html.light-theme .rest-timer {
   cursor: pointer;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  z-index: 2;
   overflow: hidden;
   flex: 0 0 calc(50% - 8px);
   width: calc(50% - 8px);

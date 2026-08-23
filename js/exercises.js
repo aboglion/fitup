@@ -871,7 +871,7 @@ const ExercisesPage = (() => {
       if (!svgCanvas) {
         svgCanvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svgCanvas.setAttribute('class', 'rpg-path-svg-canvas');
-        svgCanvas.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;';
+        svgCanvas.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;';
         pathEl.appendChild(svgCanvas);
       }
 
@@ -957,13 +957,16 @@ const ExercisesPage = (() => {
           midY = isSkipping ? endY - 26 : (startY + endY) / 2;
           midX = channelX;
 
+          const deltaY = endY - startY;
+          const curveOff = Math.min(30, deltaY > 0 ? deltaY / 2 : 0);
+
           if (Math.abs(startX - endX) < 20 && Math.abs(channelX - startX) < 20) {
             dStr = `M ${startX} ${startY} L ${endX} ${endY}`;
           } else {
             dStr = `M ${startX} ${startY} 
-                    C ${startX} ${startY + 15}, ${channelX} ${startY + 15}, ${channelX} ${startY + 30} 
-                    L ${channelX} ${endY - 30} 
-                    C ${channelX} ${endY - 15}, ${endX} ${endY - 15}, ${endX} ${endY}`;
+                    C ${startX} ${startY + curveOff}, ${channelX} ${startY + curveOff}, ${channelX} ${startY + curveOff} 
+                    L ${channelX} ${endY - curveOff} 
+                    C ${channelX} ${endY - curveOff}, ${endX} ${endY - curveOff}, ${endX} ${endY}`;
           }
         // Removed the stray closing brace here
 
