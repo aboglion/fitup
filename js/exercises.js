@@ -1159,18 +1159,18 @@ const ExercisesPage = (() => {
           <div style="display: flex; flex-direction: column; gap: 12px; position: relative;">
             <div style="position: absolute; left: 16px; top: 16px; bottom: 16px; width: 2px; background: rgba(255, 170, 0, 0.3); border-radius: 2px;"></div>
             ${ex.stages.map((stage, i) => {
-              const sImg = \`images/exercises/\${stage.replaceAll('/', '-').toUpperCase()}.png\`;
-              return \`
+              const sImg = `images/exercises/${stage.replaceAll('/', '-').toUpperCase()}.png`;
+              return `
               <div style="display: flex; gap: 16px; align-items: center; position: relative; z-index: 1;">
                 <div style="width: 32px; height: 32px; border-radius: 50%; background: #111; border: 2px solid #ffaa00; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #ffaa00; flex-shrink: 0; box-shadow: 0 0 10px rgba(255, 170, 0, 0.4);">
-                  \${i + 1}
+                  ${i + 1}
                 </div>
                 <div style="flex: 1; background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; min-height: 56px;">
-                  <span style="font-size: 14px; font-weight: 700; color: #fff;">\${stage}</span>
-                  <img src="\${sImg}" style="width: 48px; height: 48px; border-radius: 6px; object-fit: contain; background: rgba(0,0,0,0.5);" onerror="this.style.display='none'">
+                  <span style="font-size: 14px; font-weight: 700; color: #fff;">${stage}</span>
+                  <img src="${sImg}" style="width: 48px; height: 48px; border-radius: 6px; object-fit: contain; background: rgba(0,0,0,0.5);" onerror="this.style.display='none'">
                 </div>
               </div>
-            \`}).join('')}
+            `}).join('')}
           </div>
         </div>
       `;
