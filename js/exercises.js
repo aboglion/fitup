@@ -989,52 +989,54 @@ const ExercisesPage = (() => {
         const badgeWidth = isMobile ? 122 : 146;
         const badgeHeight = isMobile ? 28 : 34;
 
-        const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-        badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
+        if (!isSameRow) {
+          const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
 
-        let badgeX = midX;
-        if (badgeX < badgeWidth / 2 + 12) badgeX = badgeWidth / 2 + 12;
-        if (badgeX > pathRect.width - badgeWidth / 2 - 12) badgeX = pathRect.width - badgeWidth / 2 - 12;
+          let badgeX = midX;
+          if (badgeX < badgeWidth / 2 + 12) badgeX = badgeWidth / 2 + 12;
+          if (badgeX > pathRect.width - badgeWidth / 2 - 12) badgeX = pathRect.width - badgeWidth / 2 - 12;
 
-        const badgeBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        badgeBg.setAttribute('x', badgeX - badgeWidth / 2);
-        badgeBg.setAttribute('y', midY - badgeHeight / 2);
-        badgeBg.setAttribute('width', badgeWidth);
-        badgeBg.setAttribute('height', badgeHeight);
-        badgeBg.setAttribute('rx', isMobile ? 6 : 10);
-        badgeBg.setAttribute('ry', isMobile ? 6 : 10);
-        badgeBg.setAttribute('fill', isActive ? '#0f172a' : '#1e293b');
-        badgeBg.setAttribute('stroke', isActive ? strokeColor : 'rgba(255, 255, 255, 0.25)');
-        badgeBg.setAttribute('stroke-width', '1.5');
+          const badgeBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          badgeBg.setAttribute('x', badgeX - badgeWidth / 2);
+          badgeBg.setAttribute('y', midY - badgeHeight / 2);
+          badgeBg.setAttribute('width', badgeWidth);
+          badgeBg.setAttribute('height', badgeHeight);
+          badgeBg.setAttribute('rx', isMobile ? 6 : 10);
+          badgeBg.setAttribute('ry', isMobile ? 6 : 10);
+          badgeBg.setAttribute('fill', isActive ? '#0f172a' : '#1e293b');
+          badgeBg.setAttribute('stroke', isActive ? strokeColor : 'rgba(255, 255, 255, 0.25)');
+          badgeBg.setAttribute('stroke-width', '1.5');
 
-        // Text Line 1: Timing (Unlock Week)
-        const timingText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        timingText.setAttribute('x', badgeX);
-        timingText.setAttribute('y', isMobile ? midY - 2 : midY - 3);
-        timingText.setAttribute('text-anchor', 'middle');
-        timingText.setAttribute('font-size', isMobile ? '9.5' : '10.5');
-        timingText.setAttribute('font-weight', '800');
-        timingText.setAttribute('fill', isActive ? (isReplace ? '#93c5fd' : '#fca5a5') : '#94a3b8');
-        timingText.textContent = unlockWeekNum ? `📅 שבוע פתיחה ${unlockWeekNum}` : '📅 פתיחה מדורגת';
+          // Text Line 1: Timing (Unlock Week)
+          const timingText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          timingText.setAttribute('x', badgeX);
+          timingText.setAttribute('y', isMobile ? midY - 2 : midY - 3);
+          timingText.setAttribute('text-anchor', 'middle');
+          timingText.setAttribute('font-size', isMobile ? '9.5' : '10.5');
+          timingText.setAttribute('font-weight', '800');
+          timingText.setAttribute('fill', isActive ? (isReplace ? '#93c5fd' : '#fca5a5') : '#94a3b8');
+          timingText.textContent = unlockWeekNum ? `📅 שבוע פתיחה ${unlockWeekNum}` : '📅 פתיחה מדורגת';
 
-        // Text Line 2: Requirement & Condition
-        const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        condText.setAttribute('x', badgeX);
-        condText.setAttribute('y', isMobile ? midY + 8 : midY + 9);
-        condText.setAttribute('text-anchor', 'middle');
-        condText.setAttribute('font-size', isMobile ? '8.5' : '9.5');
-        condText.setAttribute('font-weight', '700');
-        condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
-        
-        const parentShort = parentName ? (parentName.length > 12 ? parentName.substring(0, 11) + '…' : parentName) : '';
-        condText.textContent = isReplace 
-          ? (parentShort ? `🔄 מפתח: החלפת ${parentShort}` : '🔄 מפתח: החלפת מקור')
-          : (parentShort ? `🔴 חיזוק: מתווסף במקביל` : '🔴 חיזוק: מתווסף במקביל');
+          // Text Line 2: Requirement & Condition
+          const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          condText.setAttribute('x', badgeX);
+          condText.setAttribute('y', isMobile ? midY + 8 : midY + 9);
+          condText.setAttribute('text-anchor', 'middle');
+          condText.setAttribute('font-size', isMobile ? '8.5' : '9.5');
+          condText.setAttribute('font-weight', '700');
+          condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
+          
+          const parentShort = parentName ? (parentName.length > 12 ? parentName.substring(0, 11) + '…' : parentName) : '';
+          condText.textContent = isReplace 
+            ? (parentShort ? `🔄 מפתח: החלפת ${parentShort}` : '🔄 מפתח: החלפת מקור')
+            : (parentShort ? `🔴 חיזוק: מתווסף במקביל` : '🔴 חיזוק: מתווסף במקביל');
 
-        badgeGroup.appendChild(badgeBg);
-        badgeGroup.appendChild(timingText);
-        badgeGroup.appendChild(condText);
-        svgCanvas.appendChild(badgeGroup);
+          badgeGroup.appendChild(badgeBg);
+          badgeGroup.appendChild(timingText);
+          badgeGroup.appendChild(condText);
+          svgCanvas.appendChild(badgeGroup);
+        }
       });
     });
   }

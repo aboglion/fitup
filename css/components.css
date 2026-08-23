@@ -2603,6 +2603,7 @@ html.light-theme .rest-timer {
   width: 100%;
   gap: 16px;
   box-sizing: border-box;
+  flex-wrap: wrap;
 }
 
 .rpg-level-row.parallel {
@@ -2611,6 +2612,7 @@ html.light-theme .rest-timer {
   justify-content: space-between;
   gap: 16px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 /* Outer Hex positioning: Hex image on outer edges, info facing center channel */
