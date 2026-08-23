@@ -827,7 +827,7 @@ def generate_day_exercises(dow, week):
 
         # Pair: Towel Hang ↔ L-Sit Tuck
         exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-core"))
-        exs.append(make_ex_obj("A8", "l-sit-progression", "L-sit Tuck (Bars)", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-core"))
+        exs.append(make_ex_obj("A8", "l-sit-progression", "L-Sit Progression", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-core"))
 
         if week >= 10 and not is_deload:
             exs.append(make_ex_obj("A9", "arm-block-biceps-curl", "Arm Block - DB Curl", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))

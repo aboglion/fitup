@@ -906,7 +906,8 @@ const TodayPage = (() => {
         quickProtBtn.style.cursor = 'pointer';
 
         quickProtBtn.onclick = async () => {
-          let currentNut = await DB.getNutrition(queryDateStr);
+          const targetDateStr = UI.getLocalDateString();
+          let currentNut = await DB.getNutrition(targetDateStr);
           if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
           if (!currentNut.meals) currentNut.meals = [];
 
@@ -923,13 +924,13 @@ const TodayPage = (() => {
           };
 
           currentNut.meals.push(newMeal);
-          await DB.saveNutrition(queryDateStr, currentNut);
+          await DB.saveNutrition(targetDateStr, currentNut);
 
           UI.toast(I18n.t('protein_added_toast'), 'success');
           if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
             CloudSync.scheduleSync();
           }
-          renderNutritionSection(queryDateStr);
+          renderNutritionSection(targetDateStr);
         };
       }
     }
@@ -1112,7 +1113,8 @@ const TodayPage = (() => {
         try {
           const analysisResult = await GeminiService.analyzeFood(activeBase64Image, activeMimeType, notes);
           
-          let currentNut = await DB.getNutrition(queryDateStr);
+          const targetDateStr = UI.getLocalDateString();
+          let currentNut = await DB.getNutrition(targetDateStr);
           if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
           if (!currentNut.meals) currentNut.meals = [];
 
@@ -1132,7 +1134,7 @@ const TodayPage = (() => {
           };
 
           currentNut.meals.push(newMeal);
-          await DB.saveNutrition(queryDateStr, currentNut);
+          await DB.saveNutrition(targetDateStr, currentNut);
 
           UI.toast(`${I18n.t('meal_added_toast')} ${analysisResult.meal_name} (${analysisResult.calories} ${I18n.t('nut_kcal_label')}) 🎉`, 'success');
           CloudSync.scheduleSync();
@@ -1144,7 +1146,7 @@ const TodayPage = (() => {
           if (galleryInput) galleryInput.value = '';
           if (userNotesInput) userNotesInput.value = '';
 
-          renderNutritionSection(queryDateStr);
+          renderNutritionSection(targetDateStr);
 
         } catch (err) {
           console.error('AI analysis error:', err);
@@ -1167,7 +1169,8 @@ const TodayPage = (() => {
         const cals = parseInt(calsStr) || 0;
         const prot = parseInt(protStr) || 0;
 
-        let currentNut = await DB.getNutrition(queryDateStr);
+        const targetDateStr = UI.getLocalDateString();
+        let currentNut = await DB.getNutrition(targetDateStr);
         if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
         if (!currentNut.meals) currentNut.meals = [];
 
@@ -1183,10 +1186,10 @@ const TodayPage = (() => {
           analysis: I18n.t('manual_entry')
         });
 
-        await DB.saveNutrition(queryDateStr, currentNut);
+        await DB.saveNutrition(targetDateStr, currentNut);
         UI.toast(I18n.t('meal_added_success'), 'success');
         CloudSync.scheduleSync();
-        renderNutritionSection(queryDateStr);
+        renderNutritionSection(targetDateStr);
       };
     }
   }

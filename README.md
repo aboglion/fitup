@@ -172,7 +172,7 @@ The program is split into two primary macrocycles designed to ensure progressive
   - *Phase 10–13 (Weeks 53–68)*: Weighted Calisthenics (+5 kg Vest Pull-Ups/Push-Ups), Single-Arm Dumbbell Row at 24 kg max capacity, Pistol Squats to chair.
   - *Phase 14–15 (Weeks 70–78)*: Peak Strength Testing & Tapered Transition.
 - **Scheduled Deload Microcycles (Every 8 Weeks)**:
-  - Occur on Weeks 8, 16, 24, 32, 40, 48, 56, 61, 65, 69, and 73.
+  - Occur on Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104 (every 8 weeks).
   - Volume is reduced by 40–50% with RPE target lowered to 6–7 for full central nervous system (CNS) and joint recovery.
 
 ---
