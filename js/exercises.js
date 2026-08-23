@@ -66,17 +66,17 @@ const ExercisesPage = (() => {
     'Single-Arm Curl': [{ weight: '15 kg', fromWeek: 62 }, { weight: '18 kg', fromWeek: 66 }],
 
     // Bodyweight, Mobility, Warmup & Skill Progressions
-    'Pistol Squat Progression': [{ weight: 'Bodyweight', fromWeek: 42 }],
+    'Pistol Squat Progression': [{ weight: 'Assisted Pistol', fromWeek: 42 }, { weight: 'Full Pistol Squat', fromWeek: 50 }],
     'Dead Bug': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Hollow Body Hold': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'Pike Progression': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'Push-up Bars Progression': [{ weight: 'Bodyweight', fromWeek: 1 }],
+    'Pike Progression': [{ weight: 'Pike Push-Up', fromWeek: 1 }, { weight: 'Wall Walk 45°', fromWeek: 10 }, { weight: 'Wall Walk Full', fromWeek: 18 }, { weight: 'Handstand Hold', fromWeek: 26 }, { weight: 'Elevated Pike', fromWeek: 41 }],
+    'Push-up Bars Progression': [{ weight: 'Push-up Bars', fromWeek: 1 }, { weight: 'Deficit Push-Up', fromWeek: 10 }, { weight: 'Feet-Elevated', fromWeek: 18 }, { weight: 'Weighted Deficit +5kg', fromWeek: 62 }],
     'TRX Y-T-W': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'Pull-Up Progression': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'Chin-Up Progression': [{ weight: 'Bodyweight', fromWeek: 5 }],
+    'Pull-Up Progression': [{ weight: 'Dead Hang / Scapular', fromWeek: 1 }, { weight: 'Chin-Up', fromWeek: 5 }, { weight: 'Pull-Up Overhand', fromWeek: 10 }, { weight: 'Weighted Pull-Up +5kg', fromWeek: 62 }],
+    'Chin-Up Progression': [{ weight: 'Chin-Up Assist', fromWeek: 5 }, { weight: 'Chin-Up Bodyweight', fromWeek: 10 }, { weight: 'Weighted Chin-Up +5kg', fromWeek: 66 }],
     'TRX Face Pull': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'Towel Hang': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'L-Sit Progression': [{ weight: 'Bodyweight', fromWeek: 1 }],
+    'Towel Hang': [{ weight: 'Dead Hang', fromWeek: 1 }, { weight: 'Towel Hang', fromWeek: 10 }, { weight: 'Towel Hang + 5kg', fromWeek: 62 }],
+    'L-Sit Progression': [{ weight: 'Tuck L-Sit', fromWeek: 1 }, { weight: 'One-Leg Extended', fromWeek: 18 }, { weight: 'Full L-Sit', fromWeek: 34 }],
     'High Knees': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Bodyweight Squat': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Arm Circles': [{ weight: 'Bodyweight', fromWeek: 1 }],
@@ -283,7 +283,9 @@ const ExercisesPage = (() => {
       },
       {
         title: 'hanging_core', icon: '🧱', exercises: [
-          { name: 'L-Sit Progression', unlockWeek: 1, id: 'l-sit-progression' }
+          { name: 'L-Sit Progression', unlockWeek: 1, id: 'l-sit-progression' },
+          { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-progression', id: 'l-sit-2' },
+          { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3' }
         ]
       }
     ],
