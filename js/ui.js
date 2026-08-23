@@ -31,7 +31,7 @@ const UI = (() => {
   function showModal(title, bodyHTML) {
     modalStack.push({ title, bodyHTML });
     history.pushState({ isModal: true }, '');
-    
+
     renderCurrentModal();
   }
 
@@ -178,6 +178,7 @@ const UI = (() => {
     'ZONE 2 LIGHT WALK': 'High Knees.gif',
     'VO2 MAX NORWEGIAN 4X4': 'High Knees.gif',
     'ONE LEG EXTENDED': 'One Leg Extended.gif',
+    'ONE LEG EXTENDED L SIT': 'One Leg Extended.gif',
     'FULL L SIT': 'Full L-Sit.gif',
     'L SIT PROGRESSION': 'Full L-Sit.gif',
     'SCAPULAR PULL UP': 'Scapular Pull-up.gif',
@@ -235,6 +236,7 @@ const UI = (() => {
     'TUCK HOLD (CHAIR)': 'TUCK HOLD (CHAIR).png',
     'TUCK HOLD (BARS)': 'L-SIT TUCK (BARS).png',
     'ONE LEG EXTENDED': 'ONE LEG EXTENDED.png',
+    'ONE LEG EXTENDED L SIT': 'ONE LEG EXTENDED.png',
     'FULL L SIT': 'L-SIT PROGRESSION.png',
     'SCAPULAR PULL UP': 'SCAPULAR PULL-UP.png',
     'SCAPULAR PUSH UP': 'SCAPULAR PUSH-UP.png',
@@ -262,7 +264,7 @@ const UI = (() => {
   function handleImageFallback(imgEl, type) {
     const currentSrc = imgEl.src;
     const urlDecoded = decodeURIComponent(currentSrc);
-    
+
     if (type === 'gif') {
       const match = urlDecoded.match(/images\/gifs\/([^/]+)$/);
       if (match) {
@@ -275,9 +277,9 @@ const UI = (() => {
         const baseName = lastDot !== -1 ? origKey.substring(0, lastDot) : origKey;
         const cleanBase = baseName.replace(/[-_]+/g, ' ').trim();
         const upperBase = cleanBase.toUpperCase();
-        
+
         const variations = [];
-        
+
         // Check alias mapping first
         if (EXERCISE_GIF_ALIASES[upperBase]) {
           variations.push(EXERCISE_GIF_ALIASES[upperBase]);
@@ -345,7 +347,7 @@ const UI = (() => {
         const baseName = lastDot !== -1 ? origKey.substring(0, lastDot) : origKey;
         const cleanBase = baseName.replace(/[-_]+/g, ' ').trim();
         const upperBase = cleanBase.toUpperCase();
-        
+
         let dbVariant = upperBase;
         if (upperBase.startsWith('DUMBBELL ')) {
           dbVariant = 'DB ' + upperBase.slice(9);
@@ -377,7 +379,7 @@ const UI = (() => {
         if (!imageTrials[origKey]) {
           imageTrials[origKey] = 0;
         }
-        
+
         const trialIndex = imageTrials[origKey];
         if (trialIndex < uniqueVariations.length) {
           imageTrials[origKey]++;
@@ -408,11 +410,23 @@ const UI = (() => {
   }
 
   function showImageModal(title, src) {
-    const pngPath = `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
-    const gifPath = `images/gifs/${title}.gif`;
-    const gifExists = hasGif(title);
+    // Check alias mapping for PNG
+    const cleanTitle = (title || '').toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+    const aliasPng = EXERCISE_PNG_ALIASES[cleanTitle];
+    const pngPath = aliasPng ? `images/exercises/${aliasPng}` : `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
+
+    // Use provided src if it's a GIF path, otherwise construct from title with alias mapping
+    let gifPath;
+    if (src && src.includes('.gif')) {
+      gifPath = src;
+    } else {
+      // Check alias mapping for GIF
+      const aliasGif = EXERCISE_GIF_ALIASES[cleanTitle];
+      gifPath = aliasGif ? `images/gifs/${aliasGif}` : `images/gifs/${title}.gif`;
+    }
+    const gifExists = hasGif(title) || (src && src.includes('.gif')) || !!EXERCISE_GIF_ALIASES[cleanTitle];
     const equip = getEquipment(title);
-    
+
     let extraNote = '';
     const lowerTitle = title.toLowerCase();
     if (lowerTitle.includes('chin-up') || lowerTitle.includes('pull-up')) {
@@ -427,11 +441,11 @@ const UI = (() => {
       `;
     }
 
-    const cleanTitle = (title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const searchTitle = (title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     const exData = (window.TRAINING_DATA?.exercises || []).find(e => {
       const eClean = (e.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
       const idClean = (e.id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-      return eClean === cleanTitle || idClean === cleanTitle || eClean.includes(cleanTitle) || cleanTitle.includes(eClean);
+      return eClean === searchTitle || idClean === searchTitle || eClean.includes(searchTitle) || searchTitle.includes(eClean);
     });
 
     let metadataHTML = '';
@@ -700,7 +714,7 @@ const UI = (() => {
   function getEquipment(name) {
     if (!name) return null;
     const n = name.toLowerCase();
-    
+
     // Professional SVG Icons
     const icons = {
       db: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 17.5l11-11"/><path d="M6 6l12 12"/><circle cx="5" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="5" cy="19" r="2"/></svg>`,
@@ -727,7 +741,7 @@ const UI = (() => {
     if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('chair') || n.includes('elevated')) return { label: I18n.t('equip_bench'), icon: icons.bench };
     if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('chin-up')) return { label: I18n.t('equip_towel'), icon: icons.towel };
     if (n.includes('walking') || n.includes('vo2') || n.includes('zone 2')) return { label: I18n.t('equip_treadmill'), icon: icons.treadmill };
-    
+
     return { label: I18n.t('equip_bodyweight'), icon: icons.bodyweight };
   }
 
@@ -801,7 +815,7 @@ const UI = (() => {
         const seconds = parseInt(e.target.dataset.time);
         let remaining = 0;
         if (timerEndTime && timerEndTime > Date.now()) {
-            remaining = Math.round((timerEndTime - Date.now()) / 1000);
+          remaining = Math.round((timerEndTime - Date.now()) / 1000);
         }
         // If timer is already running, add time. Otherwise set it.
         startTimer(remaining > 0 ? remaining + seconds : seconds, timerOnComplete);
@@ -812,11 +826,11 @@ const UI = (() => {
   function startTimer(seconds, onComplete = null) {
     document.getElementById('rest-timer').classList.remove('hidden');
     clearInterval(timerInterval);
-    
+
     if (onComplete !== undefined) {
       timerOnComplete = onComplete;
     }
-    
+
     timerEndTime = Date.now() + seconds * 1000;
     updateTimerDisplay(seconds);
 
@@ -827,7 +841,7 @@ const UI = (() => {
         updateTimerDisplay(0);
         playTimerSound(true);
         UI.toast(I18n.t('rest_complete_toast'), 'success');
-        
+
         setTimeout(() => {
           document.getElementById('rest-timer').classList.add('hidden');
           if (typeof timerOnComplete === 'function') {
@@ -847,7 +861,7 @@ const UI = (() => {
   function updateTimerDisplay(seconds) {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    document.getElementById('rest-timer-display').textContent = 
+    document.getElementById('rest-timer-display').textContent =
       `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
@@ -963,7 +977,7 @@ const UI = (() => {
     try {
       window.speechSynthesis.cancel();
       const lang = window.I18n ? window.I18n.getLang() : 'he';
-      
+
       // Vocalized messages (Niqqud for Hebrew, Harakat for Arabic) for 100% crystal-clear pronunciation
       let message = customMessage || 'זְמַן הַמְּנוּחָה הִסְתַּיֵּם! הַסֶּט הַבָּא מַמְתִּין לָךְ, בְּהַצְלָחָה!';
       let speechLang = 'he-IL';

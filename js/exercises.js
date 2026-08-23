@@ -23,7 +23,7 @@ const ExercisesPage = (() => {
     'Band Pull-Apart': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 9 }],
     'Pallof Press': [{ weight: '30 kg', fromWeek: 10 }, { weight: '40 kg', fromWeek: 34 }],
     'Pallof Press Progression': [{ weight: 'Band 30 kg', fromWeek: 10 }, { weight: 'Band 40 kg', fromWeek: 34 }],
- 
+
     // Dumbbell Lower Body
     'DB Bulgarian Split Squat': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '3 kg', fromWeek: 5 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 26 }],
     'Reverse Lunge + DB': [{ weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }],
@@ -324,7 +324,7 @@ const ExercisesPage = (() => {
           completedPerType[day.dayType].completed++;
         }
       });
-    } catch(e) {
+    } catch (e) {
       completedPerType = {};
     }
   }
@@ -424,7 +424,7 @@ const ExercisesPage = (() => {
     const searchEl = document.getElementById('exercise-search');
     if (searchEl) {
       searchEl.addEventListener('input', (e) => {
-        if(!isTreeView) render(e.target.value, getActiveFilter());
+        if (!isTreeView) render(e.target.value, getActiveFilter());
       });
     }
 
@@ -504,7 +504,7 @@ const ExercisesPage = (() => {
    * Set filter
    */
   function setFilter(category, btn) {
-    if(isTreeView) return;
+    if (isTreeView) return;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     render(document.getElementById('exercise-search').value, category);
@@ -620,12 +620,12 @@ const ExercisesPage = (() => {
     const xpData = getTabCompletedXP(activeTab);
     const totalWorkouts = xpData.total || 1;
     const levelThresholds = [
-      { min: 0,                                        nameKey: 'level_beginner',  num: 1 },
-      { min: Math.round(totalWorkouts * 0.1),          nameKey: 'level_apprentice', num: 2 },
-      { min: Math.round(totalWorkouts * 0.25),         nameKey: 'level_intermediate', num: 3 },
-      { min: Math.round(totalWorkouts * 0.5),          nameKey: 'level_advanced',  num: 4 },
-      { min: Math.round(totalWorkouts * 0.75),         nameKey: 'level_expert',    num: 5 },
-      { min: totalWorkouts,                            nameKey: 'level_master',   num: 6 }
+      { min: 0, nameKey: 'level_beginner', num: 1 },
+      { min: Math.round(totalWorkouts * 0.1), nameKey: 'level_apprentice', num: 2 },
+      { min: Math.round(totalWorkouts * 0.25), nameKey: 'level_intermediate', num: 3 },
+      { min: Math.round(totalWorkouts * 0.5), nameKey: 'level_advanced', num: 4 },
+      { min: Math.round(totalWorkouts * 0.75), nameKey: 'level_expert', num: 5 },
+      { min: totalWorkouts, nameKey: 'level_master', num: 6 }
     ];
 
     let levelName = I18n.t('level_beginner');
@@ -684,35 +684,6 @@ const ExercisesPage = (() => {
       </div>
     `;
   }
-
-  /**
-   * Render the tree content for the active tab
-   */
-  function renderSkillTreeContent() {
-    const contentEl = document.getElementById('rpg-tree-content');
-    if (!contentEl) return;
-
-    if (!activeTab) {
-      contentEl.innerHTML = '';
-      return;
-    }
-
-    const currentWeek = Math.floor((window.appCurrentPlanIndex || 0) / 7) + 1;
-    const paths = SKILL_TREES[activeTab] || [];
-    const tabConfig = DAY_TABS.find(t => t.id === activeTab);
-    const tabColor = tabConfig ? tabConfig.color : '#3b82f6';
-
-    let html = '';
-
-    paths.forEach((path, pathIndex) => {
-      html += `
-        <div class="rpg-skill-path" style="--path-color: ${tabColor}; animation-delay: ${pathIndex * 0.1}s">
-          <div class="rpg-path-header">
-            <span class="rpg-path-icon">${path.icon}</span>
-            <span class="rpg-path-title">${I18n.t(path.title)}</span>
-          </div>
-          <div class="rpg-nodes-track">
-      `;
 
   /**
    * Group exercises into distinct tree levels (rows) ensuring children are always
@@ -813,7 +784,7 @@ const ExercisesPage = (() => {
       levelRows.forEach((nodes, levelIndex) => {
         const minWeek = Math.min(...nodes.map(n => n.unlockWeek));
         const isLevelUnlocked = currentWeek >= minWeek;
-        const isLatestUnlock = isLevelUnlocked && 
+        const isLatestUnlock = isLevelUnlocked &&
           (levelIndex === levelRows.length - 1 || currentWeek < Math.min(...levelRows[levelIndex + 1].map(n => n.unlockWeek)));
 
         // Generous vertical spacer between level rows to fit SVG connector badges in the gap
@@ -855,60 +826,60 @@ const ExercisesPage = (() => {
               <div class="rpg-node-info">
                 <div class="rpg-node-name">${node.name}</div>
                 <div class="rpg-node-badges">
-                  ${!isUnlocked 
-                    ? `<span class="rpg-unlock-badge locked">${I18n.t('locked_week')} ${node.unlockWeek}</span>` 
-                    : `<span class="rpg-unlock-badge unlocked">${I18n.t('unlocked_week')} ${node.unlockWeek}</span>`}
+                  ${!isUnlocked
+              ? `<span class="rpg-unlock-badge locked">${I18n.t('locked_week')} ${node.unlockWeek}</span>`
+              : `<span class="rpg-unlock-badge unlocked">${I18n.t('unlocked_week')} ${node.unlockWeek}</span>`}
                   ${(() => {
-                    const equip = UI.getEquipment(node.name);
-                    const exDef = allExercises.find(e => e.name === node.name);
-                    let badges = '';
-                    if (exDef && exDef.stages && exDef.stages.length > 0) {
-                      badges += `<span class="rpg-equip-badge" style="background: rgba(255,170,0,0.15); color: #ffaa00; border: 1px solid rgba(255,170,0,0.4); padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(255,170,0,0.2);">🌟 ${exDef.stages.length} Stages</span>`;
-                    }
-                    if (equip && equip.label !== I18n.t('equip_bodyweight')) {
-                      badges += `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; unicode-bidi: isolate; max-width: 100%; white-space: normal; word-break: break-word;">${equip.icon} ${equip.label}</span>`;
-                    }
-                    return badges;
-                  })()}
+              const equip = UI.getEquipment(node.name);
+              const exDef = allExercises.find(e => e.name === node.name);
+              let badges = '';
+              if (exDef && exDef.stages && exDef.stages.length > 0) {
+                badges += `<span class="rpg-equip-badge" style="background: rgba(255,170,0,0.15); color: #ffaa00; border: 1px solid rgba(255,170,0,0.4); padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(255,170,0,0.2);">🌟 ${exDef.stages.length} Stages</span>`;
+              }
+              if (equip && equip.label !== I18n.t('equip_bodyweight')) {
+                badges += `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; unicode-bidi: isolate; max-width: 100%; white-space: normal; word-break: break-word;">${equip.icon} ${equip.label}</span>`;
+              }
+              return badges;
+            })()}
                 </div>
                 ${(() => {
-                  const tiers = getWeightTiers(node.name);
-                  if (!tiers || tiers.length === 0) return '';
-                  const wClass = (w) => {
-                    const num = String(w || '').match(/\d+/);
-                    return num ? 'evo-w' + num[0] : '';
-                  };
-                  if (tiers.length === 1) {
-                    const t = tiers[0];
-                    const tierActive = currentWeek >= t.fromWeek;
-                    return `<div class="rpg-evo-single">
+              const tiers = getWeightTiers(node.name);
+              if (!tiers || tiers.length === 0) return '';
+              const wClass = (w) => {
+                const num = String(w || '').match(/\d+/);
+                return num ? 'evo-w' + num[0] : '';
+              };
+              if (tiers.length === 1) {
+                const t = tiers[0];
+                const tierActive = currentWeek >= t.fromWeek;
+                return `<div class="rpg-evo-single">
                       <span class="rpg-evo-card ${wClass(t.weight)} ${tierActive ? 'active current' : 'locked'}">
                         <span class="rpg-evo-weight">${t.weight}</span>
                         <span class="rpg-evo-week">${tierActive ? '✓' : '🔒'} ${I18n.t('week_label_short')}${t.fromWeek}</span>
                       </span>
                     </div>`;
-                  }
-                  let evoHtml = '';
-                  tiers.forEach((t, ti) => {
-                    const tierActive = currentWeek >= t.fromWeek;
-                    const tierLatest = tierActive && (ti === tiers.length - 1 || currentWeek < tiers[ti + 1].fromWeek);
-                    const tierCompleted = tierActive && !tierLatest;
-                    const stClass = tierCompleted ? 'completed' : tierLatest ? 'active current' : 'locked';
-                    if (ti > 0) {
-                      const prevActive = currentWeek >= tiers[ti - 1].fromWeek;
-                      evoHtml += `<div class="rpg-evo-connector ${prevActive && tierActive ? 'active' : ''}">
+              }
+              let evoHtml = '';
+              tiers.forEach((t, ti) => {
+                const tierActive = currentWeek >= t.fromWeek;
+                const tierLatest = tierActive && (ti === tiers.length - 1 || currentWeek < tiers[ti + 1].fromWeek);
+                const tierCompleted = tierActive && !tierLatest;
+                const stClass = tierCompleted ? 'completed' : tierLatest ? 'active current' : 'locked';
+                if (ti > 0) {
+                  const prevActive = currentWeek >= tiers[ti - 1].fromWeek;
+                  evoHtml += `<div class="rpg-evo-connector ${prevActive && tierActive ? 'active' : ''}">
                         <div class="rpg-evo-line"></div>
                         <div class="rpg-evo-arrow-head">▸</div>
                       </div>`;
-                    }
-                    evoHtml += `<div class="rpg-evo-card ${wClass(t.weight)} ${stClass}">
+                }
+                evoHtml += `<div class="rpg-evo-card ${wClass(t.weight)} ${stClass}">
                       <span class="rpg-evo-phase">Tier ${ti + 1}</span>
                       <span class="rpg-evo-weight">${t.weight}</span>
                       <span class="rpg-evo-week">${tierCompleted ? '✓' : tierLatest ? '◆' : '🔒'} ${I18n.t('week_label_full')} ${t.fromWeek}</span>
                     </div>`;
-                  });
-                  return `<div class="rpg-evo-chain">${evoHtml}</div>`;
-                })()}
+              });
+              return `<div class="rpg-evo-chain">${evoHtml}</div>`;
+            })()}
                 ${node.note ? `<div class="rpg-node-note">🗓️ ${node.note}</div>` : ''}
               </div>
               ${videoBtn}
@@ -1047,8 +1018,8 @@ const ExercisesPage = (() => {
         path.setAttribute('d', dStr);
 
         const strokeColor = isReplace ? '#3b82f6' : '#ef4444';
-        const markerUrl = isReplace 
-          ? (isActive ? 'url(#arrow-blue)' : 'url(#arrow-blue-locked)') 
+        const markerUrl = isReplace
+          ? (isActive ? 'url(#arrow-blue)' : 'url(#arrow-blue-locked)')
           : (isActive ? 'url(#arrow-red)' : 'url(#arrow-red-locked)');
 
         path.setAttribute('stroke', strokeColor);
@@ -1106,7 +1077,7 @@ const ExercisesPage = (() => {
         condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
 
         const parentShort = parentName ? (parentName.length > 12 ? parentName.substring(0, 11) + '…' : parentName) : '';
-        condText.textContent = isReplace 
+        condText.textContent = isReplace
           ? (parentShort ? `🔄 החלפת ${parentShort}` : '🔄 החלפת מקור')
           : '🔴 חיזוק: מתווסף במקביל';
 
@@ -1122,11 +1093,11 @@ const ExercisesPage = (() => {
    * Render exercises guide (flat list view)
    */
   function render(searchTerm = '', filterCategory = 'all') {
-    if(isTreeView) {
+    if (isTreeView) {
       renderSkillTree();
       return;
     }
-    
+
     let filtered = allExercises;
 
     // Apply search
@@ -1175,11 +1146,11 @@ const ExercisesPage = (() => {
     }
 
     const unlockWeek = ex.unlockWeek || 1;
-    const weekBadgeHTML = unlockWeek > 1 
+    const weekBadgeHTML = unlockWeek > 1
       ? `<span class="guide-unlock-badge locked" style="background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 11px;">🔒 ${I18n.t('locked_week') || 'שבוע'} ${unlockWeek}</span>`
       : `<span class="guide-unlock-badge unlocked" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 11px;">🔓 ${I18n.t('unlocked_week') || 'שבוע'} 1</span>`;
 
-    const parentLineHTML = ex.parentName 
+    const parentLineHTML = ex.parentName
       ? `<div style="font-size: 11px; color: var(--accent-orange, #f97316); margin-top: 4px; font-weight: 600;">🔗 תנאי קדם: ${ex.parentName}</div>`
       : '';
 
@@ -1218,10 +1189,10 @@ const ExercisesPage = (() => {
    */
   function showExerciseDetails(name) {
     const ex = allExercises.find(e => e.name === name);
-    if(!ex) return;
+    if (!ex) return;
 
     const html = generateGuideCardHTML(ex);
-    
+
     let progressionHubHtml = '';
     if (ex.stages && ex.stages.length > 0) {
       progressionHubHtml = `
@@ -1230,8 +1201,8 @@ const ExercisesPage = (() => {
           <div style="display: flex; flex-direction: column; gap: 12px; position: relative;">
             <div style="position: absolute; left: 16px; top: 16px; bottom: 16px; width: 2px; background: rgba(255, 170, 0, 0.3); border-radius: 2px;"></div>
             ${ex.stages.map((stage, i) => {
-              const sImg = `images/exercises/${stage.replaceAll('/', '-').toUpperCase()}.png`;
-              return `
+        const sImg = `images/exercises/${stage.replaceAll('/', '-').toUpperCase()}.png`;
+        return `
               <div style="display: flex; gap: 16px; align-items: center; position: relative; z-index: 1;">
                 <div style="width: 32px; height: 32px; border-radius: 50%; background: #111; border: 2px solid #ffaa00; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #ffaa00; flex-shrink: 0; box-shadow: 0 0 10px rgba(255, 170, 0, 0.4);">
                   ${i + 1}
