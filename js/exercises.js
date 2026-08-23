@@ -1168,7 +1168,8 @@ const ExercisesPage = (() => {
                 <div style="width: 32px; height: 32px; border-radius: 50%; background: #111; border: 2px solid #ffaa00; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #ffaa00; flex-shrink: 0; box-shadow: 0 0 10px rgba(255, 170, 0, 0.4);">
                   ${i + 1}
                 </div>
-                <div style="flex: 1; background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; min-height: 56px;">
+                <div style="flex: 1; background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; min-height: 56px; cursor: pointer;"
+                     onclick="UI.showImageModal('${stage.replace(/'/g, "\\'")}')">
                   <span style="font-size: 14px; font-weight: 700; color: #fff;">${stage}</span>
                   <img src="${sImg}" style="width: 48px; height: 48px; border-radius: 6px; object-fit: contain; background: rgba(0,0,0,0.5);" onerror="this.style.display='none'">
                 </div>
