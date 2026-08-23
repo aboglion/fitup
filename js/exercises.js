@@ -940,31 +940,34 @@ const ExercisesPage = (() => {
           // Route vertically in the empty space between parent card bottom & child card top
           const centerChannelX = pathRect.width / 2;
           let channelX = centerChannelX;
+          const isSkipping = Math.abs(cNodeTop - pNodeBottom) > 80;
 
-          if (pathRect.width > 550) {
-            if (pCenterX < centerChannelX - 30 && cCenterX < centerChannelX - 30) {
-              channelX = Math.min(pNodeLeft, cNodeLeft) - 14;
-              if (channelX < 10) channelX = 10;
-            } else if (pCenterX > centerChannelX + 30 && cCenterX > centerChannelX + 30) {
-              channelX = Math.max(pNodeRight, cNodeRight) + 14;
-              if (channelX > pathRect.width - 10) channelX = pathRect.width - 10;
-            }
+          if (pCenterX < centerChannelX - 20 && cCenterX < centerChannelX - 20) {
+            channelX = Math.min(pNodeLeft, cNodeLeft) - 15;
+          } else if (pCenterX > centerChannelX + 20 && cCenterX > centerChannelX + 20) {
+            channelX = Math.max(pNodeRight, cNodeRight) + 15;
+          } else if (isSkipping) {
+            channelX = (cCenterX >= centerChannelX) ? pathRect.width - 15 : 15;
           }
+
+          if (channelX < 15) channelX = 15;
+          if (channelX > pathRect.width - 15) channelX = pathRect.width - 15;
 
           const startX = pCenterX;
           const startY = pNodeBottom;
           const endX = cCenterX;
           const endY = cNodeTop;
-          midY = (startY + endY) / 2;
+          
+          midY = isSkipping ? endY - 26 : (startY + endY) / 2;
           midX = channelX;
 
           if (Math.abs(startX - endX) < 20 && Math.abs(channelX - startX) < 20) {
             dStr = `M ${startX} ${startY} L ${endX} ${endY}`;
           } else {
             dStr = `M ${startX} ${startY} 
-                    C ${startX} ${startY + 12}, ${channelX} ${startY + 12}, ${channelX} ${startY + 20} 
-                    L ${channelX} ${endY - 20} 
-                    C ${channelX} ${endY - 12}, ${endX} ${endY - 12}, ${endX} ${endY}`;
+                    C ${startX} ${startY + 15}, ${channelX} ${startY + 15}, ${channelX} ${startY + 30} 
+                    L ${channelX} ${endY - 30} 
+                    C ${channelX} ${endY - 15}, ${endX} ${endY - 15}, ${endX} ${endY}`;
           }
         }
 
@@ -1001,8 +1004,12 @@ const ExercisesPage = (() => {
         const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
 
+        let badgeX = midX;
+        if (badgeX < badgeWidth / 2 + 12) badgeX = badgeWidth / 2 + 12;
+        if (badgeX > pathRect.width - badgeWidth / 2 - 12) badgeX = pathRect.width - badgeWidth / 2 - 12;
+
         const badgeBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        badgeBg.setAttribute('x', midX - badgeWidth / 2);
+        badgeBg.setAttribute('x', badgeX - badgeWidth / 2);
         badgeBg.setAttribute('y', midY - badgeHeight / 2);
         badgeBg.setAttribute('width', badgeWidth);
         badgeBg.setAttribute('height', badgeHeight);
@@ -1014,7 +1021,7 @@ const ExercisesPage = (() => {
 
         // Text Line 1: Timing (Unlock Week)
         const timingText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        timingText.setAttribute('x', midX);
+        timingText.setAttribute('x', badgeX);
         timingText.setAttribute('y', isMobile ? midY - 2 : midY - 3);
         timingText.setAttribute('text-anchor', 'middle');
         timingText.setAttribute('font-size', isMobile ? '9.5' : '10.5');
@@ -1024,7 +1031,7 @@ const ExercisesPage = (() => {
 
         // Text Line 2: Requirement & Condition
         const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        condText.setAttribute('x', midX);
+        condText.setAttribute('x', badgeX);
         condText.setAttribute('y', isMobile ? midY + 8 : midY + 9);
         condText.setAttribute('text-anchor', 'middle');
         condText.setAttribute('font-size', isMobile ? '8.5' : '9.5');
