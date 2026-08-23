@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FitUp — השוואת נכס ויזואלי: סנכרון מלא של תמונות וסרטוני Progression מעודכנים</title>
+<title>FitUp — השוואת נכס ויזואלי: סנכרון 100% של קבצי GIF ותמונות משורש הפרויקט</title>
 <style>
   :root {
     --bg-main: #0b1329;
@@ -401,16 +401,16 @@
 <body>
 
 <div class="header">
-  <h1>🔍 FitUp — השוואת נכסים ויזואליים: סנכרון מלא של תמונות וסרטוני Progression</h1>
-  <p class="subtitle">עודכנו תמונות השורש עבור Full Pistol Squat, Tuck Hold (Chair), Tuck Hold (Bars), Pike Hold, Feet-Elevated Pike Hold וסרטון Giphy ל-One Leg Extended</p>
+  <h1>🔍 FitUp — השוואת נכסים ויזואליים: סנכרון מלא של כל סרטוני ה-GIF ותמונות השורש</h1>
+  <p class="subtitle">הועברו וסונכרנו 8 קבצי GIF ו-4 תמונות PNG מתקיית השורש היישר לתוך מערכת ה-Progression של FitUp</p>
 </div>
 
 <div class="legend-bar">
   <div class="legend-item legend-updated">
-    <span>✅ 100% סנכרון מלא של תמונות שורש וסרטוני Progression מותאמים באפליקציה</span>
+    <span>✅ 100% סנכרון מלא של כל הקבצים מתקיית השורש באפליקציה</span>
   </div>
   <div class="legend-item legend-current">
-    <span>🟦 מה שמוצג כרגע באפליקציה (מעודכן)</span>
+    <span>🟦 מה שמוצג כרגע באפליקציה (מעודכן עם קבצי השורש)</span>
   </div>
   <div class="legend-item legend-suggested">
     <span>🟧 הצעות חלופיות נוספות</span>
@@ -441,69 +441,33 @@
 <div class="toast" id="toast">✅ הקוד הועתק בהצלחה! הדבק בצ׳אט לבקשת החלפה</div>
 
 <script>
-const FULL_PROGRESSION_DATA = [
+const ABSOLUTE_ROOT_PROGRESSION_DATA = [
   {
     masterName: "L-Sit Progression",
     stages: [
       {
         stageName: "Stage 1: Tuck Hold (Chair)",
         status: "UPDATED",
-        current: { png: "images/exercises/TUCK HOLD (CHAIR).png", gif: "images/gifs/L-sit on Chair.gif" },
-        candidates: [
-          {
-            id: "PROP_LSIT_S1_COMBINED_BARS",
-            type: "combined",
-            label: "📷+🎬 שילוב מלא: L-Sit Tuck (Bars)",
-            png: "images/exercises/L-SIT TUCK (BARS).png",
-            gif: "images/gifs/L-sit Tuck (Bars).gif",
-            note: "גרסת המקבילים"
-          }
-        ]
+        current: { png: "images/exercises/TUCK HOLD (CHAIR).png", gif: "images/gifs/Tuck Hold (Chair).gif" },
+        candidates: []
       },
       {
         stageName: "Stage 2: Tuck Hold (Bars)",
         status: "UPDATED",
-        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
-        candidates: [
-          {
-            id: "PROP_LSIT_S2_GIT_ARCHIVE",
-            type: "archive",
-            label: "📁 ארכיון GIT: Commit aa40944",
-            png: "images/temp_archive/376bfce_L-SIT_TUCK_(BARS).png",
-            gif: "images/temp_archive/aa40944_L-sit_Tuck_(Bars).gif",
-            note: "גרסה היסטורית"
-          }
-        ]
+        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/Tuck Hold (Bars).gif" },
+        candidates: []
       },
       {
         stageName: "Stage 3: One Leg Extended",
         status: "UPDATED",
         current: { png: "images/exercises/ONE LEG EXTENDED.png", gif: "images/gifs/One Leg Extended.gif" },
-        candidates: [
-          {
-            id: "PROP_LSIT_S3_RESTORE_LSIT_GIF",
-            type: "gif-only",
-            label: "🎬 סרטון בלבד: L-Sit Progression.gif",
-            png: "images/exercises/ONE LEG EXTENDED.png",
-            gif: "images/gifs/L-Sit Progression.gif",
-            note: "חזרה לסרטון Progression הכללי"
-          }
-        ]
+        candidates: []
       },
       {
         stageName: "Stage 4: Full L-Sit",
         status: "UPDATED",
         current: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-Sit Progression.gif" },
-        candidates: [
-          {
-            id: "PROP_LSIT_S4_GIT_ARCHIVE_A",
-            type: "archive",
-            label: "📁 ארכיון GIT: Commit 5929f4b",
-            png: "images/temp_archive/5929f4b_L-SIT_PROGRESSION.png",
-            gif: "images/gifs/L-Sit Progression.gif",
-            note: "תמונה היסטורית מ-Git"
-          }
-        ]
+        candidates: []
       }
     ]
   },
@@ -514,21 +478,12 @@ const FULL_PROGRESSION_DATA = [
         stageName: "Stage 1: Pike Hold",
         status: "UPDATED",
         current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
-        candidates: [
-          {
-            id: "PROP_PIKE_S1_GIT_ARCHIVE",
-            type: "archive",
-            label: "📁 ארכיון GIT: Commit 366eb57 PIKE HOLD",
-            png: "images/temp_archive/366eb57_PIKE_HOLD.png",
-            gif: "images/gifs/Pike Hold.gif",
-            note: "תמונת פייק סטטית מ-Git"
-          }
-        ]
+        candidates: []
       },
       {
         stageName: "Stage 2: Feet-Elevated Pike Hold",
         status: "UPDATED",
-        current: { png: "images/exercises/FEET-ELEVATED PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
+        current: { png: "images/exercises/FEET-ELEVATED PIKE HOLD.png", gif: "images/gifs/Feet-Elevated Pike Hold.gif" },
         candidates: []
       },
       {
@@ -551,14 +506,23 @@ const FULL_PROGRESSION_DATA = [
       {
         stageName: "Stage 1: Incline Push-Up",
         status: "UPDATED",
-        current: { png: "images/exercises/INCLINE PUSH-UP.png", gif: "images/gifs/Push-up.gif" },
+        current: { png: "images/exercises/INCLINE PUSH-UP.png", gif: "images/gifs/Incline Push-Up.gif" },
         candidates: []
       },
       {
         stageName: "Stage 2: Push-Up",
         status: "UPDATED",
         current: { png: "images/exercises/PUSH-UP.png", gif: "images/gifs/Push-up.gif" },
-        candidates: []
+        candidates: [
+          {
+            id: "PROP_PUSHUP_S2_WEIGHTED_DIAMOND",
+            type: "combined",
+            label: "📷+🎬 שילוב: Weighted Diamond Push-Up",
+            png: "images/exercises/PUSH-UP.png",
+            gif: "images/gifs/Weighted Diamond Push-Up.gif",
+            note: "קובץ GIF של שכיבות סמיכה יהלום מהשורש"
+          }
+        ]
       },
       {
         stageName: "Stage 3: Deficit Push-Up",
@@ -586,17 +550,8 @@ const FULL_PROGRESSION_DATA = [
       {
         stageName: "Stage 2: Full Pistol Squat",
         status: "UPDATED",
-        current: { png: "images/exercises/FULL PISTOL SQUAT.png", gif: "images/gifs/Pistol Squat Progression.gif" },
-        candidates: [
-          {
-            id: "PROP_PISTOL_S2_CHAIR_PNG",
-            type: "png-only",
-            label: "📷 תמונה בלבד: PISTOL SQUAT TO CHAIR",
-            png: "images/exercises/PISTOL SQUAT TO CHAIR.png",
-            gif: "images/gifs/Pistol Squat Progression.gif",
-            note: "חלופת תמונה לכיסא"
-          }
-        ]
+        current: { png: "images/exercises/FULL PISTOL SQUAT.png", gif: "images/gifs/Full Pistol Squat.gif" },
+        candidates: []
       }
     ]
   },
@@ -678,7 +633,7 @@ const FULL_PROGRESSION_DATA = [
 ];
 
 // Filter setup
-const categories = ['הכל', ...FULL_PROGRESSION_DATA.map(p => p.masterName)];
+const categories = ['הכל', ...ABSOLUTE_ROOT_PROGRESSION_DATA.map(p => p.masterName)];
 document.getElementById('filterBar').innerHTML = categories.map((cat, i) => `
   <button class="filter-btn ${i === 0 ? 'active' : ''}" onclick="filterCategory('${cat}', this)">${cat}</button>
 `).join('');
@@ -688,8 +643,8 @@ function filterCategory(cat, btn) {
   btn.classList.add('active');
 
   const filtered = cat === 'הכל' 
-    ? FULL_PROGRESSION_DATA 
-    : FULL_PROGRESSION_DATA.filter(p => p.masterName === cat);
+    ? ABSOLUTE_ROOT_PROGRESSION_DATA 
+    : ABSOLUTE_ROOT_PROGRESSION_DATA.filter(p => p.masterName === cat);
     
   render(filtered);
 }
@@ -715,7 +670,7 @@ function copyProposal(id, masterName, stageName, sugPng, sugGif) {
 
 function copyAllProposals() {
   const allReplacements = [];
-  FULL_PROGRESSION_DATA.forEach(prog => {
+  ABSOLUTE_ROOT_PROGRESSION_DATA.forEach(prog => {
     prog.stages.forEach(s => {
       if (s.candidates.length > 0) {
         const cand = s.candidates[0];
@@ -786,7 +741,7 @@ function render(catalog) {
             <div class="box-current">
               <div class="box-header">
                 <span>🟦 מה שמוצג כרגע באפליקציה (Current App State)</span>
-                ${isUpdated ? '<span class="tag-green">✅ מעודכן ב-100% באפליקציה</span>' : ''}
+                ${isUpdated ? '<span class="tag-green">✅ מעודכן ב-100% מנכסי השורש</span>' : ''}
               </div>
               <div class="media-box">
                 <div class="media-item">
@@ -813,7 +768,7 @@ function render(catalog) {
               </div>
               
               <div class="candidates-grid">
-            ` : '<div style="font-size:12px; color:#4ade80; font-weight:700; text-align:center; padding:6px;">✅ אין הצעות שינוי נוספות - השלב מעודכן ב-100%!</div>'}
+            ` : '<div style="font-size:12px; color:#4ade80; font-weight:700; text-align:center; padding:6px;">✅ מושלם! ה-GIF וה-PNG מתקיית השורש מחוברים ב-100%!</div>'}
       `;
 
       stage.candidates.forEach(cand => {
@@ -866,7 +821,7 @@ function render(catalog) {
 }
 
 // Initial render
-render(FULL_PROGRESSION_DATA);
+render(ABSOLUTE_ROOT_PROGRESSION_DATA);
 </script>
 
 </body>
