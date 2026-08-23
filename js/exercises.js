@@ -775,7 +775,18 @@ const ExercisesPage = (() => {
                   ${!isUnlocked 
                     ? `<span class="rpg-unlock-badge locked">${I18n.t('locked_week')} ${node.unlockWeek}</span>` 
                     : `<span class="rpg-unlock-badge unlocked">${I18n.t('unlocked_week')} ${node.unlockWeek}</span>`}
-                  ${equip && equip.label !== I18n.t('equip_bodyweight') ? `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; unicode-bidi: isolate; max-width: 100%; white-space: normal; word-break: break-word;">${equip.icon} ${equip.label}</span>` : ''}
+                  ${(() => {
+                    const equip = UI.getEquipment(node.name);
+                    const exDef = allExercises.find(e => e.name === node.name);
+                    let badges = '';
+                    if (exDef && exDef.stages && exDef.stages.length > 0) {
+                      badges += `<span class="rpg-equip-badge" style="background: rgba(255,170,0,0.15); color: #ffaa00; border: 1px solid rgba(255,170,0,0.4); padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(255,170,0,0.2);">🌟 ${exDef.stages.length} Stages</span>`;
+                    }
+                    if (equip && equip.label !== I18n.t('equip_bodyweight')) {
+                      badges += `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; unicode-bidi: isolate; max-width: 100%; white-space: normal; word-break: break-word;">${equip.icon} ${equip.label}</span>`;
+                    }
+                    return badges;
+                  })()}
                 </div>
                 ${(() => {
                   const tiers = getWeightTiers(node.name);
@@ -1139,10 +1150,37 @@ const ExercisesPage = (() => {
     if(!ex) return;
 
     const html = generateGuideCardHTML(ex);
+    
+    let progressionHubHtml = '';
+    if (ex.stages && ex.stages.length > 0) {
+      progressionHubHtml = `
+        <div style="background: rgba(0, 0, 0, 0.4); border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); margin-top: 8px;">
+          <h3 style="color: #ffaa00; font-size: 16px; font-weight: 800; margin-bottom: 16px; text-transform: uppercase; text-align: center; letter-spacing: 1px;">🌟 ${I18n.t('progression_path') || 'Progression Path'}</h3>
+          <div style="display: flex; flex-direction: column; gap: 12px; position: relative;">
+            <div style="position: absolute; left: 16px; top: 16px; bottom: 16px; width: 2px; background: rgba(255, 170, 0, 0.3); border-radius: 2px;"></div>
+            ${ex.stages.map((stage, i) => {
+              const sImg = \`images/exercises/\${stage.replace(/\\//g, '-').toUpperCase()}.png\`;
+              return \`
+              <div style="display: flex; gap: 16px; align-items: center; position: relative; z-index: 1;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: #111; border: 2px solid #ffaa00; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #ffaa00; flex-shrink: 0; box-shadow: 0 0 10px rgba(255, 170, 0, 0.4);">
+                  \${i + 1}
+                </div>
+                <div style="flex: 1; background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; min-height: 56px;">
+                  <span style="font-size: 14px; font-weight: 700; color: #fff;">\${stage}</span>
+                  <img src="\${sImg}" style="width: 48px; height: 48px; border-radius: 6px; object-fit: contain; background: rgba(0,0,0,0.5);" onerror="this.style.display='none'">
+                </div>
+              </div>
+            \`}).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     const gifPath = `images/gifs/${ex.name}.gif`;
     const fullHtml = `
       <div style="display: flex; flex-direction: column; gap: 16px;">
         ${html}
+        ${progressionHubHtml}
         <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 200px; border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;">
           <div class="skeleton-placeholder">
             <div class="skeleton-spinner"></div>
