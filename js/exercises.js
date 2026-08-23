@@ -78,7 +78,7 @@ const ExercisesPage = (() => {
     'Towel Hang': [{ weight: 'Dead Hang', fromWeek: 1 }, { weight: 'Towel Hang', fromWeek: 10 }, { weight: 'Towel Hang + 5kg', fromWeek: 62 }],
     'L-Sit Progression': [{ weight: 'Tuck L-Sit', fromWeek: 1 }, { weight: 'One-Leg Extended', fromWeek: 18 }, { weight: 'Full L-Sit', fromWeek: 34 }],
     'High Knees': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'Bodyweight Squat': [{ weight: 'Bodyweight Squat', fromWeek: 1 }, { weight: 'BSS', fromWeek: 1 }, { weight: 'Reverse Lunge', fromWeek: 18 }, { weight: 'BSS Goblet', fromWeek: 34 }, { weight: 'Pistol Squat', fromWeek: 42 }, { weight: 'Walking Lunge', fromWeek: 62 }],
+    'Bodyweight Squat': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Arm Circles': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Wall Slides': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Scapular Push-up': [{ weight: 'Bodyweight', fromWeek: 1 }],
@@ -878,24 +878,31 @@ const ExercisesPage = (() => {
         const parentRect = parentHex.getBoundingClientRect();
         const childRect = childHex.getBoundingClientRect();
 
-        if (parentRect.width === 0 || childRect.width === 0) return;
+        const isSameRow = Math.abs(parentRect.top - childRect.top) < 40;
+        let x1, y1, x2, y2, dStr;
 
-        const x1 = parentRect.left + parentRect.width / 2 - pathRect.left;
-        const y1 = parentRect.bottom - pathRect.top;
-
-        const x2 = childRect.left + childRect.width / 2 - pathRect.left;
-        const y2 = childRect.top - pathRect.top;
-
-        const dy = Math.abs(y2 - y1);
-        const cp1y = y1 + Math.max(dy * 0.45, 15);
-        const cp2y = y2 - Math.max(dy * 0.45, 15);
+        if (isSameRow) {
+          x1 = parentRect.right - pathRect.left;
+          y1 = parentRect.top + parentRect.height / 2 - pathRect.top;
+          x2 = childRect.left - pathRect.left;
+          y2 = childRect.top + childRect.height / 2 - pathRect.top;
+          const dx = Math.max(Math.abs(x2 - x1) * 0.4, 15);
+          dStr = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+        } else {
+          x1 = parentRect.left + parentRect.width / 2 - pathRect.left;
+          y1 = parentRect.bottom - pathRect.top;
+          x2 = childRect.left + childRect.width / 2 - pathRect.left;
+          y2 = childRect.top - pathRect.top;
+          const dy = Math.max(Math.abs(y2 - y1) * 0.45, 15);
+          dStr = `M ${x1} ${y1} C ${x1} ${y1 + dy}, ${x2} ${y2 - dy}, ${x2} ${y2}`;
+        }
 
         const isParentUnlocked = parentNode.classList.contains('unlocked');
         const isChildUnlocked = childNode.classList.contains('unlocked');
         const isActive = isParentUnlocked && isChildUnlocked;
 
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', `M ${x1} ${y1} C ${x1} ${cp1y}, ${x2} ${cp2y}, ${x2} ${y2}`);
+        path.setAttribute('d', dStr);
 
         if (isActive) {
           path.setAttribute('stroke', tabColor);
