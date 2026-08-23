@@ -22,8 +22,8 @@ const ExercisesPage = (() => {
     'Seated Band Row': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 13 }],
     'Band Pull-Apart': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 9 }],
     'Pallof Press': [{ weight: '30 kg', fromWeek: 10 }, { weight: '40 kg', fromWeek: 34 }],
-    'Pallof Press Progression': [{ weight: 'Band 30 kg', fromWeek: 1 }],
-
+    'Pallof Press Progression': [{ weight: 'Band 30 kg', fromWeek: 10 }, { weight: 'Band 40 kg', fromWeek: 34 }],
+ 
     // Dumbbell Lower Body
     'DB Bulgarian Split Squat': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '3 kg', fromWeek: 5 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 26 }],
     'Reverse Lunge + DB': [{ weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }],
@@ -33,7 +33,7 @@ const ExercisesPage = (() => {
     'DB RDL': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }],
     'DB Romanian Deadlift': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }],
     'DB Single-Leg RDL': [{ weight: '12 kg', fromWeek: 18 }, { weight: '15 kg', fromWeek: 26 }, { weight: '18 kg', fromWeek: 42 }, { weight: '21 kg', fromWeek: 50 }, { weight: '24 kg', fromWeek: 53 }],
-    'Single-Leg RDL': [{ weight: '6 kg each', fromWeek: 1 }],
+    'Single-Leg RDL': [{ weight: '6 kg each', fromWeek: 18 }, { weight: '9 kg', fromWeek: 26 }, { weight: '12 kg', fromWeek: 42 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }],
     'DB Hip Thrust': [{ weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
@@ -67,18 +67,18 @@ const ExercisesPage = (() => {
 
     // Bodyweight, Mobility, Warmup & Skill Progressions
     'Pistol Squat Progression': [{ weight: 'Assisted Pistol', fromWeek: 42 }, { weight: 'Full Pistol Squat', fromWeek: 50 }],
-    'Dead Bug': [{ weight: 'Bodyweight', fromWeek: 1 }],
+    'Dead Bug': [{ weight: 'Dead Bug', fromWeek: 1 }, { weight: 'Hollow Body Hold', fromWeek: 5 }],
     'Hollow Body Hold': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Pike Progression': [{ weight: 'Pike Push-Up', fromWeek: 1 }, { weight: 'Wall Walk 45°', fromWeek: 10 }, { weight: 'Wall Walk Full', fromWeek: 18 }, { weight: 'Handstand Hold', fromWeek: 26 }, { weight: 'Elevated Pike', fromWeek: 41 }],
     'Push-up Bars Progression': [{ weight: 'Push-up Bars', fromWeek: 1 }, { weight: 'Deficit Push-Up', fromWeek: 10 }, { weight: 'Feet-Elevated', fromWeek: 18 }, { weight: 'Weighted Deficit +5kg', fromWeek: 62 }],
-    'TRX Y-T-W': [{ weight: 'Bodyweight', fromWeek: 1 }],
+    'TRX Y-T-W': [{ weight: 'Y-Raise', fromWeek: 1 }, { weight: 'T-Raise', fromWeek: 1 }, { weight: 'W-Raise', fromWeek: 1 }],
     'Pull-Up Progression': [{ weight: 'Dead Hang / Scapular', fromWeek: 1 }, { weight: 'Chin-Up', fromWeek: 5 }, { weight: 'Pull-Up Overhand', fromWeek: 10 }, { weight: 'Weighted Pull-Up +5kg', fromWeek: 62 }],
     'Chin-Up Progression': [{ weight: 'Chin-Up Assist', fromWeek: 5 }, { weight: 'Chin-Up Bodyweight', fromWeek: 10 }, { weight: 'Weighted Chin-Up +5kg', fromWeek: 66 }],
     'TRX Face Pull': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Towel Hang': [{ weight: 'Dead Hang', fromWeek: 1 }, { weight: 'Towel Hang', fromWeek: 10 }, { weight: 'Towel Hang + 5kg', fromWeek: 62 }],
     'L-Sit Progression': [{ weight: 'Tuck L-Sit', fromWeek: 1 }, { weight: 'One-Leg Extended', fromWeek: 18 }, { weight: 'Full L-Sit', fromWeek: 34 }],
     'High Knees': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'Bodyweight Squat': [{ weight: 'Bodyweight', fromWeek: 1 }],
+    'Bodyweight Squat': [{ weight: 'Bodyweight Squat', fromWeek: 1 }, { weight: 'BSS', fromWeek: 1 }, { weight: 'Reverse Lunge', fromWeek: 18 }, { weight: 'BSS Goblet', fromWeek: 34 }, { weight: 'Pistol Squat', fromWeek: 42 }, { weight: 'Walking Lunge', fromWeek: 62 }],
     'Arm Circles': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Wall Slides': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Scapular Push-up': [{ weight: 'Bodyweight', fromWeek: 1 }],
