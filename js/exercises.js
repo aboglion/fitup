@@ -729,29 +729,17 @@ const ExercisesPage = (() => {
         const isLatestUnlock = isLevelUnlocked && 
           (levelIndex === sortedWeeks.length - 1 || currentWeek < sortedWeeks[levelIndex + 1]);
 
-        // Fallback vertical connector line
+        // Vertical spacer between rows (replacing old fallback connector lines)
         if (levelIndex > 0) {
-          const prevUnlocked = currentWeek >= sortedWeeks[levelIndex - 1];
-          const isNextTarget = prevUnlocked && !isLevelUnlocked;
-          const arrowIcon = isLevelUnlocked ? '▼' : '🔒';
-          const badgeText = isLevelUnlocked 
-            ? `${arrowIcon}` 
-            : `${arrowIcon} ${I18n.t('week_label_short') || 'W'}${week}`;
-
           html += `
-            <div class="rpg-connector ${prevUnlocked && isLevelUnlocked ? 'active' : ''} ${isNextTarget ? 'next-target' : ''}">
-              <div class="rpg-connector-line"></div>
-              <div class="rpg-connector-badge">${badgeText}</div>
-              ${prevUnlocked && isLevelUnlocked ? '<div class="rpg-connector-energy"></div>' : ''}
-            </div>
+            <div style="height: 42px; width: 100%; margin: 4px 0;"></div>
           `;
         }
 
         const hasParallel = nodes.length > 1;
 
         if (hasParallel) {
-          html += `<div class="rpg-fork-group">`;
-          html += `<div class="rpg-fork-lines ${isLevelUnlocked ? 'active' : ''}" data-count="${nodes.length}"></div>`;
+          html += `<div class="rpg-fork-group" style="height: 20px;"></div>`;
         }
 
         html += `<div class="rpg-level-row ${hasParallel ? 'parallel' : ''}">`;
