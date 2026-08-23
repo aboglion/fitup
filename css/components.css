@@ -2597,15 +2597,19 @@ html.light-theme .rest-timer {
 /* --- Level Row --- */
 .rpg-level-row {
   display: flex;
-  justify-content: center;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: stretch;
   width: 100%;
-  gap: 12px;
+  gap: 16px;
+  box-sizing: border-box;
 }
 
 .rpg-level-row.parallel {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  gap: 28px;
+  gap: 16px;
   width: 100%;
 }
 
@@ -2624,32 +2628,66 @@ html.light-theme .rest-timer {
   align-items: flex-start;
 }
 
+.rpg-node.node-center {
+  margin: 0 auto;
+  flex: 0 0 calc(50% - 8px);
+  max-width: calc(50% - 8px);
+}
+
 /* --- RPG Node --- */
 .rpg-node {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 10px 14px;
+  gap: 10px;
+  padding: 8px 12px;
   background: var(--bg-elevated);
   border: 1px solid var(--border-light);
-  border-radius: 16px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  flex: 1 1 calc(50% - 14px);
-  min-width: 270px;
-  max-width: 48%;
+  flex: 0 0 calc(50% - 8px);
+  width: calc(50% - 8px);
+  max-width: calc(50% - 8px);
+  min-width: 0;
   box-sizing: border-box;
   opacity: 0;
   transform: translateY(12px);
 }
 
 @media (max-width: 600px) {
+  .rpg-level-row {
+    gap: 10px;
+  }
   .rpg-node {
-    flex: 1 1 100%;
-    max-width: 100%;
-    min-width: 0;
+    flex: 0 0 calc(50% - 5px);
+    width: calc(50% - 5px);
+    max-width: calc(50% - 5px);
+    padding: 6px 8px;
+    gap: 6px;
+    border-radius: 12px;
+  }
+  .rpg-node-hex-wrap {
+    width: 44px !important;
+    height: 44px !important;
+    flex-shrink: 0;
+  }
+  .rpg-node-hex {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  .rpg-node-name {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+  }
+  .rpg-unlock-badge, .rpg-equip-badge {
+    font-size: 8.5px !important;
+    padding: 2px 4px !important;
+  }
+  .rpg-evo-card {
+    font-size: 8px !important;
+    padding: 1px 3px !important;
   }
 }
 
