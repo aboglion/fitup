@@ -714,33 +714,116 @@ const ExercisesPage = (() => {
           <div class="rpg-nodes-track">
       `;
 
-      // Group exercises by unlockWeek for progression rows
-      const grouped = {};
-      path.exercises.forEach(node => {
-        if (!grouped[node.unlockWeek]) grouped[node.unlockWeek] = [];
-        grouped[node.unlockWeek].push(node);
-      });
+  /**
+   * Group exercises into distinct tree levels (rows) ensuring children are always
+   * placed in a row index below their parent, preventing overlaps.
+   */
+  function calculateExerciseLevels(exercises) {
+    if (!exercises || exercises.length === 0) return [];
 
-      const sortedWeeks = Object.keys(grouped).map(Number).sort((a,b) => a - b);
+    const nodeMap = {};
+    exercises.forEach(node => {
+      const key = node.id || node.name;
+      nodeMap[key] = node;
+    });
 
-      sortedWeeks.forEach((week, levelIndex) => {
-        const nodes = grouped[week];
-        const isLevelUnlocked = currentWeek >= week;
+    const depthMap = new Map();
+    function getDepth(node) {
+      if (depthMap.has(node)) return depthMap.get(node);
+      if (!node.parentId || !nodeMap[node.parentId]) {
+        depthMap.set(node, 0);
+        return 0;
+      }
+      const parentNode = nodeMap[node.parentId];
+      const parentDepth = getDepth(parentNode);
+      const d = parentDepth + 1;
+      depthMap.set(node, d);
+      return d;
+    }
+
+    exercises.forEach(getDepth);
+
+    const sortedNodes = [...exercises].sort((a, b) => {
+      if (a.unlockWeek !== b.unlockWeek) return a.unlockWeek - b.unlockWeek;
+      return (depthMap.get(a) || 0) - (depthMap.get(b) || 0);
+    });
+
+    const nodeRowMap = new Map();
+
+    sortedNodes.forEach(node => {
+      let r = 0;
+
+      if (node.parentId && nodeMap[node.parentId]) {
+        const parentRow = nodeRowMap.get(nodeMap[node.parentId]);
+        if (parentRow !== undefined) {
+          r = parentRow + 1;
+        }
+      }
+
+      for (const [otherNode, otherRow] of nodeRowMap.entries()) {
+        if (otherNode.unlockWeek < node.unlockWeek && r <= otherRow) {
+          r = otherRow + 1;
+        }
+      }
+
+      nodeRowMap.set(node, r);
+    });
+
+    const levelRows = [];
+    sortedNodes.forEach(node => {
+      const r = nodeRowMap.get(node);
+      if (!levelRows[r]) levelRows[r] = [];
+      levelRows[r].push(node);
+    });
+
+    return levelRows.filter(group => group && group.length > 0);
+  }
+
+  /**
+   * Render the tree content for the active tab
+   */
+  function renderSkillTreeContent() {
+    const contentEl = document.getElementById('rpg-tree-content');
+    if (!contentEl) return;
+
+    if (!activeTab) {
+      contentEl.innerHTML = '';
+      return;
+    }
+
+    const currentWeek = Math.floor((window.appCurrentPlanIndex || 0) / 7) + 1;
+    const paths = SKILL_TREES[activeTab] || [];
+    const tabConfig = DAY_TABS.find(t => t.id === activeTab);
+    const tabColor = tabConfig ? tabConfig.color : '#3b82f6';
+
+    let html = '';
+
+    paths.forEach((path, pathIndex) => {
+      html += `
+        <div class="rpg-skill-path" style="--path-color: ${tabColor}; animation-delay: ${pathIndex * 0.1}s">
+          <div class="rpg-path-header">
+            <span class="rpg-path-icon">${path.icon}</span>
+            <span class="rpg-path-title">${I18n.t(path.title)}</span>
+          </div>
+          <div class="rpg-nodes-track">
+      `;
+
+      const levelRows = calculateExerciseLevels(path.exercises);
+
+      levelRows.forEach((nodes, levelIndex) => {
+        const minWeek = Math.min(...nodes.map(n => n.unlockWeek));
+        const isLevelUnlocked = currentWeek >= minWeek;
         const isLatestUnlock = isLevelUnlocked && 
-          (levelIndex === sortedWeeks.length - 1 || currentWeek < sortedWeeks[levelIndex + 1]);
+          (levelIndex === levelRows.length - 1 || currentWeek < Math.min(...levelRows[levelIndex + 1].map(n => n.unlockWeek)));
 
-        // Vertical spacer between rows to leave room for SVG connector badges
+        // Generous vertical spacer between level rows to fit SVG connector badges in the gap
         if (levelIndex > 0) {
           html += `
-            <div style="height: 64px; width: 100%; margin: 8px 0;"></div>
+            <div class="rpg-row-spacer" style="height: 76px; width: 100%; pointer-events: none;"></div>
           `;
         }
 
         const hasParallel = nodes.length > 1;
-
-        if (hasParallel) {
-          html += `<div class="rpg-fork-group" style="height: 20px;"></div>`;
-        }
 
         html += `<div class="rpg-level-row ${hasParallel ? 'parallel' : ''}">`;
 
@@ -834,10 +917,6 @@ const ExercisesPage = (() => {
         });
 
         html += `</div>`; // rpg-level-row
-
-        if (hasParallel) {
-          html += `</div>`; // rpg-fork-group
-        }
       });
 
       html += `
@@ -871,29 +950,31 @@ const ExercisesPage = (() => {
       if (!svgCanvas) {
         svgCanvas = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svgCanvas.setAttribute('class', 'rpg-path-svg-canvas');
-        svgCanvas.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;';
+        svgCanvas.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;';
         pathEl.appendChild(svgCanvas);
       }
 
-      // Re-create canvas defs with Arrow markers for Blue (Evolution) and Red (Accessory)
+      // Re-create canvas defs with sharp arrow markers for Blue (Evolution) and Red (Accessory)
       svgCanvas.innerHTML = `
         <defs>
-          <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="#3b82f6"/>
           </marker>
-          <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+          <marker id="arrow-red" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="#ef4444"/>
           </marker>
-          <marker id="arrow-blue-locked" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(59, 130, 246, 0.4)"/>
+          <marker id="arrow-blue-locked" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="rgba(59, 130, 246, 0.5)"/>
           </marker>
-          <marker id="arrow-red-locked" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(239, 68, 68, 0.4)"/>
+          <marker id="arrow-red-locked" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 9 5 L 0 9 z" fill="rgba(239, 68, 68, 0.5)"/>
           </marker>
         </defs>
       `;
 
       const pathRect = pathEl.getBoundingClientRect();
+      if (!pathRect || pathRect.width === 0) return;
+
       const nodes = pathEl.querySelectorAll('.rpg-node[data-node-id]');
 
       nodes.forEach(childNode => {
@@ -911,82 +992,52 @@ const ExercisesPage = (() => {
         const unlockWeekNum = childUnlockBadge.match(/\d+/) ? childUnlockBadge.match(/\d+/)[0] : '';
 
         const getOffsetPos = (el) => {
-          let top = 0;
-          let left = 0;
-          let current = el;
-          while (current && current !== pathEl) {
-            top += current.offsetTop;
-            left += current.offsetLeft;
-            current = current.offsetParent;
-          }
-          return { top, left, width: el.offsetWidth, height: el.offsetHeight };
+          const elRect = el.getBoundingClientRect();
+          return {
+            top: elRect.top - pathRect.top,
+            left: elRect.left - pathRect.left,
+            width: elRect.width,
+            height: elRect.height
+          };
         };
 
         const pRect = getOffsetPos(parentNode);
         const cRect = getOffsetPos(childNode);
 
-        const pNodeLeft = pRect.left;
-        const pNodeRight = pRect.left + pRect.width;
-        const pNodeTop = pRect.top;
         const pNodeBottom = pRect.top + pRect.height;
-        const pCenterX = pNodeLeft + (pRect.width / 2);
+        const pCenterX = pRect.left + (pRect.width / 2);
 
-        const cNodeLeft = cRect.left;
-        const cNodeRight = cRect.left + cRect.width;
         const cNodeTop = cRect.top;
-        const cNodeBottom = cRect.top + cRect.height;
-        const cCenterX = cNodeLeft + (cRect.width / 2);
+        const cCenterX = cRect.left + (cRect.width / 2);
 
-        const isSameRow = Math.abs(pNodeTop - cNodeTop) < 40;
-        
-        // If exercises are on the same level (row), they are parallel options.
-        // We do not draw relationship arrows between them.
-        if (isSameRow) return;
+        if (Math.abs(pRect.top - cRect.top) < 30) return;
+
+        const startX = pCenterX;
+        const startY = pNodeBottom + 2;
+        const endX = cCenterX;
+        const endY = cNodeTop - 5;
+
+        const deltaY = endY - startY;
+        if (deltaY <= 0) return;
 
         let dStr, midX, midY;
 
-          const centerChannelX = pathRect.width / 2;
-          let channelX = centerChannelX;
-          // Spacer is 64 + margins + fork group = ~100px gap for adjacent rows. >130px means it's skipping a row.
-          const isSkipping = Math.abs(cNodeTop - pNodeBottom) > 130;
+        if (Math.abs(startX - endX) < 12) {
+          dStr = `M ${startX} ${startY} L ${endX} ${endY}`;
+          midX = startX;
+          midY = (startY + endY) / 2;
+        } else {
+          const ctrlY1 = startY + (deltaY * 0.42);
+          const ctrlY2 = endY - (deltaY * 0.42);
+          dStr = `M ${startX} ${startY} C ${startX} ${ctrlY1}, ${endX} ${ctrlY2}, ${endX} ${endY}`;
+          midX = (startX + endX) / 2;
+          midY = (startY + endY) / 2;
+        }
 
-          if (isSkipping) {
-            if (pCenterX < centerChannelX - 20 && cCenterX < centerChannelX - 20) {
-              channelX = Math.min(pNodeLeft, cNodeLeft) - 15;
-            } else if (pCenterX > centerChannelX + 20 && cCenterX > centerChannelX + 20) {
-              channelX = Math.max(pNodeRight, cNodeRight) + 15;
-            } else {
-              channelX = (cCenterX >= centerChannelX) ? pathRect.width - 15 : 15;
-            }
-          } else {
-            // Adjacent rows: just use the midpoint horizontally for a smooth curve
-            channelX = (pCenterX + cCenterX) / 2;
-          }
-
-          if (channelX < 15) channelX = 15;
-          if (channelX > pathRect.width - 15) channelX = pathRect.width - 15;
-
-          const startX = pCenterX;
-          const startY = pNodeBottom;
-          const endX = cCenterX;
-          const endY = cNodeTop;
-          
-          // Badge is positioned slightly higher if skipping so it rests on the incoming horizontal line segment
-          midY = isSkipping ? endY - 45 : (startY + endY) / 2;
-          midX = channelX;
-
-          const deltaY = endY - startY;
-          const curveOff = Math.min(30, deltaY > 0 ? deltaY / 2 : 0);
-
-          if (Math.abs(startX - endX) < 20 && Math.abs(channelX - startX) < 20) {
-            dStr = `M ${startX} ${startY} L ${endX} ${endY}`;
-          } else {
-            dStr = `M ${startX} ${startY} 
-                    C ${startX} ${startY + curveOff}, ${channelX} ${startY + curveOff}, ${channelX} ${startY + curveOff} 
-                    L ${channelX} ${endY - curveOff} 
-                    C ${channelX} ${endY - curveOff}, ${endX} ${endY - curveOff}, ${endX} ${endY}`;
-          }
-        // Removed the stray closing brace here
+        if (deltaY > 120) {
+          midY = endY - 36;
+          midX = endX;
+        }
 
         const isParentUnlocked = parentNode.classList.contains('unlocked');
         const isChildUnlocked = childNode.classList.contains('unlocked');
@@ -995,75 +1046,74 @@ const ExercisesPage = (() => {
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', dStr);
 
-        // BLUE (#3b82f6) for Evolution Replacement, RED (#ef4444) for Accessory Addition
         const strokeColor = isReplace ? '#3b82f6' : '#ef4444';
         const markerUrl = isReplace 
           ? (isActive ? 'url(#arrow-blue)' : 'url(#arrow-blue-locked)') 
           : (isActive ? 'url(#arrow-red)' : 'url(#arrow-red-locked)');
 
         path.setAttribute('stroke', strokeColor);
-        path.setAttribute('stroke-width', isReplace ? '3' : '2.4');
+        path.setAttribute('stroke-width', isReplace ? '2.8' : '2.2');
         path.setAttribute('marker-end', markerUrl);
         if (!isReplace) {
           path.setAttribute('stroke-dasharray', '6 4');
         }
         path.setAttribute('fill', 'none');
         path.setAttribute('class', `rpg-svg-line ${isActive ? 'active' : 'locked'} ${relType}`);
-        path.setAttribute('style', `opacity: ${isActive ? '0.95' : '0.45'};`); // Removed heavy drop-shadow filter for fast smooth rendering
+        path.setAttribute('style', `opacity: ${isActive ? '0.95' : '0.45'};`);
 
         svgCanvas.appendChild(path);
 
-        // Add Floating Badge with Unlock Timing & Conditions strictly inside the vertical gap between cards
         const isMobile = pathRect.width < 500;
-        const badgeWidth = isMobile ? 122 : 146;
-        const badgeHeight = isMobile ? 28 : 34;
+        const badgeWidth = isMobile ? 122 : 144;
+        const badgeHeight = isMobile ? 26 : 30;
 
         const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
 
         let badgeX = midX;
-          if (badgeX < badgeWidth / 2 + 12) badgeX = badgeWidth / 2 + 12;
-          if (badgeX > pathRect.width - badgeWidth / 2 - 12) badgeX = pathRect.width - badgeWidth / 2 - 12;
+        const minX = badgeWidth / 2 + 10;
+        const maxX = pathRect.width - (badgeWidth / 2) - 10;
+        if (badgeX < minX) badgeX = minX;
+        if (badgeX > maxX) badgeX = maxX;
 
-          const badgeBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-          badgeBg.setAttribute('x', badgeX - badgeWidth / 2);
-          badgeBg.setAttribute('y', midY - badgeHeight / 2);
-          badgeBg.setAttribute('width', badgeWidth);
-          badgeBg.setAttribute('height', badgeHeight);
-          badgeBg.setAttribute('rx', isMobile ? 6 : 10);
-          badgeBg.setAttribute('ry', isMobile ? 6 : 10);
-          badgeBg.setAttribute('fill', isActive ? '#0f172a' : '#1e293b');
-          badgeBg.setAttribute('stroke', isActive ? strokeColor : 'rgba(255, 255, 255, 0.25)');
-          badgeBg.setAttribute('stroke-width', '1.5');
+        const badgeBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        badgeBg.setAttribute('x', badgeX - badgeWidth / 2);
+        badgeBg.setAttribute('y', midY - badgeHeight / 2);
+        badgeBg.setAttribute('width', badgeWidth);
+        badgeBg.setAttribute('height', badgeHeight);
+        badgeBg.setAttribute('rx', isMobile ? 6 : 8);
+        badgeBg.setAttribute('ry', isMobile ? 6 : 8);
+        badgeBg.setAttribute('fill', isActive ? '#0f172a' : '#1e293b');
+        badgeBg.setAttribute('stroke', isActive ? strokeColor : 'rgba(255, 255, 255, 0.25)');
+        badgeBg.setAttribute('stroke-width', '1.5');
+        badgeBg.setAttribute('filter', 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))');
 
-          // Text Line 1: Timing (Unlock Week)
-          const timingText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          timingText.setAttribute('x', badgeX);
-          timingText.setAttribute('y', isMobile ? midY - 2 : midY - 3);
-          timingText.setAttribute('text-anchor', 'middle');
-          timingText.setAttribute('font-size', isMobile ? '9.5' : '10.5');
-          timingText.setAttribute('font-weight', '800');
-          timingText.setAttribute('fill', isActive ? (isReplace ? '#93c5fd' : '#fca5a5') : '#94a3b8');
-          timingText.textContent = unlockWeekNum ? `📅 שבוע פתיחה ${unlockWeekNum}` : '📅 פתיחה מדורגת';
+        const timingText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        timingText.setAttribute('x', badgeX);
+        timingText.setAttribute('y', isMobile ? midY - 2 : midY - 3);
+        timingText.setAttribute('text-anchor', 'middle');
+        timingText.setAttribute('font-size', isMobile ? '9' : '10');
+        timingText.setAttribute('font-weight', '800');
+        timingText.setAttribute('fill', isActive ? (isReplace ? '#93c5fd' : '#fca5a5') : '#94a3b8');
+        timingText.textContent = unlockWeekNum ? `📅 שבוע פתיחה ${unlockWeekNum}` : '📅 פתיחה מדורגת';
 
-          // Text Line 2: Requirement & Condition
-          const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          condText.setAttribute('x', badgeX);
-          condText.setAttribute('y', isMobile ? midY + 8 : midY + 9);
-          condText.setAttribute('text-anchor', 'middle');
-          condText.setAttribute('font-size', isMobile ? '8.5' : '9.5');
-          condText.setAttribute('font-weight', '700');
-          condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
-          
-          const parentShort = parentName ? (parentName.length > 12 ? parentName.substring(0, 11) + '…' : parentName) : '';
-          condText.textContent = isReplace 
-            ? (parentShort ? `🔄 מפתח: החלפת ${parentShort}` : '🔄 מפתח: החלפת מקור')
-            : (parentShort ? `🔴 חיזוק: מתווסף במקביל` : '🔴 חיזוק: מתווסף במקביל');
+        const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        condText.setAttribute('x', badgeX);
+        condText.setAttribute('y', isMobile ? midY + 8 : midY + 9);
+        condText.setAttribute('text-anchor', 'middle');
+        condText.setAttribute('font-size', isMobile ? '8' : '9');
+        condText.setAttribute('font-weight', '700');
+        condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
 
-          badgeGroup.appendChild(badgeBg);
-          badgeGroup.appendChild(timingText);
-          badgeGroup.appendChild(condText);
-          svgCanvas.appendChild(badgeGroup);
+        const parentShort = parentName ? (parentName.length > 12 ? parentName.substring(0, 11) + '…' : parentName) : '';
+        condText.textContent = isReplace 
+          ? (parentShort ? `🔄 החלפת ${parentShort}` : '🔄 החלפת מקור')
+          : '🔴 חיזוק: מתווסף במקביל';
+
+        badgeGroup.appendChild(badgeBg);
+        badgeGroup.appendChild(timingText);
+        badgeGroup.appendChild(condText);
+        svgCanvas.appendChild(badgeGroup);
       });
     });
   }

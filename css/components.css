@@ -2594,6 +2594,20 @@ html.light-theme .rest-timer {
   box-shadow: 0 0 6px var(--path-color, var(--accent-primary));
 }
 
+/* --- Nodes Track Spacer --- */
+.rpg-row-spacer {
+  height: 76px;
+  width: 100%;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+@media (max-width: 600px) {
+  .rpg-row-spacer {
+    height: 64px;
+  }
+}
+
 /* --- Level Row --- */
 .rpg-level-row {
   display: flex;
@@ -2649,7 +2663,7 @@ html.light-theme .rest-timer {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 2;
-  overflow: hidden;
+  overflow: visible;
   flex: 0 0 calc(50% - 8px);
   width: calc(50% - 8px);
   max-width: calc(50% - 8px);
