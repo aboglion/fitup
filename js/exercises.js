@@ -173,34 +173,34 @@ const ExercisesPage = (() => {
       {
         title: 'squat_lunge_tree', icon: '🏋️', exercises: [
           { name: 'Bodyweight Squat', unlockWeek: 1, id: 'squat-1' },
-          { name: 'DB Bulgarian Split Squat', unlockWeek: 1, parentId: 'squat-1', id: 'squat-2' },
-          { name: 'Reverse Lunge + DB', unlockWeek: 18, parentId: 'squat-2', id: 'squat-3' },
-          { name: 'DB BSS (Goblet)', unlockWeek: 34, parentId: 'squat-2', id: 'squat-3b' },
-          { name: 'Pistol Squat Progression', unlockWeek: 42, parentId: 'squat-3b', id: 'squat-4' },
-          { name: 'Walking Lunge (Goblet)', unlockWeek: 62, parentId: 'squat-4', id: 'squat-5' }
+          { name: 'DB Bulgarian Split Squat', unlockWeek: 1, parentId: 'squat-1', id: 'squat-2', relType: 'replace' },
+          { name: 'Reverse Lunge + DB', unlockWeek: 18, parentId: 'squat-2', id: 'squat-3', relType: 'replace' },
+          { name: 'DB BSS (Goblet)', unlockWeek: 34, parentId: 'squat-2', id: 'squat-3b', relType: 'replace' },
+          { name: 'Pistol Squat Progression', unlockWeek: 42, parentId: 'squat-3b', id: 'squat-4', relType: 'replace' },
+          { name: 'Walking Lunge (Goblet)', unlockWeek: 62, parentId: 'squat-4', id: 'squat-5', relType: 'replace' }
         ]
       },
       {
         title: 'hamstring_chain', icon: '🦵', exercises: [
           { name: 'DB Romanian Deadlift', unlockWeek: 1, id: 'rdl-1' },
-          { name: 'Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2' }
+          { name: 'Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2', relType: 'replace' }
         ]
       },
       {
         title: 'glutes_calves', icon: '🍑', exercises: [
           { name: 'Glute Bridge', unlockWeek: 1, id: 'glute-1' },
-          { name: 'DB Glute Bridge', unlockWeek: 1, parentId: 'glute-1', id: 'glute-2' },
-          { name: 'DB Hip Thrust', unlockWeek: 5, parentId: 'glute-2', id: 'glute-3' },
+          { name: 'DB Glute Bridge', unlockWeek: 1, parentId: 'glute-1', id: 'glute-2', relType: 'replace' },
+          { name: 'DB Hip Thrust', unlockWeek: 5, parentId: 'glute-2', id: 'glute-3', relType: 'replace' },
           { name: 'Standing Single-Leg Calf Raise', unlockWeek: 1, id: 'calf-1' },
-          { name: 'Seated Single-Leg Calf Raise', unlockWeek: 1, parentId: 'calf-1', id: 'calf-2' }
+          { name: 'Seated Single-Leg Calf Raise', unlockWeek: 1, parentId: 'calf-1', id: 'calf-2', relType: 'accessory' }
         ]
       },
       {
         title: 'core_citadel', icon: '🛡️', exercises: [
           { name: 'Dead Bug', unlockWeek: 1, id: 'core-1' },
-          { name: 'Hollow Body Hold', unlockWeek: 5, parentId: 'core-1', id: 'core-2' },
+          { name: 'Hollow Body Hold', unlockWeek: 5, parentId: 'core-1', id: 'core-2', relType: 'accessory' },
           { name: 'Suitcase Carry', unlockWeek: 1, id: 'carry-1' },
-          { name: 'Pallof Press Progression', unlockWeek: 10, parentId: 'carry-1', id: 'carry-2' }
+          { name: 'Pallof Press Progression', unlockWeek: 10, parentId: 'carry-1', id: 'carry-2', relType: 'accessory' }
         ]
       }
     ],
@@ -217,23 +217,23 @@ const ExercisesPage = (() => {
         title: 'push_tree', icon: '💥', exercises: [
           { name: 'Push-up Bars Progression', unlockWeek: 1, id: 'push-1' },
           { name: 'DB Floor Press', unlockWeek: 1, id: 'floor-1' },
-          { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol' },
-          { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up' },
-          { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a' },
-          { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b' },
-          { name: 'Single-Arm Floor Press', unlockWeek: 18, parentId: 'floor-1', id: 'floor-2' },
-          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3' }
+          { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol', relType: 'accessory' },
+          { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up', relType: 'accessory' },
+          { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a', relType: 'replace' },
+          { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b', relType: 'replace' },
+          { name: 'Single-Arm Floor Press', unlockWeek: 18, parentId: 'floor-1', id: 'floor-2', relType: 'replace' },
+          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3', relType: 'replace' }
         ]
       },
       {
         title: 'overhead_skill', icon: '🎯', exercises: [
           { name: 'Pike Progression', unlockWeek: 1, id: 'pike-1' },
           { name: 'Seated DB Overhead Press', unlockWeek: 1, id: 'ohp-1' },
-          { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2' },
-          { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3' },
-          { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4' },
-          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5' },
-          { name: 'Single-Arm Seated OHP', unlockWeek: 49, parentId: 'ohp-1', id: 'ohp-2' }
+          { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2', relType: 'replace' },
+          { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3', relType: 'replace' },
+          { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4', relType: 'replace' },
+          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5', relType: 'replace' },
+          { name: 'Single-Arm Seated OHP', unlockWeek: 49, parentId: 'ohp-1', id: 'ohp-2', relType: 'replace' }
         ]
       },
       {
@@ -241,8 +241,8 @@ const ExercisesPage = (() => {
           { name: 'DB Lateral Raise', unlockWeek: 1, id: 'lat-1' },
           { name: 'DB Overhead Triceps Extension', unlockWeek: 1, id: 'tri-1' },
           { name: 'TRX Y-T-W', unlockWeek: 1 },
-          { name: 'Arm Block - DB Lateral Raise', unlockWeek: 10, parentId: 'lat-1', id: 'lat-2' },
-          { name: 'Arm Block - DB Overhead Triceps Ext', unlockWeek: 10, parentId: 'tri-1', id: 'tri-2' }
+          { name: 'Arm Block - DB Lateral Raise', unlockWeek: 10, parentId: 'lat-1', id: 'lat-2', relType: 'accessory' },
+          { name: 'Arm Block - DB Overhead Triceps Ext', unlockWeek: 10, parentId: 'tri-1', id: 'tri-2', relType: 'accessory' }
         ]
       }
     ],
@@ -257,11 +257,11 @@ const ExercisesPage = (() => {
       {
         title: 'pullup_tree', icon: '🧗', exercises: [
           { name: 'Pull-Up Progression', unlockWeek: 1, id: 'pull-1' },
-          { name: 'Chin-Up Progression', unlockWeek: 5, parentId: 'pull-1', id: 'pull-1b' },
-          { name: 'Pull-Up (Overhand)', unlockWeek: 10, parentId: 'pull-1', id: 'pull-2a' },
-          { name: 'Chin-Up', unlockWeek: 10, parentId: 'pull-1b', id: 'pull-2b' },
-          { name: 'Weighted Pull-Up', unlockWeek: 62, parentId: 'pull-2a', id: 'pull-3a' },
-          { name: 'Weighted Chin-Up', unlockWeek: 66, parentId: 'pull-2b', id: 'pull-3b' }
+          { name: 'Chin-Up Progression', unlockWeek: 5, parentId: 'pull-1', id: 'pull-1b', relType: 'accessory' },
+          { name: 'Pull-Up (Overhand)', unlockWeek: 10, parentId: 'pull-1', id: 'pull-2a', relType: 'replace' },
+          { name: 'Chin-Up', unlockWeek: 10, parentId: 'pull-1b', id: 'pull-2b', relType: 'replace' },
+          { name: 'Weighted Pull-Up', unlockWeek: 62, parentId: 'pull-2a', id: 'pull-3a', relType: 'replace' },
+          { name: 'Weighted Chin-Up', unlockWeek: 66, parentId: 'pull-2b', id: 'pull-3b', relType: 'replace' }
         ]
       },
       {
@@ -275,17 +275,17 @@ const ExercisesPage = (() => {
       {
         title: 'biceps_grip', icon: '✊', exercises: [
           { name: 'DB Curl', unlockWeek: 1, id: 'curl-1' },
-          { name: 'Hammer Curl', unlockWeek: 5, parentId: 'curl-1', id: 'curl-2' },
-          { name: 'Arm Block - DB Curl', unlockWeek: 10, parentId: 'curl-1', id: 'curl-2b' },
-          { name: 'Single-Arm Curl', unlockWeek: 49, parentId: 'curl-2', id: 'curl-3' },
+          { name: 'Hammer Curl', unlockWeek: 5, parentId: 'curl-1', id: 'curl-2', relType: 'accessory' },
+          { name: 'Arm Block - DB Curl', unlockWeek: 10, parentId: 'curl-1', id: 'curl-2b', relType: 'accessory' },
+          { name: 'Single-Arm Curl', unlockWeek: 49, parentId: 'curl-2', id: 'curl-3', relType: 'replace' },
           { name: 'Towel Hang', unlockWeek: 1, id: 'towel-1' }
         ]
       },
       {
         title: 'hanging_core', icon: '🧱', exercises: [
           { name: 'L-Sit Progression', unlockWeek: 1, id: 'l-sit-progression' },
-          { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-progression', id: 'l-sit-2' },
-          { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3' }
+          { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-progression', id: 'l-sit-2', relType: 'replace' },
+          { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace' }
         ]
       }
     ],
@@ -666,6 +666,18 @@ const ExercisesPage = (() => {
           <span class="rpg-xp-text">${nextLevelText}</span>
         </div>
       </div>
+      <div class="rpg-tree-legend" style="display:flex; gap:14px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:14px; padding:10px 16px; background:rgba(15,23,42,0.7); border:1px solid rgba(255,255,255,0.12); border-radius:12px; backdrop-filter:blur(8px); width:100%;">
+        <div class="rpg-legend-item" style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary);">
+          <span style="display:inline-block; width:24px; height:3px; background:${tabColor}; box-shadow:0 0 6px ${tabColor}; border-radius:2px;"></span>
+          <span style="background:rgba(249,115,22,0.15); color:#fdba74; border:1px solid rgba(249,115,22,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">🔄 פיתוח & החלפה</span>
+          <span>(מחליף את התרגיל הקודם בתכנית)</span>
+        </div>
+        <div class="rpg-legend-item" style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary);">
+          <span style="display:inline-block; width:24px; height:0; border-top:2px dashed #06b6d4;"></span>
+          <span style="background:rgba(6,182,212,0.15); color:#67e8f9; border:1px solid rgba(6,182,212,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">➕ חיזוק & בידוד</span>
+          <span>(שני התרגילים מתקיימים במקביל)</span>
+        </div>
+      </div>
     `;
   }
 
@@ -753,6 +765,7 @@ const ExercisesPage = (() => {
             <div class="rpg-node ${stateClass} ${latestClass}" 
                  data-node-id="${node.id || node.name}"
                  data-parent-id="${node.parentId || ''}"
+                 data-rel-type="${node.relType || 'replace'}"
                  onclick="UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc || ''}')"
                  style="animation-delay: ${(pathIndex * 0.1) + (levelIndex * 0.08) + (nodeIdx * 0.05)}s">
               <div class="rpg-node-hex-wrap">
@@ -872,6 +885,9 @@ const ExercisesPage = (() => {
         const parentNode = pathEl.querySelector(`.rpg-node[data-node-id="${parentId}"]`);
         if (!parentNode) return;
 
+        const relType = childNode.getAttribute('data-rel-type') || 'replace';
+        const isReplace = relType === 'replace';
+
         const parentHex = parentNode.querySelector('.rpg-node-hex-wrap') || parentNode;
         const childHex = childNode.querySelector('.rpg-node-hex-wrap') || childNode;
 
@@ -904,14 +920,19 @@ const ExercisesPage = (() => {
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', dStr);
 
+        const strokeColor = isReplace ? tabColor : '#06b6d4';
+
         if (isActive) {
-          path.setAttribute('stroke', tabColor);
-          path.setAttribute('stroke-width', '3');
+          path.setAttribute('stroke', strokeColor);
+          path.setAttribute('stroke-width', isReplace ? '3.5' : '2.5');
+          if (!isReplace) {
+            path.setAttribute('stroke-dasharray', '6 4');
+          }
           path.setAttribute('fill', 'none');
-          path.setAttribute('class', 'rpg-svg-line active');
-          path.setAttribute('style', `filter: drop-shadow(0 0 6px ${tabColor}); opacity: 0.85;`);
+          path.setAttribute('class', `rpg-svg-line active ${relType}`);
+          path.setAttribute('style', `filter: drop-shadow(0 0 6px ${strokeColor}); opacity: 0.9;`);
         } else {
-          path.setAttribute('stroke', 'rgba(255, 255, 255, 0.18)');
+          path.setAttribute('stroke', 'rgba(255, 255, 255, 0.2)');
           path.setAttribute('stroke-width', '2');
           path.setAttribute('stroke-dasharray', '5 4');
           path.setAttribute('fill', 'none');
@@ -919,6 +940,39 @@ const ExercisesPage = (() => {
         }
 
         svgCanvas.appendChild(path);
+
+        // Add Floating Badge on the Connector Line
+        const midX = (x1 + x2) / 2;
+        const midY = (y1 + y2) / 2;
+
+        const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
+
+        const badgeWidth = isReplace ? 76 : 84;
+        const badgeHeight = 20;
+        const badgeBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        badgeBg.setAttribute('x', midX - badgeWidth / 2);
+        badgeBg.setAttribute('y', midY - badgeHeight / 2);
+        badgeBg.setAttribute('width', badgeWidth);
+        badgeBg.setAttribute('height', badgeHeight);
+        badgeBg.setAttribute('rx', 10);
+        badgeBg.setAttribute('ry', 10);
+        badgeBg.setAttribute('fill', isActive ? (isReplace ? 'rgba(15, 23, 42, 0.92)' : 'rgba(6, 182, 212, 0.25)') : 'rgba(15, 23, 42, 0.85)');
+        badgeBg.setAttribute('stroke', isActive ? strokeColor : 'rgba(255, 255, 255, 0.25)');
+        badgeBg.setAttribute('stroke-width', '1');
+
+        const badgeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        badgeText.setAttribute('x', midX);
+        badgeText.setAttribute('y', midY + 4);
+        badgeText.setAttribute('text-anchor', 'middle');
+        badgeText.setAttribute('font-size', '10');
+        badgeText.setAttribute('font-weight', 'bold');
+        badgeText.setAttribute('fill', isActive ? (isReplace ? '#fdba74' : '#67e8f9') : '#94a3b8');
+        badgeText.textContent = isReplace ? '🔄 פיתוח' : '➕ חיזוק';
+
+        badgeGroup.appendChild(badgeBg);
+        badgeGroup.appendChild(badgeText);
+        svgCanvas.appendChild(badgeGroup);
       });
     });
   }
