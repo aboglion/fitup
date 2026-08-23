@@ -3,19 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FitUp — תמונות ו-GIFs לכל שלבי הפרוגרסיה</title>
+<title>FitUp — השוואת נכס ויזואלי: מציאות נוכחית מול הצעה להחלפה</title>
 <style>
   :root {
-    --bg-main: #0f172a;
-    --bg-card: #1e293b;
-    --bg-card-hover: #334155;
+    --bg-main: #0b1329;
+    --bg-card: #151d36;
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
-    --accent-blue: #3b82f6;
-    --accent-purple: #a855f7;
-    --accent-green: #22c55e;
-    --accent-amber: #f59e0b;
-    --border-color: #334155;
+    
+    /* Blue theme for Current App Mapping */
+    --current-bg: #172554;
+    --current-border: #2563eb;
+    --current-badge: #3b82f6;
+    
+    /* Orange theme for Suggested Replacement */
+    --suggested-bg: #451a03;
+    --suggested-border: #ea580c;
+    --suggested-badge: #f97316;
+
+    --border-color: #2a365c;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -27,14 +33,14 @@
   }
   .header {
     text-align: center;
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto 24px;
   }
   h1 {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 900;
     margin-bottom: 8px;
-    background: linear-gradient(135deg, #3b82f6, #a855f7, #ec4899);
+    background: linear-gradient(135deg, #3b82f6, #f97316);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
@@ -42,31 +48,33 @@
     color: var(--text-muted);
     font-size: 15px;
   }
-  .stats-grid {
+  .legend-bar {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     justify-content: center;
-    flex-wrap: wrap;
     margin-bottom: 24px;
+    flex-wrap: wrap;
   }
-  .stat-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 12px 20px;
-    text-align: center;
-    min-width: 140px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
   }
-  .stat-card .num {
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--accent-blue);
+  .legend-current {
+    background: rgba(37, 99, 235, 0.2);
+    border: 2px solid var(--current-border);
+    color: #60a5fa;
   }
-  .stat-card .label {
-    font-size: 12px;
-    color: var(--text-muted);
+  .legend-suggested {
+    background: rgba(234, 88, 12, 0.2);
+    border: 2px solid var(--suggested-border);
+    color: #fb923c;
   }
+
   .filter-bar {
     display: flex;
     gap: 8px;
@@ -75,8 +83,8 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(8px);
+    background: rgba(11, 19, 41, 0.95);
+    backdrop-filter: blur(10px);
     padding: 12px 0;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 24px;
@@ -93,82 +101,112 @@
     transition: all 0.2s ease;
   }
   .filter-btn:hover, .filter-btn.active {
-    background: var(--accent-blue);
-    border-color: var(--accent-blue);
+    background: #2563eb;
+    border-color: #2563eb;
     color: #fff;
-    box-shadow: 0 0 12px rgba(59,130,246,0.4);
+    box-shadow: 0 0 12px rgba(37,99,235,0.4);
   }
+
   .prog-section {
-    margin-bottom: 32px;
+    margin-bottom: 36px;
   }
   .prog-title {
     font-size: 20px;
     font-weight: 800;
     margin-bottom: 16px;
-    padding: 10px 16px;
+    padding: 12px 18px;
     background: var(--bg-card);
-    border-radius: 12px;
-    border-right: 5px solid var(--accent-blue);
+    border-radius: 14px;
+    border-right: 5px solid #3b82f6;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-  .prog-title .badge-count {
-    font-size: 12px;
-    background: rgba(59,130,246,0.2);
-    color: var(--accent-blue);
-    padding: 3px 10px;
-    border-radius: 12px;
-    border: 1px solid rgba(59,130,246,0.4);
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-    gap: 16px;
-  }
-  .card {
+  .stage-comparison-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: 16px;
+    border-radius: 18px;
+    margin-bottom: 20px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-  }
-  .card:hover {
-    border-color: var(--accent-blue);
-    transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(0,0,0,0.3);
   }
-  .card-header {
-    padding: 12px 16px;
-    background: rgba(0,0,0,0.2);
+  .stage-header {
+    padding: 12px 18px;
+    background: rgba(0,0,0,0.3);
     border-bottom: 1px solid var(--border-color);
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
   }
-  .stage-num {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--accent-amber);
-    background: rgba(245,158,11,0.15);
-    padding: 2px 8px;
-    border-radius: 6px;
-    border: 1px solid rgba(245,158,11,0.3);
-  }
-  .stage-name {
-    font-size: 15px;
+  .stage-title {
+    font-size: 17px;
     font-weight: 800;
     color: #fff;
   }
-  .card-media {
-    display: flex;
-    height: 220px;
-    background: #fff;
-    position: relative;
+  .match-badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
   }
-  .media-col {
+  .match-needed {
+    background: rgba(234, 88, 12, 0.2);
+    color: #fb923c;
+    border: 1px solid #ea580c;
+  }
+  .match-ok {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+    border: 1px solid #22c55e;
+  }
+
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 900px) {
+    .comparison-grid { grid-template-columns: 1fr; }
+  }
+
+  /* BLUE COLUMN (CURRENT) */
+  .col-current {
+    background: var(--current-bg);
+    border-left: 2px solid var(--current-border);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ORANGE COLUMN (SUGGESTED) */
+  .col-suggested {
+    background: var(--suggested-bg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .col-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .col-current .col-header { color: #60a5fa; }
+  .col-suggested .col-header { color: #fb923c; }
+
+  .media-box {
+    display: flex;
+    gap: 12px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 8px;
+    height: 180px;
+  }
+  .media-item {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -176,187 +214,305 @@
     justify-content: center;
     position: relative;
     overflow: hidden;
-    padding: 8px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
   }
-  .media-col:first-child {
-    border-left: 1px solid #e2e8f0;
+  .media-item.gif-box {
+    background: #000000;
   }
-  .media-col img {
+  .media-item img {
     max-width: 100%;
-    max-height: 190px;
+    max-height: 140px;
     object-fit: contain;
   }
-  .type-tag {
+  .media-label {
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 4px;
+    left: 4px;
     font-size: 10px;
     font-weight: 800;
     padding: 2px 6px;
     border-radius: 4px;
     color: #fff;
-    z-index: 2;
   }
-  .tag-png { background: #3b82f6; }
-  .tag-gif { background: #a855f7; }
-  .asset-info {
-    padding: 12px 16px;
-    font-size: 12px;
-    background: var(--bg-card);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .path-box {
+  .col-current .media-label { background: var(--current-badge); }
+  .col-suggested .media-label { background: var(--suggested-badge); }
+
+  .path-info {
     font-family: monospace;
     font-size: 11px;
-    background: rgba(0,0,0,0.3);
-    padding: 4px 8px;
-    border-radius: 6px;
+    background: rgba(0,0,0,0.4);
+    padding: 6px 10px;
+    border-radius: 8px;
     direction: ltr;
     text-align: left;
-    color: var(--text-muted);
+    color: #e2e8f0;
     word-break: break-all;
   }
-  .asset-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-    width: max-content;
+
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 24px;
+    background: var(--bg-card);
+    border-radius: 14px;
+    overflow: hidden;
+    font-size: 13px;
   }
-  .status-unique { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
-  .status-alias { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
-  .err-label { color: #ef4444; font-size: 12px; font-weight: 700; display: none; }
+  .summary-table th, .summary-table td {
+    padding: 10px 14px;
+    text-align: right;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .summary-table th {
+    background: rgba(0,0,0,0.4);
+    color: var(--text-muted);
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .tag-blue { color: #60a5fa; font-weight: 700; }
+  .tag-orange { color: #fb923c; font-weight: 700; }
+  .err-msg { color: #ef4444; font-size: 11px; font-weight: 700; display: none; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>🏋️ FitUp — תצוגת כל התמונות וה-GIFs לכל מצבי התרגילים</h1>
-  <p class="subtitle">סקירה חזותית מלאה של כל תרגילי הפרוגרסיה והשלבים שלהם (Stages & Variations) באפליקציה</p>
+  <h1>🔍 FitUp — השוואת נכסים ויזואליים: נוכחי מול מוצע להחלפה</h1>
+  <p class="subtitle">השוואה שורה-אחרי-שורה בין מה שמוצג כרגע באפליקציה (ברקע כחול) לבין הקובץ המדויק ביותר שנמצא בדיסק (ברקע כתום)</p>
 </div>
 
-<div class="stats-grid" id="statsGrid"></div>
+<div class="legend-bar">
+  <div class="legend-item legend-current">
+    <span>🟦 מה שמוצג כרגע באפליקציה (רקע כחול)</span>
+  </div>
+  <div class="legend-item legend-suggested">
+    <span>🟧 המוצע להחלפה מהקבצים הקיימים בדיסק (רקע כתום)</span>
+  </div>
+</div>
+
 <div class="filter-bar" id="filterBar"></div>
 <div id="contentContainer"></div>
 
+<h2 style="margin: 40px 0 16px; font-size: 20px; text-align: center; color: #fb923c;">📋 טבלת סיכום שינויים מומלצים למציאות (Mapping Action Plan)</h2>
+<div style="overflow-x: auto;">
+  <table class="summary-table" id="summaryTable">
+    <thead>
+      <tr>
+        <th>תרגיל ושלב</th>
+        <th>תמונה נוכחית (כחול)</th>
+        <th>תמונה מוצעת (כתום)</th>
+        <th>GIF נוכחי (כחול)</th>
+        <th>GIF מוצע (כתום)</th>
+        <th>הערת התאמה</th>
+      </tr>
+    </thead>
+    <tbody id="summaryTbody"></tbody>
+  </table>
+</div>
+
 <script>
-// EXERCISE PROGRESSION STAGES CATALOG
-const PROGRESSION_CATALOG = [
+const COMPARISON_DATA = [
   {
     masterName: "L-Sit Progression",
-    category: "Core / Hanging Core",
     stages: [
-      { stageNum: 1, name: "Tuck Hold (Chair)", png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif", type: "alias", note: "שימוש ב-GIF מרכזי לתמיכת כיסא" },
-      { stageNum: 2, name: "Tuck Hold (Bars)", png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif", type: "unique", note: "החזקה מלאה על מקבילים" },
-      { stageNum: 3, name: "One Leg Extended", png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif", type: "alias", note: "החזקת רגל אחת פשוטה" },
-      { stageNum: 4, name: "Full L-Sit", png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif", type: "alias", note: "החזקה מלאה עם 2 רגליים ישרות" }
+      {
+        stageName: "Stage 1: Tuck Hold (Chair)",
+        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
+        suggested: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-sit on Chair.gif" },
+        note: "נמצא GIF מדויק לתמיכת כיסא (L-sit on Chair.gif)!"
+      },
+      {
+        stageName: "Stage 2: Tuck Hold (Bars)",
+        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
+        suggested: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
+        note: "תואם ב-100% (מקבילים/ידיות)"
+      },
+      {
+        stageName: "Stage 3: One Leg Extended",
+        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
+        suggested: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-Sit Progression.gif" },
+        note: "החלפה לתמונת ו-GIF הפרוגרסיה המתקדמת"
+      },
+      {
+        stageName: "Stage 4: Full L-Sit",
+        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
+        suggested: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-Sit Progression.gif" },
+        note: "החלפה לתמונת ו-GIF הפרוגרסיה המלאה"
+      }
     ]
   },
   {
     masterName: "Pull-Up Progression",
-    category: "Pull / Upper Back",
     stages: [
-      { stageNum: 1, name: "Scapular Pull-Up", png: "images/exercises/SCAPULAR PULL-UP.png", gif: "images/gifs/Pull-up (Overhand).gif", type: "unique", note: "תרגיל מקדים לשכמות" },
-      { stageNum: 2, name: "Pull-Up Negative (3s)", png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-Up Negative.gif", type: "unique", note: "ירידה שלילית מבוקרת 3 שניות" },
-      { stageNum: 3, name: "Pull-Up Negative (5s)", png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-Up Negative.gif", type: "unique", note: "ירידה שלילית מבוקרת 5 שניות" },
-      { stageNum: 4, name: "Full Pull-Up", png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-up (Overhand).gif", type: "unique", note: "עליות מתח מלאות במשקל גוף" },
-      { stageNum: 5, name: "Weighted Pull-Up", png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Weighted Pull-Up.gif", type: "unique", note: "עליות מתח עם וסט משקולות" }
+      {
+        stageName: "Stage 1: Scapular Pull-Up",
+        current: { png: "images/exercises/SCAPULAR PULL-UP.png", gif: "images/gifs/Pull-up (Overhand).gif" },
+        suggested: { png: "images/exercises/SCAPULAR PULL-UP.png", gif: "images/gifs/Scapular Pull-up.gif" },
+        note: "נמצא GIF ייעודי לעליות שכמות (Scapular Pull-up.gif)"
+      },
+      {
+        stageName: "Stage 2: Pull-Up Negative (3s / 5s)",
+        current: { png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-up (Overhand).gif" },
+        suggested: { png: "images/exercises/PULL-UP NEGATIVE.png", gif: "images/gifs/Pull-Up Negative.gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים למתח שלילי (Pull-Up Negative)"
+      },
+      {
+        stageName: "Stage 3: Full Pull-Up",
+        current: { png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-up (Overhand).gif" },
+        suggested: { png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-Up (Overhand).gif" },
+        note: "תואם ב-100%"
+      },
+      {
+        stageName: "Stage 4: Weighted Pull-Up",
+        current: { png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Pull-up (Overhand).gif" },
+        suggested: { png: "images/exercises/WEIGHTED PULL-UP.png", gif: "images/gifs/Weighted Pull-Up.gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים למתח עם וסט (Weighted Pull-Up)"
+      }
     ]
   },
   {
     masterName: "Chin-Up Progression",
-    category: "Pull / Biceps",
     stages: [
-      { stageNum: 1, name: "Chin-Up Negative (3s)", png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Chin-up Negative.gif", type: "unique", note: "מתח שלילי באחיזה הפוכה" },
-      { stageNum: 2, name: "Full Chin-Up", png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Chin-up.gif", type: "unique", note: "עליות מתח מלאות באחיזה הפוכה" },
-      { stageNum: 3, name: "Weighted Chin-Up", png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Weighted Chin-Up.gif", type: "unique", note: "מתח באחיזה הפוכה עם משקל" }
+      {
+        stageName: "Stage 1: Chin-Up Negative (3s)",
+        current: { png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Chin-up.gif" },
+        suggested: { png: "images/exercises/CHIN-UP NEGATIVE.png", gif: "images/gifs/Chin-up Negative.gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים למתח אחיזה הפוכה שלילי (Chin-up Negative)"
+      },
+      {
+        stageName: "Stage 2: Full Chin-Up",
+        current: { png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Chin-up.gif" },
+        suggested: { png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Chin-Up.gif" },
+        note: "תואם ב-100%"
+      },
+      {
+        stageName: "Stage 3: Weighted Chin-Up",
+        current: { png: "images/exercises/CHIN-UP.png", gif: "images/gifs/Chin-up.gif" },
+        suggested: { png: "images/exercises/WEIGHTED CHIN-UP.png", gif: "images/gifs/Weighted Chin-Up.gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים למתח אחיזה הפוכה עם וסט (Weighted Chin-Up)"
+      }
     ]
   },
   {
     masterName: "Pike Progression",
-    category: "Push / Shoulders",
     stages: [
-      { stageNum: 1, name: "Pike Hold", png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif", type: "unique", note: "החזקה סטטית במנח V על הרצפה" },
-      { stageNum: 2, name: "Feet-Elevated Pike Hold", png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif", type: "alias", note: "החזקה סטטית ברגליים מוגבהות" },
-      { stageNum: 3, name: "Pike Push-Up", png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif", type: "alias", note: "שכיבות סמיכה בשיפוע כתפיים" },
-      { stageNum: 4, name: "Elevated Pike Push-Up", png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Elevated Pike Push-up.gif", type: "unique", note: "שכיבות סמיכה כתפיים ברגליים מוגבהות" }
+      {
+        stageName: "Stage 1: Pike Hold",
+        current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
+        suggested: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
+        note: "תואם ב-100%"
+      },
+      {
+        stageName: "Stage 2: Feet-Elevated Pike Hold",
+        current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
+        suggested: { png: "images/exercises/FEET-ELEVATED PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
+        note: "נמצא PNG ייעודי לפייק מוגבה (FEET-ELEVATED PIKE HOLD.png)"
+      },
+      {
+        stageName: "Stage 3: Pike Push-Up",
+        current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
+        suggested: { png: "images/exercises/PIKE PUSH-UP.png", gif: "images/gifs/Pike Push-up.gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים לשכיבות סמיכה פייק (Pike Push-up)"
+      },
+      {
+        stageName: "Stage 4: Elevated Pike Push-Up",
+        current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
+        suggested: { png: "images/exercises/ELEVATED PIKE PUSH-UP.png", gif: "images/gifs/Elevated Pike Push-Up.gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים לפייק מוגבה בתנועה (Elevated Pike Push-Up)"
+      }
     ]
   },
   {
     masterName: "Push-Up Bars Progression",
-    category: "Push / Chest & Triceps",
     stages: [
-      { stageNum: 1, name: "Incline Push-Up", png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif", type: "alias", note: "שכיבות סמיכה בשיפוע חיובי" },
-      { stageNum: 2, name: "Push-Up", png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif", type: "unique", note: "שכיבות סמיכה רגילות" },
-      { stageNum: 3, name: "Deficit Push-Up", png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up Bars Progression.gif", type: "unique", note: "שכיבות סמיכה עמוקות בין ידיות" },
-      { stageNum: 4, name: "Weighted Deficit Push-Up", png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Weighted Deficit Push-Up.gif", type: "unique", note: "שכיבות סמיכה עמוקות עם וסט משקולות" }
+      {
+        stageName: "Stage 1: Incline Push-Up",
+        current: { png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif" },
+        suggested: { png: "images/exercises/INCLINE PUSH-UP.png", gif: "images/gifs/Push-up.gif" },
+        note: "נמצא PNG ייעודי לשכיבות סמיכה בשיפוע (INCLINE PUSH-UP.png)"
+      },
+      {
+        stageName: "Stage 2: Push-Up",
+        current: { png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif" },
+        suggested: { png: "images/exercises/PUSH-UP.png", gif: "images/gifs/Push-up.gif" },
+        note: "תואם ב-100%"
+      },
+      {
+        stageName: "Stage 3: Deficit Push-Up",
+        current: { png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif" },
+        suggested: { png: "images/exercises/DEFICIT PUSH-UP.png", gif: "images/gifs/Deficit Push-Up.gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים לשכיבות סמיכה עמוקות (Deficit Push-Up)"
+      },
+      {
+        stageName: "Stage 4: Weighted Deficit Push-Up",
+        current: { png: "images/exercises/PUSH-UP (BARS).png", gif: "images/gifs/Push-up.gif" },
+        suggested: { png: "images/exercises/WEIGHTED DEFICIT PUSH-UP.png", gif: "images/gifs/Weighted Deficit Push-Up.gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים לשכיבות סמיכה עמוקות עם וסט"
+      }
     ]
   },
   {
     masterName: "Pistol Squat Progression",
-    category: "Legs / Quads & Glutes",
     stages: [
-      { stageNum: 1, name: "Assisted / Chair Pistol", png: "images/exercises/PISTOL SQUAT TO CHAIR.png", gif: "images/gifs/Pistol Squat to Chair.gif", type: "unique", note: "סקווט רגל אחת לכיסא/עם תמיכה" },
-      { stageNum: 2, name: "Pistol to Low Box", png: "images/exercises/PISTOL SQUAT TO CHAIR.png", gif: "images/gifs/Pistol Squat to Chair.gif", type: "alias", note: "סקווט רגל אחת לקופסה נמוכה" },
-      { stageNum: 3, name: "Full Pistol Squat", png: "images/exercises/PISTOL SQUAT TO CHAIR.png", gif: "images/gifs/Pistol Squat to Chair.gif", type: "alias", note: "סקווט מלא חופשי על רגל אחת" }
+      {
+        stageName: "Stage 1: Assisted / Chair Pistol",
+        current: { png: "images/exercises/PISTOL SQUAT TO CHAIR.png", gif: "images/gifs/Pistol Squat to Chair.gif" },
+        suggested: { png: "images/exercises/PISTOL SQUAT TO CHAIR.png", gif: "images/gifs/Pistol Squat to Chair.gif" },
+        note: "תואם ב-100%"
+      },
+      {
+        stageName: "Stage 2: Full Pistol Squat",
+        current: { png: "images/exercises/PISTOL SQUAT TO CHAIR.png", gif: "images/gifs/Pistol Squat to Chair.gif" },
+        suggested: { png: "images/exercises/PISTOL SQUAT PROGRESSION.png", gif: "images/gifs/Pistol Squat Progression.gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים לסרגל סקווט רגל אחת מלא"
+      }
     ]
   },
   {
     masterName: "Pallof Press Progression",
-    category: "Core / Anti-Rotation",
     stages: [
-      { stageNum: 1, name: "Pallof Hold (2h, 30kg)", png: "images/exercises/PALLOF PRESS.png", gif: "images/gifs/Pallof Press (Band).gif", type: "unique", note: "החזקה סטטית עם גומייה" },
-      { stageNum: 2, name: "Pallof Press (2h, 30kg)", png: "images/exercises/PALLOF PRESS.png", gif: "images/gifs/Pallof Press (Band).gif", type: "unique", note: "לחיצה והרחקה בשתי ידיים" },
-      { stageNum: 3, name: "Single-Arm (30kg-50kg)", png: "images/exercises/PALLOF PRESS.png", gif: "images/gifs/Pallof Press (Band).gif", type: "alias", note: "לחיצה חד-צדדית בעומס מתקדם" }
+      {
+        stageName: "Stage 1: Pallof Hold",
+        current: { png: "images/exercises/PALLOF PRESS.png", gif: "images/gifs/Pallof Press (Band).gif" },
+        suggested: { png: "images/exercises/PALLOF HOLD.png", gif: "images/gifs/Pallof Press (Band).gif" },
+        note: "נמצא PNG ייעודי להחזקה סטטית (PALLOF HOLD.png)"
+      },
+      {
+        stageName: "Stage 2: Pallof Press",
+        current: { png: "images/exercises/PALLOF PRESS.png", gif: "images/gifs/Pallof Press (Band).gif" },
+        suggested: { png: "images/exercises/PALLOF PRESS.png", gif: "images/gifs/Pallof Press (Band).gif" },
+        note: "תואם ב-100%"
+      }
     ]
   },
   {
-    masterName: "TRX Row / Face Pull Progressions",
-    category: "Pull / Rear Delts & Back",
+    masterName: "TRX Face Pull Progression",
     stages: [
-      { stageNum: 1, name: "TRX Row (Angle 1-3)", png: "images/exercises/TRX ROW.png", gif: "images/gifs/TRX Row.gif", type: "unique", note: "חתירה בזוויות שונות" },
-      { stageNum: 2, name: "TRX Row (Feet Elevated)", png: "images/exercises/TRX ROW.png", gif: "images/gifs/TRX Row.gif", type: "alias", note: "חתירה ברגליים מוגבהות" },
-      { stageNum: 3, name: "TRX Face Pull (Angle 1-3)", png: "images/exercises/TRX FACE PULL.png", gif: "images/gifs/TRX Face Pull.gif", type: "unique", note: "פייס פול בזוויות שונות" }
+      {
+        stageName: "Stage 1: Angle 1 (Gentle)",
+        current: { png: "images/exercises/TRX FACE PULL.png", gif: "images/gifs/TRX Face Pull.gif" },
+        suggested: { png: "images/exercises/TRX FACE PULL (ANGLE 1).png", gif: "images/gifs/TRX Face Pull (Angle 1).gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים מזווית 1"
+      },
+      {
+        stageName: "Stage 2: Angle 2 (Moderate)",
+        current: { png: "images/exercises/TRX FACE PULL.png", gif: "images/gifs/TRX Face Pull.gif" },
+        suggested: { png: "images/exercises/TRX FACE PULL (ANGLE 2).png", gif: "images/gifs/TRX Face Pull (Angle 2).gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים מזווית 2"
+      },
+      {
+        stageName: "Stage 3: Angle 3 (Steep)",
+        current: { png: "images/exercises/TRX FACE PULL.png", gif: "images/gifs/TRX Face Pull.gif" },
+        suggested: { png: "images/exercises/TRX FACE PULL (ANGLE 3).png", gif: "images/gifs/TRX Face Pull (Angle 3).gif" },
+        note: "נמצאו PNG ו-GIF ייעודיים מזווית 3"
+      }
     ]
   }
 ];
 
-// Calculate total statistics
-let totalProgressions = PROGRESSION_CATALOG.length;
-let totalStages = 0;
-let uniqueGifsCount = 0;
-
-PROGRESSION_CATALOG.forEach(p => {
-  totalStages += p.stages.length;
-  p.stages.forEach(s => { if (s.type === 'unique') uniqueGifsCount++; });
-});
-
-document.getElementById('statsGrid').innerHTML = `
-  <div class="stat-card">
-    <div class="num">${totalProgressions}</div>
-    <div class="label">תרגילי פרוגרסיה ראשיים</div>
-  </div>
-  <div class="stat-card">
-    <div class="num">${totalStages}</div>
-    <div class="label">סה״כ שלבים ותתי-מצבים</div>
-  </div>
-  <div class="stat-card">
-    <div class="num" style="color: #a855f7;">${uniqueGifsCount}</div>
-    <div class="label">GIFs ייחודיים לשלב</div>
-  </div>
-  <div class="stat-card">
-    <div class="num" style="color: #f59e0b;">${totalStages - uniqueGifsCount}</div>
-    <div class="label">GIFs במיפוי משפחתי (Alias)</div>
-  </div>
-`;
-
-// Filter buttons
-const categories = ['הכל', ...PROGRESSION_CATALOG.map(p => p.masterName)];
+// Filter setup
+const categories = ['הכל', ...COMPARISON_DATA.map(p => p.masterName)];
 document.getElementById('filterBar').innerHTML = categories.map((cat, i) => `
   <button class="filter-btn ${i === 0 ? 'active' : ''}" onclick="filterCategory('${cat}', this)">${cat}</button>
 `).join('');
@@ -366,70 +522,107 @@ function filterCategory(cat, btn) {
   btn.classList.add('active');
 
   const filtered = cat === 'הכל' 
-    ? PROGRESSION_CATALOG 
-    : PROGRESSION_CATALOG.filter(p => p.masterName === cat);
+    ? COMPARISON_DATA 
+    : COMPARISON_DATA.filter(p => p.masterName === cat);
     
   render(filtered);
 }
 
 function render(catalog) {
   let html = '';
+  let tbodyHtml = '';
 
   catalog.forEach(prog => {
     html += `
       <div class="prog-section">
         <div class="prog-title">
-          <span>🎯 ${prog.masterName} <small style="font-size:13px; font-weight:normal; color:#94a3b8; margin-right:8px;">(${prog.category})</small></span>
-          <span class="badge-count">${prog.stages.length} שלבים</span>
+          <span>🎯 ${prog.masterName}</span>
+          <span style="font-size:13px; color:#94a3b8;">${prog.stages.length} שלבים להשוואה</span>
         </div>
-        <div class="grid">
     `;
 
     prog.stages.forEach(stage => {
-      const isUnique = stage.type === 'unique';
+      const isDifferent = (stage.current.png !== stage.suggested.png) || (stage.current.gif !== stage.suggested.gif);
+
+      tbodyHtml += `
+        <tr>
+          <td><b>${prog.masterName}</b><br><small style="color:#94a3b8;">${stage.stageName}</small></td>
+          <td class="tag-blue">${stage.current.png.replace('images/exercises/', '')}</td>
+          <td class="tag-orange">${stage.suggested.png.replace('images/exercises/', '')}</td>
+          <td class="tag-blue">${stage.current.gif.replace('images/gifs/', '')}</td>
+          <td class="tag-orange">${stage.suggested.gif.replace('images/gifs/', '')}</td>
+          <td>${isDifferent ? '<span style="color:#fb923c; font-weight:700;">✨ מומלץ להחליף</span>' : '<span style="color:#4ade80;">✅ תואם</span>'} — ${stage.note}</td>
+        </tr>
+      `;
+
       html += `
-        <div class="card">
-          <div class="card-header">
-            <span class="stage-name">${stage.name}</span>
-            <span class="stage-num">שלב ${stage.stageNum}</span>
+        <div class="stage-comparison-card">
+          <div class="stage-header">
+            <span class="stage-title">${stage.stageName}</span>
+            <span class="match-badge ${isDifferent ? 'match-needed' : 'match-ok'}">
+              ${isDifferent ? '⚡ מוצעת החלפה מביקורת בדיסק' : '✅ תואם כרגע באפליקציה'}
+            </span>
           </div>
-          <div class="card-media">
-            <div class="media-col">
-              <span class="type-tag tag-png">PNG</span>
-              <img src="${stage.png}" alt="${stage.name} PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-              <div class="err-label">❌ PNG חסר</div>
+          
+          <div class="comparison-grid">
+            <!-- CURRENT (BLUE) -->
+            <div class="col-current">
+              <div class="col-header">
+                <span>🟦 מה שמוצג כרגע באפליקציה</span>
+                <span>(Current Mapping)</span>
+              </div>
+              <div class="media-box">
+                <div class="media-item">
+                  <span class="media-label">PNG</span>
+                  <img src="${stage.current.png}" alt="Current PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                  <div class="err-msg">❌ חסר</div>
+                </div>
+                <div class="media-item gif-box">
+                  <span class="media-label">GIF</span>
+                  <img src="${stage.current.gif}" alt="Current GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                  <div class="err-msg">❌ חסר</div>
+                </div>
+              </div>
+              <div class="path-info">📷 PNG: ${stage.current.png}</div>
+              <div class="path-info">🎬 GIF: ${stage.current.gif}</div>
             </div>
-            <div class="media-col" style="background:#000;">
-              <span class="type-tag tag-gif">GIF</span>
-              <img src="${stage.gif}" alt="${stage.name} GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-              <div class="err-label">❌ GIF חסר</div>
+
+            <!-- SUGGESTED (ORANGE) -->
+            <div class="col-suggested">
+              <div class="col-header">
+                <span>🟧 המוצע להחלפה (קובץ מדויק בדיסק)</span>
+                <span>(Suggested Replacement)</span>
+              </div>
+              <div class="media-box">
+                <div class="media-item">
+                  <span class="media-label">PNG</span>
+                  <img src="${stage.suggested.png}" alt="Suggested PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                  <div class="err-msg">❌ חסר</div>
+                </div>
+                <div class="media-item gif-box">
+                  <span class="media-label">GIF</span>
+                  <img src="${stage.suggested.gif}" alt="Suggested GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                  <div class="err-msg">❌ חסר</div>
+                </div>
+              </div>
+              <div class="path-info">📷 PNG: ${stage.suggested.png}</div>
+              <div class="path-info">🎬 GIF: ${stage.suggested.gif}</div>
             </div>
           </div>
-          <div class="asset-info">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="asset-status ${isUnique ? 'status-unique' : 'status-alias'}">
-                ${isUnique ? '✨ GIF ייחודי לשלב' : '🔗 GIF ממופה (Alias משפחתי)'}
-              </span>
-              <span style="font-size:11px; color:#94a3b8;">${stage.note}</span>
-            </div>
-            <div class="path-box">📷 PNG: ${stage.png}</div>
-            <div class="path-box">🎬 GIF: ${stage.gif}</div>
-          </div>
+
         </div>
       `;
     });
 
-    html += `
-        </div>
-      </div>
-    `;
+    html += `</div>`;
   });
 
   document.getElementById('contentContainer').innerHTML = html;
+  document.getElementById('summaryTbody').innerHTML = tbodyHtml;
 }
 
-// Initial Render
-render(PROGRESSION_CATALOG);
+// Initial render
+render(COMPARISON_DATA);
 </script>
 
 </body>
