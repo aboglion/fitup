@@ -760,13 +760,14 @@ const ExercisesPage = (() => {
           const isUnlocked = currentWeek >= node.unlockWeek;
           const stateClass = isUnlocked ? 'unlocked' : 'locked';
           const latestClass = isLatestUnlock && isUnlocked ? 'latest' : '';
+          const sideClass = hasParallel ? (nodeIdx === 0 ? 'node-side-right' : 'node-side-left') : 'node-center';
           const imgSrc = node.noImage ? null : `images/exercises/${node.name.replace(/\//g, '-').toUpperCase()}.png`;
           const equip = UI.getEquipment(node.name);
           const gifPath = `images/gifs/${node.name}.gif`;
           const videoBtn = UI.hasGif(node.name) ? `<button type="button" class="rpg-video-btn" title="${I18n.t('view_gif_title')}" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${gifPath}')">▶</button>` : '';
 
           html += `
-            <div class="rpg-node ${stateClass} ${latestClass}" 
+            <div class="rpg-node ${stateClass} ${latestClass} ${sideClass}" 
                  data-node-id="${node.id || node.name}"
                  data-parent-id="${node.parentId || ''}"
                  data-rel-type="${node.relType || 'replace'}"
@@ -913,26 +914,55 @@ const ExercisesPage = (() => {
         const parentHex = parentNode.querySelector('.rpg-node-hex-wrap') || parentNode;
         const childHex = childNode.querySelector('.rpg-node-hex-wrap') || childNode;
 
-        const parentRect = parentHex.getBoundingClientRect();
-        const childRect = childHex.getBoundingClientRect();
+        const pRect = parentHex.getBoundingClientRect();
+        const cRect = childHex.getBoundingClientRect();
 
-        const isSameRow = Math.abs(parentRect.top - childRect.top) < 40;
-        let x1, y1, x2, y2, dStr;
+        const pLeft = pRect.left - pathRect.left;
+        const pRight = pRect.right - pathRect.left;
+        const pTop = pRect.top - pathRect.top;
+        const pBottom = pRect.bottom - pathRect.top;
+        const pCenterX = (pLeft + pRight) / 2;
+
+        const cLeft = cRect.left - pathRect.left;
+        const cRight = cRect.right - pathRect.left;
+        const cTop = cRect.top - pathRect.top;
+        const cBottom = cRect.bottom - pathRect.top;
+        const cCenterX = (cLeft + cRight) / 2;
+
+        const isSameRow = Math.abs(pTop - cTop) < 40;
+        let dStr, midX, midY;
 
         if (isSameRow) {
-          x1 = parentRect.right - pathRect.left;
-          y1 = parentRect.top + parentRect.height / 2 - pathRect.top;
-          x2 = childRect.left - pathRect.left;
-          y2 = childRect.top + childRect.height / 2 - pathRect.top;
-          const dx = Math.max(Math.abs(x2 - x1) * 0.4, 15);
-          dStr = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+          // Connect across the central gap between two cards in the same row
+          const startX = pLeft < cLeft ? pRight : pLeft;
+          const endX = pLeft < cLeft ? cLeft : cRight;
+          midX = (startX + endX) / 2;
+          midY = pTop + pRect.height / 2;
+          dStr = `M ${startX} ${midY} L ${endX} ${midY}`;
         } else {
-          x1 = parentRect.left + parentRect.width / 2 - pathRect.left;
-          y1 = parentRect.bottom - pathRect.top;
-          x2 = childRect.left + childRect.width / 2 - pathRect.left;
-          y2 = childRect.top - pathRect.top;
-          const dy = Math.max(Math.abs(y2 - y1) * 0.45, 15);
-          dStr = `M ${x1} ${y1} C ${x1} ${y1 + dy}, ${x2} ${y2 - dy}, ${x2} ${y2}`;
+          // Route vertically through Dedicated Central Highway or Side Gutters
+          const centerChannelX = pathRect.width / 2;
+          let channelX = centerChannelX;
+
+          if (pCenterX < centerChannelX - 20 && cCenterX < centerChannelX - 20) {
+            channelX = Math.min(pLeft, cLeft) - 14;
+            if (channelX < 10) channelX = 10;
+          } else if (pCenterX > centerChannelX + 20 && cCenterX > centerChannelX + 20) {
+            channelX = Math.max(pRight, cRight) + 14;
+            if (channelX > pathRect.width - 10) channelX = pathRect.width - 10;
+          }
+
+          const startX = pCenterX;
+          const startY = pBottom;
+          const endX = cCenterX;
+          const endY = cTop;
+          midY = (startY + endY) / 2;
+          midX = channelX;
+
+          dStr = `M ${startX} ${startY} 
+                  C ${startX} ${startY + 18}, ${channelX} ${startY + 18}, ${channelX} ${startY + 30} 
+                  L ${channelX} ${endY - 30} 
+                  C ${channelX} ${endY - 18}, ${endX} ${endY - 18}, ${endX} ${endY}`;
         }
 
         const isParentUnlocked = parentNode.classList.contains('unlocked');
@@ -960,15 +990,12 @@ const ExercisesPage = (() => {
 
         svgCanvas.appendChild(path);
 
-        // Add Floating Badge with Unlock Timing & Conditions
-        const midX = (x1 + x2) / 2;
-        const midY = (y1 + y2) / 2;
-
+        // Add Floating Badge with Unlock Timing & Conditions centered in the Channel
         const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
 
-        const badgeWidth = 148;
-        const badgeHeight = 36;
+        const badgeWidth = 146;
+        const badgeHeight = 34;
         const badgeBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         badgeBg.setAttribute('x', midX - badgeWidth / 2);
         badgeBg.setAttribute('y', midY - badgeHeight / 2);
@@ -976,10 +1003,10 @@ const ExercisesPage = (() => {
         badgeBg.setAttribute('height', badgeHeight);
         badgeBg.setAttribute('rx', 10);
         badgeBg.setAttribute('ry', 10);
-        badgeBg.setAttribute('fill', isActive ? 'rgba(15, 23, 42, 0.95)' : 'rgba(15, 23, 42, 0.85)');
+        badgeBg.setAttribute('fill', isActive ? 'rgba(15, 23, 42, 0.96)' : 'rgba(15, 23, 42, 0.88)');
         badgeBg.setAttribute('stroke', isActive ? strokeColor : 'rgba(255, 255, 255, 0.25)');
         badgeBg.setAttribute('stroke-width', '1.5');
-        badgeBg.setAttribute('style', `box-shadow: 0 4px 12px rgba(0,0,0,0.5);`);
+        badgeBg.setAttribute('style', `box-shadow: 0 4px 12px rgba(0,0,0,0.6);`);
 
         // Text Line 1: Timing (Unlock Week)
         const timingText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
@@ -994,7 +1021,7 @@ const ExercisesPage = (() => {
         // Text Line 2: Requirement & Condition
         const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         condText.setAttribute('x', midX);
-        condText.setAttribute('y', midY + 10);
+        condText.setAttribute('y', midY + 9);
         condText.setAttribute('text-anchor', 'middle');
         condText.setAttribute('font-size', '9.5');
         condText.setAttribute('font-weight', '700');

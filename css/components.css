@@ -2599,7 +2599,25 @@ html.light-theme .rest-timer {
 }
 
 .rpg-level-row.parallel {
-  flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+  gap: 28px;
+  width: 100%;
+}
+
+/* Outer Hex positioning: Hex image on outer edges, info facing center channel */
+.rpg-node.node-side-right {
+  flex-direction: row;
+  text-align: right;
+}
+
+.rpg-node.node-side-left {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.rpg-node.node-side-left .rpg-node-info {
+  align-items: flex-start;
 }
 
 /* --- RPG Node --- */
