@@ -2630,8 +2630,8 @@ html.light-theme .rest-timer {
 
 .rpg-node.node-center {
   margin: 0 auto;
-  flex: 0 0 calc(50% - 8px);
-  max-width: calc(50% - 8px);
+  flex: 0 0 75%;
+  max-width: 75%;
 }
 
 /* --- RPG Node --- */
@@ -2667,6 +2667,11 @@ html.light-theme .rest-timer {
     padding: 6px 8px;
     gap: 6px;
     border-radius: 12px;
+  }
+  .rpg-node.node-center {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
   }
   .rpg-node-hex-wrap {
     width: 44px !important;
@@ -3357,11 +3362,18 @@ html[dir="rtl"] .rpg-video-btn {
   }
 
   .rpg-node {
-    min-width: 100%;
-    max-width: 100%;
+    flex: 0 0 calc(50% - 4px);
+    width: calc(50% - 4px);
+    max-width: calc(50% - 4px);
     padding: 10px 12px;
     gap: 12px;
     border-radius: 12px;
+  }
+
+  .rpg-node.node-center {
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
   }
 
   .rpg-node-hex-wrap {
@@ -3387,8 +3399,7 @@ html[dir="rtl"] .rpg-video-btn {
   }
 
   .rpg-level-row.parallel {
-    flex-direction: column;
-    align-items: center;
+    /* Kept as row to preserve the branching tree layout on mobile */
     gap: 8px;
   }
 
