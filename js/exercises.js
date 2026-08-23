@@ -915,17 +915,14 @@ const ExercisesPage = (() => {
         const cCenterX = (cNodeLeft + cNodeRight) / 2;
 
         const isSameRow = Math.abs(pNodeTop - cNodeTop) < 40;
+        
+        // If exercises are on the same level (row), they are parallel options.
+        // We do not draw relationship arrows between them.
+        if (isSameRow) return;
+
         let dStr, midX, midY;
 
-        if (isSameRow) {
-          // Connect across central gap between cards in the same row
-          const startX = pNodeLeft < cNodeLeft ? pNodeRight : pNodeLeft;
-          const endX = pNodeLeft < cNodeLeft ? cNodeLeft : cNodeRight;
-          midX = (startX + endX) / 2;
-          midY = pNodeTop + parentCardRect.height / 2;
-          dStr = `M ${startX} ${midY} L ${endX} ${midY}`;
-        } else {
-          // Route vertically in the empty space between parent card bottom & child card top
+        // Route vertically in the empty space between parent card bottom & child card top
           const centerChannelX = pathRect.width / 2;
           let channelX = centerChannelX;
           const isSkipping = Math.abs(cNodeTop - pNodeBottom) > 80;
@@ -957,7 +954,7 @@ const ExercisesPage = (() => {
                     L ${channelX} ${endY - 30} 
                     C ${channelX} ${endY - 15}, ${endX} ${endY - 15}, ${endX} ${endY}`;
           }
-        }
+        // Removed the stray closing brace here
 
         const isParentUnlocked = parentNode.classList.contains('unlocked');
         const isChildUnlocked = childNode.classList.contains('unlocked');
@@ -989,11 +986,10 @@ const ExercisesPage = (() => {
         const badgeWidth = isMobile ? 122 : 146;
         const badgeHeight = isMobile ? 28 : 34;
 
-        if (!isSameRow) {
-          const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
+        const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
 
-          let badgeX = midX;
+        let badgeX = midX;
           if (badgeX < badgeWidth / 2 + 12) badgeX = badgeWidth / 2 + 12;
           if (badgeX > pathRect.width - badgeWidth / 2 - 12) badgeX = pathRect.width - badgeWidth / 2 - 12;
 
@@ -1036,7 +1032,6 @@ const ExercisesPage = (() => {
           badgeGroup.appendChild(timingText);
           badgeGroup.appendChild(condText);
           svgCanvas.appendChild(badgeGroup);
-        }
       });
     });
   }
