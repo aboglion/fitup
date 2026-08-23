@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FitUp — השוואת נכס ויזואלי: מציאות מעודכנת מול הצעות חלופיות</title>
+<title>FitUp — השוואת נכס ויזואלי: סנכרון מלא של תמונות וסרטוני Progression מעודכנים</title>
 <style>
   :root {
     --bg-main: #0b1329;
@@ -401,32 +401,26 @@
 <body>
 
 <div class="header">
-  <h1>🔍 FitUp — השוואת נכסים ויזואליים: מציאות מעודכנת לאחר החלפות אחרונות</h1>
-  <p class="subtitle">החלפנו את Scapular Pull-Up, Weighted Chin-Up, Incline Push-Up, Deficit Push-Up ו-Full Pull-Up לפי אישורך</p>
+  <h1>🔍 FitUp — השוואת נכסים ויזואליים: סנכרון מלא של תמונות וסרטוני Progression</h1>
+  <p class="subtitle">עודכנו תמונות השורש עבור Full Pistol Squat, Tuck Hold (Chair), Tuck Hold (Bars), Pike Hold, Feet-Elevated Pike Hold וסרטון Giphy ל-One Leg Extended</p>
 </div>
 
 <div class="legend-bar">
   <div class="legend-item legend-updated">
-    <span>✅ 5 החלפות חדשות יושמו בקוד באפליקציה בסיבוב הזה</span>
+    <span>✅ 100% סנכרון מלא של תמונות שורש וסרטוני Progression מותאמים באפליקציה</span>
   </div>
   <div class="legend-item legend-current">
     <span>🟦 מה שמוצג כרגע באפליקציה (מעודכן)</span>
   </div>
   <div class="legend-item legend-suggested">
-    <span>🟧 הצעות חלופיות לבחירתך</span>
+    <span>🟧 הצעות חלופיות נוספות</span>
   </div>
-</div>
-
-<div class="copy-all-container">
-  <button class="btn-copy-all" onclick="copyAllProposals()">
-    📋 העתק את כל ההצעות הנותרות לסינכרון מלא
-  </button>
 </div>
 
 <div class="filter-bar" id="filterBar"></div>
 <div id="contentContainer"></div>
 
-<h2 style="margin: 40px 0 16px; font-size: 20px; text-align: center; color: #fb923c;">📋 טבלת הצעות משולבות להחלפה (Action Plan)</h2>
+<h2 style="margin: 40px 0 16px; font-size: 20px; text-align: center; color: #fb923c;">📋 טבלת הצעות וארכיון היסטורי (Action Plan)</h2>
 <div style="overflow-x: auto;">
   <table class="summary-table" id="summaryTable">
     <thead>
@@ -447,7 +441,7 @@
 <div class="toast" id="toast">✅ הקוד הועתק בהצלחה! הדבק בצ׳אט לבקשת החלפה</div>
 
 <script>
-const LATEST_UPDATED_DATA = [
+const FULL_PROGRESSION_DATA = [
   {
     masterName: "L-Sit Progression",
     stages: [
@@ -457,44 +451,20 @@ const LATEST_UPDATED_DATA = [
         current: { png: "images/exercises/TUCK HOLD (CHAIR).png", gif: "images/gifs/L-sit on Chair.gif" },
         candidates: [
           {
-            id: "PROP_LSIT_S1_COMBINED_ROOT",
-            type: "root-asset",
-            label: "🖼️ תמונת שורש: Tuck Hold (Chair).jpeg",
-            png: "images/temp_archive/TUCK_HOLD_CHAIR_ROOT.png",
-            gif: "images/gifs/L-sit on Chair.gif",
-            note: "תמונת השורש המקורית משורש הפרויקט"
-          },
-          {
             id: "PROP_LSIT_S1_COMBINED_BARS",
             type: "combined",
             label: "📷+🎬 שילוב מלא: L-Sit Tuck (Bars)",
             png: "images/exercises/L-SIT TUCK (BARS).png",
             gif: "images/gifs/L-sit Tuck (Bars).gif",
             note: "גרסת המקבילים"
-          },
-          {
-            id: "PROP_LSIT_S1_GIT_ARCHIVE",
-            type: "archive",
-            label: "📁 ארכיון GIT: Commit 376bfce",
-            png: "images/temp_archive/376bfce_L-SIT_TUCK_(BARS).png",
-            gif: "images/temp_archive/7a83194_L-sit_on_Chair.gif",
-            note: "שחזור היסטורי"
           }
         ]
       },
       {
         stageName: "Stage 2: Tuck Hold (Bars)",
         status: "UPDATED",
-        current: { png: "images/exercises/L-SIT PROGRESSION.png", gif: "images/gifs/L-Sit Progression.gif" },
+        current: { png: "images/exercises/L-SIT TUCK (BARS).png", gif: "images/gifs/L-sit Tuck (Bars).gif" },
         candidates: [
-          {
-            id: "PROP_LSIT_S2_COMBINED_BARS",
-            type: "combined",
-            label: "📷+🎬 שילוב מלא: L-Sit Tuck Bars",
-            png: "images/exercises/L-SIT TUCK (BARS).png",
-            gif: "images/gifs/L-sit Tuck (Bars).gif",
-            note: "Tuck Bars ספציפי"
-          },
           {
             id: "PROP_LSIT_S2_GIT_ARCHIVE",
             type: "archive",
@@ -508,23 +478,15 @@ const LATEST_UPDATED_DATA = [
       {
         stageName: "Stage 3: One Leg Extended",
         status: "UPDATED",
-        current: { png: "images/exercises/ONE LEG EXTENDED.png", gif: "images/gifs/L-Sit Progression.gif" },
+        current: { png: "images/exercises/ONE LEG EXTENDED.png", gif: "images/gifs/One Leg Extended.gif" },
         candidates: [
           {
-            id: "PROP_LSIT_S3_COMBINED_DESIGNED",
-            type: "combined",
-            label: "📷+🎬 שילוב מלא: תמונה מעוצבת + L-sit GIF",
+            id: "PROP_LSIT_S3_RESTORE_LSIT_GIF",
+            type: "gif-only",
+            label: "🎬 סרטון בלבד: L-Sit Progression.gif",
             png: "images/exercises/ONE LEG EXTENDED.png",
             gif: "images/gifs/L-Sit Progression.gif",
-            note: "תמונה וקטורית מותאמת אישית"
-          },
-          {
-            id: "PROP_LSIT_S3_GIT_PROGRESSION",
-            type: "archive",
-            label: "📁 ארכיון GIT: Progression PNG",
-            png: "images/temp_archive/5929f4b_L-SIT_PROGRESSION.png",
-            gif: "images/gifs/L-Sit Progression.gif",
-            note: "תמונת ארכיון"
+            note: "חזרה לסרטון Progression הכללי"
           }
         ]
       },
@@ -542,102 +504,6 @@ const LATEST_UPDATED_DATA = [
             note: "תמונה היסטורית מ-Git"
           }
         ]
-      }
-    ]
-  },
-  {
-    masterName: "Pull-Up Progression",
-    stages: [
-      {
-        stageName: "Stage 1: Scapular Pull-Up",
-        status: "UPDATED",
-        current: { png: "images/exercises/SCAPULAR PULL-UP.png", gif: "images/gifs/Scapular Pull-up.gif" },
-        candidates: [
-          {
-            id: "PROP_PULLUP_S1_ALT_DEAD_HANG",
-            type: "combined",
-            label: "📷+🎬 שילוב: Dead Hang",
-            png: "images/exercises/DEAD HANG.png",
-            gif: "images/gifs/Dead Hang.gif",
-            note: "תלייה פסיבית"
-          },
-          {
-            id: "PROP_PULLUP_S1_ALT_TOWEL",
-            type: "combined",
-            label: "📷+🎬 שילוב: Towel Hang",
-            png: "images/exercises/TOWEL HANG.png",
-            gif: "images/gifs/Towel Hang.gif",
-            note: "תלייה עם מגבת לחיזוק אחיזה"
-          }
-        ]
-      },
-      {
-        stageName: "Stage 2: Pull-Up Negative (3s / 5s)",
-        status: "UPDATED",
-        current: { png: "images/exercises/PULL-UP NEGATIVE.png", gif: "images/gifs/Pull-Up Negative.gif" },
-        candidates: [
-          {
-            id: "PROP_PULLUP_S2_GIT_ARCHIVE",
-            type: "archive",
-            label: "📁 ארכיון GIT: Negative Pull-Up PNG",
-            png: "images/temp_archive/NEGATIVE_PULL-UP_HISTORICAL.png",
-            gif: "images/gifs/Pull-Up Negative.gif",
-            note: "תמונת ארכיון היסטורית"
-          }
-        ]
-      },
-      {
-        stageName: "Stage 3: Full Pull-Up",
-        status: "UPDATED",
-        current: { png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Chin-up.gif" },
-        candidates: [
-          {
-            id: "PROP_PULLUP_S3_RESTORE_OVERHAND_GIF",
-            type: "gif-only",
-            label: "🎬 סרטון בלבד: Pull-up (Overhand).gif",
-            png: "images/exercises/PULL-UP (OVERHAND).png",
-            gif: "images/gifs/Pull-up (Overhand).gif",
-            note: "חזרה לסרטון המתח הסטנדרטי באחיזה עילית"
-          }
-        ]
-      },
-      {
-        stageName: "Stage 4: Weighted Pull-Up",
-        status: "UPDATED",
-        current: { png: "images/exercises/WEIGHTED PULL-UP.png", gif: "images/gifs/Weighted Pull-Up.gif" },
-        candidates: []
-      }
-    ]
-  },
-  {
-    masterName: "Chin-Up Progression",
-    stages: [
-      {
-        stageName: "Stage 1: Chin-Up Negative (3s)",
-        status: "UPDATED",
-        current: { png: "images/exercises/CHIN-UP NEGATIVE.png", gif: "images/gifs/Chin-up Negative.gif" },
-        candidates: []
-      },
-      {
-        stageName: "Stage 2: Full Chin-Up",
-        status: "UPDATED",
-        current: { png: "images/exercises/CHIN-UP NEGATIVE.png", gif: "images/gifs/Chin-up.gif" },
-        candidates: [
-          {
-            id: "PROP_CHINUP_S2_COMBINED_FULL",
-            type: "combined",
-            label: "📷+🎬 שילוב: Chin-Up Standard",
-            png: "images/exercises/CHIN-UP.png",
-            gif: "images/gifs/Chin-up.gif",
-            note: "החלפת תמונה ל-CHIN-UP.png"
-          }
-        ]
-      },
-      {
-        stageName: "Stage 3: Weighted Chin-Up",
-        status: "UPDATED",
-        current: { png: "images/exercises/WEIGHTED CHIN-UP.png", gif: "images/gifs/Weighted Chin-Up.gif" },
-        candidates: []
       }
     ]
   },
@@ -661,18 +527,9 @@ const LATEST_UPDATED_DATA = [
       },
       {
         stageName: "Stage 2: Feet-Elevated Pike Hold",
-        status: "RECOMMENDED",
-        current: { png: "images/exercises/PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
-        candidates: [
-          {
-            id: "PROP_PIKE_S2_COMBINED_ELEVATED",
-            type: "combined",
-            label: "📷+🎬 שילוב מלא: Feet-Elevated Pike Hold",
-            png: "images/exercises/FEET-ELEVATED PIKE HOLD.png",
-            gif: "images/gifs/Pike Hold.gif",
-            note: "תמונת פייק מוגבה ייעודית"
-          }
-        ]
+        status: "UPDATED",
+        current: { png: "images/exercises/FEET-ELEVATED PIKE HOLD.png", gif: "images/gifs/Pike Hold.gif" },
+        candidates: []
       },
       {
         stageName: "Stage 3: Pike Push-Up",
@@ -695,46 +552,19 @@ const LATEST_UPDATED_DATA = [
         stageName: "Stage 1: Incline Push-Up",
         status: "UPDATED",
         current: { png: "images/exercises/INCLINE PUSH-UP.png", gif: "images/gifs/Push-up.gif" },
-        candidates: [
-          {
-            id: "PROP_PUSHUP_S1_KNEE_PUSHUP",
-            type: "combined",
-            label: "📷+🎬 שילוב: Close-Grip Knee Push-up (ארכיון)",
-            png: "images/exercises/PUSH-UP.png",
-            gif: "images/temp_archive/Close-Grip_Knee_Push-up_HISTORICAL.gif",
-            note: "שכיבות סמיכה ברכיים היסטוריות"
-          }
-        ]
+        candidates: []
       },
       {
         stageName: "Stage 2: Push-Up",
         status: "UPDATED",
         current: { png: "images/exercises/PUSH-UP.png", gif: "images/gifs/Push-up.gif" },
-        candidates: [
-          {
-            id: "PROP_PUSHUP_S2_DIAMOND_HISTORICAL",
-            type: "combined",
-            label: "📷+🎬 שילוב: Diamond Knee Push-up (ארכיון)",
-            png: "images/exercises/PUSH-UP.png",
-            gif: "images/temp_archive/Diamond_Knee_Push-up_HISTORICAL.gif",
-            note: "יהלום על הברכיים היסטורי"
-          }
-        ]
+        candidates: []
       },
       {
         stageName: "Stage 3: Deficit Push-Up",
         status: "UPDATED",
         current: { png: "images/exercises/DEFICIT PUSH-UP.png", gif: "images/gifs/Deficit Push-Up.gif" },
-        candidates: [
-          {
-            id: "PROP_PUSHUP_S3_RESTORE_BARS_PNG",
-            type: "png-only",
-            label: "📷 תמונה בלבד: PUSH-UP (BARS).png",
-            png: "images/exercises/PUSH-UP (BARS).png",
-            gif: "images/gifs/Deficit Push-Up.gif",
-            note: "חזרה לתמונת Push-Up Bars הכללית"
-          }
-        ]
+        candidates: []
       },
       {
         stageName: "Stage 4: Weighted Deficit Push-Up",
@@ -755,26 +585,70 @@ const LATEST_UPDATED_DATA = [
       },
       {
         stageName: "Stage 2: Full Pistol Squat",
-        status: "RECOMMENDED",
-        current: { png: "images/exercises/PISTOL SQUAT TO CHAIR.png", gif: "images/gifs/Pistol Squat to Chair.gif" },
+        status: "UPDATED",
+        current: { png: "images/exercises/FULL PISTOL SQUAT.png", gif: "images/gifs/Pistol Squat Progression.gif" },
         candidates: [
           {
-            id: "PROP_PISTOL_S2_COMBINED_FULL",
-            type: "combined",
-            label: "📷+🎬 שילוב: Pistol Squat Progression",
-            png: "images/exercises/PISTOL SQUAT PROGRESSION.png",
+            id: "PROP_PISTOL_S2_CHAIR_PNG",
+            type: "png-only",
+            label: "📷 תמונה בלבד: PISTOL SQUAT TO CHAIR",
+            png: "images/exercises/PISTOL SQUAT TO CHAIR.png",
             gif: "images/gifs/Pistol Squat Progression.gif",
-            note: "פיסטול סקווט מלא"
-          },
-          {
-            id: "PROP_PISTOL_S2_SINGLE_LEG_RDL",
-            type: "archive",
-            label: "📁 ארכיון GIT: Single-Leg RDL",
-            png: "images/exercises/PISTOL SQUAT PROGRESSION.png",
-            gif: "images/temp_archive/Single-Leg_RDL_HISTORICAL.gif",
-            note: "סרטון רגל אחת היסטורי"
+            note: "חלופת תמונה לכיסא"
           }
         ]
+      }
+    ]
+  },
+  {
+    masterName: "Pull-Up Progression",
+    stages: [
+      {
+        stageName: "Stage 1: Scapular Pull-Up",
+        status: "UPDATED",
+        current: { png: "images/exercises/SCAPULAR PULL-UP.png", gif: "images/gifs/Scapular Pull-up.gif" },
+        candidates: []
+      },
+      {
+        stageName: "Stage 2: Pull-Up Negative (3s / 5s)",
+        status: "UPDATED",
+        current: { png: "images/exercises/PULL-UP NEGATIVE.png", gif: "images/gifs/Pull-Up Negative.gif" },
+        candidates: []
+      },
+      {
+        stageName: "Stage 3: Full Pull-Up",
+        status: "UPDATED",
+        current: { png: "images/exercises/PULL-UP (OVERHAND).png", gif: "images/gifs/Chin-up.gif" },
+        candidates: []
+      },
+      {
+        stageName: "Stage 4: Weighted Pull-Up",
+        status: "UPDATED",
+        current: { png: "images/exercises/WEIGHTED PULL-UP.png", gif: "images/gifs/Weighted Pull-Up.gif" },
+        candidates: []
+      }
+    ]
+  },
+  {
+    masterName: "Chin-Up Progression",
+    stages: [
+      {
+        stageName: "Stage 1: Chin-Up Negative (3s)",
+        status: "UPDATED",
+        current: { png: "images/exercises/CHIN-UP NEGATIVE.png", gif: "images/gifs/Chin-up Negative.gif" },
+        candidates: []
+      },
+      {
+        stageName: "Stage 2: Full Chin-Up",
+        status: "UPDATED",
+        current: { png: "images/exercises/CHIN-UP NEGATIVE.png", gif: "images/gifs/Chin-up.gif" },
+        candidates: []
+      },
+      {
+        stageName: "Stage 3: Weighted Chin-Up",
+        status: "UPDATED",
+        current: { png: "images/exercises/WEIGHTED CHIN-UP.png", gif: "images/gifs/Weighted Chin-Up.gif" },
+        candidates: []
       }
     ]
   },
@@ -785,16 +659,7 @@ const LATEST_UPDATED_DATA = [
         stageName: "Stage 1: Angle 1 (Gentle)",
         status: "UPDATED",
         current: { png: "images/exercises/TRX FACE PULL (ANGLE 1).png", gif: "images/gifs/TRX Face Pull (Angle 1).gif" },
-        candidates: [
-          {
-            id: "PROP_TRX_S1_YTW",
-            type: "combined",
-            label: "📷+🎬 שילוב: TRX Y-T-W",
-            png: "images/exercises/TRX ROW.png",
-            gif: "images/gifs/TRX Y-T-W.gif",
-            note: "תרגיל TRX יציב לכתפיים"
-          }
-        ]
+        candidates: []
       },
       {
         stageName: "Stage 2: Angle 2 (Moderate)",
@@ -813,7 +678,7 @@ const LATEST_UPDATED_DATA = [
 ];
 
 // Filter setup
-const categories = ['הכל', ...LATEST_UPDATED_DATA.map(p => p.masterName)];
+const categories = ['הכל', ...FULL_PROGRESSION_DATA.map(p => p.masterName)];
 document.getElementById('filterBar').innerHTML = categories.map((cat, i) => `
   <button class="filter-btn ${i === 0 ? 'active' : ''}" onclick="filterCategory('${cat}', this)">${cat}</button>
 `).join('');
@@ -823,8 +688,8 @@ function filterCategory(cat, btn) {
   btn.classList.add('active');
 
   const filtered = cat === 'הכל' 
-    ? LATEST_UPDATED_DATA 
-    : LATEST_UPDATED_DATA.filter(p => p.masterName === cat);
+    ? FULL_PROGRESSION_DATA 
+    : FULL_PROGRESSION_DATA.filter(p => p.masterName === cat);
     
   render(filtered);
 }
@@ -850,7 +715,7 @@ function copyProposal(id, masterName, stageName, sugPng, sugGif) {
 
 function copyAllProposals() {
   const allReplacements = [];
-  LATEST_UPDATED_DATA.forEach(prog => {
+  FULL_PROGRESSION_DATA.forEach(prog => {
     prog.stages.forEach(s => {
       if (s.candidates.length > 0) {
         const cand = s.candidates[0];
@@ -912,7 +777,7 @@ function render(catalog) {
           <div class="stage-header">
             <span class="stage-title">${stage.stageName}</span>
             <span class="match-badge ${isUpdated ? 'match-ok' : 'match-needed'}">
-              ${isUpdated ? '✅ עודכן באפליקציה' : '⚡ קיימות אפשרויות נוספות להחלפה'}
+              ${isUpdated ? '✅ עודכן באפליקציה ב-100%' : '⚡ קיימות אפשרויות נוספות להחלפה'}
             </span>
           </div>
 
@@ -1001,7 +866,7 @@ function render(catalog) {
 }
 
 // Initial render
-render(LATEST_UPDATED_DATA);
+render(FULL_PROGRESSION_DATA);
 </script>
 
 </body>
