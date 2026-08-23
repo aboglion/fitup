@@ -668,14 +668,18 @@ const ExercisesPage = (() => {
       </div>
       <div class="rpg-tree-legend" style="display:flex; gap:14px; align-items:center; justify-content:center; flex-wrap:wrap; margin-top:14px; padding:10px 16px; background:rgba(15,23,42,0.7); border:1px solid rgba(255,255,255,0.12); border-radius:12px; backdrop-filter:blur(8px); width:100%;">
         <div class="rpg-legend-item" style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary);">
-          <span style="display:inline-block; width:24px; height:3px; background:${tabColor}; box-shadow:0 0 6px ${tabColor}; border-radius:2px;"></span>
-          <span style="background:rgba(249,115,22,0.15); color:#fdba74; border:1px solid rgba(249,115,22,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">🔄 פיתוח & החלפה</span>
-          <span>(מחליף את התרגיל הקודם בתכנית)</span>
+          <span style="display:inline-block; width:28px; height:3px; background:#3b82f6; box-shadow:0 0 6px #3b82f6; border-radius:2px; position:relative;">
+            <span style="position:absolute; right:-4px; top:-3.5px; font-size:8px; color:#3b82f6;">►</span>
+          </span>
+          <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">🔵 חץ כחול — 🔄 התפתחות & החלפה</span>
+          <span>(מחליף את התרגיל הקודם כשאנו מגיעים לשבוע הפתיחה)</span>
         </div>
         <div class="rpg-legend-item" style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary);">
-          <span style="display:inline-block; width:24px; height:0; border-top:2px dashed #06b6d4;"></span>
-          <span style="background:rgba(6,182,212,0.15); color:#67e8f9; border:1px solid rgba(6,182,212,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">➕ חיזוק & בידוד</span>
-          <span>(שני התרגילים מתקיימים במקביל)</span>
+          <span style="display:inline-block; width:28px; height:0; border-top:2.5px dashed #ef4444; position:relative;">
+            <span style="position:absolute; right:-4px; top:-4px; font-size:8px; color:#ef4444;">►</span>
+          </span>
+          <span style="background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">🔴 חץ אדום — ➕ חיזוק & בידוד</span>
+          <span>(מתווסף כחיזוק משלים ומתקיים במקביל בתכנית)</span>
         </div>
       </div>
     `;
@@ -861,8 +865,6 @@ const ExercisesPage = (() => {
     if (!contentEl) return;
 
     const pathEls = contentEl.querySelectorAll('.rpg-skill-path');
-    const tabConfig = DAY_TABS.find(t => t.id === activeTab);
-    const tabColor = tabConfig ? tabConfig.color : '#3b82f6';
 
     pathEls.forEach(pathEl => {
       let svgCanvas = pathEl.querySelector('.rpg-path-svg-canvas');
@@ -871,9 +873,25 @@ const ExercisesPage = (() => {
         svgCanvas.setAttribute('class', 'rpg-path-svg-canvas');
         svgCanvas.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1;';
         pathEl.appendChild(svgCanvas);
-      } else {
-        svgCanvas.innerHTML = '';
       }
+
+      // Re-create canvas defs with Arrow markers for Blue (Evolution) and Red (Accessory)
+      svgCanvas.innerHTML = `
+        <defs>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+          </marker>
+          <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+          </marker>
+          <marker id="arrow-blue-locked" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(59, 130, 246, 0.4)"/>
+          </marker>
+          <marker id="arrow-red-locked" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="rgba(239, 68, 68, 0.4)"/>
+          </marker>
+        </defs>
+      `;
 
       const pathRect = pathEl.getBoundingClientRect();
       const nodes = pathEl.querySelectorAll('.rpg-node[data-node-id]');
@@ -887,6 +905,10 @@ const ExercisesPage = (() => {
 
         const relType = childNode.getAttribute('data-rel-type') || 'replace';
         const isReplace = relType === 'replace';
+
+        const parentName = parentNode.querySelector('.rpg-node-name')?.textContent || '';
+        const childUnlockBadge = childNode.querySelector('.rpg-unlock-badge')?.textContent || '';
+        const unlockWeekNum = childUnlockBadge.match(/\d+/) ? childUnlockBadge.match(/\d+/)[0] : '';
 
         const parentHex = parentNode.querySelector('.rpg-node-hex-wrap') || parentNode;
         const childHex = childNode.querySelector('.rpg-node-hex-wrap') || childNode;
@@ -920,36 +942,33 @@ const ExercisesPage = (() => {
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.setAttribute('d', dStr);
 
-        const strokeColor = isReplace ? tabColor : '#06b6d4';
+        // BLUE (#3b82f6) for Evolution Replacement, RED (#ef4444) for Accessory Addition
+        const strokeColor = isReplace ? '#3b82f6' : '#ef4444';
+        const markerUrl = isReplace 
+          ? (isActive ? 'url(#arrow-blue)' : 'url(#arrow-blue-locked)') 
+          : (isActive ? 'url(#arrow-red)' : 'url(#arrow-red-locked)');
 
-        if (isActive) {
-          path.setAttribute('stroke', strokeColor);
-          path.setAttribute('stroke-width', isReplace ? '3.5' : '2.5');
-          if (!isReplace) {
-            path.setAttribute('stroke-dasharray', '6 4');
-          }
-          path.setAttribute('fill', 'none');
-          path.setAttribute('class', `rpg-svg-line active ${relType}`);
-          path.setAttribute('style', `filter: drop-shadow(0 0 6px ${strokeColor}); opacity: 0.9;`);
-        } else {
-          path.setAttribute('stroke', 'rgba(255, 255, 255, 0.2)');
-          path.setAttribute('stroke-width', '2');
-          path.setAttribute('stroke-dasharray', '5 4');
-          path.setAttribute('fill', 'none');
-          path.setAttribute('class', 'rpg-svg-line locked');
+        path.setAttribute('stroke', strokeColor);
+        path.setAttribute('stroke-width', isReplace ? '3.5' : '2.8');
+        path.setAttribute('marker-end', markerUrl);
+        if (!isReplace) {
+          path.setAttribute('stroke-dasharray', '6 4');
         }
+        path.setAttribute('fill', 'none');
+        path.setAttribute('class', `rpg-svg-line ${isActive ? 'active' : 'locked'} ${relType}`);
+        path.setAttribute('style', `filter: drop-shadow(0 0 6px ${strokeColor}); opacity: ${isActive ? '0.95' : '0.45'};`);
 
         svgCanvas.appendChild(path);
 
-        // Add Floating Badge on the Connector Line
+        // Add Floating Badge with Unlock Timing & Conditions
         const midX = (x1 + x2) / 2;
         const midY = (y1 + y2) / 2;
 
         const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
 
-        const badgeWidth = isReplace ? 76 : 84;
-        const badgeHeight = 20;
+        const badgeWidth = 148;
+        const badgeHeight = 36;
         const badgeBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         badgeBg.setAttribute('x', midX - badgeWidth / 2);
         badgeBg.setAttribute('y', midY - badgeHeight / 2);
@@ -957,21 +976,38 @@ const ExercisesPage = (() => {
         badgeBg.setAttribute('height', badgeHeight);
         badgeBg.setAttribute('rx', 10);
         badgeBg.setAttribute('ry', 10);
-        badgeBg.setAttribute('fill', isActive ? (isReplace ? 'rgba(15, 23, 42, 0.92)' : 'rgba(6, 182, 212, 0.25)') : 'rgba(15, 23, 42, 0.85)');
+        badgeBg.setAttribute('fill', isActive ? 'rgba(15, 23, 42, 0.95)' : 'rgba(15, 23, 42, 0.85)');
         badgeBg.setAttribute('stroke', isActive ? strokeColor : 'rgba(255, 255, 255, 0.25)');
-        badgeBg.setAttribute('stroke-width', '1');
+        badgeBg.setAttribute('stroke-width', '1.5');
+        badgeBg.setAttribute('style', `box-shadow: 0 4px 12px rgba(0,0,0,0.5);`);
 
-        const badgeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        badgeText.setAttribute('x', midX);
-        badgeText.setAttribute('y', midY + 4);
-        badgeText.setAttribute('text-anchor', 'middle');
-        badgeText.setAttribute('font-size', '10');
-        badgeText.setAttribute('font-weight', 'bold');
-        badgeText.setAttribute('fill', isActive ? (isReplace ? '#fdba74' : '#67e8f9') : '#94a3b8');
-        badgeText.textContent = isReplace ? '🔄 פיתוח' : '➕ חיזוק';
+        // Text Line 1: Timing (Unlock Week)
+        const timingText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        timingText.setAttribute('x', midX);
+        timingText.setAttribute('y', midY - 3);
+        timingText.setAttribute('text-anchor', 'middle');
+        timingText.setAttribute('font-size', '10.5');
+        timingText.setAttribute('font-weight', '800');
+        timingText.setAttribute('fill', isActive ? (isReplace ? '#93c5fd' : '#fca5a5') : '#94a3b8');
+        timingText.textContent = unlockWeekNum ? `📅 שבוע פתיחה ${unlockWeekNum}` : '📅 פתיחה מדורגת';
+
+        // Text Line 2: Requirement & Condition
+        const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        condText.setAttribute('x', midX);
+        condText.setAttribute('y', midY + 10);
+        condText.setAttribute('text-anchor', 'middle');
+        condText.setAttribute('font-size', '9.5');
+        condText.setAttribute('font-weight', '700');
+        condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
+        
+        const parentShort = parentName ? (parentName.length > 14 ? parentName.substring(0, 13) + '…' : parentName) : '';
+        condText.textContent = isReplace 
+          ? (parentShort ? `🔄 מפתח: החלפת ${parentShort}` : '🔄 מפתח: החלפת מקור')
+          : (parentShort ? `🔴 חיזוק: מתווסף במקביל` : '🔴 חיזוק: מתווסף במקביל');
 
         badgeGroup.appendChild(badgeBg);
-        badgeGroup.appendChild(badgeText);
+        badgeGroup.appendChild(timingText);
+        badgeGroup.appendChild(condText);
         svgCanvas.appendChild(badgeGroup);
       });
     });

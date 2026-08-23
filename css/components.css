@@ -2615,11 +2615,20 @@ html.light-theme .rest-timer {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  flex: 1;
-  min-width: 250px;
-  max-width: 420px;
+  flex: 1 1 calc(50% - 14px);
+  min-width: 270px;
+  max-width: 48%;
+  box-sizing: border-box;
   opacity: 0;
   transform: translateY(12px);
+}
+
+@media (max-width: 600px) {
+  .rpg-node {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
 }
 
 .rpg-node.rpg-animate-in {
