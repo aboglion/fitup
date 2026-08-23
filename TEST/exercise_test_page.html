@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitUp - דף בדיקת תרגילים ומסלולי התקדמות (TEST Hub)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: #111827;
+      --card-inner: #162032;
+      --border-color: #1f2937;
+      --border-highlight: #334155;
+      --accent-blue: #38bdf8;
+      --accent-green: #34d399;
+      --accent-orange: #f97316;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-sub: #cbd5e1;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Heebo', 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 2rem 1.5rem;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(17, 24, 39, 0.9));
+      border: 1px solid var(--border-highlight);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-green), var(--accent-purple));
+    }
+
+    .test-badge {
+      display: inline-block;
+      background: rgba(249, 115, 22, 0.15);
+      color: var(--accent-orange);
+      border: 1px solid rgba(249, 115, 22, 0.3);
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+    }
+
+    h1 {
+      font-family: 'Outfit', 'Heebo', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #38bdf8, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 900px;
+      margin: 0 auto 1.5rem;
+      line-height: 1.7;
+    }
+
+    .explanation-box {
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 14px;
+      padding: 1.2rem 1.5rem;
+      max-width: 950px;
+      margin: 1rem auto 0;
+      text-align: right;
+      font-size: 0.95rem;
+      color: var(--text-sub);
+    }
+
+    .explanation-box h3 {
+      color: var(--accent-blue);
+      font-size: 1.1rem;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Controls Bar */
+    .controls-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(17, 24, 39, 0.6);
+      padding: 1.2rem;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 2rem;
+    }
+
+    .search-box {
+      flex: 1 1 300px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.8rem 1.2rem;
+      background: #0f172a;
+      border: 1px solid var(--border-highlight);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      background: #1e293b;
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      padding: 0.6rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      background: #283548;
+      color: var(--text-main);
+    }
+
+    .filter-btn.active {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .select-box select {
+      background: #0f172a;
+      color: var(--text-main);
+      border: 1px solid var(--border-highlight);
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .stats-summary {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .stats-summary span {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .stats-summary b {
+      color: var(--accent-blue);
+    }
+
+    /* Exercise Grid */
+    .exercise-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .exercise-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .exercise-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-blue);
+      box-shadow: 0 15px 35px rgba(56, 189, 248, 0.15);
+    }
+
+    .card-header {
+      padding: 1.2rem 1.4rem;
+      background: #141d2d;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .card-title-group { flex: 1; }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.3;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-category {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background: rgba(56, 189, 248, 0.1);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .unlock-week-tag {
+      background: linear-gradient(135deg, rgba(52, 211, 153, 0.15), rgba(16, 185, 129, 0.25));
+      color: var(--accent-green);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .unlock-week-tag.future-week {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(147, 51, 234, 0.25));
+      color: var(--accent-purple);
+      border-color: rgba(168, 85, 247, 0.3);
+    }
+
+    /* Conditions & Tree Structure Box */
+    .conditions-box {
+      background: var(--card-inner);
+      margin: 1.2rem 1.4rem 0.8rem;
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-highlight);
+      font-size: 0.9rem;
+    }
+
+    .condition-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .condition-row:last-child { margin-bottom: 0; }
+
+    .condition-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+    .condition-label {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .condition-val { color: var(--text-sub); font-weight: 700; }
+    .condition-val.highlight { color: var(--accent-green); }
+    .condition-val.prereq { color: var(--accent-orange); }
+    .condition-val.children { color: var(--accent-purple); }
+
+    .children-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.3rem;
+    }
+
+    .child-chip {
+      background: rgba(168, 85, 247, 0.12);
+      color: var(--accent-purple);
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* Media Visuals Section */
+    .media-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      padding: 0.8rem 1.4rem;
+    }
+
+    .media-box {
+      background: #0d131f;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+      position: relative;
+    }
+
+    .media-label {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(4px);
+      color: var(--text-sub);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      z-index: 2;
+    }
+
+    .media-box img {
+      width: 100%;
+      height: 170px;
+      object-fit: contain;
+      padding: 8px;
+      transition: transform 0.2s;
+    }
+
+    .media-box img:hover { transform: scale(1.05); }
+
+    .media-fallback {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      height: 170px;
+    }
+
+    .media-fallback-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.3rem;
+      opacity: 0.6;
+    }
+
+    /* Meta Footer */
+    .card-footer {
+      margin-top: auto;
+      padding: 1rem 1.4rem;
+      background: #0e1522;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.85rem;
+    }
+
+    .weight-roadmap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    .tier-badge {
+      background: #1e293b;
+      color: var(--text-sub);
+      border: 1px solid var(--border-highlight);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .tier-badge b { color: var(--accent-blue); }
+
+    @media (max-width: 768px) {
+      body { padding: 1rem 0.75rem; }
+      .exercise-grid { grid-template-columns: 1fr; }
+      .media-section { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="test-badge">🧪 TEST DIRECTORY HUB — תצוגת מיומנויות ותת-תרגילים</div>
+      <h1>מבנה עץ התרגילים, תנאי הפתיחה והתת-תרגילים (Progression Tree)</h1>
+      <p class="subtitle">
+        דף בדיקה זה מציג את 66 התרגילים במערכת, מבהיר את המשמעות של תרגילי הבסיס (Progression Parent Nodes) ומראה בדיוק אילו <b>תת-תרגילים (Sub-Exercises)</b> מסתעפים מהם לאורך 52 השבועות.
+      </p>
+
+      <div class="explanation-box">
+        <h3>💡 מהי המשמעות של תרגיל "Progression"?</h3>
+        <p>במערכת FitUp, תרגיל הנושא את השם <b>Progression</b> (כגון <i>Push-up Bars Progression</i>, <i>Pull-Up Progression</i>, <i>Pike Progression</i> או <i>Pistol Squat Progression</i>) אינו תרגיל בודד ומבודד, אלא <b>צומת אב (Parent Skill Node)</b> בסולם המיומנות!</p>
+        <p style="margin-top: 6px;">
+          מכל צומת אב כזה מסתעפים <b>תת-תרגילים (Sub-Exercises)</b> ו-Variations שנפתחים בשבועות מתקדמים יותר (למשל: Push-up Bars Progression ➔ Deficit Push-Up ➔ Feet-Elevated Push-Up ➔ Weighted Deficit Push-Up).
+        </p>
+      </div>
+
+      <div class="stats-summary">
+        <span>סה"כ תרגילים במערכת: <b id="stat-total">66</b></span>
+        <span>צומתי אב (Root Progression Nodes): <b id="stat-parents">--</b></span>
+        <span>תת-תרגילים נגזרים (Sub-Exercises): <b id="stat-children">--</b></span>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="controls-grid">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 חפש תרגיל, תת-תרגיל, תנאי קדם או קטגוריה...">
+      </div>
+
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-cat="all">הכל (66)</button>
+        <button class="filter-btn" data-cat="lower-strength">🦵 רגליים + ליבה</button>
+        <button class="filter-btn" data-cat="upper-push">💥 דחיפה + מיומנות</button>
+        <button class="filter-btn" data-cat="upper-pull">🧗 משיכה + אחיזה</button>
+        <button class="filter-btn" data-cat="cardio">🫀 אירובי ואירובי 4x4</button>
+      </div>
+
+      <div class="select-box">
+        <select id="weekSelect">
+          <option value="all">כל השבועות</option>
+          <option value="1">שבוע 1 (התחלה מיידית)</option>
+          <option value="5">שבוע 5+</option>
+          <option value="10">שבוע 10+</option>
+          <option value="18">שבוע 18+</option>
+          <option value="34">שבוע 34+</option>
+          <option value="42">שבוע 42+</option>
+          <option value="53">שבוע 53+ (שנה 2)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Exercise Grid Container -->
+    <div class="exercise-grid" id="exerciseGrid">
+      <!-- Generated via JS -->
+    </div>
+  </div>
+
+  <script>
+    const EXERCISES_DATA = [
+  {
+    "name": "High Knees",
+    "category": "lower-strength",
+    "treeTitle": "warmup_mobility",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Deep Mobility Protocol",
+    "category": "lower-strength",
+    "treeTitle": "warmup_mobility",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Micro Mobility Protocol",
+    "category": "lower-strength",
+    "treeTitle": "warmup_mobility",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Wrist Rocks",
+    "category": "lower-strength",
+    "treeTitle": "warmup_mobility",
+    "unlockWeek": 53,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 53 }]
+  },
+  {
+    "name": "Bodyweight Squat",
+    "category": "lower-strength",
+    "treeTitle": "squat_lunge_tree",
+    "unlockWeek": 1,
+    "id": "squat-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "DB Bulgarian Split Squat",
+    "category": "lower-strength",
+    "treeTitle": "squat_lunge_tree",
+    "unlockWeek": 1,
+    "id": "squat-2",
+    "parentId": "squat-1",
+    "parentName": "Bodyweight Squat",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "Bodyweight", "fromWeek": 1 },
+      { "weight": "3 kg", "fromWeek": 5 },
+      { "weight": "9 kg", "fromWeek": 10 },
+      { "weight": "12 kg", "fromWeek": 26 }
+    ]
+  },
+  {
+    "name": "Reverse Lunge + DB",
+    "category": "lower-strength",
+    "treeTitle": "squat_lunge_tree",
+    "unlockWeek": 18,
+    "id": "squat-3",
+    "parentId": "squat-2",
+    "parentName": "DB Bulgarian Split Squat",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "9 kg", "fromWeek": 18 },
+      { "weight": "12 kg", "fromWeek": 42 }
+    ]
+  },
+  {
+    "name": "DB BSS (Goblet)",
+    "category": "lower-strength",
+    "treeTitle": "squat_lunge_tree",
+    "unlockWeek": 34,
+    "id": "squat-3b",
+    "parentId": "squat-2",
+    "parentName": "DB Bulgarian Split Squat",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "15 kg", "fromWeek": 34 },
+      { "weight": "18 kg", "fromWeek": 53 },
+      { "weight": "21 kg", "fromWeek": 58 },
+      { "weight": "24 kg", "fromWeek": 62 }
+    ]
+  },
+  {
+    "name": "Pistol Squat Progression",
+    "category": "lower-strength",
+    "treeTitle": "squat_lunge_tree",
+    "unlockWeek": 42,
+    "id": "squat-4",
+    "parentId": "squat-3b",
+    "parentName": "DB BSS (Goblet)",
+    "parentUnlockWeek": 34,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 42 }]
+  },
+  {
+    "name": "Walking Lunge (Goblet)",
+    "category": "lower-strength",
+    "treeTitle": "squat_lunge_tree",
+    "unlockWeek": 62,
+    "id": "squat-5",
+    "parentId": "squat-4",
+    "parentName": "Pistol Squat Progression",
+    "parentUnlockWeek": 42,
+    "note": "",
+    "weightTiers": [{ "weight": "18 kg", "fromWeek": 62 }]
+  },
+  {
+    "name": "DB Romanian Deadlift",
+    "category": "lower-strength",
+    "treeTitle": "hamstring_chain",
+    "unlockWeek": 1,
+    "id": "rdl-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "6 kg each", "fromWeek": 1 },
+      { "weight": "9 kg", "fromWeek": 5 },
+      { "weight": "12 kg", "fromWeek": 10 }
+    ]
+  },
+  {
+    "name": "Single-Leg RDL",
+    "category": "lower-strength",
+    "treeTitle": "hamstring_chain",
+    "unlockWeek": 18,
+    "id": "rdl-2",
+    "parentId": "rdl-1",
+    "parentName": "DB Romanian Deadlift",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "6 kg each", "fromWeek": 1 }]
+  },
+  {
+    "name": "Glute Bridge",
+    "category": "lower-strength",
+    "treeTitle": "glutes_calves",
+    "unlockWeek": 1,
+    "id": "glute-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "DB Glute Bridge",
+    "category": "lower-strength",
+    "treeTitle": "glutes_calves",
+    "unlockWeek": 1,
+    "id": "glute-2",
+    "parentId": "glute-1",
+    "parentName": "Glute Bridge",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "9 kg", "fromWeek": 1 }]
+  },
+  {
+    "name": "DB Hip Thrust",
+    "category": "lower-strength",
+    "treeTitle": "glutes_calves",
+    "unlockWeek": 5,
+    "id": "glute-3",
+    "parentId": "glute-2",
+    "parentName": "DB Glute Bridge",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "9 kg", "fromWeek": 5 },
+      { "weight": "12 kg", "fromWeek": 10 },
+      { "weight": "15 kg", "fromWeek": 18 },
+      { "weight": "18 kg", "fromWeek": 26 },
+      { "weight": "21 kg", "fromWeek": 34 },
+      { "weight": "24 kg", "fromWeek": 50 }
+    ]
+  },
+  {
+    "name": "Standing Single-Leg Calf Raise",
+    "category": "lower-strength",
+    "treeTitle": "glutes_calves",
+    "unlockWeek": 1,
+    "id": "calf-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "6 kg in hand", "fromWeek": 1 }]
+  },
+  {
+    "name": "Seated Single-Leg Calf Raise",
+    "category": "lower-strength",
+    "treeTitle": "glutes_calves",
+    "unlockWeek": 1,
+    "id": "calf-2",
+    "parentId": "calf-1",
+    "parentName": "Standing Single-Leg Calf Raise",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "6 kg on knee", "fromWeek": 1 }]
+  },
+  {
+    "name": "Dead Bug",
+    "category": "lower-strength",
+    "treeTitle": "core_citadel",
+    "unlockWeek": 1,
+    "id": "core-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Hollow Body Hold",
+    "category": "lower-strength",
+    "treeTitle": "core_citadel",
+    "unlockWeek": 5,
+    "id": "core-2",
+    "parentId": "core-1",
+    "parentName": "Dead Bug",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Suitcase Carry",
+    "category": "lower-strength",
+    "treeTitle": "core_citadel",
+    "unlockWeek": 1,
+    "id": "carry-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "12 kg", "fromWeek": 1 },
+      { "weight": "15 kg", "fromWeek": 5 },
+      { "weight": "18 kg", "fromWeek": 18 },
+      { "weight": "21 kg", "fromWeek": 26 },
+      { "weight": "24 kg", "fromWeek": 53 }
+    ]
+  },
+  {
+    "name": "Pallof Press Progression",
+    "category": "lower-strength",
+    "treeTitle": "core_citadel",
+    "unlockWeek": 10,
+    "id": "carry-2",
+    "parentId": "carry-1",
+    "parentName": "Suitcase Carry",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "Band 30 kg", "fromWeek": 1 }]
+  },
+  {
+    "name": "Arm Circles",
+    "category": "upper-push",
+    "treeTitle": "warmup_shoulders",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Wall Slides",
+    "category": "upper-push",
+    "treeTitle": "warmup_shoulders",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Scapular Push-up",
+    "category": "upper-push",
+    "treeTitle": "warmup_shoulders",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Band Pull-Apart",
+    "category": "upper-push",
+    "treeTitle": "warmup_shoulders",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "30 kg", "fromWeek": 1 },
+      { "weight": "40 kg", "fromWeek": 5 },
+      { "weight": "50 kg", "fromWeek": 9 }
+    ]
+  },
+  {
+    "name": "Push-up Bars Progression",
+    "category": "upper-push",
+    "treeTitle": "push_tree",
+    "unlockWeek": 1,
+    "id": "push-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "DB Floor Press",
+    "category": "upper-push",
+    "treeTitle": "push_tree",
+    "unlockWeek": 1,
+    "id": "floor-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "6 kg each", "fromWeek": 1 },
+      { "weight": "9 kg", "fromWeek": 5 },
+      { "weight": "12 kg", "fromWeek": 10 }
+    ]
+  },
+  {
+    "name": "Push-Up Volume (Day 5)",
+    "category": "upper-push",
+    "treeTitle": "push_tree",
+    "unlockWeek": 1,
+    "id": "push-vol",
+    "parentId": "push-1",
+    "parentName": "Push-up Bars Progression",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Diamond Push-Up",
+    "category": "upper-push",
+    "treeTitle": "push_tree",
+    "unlockWeek": 1,
+    "id": "diamond-push-up",
+    "parentId": "push-1",
+    "parentName": "Push-up Bars Progression",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "Bodyweight", "fromWeek": 1 },
+      { "weight": "+5 kg", "fromWeek": 62 }
+    ]
+  },
+  {
+    "name": "Deficit Push-Up",
+    "category": "upper-push",
+    "treeTitle": "push_tree",
+    "unlockWeek": 10,
+    "id": "push-2a",
+    "parentId": "push-1",
+    "parentName": "Push-up Bars Progression",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 10 }]
+  },
+  {
+    "name": "Feet-Elevated Push-Up",
+    "category": "upper-push",
+    "treeTitle": "push_tree",
+    "unlockWeek": 18,
+    "id": "push-2b",
+    "parentId": "push-1",
+    "parentName": "Push-up Bars Progression",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 18 }]
+  },
+  {
+    "name": "Single-Arm Floor Press",
+    "category": "upper-push",
+    "treeTitle": "push_tree",
+    "unlockWeek": 18,
+    "id": "floor-2",
+    "parentId": "floor-1",
+    "parentName": "DB Floor Press",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "15 kg", "fromWeek": 18 },
+      { "weight": "18 kg", "fromWeek": 26 },
+      { "weight": "21 kg", "fromWeek": 34 },
+      { "weight": "24 kg", "fromWeek": 42 }
+    ]
+  },
+  {
+    "name": "Weighted Deficit Push-Up",
+    "category": "upper-push",
+    "treeTitle": "push_tree",
+    "unlockWeek": 62,
+    "id": "push-3",
+    "parentId": "push-2a",
+    "parentName": "Deficit Push-Up",
+    "parentUnlockWeek": 10,
+    "note": "",
+    "weightTiers": [{ "weight": "+5 kg", "fromWeek": 62 }]
+  },
+  {
+    "name": "Pike Progression",
+    "category": "upper-push",
+    "treeTitle": "overhead_skill",
+    "unlockWeek": 1,
+    "id": "pike-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Seated DB Overhead Press",
+    "category": "upper-push",
+    "treeTitle": "overhead_skill",
+    "unlockWeek": 1,
+    "id": "ohp-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "6 kg each", "fromWeek": 1 },
+      { "weight": "9 kg", "fromWeek": 18 },
+      { "weight": "12 kg", "fromWeek": 42 }
+    ]
+  },
+  {
+    "name": "Wall Walk (Partial)",
+    "category": "upper-push",
+    "treeTitle": "overhead_skill",
+    "unlockWeek": 10,
+    "id": "pike-2",
+    "parentId": "pike-1",
+    "parentName": "Pike Progression",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 10 }]
+  },
+  {
+    "name": "Wall Walk (Full)",
+    "category": "upper-push",
+    "treeTitle": "overhead_skill",
+    "unlockWeek": 18,
+    "id": "pike-3",
+    "parentId": "pike-2",
+    "parentName": "Wall Walk (Partial)",
+    "parentUnlockWeek": 10,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 18 }]
+  },
+  {
+    "name": "Wall Handstand",
+    "category": "upper-push",
+    "treeTitle": "overhead_skill",
+    "unlockWeek": 26,
+    "id": "pike-4",
+    "parentId": "pike-3",
+    "parentName": "Wall Walk (Full)",
+    "parentUnlockWeek": 18,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 26 }]
+  },
+  {
+    "name": "Elevated Pike Push-Up",
+    "category": "upper-push",
+    "treeTitle": "overhead_skill",
+    "unlockWeek": 41,
+    "id": "pike-5",
+    "parentId": "pike-4",
+    "parentName": "Wall Handstand",
+    "parentUnlockWeek": 26,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 41 }]
+  },
+  {
+    "name": "Single-Arm Seated OHP",
+    "category": "upper-push",
+    "treeTitle": "overhead_skill",
+    "unlockWeek": 49,
+    "id": "ohp-2",
+    "parentId": "ohp-1",
+    "parentName": "Seated DB Overhead Press",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "18 kg", "fromWeek": 53 },
+      { "weight": "21 kg", "fromWeek": 58 },
+      { "weight": "24 kg", "fromWeek": 62 }
+    ]
+  },
+  {
+    "name": "DB Lateral Raise",
+    "category": "upper-push",
+    "treeTitle": "accessory_prehab",
+    "unlockWeek": 1,
+    "id": "lat-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "3 kg each", "fromWeek": 1 },
+      { "weight": "6 kg", "fromWeek": 42 },
+      { "weight": "9 kg", "fromWeek": 53 }
+    ]
+  },
+  {
+    "name": "DB Overhead Triceps Extension",
+    "category": "upper-push",
+    "treeTitle": "accessory_prehab",
+    "unlockWeek": 1,
+    "id": "tri-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "6 kg total", "fromWeek": 1 },
+      { "weight": "9 kg", "fromWeek": 10 },
+      { "weight": "12 kg", "fromWeek": 34 },
+      { "weight": "15 kg", "fromWeek": 50 },
+      { "weight": "18 kg", "fromWeek": 53 }
+    ]
+  },
+  {
+    "name": "TRX Y-T-W",
+    "category": "upper-push",
+    "treeTitle": "accessory_prehab",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Arm Block - DB Lateral Raise",
+    "category": "upper-push",
+    "treeTitle": "accessory_prehab",
+    "unlockWeek": 10,
+    "id": "lat-2",
+    "parentId": "lat-1",
+    "parentName": "DB Lateral Raise",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "3-9 kg", "fromWeek": 10 },
+      { "weight": "9 kg", "fromWeek": 74 }
+    ]
+  },
+  {
+    "name": "Arm Block - DB Overhead Triceps Ext",
+    "category": "upper-push",
+    "treeTitle": "accessory_prehab",
+    "unlockWeek": 10,
+    "id": "tri-2",
+    "parentId": "tri-1",
+    "parentName": "DB Overhead Triceps Extension",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "6-15 kg", "fromWeek": 10 },
+      { "weight": "24 kg", "fromWeek": 74 }
+    ]
+  },
+  {
+    "name": "Scapular Pull-up",
+    "category": "upper-pull",
+    "treeTitle": "warmup_back",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Dead Hang",
+    "category": "upper-pull",
+    "treeTitle": "warmup_back",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Pull-Up Progression",
+    "category": "upper-pull",
+    "treeTitle": "pullup_tree",
+    "unlockWeek": 1,
+    "id": "pull-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Chin-Up Progression",
+    "category": "upper-pull",
+    "treeTitle": "pullup_tree",
+    "unlockWeek": 5,
+    "id": "pull-1b",
+    "parentId": "pull-1",
+    "parentName": "Pull-Up Progression",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 5 }]
+  },
+  {
+    "name": "Pull-Up (Overhand)",
+    "category": "upper-pull",
+    "treeTitle": "pullup_tree",
+    "unlockWeek": 10,
+    "id": "pull-2a",
+    "parentId": "pull-1",
+    "parentName": "Pull-Up Progression",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 10 }]
+  },
+  {
+    "name": "Chin-Up",
+    "category": "upper-pull",
+    "treeTitle": "pullup_tree",
+    "unlockWeek": 10,
+    "id": "pull-2b",
+    "parentId": "pull-1b",
+    "parentName": "Chin-Up Progression",
+    "parentUnlockWeek": 5,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 10 }]
+  },
+  {
+    "name": "Weighted Pull-Up",
+    "category": "upper-pull",
+    "treeTitle": "pullup_tree",
+    "unlockWeek": 62,
+    "id": "pull-3a",
+    "parentId": "pull-2a",
+    "parentName": "Pull-Up (Overhand)",
+    "parentUnlockWeek": 10,
+    "note": "",
+    "weightTiers": [{ "weight": "+5 kg", "fromWeek": 62 }]
+  },
+  {
+    "name": "Weighted Chin-Up",
+    "category": "upper-pull",
+    "treeTitle": "pullup_tree",
+    "unlockWeek": 66,
+    "id": "pull-3b",
+    "parentId": "pull-2b",
+    "parentName": "Chin-Up",
+    "parentUnlockWeek": 10,
+    "note": "",
+    "weightTiers": [{ "weight": "+5 kg", "fromWeek": 66 }]
+  },
+  {
+    "name": "TRX Row",
+    "category": "upper-pull",
+    "treeTitle": "rows_horizontal",
+    "unlockWeek": 1,
+    "id": "row-0",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Seated Band Row",
+    "category": "upper-pull",
+    "treeTitle": "rows_horizontal",
+    "unlockWeek": 1,
+    "id": "row-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "30 kg", "fromWeek": 1 },
+      { "weight": "40 kg", "fromWeek": 5 },
+      { "weight": "50 kg", "fromWeek": 13 }
+    ]
+  },
+  {
+    "name": "One-Arm DB Row",
+    "category": "upper-pull",
+    "treeTitle": "rows_horizontal",
+    "unlockWeek": 1,
+    "id": "row-2",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "6 kg", "fromWeek": 1 },
+      { "weight": "9 kg", "fromWeek": 5 },
+      { "weight": "12 kg", "fromWeek": 10 },
+      { "weight": "15 kg", "fromWeek": 26 },
+      { "weight": "21 kg", "fromWeek": 42 },
+      { "weight": "24 kg", "fromWeek": 53 }
+    ]
+  },
+  {
+    "name": "TRX Face Pull",
+    "category": "upper-pull",
+    "treeTitle": "rows_horizontal",
+    "unlockWeek": 1,
+    "id": "row-3",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "DB Curl",
+    "category": "upper-pull",
+    "treeTitle": "biceps_grip",
+    "unlockWeek": 1,
+    "id": "curl-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [
+      { "weight": "3 kg each", "fromWeek": 1 },
+      { "weight": "6 kg", "fromWeek": 10 },
+      { "weight": "9 kg", "fromWeek": 34 },
+      { "weight": "12 kg", "fromWeek": 58 }
+    ]
+  },
+  {
+    "name": "Hammer Curl",
+    "category": "upper-pull",
+    "treeTitle": "biceps_grip",
+    "unlockWeek": 5,
+    "id": "curl-2",
+    "parentId": "curl-1",
+    "parentName": "DB Curl",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "3 kg each", "fromWeek": 1 },
+      { "weight": "6 kg", "fromWeek": 5 }
+    ]
+  },
+  {
+    "name": "Arm Block - DB Curl",
+    "category": "upper-pull",
+    "treeTitle": "biceps_grip",
+    "unlockWeek": 10,
+    "id": "curl-2b",
+    "parentId": "curl-1",
+    "parentName": "DB Curl",
+    "parentUnlockWeek": 1,
+    "note": "",
+    "weightTiers": [
+      { "weight": "3-12 kg", "fromWeek": 10 },
+      { "weight": "18 kg", "fromWeek": 74 }
+    ]
+  },
+  {
+    "name": "Single-Arm Curl",
+    "category": "upper-pull",
+    "treeTitle": "biceps_grip",
+    "unlockWeek": 49,
+    "id": "curl-3",
+    "parentId": "curl-2",
+    "parentName": "Hammer Curl",
+    "parentUnlockWeek": 5,
+    "note": "",
+    "weightTiers": [
+      { "weight": "15 kg", "fromWeek": 62 },
+      { "weight": "18 kg", "fromWeek": 66 }
+    ]
+  },
+  {
+    "name": "Towel Hang",
+    "category": "upper-pull",
+    "treeTitle": "biceps_grip",
+    "unlockWeek": 1,
+    "id": "towel-1",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "L-Sit Progression",
+    "category": "upper-pull",
+    "treeTitle": "hanging_core",
+    "unlockWeek": 1,
+    "id": "l-sit-progression",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Bodyweight", "fromWeek": 1 }]
+  },
+  {
+    "name": "Relaxed Walking",
+    "category": "cardio",
+    "treeTitle": "cardio_recovery",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Incline 0%", "fromWeek": 1 }]
+  },
+  {
+    "name": "Brisk Walking",
+    "category": "cardio",
+    "treeTitle": "cardio_recovery",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Incline 4%", "fromWeek": 1 }]
+  },
+  {
+    "name": "VO2 Max Norwegian 4x4",
+    "category": "cardio",
+    "treeTitle": "cardio_recovery",
+    "unlockWeek": 1,
+    "id": "",
+    "parentId": "",
+    "parentName": null,
+    "parentUnlockWeek": null,
+    "note": "",
+    "weightTiers": [{ "weight": "Incline 3%", "fromWeek": 1 }]
+  }
+];
+
+    // Deduplicate
+    const uniqueMap = new Map();
+    EXERCISES_DATA.forEach(item => {
+      if (!uniqueMap.has(item.name)) {
+        uniqueMap.set(item.name, item);
+      }
+    });
+    const exercisesList = Array.from(uniqueMap.values());
+
+    // Map parent ID -> list of child exercises
+    const idToNode = {};
+    exercisesList.forEach(ex => { if (ex.id) idToNode[ex.id] = ex; });
+
+    const parentToChildrenMap = {};
+    exercisesList.forEach(ex => {
+      if (ex.parentId && idToNode[ex.parentId]) {
+        const parentName = idToNode[ex.parentId].name;
+        if (!parentToChildrenMap[parentName]) parentToChildrenMap[parentName] = [];
+        parentToChildrenMap[parentName].push(ex);
+      }
+    });
+
+    // Update Stats
+    const totalParents = Object.keys(parentToChildrenMap).length;
+    const totalChildren = exercisesList.filter(e => e.parentName !== null).length;
+    document.getElementById('stat-total').innerText = exercisesList.length;
+    document.getElementById('stat-parents').innerText = totalParents;
+    document.getElementById('stat-children').innerText = totalChildren;
+
+    let currentCategory = 'all';
+    let currentMinWeek = 'all';
+    let searchQuery = '';
+
+    function renderGrid() {
+      const container = document.getElementById('exerciseGrid');
+      container.innerHTML = '';
+
+      const filtered = exercisesList.filter(ex => {
+        if (currentCategory !== 'all' && ex.category !== currentCategory) return false;
+        if (currentMinWeek !== 'all') {
+          const reqW = parseInt(currentMinWeek);
+          if (reqW === 1 && ex.unlockWeek !== 1) return false;
+          if (reqW > 1 && ex.unlockWeek < reqW) return false;
+        }
+
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.toLowerCase();
+          const nameMatch = ex.name.toLowerCase().includes(q);
+          const prereqMatch = ex.parentName && ex.parentName.toLowerCase().includes(q);
+          const catMatch = ex.category.toLowerCase().includes(q);
+          const childMatch = (parentToChildrenMap[ex.name] || []).some(c => c.name.toLowerCase().includes(q));
+          if (!nameMatch && !prereqMatch && !catMatch && !childMatch) return false;
+        }
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; background: #111827; border-radius: 18px; border: 1px dashed var(--border-highlight);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--text-main);">לא נמצאו תרגילים מתאימים</h3>
+            <p style="color: var(--text-muted);">נסה לשנות את מילות החיפוש או את המסננים</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(ex => {
+        const pngPath = `../images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png`;
+        const gifPath = `../images/gifs/${ex.name}.gif`;
+
+        const isFuture = ex.unlockWeek > 1;
+        const weekTagClass = isFuture ? 'unlock-week-tag future-week' : 'unlock-week-tag';
+
+        // Prerequisite HTML
+        let prereqHTML = '';
+        if (ex.parentName) {
+          prereqHTML = `<span class="condition-val prereq">🔗 תנאי קדם: <b>${ex.parentName}</b> (נפתח בשבוע ${ex.parentUnlockWeek || 1})</span>`;
+        } else {
+          prereqHTML = `<span class="condition-val highlight">🌱 תרגיל שורש / אב (Root Node)</span>`;
+        }
+
+        // Children HTML (Sub-Exercises derived from this exercise)
+        let childrenHTML = '';
+        const children = parentToChildrenMap[ex.name] || [];
+        if (children.length > 0) {
+          const chips = children.map(c => `<span class="child-chip">➔ ${c.name} (שבוע ${c.unlockWeek})</span>`).join('');
+          childrenHTML = `
+            <div class="condition-row" style="margin-top: 0.6rem;">
+              <span class="condition-icon">🌿</span>
+              <span class="condition-label">תת-תרגילים הנגזרים מתרגיל זה:</span>
+              <div class="children-list">${chips}</div>
+            </div>
+          `;
+        }
+
+        // Weight Tiers HTML
+        let weightHTML = '';
+        if (ex.weightTiers && ex.weightTiers.length > 0) {
+          weightHTML = ex.weightTiers.map((t, idx) => `
+            <span class="tier-badge">שלב ${idx + 1}: <b>${t.weight}</b> (משבוע ${t.fromWeek})</span>
+          `).join('');
+        } else {
+          weightHTML = `<span class="tier-badge"><b>Bodyweight</b></span>`;
+        }
+
+        const card = document.createElement('div');
+        card.className = 'exercise-card';
+        card.innerHTML = `
+          <div class="card-header">
+            <div class="card-title-group">
+              <h2 class="card-title">${ex.name}</h2>
+              <span class="card-category">${getCategoryLabel(ex.category)}</span>
+            </div>
+            <div class="${weekTagClass}">
+              ${ex.unlockWeek === 1 ? '🔓 שבוע 1 (מיידי)' : '🔒 שבוע ' + ex.unlockWeek}
+            </div>
+          </div>
+
+          <div class="conditions-box">
+            <div class="condition-row">
+              <span class="condition-icon">🗓️</span>
+              <span class="condition-label">מועד פתיחה מדויק:</span>
+              <span class="condition-val">שבוע ${ex.unlockWeek} בתכנית 52 השבועות</span>
+            </div>
+            <div class="condition-row">
+              <span class="condition-icon">🎯</span>
+              <span class="condition-label">תנאי פתיחה ודרישות:</span>
+              ${prereqHTML}
+            </div>
+            ${childrenHTML}
+          </div>
+
+          <div class="media-section">
+            <div class="media-box">
+              <span class="media-label">🖼️ תמונה (PNG)</span>
+              <img src="${pngPath}" alt="${ex.name} PNG" 
+                   onload="this.style.display='block'" 
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+              <div class="media-fallback" style="display:none">
+                <span class="media-fallback-icon">🖼️</span>
+                <span>אין תמונת PNG זמינה</span>
+              </div>
+            </div>
+
+            <div class="media-box">
+              <span class="media-label">🎬 הדגמה (GIF)</span>
+              <img src="${gifPath}" alt="${ex.name} GIF" 
+                   onload="this.style.display='block'" 
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+              <div class="media-fallback" style="display:none">
+                <span class="media-fallback-icon">🎬</span>
+                <span>אין גיף הדגמה זמין</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <div style="color: var(--text-muted); font-size: 0.82rem; font-weight: 700; margin-bottom: 4px;">
+              💪 מדרגות משקל והתקדמות:
+            </div>
+            <div class="weight-roadmap">
+              ${weightHTML}
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function getCategoryLabel(catKey) {
+      switch(catKey) {
+        case 'lower-strength': return '🦵 רגליים + ליבה';
+        case 'upper-push': return '💥 דחיפה + מיומנות';
+        case 'upper-pull': return '🧗 משיכה + אחיזה';
+        case 'cardio': return '🫀 אירובי ואירובי 4x4';
+        default: return catKey;
+      }
+    }
+
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = btn.dataset.cat;
+        renderGrid();
+      });
+    });
+
+    document.getElementById('weekSelect').addEventListener('change', (e) => {
+      currentMinWeek = e.target.value;
+      renderGrid();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderGrid();
+    });
+
+    renderGrid();
+  </script>
+</body>
+</html>

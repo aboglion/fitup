@@ -345,20 +345,68 @@ const ExercisesPage = (() => {
   }
 
   /**
+   * Helper to extract all 66 master exercises from SKILL_TREES with complete tree hierarchy
+   */
+  function getSkillTreeMasterExercises() {
+    const list = [];
+    const nodeMap = {};
+
+    Object.values(SKILL_TREES).forEach(paths => {
+      paths.forEach(p => {
+        (p.exercises || []).forEach(node => {
+          if (node.id || node.name) nodeMap[node.id || node.name] = node;
+        });
+      });
+    });
+
+    Object.entries(SKILL_TREES).forEach(([catKey, paths]) => {
+      paths.forEach(p => {
+        (p.exercises || []).forEach(node => {
+          const parent = node.parentId ? nodeMap[node.parentId] : null;
+          const tiers = getWeightTiers(node.name) || [{ weight: 'Bodyweight', fromWeek: node.unlockWeek || 1 }];
+          const equip = UI.getEquipment(node.name);
+
+          list.push({
+            name: node.name,
+            category: catKey,
+            treeTitle: p.title,
+            unlockWeek: node.unlockWeek || 1,
+            id: node.id || '',
+            parentId: node.parentId || '',
+            parentName: parent ? parent.name : null,
+            parentUnlockWeek: parent ? parent.unlockWeek : null,
+            weight: tiers[0] ? tiers[0].weight : 'Bodyweight',
+            difficulty: (node.unlockWeek || 1) > 26 ? 'Advanced' : (node.unlockWeek || 1) > 5 ? 'Intermediate' : 'Beginner',
+            setsProgression: `Unlocks Week ${node.unlockWeek || 1}`,
+            noImage: node.noImage || false
+          });
+        });
+      });
+    });
+
+    const map = new Map();
+    list.forEach(ex => {
+      if (!map.has(ex.name)) map.set(ex.name, ex);
+    });
+    return Array.from(map.values());
+  }
+
+  /**
    * Initialize
    */
   async function init() {
-    allExercises = await DB.getExerciseGuide();
-    if (!allExercises || allExercises.length === 0) {
-      allExercises = window.TRAINING_DATA?.exercises || [];
-    } else if (window.TRAINING_DATA?.exercises) {
-      const existingNames = new Set(allExercises.map(e => e.name));
-      window.TRAINING_DATA.exercises.forEach(e => {
-        if (!existingNames.has(e.name)) {
-          allExercises.push(e);
-        }
-      });
-    }
+    const dbExs = (await DB.getExerciseGuide()) || [];
+    const masterExs = getSkillTreeMasterExercises();
+
+    const nameMap = new Map();
+    masterExs.forEach(ex => nameMap.set(ex.name, ex));
+    dbExs.forEach(ex => {
+      if (ex && ex.name) {
+        nameMap.set(ex.name, { ...nameMap.get(ex.name), ...ex });
+      }
+    });
+
+    allExercises = Array.from(nameMap.values());
 
     // Extract unique categories
     const catSet = new Set(allExercises.map(e => e.category));
@@ -922,6 +970,15 @@ const ExercisesPage = (() => {
       weightDisplay = `${I18n.t('equip_band')}: ${weightDisplay}`;
     }
 
+    const unlockWeek = ex.unlockWeek || 1;
+    const weekBadgeHTML = unlockWeek > 1 
+      ? `<span class="guide-unlock-badge locked" style="background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 11px;">🔒 ${I18n.t('locked_week') || 'שבוע'} ${unlockWeek}</span>`
+      : `<span class="guide-unlock-badge unlocked" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 11px;">🔓 ${I18n.t('unlocked_week') || 'שבוע'} 1</span>`;
+
+    const parentLineHTML = ex.parentName 
+      ? `<div style="font-size: 11px; color: var(--accent-orange, #f97316); margin-top: 4px; font-weight: 600;">🔗 תנאי קדם: ${ex.parentName}</div>`
+      : '';
+
     return `
       <div class="guide-card" style="cursor: pointer;" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}')">
         <div class="guide-card-image-container diff-${diffClass} skeleton-loading">
@@ -935,7 +992,11 @@ const ExercisesPage = (() => {
             <span style="flex: 0 1 auto; word-break: break-word;">${ex.name}</span>
             ${equip ? `<span class="guide-equipment" style="flex-shrink: 0; unicode-bidi: isolate;">${equip.icon} ${equip.label}</span>` : ''}
           </div>
-          <span class="guide-card-category">${ex.category || ''}</span>
+          <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0;">
+            <span class="guide-card-category">${ex.category || ''}</span>
+            ${weekBadgeHTML}
+          </div>
+          ${parentLineHTML}
           <div class="guide-card-sets">${ex.setsProgression || ''}</div>
           <div class="guide-card-meta">
             <span class="guide-difficulty ${diffClass}">${ex.difficulty || ''}</span>
