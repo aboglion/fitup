@@ -124,8 +124,10 @@
           }
         };
 
-        if (window.fetch) {
-          fetch(url)
+        const isLocalFile = window.location.protocol === 'file:';
+
+        if (window.fetch && !isLocalFile) {
+          fetch(url, { mode: 'no-cors' })
             .then(() => checkDone())
             .catch(() => {
               const img = new Image();
