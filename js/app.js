@@ -269,7 +269,7 @@ const App = (() => {
       }, 2500);
 
       // Register Service Worker for PWA with automatic update force
-      if ('serviceWorker' in navigator) {
+      if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
         navigator.serviceWorker.register('./sw.js')
           .then(reg => {
             console.log('SW registered!', reg);
