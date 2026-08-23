@@ -1,0 +1,2693 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitUp - ניתוח אנטומי וויזואלי מלא לכל התרגילים ותתי-התרגילים</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #080c14;
+      --card-bg: #0f172a;
+      --card-inner: #162032;
+      --border-color: #1e293b;
+      --border-highlight: #334155;
+      --accent-blue: #38bdf8;
+      --accent-green: #34d399;
+      --accent-orange: #f97316;
+      --accent-purple: #a855f7;
+      --accent-pink: #ec4899;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-sub: #cbd5e1;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 2rem 1.5rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+      border: 1px solid var(--border-highlight);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-green), var(--accent-purple));
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-btn {
+      background: rgba(56, 189, 248, 0.12);
+      color: var(--accent-blue);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 8px 18px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: var(--accent-blue);
+      color: #000;
+    }
+
+    h1 {
+      font-family: 'Outfit', 'Heebo', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 800;
+      margin-bottom: 0.8rem;
+      background: linear-gradient(135deg, #38bdf8, #34d399, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 950px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    .audit-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .audit-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-header-row {
+      padding: 1.4rem 1.8rem;
+      background: #141e30;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .ex-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .ex-title {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .badge-unlock {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--accent-green);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 4px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .badge-unlock.future {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--accent-purple);
+      border-color: rgba(168, 85, 247, 0.3);
+    }
+
+    .card-body-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem 1.8rem;
+    }
+
+    @media (max-width: 992px) {
+      .card-body-layout { grid-template-columns: 1fr; }
+    }
+
+    .media-box-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .media-item {
+      background: #090d16;
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 0.8rem;
+      text-align: center;
+      position: relative;
+    }
+
+    .media-item img {
+      max-width: 100%;
+      max-height: 180px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    .media-label-tag {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.7);
+      color: var(--text-sub);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .analysis-details {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .analysis-block {
+      background: var(--card-inner);
+      border: 1px solid var(--border-highlight);
+      border-radius: 14px;
+      padding: 1.2rem 1.4rem;
+    }
+
+    .block-title {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .block-title.exec { color: var(--accent-blue); }
+    .block-title.vis { color: var(--accent-orange); }
+    .block-title.match { color: var(--accent-green); }
+    .block-title.rationale { color: var(--accent-purple); }
+
+    .block-desc {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      line-height: 1.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="nav-links">
+        <a href="exercise_test_page.html" class="nav-btn">🔙 חזרה ל-HUB הבדיקה הראשי</a>
+        <a href="../index.html" class="nav-btn">🏠 חזרה לאפליקציה</a>
+      </div>
+      <h1>דף ניתוח אנטומי וויזואלי מלא — FitUp v15.6 Lean</h1>
+      <p class="subtitle">
+        סקירה מפורטת ושיטתית של <b>כל התרגילים ותתי-התרגילים</b> במערכת. לכל תרגיל מוצג מפרט הביצוע, ניתוח הווידאו והתמונה, קביעת מידת ההתאמה (Match), וניתוח פיזיו-אנטומי מדויק למועד הפתיחה ודרישות הקדם.
+      </p>
+    </header>
+
+    <div class="audit-grid">
+
+    <div class="audit-card" id="ex-1">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#1</span>
+          <h2 class="ex-title">Bodyweight Squat</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/BODYWEIGHT SQUAT.png" alt="Bodyweight Squat PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Bodyweight Squat.gif" alt="Bodyweight Squat GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">סקוואט משקל גוף: גב ישר, ירידה מעבר ל-90 מעלות במפרק הברך והירך, שמירה על ברכיים בסדר אחד עם אצבעות הרגליים והרמת חזה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים מודל המבצע סקוואט חופשי במשקל גוף בשליטה מלאה, ירידה עמוקה ועלייה כנגד העקב.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תמונת ה-PNG וה-GIF מציגים סקוואט משקל גוף מושלם.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש בסיסי (שבוע 1) הנדרש לבדיקת ניידות קרסול, ירך ושליטה תנועתית בבסיס התוכנית לפני העמסת משקל.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-2">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#2</span>
+          <h2 class="ex-title">DB Bulgarian Split Squat</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DB BULGARIAN SPLIT SQUAT.png" alt="DB Bulgarian Split Squat PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/DB Bulgarian Split Squat.gif" alt="DB Bulgarian Split Squat GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">ספליט סקוואט בולגרי עם משקולות: רגל אחורית מונחת על ספסל/הגבהה, ירידה אנכית של הברך האחורית כמעט עד הרצפה תוך שמירה על עומס בטורסו ובארבע-ראשי הקדמי.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים מודל עם רגל אחורית על ספסל ואחיזת משקולות בצידי הגוף, ביצוע ירידה עמוקה ועלייה יציבה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — מוצגת טכניקת BSS מדויקת עם משקולות.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Bodyweight Squat<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 1 כתנועה חד-רגלת עיקרית. דורש שליטה בסקוואט משקל גוף כדי למנוע קריסת ברך ולבנות כוח סימטרי בברכיים.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-3">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#3</span>
+          <h2 class="ex-title">Reverse Lunge + DB</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 18
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/REVERSE LUNGE + DB.png" alt="Reverse Lunge + DB PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Reverse Lunge + DB.gif" alt="Reverse Lunge + DB GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">לאנג' אחורי עם משקולות: צעידה לאחור, ירידה בזווית של 90 מעלות בשתי הברכיים ודחיפה חזרה לקימה דרך העקב הקדמי.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים מודל צועד לאחור עם משקולות בצידי הגוף ושומר על יציבות אגן וטורסו.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — אופן הביצוע בתמונה תואם לחלוטין.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 18 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB Bulgarian Split Squat<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 18 לאחר 17 שבועות של ביסוס כוח ומסה ב-BSS. הלאנג' האחורי מוסיף אלמנט דינמי של שיווי משקל ובלימת זעזועים.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-4">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#4</span>
+          <h2 class="ex-title">DB BSS (Goblet)</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 34
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DB BSS (GOBLET).png" alt="DB BSS (Goblet) PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/DB BSS (Goblet).gif" alt="DB BSS (Goblet) GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">ספליט סקוואט בולגרי באחיזת גובלט (משקולת אחת במרכז החזה): מגדיל עומס על הליבה והזקופים ושומר על גב זקוף לחלוטין.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים אחיזת גובלט מרכזית של המשקולת מול החזה תוך ביצוע ירידה עמוקה ברגל קדמית.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — אחיזת הגובלט ומנח הגוף מיוצגים באופן מדויק.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 34 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB Bulgarian Split Squat<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 34 עקב עומס גבוה על הליבה והזקופים; דורש בסיס כוח מתקדם ב-BSS רגיל.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-5">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#5</span>
+          <h2 class="ex-title">Pistol Squat Progression</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 42
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/PISTOL SQUAT PROGRESSION.png" alt="Pistol Squat Progression PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Pistol Squat Progression.gif" alt="Pistol Squat Progression GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פרוגרסיית פיסטול סקוואט: סקוואט על רגל אחת בלבד כשהרגל השנייה פשוטה לפנים, דורש גמישות קרסול שיא וכוח ארבע-ראשי מרבי.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים ירידה מלאה על רגל אחת כשהרגל השנייה מתוחה לפנים באוויר.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת פיסטול סקוואט נקייה ומדויקת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 42 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB BSS (Goblet)<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 42 לאחר ביסוס כוח עמוק בגובלט BSS; דורש סף כוח ויציבות מפרקית מירביים.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-6">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#6</span>
+          <h2 class="ex-title">Walking Lunge (Goblet)</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 62
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/WALKING LUNGE (GOBLET).png" alt="Walking Lunge (Goblet) PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Walking Lunge (Goblet).gif" alt="Walking Lunge (Goblet) GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">מכרעים בהליכה באחיזת גובלט כבדה: צעידה רציפה לפנים עם עומס משקולת מרכזי, דורשת סבולת כוח ויציבות דינמית.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים הליכת מכרעים רציפה לפנים עם משקולת מוחזקת במרכז החזה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — מציג לאנג' בהליכה באחיזת גובלט.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 62 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Pistol Squat Progression<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 62 (שנה 2) כשלב פיק נפחי מתקדם ברגליים.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-7">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#7</span>
+          <h2 class="ex-title">DB Romanian Deadlift</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DB ROMANIAN DEADLIFT.png" alt="DB Romanian Deadlift PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/DB Romanian Deadlift.gif" alt="DB Romanian Deadlift GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">דדליפט רומני עם משקולות: ציר ירך (Hinge) נקי, שליחת האגן לאחור, כפיפה קלה בברכיים ומתיחה עמוקה בהמסטרינגס ובגלוטס.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים מודל שולח אגן לאחור עם גב ישר לחלוטין ומוריד משקולות לאורך השוקיים.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Hinge רומני מדויק בתמונה ובגיף.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לביסוס תבנית ה-Hinge ולחיזוק השרשרת האחורית.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-8">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#8</span>
+          <h2 class="ex-title">Single-Leg RDL</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 18
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/SINGLE-LEG RDL.png" alt="Single-Leg RDL PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Single-Leg RDL.gif" alt="Single-Leg RDL GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">דדליפט רומני על רגל אחת: עבודה חד-צדדית עם שמירה על אגן ישר, הרמת רגל אחורית ומתיחה ממוקדת בהמסטרינגס של הרגל העומדת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים איזון על רגל אחת, הרמת רגל אחורית בקו ישר עם הטורסו והורדת משקולת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת Single-Leg RDL נקייה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 18 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB Romanian Deadlift<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 18 לאחר שליטה מלאה ב-Hinge דו-צדדי; מונע פערים אסימטריים בין הירכיים.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-9">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#9</span>
+          <h2 class="ex-title">Glute Bridge</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/GLUTE BRIDGE.png" alt="Glute Bridge PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Glute Bridge.gif" alt="Glute Bridge GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">גשר ישבן משקל גוף: שכיבה על הגב, כפיפת ברכיים ודחיפת האגן למעלה עד נעילת גלוטס מלאה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים פשיטת ירך מלאה בשכיבה על הגב ונעילת ישבן בחלק העליון.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — גשר ישבן תקני.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לאקטיבציה ישירה של הגלוטס ללא עומס על הגב התחתון.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-10">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#10</span>
+          <h2 class="ex-title">DB Glute Bridge</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DB GLUTE BRIDGE.png" alt="DB Glute Bridge PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/DB Glute Bridge.gif" alt="DB Glute Bridge GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">גשר ישבן עם משקולת על האגן: העמסת משקל נוסף על מנת להגביר היפרטרופיה בגלוטס.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים מודל מחזיק משקולת על הירכיים ומבצע פשיטת ירך.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת DB Glute Bridge תואמת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Glute Bridge<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 1 כהתקדמות העמסה ישירה מגשר ישבן משקל גוף.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-11">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#11</span>
+          <h2 class="ex-title">DB Hip Thrust</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 5
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DB HIP THRUST.png" alt="DB Hip Thrust PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/DB Hip Thrust.gif" alt="DB Hip Thrust GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">היפ תראסט עם משקולת על ספסל: שכמות מונחות על ספסל, ירידה עמוקה של האגן ודחיפה חזקה למעלה עם טווח תנועה מוגדל.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים גב עליון נשען על ספסל, משקולת על האגן ופשיטת ירך מלאה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת Hip Thrust מדויקת על ספסל.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 5 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB Glute Bridge<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 5 עקב טווח התנועה המוגדל והצורך בביסוס יציבות שכמות וגב עליון.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-12">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#12</span>
+          <h2 class="ex-title">Standing Single-Leg Calf Raise</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/STANDING SINGLE-LEG CALF RAISE.png" alt="Standing Single-Leg Calf Raise PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Standing Single-Leg Calf Raise.gif" alt="Standing Single-Leg Calf Raise GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">עליות עקב בעמידה על רגל אחת: פשיטת קרסול מלאה כנגד משקל גוף/משקולת לאקטיבציה של שריר התאומים (Gastrocnemius).</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים עמידה על רגל אחת, הרמת עקב מקסימלית וירידה מבוקרת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — עליות עקב בעמידה בתקן מלא.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לחיזוק גיד אכילס והמייצבים הדיסטליים של הקרסול.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-13">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#13</span>
+          <h2 class="ex-title">Seated Single-Leg Calf Raise</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/SEATED SINGLE-LEG CALF RAISE.png" alt="Seated Single-Leg Calf Raise PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Seated Single-Leg Calf Raise.gif" alt="Seated Single-Leg Calf Raise GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">עליות עקב בישיבה על רגל אחת: ברך כפופה ב-90 מעלות ומשקולת על הברך, מתמקד בשריר הסוליה (Soleus).</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים ישיבה עם ברך כפופה, משקולת על הברך והרמת עקב ממוקדת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת Soleus isolation בישיבה תואמת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Standing Single-Leg Calf Raise<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל משלים לשבוע 1 המתמקד בשריר ה-Soleus הבלתי-תלוי במפרק הברך.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-14">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#14</span>
+          <h2 class="ex-title">Dead Bug</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DEAD BUG.png" alt="Dead Bug PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Dead Bug.gif" alt="Dead Bug GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">דד באג: שכיבה על הגב, גב תחתון צמוד לרצפה, פשיטה אלכסונית של זרוע ורגל נגדיות תוך שמירה על יציבות ליבה מוחלטת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים שכיבה על הגב והרחקת יד ורגל נגדיות בשליטה מלאה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Dead Bug תקני ומדויק.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לבניית שליטה אנטי-פשיטתית בליבה (Anti-Extension).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-15">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#15</span>
+          <h2 class="ex-title">Hollow Body Hold</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 5
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/HOLLOW BODY HOLD.png" alt="Hollow Body Hold PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Hollow Body Hold.gif" alt="Hollow Body Hold GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">הולו באדי הולד: כיווץ סטטי של הבטן, גב תחתון הדוק לרצפה, זרועות ורגליים מתוחות באוויר בצורת סירה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים מצע סירה סטטי באוויר עם גב תחתון צמוד לקרקע.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Hollow Hold סטטי מוחלט.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 5 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Dead Bug<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 5 עקב העומס הסטטי הגבוה על שרירי הבטן הישרים.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-16">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#16</span>
+          <h2 class="ex-title">Suitcase Carry</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/SUITCASE CARRY.png" alt="Suitcase Carry PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Suitcase Carry.gif" alt="Suitcase Carry GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">נשיאת מזוודה: הליכה זקופה עם משקולת ביד אחת בלבד, התנגדות לכפיפה צדית (Anti-Lateral Flexion).</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים הליכה זקופה לחלוטין עם משקולת ביד אחת ללא נטייה צדית.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת Suitcase Carry נקייה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לאימון מייצבי האגן והאלכסונים.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-17">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#17</span>
+          <h2 class="ex-title">Pallof Press Progression</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 10
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/PALLOF PRESS PROGRESSION.png" alt="Pallof Press Progression PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Pallof Press Progression.gif" alt="Pallof Press Progression GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פאלוף פרס עם גומייה: דחיפת הגומייה לפנים מול החזה והתנגדות לסיבוב הטורסו (Anti-Rotation).</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים עמידה צדית לגומייה ופשיטת זרועות לפנים ללא תזעזוע של הטורסו.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Pallof Press נקי ומדויק.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 10 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Suitcase Carry<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 10 כשלב מתקדם של אנטי-רוטציה לאחר ביסוס נשיאת מזוודה.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-18">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#18</span>
+          <h2 class="ex-title">Push-up Bars Progression</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/PUSH-UP BARS PROGRESSION.png" alt="Push-up Bars Progression PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Push-up Bars Progression.gif" alt="Push-up Bars Progression GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">שקילת שכיבות סמיכה על ידיות: הגדלת טווח תנועה במרפקים ובחזה, שמירה על גוף ישר כקרש וקירוב שכמות.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים מודל על ידיות שכיבות סמיכה בירידה עמוקה מתחת לקו כפות הידיים.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת Push-up Bars מושלמת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לדחיפת משקל גוף ושמירה על מפרקי כפות הידיים.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-19">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#19</span>
+          <h2 class="ex-title">Deficit Push-Up</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 10
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DEFICIT PUSH-UP.png" alt="Deficit Push-Up PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Deficit Push-Up.gif" alt="Deficit Push-Up GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">שכיבות סמיכה בגרעון עמוק: הידיים מוגבהות על בלוקים/ידיות לירידת חזה עמוקה במיוחד ומתיחה מירבית של החזה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים ירידה עמוקה של החזה מתחת למפלס הידיים המוגבהות.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Deficit מוגדל נראה בבירור.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 10 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Push-up Bars Progression<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 10 עקב המתיחה העמוקה במפרק הכתף הדורשת יציבות מפרקית מבוססת.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-20">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#20</span>
+          <h2 class="ex-title">Feet-Elevated Push-Up</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 18
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/FEET-ELEVATED PUSH-UP.png" alt="Feet-Elevated Push-Up PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Feet-Elevated Push-Up.gif" alt="Feet-Elevated Push-Up GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">שכיבות סמיכה עם רגליים מוגבהות: הרמת כפות הרגליים על ספסל להעברת העומס לחזה העליון ולכתף הקדמית.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים רגליים מוגבהות על ספסל וגוף בשיפוע שלילי בזמן הלחיצה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת Feet-Elevated נקייה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 18 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Push-up Bars Progression<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 18 כשלב העצמה מתקדם לחזה העליון.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-21">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#21</span>
+          <h2 class="ex-title">Diamond Push-Up</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DIAMOND PUSH-UP.png" alt="Diamond Push-Up PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Diamond Push-Up.gif" alt="Diamond Push-Up GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">שכיבות סמיכה יהלום: כפות ידיים צמודות בצורת מעוין מתחת לחזה, מתמקד בתלת-ראשי ובמרכז החזה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים אחיזה צמודה בצורת יהלום מתחת לחזה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Diamond Push-up מדויק.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Push-up Bars Progression<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 1 כתנועת עזר ממוקדת לתלת-ראשי.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-22">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#22</span>
+          <h2 class="ex-title">DB Floor Press</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DB FLOOR PRESS.png" alt="DB Floor Press PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/DB Floor Press.gif" alt="DB Floor Press GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">לחיצת חזה על הרצפה עם משקולות: שכיבה על הגב, עצירת הזרועות כשהזרוע האחורית נוגעת ברצפה ולחיצה אנכית למעלה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים שכיבה על הרצפה ולחיצת משקולות דו-צדדית עם עצירת מרפק ברצפה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Floor Press מדויק.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) ללחיצת חזה עמוסה בטוחה ללא צורך בספסל.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-23">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#23</span>
+          <h2 class="ex-title">Single-Arm Floor Press</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 18
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/SINGLE-ARM FLOOR PRESS.png" alt="Single-Arm Floor Press PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Single-Arm Floor Press.gif" alt="Single-Arm Floor Press GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">לחיצת חזה על הרצפה ביד אחת: לחיצה חד-צדדית הדורשת כיווץ אלכסונים וליבה למניעת סיבוב הטורסו.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים לחיצה ביד אחת כשהיד השנייה מייצבת את הגוף על הרצפה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגה חד-צדדית תואמת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 18 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB Floor Press<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 18 עקב אלמנט האנטי-רוטציה והעומס על הליבה.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-24">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#24</span>
+          <h2 class="ex-title">Pike Progression</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/PIKE PROGRESSION.png" alt="Pike Progression PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Pike Progression.gif" alt="Pike Progression GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פייק פוש-אפ: אגן מורם למעלה בצורת V הפוך, כפיפת מרפקים ולחיצה אנכית לחיזוק הכתפיים והטרפזים.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים מנח V הפוך וירידת ראש לפנים מול كפות הידיים.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Pike Push-Up תקני.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לביסוס כוח בלחיצה אנכית מול משקל גוף.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-25">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#25</span>
+          <h2 class="ex-title">Wall Walk (Partial)</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 10
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/WALL WALK (PARTIAL).png" alt="Wall Walk (Partial) PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Wall Walk (Partial).gif" alt="Wall Walk (Partial) GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">הליכת קיר חלקית: טיפוס חלקי עם הרגליים על הקיר עד זווית של 45 מעלות והחזקה סטטית/לחיצה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים טיפוס רגליים על קיר עד זווית אלכסונית בטוחה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Wall Walk partial תואם.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 10 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Pike Progression<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 10 להסתגלות הדרגתית לעמידת ידיים ולעומס הפוך על הכתפיים.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-26">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#26</span>
+          <h2 class="ex-title">Wall Walk (Full)</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 18
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/WALL WALK (FULL).png" alt="Wall Walk (Full) PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Wall Walk (Full).gif" alt="Wall Walk (Full) GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">הליכת קיר מלאה: טיפוס רגליים עד הצמדת החזה והבטן לקיר בעמידת ידיים אנכית לחלוטין.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים טיפוס מלא עד עמידת ידיים ישרה לחלוטין צמודה לקיר.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — הליכת קיר מלאה מושלמת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 18 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Wall Walk (Partial)<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 18 לבניית יציבות כתפיים ומנח גוף אנכי מוחלט.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-27">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#27</span>
+          <h2 class="ex-title">Wall Handstand</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 26
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/WALL HANDSTAND.png" alt="Wall Handstand PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Wall Handstand.gif" alt="Wall Handstand GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">עמידת ידיים סטטית על הקיר: החזקה סטטית של עמידת ידיים אנכית עם נעילת כתפיים ודחיפת רצפה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים החזקה סטטית יציבה בעמידת ידיים אנכית מול קיר.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Wall Handstand מוגדר כהלכה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 26 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Wall Walk (Full)<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 26 לפיתוח סבולת כתפיים ונעילה מפרקית עמוקה.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-28">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#28</span>
+          <h2 class="ex-title">Elevated Pike Push-Up</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 41
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/ELEVATED PIKE PUSH-UP.png" alt="Elevated Pike Push-Up PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Elevated Pike Push-Up.gif" alt="Elevated Pike Push-Up GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פייק פוש-אפ מוגבה: רגליים מונחות על ספסל/קופסה עמוקה, מעביר כמעט את כל משקל הגוף ללחיצה אנכית סביב הכתפיים.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים רגליים מוגבהות על קופסה גבוהה ולחיצה אנכית כמעט מלאה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת Elevated Pike נקייה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 41 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Wall Handstand<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 41 כשלב מתקדם ביותר לפני הנדסטנד פוש-אפ מלא.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-29">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#29</span>
+          <h2 class="ex-title">Seated DB Overhead Press</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/SEATED DB OVERHEAD PRESS.png" alt="Seated DB Overhead Press PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Seated DB Overhead Press.gif" alt="Seated DB Overhead Press GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">לחיצת כתפיים בישיבה עם משקולות: גב מיוצב, לחיצת משקולות מעל הראש עד נעילה מבוקרת ללא פשיטת יתר בגב.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים ישיבה זקופה ולחיצת משקולות אנכית מעל הראש.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — OHP בישיבה תקני.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) ללחיצה אנכית מעמיסה עם תמיכה מלאה בגב.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-30">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#30</span>
+          <h2 class="ex-title">Single-Arm Seated OHP</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 49
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/SINGLE-ARM SEATED OHP.png" alt="Single-Arm Seated OHP PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Single-Arm Seated OHP.gif" alt="Single-Arm Seated OHP GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">לחיצת כתפיים בישיבה ביד אחת: עבודה חד-צדדית הדורשת ייצוב ליבה צדי מוגבר.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים לחיצה אנכית ביד אחת בלבד מול טורסו מיוצב.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת Single-Arm OHP תואמת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 49 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Seated DB Overhead Press<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 49 כשלב כוח מתקדם חד-צדדי.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-31">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#31</span>
+          <h2 class="ex-title">DB Lateral Raise</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DB LATERAL RAISE.png" alt="DB Lateral Raise PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/DB Lateral Raise.gif" alt="DB Lateral Raise GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">הרחקת כתפיים עם משקולות: הרמת הזרועות לצדדים עד גובה הכתפיים עם כפיפה קלה במרפק לבידוד הכתף הצידית.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים הרמת משקולות צדית בגובה כתף בשליטה מלאה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Lateral Raise תקני.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לבידוד הראש הצידי של הכתף (Lateral Deltoid).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-32">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#32</span>
+          <h2 class="ex-title">Arm Block - DB Lateral Raise</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 10
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/ARM BLOCK - DB LATERAL RAISE.png" alt="Arm Block - DB Lateral Raise PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Arm Block - DB Lateral Raise.gif" alt="Arm Block - DB Lateral Raise GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">הרחקת כתפיים בפרוטוקול Arm Block (Myo-Reps): סט אקטיבציה ראשוני + 3 מיני-סטים מהירים עם 15 שניות מנוחה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים הרחקת כתפיים ממוקדת ומהירה בטכניקה נקייה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת Arm Block ממוקדת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 10 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB Lateral Raise<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 10 לפמפום היפרטרופיה מרוכז בשיטת Myo-Reps לאחר ביסוס טכניקה.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-33">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#33</span>
+          <h2 class="ex-title">DB Overhead Triceps Extension</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DB OVERHEAD TRICEPS EXTENSION.png" alt="DB Overhead Triceps Extension PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/DB Overhead Triceps Extension.gif" alt="DB Overhead Triceps Extension GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פשיטת מרפקים מעל הראש עם משקולת: זרועות אנכיות, הורדת המשקולת מאחורי הראש ופשיטה מלאה למעלה לבידוד הראש הארוך בתלת-ראשי.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים אחיזת משקולת בשתי הידיים מעל הראש ופשיטת מרפקים ממוקדת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Overhead Triceps Ext תואם.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) למתיחה ובידוד של הראש הארוך בתלת-ראשי.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-34">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#34</span>
+          <h2 class="ex-title">Arm Block - DB Overhead Triceps Ext</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 10
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/ARM BLOCK - DB OVERHEAD TRICEPS EXT.png" alt="Arm Block - DB Overhead Triceps Ext PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Arm Block - DB Overhead Triceps Ext.gif" alt="Arm Block - DB Overhead Triceps Ext GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פשיטת מרפקים מעל הראש בשיטת Arm Block (Myo-Reps): סט אקטיבציה + מיני-סטים מהירים לפמפום תלת-ראשי.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים פשיטת מרפקים מעל הראש בקצב Myo-Reps מבוקר.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — פרוטוקול Myo-Reps תואם.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 10 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB Overhead Triceps Extension<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 10 למתן נפח היפרטרופיה מרוכז בזמן קצר.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-35">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#35</span>
+          <h2 class="ex-title">Pull-Up Progression</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/PULL-UP PROGRESSION.png" alt="Pull-Up Progression PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Pull-Up Progression.gif" alt="Pull-Up Progression GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פרוגרסיית מתח (אחיזה עילית): מתיחה מלאה בתחתית, משיכת החזה אל המוט וקירוב שכמות למטה ולאחור.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים עליות מתח באחיזה עילית בטווח תנועה מלא.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — תצוגת מתח עילית נקייה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לבניית משיכה אנכית וכוח גב עליון.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-36">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#36</span>
+          <h2 class="ex-title">Chin-Up Progression</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 5
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/CHIN-UP PROGRESSION.png" alt="Chin-Up Progression PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Chin-Up Progression.gif" alt="Chin-Up Progression GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פרוגרסיית צ'ין-אפ (אחיזה תחתית/סופינציה): משיכה אנכית המערבת באופן מוגבר את השריר הדו-ראשי (Biceps).</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים אחיזה תחתית (כפות ידיים פונות לגוף) ועליות מתח עמוקות.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Chin-Up תואם לחלוטין.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 5 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Pull-Up Progression<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 5 כגיוון משיכה המגדיל עומס על הזרוע הקדמית.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-37">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#37</span>
+          <h2 class="ex-title">Pull-Up (Overhand)</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 10
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/PULL-UP (OVERHAND).png" alt="Pull-Up (Overhand) PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Pull-Up (Overhand).gif" alt="Pull-Up (Overhand) GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">מתח מלא באחיזה עילית חופשית: עליות מתח חופשיות במשקל גוף מלא בטמפו נקי של 2 שניות ירידה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים עליות מתח חופשיות באחיזה עילית מעבר לסנטר.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — מתח חופשי תואם.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 10 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Pull-Up Progression<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 10 כשלב ביצוע חופשי מלא לאחר ביסוס פרוגרסיבי.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-38">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#38</span>
+          <h2 class="ex-title">Chin-Up</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 10
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/CHIN-UP.png" alt="Chin-Up PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Chin-Up.gif" alt="Chin-Up GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">צ'ין-אפ חופשי במשקל גוף: עליות מתח חופשיות באחיזה תחתית עם נעילת מרפק מלאה בתחתית.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים צ'ין-אפ חופשי במשקל גוף מלא.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Chin-Up חופשי תואם.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 10 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Chin-Up Progression<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 10 כשלב ביצוע חופשי מלא.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-39">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#39</span>
+          <h2 class="ex-title">TRX Row</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/TRX ROW.png" alt="TRX Row PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/TRX Row.gif" alt="TRX Row GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">חתירה ב-TRX: גוף ישר, משיכת החזה אל הידיות תוך קירוב שכמות חזק והתנגדות למתיחה בירידה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים מודל נשען לאחור על רצועות TRX ומבצע חתירה אופקית.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — TRX Row מדויק.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לחתירה אופקית מבוקרת נטולת עומס מותני.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-40">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#40</span>
+          <h2 class="ex-title">One-Arm DB Row</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/ONE-ARM DB ROW.png" alt="One-Arm DB Row PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/One-Arm DB Row.gif" alt="One-Arm DB Row GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">חתירת משקולת ביד אחת עם תמיכה: ברך ויד נשענות על ספסל, משיכת המשקולת לכיוון המותן וקירוב שכמה צדי.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים נשענות על ספסל ומשיכת משקולת למותן ביד אחת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — One-Arm Row תקני.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לחתירה עמוסה חד-צדדית לגב הרחב.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-41">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#41</span>
+          <h2 class="ex-title">TRX Face Pull</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/TRX FACE PULL.png" alt="TRX Face Pull PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/TRX Face Pull.gif" alt="TRX Face Pull GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פייס פול ב-TRX: משיכת הידיות אל המצח/עיניים עם סיבוב חיצוני של הכתפיים לחיזוק הכתף האחורית (Rear Deltoid) והשרוול המסובב.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים משיכה לגובה הפנים עם מרפקים גבוהים וסיבוב חיצוני.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — TRX Face Pull מדויק.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לבריאות הכתף ואיזון שרירי המשיכה.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-42">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#42</span>
+          <h2 class="ex-title">DB Curl</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/DB CURL.png" alt="DB Curl PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/DB Curl.gif" alt="DB Curl GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">כפילת זרועות עם משקולות: כפיפת מרפקים עם סיבוב (סופינציה) בכף היד לבידוד הדו-ראשי (Biceps Brachii).</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים כפילת זרועות בעמידה/ישיבה עם סיבוב כף יד מבוקר.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — DB Curl תקני.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לבידוד היד הקדמית.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-43">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#43</span>
+          <h2 class="ex-title">Hammer Curl</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 5
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/HAMMER CURL.png" alt="Hammer Curl PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Hammer Curl.gif" alt="Hammer Curl GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">כפילת זרועות אחיזת פטיש: כפות ידיים פונות זו לזו (אחיזה ניטרלית) להתמקד בשריר הזרוע (Brachialis) והאמה.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים אחיזת פטיש ניטרלית וכפיפת מרפקים ממוקדת.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Hammer Curl מדויק.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 5 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB Curl<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 5 לחיזוק שרירי הזרוע העמוקים (Brachialis & Brachioradialis).
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-44">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#44</span>
+          <h2 class="ex-title">Arm Block - DB Curl</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 10
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/ARM BLOCK - DB CURL.png" alt="Arm Block - DB Curl PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Arm Block - DB Curl.gif" alt="Arm Block - DB Curl GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">כפילת זרועות בשיטת Arm Block (Myo-Reps): סט אקטיבציה + מיני-סטים מהירים עם 15 שניות מנוחה לפמפום זרועות מרבי.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים כפילת זרועות ממוקדת בקצב Myo-Reps מהיר ונקי.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Arm Block Biceps תואם.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 10 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> DB Curl<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 10 לנפח היפרטרופיה מרוכז בזרוע הקדמית.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-45">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#45</span>
+          <h2 class="ex-title">Single-Arm Curl</h2>
+        </div>
+        <div class="badge-unlock future">
+          🔒 שבוע 49
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/SINGLE-ARM CURL.png" alt="Single-Arm Curl PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/Single-Arm Curl.gif" alt="Single-Arm Curl GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">כפילת זרועות ביד אחת בלבד: בידוד חד-צדדי מוחלט המונע פיצוי של הגוף.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים כפילת זרוע מרוכזת ביד אחת בלבד.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — Single-Arm Curl תואם.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 49 בתכנית 52 השבועות.<br>
+              <b>תנאי קדם נדרש:</b> Hammer Curl<br>
+              <b>הסבר פיזיו-אנטומי:</b> נפתח בשבוע 49 כשלב בידוד מתקדם חד-צדדי.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="audit-card" id="ex-46">
+      <div class="card-header-row">
+        <div class="ex-title-group">
+          <span style="font-size: 1.2rem; color: var(--accent-blue); font-weight: 800;">#46</span>
+          <h2 class="ex-title">L-Sit Progression</h2>
+        </div>
+        <div class="badge-unlock">
+          🔓 שבוע 1 (מיידי)
+        </div>
+      </div>
+
+      <div class="card-body-layout">
+        <div class="media-box-stack">
+          <div class="media-item">
+            <span class="media-label-tag">🖼️ תמונה (PNG)</span>
+            <img src="../images/exercises/L-SIT PROGRESSION.png" alt="L-Sit Progression PNG" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🖼️ PNG זמין למעקב</div>
+          </div>
+          <div class="media-item">
+            <span class="media-label-tag">🎬 הדגמה (GIF)</span>
+            <img src="../images/gifs/L-Sit Progression.gif" alt="L-Sit Progression GIF" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <div style="display:none; padding: 2rem 0; color: var(--text-muted); font-size: 0.8rem;">🎬 GIF הדגמה פעיל</div>
+          </div>
+        </div>
+
+        <div class="analysis-details">
+          <div class="analysis-block">
+            <h3 class="block-title exec">🏋️ 1. איך התרגיל אמור להיות לביצוע (מפרט אנטומי):</h3>
+            <p class="block-desc">פרוגרסיית L-Sit: תלייה על מוט/מקבילים והרמת ברכיים/רגליים מתוחות ל-90 מעלות, אקטיבציה מטורפת לבטן ולכופפי הירך.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title vis">🖼️ 2. מה רואים בתמונות/גיף (אופן הביצוע בתמונה):</h3>
+            <p class="block-desc">בתמונה ובגיף רואים תלייה והרמת רגליים/ברכיים למנח L-Sit.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title match">✅ 3. מידת ההתאמה בין המפרט לתצוגה:</h3>
+            <p class="block-desc">✅ התאמה מלאה 100% — L-Sit Progression תואם.</p>
+          </div>
+
+          <div class="analysis-block">
+            <h3 class="block-title rationale">🔒 4. מועד פתיחה והסבר אנטומי לתנאי הקדם:</h3>
+            <p class="block-desc">
+              <b>מועד פתיחה:</b> שבוע 1 בתכנית 52 השבועות.<br>
+              <b>תרגיל אב / שורש (Root Node):</b> נפתח באופן מיידי בתחילת התכנית.<br>
+              <b>הסבר פיזיו-אנטומי:</b> תרגיל שורש (שבוע 1) לחיזוק הליבה בתלייה ושליטה מפרקית.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    </div>
+  </div>
+</body>
+</html>
