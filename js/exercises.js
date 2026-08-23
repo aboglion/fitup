@@ -911,58 +911,61 @@ const ExercisesPage = (() => {
         const childUnlockBadge = childNode.querySelector('.rpg-unlock-badge')?.textContent || '';
         const unlockWeekNum = childUnlockBadge.match(/\d+/) ? childUnlockBadge.match(/\d+/)[0] : '';
 
-        const parentHex = parentNode.querySelector('.rpg-node-hex-wrap') || parentNode;
-        const childHex = childNode.querySelector('.rpg-node-hex-wrap') || childNode;
+        const parentCardRect = parentNode.getBoundingClientRect();
+        const childCardRect = childNode.getBoundingClientRect();
 
-        const pRect = parentHex.getBoundingClientRect();
-        const cRect = childHex.getBoundingClientRect();
+        const pNodeLeft = parentCardRect.left - pathRect.left;
+        const pNodeRight = parentCardRect.right - pathRect.left;
+        const pNodeTop = parentCardRect.top - pathRect.top;
+        const pNodeBottom = parentCardRect.bottom - pathRect.top;
+        const pCenterX = (pNodeLeft + pNodeRight) / 2;
 
-        const pLeft = pRect.left - pathRect.left;
-        const pRight = pRect.right - pathRect.left;
-        const pTop = pRect.top - pathRect.top;
-        const pBottom = pRect.bottom - pathRect.top;
-        const pCenterX = (pLeft + pRight) / 2;
+        const cNodeLeft = childCardRect.left - pathRect.left;
+        const cNodeRight = childCardRect.right - pathRect.left;
+        const cNodeTop = childCardRect.top - pathRect.top;
+        const cNodeBottom = childCardRect.bottom - pathRect.top;
+        const cCenterX = (cNodeLeft + cNodeRight) / 2;
 
-        const cLeft = cRect.left - pathRect.left;
-        const cRight = cRect.right - pathRect.left;
-        const cTop = cRect.top - pathRect.top;
-        const cBottom = cRect.bottom - pathRect.top;
-        const cCenterX = (cLeft + cRight) / 2;
-
-        const isSameRow = Math.abs(pTop - cTop) < 40;
+        const isSameRow = Math.abs(pNodeTop - cNodeTop) < 40;
         let dStr, midX, midY;
 
         if (isSameRow) {
-          // Connect across the central gap between two cards in the same row
-          const startX = pLeft < cLeft ? pRight : pLeft;
-          const endX = pLeft < cLeft ? cLeft : cRight;
+          // Connect across central gap between cards in the same row
+          const startX = pNodeLeft < cNodeLeft ? pNodeRight : pNodeLeft;
+          const endX = pNodeLeft < cNodeLeft ? cNodeLeft : cNodeRight;
           midX = (startX + endX) / 2;
-          midY = pTop + pRect.height / 2;
+          midY = pNodeTop + parentCardRect.height / 2;
           dStr = `M ${startX} ${midY} L ${endX} ${midY}`;
         } else {
-          // Route vertically through Dedicated Central Highway or Side Gutters
+          // Route vertically in the empty space between parent card bottom & child card top
           const centerChannelX = pathRect.width / 2;
           let channelX = centerChannelX;
 
-          if (pCenterX < centerChannelX - 20 && cCenterX < centerChannelX - 20) {
-            channelX = Math.min(pLeft, cLeft) - 14;
-            if (channelX < 10) channelX = 10;
-          } else if (pCenterX > centerChannelX + 20 && cCenterX > centerChannelX + 20) {
-            channelX = Math.max(pRight, cRight) + 14;
-            if (channelX > pathRect.width - 10) channelX = pathRect.width - 10;
+          if (pathRect.width > 550) {
+            if (pCenterX < centerChannelX - 30 && cCenterX < centerChannelX - 30) {
+              channelX = Math.min(pNodeLeft, cNodeLeft) - 14;
+              if (channelX < 10) channelX = 10;
+            } else if (pCenterX > centerChannelX + 30 && cCenterX > centerChannelX + 30) {
+              channelX = Math.max(pNodeRight, cNodeRight) + 14;
+              if (channelX > pathRect.width - 10) channelX = pathRect.width - 10;
+            }
           }
 
           const startX = pCenterX;
-          const startY = pBottom;
+          const startY = pNodeBottom;
           const endX = cCenterX;
-          const endY = cTop;
+          const endY = cNodeTop;
           midY = (startY + endY) / 2;
           midX = channelX;
 
-          dStr = `M ${startX} ${startY} 
-                  C ${startX} ${startY + 18}, ${channelX} ${startY + 18}, ${channelX} ${startY + 30} 
-                  L ${channelX} ${endY - 30} 
-                  C ${channelX} ${endY - 18}, ${endX} ${endY - 18}, ${endX} ${endY}`;
+          if (Math.abs(startX - endX) < 20 && Math.abs(channelX - startX) < 20) {
+            dStr = `M ${startX} ${startY} L ${endX} ${endY}`;
+          } else {
+            dStr = `M ${startX} ${startY} 
+                    C ${startX} ${startY + 12}, ${channelX} ${startY + 12}, ${channelX} ${startY + 20} 
+                    L ${channelX} ${endY - 20} 
+                    C ${channelX} ${endY - 12}, ${endX} ${endY - 12}, ${endX} ${endY}`;
+          }
         }
 
         const isParentUnlocked = parentNode.classList.contains('unlocked');
@@ -979,41 +982,42 @@ const ExercisesPage = (() => {
           : (isActive ? 'url(#arrow-red)' : 'url(#arrow-red-locked)');
 
         path.setAttribute('stroke', strokeColor);
-        path.setAttribute('stroke-width', isReplace ? '3.5' : '2.8');
+        path.setAttribute('stroke-width', isReplace ? '3' : '2.4');
         path.setAttribute('marker-end', markerUrl);
         if (!isReplace) {
           path.setAttribute('stroke-dasharray', '6 4');
         }
         path.setAttribute('fill', 'none');
         path.setAttribute('class', `rpg-svg-line ${isActive ? 'active' : 'locked'} ${relType}`);
-        path.setAttribute('style', `filter: drop-shadow(0 0 6px ${strokeColor}); opacity: ${isActive ? '0.95' : '0.45'};`);
+        path.setAttribute('style', `opacity: ${isActive ? '0.95' : '0.45'};`); // Removed heavy drop-shadow filter for fast smooth rendering
 
         svgCanvas.appendChild(path);
 
-        // Add Floating Badge with Unlock Timing & Conditions centered in the Channel
+        // Add Floating Badge with Unlock Timing & Conditions strictly inside the vertical gap between cards
+        const isMobile = pathRect.width < 500;
+        const badgeWidth = isMobile ? 122 : 146;
+        const badgeHeight = isMobile ? 28 : 34;
+
         const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         badgeGroup.setAttribute('class', `rpg-svg-badge ${relType}`);
 
-        const badgeWidth = 146;
-        const badgeHeight = 34;
         const badgeBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
         badgeBg.setAttribute('x', midX - badgeWidth / 2);
         badgeBg.setAttribute('y', midY - badgeHeight / 2);
         badgeBg.setAttribute('width', badgeWidth);
         badgeBg.setAttribute('height', badgeHeight);
-        badgeBg.setAttribute('rx', 10);
-        badgeBg.setAttribute('ry', 10);
-        badgeBg.setAttribute('fill', isActive ? 'rgba(15, 23, 42, 0.96)' : 'rgba(15, 23, 42, 0.88)');
+        badgeBg.setAttribute('rx', isMobile ? 6 : 10);
+        badgeBg.setAttribute('ry', isMobile ? 6 : 10);
+        badgeBg.setAttribute('fill', isActive ? '#0f172a' : '#1e293b');
         badgeBg.setAttribute('stroke', isActive ? strokeColor : 'rgba(255, 255, 255, 0.25)');
         badgeBg.setAttribute('stroke-width', '1.5');
-        badgeBg.setAttribute('style', `box-shadow: 0 4px 12px rgba(0,0,0,0.6);`);
 
         // Text Line 1: Timing (Unlock Week)
         const timingText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         timingText.setAttribute('x', midX);
-        timingText.setAttribute('y', midY - 3);
+        timingText.setAttribute('y', isMobile ? midY - 2 : midY - 3);
         timingText.setAttribute('text-anchor', 'middle');
-        timingText.setAttribute('font-size', '10.5');
+        timingText.setAttribute('font-size', isMobile ? '9.5' : '10.5');
         timingText.setAttribute('font-weight', '800');
         timingText.setAttribute('fill', isActive ? (isReplace ? '#93c5fd' : '#fca5a5') : '#94a3b8');
         timingText.textContent = unlockWeekNum ? `📅 שבוע פתיחה ${unlockWeekNum}` : '📅 פתיחה מדורגת';
@@ -1021,13 +1025,13 @@ const ExercisesPage = (() => {
         // Text Line 2: Requirement & Condition
         const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         condText.setAttribute('x', midX);
-        condText.setAttribute('y', midY + 9);
+        condText.setAttribute('y', isMobile ? midY + 8 : midY + 9);
         condText.setAttribute('text-anchor', 'middle');
-        condText.setAttribute('font-size', '9.5');
+        condText.setAttribute('font-size', isMobile ? '8.5' : '9.5');
         condText.setAttribute('font-weight', '700');
         condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
         
-        const parentShort = parentName ? (parentName.length > 14 ? parentName.substring(0, 13) + '…' : parentName) : '';
+        const parentShort = parentName ? (parentName.length > 12 ? parentName.substring(0, 11) + '…' : parentName) : '';
         condText.textContent = isReplace 
           ? (parentShort ? `🔄 מפתח: החלפת ${parentShort}` : '🔄 מפתח: החלפת מקור')
           : (parentShort ? `🔴 חיזוק: מתווסף במקביל` : '🔴 חיזוק: מתווסף במקביל');

@@ -2471,15 +2471,19 @@ html.light-theme .rest-timer {
   width: 100%;
 }
 
-/* --- Connector --- */
 .rpg-connector {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 38px;
+  height: 42px;
   width: 100%;
   position: relative;
-  margin: 2px 0;
+  margin: 4px 0;
+}
+
+/* Hide fallback badge when SVG badge is used to prevent duplicate clutter */
+.rpg-connector-badge {
+  display: none !important;
 }
 
 .rpg-connector-line {
