@@ -284,6 +284,7 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 | Hollow Body Hold | 30 | — |
 | L-Sit Progression | 45 | — |
 | Towel Hang | 45 | — |
+| Band Neck Flexion & Extension | 45 | — |
 
 ==================================================
 ## 7. מצב Lean — זיווגים, מעגלים, בלוקים ורוטציה
@@ -1038,10 +1039,14 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 - מבחן דיבור: חייבת להיות אפשרות לדבר במשפט מלא; אם לא, הורד ל-5.0 קמ״ש.
 - ב-Deload: 30 דקות, 5.0 קמ״ש, 2% שיפוע.
 
-### Day 4 — Active Recovery
+### Day 4 — Active Recovery + Joint Health
 
-- 25 דקות הליכה, 4.5 קמ״ש, שיפוע 0%.
-- לאחר ההליכה, 10 דקות Mobility:
+- בתחילת הסשן (A1), 5 דקות פרוטוקול צוואר (Cervical Health):
+  - **Band Neck Flexion & Extension** (כפיפה ופשיטה כנגד גומייה מעוגנת בגובה הראש על המתח)
+  - 2 סטים × 15-20 חזרות בכל כיוון (Flexion 2×15-20, Extension 2×15-20), טמפו איטי 3-1-3 עם Chin Tuck קבוע. מנוחה 45 שניות.
+  - שלבי progression: גומייה 30 ק״ג (עיגון קרוב) ← גומייה 30 ק״ג (צעד אחורה) ← גומייה 40 ק״ג ← גומייה 50 ק״ג.
+- בהמשך (A2), 25 דקות הליכה, 4.5 קמ״ש, שיפוע 0%.
+- בסיום (A3), 10 דקות Mobility:
   - Cat-Cow 10
   - 90/90 Hip Stretch 8 לכל צד
   - Thoracic Rotations 8 לכל צד

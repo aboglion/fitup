@@ -2,51 +2,52 @@ window.ExporterGuide = (() => {
 
   const GUIDE_I18N = {
     en: {
-      title: "FitUp Pro v15.6 Lean Edition — 78-Week Training Program Guide",
-      subtitle: "Zero Decisions 3-Button Progression & Adaptive Rest — Full 546-Day Blueprint",
+      title: "FitUp Pro v15.6 Lean Edition — Master Training Program Guide",
+      subtitle: "Zero Decisions 3-Button Progression & Adaptive Rest — Complete Blueprint",
       overview_title: "📖 Program Specifications & Philosophy — v15.6 Lean Edition",
-      overview_desc: "This training program was engineered for <strong>78 weeks (546 days)</strong> tailored for age 42 with lower back protection under the <strong>v15.6 Lean Protocol</strong>. It prioritizes athletic body, V-Taper, arm development, strong back, and joint longevity through <strong>Progressive Overload</strong>.",
+      overview_desc: "This training program was engineered under the <strong>v15.6 Lean Protocol</strong> for lower back protection, athletic body sculpting, V-Taper development, arm hyper-trophy, and joint longevity through <strong>Progressive Overload</strong>.",
       zero_decisions_title: "🎯 'Zero Decisions' & 3-Button Outcome Classifier",
-      zero_decisions_desc: "The program eliminates guesswork with 3 objective set outcome selectors across all 78 weeks:",
+      zero_decisions_desc: "The program eliminates guesswork with 3 objective set outcome selectors across all workouts:",
       mental_load: "<strong>Zero Decisions & 3 Outcome Buttons:</strong> Predefined weights, sets, reps, tempo, and rest. Every set is logged as 🚀 <strong>ABOVE</strong>, ✅ <strong>IN_WINDOW</strong>, or ⚠️ <strong>BELOW</strong> (Mechanical Stop). Reaching a mechanical stop automatically extends adaptive rest by +30s.",
-      strength_cardio: "<strong>Fixed 7-Day Weekly Structure:</strong> 3 strength days, Zone 2 cardio day, VO2 Max 4x4 day, Active Recovery day, and Rest day.",
-      deload_cycles: "<strong>Scientific Recovery (Deload Cycles):</strong> Scheduled deload weeks (Weeks 8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73) reduce volume to 2 sets (~60% load) for neural and joint recovery.",
-      time_efficiency_title: "⏱️ Time Efficiency & Antagonistic Supersets Protocol (45–50 min target)",
+      strength_cardio: "<strong>Fixed 7-Day Weekly Structure:</strong> 3 strength days (with Day 1 & Day 3 Toggles), Zone 2 cardio day, VO2 Max 4x4 day, Active Recovery & Cervical Health day, and Rest day.",
+      deload_cycles: "<strong>Scientific Recovery (Deload Cycles):</strong> Scheduled deload weeks (every 8 weeks: Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72...) reduce volume to 2 sets (~60% load) for neural and joint recovery.",
+      time_efficiency_title: "⏱️ Lean Architecture & Structural Optimization (40–45 min target)",
       time_efficiency_list: [
-        "<strong>Antagonistic Supersets:</strong> Pair non-competing isolation exercises (e.g., Lateral Raise + Triceps Ext on Day 3). Perform Ex A → 45s rest → Ex B → 45s rest. Target muscle gets 120s full recovery while cutting clock time by 50%.",
-        "<strong>Arm Block Integration:</strong> From Week 10 onwards, main table isolation sets (Lateral & Triceps) are capped at 2 sets as the Arm Block ladder handles primary progression.",
-        "<strong>Single-Arm Staggered Rest:</strong> On unilateral work, rest 45s between right and left sides (giving Arm A 105s total rest without passive waiting).",
-        "<strong>Micro-Mobility Integration:</strong> Perform Dead Hang or chest stretches during set rest periods to save 5 minutes post-workout."
+        "<strong>Protected Compound Lifts:</strong> Heavy compound exercises are strictly performed in straight sets with full adaptive rest to protect performance.",
+        "<strong>Lean Pairs (Antagonistic & Non-Competing):</strong> Pair non-competing exercises (Day 3: TRX Row ↔ DB Lateral Raise; Day 5: Push-Up Volume ↔ DB Curl; Day 5: Towel Hang ↔ L-Sit). Perform Ex A → Ex B → 45-75s rest.",
+        "<strong>Arm Block Myo-Reps Protocol:</strong> Active from Week 10 onwards. Myo-reps cluster (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped objectively after two consecutive tempo losses, capped at 1 exposure per muscle area per week.",
+        "<strong>Weekly Alternating Toggles:</strong> Day 1 rotates Single-Leg RDL (odd weeks) with Lunge/Pistol Slot (even weeks). Day 3 rotates TRX Y-T-W (odd weeks) with Band Pull-Apart (even weeks).",
+        "<strong>Biceps 3-Week Microcycle:</strong> Weeks 1-2 heavy progressive overload, Week 3 light preservation (Hammer Curl 2 sets, no progression)."
       ],
       equipment_title: "🔧 Required Equipment & Specifications",
       equipment_list: [
-        "Modular Dumbbells: 8 plates × 3kg (24kg total) + 2 handles (3, 6, 9, 12kg per dumbbell / up to 24kg single)",
+        "Modular Dumbbells: 8 plates × 3kg (24kg total) + 2 handles (3–24kg legal range per dumbbell)",
         "Pull-up Bar (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
-        "Push-up Bars / Parallettes (All push exercises: Push-Up, Deficit, Pike, L-sit)",
-        "TRX Suspension Trainer (Face Pull, Y-T-W at fixed angles)",
-        "Resistance Bands: 30kg (Pull-Apart, Pallof), 40kg (Advanced Pallof)",
+        "Push-up Bars / Parallettes (All push exercises: Push-Up, Deficit, Pike, L-sit — no palms flat on floor)",
+        "TRX Suspension Trainer (Face Pull, TRX Row, Y-T-W at fixed angles)",
+        "Resistance Bands: 30kg (Pull-Apart, Pallof, Neck Flexion/Extension), 40kg, 50kg",
         "Bench / Sturdy Chair (BSS, Feet-Elevated Push-Up, Pike Hold)",
         "Treadmill (Zone 2: 4% incline @ 5.5 km/h; VO2 Max 4x4: 3–6% incline @ 6.5 km/h)",
-        "Weighted Vest / Backpack (+5kg for designated exercises)"
+        "Weighted Vest / Backpack (+2kg, +4kg, +5kg for designated exercises)"
       ],
       weekly_structure_title: "⚙️ Weekly Structure (7 Days)",
       col_day: "Day",
       col_type: "Workout Type",
       col_intensity: "Intensity / Focus",
       days_table: [
-        { day: "Day 1", type: "🦵 Legs + Core + Grip/Carry", focus: "50 min — RPE 7–9 — RDL, BSS, Hip Thrust, Calf Raise, Suitcase Carry, Core" },
-        { day: "Day 2", type: "🫀 Zone 2 Cardio + Daily Mobility", focus: "50 min — 45 min Treadmill (4% incline, 5.5 km/h) + 5 min Micro Mobility" },
-        { day: "Day 3", type: "💥 Push + Shoulders + Triceps + Handstand", focus: "55 min — RPE 7–9 — Handstand, Floor Press, Push-up, OHP, Lateral Raise + Arm Block (from W10)" },
-        { day: "Day 4", type: "🌿 Active Recovery + Deep Mobility", focus: "30 min — 25 min Treadmill (0% incline, 4.5 km/h) + 10 min Macro Mobility" },
-        { day: "Day 5", type: "🧲 Pull + Back + Biceps + Grip + Core", focus: "55 min — RPE 7–9 — Pull-ups, Chin-ups, One-Arm Row, TRX Face Pull, Curls, Towel Hang + Arm Block (from W10)" },
+        { day: "Day 1", type: "🦵 Legs + Core + Carry", focus: "45 min — RPE 7–9 — DB RDL, Day 1 Toggle (Single-Leg RDL / Lunge-Pistol Slot), BSS, Hip Thrust, Suitcase Carry, Calf Block, Core Circuit" },
+        { day: "Day 2", type: "🫀 Zone 2 Cardio + Daily Mobility", focus: "45 min — Treadmill (4% incline, 5.5 km/h) + 5 min Micro Mobility" },
+        { day: "Day 3", type: "💥 Push + Shoulders + Triceps + Back Volume", focus: "45 min — RPE 7–9 — Pike Hold/Push-Up, Floor Press, Push-Up Bars, Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ DB Lateral Raise pair, Rear Delt Toggle + Arm Block (W10+)" },
+        { day: "Day 4", type: "🌿 Active Recovery + Cervical & Joint Health", focus: "30 min — Cervical Health (Band Neck Flexion & Extension 2x15-20) + 25 min Treadmill (0% incline, 4.5 km/h) + 10 min Deep Mobility" },
+        { day: "Day 5", type: "🧲 Pull + Grip + Core + Chest Volume", focus: "45 min — RPE 7–9 — Pull-Up, One-Arm Row, TRX Face Pull, Biceps Microcycle (DB Curl & Hammer Curl), Push-Up Volume ↔ DB Curl pair, Towel Hang ↔ L-Sit pair + Arm Block (W10+)" },
         { day: "Day 6", type: "🔴 VO2 Max 4×4 Cardio", focus: "35 min — Norwegian 4x4: 10m warmup, 4x(4m effort @ 6.5 km/h, 3m rest), 5m cooldown (Zone 2 in Deload)" },
         { day: "Day 7", type: "😴 Full Rest Day", focus: "Complete Recovery, Nutrition & Sleep" }
       ],
-      arm_block_title: "💪 Arm Block v5 (Appendix B — Double Progression Ladder)",
-      arm_block_desc: "Starts from Week 10 at the end of Day 3 (Lateral + Triceps) and Day 5 (Curl). 2 sets each, 60s rest. Advance 1 step when all reps completed in tempo.",
+      arm_block_title: "💪 Arm Block v15.6 (Myo-Reps Cluster Protocol)",
+      arm_block_desc: "Active from Week 10 at end of Day 3 (Lateral Raise + Overhead Triceps Extension) and Day 5 (DB Curl / Hammer Curl). 1 activation set to target + 3 mini-sets of 5 reps with 15s rest. Objective stop rule: 2 consecutive tempo losses terminates cluster. Capped at 1 exposure per muscle area per week.",
       dictionary_title: "📚 Exercise Dictionary",
-      dictionary_subtitle: "Comprehensive list of all exercises in the 78-week program.",
-      full_plan_title: "📅 Full 78-Week Program Breakdown",
+      dictionary_subtitle: "Comprehensive list of all exercises in the program.",
+      full_plan_title: "📅 Full Program Breakdown",
       full_plan_desc: "Detailed daily schedule of exercises, sets, reps, and tempos.",
       table_ex: "Exercise",
       table_sets: "Sets & Reps",
@@ -59,51 +60,52 @@ window.ExporterGuide = (() => {
       toast_error: "Error exporting guide"
     },
     he: {
-      title: "FitUp Pro v15.6 Lean — מדריך תוכנית 78 שבועות",
-      subtitle: "פרוטוקול \"אפס החלטות\" בשיטת 3 כפתורים + מנוחה דינמית אדפטיבית — פריסת 546 ימים מלאה",
+      title: "FitUp Pro v15.6 Lean — מדריך תוכנית האימונים המלא",
+      subtitle: "פרוטוקול \"אפס החלטות\" בשיטת 3 כפתורים + מנוחה דינמית אדפטיבית — פריסה מלאה",
       overview_title: "📖 אפיון והסבר על התוכנית — גרסה v15.6 Lean",
-      overview_desc: "תוכנית אימונים זו תוכננה למשך <strong>78 שבועות (546 ימים)</strong> עפ\"י פרוטוקול <strong>v15.6 Lean</strong> ומותאמת לגיל 42 עם הגנה על הגב התחתון. התוכנית מבוססת על <strong>התקדמות הדרגתית מבוקרת (Progressive Overload)</strong> לבניית גוף אתלטי, V-Taper, זרועות בולטות, וחיזוק גידים ומפרקים.",
+      overview_desc: "תוכנית אימונים זו תוכננה עפ\"י פרוטוקול <strong>v15.6 Lean</strong> ומותאמת להגנה על הגב התחתון, לבניית גוף אתלטי, V-Taper, זרועות בולטות, וחיזוק גידים ומפרקים באמצעות <strong>התקדמות הדרגתית מבוקרת (Progressive Overload)</strong>.",
       zero_decisions_title: "🎯 פילוסופיית \"אפס החלטות\" ומנגנון 3 תוצאות סט",
       zero_decisions_desc: "התוכנית נבנתה במכוון סביב הרעיון של <strong>אפס החלטות מצד המתאמן</strong> באמצעות דיווח 3 תוצאות אובייקטיביות בלבד:",
       mental_load: "<strong>אפס החלטות ודירוג 3 כפתורים:</strong> כל תרגיל, משקל, סטים, חזרות, קצב (Tempo) וזמני מנוחה קבועים מראש. בסיום סט בוחרים: 🚀 <strong>מעל היעד</strong>, ✅ <strong>בתחום היעד</strong>, או ⚠️ <strong>כשל / עצירה מכנית</strong> (מפעיל אוטומטית +30 שנ' מנוחה אדפטיבית).",
-      strength_cardio: "<strong>מבנה שבועי קבוע (7 ימים):</strong> יום 1 (רגליים+ליבה+אחיזה), יום 2 (Zone 2+מוביליות), יום 3 (דחיפה+עמידת ידיים+בלוק זרועות), יום 4 (התאוששות פעילה), יום 5 (משיכה+אחיזה+בלוק זרועות), יום 6 (VO2 Max 4x4), יום 7 (מנוחה מלאה).",
-      deload_cycles: "<strong>התאוששות מדעית (Deload Cycles):</strong> שבועות דילואד מוגדרים מראש (שבועות 8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73) שבהם הנפח יורד ל-2 סטים (~60% משקל) להורדת עומס מעצבים ומפרקים.",
-      time_efficiency_title: "⏱️ פרוטוקול ייעול זמנים וסופר-סטים (אימון ב-45–50 דקות)",
+      strength_cardio: "<strong>מבנה שבועי קבוע (7 ימים):</strong> יום 1 (רגליים+ליבה+אחיזה+רוטציה), יום 2 (Zone 2+מוביליות), יום 3 (דחיפה+כתפיים+טריספס+נפח גב), יום 4 (התאוששות פעילה+פרוטוקול צוואר), יום 5 (משיכה+גב+ביספס+נפח חזה), יום 6 (VO2 Max 4x4), יום 7 (מנוחה מלאה).",
+      deload_cycles: "<strong>התאוששות מדעית (Deload Cycles):</strong> שבועות דילואד מוגדרים מראש (כל 8 שבועות: 8, 16, 24, 32, 40, 48, 56, 64, 72...) שבהם הנפח יורד ל-2 סטים (~60% משקל) להורדת עומס מעצבים ומפרקים.",
+      time_efficiency_title: "⏱️ מבנה Lean וייעול זמנים (אימון ב-40–45 דקות)",
       time_efficiency_list: [
-        "<strong>סופר-סטים אנטגוניסטיים (Antagonistic Supersets):</strong> בתרגילי בידוד (כמו Lateral Raise + Triceps Ext ביום 3, או Curl + Core ביום 5), בצע את תרגיל א' ← מנוחה 45 שנ' ← תרגיל ב' ← מנוחה 45 שנ'. השריר מרוויח 120 שנ' מנוחה מלאה, והזמן הכללי נחתך ב-50%.",
-        "<strong>איחוד סטים כפולים מול בלוק הזרועות:</strong> החל משבוע 10, כשבלוק הזרועות נכנס לתוקף, צמצם ל-2 סטים בטבלה הראשית בתרגילי Lateral Raise ו-Triceps Extension כדי למנוע עומס נפחי כפול.",
-        "<strong>מנוחה מוצלבת בתרגילים חד-צדדיים:</strong> בתרגילי Single-Arm / Single-Leg, בצע צד ימין ← מנוחה 45 שנ' ← צד שמאל ← מנוחה 45 שנ' (מעניק 105 שנ' מנוחה לצד ימין ללא זמן מת).",
-        "<strong>שילוב מיקרו-מוביליות בזמני מנוחה:</strong> בצע את ה-Dead Hang ומתיחת החזה בזמן המנוחה בין סטי הליבה/הרגליים כדי לסיים את האימון מיד ולחסוך 5 דקות בסוף."
+        "<strong>הגנה על תרגילי בסיס:</strong> תרגילי כוח מורכבים כבדים מבוצעים תמיד כסטים ישרים עם מנוחה אדפטיבית מלאה להגנה על ביצועים.",
+        "<strong>זיווגי Lean (אנטגוניסטיים ולא-מתחרים):</strong> זיווג תרגילים לא מתחרים (יום 3: TRX Row ↔ DB Lateral Raise; יום 5: Push-Up Volume ↔ DB Curl; יום 5: Towel Hang ↔ L-Sit). מבוצע א' ← ב' ← מנוחה 45-75 שנ'.",
+        "<strong>פרוטוקול Arm Block ב-Myo-Reps:</strong> פעיל משבוע 10. צביר Myo-Reps (סט אקטיבציה + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה). עצירה אובייקטיבית ב-2 אובדני טמפו רצופים, מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.",
+        "<strong>רוטציות שבועיות (Toggles):</strong> יום 1 מחליף Single-Leg RDL (שבועות אי-זוגיים) עם Lunge/Pistol Slot (שבועות זוגיים). יום 3 מחליף TRX Y-T-W (אי-זוגי) עם Band Pull-Apart (זוגי).",
+        "<strong>מיקרו-מחזור בייספס (3 שבועות):</strong> שבועות 1-2 עומס כבד וקידום, שבוע 3 קל (Hammer Curl בלבד, 2 סטים, ללא קידום)."
       ],
       equipment_title: "🔧 ציוד נדרש ושימוש קבוע",
       equipment_list: [
-        "משקולות מודולריות: 8 פלטות × 3 ק\"ג (24 ק\"ג סה\"כ) + 2 ידיות (3 / 6 / 9 / 12 ק\"ג ליד, עד 24 ק\"ג בידית אחת)",
+        "משקולות מודולריות: 8 פלטות × 3 ק\"ג (24 ק\"ג סה\"כ) + 2 ידיות (משקל חוקי 3–24 ק\"ג ליד)",
         "מוט מתח (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "Push-up Bars (כל תרגילי הדחיפה: Push-Up, Deficit, Pike, L-sit — אין כפות ידיים על הרצפה)",
-        "TRX (Face Pull, Y-T-W בזוויות קבועות)",
-        "גומיות התנגדות: 30 ק\"ג (Pull-Apart, Pallof), 40 ק\"ג (Pallof מתקדם)",
+        "TRX (Face Pull, TRX Row, Y-T-W בזוויות קבועות)",
+        "גומיות התנגדות: 30 ק\"ג (Pull-Apart, Pallof, כפיפה/פשיטת צוואר), 40 ק\"ג, 50 ק\"ג",
         "כיסא / ספסל יציב (BSS, Feet-Elevated Push-Up, Pike Hold)",
         "הליכון (Zone 2: שיפוע 4% ב-5.5 קמ\"ש; VO2 Max 4×4: שיפוע 3%–6% ב-6.5 קמ\"ש)",
-        "וסט / תיק משוקלל (+5 ק\"ג לתרגילים המסומנים בלבד)"
+        "וסט משוקלל (+2, +4, +5 ק\"ג לתרגילים המסומנים בלבד)"
       ],
       weekly_structure_title: "⚙️ מבנה שבועי קבוע (7 ימים)",
       col_day: "יום",
       col_type: "סוג אימון",
       col_intensity: "עצימות / דגשים",
       days_table: [
-        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "50 דק' — RPE 7–9 — RDL, BSS, Hip Thrust, Calf Raise, Suitcase Carry, Dead Bug" },
-        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "50 דק' — 45 דק' הליכה בשיפוע 4% (5.5 קמ\"ש, דופק Zone 2) + 5 דק' מיקרו-מוביליות" },
-        { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + Handstand", focus: "55 דק' — RPE 7–9 — עמידת ידיים, Floor Press, Push-up, OHP, Lateral Raise + בלוק זרועות (משבוע 10)" },
-        { day: "יום 4", type: "🌿 התאוששות פעילה + מוביליות עמוקה", focus: "30 דק' — 25 דק' הליכון 0% (4.5 קמ\"ש) + 10 דק' מאקרו-מוביליות" },
-        { day: "יום 5", type: "🧲 משיכה + גב + ביספס + אחיזה + ליבה", focus: "55 דק' — RPE 7–9 — מתח, Chin-up, One-Arm Row, TRX Face Pull, Curls, Towel Hang + בלוק זרועות (משבוע 10)" },
+        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "45 דק' — RPE 7–9 — DB RDL, רוטציית יום 1 (Single-Leg RDL / Lunge-Pistol Slot), BSS, Hip Thrust, Suitcase Carry, בלוק תאומים, מעגל ליבה" },
+        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — 45 דק' הליכה בשיפוע 4% (5.5 קמ\"ש, דופק Zone 2) + 5 דק' מיקרו-מוביליות" },
+        { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "45 דק' — RPE 7–9 — Pike Hold/Push-Up, Floor Press, Push-Up Bars, OHP, Triceps Ext, Diamond Push-Up, זוג TRX Row ↔ Lateral Raise, רוטציית כתף אחורית + Arm Block (משבוע 10)" },
+        { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 25 דק' הליכון 0% (4.5 קמ\"ש) + 10 דק' מאקרו-מוביליות" },
+        { day: "יום 5", type: "🧲 משיכה + גב + ביספס + נפח חזה", focus: "45 דק' — RPE 7–9 — מתח, One-Arm Row, TRX Face Pull, מיקרו-מחזור בייספס, זוג Push-Up Volume ↔ DB Curl, זוג Towel Hang ↔ L-Sit + Arm Block (משבוע 10)" },
         { day: "יום 6", type: "🔴 VO2 Max 4×4 Cardio", focus: "35 דק' — פרוטוקול נורבגי: 10 דק' חימום, 4×(4 דק' מאמץ 6.5 קמ\"ש בשיפוע השלב / 3 דק' מנוחה), 5 דק' שחרור" },
         { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה, תזונה ושינה" }
       ],
-      arm_block_title: "💪 בלוק זרועות v5 (נספח ב' — התקדמות כפולה — משבוע 10)",
-      arm_block_desc: "מתבצע בסוף יום 3 (Lateral + Triceps) ויום 5 (Curl) החל משבוע 10. 2 סטים כל תרגיל, מנוחה 60 שנ'. השלמת הכל בטמפו → עולים שלב אחד בסולם באימון הבא. עצירה מכנית = הסט נגמר.",
+      arm_block_title: "💪 בלוק זרועות v15.6 (פרוטוקול Myo-Reps Cluster)",
+      arm_block_desc: "מתבצע בסוף יום 3 (Lateral + Triceps) ויום 5 (Curl / Hammer) משבוע 10. סט אקטיבציה יחיד ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה. חוק עצירה אובייקטיבי: 2 אובדני טמפו רצופים מסיימים את הצביר. חשיפה מוגבלת לפעם אחת בשבוע לכל אזור שרירי.",
       dictionary_title: "📚 מילון תרגילים",
       dictionary_subtitle: "פירוט כל התרגילים המופיעים בתוכנית.",
-      full_plan_title: "📅 פירוט התוכנית המלאה - 78 שבועות",
+      full_plan_title: "📅 פירוט התוכנית המלאה",
       full_plan_desc: "כאן תוכלו לראות כל יום ויום בתוכנית, כולל תרגילים, חזרות וזמני עבודה.",
       table_ex: "תרגיל",
       table_sets: "סטים וחזרות",
@@ -116,51 +118,52 @@ window.ExporterGuide = (() => {
       toast_error: "שגיאה בייצוא המדריך"
     },
     ar: {
-      title: "FitUp Pro v15.6 Lean — دليل برنامج التدريب 78 أسبوعًا",
-      subtitle: "بروتوكول \"صفر قرارات\" بنظام 3 أزرار + الراحة الديناميكية — 546 يوماً",
+      title: "FitUp Pro v15.6 Lean — دليل برنامج التدريب الكامل",
+      subtitle: "بروتوكول \"صفر قرارات\" بنظام 3 أزرار + الراحة الديناميكية — الإصدار Lean",
       overview_title: "📖 المواصفات والشفافية — الإصدار v15.6 Lean",
-      overview_desc: "تم تصميم هذا البرنامج لـ <strong>78 أسبوعًا (546 يومًا)</strong> وفق بروتوكول <strong>v15.6 Lean</strong> ومناسب لعمر 42 مع حماية أسفل الظهر. يعتمد على <strong>التحميل الزائد التدريجي (Progressive Overload)</strong>.",
+      overview_desc: "تم تصميم هذا البرنامج وفق بروتوكول <strong>v15.6 Lean</strong> لحماية أسفل الظهر وبناء جسم رياضي مع التركيز على <strong>التحميل الزائد التدريجي (Progressive Overload)</strong>.",
       zero_decisions_title: "🎯 فلسفة \"صفر قرارات\" ونظام الأزرار الثلاثة",
       zero_decisions_desc: "يلغي البرنامج التخمين كلياً عبر اختيار واحدة من 3 نتائج محددة للمجموعة:",
       mental_load: "<strong>صفر قرارات وتقييم 3 أزرار:</strong> الأوزان والمجموعات والتكرارات محددة مسبقاً. عند نهاية المجموعة تختار: 🚀 <strong>أعلى من الهدف</strong>, ✅ <strong>ضمن الهدف</strong>, أو ⚠️ <strong>فشل / توقف ميكانيكي</strong> (يزيد الراحة تلقائياً +30 ثانية).",
-      strength_cardio: "<strong>الهيكل الأسبوعي (7 أيام):</strong> اليوم 1 (الأرجل+الظهر/الكتف), اليوم 2 (Zone 2+مرونة), اليوم 3 (الدفع+المهارة+بلوك الذراعين), اليوم 4 (التعافي النشط), اليوم 5 (السحب+القبضة+بلوك الذراعين), اليوم 6 (VO2 Max 4x4), اليوم 7 (راحة كاملة).",
-      deload_cycles: "<strong>التعافي العلمي (أسابيع Deload):</strong> أسابيع تعافي محددة (الأسابيع 8, 16, 24, 32, 40, 48, 56, 61, 65, 69, 73) يقل فيها الحجم إلى مجموعتين (~60% وزن).",
-      time_efficiency_title: "⏱️ بروتوكول تحسين الوقت والمجموعات الفائقة (45-50 دقيقة)",
+      strength_cardio: "<strong>الهيكل الأسبوعي (7 أيام):</strong> اليوم 1 (الأرجل+الظهر/الكتف), اليوم 2 (Zone 2+مرونة), اليوم 3 (الدفع+الكتفين+الترايسبس), اليوم 4 (التعافي النشط+صحة الرقبة), اليوم 5 (السحب+القبضة+البايسبس), اليوم 6 (VO2 Max 4x4), اليوم 7 (راحة كاملة).",
+      deload_cycles: "<strong>التعافي العلمي (أسابيع Deload):</strong> أسابيع تعافي محددة (كل 8 أسابيع: 8, 16, 24, 32, 40, 48, 56, 64, 72...) يقل فيها الحجم إلى مجموعتين (~60% وزن).",
+      time_efficiency_title: "⏱️ بنية Lean وتحسين الوقت (40-45 دقيقة)",
       time_efficiency_list: [
-        "<strong>المجموعات الفائقة (Antagonistic Supersets):</strong> في تمارين العزل (مثل Lateral Raise + Triceps Ext)، قم بالتمرين أ ← راحة 45 ثانية ← التمرين ب ← راحة 45 ثانية. تحصل العضلة على 120 ثانية راحة كاملة.",
-        "<strong>دمج مجموعات الذراعين:</strong> بدءًا من الأسبوع 10، قلل مجموعات العزل في الجدول الرئيسي إلى مجموعتين نظرًا لوجود بلوك الذراعين.",
-        "<strong>الراحة المتقاطعة للتمارين الأحادية:</strong> في التمارين الأحادية، استرح 45 ثانية بين الجانبين الأيمن والأيسر.",
-        "<strong>دمج التمدد الخفيف أثناء الراحة:</strong> قم بتمارين التعليق والتمدد خلال فترات الراحة لتوفير 5 دقائق."
+        "<strong>حماية التمارين المركبة:</strong> التمارين المركبة الثقيلة تتم دائماً في مجموعات مستقيمة مع راحة كاملة.",
+        "<strong>ثنائيات Lean (المزدوجة):</strong> دمج تمارين غير متنافسة (اليوم 3: TRX Row ↔ DB Lateral Raise; اليوم 5: Push-Up Volume ↔ DB Curl).",
+        "<strong>بروتوكول بلوك الذراعين Myo-Reps:</strong> مفعل من الأسبوع 10. مجموعة تنشيط + 3 مجموعات مصغرة (5 تكرارات مع 15 ثانية راحة). توقف عند فقدان الإيقاع مرتين متتاليتين.",
+        "<strong>التناوب الأسبوعي (Toggles):</strong> اليوم 1 يتناول Single-Leg RDL واليوم 3 يتناول TRX Y-T-W و Band Pull-Apart.",
+        "<strong>دورة البايسبس (3 أسابيع):</strong> أسبوعان حمولة زائدة وأسبوع خفيف."
       ],
       equipment_title: "🔧 المعدات المطلوبة",
       equipment_list: [
-        "أثقال يدوية قابلة للتعديل: 8 أقراص × 3 كغم (24 كغم إجمالي) + مقبضان (3 / 6 / 9 / 12 كغم لكل يد، وحتى 24 كغم بمقبض واحد)",
+        "أثقال يدوية قابلة للتعديل (3–24 كغم)",
         "عقلة (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "مقابض ضغط / Parallettes (جميع تمارين الضغط)",
-        "حبال TRX (Face Pull, Y-T-W)",
-        "أربطة مقاومة: 30 كغم (Pull-Apart, Pallof)، 40 كغم (Pallof متتقدم)",
+        "حبال TRX (Face Pull, TRX Row, Y-T-W)",
+        "أربطة مقاومة: 30 كغم، 40 كغم، 50 كغم",
         "كرسي / مقعد ثابت",
-        "جهاز مشي (Zone 2: ميل 4% بسرعة 5.5 كم/س; VO2 Max 4x4: ميل 3-6% بسرعة 6.5 كم/س)",
-        "سترة ثقيلة (+5 كغم)"
+        "جهاز مشي",
+        "سترة ثقيلة (+2 كغم، +4 كغم، +5 كغم)"
       ],
       weekly_structure_title: "⚙️ الهيكل الأسبوعي (7 أيام)",
       col_day: "اليوم",
       col_type: "نوع التمرين",
       col_intensity: "الشدة / التركيز",
       days_table: [
-        { day: "اليوم 1", type: "Legs + Core + Grip", focus: "50 دقيقة — RPE 7–9 — RDL, BSS, Hip Thrust, Calf Raise, Suitcase Carry, Core" },
-        { day: "اليوم 2", type: "Zone 2 Cardio + المرونة اليومية", focus: "50 دقيقة — 45 دقيقة مشي مائل (4%, 5.5 كم/س) + 5 دقائق مرونة خفيفة" },
-        { day: "اليوم 3", type: "Push + Shoulders + Triceps", focus: "55 دقيقة — RPE 7–9 — الوقوف على اليدين, Floor Press, Push-up, OHP, Lateral Raise + بلوك الذراعين (من الأسبوع 10)" },
-        { day: "اليوم 4", type: "Active Recovery + المرونة العملاقة", focus: "30 دقيقة — 25 دقيقة مشي (0%, 4.5 كم/س) + 10 دقائق تمارين مرونة عميقة" },
-        { day: "اليوم 5", type: "Pull + Back + Biceps + Grip", focus: "55 دقيقة — RPE 7–9 — عقلة, Rows, TRX Face Pull, Curls, Towel Hang + بلوك الذراعين (من الأسبوع 10)" },
-        { day: "اليوم 6", type: "VO2 Max 4×4 Cardio", focus: "35 دقيقة — بروتوكول نرويجي: 10 دقائق إحماء, 4×(4 دقائق جهد 6.5 كم/س / 3 دقائق راحة), 5 دقائق استرخاء" },
+        { day: "اليوم 1", type: "Legs + Core + Grip", focus: "45 دقيقة — RPE 7–9 — RDL, Day 1 Toggle, BSS, Hip Thrust, Suitcase Carry, Core" },
+        { day: "اليوم 2", type: "Zone 2 Cardio + المرونة اليومية", focus: "45 دقيقة — مشي مائل (4%, 5.5 كم/س) + 5 دقائق مرونة" },
+        { day: "اليوم 3", type: "Push + Shoulders + Triceps", focus: "45 دقيقة — RPE 7–9 — Floor Press, OHP, Lateral Raise + بلوك الذراعين (من الأسبوع 10)" },
+        { day: "اليوم 4", type: "Active Recovery + صحة الرقبة", focus: "30 دقيقة — تمارين الرقبة + مشي 25 دقيقة (0%, 4.5 كم/س) + مرونة عميقة" },
+        { day: "اليوم 5", type: "Pull + Back + Biceps", focus: "45 دقيقة — RPE 7–9 — عقلة, Rows, TRX Face Pull, Curls + بلوك الذراعين (من الأسبوع 10)" },
+        { day: "اليوم 6", type: "VO2 Max 4×4 Cardio", focus: "35 دقيقة — بروتوكول نرويجي 4x4" },
         { day: "اليوم 7", type: "Rest Day", focus: "راحة كاملة وتغذية ونوم" }
       ],
-      arm_block_title: "💪 بلوك الذراعين v5 (التقدم المزدوج — من الأسبوع 10)",
-      arm_block_desc: "يتم إجراؤه في نهاية اليوم 3 واليوم 5 من الأسبوع 10. مجموعتان لكل تمرين، راحة 60 ثانية. تقدم خطوة عند إكمال التكرارات.",
+      arm_block_title: "💪 بلوك الذراعين v15.6 (بروتوكول Myo-Reps)",
+      arm_block_desc: "يتم إجراؤه في نهاية اليوم 3 واليوم 5 من الأسبوع 10. مجموعة تنشيطية واحدة + 3 مجموعات مصغرة (5 تكرارات مع 15 ثانية راحة). توقف عند فقدان الإيقاع مرتين متتاليتين.",
       dictionary_title: "📚 قاموس التمارين",
       dictionary_subtitle: "قائمة شاملة بجميع التمارين المذكورة في البرنامج.",
-      full_plan_title: "📅 تفاصيل البرنامج الكامل - 78 أسبوعًا",
+      full_plan_title: "📅 تفاصيل البرنامج الكامل",
       full_plan_desc: "هنا يمكنك رؤية كل يوم في البرنامج بما في ذلك التمارين والتكرارات وأوقات الراحة.",
       table_ex: "التمرين",
       table_sets: "المجموعات والتكرارات",
@@ -323,31 +326,12 @@ window.ExporterGuide = (() => {
 
         <h3>${t.arm_block_title}</h3>
         <p>${t.arm_block_desc}</p>
-        <p><strong>${lang === 'he' ? 'יום 3 — סיום (2 סטים, מנוחה 60 שנ\')' : (lang === 'ar' ? 'اليوم 3 — الختام (مجموعتان)' : 'Day 3 Finisher (2 sets, 60s rest)')}:</strong></p>
-        <table>
-          <tr><th>${lang === 'he' ? 'שלב' : (lang === 'ar' ? 'الخطوة' : 'Step')}</th><th>DB Lateral Raise (2s descent)</th><th>DB OH Triceps Ext (2s descent)</th></tr>
-          <tr><td>1</td><td>3 kg × 12</td><td>6 kg × 12</td></tr>
-          <tr><td>2</td><td>3 kg × 15</td><td>6 kg × 15</td></tr>
-          <tr><td>3</td><td>3 kg × 18</td><td>9 kg × 10</td></tr>
-          <tr><td>4</td><td>3 kg × 20</td><td>9 kg × 12</td></tr>
-          <tr><td>5</td><td>6 kg × 10</td><td>9 kg × 15</td></tr>
-          <tr><td>6</td><td>6 kg × 12</td><td>12 kg × 10</td></tr>
-          <tr><td>7</td><td>6 kg × 15</td><td>12 kg × 12</td></tr>
-          <tr><td>8</td><td>9 kg × 10</td><td>15 kg × 10</td></tr>
-          <tr><td>9</td><td>9 kg × 12</td><td>15 kg × 12</td></tr>
-        </table>
-        <p style="margin-top: 15px;"><strong>${lang === 'he' ? 'יום 5 — סיום (2 סטים, מנוחה 60 שנ\')' : (lang === 'ar' ? 'اليوم 5 — الختام (مجموعتان)' : 'Day 5 Finisher (2 sets, 60s rest)')}:</strong></p>
-        <table>
-          <tr><th>${lang === 'he' ? 'שלב' : (lang === 'ar' ? 'الخطوة' : 'Step')}</th><th>DB Curl (${lang === 'he' ? 'ליד' : (lang === 'ar' ? 'لكل يد' : 'each hand')})</th></tr>
-          <tr><td>1</td><td>3 kg × 12</td></tr>
-          <tr><td>2</td><td>3 kg × 15</td></tr>
-          <tr><td>3</td><td>6 kg × 10</td></tr>
-          <tr><td>4</td><td>6 kg × 12</td></tr>
-          <tr><td>5</td><td>6 kg × 15</td></tr>
-          <tr><td>6</td><td>9 kg × 10</td></tr>
-          <tr><td>7</td><td>9 kg × 12</td></tr>
-          <tr><td>8</td><td>12 kg × 10</td></tr>
-        </table>
+        <ul>
+          <li><strong>${lang === 'he' ? 'סט אקטיבציה:' : (lang === 'ar' ? 'مجموعة التنشيط:' : 'Activation Set:')}</strong> ${lang === 'he' ? 'ביצוע ליעד החזרות של השלב הנוכחי (למשל 12 חזרות). מנוחה 15 שניות.' : (lang === 'ar' ? 'التنفيذ لهدف التكرارات. راحة 15 ثانية.' : 'Executed to stage target reps. Rest 15 seconds.')}</li>
+          <li><strong>${lang === 'he' ? 'מיני-סטים:' : (lang === 'ar' ? 'المجموعات المصغرة:' : 'Mini-Sets:')}</strong> ${lang === 'he' ? '3 מיני-סטים של 5 חזרות נקיות, 15 שניות מנוחה ביניהם.' : (lang === 'ar' ? '3 مجموعات مصغرة من 5 تكرارات، 15 ثانية راحة بينها.' : '3 mini-sets of 5 clean reps each, 15s rest between mini-sets.')}</li>
+          <li><strong>${lang === 'he' ? 'חוק עצירה אובייקטיבי (two_consecutive_tempo_losses):' : (lang === 'ar' ? 'قانون التوقف الموضوعي:' : 'Objective Stop Rule (two_consecutive_tempo_losses):')}</strong> ${lang === 'he' ? 'שני אובדני טמפו רצופים (אקסצנטרי מתחת ל-2 שניות, תנופה או שינוי טכניקה) מסיימים את הצביר מיד. חזרות עם אובדן טמפו אינן נספרות.' : (lang === 'ar' ? 'فقدان الإيقاع مرتين متتاليتين ينهي التجميع فوراً.' : 'Two consecutive tempo losses immediately terminates the cluster. Non-tempo reps are not counted.')}</li>
+          <li><strong>${lang === 'he' ? 'מגבלת חשיפה שבועית:' : (lang === 'ar' ? 'حد التعرض الأسبوعي:' : 'Weekly Exposure Limit:')}</strong> ${lang === 'he' ? 'חשיפה אחת בלבד בשבוע לכל אזור שרירי (כתף צדית, טריספס, בייספס).' : (lang === 'ar' ? 'تعرض واحد فقط أسبوعياً لكل منطقة عضلية.' : 'Max 1 exposure per muscle area per week (Lateral Shoulder, Triceps, Biceps).')}</li>
+        </ul>
       </div>
 
       <div class="section">

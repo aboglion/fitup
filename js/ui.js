@@ -515,6 +515,16 @@ const UI = (() => {
           </ul>
         </div>
       `;
+    } else if (lowerTitle.includes('neck') || lowerTitle.includes('צוואר')) {
+      extraNote = `
+        <div style="background: rgba(245, 158, 11, 0.12); padding: 12px; border-radius: 10px; border: 1px solid rgba(245, 158, 11, 0.3); margin-top: 4px;">
+          <p style="font-size: 13px; margin-bottom: 6px; color: var(--text-primary);"><strong>${I18n.t('neck_tip_title')}</strong></p>
+          <ul style="font-size: 12px; color: var(--text-secondary); padding-inline-start: 18px; margin: 0; line-height: 1.5;">
+            <li style="margin-bottom: 6px;">${I18n.t('neck_flexion_cue')}</li>
+            <li>${I18n.t('neck_extension_cue')}</li>
+          </ul>
+        </div>
+      `;
     }
 
     const searchTitle = (title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -526,25 +536,35 @@ const UI = (() => {
 
     let metadataHTML = '';
     if (exData) {
-      const restText = exData.restRange ? `${exData.restRange[0]}-${exData.restRange[1]} שניות` : (exData.restSeconds ? `${exData.restSeconds} שניות` : null);
-      const repText = (exData.windowMin && exData.windowMax) ? `${exData.windowMin}-${exData.windowMax} חזרות` : null;
-      const weightText = exData.startingWeight != null ? `${exData.startingWeight} ק״ג (${exData.loadType || 'לכל צד'}) [מינ׳ ${exData.minWeight || 3}ק״ג | מקס׳ ${exData.maxWeight || 24}ק״ג]` : null;
+      const secLabel = I18n.t('unit_seconds', 'שניות');
+      const repsLabel = I18n.t('unit_reps', 'חזרות');
+      const kgLabel = I18n.t('unit_kg', 'ק״ג');
+      const perSideLabel = I18n.t('per_side', 'לכל צד');
+      const minLbl = I18n.t('min_label', 'מינ׳');
+      const maxLbl = I18n.t('max_label', 'מקס׳');
+
+      const restText = exData.restRange ? `${exData.restRange[0]}-${exData.restRange[1]} ${secLabel}` : (exData.restSeconds ? `${exData.restSeconds} ${secLabel}` : null);
+      const repText = (exData.windowMin && exData.windowMax) ? `${exData.windowMin}-${exData.windowMax} ${repsLabel}` : null;
+      const weightText = exData.startingWeight != null ? `${exData.startingWeight} ${kgLabel} (${exData.loadType || perSideLabel}) [${minLbl} ${exData.minWeight || 3}${kgLabel} | ${maxLbl} ${exData.maxWeight || 24}${kgLabel}]` : null;
+
+      const ruleKey = 'rule_' + (exData.id || '').replace(/[-_]+/g, '_');
+      const ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (exData.rule || '');
 
       metadataHTML = `
         <div style="background: var(--bg-hover, rgba(255,255,255,0.05)); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light, rgba(255,255,255,0.1)); display: flex; flex-direction: column; gap: 8px;">
           <div style="font-size: 13px; font-weight: 800; color: var(--accent-primary, #3b82f6); display: flex; align-items: center; gap: 6px;">
-            <span>📋</span> <span>מפרט ופרוטוקול ביצוע ("Zero Decisions")</span>
+            <span>📋</span> <span>${I18n.t('zero_decisions_spec', 'מפרט ופרוטוקול ביצוע ("Zero Decisions")')}</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; font-size: 12px;">
-            ${exData.tempo ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">⏱️ <b>טמפו:</b> ${exData.tempo}</div>` : ''}
-            ${restText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">⏳ <b>מנוחה:</b> ${restText}</div>` : ''}
-            ${repText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">🎯 <b>חלון חזרות:</b> ${repText}</div>` : ''}
-            ${exData.structure ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">🏗️ <b>מבנה:</b> ${exData.structure}</div>` : ''}
-            ${weightText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px; grid-column: 1/-1;">⚖️ <b>משקל התחלתי:</b> ${weightText}</div>` : ''}
+            ${exData.tempo ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">⏱️ <b>${I18n.t('label_tempo', 'טמפו:')}</b> ${exData.tempo}</div>` : ''}
+            ${restText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">⏳ <b>${I18n.t('label_rest', 'מנוחה:')}</b> ${restText}</div>` : ''}
+            ${repText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">🎯 <b>${I18n.t('label_rep_window', 'חלון חזרות:')}</b> ${repText}</div>` : ''}
+            ${exData.structure ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">🏗️ <b>${I18n.t('label_structure', 'מבנה:')}</b> ${exData.structure}</div>` : ''}
+            ${weightText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px; grid-column: 1/-1;">⚖️ <b>${I18n.t('label_starting_weight', 'משקל התחלתי:')}</b> ${weightText}</div>` : ''}
           </div>
-          ${exData.rule ? `
+          ${ruleText ? `
             <div style="margin-top: 4px; padding: 8px 10px; background: rgba(245, 158, 11, 0.12); border-right: 3px solid #f59e0b; border-radius: 6px; font-size: 12px; color: var(--text-primary);">
-              <b>⚠️ כלל טכניקה / Mechanical Stop:</b> ${exData.rule}
+              <b>⚠️ ${I18n.t('mechanical_stop_rule', 'כלל טכניקה / Mechanical Stop:')}</b> ${ruleText}
             </div>
           ` : ''}
         </div>

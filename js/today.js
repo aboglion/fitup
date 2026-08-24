@@ -3034,7 +3034,8 @@ const TodayPage = (() => {
       belowTrigger: 'איבוד טכניקה, אובדן קצב (Tempo Loss), או חוסר יכולת להשלים חזרה מלאה.'
     };
 
-    const ruleText = typeof ruleObj === 'string' ? ruleObj : ruleObj.rule;
+    const ruleKey = 'rule_' + (exName || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (typeof ruleObj === 'string' ? ruleObj : ruleObj.rule);
     const belowTriggerText = typeof ruleObj === 'object' ? ruleObj.belowTrigger : 'איבוד טכניקה חמור או אובדן קצב (Tempo Loss > 2 שניות).';
 
     UI.showModal(`ℹ️ ${exName} — ${I18n.t('form_rules_title') || 'חוקי טכניקה'}`, `

@@ -550,6 +550,20 @@ EXERCISES_CATALOG = [
     { "id": "vo2-max-norwegian-4x4", "name": "VO2 Max Norwegian 4x4", "category": "Cardio", "type": "interval", "restSeconds": 0, "repWindow": "16m" },
     { "id": "micro-mobility-protocol", "name": "Micro Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "5m" },
     { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "10m" },
+    {
+        "id": "band-neck-flexion",
+        "name": "Band Neck Flexion & Extension",
+        "category": "Warmup",
+        "type": "variation",
+        "restSeconds": 45,
+        "repWindow": "15-20",
+        "tempo": "3-1-3 slow",
+        "compound": False,
+        "sets": 2,
+        "structure": "straight",
+        "rule": "סט 1 (כפיפה): פנים הרחק מהעגינה (גומייה על מצח) | סט 2 (פשיטה): פנים לכיוון העגינה (גומייה על עורף). עגינה אופקית בגובה הראש!",
+        "stages": ["Band 30kg (Close Anchor)", "Band 30kg (1 Step Back)", "Band 40kg", "Band 50kg"]
+    },
     { "id": "glute-bridge", "name": "Glute Bridge", "category": "Warmup", "type": "timebased", "restSeconds": 30, "repWindow": "12" },
 
     # Arm Blocks (Myo-reps)
@@ -688,8 +702,9 @@ def generate_day_exercises(dow, week):
 
     if dow == 4:  # Thursday - Active Recovery
         return "Active Recovery", "—", [
-            make_ex_obj("A1", "relaxed-walking", "Relaxed Walking", "25 mins", weight="Incline 0%", tempo="4.5 km/h", rest=0),
-            make_ex_obj("A2", "deep-mobility-protocol", "Deep Mobility Protocol", "10 mins", weight="Bodyweight", tempo="slow", rest=0)
+            make_ex_obj("A1", "band-neck-flexion", "Band Neck Flexion & Extension", "2×15-20", rep_window="15-20", weight="Band 30 kg", tempo="3-1-3 slow", rest=45, structure="straight"),
+            make_ex_obj("A2", "relaxed-walking", "Relaxed Walking", "25 mins", weight="Incline 0%", tempo="4.5 km/h", rest=0),
+            make_ex_obj("A3", "deep-mobility-protocol", "Deep Mobility Protocol", "10 mins", weight="Bodyweight", tempo="slow", rest=0)
         ]
 
     if dow == 6:  # Saturday - VO2 Max / Cardio

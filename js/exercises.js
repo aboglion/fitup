@@ -21,6 +21,7 @@ const ExercisesPage = (() => {
     // Resistance Bands
     'Seated Band Row': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 13 }],
     'Band Pull-Apart': [{ weight: '30 kg', fromWeek: 1 }, { weight: '40 kg', fromWeek: 5 }, { weight: '50 kg', fromWeek: 9 }],
+    'Band Neck Flexion & Extension': [{ weight: 'Band 30 kg', fromWeek: 1 }, { weight: 'Band 40 kg', fromWeek: 13 }, { weight: 'Band 50 kg', fromWeek: 26 }],
     'Pallof Press': [{ weight: '30 kg', fromWeek: 10 }, { weight: '40 kg', fromWeek: 34 }],
     'Pallof Press Progression': [{ weight: 'Band 30 kg', fromWeek: 10 }, { weight: 'Band 40 kg', fromWeek: 34 }],
 
@@ -294,7 +295,8 @@ const ExercisesPage = (() => {
         title: 'cardio_recovery', icon: '🫀', exercises: [
           { name: 'Relaxed Walking', unlockWeek: 1 },
           { name: 'Brisk Walking', unlockWeek: 1 },
-          { name: 'VO2 Max Norwegian 4x4', unlockWeek: 1 }
+          { name: 'VO2 Max Norwegian 4x4', unlockWeek: 1 },
+          { name: 'Band Neck Flexion & Extension', unlockWeek: 1 }
         ]
       }
     ]

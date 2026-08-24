@@ -76,7 +76,7 @@ To prevent elbow tendonitis while maximizing hyper-trophy:
 | **Day 1** | **Legs + Core + Carry** | Lower body unilateral strength, Day 1 Toggle, Calf Block & Core Circuit | 45 min |
 | **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building, treadmill walking & daily micro-mobility | 45 min |
 | **Day 3** | **Push + Shoulders + Triceps + Handstand** | Chest, delts, overhead pressing, Day 3 Rear Delt Toggle, Lean Pair & Arm Block (W10+) | 45 min |
-| **Day 4** | **Active Recovery + Deep Mobility** | Light treadmill recovery walk & 10-minute macro mobility sequence | 30 min |
+| **Day 4** | **Active Recovery + Joint Health** | Band Neck Flexion/Extension protocol (A1), light treadmill recovery walk (A2) & 10-min deep mobility sequence (A3) | 30 min |
 | **Day 5** | **Pull + Back + Biceps + Grip + Core** | Pull-Up progressions, One-Arm DB Row, Biceps Microcycle, Lean Pairs & Arm Block (W10+) | 45 min |
 | **Day 6** | **Cardio VO2 Max** | Norwegian 4x4 interval protocol (or Zone 2 during Deload weeks) | 35 min |
 | **Day 7** | **Complete Rest** | Passive recovery, hydration & CNS regeneration | — |
@@ -95,14 +95,15 @@ Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase inclin
 | **Weeks 10–16** | 5% |
 | **Weeks 18–52+** | 6% |
 
-🟡 **Active Recovery (Day 4):** Treadmill 25 min @ 0% 4.5 km/h + 10 min deep mobility.
+🟡 **Active Recovery (Day 4):** 5 min Cervical Health protocol (Band Neck Flexion & Extension 2×15–20 each direction, 45s rest, 3-1-3 tempo, chin-tuck focus) + Treadmill 25 min @ 0% 4.5 km/h + 10 min deep mobility.
 
 ---
 
-## Part 4 — Mobility Protocols
+## Part 4 — Mobility & Cervical Protocols
 
 - **Daily Micro (5 min post-strength session):** Dead Hang 30s | Deep Squat Hold 60s | Doorway Chest Stretch 30s/side | World's Greatest Stretch 5/side.
 - **Weekly Macro (Day 4, 10 min):** Cat-Cow 10 reps | 90/90 Hip Stretch 8/side | Thoracic Rotations 8/side | Couch Stretch 45s/side | Sleeper Stretch 30s/side | Prone Y-T-W 8 reps/shape.
+- **Cervical Health Protocol (Day 4, 5 min):** Band Neck Flexion & Extension 2×15–20 reps each direction (Flexion 2×15–20, Extension 2×15–20), 45s rest, 3-1-3 slow control tempo, chin tuck cueing. Band anchored at head height on Pull-Up Bar (100% horizontal force vector).
 
 ---
 

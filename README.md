@@ -1,6 +1,6 @@
 # 🏋️‍♂️ FitUp Pro v15.6 Lean Edition
 
-> **A 52-Week Automated Prescriptive Lean Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Myo-Reps Clusters, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
+> **A 52-Week (364-Day) Prescriptive FitUp v15.6 Lean Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Objective Myo-Reps Arm Block Clusters, Biceps 3-Week Microcycle, Cervical Health Protocol, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
 
 ---
 
@@ -8,7 +8,7 @@
 
 **FitUp Pro v15.6 Lean Edition** is an advanced, offline-first Web Application designed for long-term physical progression, hypertrophic gains, cardiovascular conditioning, and precision workout tracking.
 
-Built on a strict **"Zero Decisions" Philosophy**, every single workout day across the 52-week (364-day) period is fully prescribed—down to exact exercise ordering, target rep ranges, weight progressions, tempo control, rest intervals, structural tags, and micro-mobility integration.
+Built on a strict **"Zero Decisions" Philosophy**, every single workout day across the 52-week (364-day) period is fully prescribed—down to exact exercise ordering, target rep ranges, weight progressions, legal dumbbell increments, tempo control, rest intervals, structural tags, and micro-mobility integration.
 
 Set completion operates under an objective **3-Button Outcome Classifier** (🚀 **ABOVE**, ✅ **IN_WINDOW**, ⚠️ **BELOW** / Mechanical Stop), which feeds the atomic progression engine and adjusts intra-workout rest timers dynamically (+30s extension on mechanical stop).
 
@@ -17,14 +17,13 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 ## ✨ Key Features
 
 ### 🏋️‍♂️ Prescriptive 52-Week Lean Training Engine
-- **Periodized Progression**: Structured across 15 distinct training phases over 52 weeks (Year 1 Foundation & Peak + Year 2 Mastery).
+- **v15.6 Lean Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
 - **Zero Decisions 3-Button Outcome Selector**: Objective set classification (🚀 Above Target, ✅ In Window, ⚠️ Mechanical Stop / Failure) replacing guesswork.
-- **Myo-Reps & Arm Block Integration**: High-density cluster reps and double-progression ladder protocols for maximal hypertrophy.
+- **Objective Myo-Reps & Arm Block Protocol**: Active from Week 10 onwards (1 activation set + 3 mini-sets of 5 reps with 15s rest). Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
+- **Biceps 3-Week Microcycle**: 2 heavy progressive overload weeks + 1 light preservation week (Hammer Curl 2 sets, no progression) to maximize hypertrophy while protecting elbow joints.
+- **Weekly Frequency Additions**: 2nd Back Frequency (TRX Row on Day 3 = 10 weekly back sets) and 2nd Chest Frequency (Push-Up Volume on Day 5 = 8 weekly chest sets).
+- **Cervical Health Protocol**: Dedicated Band Neck Flexion & Extension protocol on Day 4 for neck/postural resilience.
 - **Adaptive Intra-Workout Rest Engine**: Dynamically calculates rest timers with automatic +30s extensions following a mechanical stop (`BELOW` outcome).
-- **Time Efficiency Protocol (Weeks 34+)**: Caps workouts to a crisp 45–50 minutes through:
-  - **Antagonistic Supersets**: Pairing non-competing muscle groups (e.g., Push/Pull, Biceps/Triceps) to reduce workout duration by up to 50%.
-  - **Unilateral Staggered Rest**: Eliminating dead time during single-arm/single-leg movements.
-  - **Arm Block v5 Integration**: Double-progression ladder protocols for maximal arm hypertrophy without redundant main-table set fatigue.
 - **Cardiovascular & Recovery Integration**:
   - **Norwegian 4x4 VO2 Max**: High-intensity interval treadmill running capped at ≤6% incline for joint protection.
   - **Zone 2 Cardio & Micro-Mobility**: Dedicated active recovery days and dead hangs/thoracic extensions integrated into rest periods.
@@ -135,45 +134,35 @@ FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a hi
 
 ## 📋 Training Program Deep Dive
 
-The **FitUp Pro Ultimate v15.6 Lean** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 52 weeks.
+The **FitUp Pro Ultimate v15.6 Lean** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 52 weeks (364 days).
 
 ### 🗓️ Weekly Microcycle Architecture (7 Days)
 Each week follows a strictly optimized 7-day routine designed to balance muscular stimulus, joint recovery, and metabolic conditioning:
 
 | Day | Workout Type | Focus / Key Movements | Target Duration |
 | :--- | :--- | :--- | :--- |
-| **Day 1 (Mon)** | **Legs + Core** | DB Bulgarian Split Squat, Single-Leg RDL, DB Hip Thrust, Calf Raises, Core Anti-Rotation/Flexion | 45–50 min |
-| **Day 2 (Tue)** | **Active Recovery** | Brisk Walking (6,000–8,000 steps), Micro-Mobility, Joint Decompression | 30–45 min |
-| **Day 3 (Wed)** | **Push + Skill** | Single-Arm Floor Press, Seated DB OHP, Feet-Elevated Push-Ups, Wall Handstand, Arm Block | 45–50 min |
-| **Day 4 (Thu)** | **Active Recovery** | Zone 2 Aerobic Base Walking, Light Stretching | 30–45 min |
-| **Day 5 (Fri)** | **Pull + Grip** | Weighted/Bodyweight Pull-Ups & Chin-Ups, One-Arm DB Rows, TRX Face Pulls, Biceps & Towel Hang | 45–50 min |
-| **Day 6 (Sat)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 85–95% HRmax, ≤6% treadmill incline) | 35–40 min |
+| **Day 1 (Mon)** | **Legs + Core + Carry** | DB RDL, Day 1 Toggle (Single-Leg RDL / Lunge-Pistol Slot), BSS, DB Hip Thrust, Suitcase Carry, Calf Block, Core Circuit | 45 min |
+| **Day 2 (Tue)** | **Zone 2 Cardio** | Treadmill Walking (4% incline, 5.5 km/h, conversational test), Daily Micro-Mobility | 45 min |
+| **Day 3 (Wed)** | **Push + Shoulders + Triceps + Back Vol** | Pike Hold/Push-Up, DB Floor Press, Push-Up Bars, Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ DB Lateral Raise pair, Rear Delt Toggle, Arm Block (W10+) | 45 min |
+| **Day 4 (Thu)** | **Active Recovery & Joint Health** | Band Neck Flexion & Extension protocol (A1), Light Treadmill Recovery Walk (A2), 10-min Deep Mobility sequence (A3) | 30 min |
+| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression, One-Arm DB Row, TRX Face Pull, Biceps Microcycle (DB Curl & Hammer Curl), Push-Up Volume ↔ DB Curl pair, Towel Hang ↔ L-Sit pair, Arm Block (W10+) | 45 min |
+| **Day 6 (Sat)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 6.5 km/h at phase incline, ≤6% treadmill incline) | 35 min |
 | **Day 7 (Sun)** | **Complete Rest** | System Regeneration, Hydration & Passive Recovery | — |
 
 ---
 
-### ⏱️ Time-Efficiency Protocol (Weeks 34+)
-Starting from Week 34 (Phases 10–15), workout volume peaks while strict duration controls ensure sessions conclude in **45–50 minutes**:
-1. **Antagonistic Supersets**: Pairs push/pull and antagonist movements (e.g., Floor Press paired with TRX Face Pulls, Biceps Curls paired with Overhead Triceps Extensions) with shortened rest intervals, reducing dead time by 50%.
-2. **Unilateral Staggered Rest**: Eliminates rest pauses when switching limbs on Single-Arm/Single-Leg exercises (e.g., Left leg rests while Right leg works), keeping overall session time minimal.
-3. **Streamlined Main-Table Sets**: Sets for duplicate isolation exercises in the main table are capped at **2 sets** once the **Arm Block v5** (2×10–15 ladder double progression) is active.
-4. **Embedded Micro-Mobility**: Dead hangs and thoracic door-frame stretches are performed *during* rest intervals rather than adding standalone extra time.
-
----
-
-### 📈 52-Week Macrocycle Periodization (15 Phases)
-The program is split into two primary macrocycles designed to ensure progressive overload and prevent adaptation plateaus:
-
-- **Year 1 (Weeks 1–52: Foundation, Hypertrophy & Peak)**
-  - *Phase 1–3 (Weeks 1–16)*: Anatomical Adaptation, Unilateral Balance & Push-Up/Pull-Up Progression. Introduction of Arm Block v5 at Week 10.
-  - *Phase 4–6 (Weeks 18–32)*: Heavy Single-Arm Floor Pressing, Pistol Squat Progressions, Elevated TRX Work.
-  - *Phase 7–9 (Weeks 34–52)*: Peak Strength & Volume Density. Time Efficiency Protocol active. Single-Arm OHP & Vest Push-Ups.
-- **Year 2 (Weeks 53–52: Advanced Mastery & Weighted Calisthenics)**
-  - *Phase 10–13 (Weeks 53–68)*: Weighted Calisthenics (+5 kg Vest Pull-Ups/Push-Ups), Single-Arm Dumbbell Row at 24 kg max capacity, Pistol Squats to chair.
-  - *Phase 14–15 (Weeks 70–78)*: Peak Strength Testing & Tapered Transition.
-- **Scheduled Deload Microcycles (Every 8 Weeks)**:
-  - Occur on Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104 (every 8 weeks).
-  - Volume is reduced by 40–50% with RPE target lowered to 6–7 for full central nervous system (CNS) and joint recovery.
+### ⏱️ v15.6 Lean Architecture & Structural Optimization
+The program organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts (target session duration: **40–45 minutes**):
+1. **Protected Compound Lifts**: Base compound lifts (DB RDL, Single-Leg RDL, BSS, Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, DB Floor Press, Push-Up Progression, Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, DB Curl, Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
+2. **Lean Pairs (Antagonistic & Non-Competing)**:
+   - **Day 3**: TRX Row ↔ DB Lateral Raise (75s rest after completing both).
+   - **Day 5**: Push-Up Volume ↔ DB Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
+   - **Day 5**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
+3. **Weekly Alternating Toggles**:
+   - **Day 1 Toggle (Posterior vs Quad/Unilateral)**: Odd weeks = Single-Leg RDL; Even weeks = Lunge/Pistol Slot (resolves to Reverse Lunge or Pistol Squat Progression when unlocked).
+   - **Day 3 Rear Delt Toggle**: Odd weeks = TRX Y-T-W; Even weeks = Band Pull-Apart.
+4. **Arm Block Myo-Reps Clusters (W10+)**: 1 activation set + 3 mini-sets of 5 reps with 15s rest. Terminated by 2 consecutive tempo losses (`two_consecutive_tempo_losses`). Maximum 1 exposure per muscle area per week.
+5. **Scheduled Deload Microcycles (Every 8 Weeks)**: Occur on Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104. Sets capped at 2 per exercise, loads reduced by 2 kg (rounded to legal range [3..24] kg). All pairs/circuits/blocks dissolve into straight sets.
 
 ---
 
