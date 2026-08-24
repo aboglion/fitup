@@ -2317,6 +2317,7 @@ const TodayPage = (() => {
       const isArmBlock = ex.name.toLowerCase().includes('arm block');
 
       await ProgressionEngine.commitExerciseProgression({
+        exerciseId: ex.id || ex.name.toLowerCase().replace(/\s+/g, '-'),
         exerciseName: ex.name,
         dayIndex: currentDayIndex,
         weekNumber: weekNum,

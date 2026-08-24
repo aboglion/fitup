@@ -416,6 +416,7 @@ const StatsPage = (() => {
     'db-single-arm-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'push-up-bars-progression': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'push-up-volume-day5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'push-up-volume-day-5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'deficit-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'incline-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.4 }],
@@ -453,6 +454,7 @@ const StatsPage = (() => {
     'single-arm-curl': [{ m: 'biceps', w: 1.0 }],
     'biceps-curl-ladder': [{ m: 'biceps', w: 1.0 }],
 
+    'trx-ytw': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }],
     'trx-y-t-w': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }],
     'band-pull-apart': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.5 }],
 
@@ -576,8 +578,10 @@ const StatsPage = (() => {
   }
 
   const EXERCISE_MUSCLE_MAP = {
-    'db-floor-press': 'chest', 'db-single-arm-floor-press': 'chest', 'push-up': 'chest', 'deficit-push-up': 'chest', 'incline-push-up': 'chest', 'feet-elevated-push-up': 'chest', 'weighted-push-up': 'chest', 'push-up-bars-progression': 'chest', 'push-up-volume-day-5': 'chest', 'scapular-push-up': 'chest',
-    'seated-db-ohp': 'shoulders', 'seated-db-overhead-press': 'shoulders', 'seated-single-arm-ohp': 'shoulders', 'db-lateral-raise': 'shoulders', 'pike-push-up': 'shoulders', 'pike-progression': 'shoulders', 'trx-face-pull': 'shoulders', 'wall-walk': 'shoulders', 'wall-handstand-hold': 'shoulders', 'band-pull-apart': 'shoulders', 'trx-y-t-w': 'traps',
+    'db-floor-press': 'chest', 'db-single-arm-floor-press': 'chest', 'push-up': 'chest', 'deficit-push-up': 'chest', 'incline-push-up': 'chest', 'feet-elevated-push-up': 'chest', 'weighted-push-up': 'chest', 'push-up-bars-progression': 'chest', 'push-up-volume-day5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'push-up-volume-day5': 'chest', 'push-up-volume-day-5': 'chest', 'scapular-push-up': 'chest',
+    'seated-db-ohp': 'shoulders', 'seated-db-overhead-press': 'shoulders', 'seated-single-arm-ohp': 'shoulders', 'db-lateral-raise': 'shoulders', 'pike-push-up': 'shoulders', 'pike-progression': 'shoulders', 'trx-face-pull': 'shoulders', 'wall-walk': 'shoulders', 'wall-handstand-hold': 'shoulders', 'band-pull-apart': 'shoulders', 'trx-ytw': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }],
+    'trx-ytw': 'traps', 'trx-y-t-w': 'traps',
     'overhead-triceps-ext': 'triceps', 'db-overhead-triceps-extension': 'triceps', 'single-arm-overhead-triceps-ext': 'triceps', 'diamond-push-up': 'triceps',
     'pull-up': 'lats', 'pull-up-progression': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'seated-band-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
     'db-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-curl': 'biceps', 'biceps-curl-ladder': 'biceps',

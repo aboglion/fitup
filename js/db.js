@@ -509,12 +509,12 @@ const DB = (() => {
 
     // Progression Engine Stores Import
     const arrayStores = [
-      { key: 'progressionState', store: STORES.PROGRESSION_STATE, idProp: 'sessionKey' },
+      { key: 'progressionState', store: STORES.PROGRESSION_STATE, idProp: 'exerciseId' },
       { key: 'progressionHistory', store: STORES.PROGRESSION_HISTORY, idProp: 'id' },
-      { key: 'adaptiveRestHistory', store: STORES.ADAPTIVE_REST, idProp: 'exerciseName' },
+      { key: 'adaptiveRestHistory', store: STORES.ADAPTIVE_REST, idProp: 'exerciseId' },
       { key: 'armBlockStatus', store: STORES.ARM_BLOCK_STATUS, idProp: 'muscleArea' },
       { key: 'armBlockExposure', store: STORES.ARM_BLOCK_EXPOSURE, idProp: 'id' },
-      { key: 'leanSessionState', store: STORES.LEAN_SESSION, idProp: 'dayIndex' },
+      { key: 'leanSessionState', store: STORES.LEAN_SESSION, idProp: 'sessionKey' },
       { key: 'myoClusterHistory', store: STORES.MYO_CLUSTERS, idProp: 'id' }
     ];
 
@@ -734,8 +734,13 @@ const DB = (() => {
 
   // ============ Progression Engine Store Helpers ============
 
-  async function getProgressionState(sessionKey) {
-    return get(STORES.PROGRESSION_STATE, sessionKey);
+  async function getProgressionState(key) {
+    if (!key) return null;
+    const res = await get(STORES.PROGRESSION_STATE, key);
+    if (res) return res;
+    // Fallback search by exerciseId or sessionKey if key format changed
+    const all = await getAll(STORES.PROGRESSION_STATE);
+    return all.find(item => item.exerciseId === key || item.sessionKey === key || item.exerciseName === key) || null;
   }
 
   async function saveProgressionState(data) {
@@ -766,8 +771,12 @@ const DB = (() => {
     return getAll(STORES.PROGRESSION_HISTORY);
   }
 
-  async function getAdaptiveRest(exerciseName) {
-    return get(STORES.ADAPTIVE_REST, exerciseName);
+  async function getAdaptiveRest(key) {
+    if (!key) return null;
+    const res = await get(STORES.ADAPTIVE_REST, key);
+    if (res) return res;
+    const all = await getAll(STORES.ADAPTIVE_REST);
+    return all.find(item => item.exerciseId === key || item.exerciseName === key) || null;
   }
 
   async function saveAdaptiveRest(exerciseName, data) {
@@ -798,8 +807,12 @@ const DB = (() => {
     return put(STORES.ARM_BLOCK_EXPOSURE, data);
   }
 
-  async function getLeanSessionState(dayIndex) {
-    return get(STORES.LEAN_SESSION, dayIndex);
+  async function getLeanSessionState(key) {
+    if (key === undefined || key === null) return null;
+    const res = await get(STORES.LEAN_SESSION, key);
+    if (res) return res;
+    const all = await getAll(STORES.LEAN_SESSION);
+    return all.find(item => item.sessionKey === key || item.dayIndex === key || item.sessionKey === ('day_' + key)) || null;
   }
 
   async function saveLeanSessionState(dayIndex, data) {
@@ -856,12 +869,12 @@ const DB = (() => {
               else if (s === STORES.SETTINGS) database.createObjectStore(s, { keyPath: 'key' });
               else if (s === STORES.PHOTOS) database.createObjectStore(s, { keyPath: 'id' });
               else if (s === STORES.NUTRITION) database.createObjectStore(s, { keyPath: 'date' });
-              else if (s === STORES.PROGRESSION_STATE) database.createObjectStore(s, { keyPath: 'sessionKey' });
+              else if (s === STORES.PROGRESSION_STATE) database.createObjectStore(s, { keyPath: 'exerciseId' });
               else if (s === STORES.PROGRESSION_HISTORY) database.createObjectStore(s, { keyPath: 'id' });
-              else if (s === STORES.ADAPTIVE_REST) database.createObjectStore(s, { keyPath: 'exerciseName' });
+              else if (s === STORES.ADAPTIVE_REST) database.createObjectStore(s, { keyPath: 'exerciseId' });
               else if (s === STORES.ARM_BLOCK_STATUS) database.createObjectStore(s, { keyPath: 'muscleArea' });
               else if (s === STORES.ARM_BLOCK_EXPOSURE) database.createObjectStore(s, { keyPath: 'id' });
-              else if (s === STORES.LEAN_SESSION) database.createObjectStore(s, { keyPath: 'dayIndex' });
+              else if (s === STORES.LEAN_SESSION) database.createObjectStore(s, { keyPath: 'sessionKey' });
               else if (s === STORES.MYO_CLUSTERS) database.createObjectStore(s, { keyPath: 'id' });
               else database.createObjectStore(s);
             }

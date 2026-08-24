@@ -386,31 +386,130 @@
     // ----------------------------
     // 8. Atomic Progression Transaction Commit
     // ----------------------------
-    async commitExerciseProgression(exerciseData) {
-      if (!window.DB) return null;
 
-      const {
+    // Helper to find exercise by ID or Name
+    findExerciseIdByName(name) {
+      if (!name) return null;
+      if (!window.TRAINING_DATA || !window.TRAINING_DATA.exercises) return null;
+      const ex = window.TRAINING_DATA.exercises.find(e => e.id === name || e.name === name || e.id === name.toLowerCase().replace(/\s+/g, '-'));
+      return ex ? ex.id : name;
+    }
+
+    // ----------------------------
+    // Check Unlock Criteria
+    // ----------------------------
+    checkUnlockCriteria(exerciseId, allProgressionStates = {}) {
+      const exercise = this.getExercise(exerciseId);
+      if (!exercise) return { unlocked: true, reason: 'Exercise not found' };
+      
+      if (exercise.id === 'pistol-squat-progression') {
+        const lungeState = allProgressionStates['reverse-lunge'] || allProgressionStates['single-leg-rdl'];
+        if (lungeState && (lungeState.currentWeightKg >= 15 || lungeState.currentStageIndex >= 2)) {
+          return { unlocked: true, reason: 'Prerequisite strength achieved' };
+        }
+        return { unlocked: false, reason: 'Requires Reverse Lunge 15kg+' };
+      }
+      
+      return { unlocked: exercise.unlocked ?? true, reason: 'Unlocked' };
+    }
+
+    // ----------------------------
+    // Apply Deload
+    // ----------------------------
+    applyDeload(exerciseId, state) {
+      const exercise = this.getExercise(exerciseId);
+      if (!exercise || !state) return state;
+
+      const updated = { ...state };
+      const deloadReduction = window.TRAINING_DATA?.progressionSettings?.deloadWeightReductionKg || 3;
+
+      if (exercise.type === 'weighted') {
+        const minW = exercise.minWeight || 3;
+        updated.currentWeightKg = Math.max(minW, (updated.currentWeightKg || exercise.startingWeight || 6) - deloadReduction);
+      } else if (exercise.stages && exercise.stages.length > 0) {
+        updated.currentStageIndex = Math.max(0, (updated.currentStageIndex || 0) - 1);
+      }
+
+      updated.lastUpdated = new Date().toISOString();
+      return updated;
+    }
+
+    // ----------------------------
+    // Create Initial State
+    // ----------------------------
+    createInitialState(exerciseId) {
+      const exercise = this.getExercise(exerciseId);
+      const startWeight = exercise ? (exercise.startingWeight || 3) : 3;
+      return {
         exerciseId,
-        dayIndex,
-        weekNumber,
-        setResults = [],
-        previousSessionData = null
-      } = exerciseData;
+        sessionKey: exerciseId,
+        currentWeightKg: startWeight,
+        currentStageIndex: 0,
+        unlocked: exercise ? (exercise.unlocked ?? true) : true,
+        lastUpdated: new Date().toISOString()
+      };
+    }
 
+    // ----------------------------
+    // Get Display Prescription
+    // ----------------------------
+    getDisplayPrescription(exerciseId, weekNumber = 1, state = null) {
       const exercise = this.getExercise(exerciseId);
       if (!exercise) return null;
 
-      // 1. Fetch current progression state
-      let state = await DB.getProgressionState(exerciseId);
+      const isDeload = weekNumber % 8 === 0;
+      const bicepsConfig = window.TRAINING_DATA?.progressionSettings?.bicepsMicrocycle;
+      const isBicepsLightWeek = bicepsConfig && (weekNumber % bicepsConfig.cycleLength === 0);
+
+      let sets = exercise.sets || 3;
+      if (isDeload) sets = Math.min(sets, 2);
+      else if (isBicepsLightWeek && (exercise.id === 'db-curl' || exercise.id === 'hammer-curl')) {
+        sets = bicepsConfig.lightWeekSets || 2;
+      }
+
+      const currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || 3);
+      const currentStage = state ? (exercise.stages ? exercise.stages[state.currentStageIndex || 0] : null) : (exercise.stages ? exercise.stages[0] : null);
+
+      return {
+        exerciseId: exercise.id,
+        name: exercise.name,
+        sets,
+        repWindow: exercise.repWindow || (exercise.windowMin && exercise.windowMax ? exercise.windowMin + "–" + exercise.windowMax : "8–12"),
+        targetWeightKg: isDeload ? Math.max(exercise.minWeight || 3, currentWeight - 3) : currentWeight,
+        targetStage: currentStage,
+        restSeconds: exercise.rest || exercise.restSeconds || 60,
+        isDeload,
+        isBicepsLightWeek
+      };
+    }
+
+    async commitExerciseProgression(exerciseData) {
+      if (!window.DB) return null;
+
+      const exId = exerciseData.exerciseId || this.findExerciseIdByName(exerciseData.exerciseName);
+      const dayIndex = exerciseData.dayIndex || 1;
+      const weekNumber = exerciseData.weekNumber || 1;
+      
+      let setResults = exerciseData.setResults;
+      if (!setResults || setResults.length === 0) {
+        if (exerciseData.actualReps !== undefined) {
+          setResults = [{
+            reps: exerciseData.actualReps,
+            weightKg: exerciseData.weightKg,
+            RPE: exerciseData.RPE || 7,
+            tempoLoss: exerciseData.tempoLossCount >= 2
+          }];
+        } else {
+          setResults = [];
+        }
+      }
+      
+      const exercise = this.getExercise(exId);
+      if (!exercise) return null;
+
+      let state = await DB.getProgressionState(exId);
       if (!state) {
-        state = {
-          exerciseId,
-          sessionKey: exerciseId,
-          currentWeightKg: exercise.startingWeight || 6,
-          currentStageIndex: 0,
-          unlocked: exercise.unlocked ?? true,
-          lastUpdated: new Date().toISOString()
-        };
+        state = this.createInitialState(exId);
       }
 
       // 2. Calculate progression decision
