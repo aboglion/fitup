@@ -728,27 +728,6 @@ label {
   }
 }
 
-/* ===== Active Recovery Mode Theme ===== */
-body.recovery-mode {
-  --bg-primary: #061917;
-  --bg-secondary: #0a2522;
-  --bg-card: #0f332f;
-  --bg-card-hover: #143d38;
-  --bg-elevated: #1a4d47;
-  --bg-input: #08211e;
-  --accent-primary: #10b981;
-  --accent-secondary: #059669;
-  --accent-gradient: linear-gradient(135deg, #10b981, #059669);
-  --accent-glow: 0 0 25px rgba(16, 185, 129, 0.4);
-  background: radial-gradient(circle at top center, #0e302b 0%, #061917 100%);
-  transition: background 0.5s ease;
-}
-
-body.recovery-mode .nav-title {
-  background: linear-gradient(135deg, #34d399, #059669);
-  -webkit-background-clip: text;
-  background-clip: text;
-}
 
 /* ===== Deload Mode Theme (Calming Green-Turquoise) ===== */
 body.deload-mode {

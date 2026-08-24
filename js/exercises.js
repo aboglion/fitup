@@ -218,23 +218,23 @@ const ExercisesPage = (() => {
         title: 'push_tree', icon: '💥', exercises: [
           { name: 'Push-up Bars Progression', unlockWeek: 1, id: 'push-1' },
           { name: 'DB Floor Press', unlockWeek: 1, id: 'floor-1' },
-          { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol', relType: 'accessory' },
-          { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up', relType: 'accessory' },
-          { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a', relType: 'replace' },
-          { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b', relType: 'replace' },
-          { name: 'Single-Arm Floor Press', unlockWeek: 18, parentId: 'floor-1', id: 'floor-2', relType: 'replace' },
-          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3', relType: 'replace' }
+          { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol', relType: 'accessory', unlockCond: '⚡ נפח משלים' },
+          { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up', relType: 'accessory', unlockCond: '⚡ חיזוק יד אחורית' },
+          { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a', relType: 'replace', unlockCond: '⚡ 15 חזרות שטוחות' },
+          { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b', relType: 'replace', unlockCond: '⚡ 12 דפיציט עמוק' },
+          { name: 'Single-Arm Floor Press', unlockWeek: 18, parentId: 'floor-1', id: 'floor-2', relType: 'replace', unlockCond: '⚡ שליטה חד-צדדית' },
+          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3', relType: 'replace', unlockCond: '⚡ וסט 5kg בטכניקה נקיה' }
         ]
       },
       {
         title: 'overhead_skill', icon: '🎯', exercises: [
           { name: 'Pike Progression', unlockWeek: 1, id: 'pike-1' },
           { name: 'Seated DB Overhead Press', unlockWeek: 1, id: 'ohp-1' },
-          { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2', relType: 'replace' },
-          { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3', relType: 'replace' },
-          { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4', relType: 'replace' },
-          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5', relType: 'replace' },
-          { name: 'Single-Arm Seated OHP', unlockWeek: 49, parentId: 'ohp-1', id: 'ohp-2', relType: 'replace' }
+          { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2', relType: 'replace', unlockCond: '⚡ 10 פייק פושאפ' },
+          { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3', relType: 'replace', unlockCond: '⚡ עמידת ידיים לקיר' },
+          { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4', relType: 'replace', unlockCond: '⚡ עמידת ידיים יציבה' },
+          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5', relType: 'replace', unlockCond: '⚡ כוח כתפיים מתקדם' },
+          { name: 'Single-Arm Seated OHP', unlockWeek: 49, parentId: 'ohp-1', id: 'ohp-2', relType: 'replace', unlockCond: '⚡ 10 חזרות ב-OHP' }
         ]
       },
       {
@@ -284,9 +284,9 @@ const ExercisesPage = (() => {
       },
       {
         title: 'hanging_core', icon: '🧱', exercises: [
-          { name: 'L-Sit Progression', unlockWeek: 1, id: 'l-sit-progression' },
-          { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-progression', id: 'l-sit-2', relType: 'replace' },
-          { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace' }
+          { name: 'Tuck L-Sit', unlockWeek: 1, id: 'l-sit-1' },
+          { name: 'One-Leg Extended L-Sit', unlockWeek: 1, parentId: 'l-sit-1', id: 'l-sit-2', relType: 'replace', unlockCond: '⚡ 15 שניות Tuck' },
+          { name: 'Full L-Sit', unlockWeek: 1, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace', unlockCond: '⚡ 15 שניות רגל אחת' }
         ]
       }
     ],
@@ -815,6 +815,7 @@ const ExercisesPage = (() => {
                  data-node-id="${node.id || node.name}"
                  data-parent-id="${node.parentId || ''}"
                  data-rel-type="${node.relType || 'replace'}"
+                 data-unlock-cond="${node.unlockCond ? node.unlockCond.replace(/"/g, '&quot;') : ''}"
                  onclick="UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${imgSrc || ''}')"
                  style="animation-delay: ${(pathIndex * 0.1) + (levelIndex * 0.08) + (nodeIdx * 0.05)}s">
               <div class="rpg-node-hex-wrap">
@@ -1061,6 +1062,9 @@ const ExercisesPage = (() => {
         badgeBg.setAttribute('stroke-width', '1.5');
         badgeBg.setAttribute('filter', 'drop-shadow(0 2px 6px rgba(0,0,0,0.4))');
 
+        const unlockCond = childNode.getAttribute('data-unlock-cond') || '';
+        const parentShort = parentName ? (parentName.length > 12 ? parentName.substring(0, 11) + '…' : parentName) : '';
+
         const timingText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         timingText.setAttribute('x', badgeX);
         timingText.setAttribute('y', isMobile ? midY - 2 : midY - 3);
@@ -1068,7 +1072,7 @@ const ExercisesPage = (() => {
         timingText.setAttribute('font-size', isMobile ? '9' : '10');
         timingText.setAttribute('font-weight', '800');
         timingText.setAttribute('fill', isActive ? (isReplace ? '#93c5fd' : '#fca5a5') : '#94a3b8');
-        timingText.textContent = unlockWeekNum ? `📅 שבוע פתיחה ${unlockWeekNum}` : '📅 פתיחה מדורגת';
+        timingText.textContent = unlockCond ? unlockCond : (unlockWeekNum ? `📅 שבוע פתיחה ${unlockWeekNum}` : '📅 פתיחה מדורגת');
 
         const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         condText.setAttribute('x', badgeX);
@@ -1077,11 +1081,9 @@ const ExercisesPage = (() => {
         condText.setAttribute('font-size', isMobile ? '8' : '9');
         condText.setAttribute('font-weight', '700');
         condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
-
-        const parentShort = parentName ? (parentName.length > 12 ? parentName.substring(0, 11) + '…' : parentName) : '';
-        condText.textContent = isReplace
-          ? (parentShort ? `🔄 החלפת ${parentShort}` : '🔄 החלפת מקור')
-          : '🔴 חיזוק: מתווסף במקביל';
+        condText.textContent = unlockCond
+          ? '🎯 תנאי מעבר דרגה'
+          : (isReplace ? (parentShort ? `🔄 החלפת ${parentShort}` : '🔄 החלפת מקור') : '🔴 חיזוק: מתווסף במקביל');
 
         badgeGroup.appendChild(badgeBg);
         badgeGroup.appendChild(timingText);

@@ -107,6 +107,9 @@ const TodayPage = (() => {
    * Get suggested numeric weight for set (supports ladder ranges e.g. "6-15 kg total (Ladder)")
    */
   function getSuggestedWeightForSet(ex, setIndex, totalSets, prevPerf) {
+    if (ex && ex.targetWeightKg !== undefined && ex.targetWeightKg !== null) {
+      return String(ex.targetWeightKg);
+    }
     if (prevPerf && prevPerf.setData && prevPerf.setData[`set_${setIndex}_weight`]) {
       return prevPerf.setData[`set_${setIndex}_weight`];
     }
@@ -116,11 +119,123 @@ const TodayPage = (() => {
     // Check for range like "6-15 kg total (Ladder)" or "3-9 kg each (Ladder)"
     const rangeMatch = wStr.match(/(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)/);
     if (rangeMatch) {
-      // Both sets start at the current stage weight (min weight of range for stage 1)
       return String(rangeMatch[1]);
     }
 
     return extractNumericWeight(wStr);
+  }
+
+  /**
+   * Dynamically enrich exercise data with active progression states (weights & stages)
+   * Includes auto-recovery backfill from completed tracking history if state store is empty
+   */
+  async function enrichDayWithProgression(day) {
+    if (!day || !day.exercises || !Array.isArray(day.exercises)) return;
+    const weekNum = day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1;
+    const isDeload = weekNum % 8 === 0;
+
+    let statesList = [];
+    try {
+      if (window.DB && window.DB.getAllProgressionState) {
+        statesList = await DB.getAllProgressionState();
+      }
+    } catch (e) {
+      console.warn('[Today] Failed to fetch progression states:', e);
+    }
+
+    const statesMap = {};
+    if (Array.isArray(statesList)) {
+      statesList.forEach(s => {
+        if (s.exerciseId) statesMap[s.exerciseId] = s;
+        if (s.sessionKey) statesMap[s.sessionKey] = s;
+      });
+    }
+
+    // Ensure allTrackingCache is available for history backfill
+    if (!allTrackingCache && window.DB && window.DB.getAllTracking) {
+      try {
+        allTrackingCache = await DB.getAllTracking();
+      } catch (e) {
+        allTrackingCache = [];
+      }
+    }
+
+    for (let ex of day.exercises) {
+      const exId = ex.id || (window.ProgressionEngine ? window.ProgressionEngine.findExerciseIdByName(ex.name) : ex.name.toLowerCase().replace(/\s+/g, '-'));
+      const exDef = window.ProgressionEngine ? window.ProgressionEngine.getExercise(exId) : null;
+      let state = statesMap[exId] || statesMap[ex.name];
+
+      // Auto-recovery / Backfill: If state is missing, look for past completed sessions in tracking history
+      if (!state && allTrackingCache && Array.isArray(allTrackingCache)) {
+        for (let i = currentDayIndex - 1; i >= 0; i--) {
+          const pastDay = allPlanDays[i];
+          if (!pastDay || !pastDay.exercises) continue;
+
+          const pastExIdx = pastDay.exercises.findIndex(e => (e.id && exId && e.id === exId) || e.name === ex.name);
+          if (pastExIdx === -1) continue;
+
+          const pastTrack = allTrackingCache.find(t => t.dayIndex === i);
+          if (!pastTrack || !pastTrack.setData || !pastTrack.setData[pastExIdx]) continue;
+
+          const pastSetData = pastTrack.setData[pastExIdx];
+          const pastSetsCount = UI.parseSetsCount(pastDay.exercises[pastExIdx].sets);
+
+          let setsDoneCount = 0;
+          let hasBelow = false;
+          let lastLoggedW = 0;
+
+          for (let s = 0; s < pastSetsCount; s++) {
+            if (pastSetData[`set_${s}_done`]) setsDoneCount++;
+            if (pastSetData[`set_${s}_result`] === 'below') hasBelow = true;
+            if (pastSetData[`set_${s}_weight`]) lastLoggedW = parseFloat(pastSetData[`set_${s}_weight`]);
+          }
+
+          if (setsDoneCount >= pastSetsCount && pastSetsCount > 0) {
+            const startW = exDef?.startingWeight || extractNumericWeight(ex.weight) || 6;
+            let baseW = lastLoggedW > 0 ? lastLoggedW : startW;
+            let calcW = hasBelow ? Math.max(exDef?.minWeight || 3, baseW - 1) : baseW + (exDef?.increment || 1);
+            let calcStage = hasBelow ? 0 : 1;
+
+            state = {
+              exerciseId: exId,
+              sessionKey: exId,
+              currentWeightKg: calcW,
+              currentStageIndex: calcStage,
+              unlocked: true,
+              lastUpdated: new Date().toISOString()
+            };
+            statesMap[exId] = state;
+            if (window.DB && window.DB.saveProgressionState) {
+              await DB.saveProgressionState(state);
+            }
+            break;
+          }
+        }
+      }
+
+      // 1. Handle Weighted Exercises
+      if (isWeighted(ex)) {
+        const startW = exDef?.startingWeight || extractNumericWeight(ex.weight) || 6;
+        const currentW = (state && state.currentWeightKg != null) ? state.currentWeightKg : startW;
+        const targetW = isDeload ? Math.max(exDef?.minWeight || 3, currentW - 3) : currentW;
+
+        ex.targetWeightKg = targetW;
+
+        if (ex.weight) {
+          ex.weight = String(ex.weight).replace(/\d+(?:\.\d+)?/, targetW);
+        } else {
+          ex.weight = `${targetW} kg each`;
+        }
+      }
+
+      // 2. Handle Variation / Stage Exercises
+      if (exDef && exDef.stages && exDef.stages.length > 0) {
+        const stageIdx = (state && state.currentStageIndex != null) ? state.currentStageIndex : 0;
+        const stageName = exDef.stages[stageIdx] || exDef.stages[0];
+        ex.currentStageIndex = stageIdx;
+        ex.currentStageName = stageName;
+      }
+    }
   }
 
   /**
@@ -404,6 +519,9 @@ const TodayPage = (() => {
     if (!day) return;
     if (!day.exercises) day.exercises = [];
 
+    // Dynamic enrichment with Progression Engine states BEFORE rendering UI
+    await enrichDayWithProgression(day);
+
     // Load tracking data
     currentTracking = await DB.getDayTracking(currentDayIndex) || {
       exerciseStatus: {},
@@ -422,11 +540,8 @@ const TodayPage = (() => {
     const typeInfo = UI.getDayTypeInfo(day.dayType);
     const isDeloadDay = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload')) || (day.week && day.week.includes('Deload'));
 
-    // Active Recovery & Deload UI Background differentiation
-    if (day.dayType === 'Active Recovery') {
-      document.body.classList.add('recovery-mode');
-      document.body.classList.remove('deload-mode');
-    } else if (isDeloadDay) {
+    // Deload UI Background differentiation
+    if (isDeloadDay) {
       document.body.classList.add('deload-mode');
       document.body.classList.remove('recovery-mode');
     } else {
@@ -1242,7 +1357,7 @@ const TodayPage = (() => {
           for (let i = currentDayIndex - 1; i >= 0; i--) {
             const pastDay = allPlanDays[i];
             if (pastDay && pastDay.exercises) {
-              prevEx = pastDay.exercises.find(e => e.name === ex.name);
+              prevEx = pastDay.exercises.find(e => (e.id && ex.id && e.id === ex.id) || e.name === ex.name);
               if (prevEx) break;
             }
           }
@@ -1347,6 +1462,9 @@ const TodayPage = (() => {
 
     // Update progress
     updateProgress(day);
+
+    // Dynamic enrichment with Progression Engine states
+    await enrichDayWithProgression(day);
 
     // Render exercises
     renderExercises(day);
@@ -1733,10 +1851,11 @@ const TodayPage = (() => {
         setsHTML += '</div>';
       }
 
-      const gifPath = UI.getGifUrl(ex.name);
+      const activeName = ex.currentStageName || ex.name;
+      const gifPath = UI.getGifUrl(activeName);
       let videoBtn = '';
       if (!ex.name.toLowerCase().includes('walking')) {
-        videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>`;
+        videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${activeName.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>`;
       }
 
       // Find previous occurrence
@@ -1744,7 +1863,7 @@ const TodayPage = (() => {
       for (let i = currentDayIndex - 1; i >= 0; i--) {
         const pastDay = allPlanDays[i];
         if (pastDay && pastDay.exercises) {
-          prevEx = pastDay.exercises.find(e => e.name === ex.name);
+          prevEx = pastDay.exercises.find(e => (e.id && ex.id && e.id === ex.id) || e.name === ex.name);
           if (prevEx) break;
         }
       }
@@ -1793,13 +1912,13 @@ const TodayPage = (() => {
             <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-weight: 800; font-family: 'Inter', sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid rgba(255,255,255,0.1);">
               #${idx + 1}
             </div>
-            <img src="${UI.getImageUrl(ex.name)}" 
+            <img src="${UI.getImageUrl(activeName)}" 
                  class="exercise-hero-image skeleton-img"
                  loading="eager" decoding="async"
-                 alt="${ex.name}" 
+                 alt="${activeName}" 
                  onload="UI.handleImageLoaded(this)"
                  onerror="UI.handleImageFallback(this, 'png')"
-                 onclick="TodayPage.handleImageClick(event, ${idx}, '${ex.name.replace(/'/g, "\\'")}')">
+                 onclick="TodayPage.handleImageClick(event, ${idx}, '${activeName.replace(/'/g, "\\'")}')">
             ${newBadgeHTML}
           </div>
           <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
@@ -1808,6 +1927,7 @@ const TodayPage = (() => {
               <div>
                 <div class="exercise-card-name" style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
                   ${ex.name}
+                  ${ex.currentStageName ? `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">🎯 ${ex.currentStageName}</span>` : ''}
                   <button type="button" class="form-rule-info-btn" onclick="event.stopPropagation(); TodayPage.showFormRuleModal('${ex.name.replace(/'/g, "\\'")}')" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-primary); border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 2px;" title="${I18n.t('form_rules_title') || 'חוקי טכניקה'}">ℹ️</button>
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
                   ${!isExUnlocked ? `<span class="locked-badge">🔒 ${I18n.t('exercise_locked')}</span>` : ''}
@@ -2109,12 +2229,9 @@ const TodayPage = (() => {
       window.Effects3D.triggerExerciseEffect(ex.name);
     }
 
+    await handleExerciseCompleted(exIdx, day);
     if (currentTracking.completed) {
       showWorkoutCelebration(day);
-    } else {
-      // handleExerciseCompleted starts the rest timer with outcome-based extension
-      // and scrolls to the next incomplete exercise
-      handleExerciseCompleted(exIdx, day);
     }
   }
 
@@ -2309,9 +2426,19 @@ const TodayPage = (() => {
     if (window.ProgressionEngine && window.ProgressionEngine.commitExerciseProgression) {
       let totalReps = 0;
       let lastWeight = 0;
+      const setResults = [];
+
       for (let s = 0; s < setsCount; s++) {
-        totalReps += parseInt(setData[`set_${s}_reps`]) || UI.parseReps(ex.sets);
-        if (setData[`set_${s}_weight`]) lastWeight = parseFloat(setData[`set_${s}_weight`]);
+        const setReps = parseInt(setData[`set_${s}_reps`]) || UI.parseReps(ex.sets);
+        const setW = setData[`set_${s}_weight`] ? parseFloat(setData[`set_${s}_weight`]) : (ex.targetWeightKg || 0);
+        totalReps += setReps;
+        if (setW) lastWeight = setW;
+
+        setResults.push({
+          result: setData[`set_${s}_result`] || 'in_window',
+          reps: setReps,
+          weightKg: setW
+        });
       }
       const avgReps = setsCount > 0 ? Math.round(totalReps / setsCount) : UI.parseReps(ex.sets);
       const isArmBlock = ex.name.toLowerCase().includes('arm block');
@@ -2321,6 +2448,7 @@ const TodayPage = (() => {
         exerciseName: ex.name,
         dayIndex: currentDayIndex,
         weekNumber: weekNum,
+        setResults: setResults,
         targetReps: UI.parseReps(ex.sets),
         actualReps: avgReps,
         weightKg: lastWeight,
@@ -2331,6 +2459,10 @@ const TodayPage = (() => {
         muscleArea: ex.name.toLowerCase().includes('curl') ? 'Biceps' : 'Triceps',
         targetRest: ex.rest || 90
       });
+
+      // Re-enrich and re-render day to immediately reflect updated progression states
+      await enrichDayWithProgression(day);
+      renderExercises(day);
     }
   }
 
@@ -2612,10 +2744,9 @@ const TodayPage = (() => {
       if (window.Effects3D) {
         window.Effects3D.triggerExerciseEffect(ex.name);
       }
+      await handleExerciseCompleted(exIdx, day);
       if (currentTracking.completed) {
         showWorkoutCelebration(day);
-      } else {
-        handleExerciseCompleted(exIdx, day);
       }
     } else if (isNowDone) {
       const restTime = getRestTime(ex);

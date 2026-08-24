@@ -483,6 +483,46 @@
       };
     }
 
+    async getPreviousSessionData(exerciseId, currentDayIndex) {
+      if (!window.DB || !window.DB.getAllTracking) return null;
+      try {
+        const allTracking = await window.DB.getAllTracking();
+        if (!allTracking || !Array.isArray(allTracking)) return null;
+
+        const planDays = await window.DB.getAllPlan();
+        if (!planDays || !Array.isArray(planDays)) return null;
+
+        for (let i = currentDayIndex - 1; i >= 0; i--) {
+          const pastDay = planDays[i];
+          if (!pastDay || !pastDay.exercises) continue;
+
+          const exIdx = pastDay.exercises.findIndex(e => e.id === exerciseId || e.name === exerciseId);
+          if (exIdx === -1) continue;
+
+          const tracking = allTracking.find(t => t.dayIndex === i);
+          if (!tracking || !tracking.setData || !tracking.setData[exIdx]) continue;
+
+          const setData = tracking.setData[exIdx];
+          const sets = [];
+          for (let s = 0; s < 10; s++) {
+            if (setData[`set_${s}_done`] || setData[`set_${s}_result`]) {
+              sets.push({
+                result: setData[`set_${s}_result`] || 'in_window',
+                reps: parseInt(setData[`set_${s}_reps`]) || 0,
+                weightKg: parseFloat(setData[`set_${s}_weight`]) || 0
+              });
+            }
+          }
+          if (sets.length > 0) {
+            return { dayIndex: i, sets };
+          }
+        }
+      } catch (err) {
+        console.warn('[ProgressionEngine] Error fetching previous session data:', err);
+      }
+      return null;
+    }
+
     async commitExerciseProgression(exerciseData) {
       if (!window.DB) return null;
 
@@ -494,6 +534,7 @@
       if (!setResults || setResults.length === 0) {
         if (exerciseData.actualReps !== undefined) {
           setResults = [{
+            result: exerciseData.result || 'in_window',
             reps: exerciseData.actualReps,
             weightKg: exerciseData.weightKg,
             RPE: exerciseData.RPE || 7,
@@ -503,6 +544,8 @@
           setResults = [];
         }
       }
+
+      const previousSessionData = exerciseData.previousSessionData || (await this.getPreviousSessionData(exId, dayIndex));
       
       const exercise = this.getExercise(exId);
       if (!exercise) return null;
@@ -514,7 +557,7 @@
 
       // 2. Calculate progression decision
       let decision;
-      if (exercise.type === 'weighted') {
+      if (exercise.type === 'weighted' || exercise.startingWeight != null) {
         decision = this.calculateWeightedDecision(exercise, state, setResults, weekNumber, previousSessionData);
         state.currentWeightKg = decision.newWeight;
       } else {
@@ -527,8 +570,8 @@
 
       // 3. Save progression history entry
       const historyEntry = {
-        id: `dec_${exerciseId}_${Date.now()}`,
-        exerciseId,
+        id: `dec_${exId}_${Date.now()}`,
+        exerciseId: exId,
         dayIndex,
         weekNumber,
         action: decision.action,
@@ -541,8 +584,8 @@
 
       // 4. Save next session rest
       const nextRest = this.calculateNextSessionRest(exercise, { sets: setResults });
-      await DB.saveAdaptiveRest(exerciseId, {
-        exerciseId,
+      await DB.saveAdaptiveRest(exId, {
+        exerciseId: exId,
         lastRestSecs: nextRest,
         targetRestSecs: exercise.restSeconds || 90,
         lastUpdated: new Date().toISOString()

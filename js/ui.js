@@ -531,7 +531,8 @@ const UI = (() => {
     const exData = (window.TRAINING_DATA?.exercises || []).find(e => {
       const eClean = (e.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
       const idClean = (e.id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-      return eClean === searchTitle || idClean === searchTitle || eClean.includes(searchTitle) || searchTitle.includes(eClean);
+      const hasStageMatch = (e.stages || []).some(s => s.toLowerCase().replace(/[^a-z0-9]/g, '') === searchTitle || searchTitle.includes(s.toLowerCase().replace(/[^a-z0-9]/g, '')));
+      return eClean === searchTitle || idClean === searchTitle || hasStageMatch || eClean.includes(searchTitle) || searchTitle.includes(eClean);
     });
 
     let metadataHTML = '';
