@@ -139,8 +139,9 @@ Deload occurs automatically on **Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88
 ## Appendix B — System Definition & Master References
 - **Program Dataset**: `window.TRAINING_DATA` in `js/data.js` (FitUp v15.6 Lean).
 - **Progression Engine**: `ProgressionEngine` in `js/progression.js`.
+- **Zero-0-Kg Weight Protection Engine**: All weighted exercises strictly enforce prescribed starting weights (`startingWeight`) and a hard `minWeight` floor (3 kg minimum). Loads are guaranteed never to calculate or display as 0 kg / 0 kg each under any fallback or parsing state.
 - **Database Version**: IndexedDB Version 9 (`DBVERSION = 9`).
-- **Cloud Synchronization**: Automatic bidirectional sync with Google Drive.
+- **Cloud Synchronization & Local Data Export**: Automatic bidirectional sync with Google Drive alongside one-click local JSON data backup (`fitup_backup_[DATE].json`) and import verification.
 
 ---
 FitUp Pro v15.6 Lean Edition — Built for Precision, Zero Decisions, and Zero Regrets.

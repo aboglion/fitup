@@ -26,19 +26,19 @@ const ExercisesPage = (() => {
     'Pallof Press Progression': [{ weight: 'Band 30 kg', fromWeek: 10 }, { weight: 'Band 40 kg', fromWeek: 34 }],
 
     // Dumbbell Lower Body
-    'DB Bulgarian Split Squat': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '3 kg', fromWeek: 5 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 26 }],
-    'Reverse Lunge + DB': [{ weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }],
-    'Reverse Lunge / Pistol Squat': [{ weight: '6 kg each', fromWeek: 2 }],
+    'DB Bulgarian Split Squat': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 26 }],
+    'Reverse Lunge + DB': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }],
+    'Reverse Lunge / Pistol Squat': [{ weight: '6 kg each', fromWeek: 1 }],
     'DB BSS (Goblet)': [{ weight: '15 kg', fromWeek: 34 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 62 }],
     'Walking Lunge (Goblet)': [{ weight: '18 kg', fromWeek: 62 }],
     'DB RDL': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }],
     'DB Romanian Deadlift': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }],
     'DB Single-Leg RDL': [{ weight: '12 kg', fromWeek: 18 }, { weight: '15 kg', fromWeek: 26 }, { weight: '18 kg', fromWeek: 42 }, { weight: '21 kg', fromWeek: 50 }, { weight: '24 kg', fromWeek: 53 }],
-    'Single-Leg RDL': [{ weight: '6 kg each', fromWeek: 18 }, { weight: '9 kg', fromWeek: 26 }, { weight: '12 kg', fromWeek: 42 }],
+    'Single-Leg RDL': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 26 }, { weight: '12 kg', fromWeek: 42 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }],
-    'DB Hip Thrust': [{ weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
-    'Single-Leg Calf Raise': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 18 }, { weight: '15 kg', fromWeek: 34 }, { weight: '18 kg', fromWeek: 42 }, { weight: '21 kg', fromWeek: 50 }, { weight: '24 kg', fromWeek: 58 }],
+    'DB Hip Thrust': [{ weight: '9 kg', fromWeek: 1 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
+    'Single-Leg Calf Raise': [{ weight: '6 kg in hand', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 18 }, { weight: '15 kg', fromWeek: 34 }, { weight: '18 kg', fromWeek: 42 }, { weight: '21 kg', fromWeek: 50 }, { weight: '24 kg', fromWeek: 58 }],
     'Standing Single-Leg Calf Raise': [{ weight: '6 kg in hand', fromWeek: 1 }],
     'Seated Single-Leg Calf Raise': [{ weight: '6 kg on knee', fromWeek: 1 }],
     'Suitcase Carry': [{ weight: '12 kg', fromWeek: 1 }, { weight: '15 kg', fromWeek: 5 }, { weight: '18 kg', fromWeek: 18 }, { weight: '21 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 53 }],
@@ -112,14 +112,13 @@ const ExercisesPage = (() => {
    */
   const getWeightTiers = (name) => {
     if (!name) return null;
-    let lookupName = name;
-    if (lookupName.startsWith('TRX Face Pull')) lookupName = 'TRX Face Pull';
-    if (lookupName === 'DB BSS') lookupName = 'DB Bulgarian Split Squat';
-    if (lookupName.includes('Calf Raise')) lookupName = 'Single-Leg Calf Raise';
-
     if (EXERCISE_WEIGHT_PROGRESSION[name]) {
       return EXERCISE_WEIGHT_PROGRESSION[name];
     }
+    let lookupName = name;
+    if (lookupName.startsWith('TRX Face Pull')) lookupName = 'TRX Face Pull';
+    if (lookupName === 'DB BSS') lookupName = 'DB Bulgarian Split Squat';
+
     if (EXERCISE_WEIGHT_PROGRESSION[lookupName]) {
       return EXERCISE_WEIGHT_PROGRESSION[lookupName];
     }

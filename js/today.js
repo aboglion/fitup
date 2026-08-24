@@ -107,10 +107,10 @@ const TodayPage = (() => {
    * Get suggested numeric weight for set (supports ladder ranges e.g. "6-15 kg total (Ladder)")
    */
   function getSuggestedWeightForSet(ex, setIndex, totalSets, prevPerf) {
-    if (ex && ex.targetWeightKg !== undefined && ex.targetWeightKg !== null) {
+    if (ex && ex.targetWeightKg != null && Number(ex.targetWeightKg) > 0) {
       return String(ex.targetWeightKg);
     }
-    if (prevPerf && prevPerf.setData && prevPerf.setData[`set_${setIndex}_weight`]) {
+    if (prevPerf && prevPerf.setData && prevPerf.setData[`set_${setIndex}_weight`] && parseFloat(prevPerf.setData[`set_${setIndex}_weight`]) > 0) {
       return prevPerf.setData[`set_${setIndex}_weight`];
     }
     if (!ex || !ex.weight || !isWeighted(ex)) return '';
@@ -122,7 +122,8 @@ const TodayPage = (() => {
       return String(rangeMatch[1]);
     }
 
-    return extractNumericWeight(wStr);
+    const numW = extractNumericWeight(wStr);
+    return (numW && parseFloat(numW) > 0) ? numW : '';
   }
 
   /**
@@ -215,13 +216,15 @@ const TodayPage = (() => {
 
       // 1. Handle Weighted Exercises
       if (isWeighted(ex)) {
-        const startW = exDef?.startingWeight || extractNumericWeight(ex.weight) || 6;
-        const currentW = (state && state.currentWeightKg != null) ? state.currentWeightKg : startW;
-        const targetW = isDeload ? Math.max(exDef?.minWeight || 3, currentW - 3) : currentW;
+        const minW = exDef?.minWeight || 3;
+        const startW = exDef?.startingWeight || extractNumericWeight(ex.weight) || minW || 6;
+        let currentW = (state && state.currentWeightKg != null && state.currentWeightKg > 0) ? state.currentWeightKg : startW;
+        currentW = Math.max(minW, currentW);
+        const targetW = isDeload ? Math.max(minW, currentW - 3) : currentW;
 
         ex.targetWeightKg = targetW;
 
-        if (ex.weight) {
+        if (ex.weight && /\d/.test(String(ex.weight))) {
           ex.weight = String(ex.weight).replace(/\d+(?:\.\d+)?/, targetW);
         } else {
           ex.weight = `${targetW} kg each`;
@@ -2109,11 +2112,12 @@ const TodayPage = (() => {
     const setData = (currentTracking.setData && currentTracking.setData[exIdx]) || {};
     const weightInfo = parseWeightDetails(ex, setData);
     const weightBadge = weightInfo && weightInfo.suggestedWeightNum > 0 ? `<span style="color: #f59e0b; font-weight: 700; margin-inline-start: 4px;">• ${weightInfo.suggestedWeightNum} kg</span>` : '';
+    const repTarget = UI.parseReps(ex.sets || '');
     
     return `
       <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 10px 14px; margin: 10px 0 16px 0; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
         <span style="font-size: 13px; color: var(--text-secondary); font-weight: 600;">${I18n.t('planned_target')}</span>
-        <span style="font-size: 15px; color: var(--accent-primary); font-weight: 800;">${ex.sets || ''}</span>
+        <span style="font-size: 15px; color: var(--accent-primary); font-weight: 800;" dir="ltr">${repTarget}</span>
         ${weightBadge}
       </div>
     `;

@@ -18,7 +18,7 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ### 🏋️‍♂️ Prescriptive 52-Week Lean Training Engine
 - **v15.6 Lean Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
-- **Zero Decisions 3-Button Outcome Selector**: Objective set classification (🚀 Above Target, ✅ In Window, ⚠️ Mechanical Stop / Failure) replacing guesswork.
+- **Zero Decisions 3-Button Outcome Selector & Minimum Weight Protection Engine**: Objective set classification with guaranteed `minWeight` floor protection (3 kg minimum) preventing invalid 0 kg displays under any fallback.
 - **Objective Myo-Reps & Arm Block Protocol**: Active from Week 10 onwards (1 activation set + 3 mini-sets of 5 reps with 15s rest). Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
 - **Biceps 3-Week Microcycle**: 2 heavy progressive overload weeks + 1 light preservation week (Hammer Curl 2 sets, no progression) to maximize hypertrophy while protecting elbow joints.
 - **Weekly Frequency Additions**: 2nd Back Frequency (TRX Row on Day 3 = 10 weekly back sets) and 2nd Chest Frequency (Push-Up Volume on Day 5 = 8 weekly chest sets).
