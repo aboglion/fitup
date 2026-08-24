@@ -803,9 +803,9 @@ const ExercisesPage = (() => {
           const stateClass = isUnlocked ? 'unlocked' : 'locked';
           const latestClass = isLatestUnlock && isUnlocked ? 'latest' : '';
           const sideClass = hasParallel ? (nodeIdx === 0 ? 'node-side-right' : 'node-side-left') : 'node-center';
-          const imgSrc = node.noImage ? null : `images/exercises/${node.name.replace(/\//g, '-').toUpperCase()}.png`;
+          const imgSrc = node.noImage ? null : UI.getImageUrl(node.name);
           const equip = UI.getEquipment(node.name);
-          const gifPath = `images/gifs/${node.name}.gif`;
+          const gifPath = UI.getGifUrl(node.name);
           const videoBtn = UI.hasGif(node.name) ? `<button type="button" class="rpg-video-btn" title="${I18n.t('view_gif_title')}" onclick="event.stopPropagation(); UI.showImageModal('${node.name.replace(/'/g, "\\'")}', '${gifPath}')">▶</button>` : '';
 
           html += `
@@ -1136,7 +1136,7 @@ const ExercisesPage = (() => {
    */
   function generateGuideCardHTML(ex) {
     const diffClass = UI.getDifficultyClass(ex.difficulty);
-    const gifPath = `images/gifs/${ex.name}.gif`;
+    const gifPath = UI.getGifUrl(ex.name);
     const videoLink = UI.hasGif(ex.name) ? `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>` : '';
 
     const equip = UI.getEquipment(ex.name);
@@ -1160,7 +1160,7 @@ const ExercisesPage = (() => {
           <div class="skeleton-placeholder" style="gap: 4px;">
             <div class="skeleton-spinner" style="width: 18px; height: 18px; border-width: 2px;"></div>
           </div>
-          <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" class="exercise-image skeleton-img" alt="${ex.name}" loading="eager" decoding="async" onload="UI.handleImageLoaded(this)" onerror="UI.handleImageFallback(this, 'png')">
+          <img src="${UI.getImageUrl(ex.name)}" class="exercise-image skeleton-img" alt="${ex.name}" loading="eager" decoding="async" onload="UI.handleImageLoaded(this)" onerror="UI.handleImageFallback(this, 'png')">
         </div>
         <div class="guide-card-content">
           <div class="guide-card-title">
@@ -1201,7 +1201,7 @@ const ExercisesPage = (() => {
           <div style="display: flex; flex-direction: column; gap: 12px; position: relative;">
             <div style="position: absolute; left: 16px; top: 16px; bottom: 16px; width: 2px; background: rgba(255, 170, 0, 0.3); border-radius: 2px;"></div>
             ${ex.stages.map((stage, i) => {
-        const sImg = `images/exercises/${stage.replaceAll('/', '-').toUpperCase()}.png`;
+        const sImg = UI.getImageUrl(stage);
         return `
               <div style="display: flex; gap: 16px; align-items: center; position: relative; z-index: 1;">
                 <div style="width: 32px; height: 32px; border-radius: 50%; background: #111; border: 2px solid #ffaa00; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #ffaa00; flex-shrink: 0; box-shadow: 0 0 10px rgba(255, 170, 0, 0.4);">
@@ -1219,7 +1219,7 @@ const ExercisesPage = (() => {
       `;
     }
 
-    const gifPath = `images/gifs/${ex.name}.gif`;
+    const gifPath = UI.getGifUrl(ex.name);
     const fullHtml = `
       <div style="display: flex; flex-direction: column; gap: 16px;">
         ${html}

@@ -94,10 +94,11 @@ const UI = (() => {
     'CHIN UP': 'Chin-up.gif',
     'CHIN UP NEGATIVE': 'Chin-up Negative.gif',
     'CHIN UP NEGATIVE (3S)': 'Chin-up Negative.gif',
+    'CHIN UP PROGRESSION': 'Chin-Up Negative.gif',
     'FULL CHIN UP': 'Chin-up.gif',
     'WEIGHTED CHIN UP': 'Weighted Chin-Up.gif',
     'PULL UP (OVERHAND)': 'Pull-up (Overhand).gif',
-    'PULL UP PROGRESSION': 'Pull-up (Overhand).gif',
+    'PULL UP PROGRESSION': 'Pull-Up Negative.gif',
     'PULL UP NEGATIVE': 'Pull-Up Negative.gif',
     'PULL UP NEGATIVE (3S)': 'Pull-Up Negative.gif',
     'PULL UP NEGATIVE (5S)': 'Pull-Up Negative.gif',
@@ -114,6 +115,7 @@ const UI = (() => {
     'DEFICIT PUSH UP': 'Deficit Push-Up.gif',
     'FEET ELEVATED PUSH UP': 'Feet-Elevated Push-Up.gif',
     'WEIGHTED DEFICIT PUSH UP': 'Weighted Deficit Push-Up.gif',
+    'PUSH UP BARS PROGRESSION': 'Incline Push-Up.gif',
     'DB RDL': 'Dumbbell Romanian Deadlift (RDL).gif',
     'DB ROMANIAN DEADLIFT': 'Dumbbell Romanian Deadlift (RDL).gif',
     'DB SINGLE LEG RDL': 'Dumbbell Single-Leg RDL.gif',
@@ -141,7 +143,7 @@ const UI = (() => {
     'REVERSE LUNGE + DB': 'Reverse Lunge + DB.gif',
     'REVERSE LUNGE / PISTOL SQUAT': 'Reverse Lunge + DB.gif',
     'REVERSE LUNGE   PISTOL SQUAT': 'Reverse Lunge + DB.gif',
-    'PISTOL SQUAT PROGRESSION': 'Full Pistol Squat.gif',
+    'PISTOL SQUAT PROGRESSION': 'Pistol Squat to Chair.gif',
     'PISTOL SQUAT TO CHAIR': 'Pistol Squat to Chair.gif',
     'FULL PISTOL SQUAT': 'Full Pistol Squat.gif',
     'SEATED DB OHP': 'Seated DB OHP.gif',
@@ -180,7 +182,6 @@ const UI = (() => {
     'ONE LEG EXTENDED': 'One Leg Extended.gif',
     'ONE LEG EXTENDED L SIT': 'One Leg Extended.gif',
     'FULL L SIT': 'Full L-Sit.gif',
-    'L SIT PROGRESSION': 'Full L-Sit.gif',
     'SCAPULAR PULL UP': 'Scapular Pull-up.gif',
     'FULL PULL UP': 'Chin-up.gif',
     'WRIST ROCKS': 'Wrist Rocks.gif'
@@ -194,23 +195,24 @@ const UI = (() => {
     'ARM BLOCK   DB OVERHEAD TRICEPS EXT': 'DB OH TRICEPS EXT.png',
     'STANDING SINGLE LEG CALF RAISE': 'SINGLE-LEG CALF RAISE.png',
     'SEATED SINGLE LEG CALF RAISE': 'SINGLE-LEG CALF RAISE.png',
-    'PALLOF PRESS PROGRESSION': 'PALLOF PRESS.png',
+    'PALLOF PRESS PROGRESSION': 'PALLOF HOLD.png',
     'PALLOF HOLD': 'PALLOF PRESS.png',
     'PIKE PROGRESSION': 'PIKE HOLD.png',
     'FEET ELEVATED PIKE HOLD': 'PIKE HOLD.png',
     'PIKE PUSH UP': 'PIKE PUSH-UP.png',
     'ELEVATED PIKE PUSH UP': 'ELEVATED PIKE PUSH-UP.png',
-    'PUSH UP BARS PROGRESSION': 'PUSH-UP (BARS).png',
+    'PUSH UP BARS PROGRESSION': 'INCLINE PUSH-UP.png',
     'PUSH UP VOLUME (DAY 5)': 'PUSH-UP.png',
     'PUSH UP VOLUME': 'PUSH-UP.png',
-    'PULL UP PROGRESSION': 'PULL-UP (OVERHAND).png',
+    'PULL UP PROGRESSION': 'PULL-UP NEGATIVE.png',
     'WEIGHTED PULL UP': 'WEIGHTED PULL-UP.png',
+    'CHIN UP PROGRESSION': 'CHIN-UP NEGATIVE.png',
     'WEIGHTED CHIN UP': 'WEIGHTED CHIN-UP.png',
     'WEIGHTED DEFICIT PUSH UP': 'WEIGHTED DEFICIT PUSH-UP.png',
     'HAMMER CURL': 'DB HAMMER CURL.png',
     'L SIT PROGRESSION': 'L-SIT TUCK (BARS).png',
     'REVERSE LUNGE': 'REVERSE LUNGE + DB.png',
-    'PISTOL SQUAT PROGRESSION': 'FULL PISTOL SQUAT.png',
+    'PISTOL SQUAT PROGRESSION': 'PISTOL SQUAT TO CHAIR.png',
     'FULL PISTOL SQUAT': 'FULL PISTOL SQUAT.png',
     'REVERSE LUNGE / PISTOL SQUAT': 'REVERSE LUNGE + DB.png',
     'REVERSE LUNGE   PISTOL SQUAT': 'REVERSE LUNGE + DB.png',
@@ -235,9 +237,9 @@ const UI = (() => {
     'FEET ELEVATED PIKE HOLD': 'FEET-ELEVATED PIKE HOLD.png',
     'TUCK HOLD (CHAIR)': 'TUCK HOLD (CHAIR).png',
     'TUCK HOLD (BARS)': 'L-SIT TUCK (BARS).png',
-    'ONE LEG EXTENDED': 'ONE LEG EXTENDED.png',
-    'ONE LEG EXTENDED L SIT': 'ONE LEG EXTENDED.png',
-    'FULL L SIT': 'L-SIT PROGRESSION.png',
+    'ONE LEG EXTENDED': 'ONE-LEG EXTENDED L-SIT.png',
+    'ONE LEG EXTENDED L SIT': 'ONE-LEG EXTENDED L-SIT.png',
+    'FULL L SIT': 'FULL L-SIT.png',
     'SCAPULAR PULL UP': 'SCAPULAR PULL-UP.png',
     'SCAPULAR PUSH UP': 'SCAPULAR PUSH-UP.png',
     'CHIN UP NEGATIVE (3S)': 'CHIN-UP NEGATIVE.png',
@@ -409,21 +411,30 @@ const UI = (() => {
     return !NO_GIF_EXERCISES.has(upper);
   }
 
-  function showImageModal(title, src) {
-    // Check alias mapping for PNG
-    const cleanTitle = (title || '').toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+  function getImageUrl(title) {
+    if (!title) return null;
+    const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
     const aliasPng = EXERCISE_PNG_ALIASES[cleanTitle];
-    const pngPath = aliasPng ? `images/exercises/${aliasPng}` : `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
+    return aliasPng ? `images/exercises/${aliasPng}` : `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
+  }
 
-    // Use provided src if it's a GIF path, otherwise construct from title with alias mapping
+  function getGifUrl(title) {
+    if (!title) return null;
+    const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+    const aliasGif = EXERCISE_GIF_ALIASES[cleanTitle];
+    return aliasGif ? `images/gifs/${aliasGif}` : `images/gifs/${title}.gif`;
+  }
+
+  function showImageModal(title, src) {
+    const pngPath = getImageUrl(title);
+
     let gifPath;
     if (src && src.includes('.gif')) {
       gifPath = src;
     } else {
-      // Check alias mapping for GIF
-      const aliasGif = EXERCISE_GIF_ALIASES[cleanTitle];
-      gifPath = aliasGif ? `images/gifs/${aliasGif}` : `images/gifs/${title}.gif`;
+      gifPath = getGifUrl(title);
     }
+    const cleanTitle = (title || '').toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
     const gifExists = hasGif(title) || (src && src.includes('.gif')) || !!EXERCISE_GIF_ALIASES[cleanTitle];
     const equip = getEquipment(title);
 
@@ -1090,6 +1101,10 @@ const UI = (() => {
     formatTempo,
     initTimer,
     startTimer,
+    hasGif,
+    getImageUrl,
+    getGifUrl,
+    showImageModal,
     stopTimer,
     speakVoiceCue,
     compressImage,

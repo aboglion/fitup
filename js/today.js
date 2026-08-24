@@ -1733,7 +1733,7 @@ const TodayPage = (() => {
         setsHTML += '</div>';
       }
 
-      const gifPath = `images/gifs/${ex.name}.gif`;
+      const gifPath = UI.getGifUrl(ex.name);
       let videoBtn = '';
       if (!ex.name.toLowerCase().includes('walking')) {
         videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>`;
@@ -1793,7 +1793,7 @@ const TodayPage = (() => {
             <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-weight: 800; font-family: 'Inter', sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid rgba(255,255,255,0.1);">
               #${idx + 1}
             </div>
-            <img src="images/exercises/${ex.name.replace(/\//g, '-').toUpperCase()}.png" 
+            <img src="${UI.getImageUrl(ex.name)}" 
                  class="exercise-hero-image skeleton-img"
                  loading="eager" decoding="async"
                  alt="${ex.name}" 
