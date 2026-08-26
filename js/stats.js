@@ -138,7 +138,7 @@ const StatsPage = (() => {
 
     // Render overview
     renderOverview(completedDays, totalDays, completedStrength, strengthDays.length,
-                   completedWalk, walkDays.length, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct);
+      completedWalk, walkDays.length, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct);
 
     // Metrics for compact cards at the bottom
     const metrics = {
@@ -203,7 +203,7 @@ const StatsPage = (() => {
    * Render overview stats
    */
   function renderOverview(completed, total, strength, totalStrength,
-                          walk, totalWalk, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct) {
+    walk, totalWalk, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct) {
     const container = document.getElementById('stats-overview');
 
     const streakHTML = streak > 0 ? `
@@ -529,7 +529,7 @@ const StatsPage = (() => {
     'weighted-chin-up': [{ m: 'lats', w: 0.8 }, { m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.5 }],
     'walking-lunge-goblet': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'wrist-rocks': [{ m: 'forearms', w: 0.5 }],
-    'band-neck-flexion': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.5 }]
+    'band-neck-flexion': [{ m: 'neck', w: 1.0 }, { m: 'traps', w: 0.7 }, { m: 'shoulders', w: 0.3 }]
   };
 
   function getExerciseContributions(ex) {
@@ -597,19 +597,19 @@ const StatsPage = (() => {
     'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
     'db-rdl': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'db-hip-thrust': 'glutes',
     'single-leg-calf-raise': 'calves', 'standing-single-leg-calf-raise': 'calves', 'seated-single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves', 'seated-calf-raise': 'calves',
-    'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'obliques', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat-progression': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'shoulders', 'chin-up-progression': 'lats', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': null, 'deep-mobility-protocol': null, 'band-neck-flexion': 'traps', 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'lats', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
+    'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'obliques', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat-progression': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'shoulders', 'chin-up-progression': 'lats', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': null, 'deep-mobility-protocol': null, 'band-neck-flexion': 'neck', 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'lats', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
   };
 
   function getMuscleForExercise(ex) {
     if (!ex) return null;
     if (ex.id && EXERCISE_MUSCLE_MAP[ex.id]) return EXERCISE_MUSCLE_MAP[ex.id];
     if (ex.exerciseId && EXERCISE_MUSCLE_MAP[ex.exerciseId]) return EXERCISE_MUSCLE_MAP[ex.exerciseId];
-    
+
     const slug = (ex.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
     for (const [key, muscle] of Object.entries(EXERCISE_MUSCLE_MAP)) {
       if (slug.includes(key) || key.includes(slug)) return muscle;
     }
-    
+
     const name = (ex.name || '').toLowerCase();
     if (name.includes('pallof') || name.includes('oblique') || name.includes('carry')) return 'core';
     if (name.includes('ohp') || name.includes('overhead press') || name.includes('raise') || name.includes('shoulder') || name.includes('pike') || name.includes('face pull')) return 'shoulders';
@@ -622,7 +622,7 @@ const StatsPage = (() => {
     if (name.includes('calf') || name.includes('calves')) return 'calves';
     if (name.includes('bug') || name.includes('hollow') || name.includes('l-sit') || name.includes('hold') || name.includes('core')) return 'core';
     if (name.includes('hang')) return 'forearms';
-    
+
     return null;
   }
 
@@ -673,9 +673,9 @@ const StatsPage = (() => {
    * where exerciseProgress = (currentWeight - minWeight) / (maxWeight - minWeight) * 100
    */
   function calculateMuscleProgressions(trackingMap, allProgressionStates, exerciseGuide) {
-    const muscles = ['chest','shoulders','triceps','lats','traps','biceps','forearms',
-                     'quads','hamstrings','glutes','calves','core','obliques','lowerBack'];
-    
+    const muscles = ['chest', 'shoulders', 'triceps', 'lats', 'traps', 'biceps', 'forearms',
+      'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack'];
+
     if (!allProgressionStates || !exerciseGuide) {
       const result = {};
       muscles.forEach(m => { result[m] = 0; });
@@ -930,7 +930,7 @@ const StatsPage = (() => {
 
     const currentWeekDays = allPlanDays.filter(d => d.week === `Week ${weekNum}`);
     const isDeloadWeek = currentWeekDays.some(d => d.dayType && d.dayType.toLowerCase().includes('deload'));
-    const deloadBadgeHTML = isDeloadWeek 
+    const deloadBadgeHTML = isDeloadWeek
       ? `<span class="badge deload-week-badge" style="background: rgba(20, 184, 166, 0.2); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.4); padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">🌿 Deload Week</span>`
       : '';
 

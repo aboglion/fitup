@@ -241,7 +241,7 @@ const AnatomyMap = (() => {
       core: ['Dead Bug', 'Hollow Body Hold', 'L-sit Tuck (Bars)', 'Suitcase Carry', 'Pallof Press Progression'],
       obliques: ['Suitcase Carry', 'Pallof Press Progression', 'Dead Bug'],
       lowerBack: ['DB Romanian Deadlift', 'Single-Leg RDL', 'DB Hip Thrust', 'Suitcase Carry'],
-      neck: ['Deep Mobility Protocol', 'Wall Slides', 'Band Pull-Apart', 'TRX Face Pull']
+      neck: ['Deep Mobility Protocol', 'Wall Slides', 'Band Pull-Apart', 'TRX Face Pull', 'Band Neck Flexion & Extension']
     };
 
     const exerciseNames = muscleExerciseMap[muscleKey] || [I18n.t('anatomy_only_exercises')];
