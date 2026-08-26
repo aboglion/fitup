@@ -1207,6 +1207,7 @@ const UI = (() => {
     showImageModal,
     hasGif,
     handleImageLoaded,
+    __build: 'media-fix-2026-08-26',
     handleImageFallback,
     getDayTypeInfo,
     getCategoryColor,
