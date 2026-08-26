@@ -21,8 +21,8 @@ const AnatomyMap = (() => {
     };
 
     // Safe fallback for all muscle keys
-    const keys = ['chest','shoulders','triceps','lats','traps','biceps','forearms',
-                  'quads','hamstrings','glutes','calves','core','obliques','lowerBack'];
+    const keys = ['chest', 'shoulders', 'triceps', 'lats', 'traps', 'biceps', 'forearms',
+      'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack', 'neck'];
     const m = {};
     keys.forEach(k => {
       const rawPct = muscleData[k] != null ? Math.max(0, Math.min(100, Number(muscleData[k]))) : 0;
@@ -32,27 +32,28 @@ const AnatomyMap = (() => {
     // Body centered 50%.
     const frontCallouts = [
       // Left labels (User's left, Character's right)
-      { id: 'chest-l',    label: I18n.t('muscle_chest'),     pct: m.chest.pct,     formatted: m.chest.formatted,     color: m.chest.color,     nodeX: 45, nodeY: 24, labelY: 18, side: 'left' },
-      { id: 'core',       label: I18n.t('muscle_core'),      pct: m.core.pct,      formatted: m.core.formatted,      color: m.core.color,      nodeX: 50, nodeY: 34, labelY: 38, side: 'left' },
-      { id: 'obliques-l', label: I18n.t('muscle_obliques'),  pct: m.obliques.pct,  formatted: m.obliques.formatted,  color: m.obliques.color,  nodeX: 45, nodeY: 39, labelY: 58, side: 'left' },
+      { id: 'neck', label: I18n.t('muscle_neck'), pct: m.neck.pct, formatted: m.neck.formatted, color: m.neck.color, nodeX: 47.5, nodeY: 18, labelY: 7, side: 'left' },
+      { id: 'chest-l', label: I18n.t('muscle_chest'), pct: m.chest.pct, formatted: m.chest.formatted, color: m.chest.color, nodeX: 45, nodeY: 24, labelY: 18, side: 'left' },
+      { id: 'core', label: I18n.t('muscle_core'), pct: m.core.pct, formatted: m.core.formatted, color: m.core.color, nodeX: 50, nodeY: 34, labelY: 38, side: 'left' },
+      { id: 'obliques-l', label: I18n.t('muscle_obliques'), pct: m.obliques.pct, formatted: m.obliques.formatted, color: m.obliques.color, nodeX: 45, nodeY: 39, labelY: 58, side: 'left' },
       // Right labels (User's right, Character's left)
-      { id: 'shoulders-r',label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, formatted: m.shoulders.formatted, color: m.shoulders.color, nodeX: 60, nodeY: 19, labelY: 12, side: 'right' },
-      { id: 'biceps-r',   label: I18n.t('muscle_biceps'),    pct: m.biceps.pct,    formatted: m.biceps.formatted,    color: m.biceps.color,    nodeX: 62, nodeY: 30, labelY: 31, side: 'right' },
-      { id: 'forearm-r',  label: I18n.t('muscle_forearms'),  pct: m.forearms.pct,  formatted: m.forearms.formatted,  color: m.forearms.color,  nodeX: 65, nodeY: 40, labelY: 50, side: 'right' },
-      { id: 'quads-r',    label: I18n.t('muscle_quads'),     pct: m.quads.pct,     formatted: m.quads.formatted,     color: m.quads.color,     nodeX: 55, nodeY: 55, labelY: 69, side: 'right' },
+      { id: 'shoulders-r', label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, formatted: m.shoulders.formatted, color: m.shoulders.color, nodeX: 60, nodeY: 19, labelY: 12, side: 'right' },
+      { id: 'biceps-r', label: I18n.t('muscle_biceps'), pct: m.biceps.pct, formatted: m.biceps.formatted, color: m.biceps.color, nodeX: 62, nodeY: 30, labelY: 31, side: 'right' },
+      { id: 'forearm-r', label: I18n.t('muscle_forearms'), pct: m.forearms.pct, formatted: m.forearms.formatted, color: m.forearms.color, nodeX: 65, nodeY: 40, labelY: 50, side: 'right' },
+      { id: 'quads-r', label: I18n.t('muscle_quads'), pct: m.quads.pct, formatted: m.quads.formatted, color: m.quads.color, nodeX: 55, nodeY: 55, labelY: 69, side: 'right' },
     ];
 
     // ── BACK VIEW ──
     const backCallouts = [
       // Left labels (4)
-      { id: 'traps-l',     label: I18n.t('muscle_traps'),      pct: m.traps.pct,       formatted: m.traps.formatted,       color: m.traps.color,       nodeX: 46, nodeY: 18, labelY: 14, side: 'left' },
-      { id: 'triceps-l',   label: I18n.t('muscle_triceps'),    pct: m.triceps.pct,     formatted: m.triceps.formatted,     color: m.triceps.color,     nodeX: 39, nodeY: 30, labelY: 33, side: 'left' },
-      { id: 'lowerBack',   label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct,   formatted: m.lowerBack.formatted,   color: m.lowerBack.color,   nodeX: 50, nodeY: 42, labelY: 52, side: 'left' },
-      { id: 'hamstrings-l',label: I18n.t('muscle_hamstrings'),  pct: m.hamstrings.pct,  formatted: m.hamstrings.formatted,  color: m.hamstrings.color,  nodeX: 46, nodeY: 63, labelY: 71, side: 'left' },
+      { id: 'traps-l', label: I18n.t('muscle_traps'), pct: m.traps.pct, formatted: m.traps.formatted, color: m.traps.color, nodeX: 46, nodeY: 18, labelY: 14, side: 'left' },
+      { id: 'triceps-l', label: I18n.t('muscle_triceps'), pct: m.triceps.pct, formatted: m.triceps.formatted, color: m.triceps.color, nodeX: 39, nodeY: 30, labelY: 33, side: 'left' },
+      { id: 'lowerBack', label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct, formatted: m.lowerBack.formatted, color: m.lowerBack.color, nodeX: 50, nodeY: 42, labelY: 52, side: 'left' },
+      { id: 'hamstrings-l', label: I18n.t('muscle_hamstrings'), pct: m.hamstrings.pct, formatted: m.hamstrings.formatted, color: m.hamstrings.color, nodeX: 46, nodeY: 63, labelY: 71, side: 'left' },
       // Right labels (3)
-      { id: 'lats-r',      label: I18n.t('muscle_lats'),       pct: m.lats.pct,        formatted: m.lats.formatted,        color: m.lats.color,        nodeX: 56, nodeY: 33, labelY: 28, side: 'right' },
-      { id: 'glutes-r',    label: I18n.t('muscle_glutes'),     pct: m.glutes.pct,      formatted: m.glutes.formatted,      color: m.glutes.color,      nodeX: 54, nodeY: 51, labelY: 49, side: 'right' },
-      { id: 'calves-r',    label: I18n.t('muscle_calves'),     pct: m.calves.pct,      formatted: m.calves.formatted,      color: m.calves.color,      nodeX: 54, nodeY: 77, labelY: 70, side: 'right' },
+      { id: 'lats-r', label: I18n.t('muscle_lats'), pct: m.lats.pct, formatted: m.lats.formatted, color: m.lats.color, nodeX: 56, nodeY: 33, labelY: 28, side: 'right' },
+      { id: 'glutes-r', label: I18n.t('muscle_glutes'), pct: m.glutes.pct, formatted: m.glutes.formatted, color: m.glutes.color, nodeX: 54, nodeY: 51, labelY: 49, side: 'right' },
+      { id: 'calves-r', label: I18n.t('muscle_calves'), pct: m.calves.pct, formatted: m.calves.formatted, color: m.calves.color, nodeX: 54, nodeY: 77, labelY: 70, side: 'right' },
     ];
 
     const generatePaneHTML = (callouts, title, imagePath) => {
@@ -63,28 +64,28 @@ const AnatomyMap = (() => {
             <div class="anatomy-image-bg" style="background-image: url('${imagePath}');"></div>
             <svg class="anatomy-svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%">
               ${visible.map(c => {
-                const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
-                const targetX = c.side === 'left' ? 28 : 72;
-                const midX = c.side === 'left' ? Math.min(c.nodeX - 4, 35) : Math.max(c.nodeX + 4, 65);
-                return `
+        const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
+        const targetX = c.side === 'left' ? 22 : 78;
+        const midX = c.side === 'left' ? Math.min(c.nodeX - 5, 34) : Math.max(c.nodeX + 5, 66);
+        return `
                   <path d="M ${c.nodeX} ${c.nodeY} L ${midX} ${labelY} L ${targetX} ${labelY}" 
                         stroke="${c.color}" stroke-width="0.85" fill="none" opacity="0.9" 
                         stroke-dasharray="1.5 1" style="filter: drop-shadow(0 0 3px ${c.color});" />
                   <circle cx="${c.nodeX}" cy="${c.nodeY}" r="1.1" fill="${c.color}" />
                   <circle cx="${targetX}" cy="${labelY}" r="0.9" fill="${c.color}" />
                 `;
-              }).join('')}
+      }).join('')}
             </svg>
             ${visible.map(c => {
-              const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
-              return `
+        const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
+        return `
                 <div class="callout-label side-${c.side}" style="top: ${labelY}%; --color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${c.label.replace(/'/g, "\\'")}', ${c.pct})">
                   <div class="callout-title">${c.label}</div>
                   <div class="callout-value">${c.formatted}</div>
                   <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${Math.min(100, c.pct)}%; background: ${c.pct > 0 ? '#00ff66' : 'rgba(255,255,255,0.2)'};"></div></div>
                 </div>
               `;
-            }).join('')}
+      }).join('')}
             ${visible.map(c => `
               <div class="anatomy-node" style="left: ${c.nodeX}%; top: ${c.nodeY}%; background-color: ${c.color}; color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${(c.label || c.id).replace(/'/g, "\\'")}', ${c.pct || 0})"></div>
             `).join('')}
@@ -100,9 +101,6 @@ const AnatomyMap = (() => {
           gap: 18px;
           width: 100%;
           padding: 6px 0;
-        }
-        @media (min-width: 768px) {
-          .anatomy-dual-container { grid-template-columns: 1fr 1fr; }
         }
         .anatomy-pane {
           display: flex;
@@ -242,7 +240,8 @@ const AnatomyMap = (() => {
       calves: ['Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise', 'Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4'],
       core: ['Dead Bug', 'Hollow Body Hold', 'L-sit Tuck (Bars)', 'Suitcase Carry', 'Pallof Press Progression'],
       obliques: ['Suitcase Carry', 'Pallof Press Progression', 'Dead Bug'],
-      lowerBack: ['DB Romanian Deadlift', 'Single-Leg RDL', 'DB Hip Thrust', 'Suitcase Carry']
+      lowerBack: ['DB Romanian Deadlift', 'Single-Leg RDL', 'DB Hip Thrust', 'Suitcase Carry'],
+      neck: ['Deep Mobility Protocol', 'Wall Slides', 'Band Pull-Apart', 'TRX Face Pull']
     };
 
     const exerciseNames = muscleExerciseMap[muscleKey] || [I18n.t('anatomy_only_exercises')];
@@ -257,7 +256,7 @@ const AnatomyMap = (() => {
         }
         allPlanDays = await DB.getAllPlan();
       }
-    } catch(e) {
+    } catch (e) {
       console.warn('Could not load exercise stats:', e);
     }
 

@@ -124,7 +124,7 @@ const StatsPage = (() => {
     const currentWeekNum = Math.floor(todayIdx / 7) + 1;
     const currentWeekDays = allPlanDays.filter(d => d.week === `Week ${currentWeekNum}`);
     const lastWeekDays = allPlanDays.filter(d => d.week === `Week ${currentWeekNum - 1}`);
-    
+
     const currCompleted = currentWeekDays.filter(d => trackingMap[d.dayIndex] && trackingMap[d.dayIndex].completed).length;
     const lastCompleted = lastWeekDays.filter(d => trackingMap[d.dayIndex] && trackingMap[d.dayIndex].completed).length;
 
@@ -405,6 +405,14 @@ const StatsPage = (() => {
       { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.25, category: 'Legs' },
       // Loaded Carry & Anti-Flexion Bracing (Suitcase Carry & Dead Bug)
       { stages: [1, 5, 18, 26, 34, 53, 66], weight: 0.15, category: 'Legs' },
+    ],
+    neck: [
+      // Neck Mobility & Deep Cervical Flexors (Deep Mobility Protocol — Day 4 Active Recovery)
+      { stages: [1, 10, 26, 53], weight: 0.60, category: 'Cardio' },
+      // Cervical Stabilization via Scapular Warmups (Wall Slides, Band Pull-Apart)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.25, category: 'Push' },
+      // Deep Neck Flexor & Upper Trap Co-contraction (TRX Face Pull)
+      { stages: [1, 5, 10, 18, 26, 34, 42, 53, 66], weight: 0.15, category: 'Pull' },
     ],
   };
 
@@ -724,7 +732,7 @@ const StatsPage = (() => {
    */
   function renderAnatomy(trackingMap, allProgressionStates, exerciseGuide) {
     const container = document.getElementById('stats-overview');
-    
+
     // Create anatomy wrapper if it doesn't exist
     let anatomyWrapper = document.getElementById('anatomy-wrapper');
     if (!anatomyWrapper) {
@@ -732,17 +740,17 @@ const StatsPage = (() => {
       anatomyWrapper.id = 'anatomy-wrapper';
       anatomyWrapper.style.gridColumn = '1 / -1';
       anatomyWrapper.style.marginBottom = 'var(--space-lg)';
-      
+
       const title = document.createElement('div');
       title.className = 'chart-title';
       title.innerHTML = `<span>${I18n.t('muscle_map_title')}</span>`;
-      
+
       const mapContainer = document.createElement('div');
       mapContainer.id = 'anatomy-map-container';
-      
+
       anatomyWrapper.appendChild(title);
       anatomyWrapper.appendChild(mapContainer);
-      
+
       const firstStatCard = container.querySelector('.stat-card');
       if (firstStatCard) {
         container.insertBefore(anatomyWrapper, firstStatCard);
@@ -750,7 +758,7 @@ const StatsPage = (() => {
         container.appendChild(anatomyWrapper);
       }
     }
-    
+
     if (typeof AnatomyMap !== 'undefined') {
       const muscleData = calculateMuscleProgressions(trackingMap, allProgressionStates, exerciseGuide);
       AnatomyMap.render(document.getElementById('anatomy-map-container'), muscleData);
@@ -790,13 +798,13 @@ const StatsPage = (() => {
     }
 
     const heatmapDays = allPlanDays.slice(0, Math.max(1, endIdx + 1));
-    
+
     const heatmapCells = heatmapDays.map((day, index) => {
       const dIdx = day.dayIndex != null ? day.dayIndex : index;
       const tracking = trackingMap[dIdx];
       const isCompleted = tracking && tracking.completed;
       let colorClass = 'heat-empty';
-      
+
       if (isCompleted) {
         if (day.dayType && day.dayType.includes('Deload')) colorClass = 'heat-deload';
         else if (isStrengthDay(day.dayType)) colorClass = 'heat-strength';
@@ -1117,7 +1125,7 @@ const StatsPage = (() => {
         CloudSync.scheduleSync();
       }
       UI.toast(I18n.t('photo_saved'), 'success');
-      
+
       // Redirect to the "today" page after uploading
       if (typeof App !== 'undefined') {
         App.navigateTo('today');
@@ -1131,7 +1139,7 @@ const StatsPage = (() => {
   async function renderPhotos() {
     const container = document.getElementById('stats-charts');
     const photos = await DB.getAllPhotos();
-    
+
     let photosHtml = `
       <div class="chart-card" style="grid-column: 1 / -1; margin-bottom: var(--space-lg);">
         <div class="chart-title" style="display: flex; justify-content: space-between; align-items: center;">
@@ -1203,7 +1211,7 @@ const StatsPage = (() => {
 
   function playTimelapse(photos) {
     if (!photos || photos.length < 2) return;
-    
+
     let currentIndex = 0;
     const modalContent = `
       <div style="text-align: center; padding-bottom: 16px;">
@@ -1234,14 +1242,14 @@ const StatsPage = (() => {
         clearInterval(interval);
         return;
       }
-      
+
       imgEl.style.opacity = 0.3;
       setTimeout(() => {
         imgEl.src = photos[currentIndex].dataUrl;
         dateEl.textContent = UI.formatShortDate(photos[currentIndex].date);
         imgEl.style.opacity = 1;
       }, 200);
-      
+
     }, 1500);
 
     // Stop interval if modal closed

@@ -1340,20 +1340,24 @@ const TodayPage = (() => {
               unifiedRequirementsMap.get(reqKey).exercises.push(exNum);
             }
           } else {
-            const equip = UI.getEquipment(ex.name);
-            if (equip && equip.label !== I18n.t('equip_bodyweight') && equip.label !== I18n.t('equip_wall') && equip.label !== I18n.t('equip_db')) {
-              const reqKey = `equip_${equip.label}`;
-              if (!unifiedRequirementsMap.has(reqKey)) {
-                unifiedRequirementsMap.set(reqKey, {
-                  type: 'equipment',
-                  icon: equip.icon,
-                  label: equip.label,
-                  weightInfo: null,
-                  exercises: []
-                });
+            const equips = UI.getEquipments ? UI.getEquipments(ex.name) : [UI.getEquipment(ex.name)];
+            equips.forEach(equip => {
+              if (equip && equip.label !== I18n.t('equip_bodyweight') && equip.label !== I18n.t('equip_wall') && equip.label !== I18n.t('equip_db')) {
+                const reqKey = `equip_${equip.label}`;
+                if (!unifiedRequirementsMap.has(reqKey)) {
+                  unifiedRequirementsMap.set(reqKey, {
+                    type: 'equipment',
+                    icon: equip.icon,
+                    label: equip.label,
+                    weightInfo: null,
+                    exercises: []
+                  });
+                }
+                if (!unifiedRequirementsMap.get(reqKey).exercises.includes(exNum)) {
+                  unifiedRequirementsMap.get(reqKey).exercises.push(exNum);
+                }
               }
-              unifiedRequirementsMap.get(reqKey).exercises.push(exNum);
-            }
+            });
           }
           
           let prevEx = null;

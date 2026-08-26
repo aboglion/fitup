@@ -589,7 +589,11 @@ const UI = (() => {
         </div>
         <div style="display: flex; flex-direction: column; gap: 6px; justify-content: center;">
           <span style="font-size: 19px; font-weight: 900; color: var(--text-primary); line-height: 1.25;">${title}</span>
-          ${equip ? `<span style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; background: var(--bg-elevated); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-light); width: max-content;">${equip.icon} ${equip.label}</span>` : ''}
+          ${(() => {
+        const equips = getEquipments(title);
+        if (!equips || equips.length === 0) return '';
+        return `<div style="display: flex; gap: 6px; flex-wrap: wrap;">` + equips.map(eq => `<span style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; background: var(--bg-elevated); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-light); width: max-content;">${eq.icon} ${eq.label}</span>`).join('') + `</div>`;
+      })()}
         </div>
       </div>
     `;
@@ -806,10 +810,10 @@ const UI = (() => {
   }
 
   /**
-   * Get required equipment based on exercise name
+   * Get all required equipment for an exercise name (returns array)
    */
-  function getEquipment(name) {
-    if (!name) return null;
+  function getEquipments(name) {
+    if (!name) return [];
     const n = name.toLowerCase();
 
     // Professional SVG Icons
@@ -827,19 +831,42 @@ const UI = (() => {
       bodyweight: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>`
     };
 
-    if (n.startsWith('weighted')) return { label: I18n.t('equip_weighted'), icon: icons.vest };
-    if (n.includes('weighted')) return { label: I18n.t('equip_weighted'), icon: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M2 12h3"/><path d="M19 12h3"/><path d="M3 7h2"/><path d="M19 7h2"/><path d="M3 17h2"/><path d="M19 17h2"/><rect x="5" y="9" width="2" height="6" rx="1"/><rect x="17" y="9" width="2" height="6" rx="1"/></svg>` };
-    if (n.includes('vest') || n.includes('weighted')) return { label: I18n.t('equip_vest'), icon: icons.vest };
-    if (n.includes('trx')) return { label: I18n.t('equip_trx'), icon: icons.trx };
-    if (n.includes('bars') || n.includes('push-up bars') || n.includes('parallettes')) return { label: I18n.t('equip_bars'), icon: icons.bars };
-    if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row')) return { label: I18n.t('equip_db'), icon: icons.db };
-    if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) return { label: I18n.t('equip_band'), icon: icons.band };
-    if (n.includes('wall') || n.includes('handstand')) return { label: I18n.t('equip_wall'), icon: icons.wall };
-    if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('chair') || n.includes('elevated')) return { label: I18n.t('equip_bench'), icon: icons.bench };
-    if (n.includes('towel') || n.includes('hang') || n.includes('pull-up') || n.includes('chin-up')) return { label: I18n.t('equip_towel'), icon: icons.towel };
-    if (n.includes('walking') || n.includes('vo2') || n.includes('zone 2')) return { label: I18n.t('equip_treadmill'), icon: icons.treadmill };
+    const results = [];
 
-    return { label: I18n.t('equip_bodyweight'), icon: icons.bodyweight };
+    // Weighted variants get top priority (integrated from today's local work)
+    if (n.includes('weighted')) {
+      results.push({ label: I18n.t('equip_weighted'), icon: icons.vest, key: 'weighted' });
+    }
+
+    const hasTowel = n.includes('towel');
+    const hasBar = n.includes('pull-up') || n.includes('chin-up') || n.includes('dead hang') || n.includes('scapular pull-up') || n.includes('front lever') || (hasTowel && (n.includes('hang') || n.includes('grip')));
+
+    if (hasTowel) {
+      results.push({ label: I18n.t('equip_towel'), icon: icons.towel, key: 'towel' });
+    }
+
+    if (hasBar || (!hasTowel && n.includes('hang') && !n.includes('dead bug'))) {
+      results.push({ label: I18n.t('equip_bar'), icon: icons.bar, key: 'bar' });
+    }
+
+    if (results.length > 0) return results;
+
+    if (n.includes('vest')) results.push({ label: I18n.t('equip_vest'), icon: icons.vest, key: 'vest' });
+    else if (n.includes('trx')) results.push({ label: I18n.t('equip_trx'), icon: icons.trx, key: 'trx' });
+    else if (n.includes('bars') || n.includes('push-up bars') || n.includes('parallettes')) results.push({ label: I18n.t('equip_bars'), icon: icons.bars, key: 'bars' });
+    else if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row')) results.push({ label: I18n.t('equip_db'), icon: icons.db, key: 'db' });
+    else if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) results.push({ label: I18n.t('equip_band'), icon: icons.band, key: 'band' });
+    else if (n.includes('wall') || n.includes('handstand')) results.push({ label: I18n.t('equip_wall'), icon: icons.wall, key: 'wall' });
+    else if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('chair') || n.includes('elevated')) results.push({ label: I18n.t('equip_bench'), icon: icons.bench, key: 'bench' });
+    else if (n.includes('walking') || n.includes('vo2') || n.includes('zone 2')) results.push({ label: I18n.t('equip_treadmill'), icon: icons.treadmill, key: 'treadmill' });
+    else results.push({ label: I18n.t('equip_bodyweight'), icon: icons.bodyweight, key: 'bodyweight' });
+
+    return results;
+  }
+
+  function getEquipment(name) {
+    const list = getEquipments(name);
+    return list.length > 0 ? list[0] : null;
   }
 
   /**
@@ -1184,6 +1211,7 @@ const UI = (() => {
     parseReps,
     getDifficultyClass,
     getEquipment,
+    getEquipments,
     formatTempo,
     initTimer,
     startTimer,

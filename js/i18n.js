@@ -23,7 +23,7 @@ const I18n = (() => {
       nav_stats: "Progress",
       nav_settings: "Settings",
       daily_progress: "Daily Progress",
-      
+
       // Today Page
       back_to_today: "Back to Today's Workout",
       day_label: "Day",
@@ -114,7 +114,7 @@ const I18n = (() => {
       completed_days: "Completed Days",
       streak: "Current Streak",
       body_weight_tracker: "Body Weight Tracker",
-      
+
       // Settings Page
       settings_title: "Settings",
       language_selection: "🌐 Language / اللغة / שפה",
@@ -195,13 +195,15 @@ const I18n = (() => {
 
       // Equipment labels
       equip_vest: "Weighted Vest +5kg",
+      equip_weighted: "Weighted",
       equip_trx: "TRX Straps",
       equip_bars: "Push-up Bars / Parallettes",
       equip_db: "Dumbbells",
       equip_band: "Resistance Band",
       equip_wall: "Free Wall",
       equip_bench: "Chair / Bench",
-      equip_towel: "Pull-up Bar / Towel",
+      equip_bar: "Pull-up Bar",
+      equip_towel: "Towel",
       equip_treadmill: "Treadmill / Walking",
       equip_bodyweight: "Bodyweight Only",
       equip_band_weighted: "Resistance Band ({weight})",
@@ -541,6 +543,7 @@ const I18n = (() => {
       muscle_lats: "Lats",
       muscle_glutes: "Glutes",
       muscle_calves: "Calves",
+      muscle_neck: "Neck",
       anatomy_front: "Front View",
       anatomy_back: "Back View",
 
@@ -1022,9 +1025,11 @@ const I18n = (() => {
       equip_band: "גומיית התנגדות",
       equip_wall: "קיר פנוי",
       equip_bench: "כיסא / ספסל",
-      equip_towel: "מתח / מגבת",
+      equip_bar: "מוט מתח",
+      equip_towel: "מגבת",
       equip_treadmill: "מסילת כושר / הליכה",
       equip_bodyweight: "משקל גוף בלבד",
+      equip_weighted: "עם משקל",
       equip_band_weighted: "גומיית התנגדות ({weight})",
 
       rest_day_desc: "הגוף שלך צריך מנוחה כדי להיבנות ולהתחזק. הקפד על שינה טובה, תזונה נכונה ושתיית מים!",
@@ -1331,6 +1336,7 @@ const I18n = (() => {
       muscle_lats: "רחב גבי",
       muscle_glutes: "ישבן",
       muscle_calves: "תאומים",
+      muscle_neck: "צוואר",
       anatomy_front: "מבט קדמי (Front)",
       anatomy_back: "מבט אחורי (Back)",
 
@@ -1458,6 +1464,7 @@ const I18n = (() => {
       muscle_lats: "רחב גבי",
       muscle_glutes: "ישבן",
       muscle_calves: "תאומים",
+      muscle_neck: "צוואר",
 
       program_not_started: "מצב עיון: התוכנית טרם התחילה",
       program_not_started_desc: "ברגע שתסמן תרגיל או יום מנוחה כהושלם, התוכנית תתחיל באופן רשמי והתאריכים ייקבעו בהתאם.",
@@ -1757,9 +1764,11 @@ const I18n = (() => {
       equip_band: "شريط مقاومة",
       equip_wall: "جدار فارغ",
       equip_bench: "كرسي / مقعد",
-      equip_towel: "بار سحب / منشفة",
+      equip_bar: "بار سحب",
+      equip_towel: "منشفة",
       equip_treadmill: "جهاز مشي / مشي",
       equip_bodyweight: "وزن الجسم فقط",
+      equip_weighted: "بأوزان إضافية",
       equip_band_weighted: "شريط مقاومة ({weight})",
 
       rest_day_desc: "جسمك يحتاج للراحة للبناء والتقوية. احرص على نوم جيد وتغذية سليمة وشرب الماء!",
@@ -1957,6 +1966,7 @@ const I18n = (() => {
       muscle_forearms: "ساعد ومقبض",
       muscle_lower_back: "أسفل الظهر",
       muscle_obliques: "عضلات مائلة",
+      muscle_neck: "الرقبة",
       anatomy_front: "عرض أمامي (Front)",
       anatomy_back: "عرض خلفي (Back)",
 
@@ -2057,7 +2067,7 @@ const I18n = (() => {
         console.warn('I18n: Failed to fetch language from DB, defaulting to en', e);
       }
     }
-    
+
     currentLang = (saved && CONFIG[saved]) ? saved : 'en';
     applyToDOM();
   }
@@ -2114,7 +2124,7 @@ const I18n = (() => {
     const config = CONFIG[currentLang] || CONFIG['en'];
     document.documentElement.lang = currentLang;
     document.documentElement.dir = config.dir;
-    
+
     // Apply font stack according to language direction/family
     document.documentElement.style.setProperty('--font-family-active', config.font);
 

@@ -832,15 +832,13 @@ const ExercisesPage = (() => {
               ? `<span class="rpg-unlock-badge locked">${I18n.t('locked_week')} ${node.unlockWeek}</span>`
               : `<span class="rpg-unlock-badge unlocked">${I18n.t('unlocked_week')} ${node.unlockWeek}</span>`}
                   ${(() => {
-              const equip = UI.getEquipment(node.name);
               const exDef = allExercises.find(e => e.name === node.name);
               let badges = '';
               if (exDef && exDef.stages && exDef.stages.length > 0) {
                 badges += `<span class="rpg-equip-badge" style="background: rgba(255,170,0,0.15); color: #ffaa00; border: 1px solid rgba(255,170,0,0.4); padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(255,170,0,0.2);">🌟 ${exDef.stages.length} Stages</span>`;
               }
-              if (equip && equip.label !== I18n.t('equip_bodyweight')) {
-                badges += `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; unicode-bidi: isolate; max-width: 100%; white-space: normal; word-break: break-word;">${equip.icon} ${equip.label}</span>`;
-              }
+              const equips = UI.getEquipments ? UI.getEquipments(node.name) : [UI.getEquipment(node.name)];
+              badges += equips.filter(eq => eq && eq.label !== I18n.t('equip_bodyweight')).map(eq => `<span class="rpg-equip-badge" style="background: var(--bg-hover); color: var(--text-primary); border: 1px solid var(--border-light); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); flex-shrink: 0; unicode-bidi: isolate; max-width: 100%; white-space: normal; word-break: break-word;">${eq.icon} ${eq.label}</span>`).join('');
               return badges;
             })()}
                 </div>
@@ -1168,7 +1166,10 @@ const ExercisesPage = (() => {
         <div class="guide-card-content">
           <div class="guide-card-title">
             <span style="flex: 0 1 auto; word-break: break-word;">${ex.name}</span>
-            ${equip ? `<span class="guide-equipment" style="flex-shrink: 0; unicode-bidi: isolate;">${equip.icon} ${equip.label}</span>` : ''}
+            ${(() => {
+              const equips = UI.getEquipments ? UI.getEquipments(ex.name) : [UI.getEquipment(ex.name)];
+              return equips.filter(eq => eq && eq.label !== I18n.t('equip_bodyweight')).map(eq => `<span class="guide-equipment" style="flex-shrink: 0; unicode-bidi: isolate;">${eq.icon} ${eq.label}</span>`).join('');
+            })()}
           </div>
           <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0;">
             <span class="guide-card-category">${ex.category || ''}</span>

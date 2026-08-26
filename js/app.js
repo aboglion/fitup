@@ -269,13 +269,16 @@ const App = (() => {
       }, 2500);
 
       // Register Service Worker for PWA with automatic update force
-      if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+      // (Service Workers require http/https — skipped gracefully on file:// protocol)
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
         navigator.serviceWorker.register('./sw.js')
           .then(reg => {
             console.log('SW registered!', reg);
             reg.update();
           })
           .catch(err => console.error('SW failed', err));
+      } else if (!location.protocol.startsWith('http')) {
+        console.info('SW skipped: running from file:// — serve via local server (e.g. python3 -m http.server) to enable PWA offline mode.');
       }
 
       // Setup PWA install prompt
@@ -302,9 +305,9 @@ const App = (() => {
       // Check if this is a new installation but we have an encrypted URL in config
       let savedUrl = await DB.getSetting('cloudSyncUrl');
       const hasEncryptedUrl = CONFIG && CONFIG.encryptedUrl && CONFIG.encryptedUrl.length > 10;
-      
+
       const planCount = await DB.count(DB.STORES.PLAN);
-      
+
       if (!savedUrl && hasEncryptedUrl && planCount === 0) {
         // App is empty and we have an encrypted config, show Login Screen!
         return showLoginScreen();
@@ -324,12 +327,12 @@ const App = (() => {
     try {
       const currentDataVersion = '15.6.4'; // FitUp v15.6.4 neck exercise at A1 update
       const savedDataVersion = await DB.getSetting('dataVersion');
-      
+
       let planStartDate = await DB.getSetting('planStartDate');
-      
+
       const planCount = await DB.count(DB.STORES.PLAN);
       const exCount = await DB.count(DB.STORES.EXERCISES);
-      
+
       if (planCount === 0 || exCount === 0 || savedDataVersion !== currentDataVersion || !planStartDate) {
         console.log("Reloading training plan due to data version update, empty DB, or missing start date.");
         await DB.clearTracking();
@@ -385,7 +388,7 @@ const App = (() => {
           }
         }
       }
-      
+
       // If we haven't started yet and index points to a Rest day, skip to the first workout day
       let planStartDateStr = await DB.getSetting('planStartDate');
       if (!planStartDateStr && allPlanDays[planIndex]?.dayType === 'Rest') {
@@ -449,8 +452,8 @@ const App = (() => {
       // Hide splash and login, show app
       document.getElementById('splash-screen').classList.add('hidden');
       const loginScreen = document.getElementById('login-screen');
-      if(loginScreen) loginScreen.classList.add('hidden');
-      
+      if (loginScreen) loginScreen.classList.add('hidden');
+
       document.getElementById('app').classList.remove('hidden');
       checkPhotoReminder();
       setupAuthPromptBanner();
@@ -466,7 +469,7 @@ const App = (() => {
     const loginScreen = document.getElementById('login-screen');
     if (loginScreen) loginScreen.classList.add('hidden');
     document.getElementById('app').classList.add('hidden');
-    
+
     document.getElementById('splash-screen').innerHTML = `
       <div class="splash-content" style="padding: 24px; text-align: center;">
         <div style="font-size: 48px; margin-bottom: 16px;">⚠️</div>
@@ -554,16 +557,16 @@ const App = (() => {
   async function checkPhotoReminder() {
     const photos = await DB.getAllPhotos();
     const lastPhotoDate = photos.length > 0 ? new Date(photos[photos.length - 1].date) : null;
-    
+
     let planStartDateStr = await DB.getSetting('planStartDate');
     if (!planStartDateStr) return; // Do not remind if program hasn't started
-    
+
     const startDateObj = new Date(planStartDateStr + 'T12:00:00');
     const now = new Date();
     const daysSinceStart = Math.floor((now - startDateObj) / (1000 * 60 * 60 * 24));
-    
+
     let shouldRemind = false;
-    
+
     const snoozeUntil = await DB.getSetting('photoSnoozeUntil');
     if (snoozeUntil && new Date(snoozeUntil) > now) {
       return; // Snoozed
@@ -662,17 +665,17 @@ const App = (() => {
         }
       }
     }
-    
+
     let planStartDateStr = await DB.getSetting('planStartDate');
     window.appNotStarted = !planStartDateStr;
-    
+
     // Auto-skip Rest days if the user has started and is behind schedule
     if (planStartDateStr) {
       const startDateObj = new Date(planStartDateStr + 'T00:00:00');
       const todayObj = new Date(UI.getLocalDateString() + 'T00:00:00');
       const diffTime = Math.abs(todayObj - startDateObj);
       const daysSinceStart = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      
+
       while (planIndex < daysSinceStart && planIndex < allPlanDays.length && allPlanDays[planIndex].dayType === 'Rest') {
         // Auto complete this rest day
         const track = allTracking.find(t => t.dayIndex === planIndex) || { dayIndex: planIndex };
@@ -687,7 +690,7 @@ const App = (() => {
     updatePlanDaysDates(allPlanDays, planIndex, planStartDateStr);
     window.appCurrentPlanIndex = planIndex;
     await DB.setSetting('currentPlanIndex', planIndex);
-    
+
     await DB.setSetting('lastActiveDate', todayStr);
   }
 
@@ -696,13 +699,13 @@ const App = (() => {
    */
   function navigateTo(pageName, pushState = true) {
     if (pageName === 'calendar') pageName = 'today'; // Fallback for old cached URLs
-    
+
     // Always hide any open modal overlay when switching views
     const modalOverlay = document.getElementById('modal-overlay');
     if (modalOverlay) modalOverlay.classList.add('hidden');
 
     if (pageName === currentPage) return;
-    
+
     const pageEl = document.getElementById(`page-${pageName}`);
     if (!pageEl) pageName = 'today'; // Safety fallback
 
@@ -831,7 +834,7 @@ const App = (() => {
         const count = await DB.loadTrainingPlan();
         allPlanDays = await DB.getAllPlan();
         allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
-        UI.toast(I18n.t('plan_reloaded', '', {count}), 'success');
+        UI.toast(I18n.t('plan_reloaded', '', { count }), 'success');
         setTimeout(() => location.reload(), 1000);
       } catch (err) {
         UI.toast(I18n.t('error_prefix') + err.message, 'error');
@@ -919,12 +922,12 @@ const App = (() => {
     if (currentTheme === 'light') {
       document.documentElement.classList.add('light-theme');
     }
-    
+
     document.getElementById('theme-toggle-btn').addEventListener('click', () => {
       document.documentElement.classList.toggle('light-theme');
       const newTheme = document.documentElement.classList.contains('light-theme') ? 'light' : 'dark';
       localStorage.setItem('theme', newTheme);
-      UI.toast(I18n.t('theme_changed', '', {theme: newTheme === 'light' ? I18n.t('theme_light') : I18n.t('theme_dark')}), 'info');
+      UI.toast(I18n.t('theme_changed', '', { theme: newTheme === 'light' ? I18n.t('theme_light') : I18n.t('theme_dark') }), 'info');
     });
 
     // --- Google Drive & Account Settings ---
@@ -1042,7 +1045,7 @@ const App = (() => {
       syncBtn.addEventListener('click', async () => {
         syncBtn.disabled = true;
         syncBtn.textContent = I18n.t('syncing_drive');
-        
+
         const result = await CloudSync.syncData(true);
         if (result.success) {
           await updateGoogleUI();
@@ -1052,7 +1055,7 @@ const App = (() => {
         syncBtn.textContent = I18n.t('sync_now');
       });
     }
-        
+
 
 
     // --- Gemini AI Settings ---
@@ -1065,9 +1068,9 @@ const App = (() => {
 
     const updateGeminiSettingsUI = async () => {
       if (!window.GeminiService) return;
-      
+
       const isConfigured = await window.GeminiService.isConfigured();
-      
+
       if (isConfigured) {
         if (geminiInputWrapper) geminiInputWrapper.style.display = 'none';
         if (geminiActiveWrapper) geminiActiveWrapper.style.display = 'flex';
@@ -1083,7 +1086,7 @@ const App = (() => {
 
     if (window.GeminiService) {
       if (window.GeminiService.initSelects) window.GeminiService.initSelects();
-      
+
       window.GeminiService.getApiKey().then(key => {
         if (key && geminiKeyInput) geminiKeyInput.value = key;
         updateGeminiSettingsUI();
@@ -1097,7 +1100,7 @@ const App = (() => {
         saveGeminiBtn.onclick = async () => {
           const isConfigured = await window.GeminiService.isConfigured();
           const model = geminiModelSelect ? geminiModelSelect.value : 'gemini-3.1-flash-lite';
-          
+
           if (!isConfigured) {
             const key = geminiKeyInput ? geminiKeyInput.value.trim() : '';
             if (!key) {
@@ -1177,7 +1180,7 @@ const App = (() => {
       const loginScreen = document.getElementById('login-screen');
       const splashScreen = document.getElementById('splash-screen');
       if ((loginScreen && !loginScreen.classList.contains('hidden')) ||
-          (splashScreen && !splashScreen.classList.contains('hidden'))) {
+        (splashScreen && !splashScreen.classList.contains('hidden'))) {
         banner.classList.add('hidden');
         return;
       }
@@ -1287,7 +1290,7 @@ document.addEventListener('visibilitychange', async () => {
     if (window.App && window.App.recalculatePlanIndex) {
       await window.App.recalculatePlanIndex();
     }
-    
+
     // 2. Reset nutrition date to today and render UI immediately to reflect new day if it changed
     if (window.TodayPage && window.TodayPage.resetNutritionDateToToday) {
       window.TodayPage.resetNutritionDateToToday();

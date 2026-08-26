@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
+
 <head>
   <meta charset="UTF-8">
   <meta name="google-site-verification" content="_fuGMhftIfxS8IGi3hPlkWa9ZiwtMpy0UusLsFvy-NU" />
@@ -13,6 +14,8 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta property="og:title" content="FitUp">
   <meta name="description" content="Professional AI Workout & Nutrition Tracker">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💪</text></svg>">
   <link rel="icon" type="image/png" sizes="192x192" href="images/icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="images/icon-512.png">
   <link rel="shortcut icon" href="images/icon-192.png">
@@ -35,6 +38,7 @@
     }
   </script>
 </head>
+
 <body>
   <!-- Splash Screen -->
   <div id="splash-screen" class="splash-screen">
@@ -57,7 +61,9 @@
           <span class="nav-icon">💪</span>
           <span class="nav-title">FitUp</span>
         </div>
-        <div id="cloud-status-indicator" style="font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 8px; background: var(--bg-elevated); border: 1px solid var(--border-light); transition: all 0.2s;" title="מצב סנכרון ענן">☁️</div>
+        <div id="cloud-status-indicator"
+          style="font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 8px; background: var(--bg-elevated); border: 1px solid var(--border-light); transition: all 0.2s;"
+          title="מצב סנכרון ענן">☁️</div>
       </div>
       <div class="nav-links">
         <button class="nav-link active" data-page="today" id="nav-today">
@@ -84,13 +90,15 @@
       <div style="margin-top: auto; display: flex; flex-direction: column; align-items: center; padding-bottom: 24px;">
         <div class="progress-ring" style="width: 80px; height: 80px;">
           <svg viewBox="0 0 100 100">
-            <circle class="progress-ring-bg" cx="50" cy="50" r="42" stroke-width="6"/>
-            <circle class="progress-ring-fill js-progress-circle" cx="50" cy="50" r="42" stroke-width="6"/>
+            <circle class="progress-ring-bg" cx="50" cy="50" r="42" stroke-width="6" />
+            <circle class="progress-ring-fill js-progress-circle" cx="50" cy="50" r="42" stroke-width="6" />
           </svg>
           <span class="progress-text js-progress-text" style="font-size: 18px; font-weight: 700;">0%</span>
         </div>
-        <span style="font-size: 12px; color: var(--text-muted); margin-top: 8px; font-weight: 600;" data-i18n="daily_progress">Daily Progress</span>
-        <div id="desktop-nav-nutrition" style="display: flex; gap: 12px; margin-top: 8px; font-size: 12px; font-weight: 700;"></div>
+        <span style="font-size: 12px; color: var(--text-muted); margin-top: 8px; font-weight: 600;"
+          data-i18n="daily_progress">Daily Progress</span>
+        <div id="desktop-nav-nutrition"
+          style="display: flex; gap: 12px; margin-top: 8px; font-size: 12px; font-weight: 700;"></div>
       </div>
     </nav>
 
@@ -104,10 +112,10 @@
         <span class="bottom-nav-icon">🏋️</span>
         <span class="bottom-nav-text" data-i18n="nav_exercises">Exercises</span>
       </button>
-      
+
       <!-- Center Progress Circle & Nutrition HUD -->
       <div id="bottom-nav-progress" class="bottom-nav-center-hub" style="direction: ltr !important;">
-        
+
         <!-- Calories (Left Stat) -->
         <div class="nav-macro-stat cals-stat">
           <span id="nav-cals-percent" class="macro-percent">0%</span>
@@ -122,10 +130,11 @@
           <div class="hero-progress-badge">
             <span class="js-progress-text">0%</span>
           </div>
-          <button class="bottom-nav-hero-btn bottom-nav-link" data-page="nutrition" id="nav-mobile-food-btn" data-i18n-title="go_to_nutrition">
+          <button class="bottom-nav-hero-btn bottom-nav-link" data-page="nutrition" id="nav-mobile-food-btn"
+            data-i18n-title="go_to_nutrition">
             <svg class="hero-ring-svg" viewBox="0 0 100 100">
-              <circle class="progress-ring-bg" cx="50" cy="50" r="42" stroke-width="8"/>
-              <circle class="progress-ring-fill js-progress-circle" cx="50" cy="50" r="42" stroke-width="8"/>
+              <circle class="progress-ring-bg" cx="50" cy="50" r="42" stroke-width="8" />
+              <circle class="progress-ring-fill js-progress-circle" cx="50" cy="50" r="42" stroke-width="8" />
             </svg>
             <span class="hero-icon">🍽️</span>
           </button>
@@ -156,8 +165,9 @@
     <main id="page-container" class="page-container">
       <!-- Today Page -->
       <section id="page-today" class="page active">
-        
-        <button id="today-btn" class="btn-warning" style="display: none; width: 100%; margin-bottom: 16px; font-size: 15px; font-weight: bold; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);">
+
+        <button id="today-btn" class="btn-warning"
+          style="display: none; width: 100%; margin-bottom: 16px; font-size: 15px; font-weight: bold; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);">
           <span>🔙</span> <span data-i18n="back_to_today">Back to Today's Workout</span>
         </button>
 
@@ -233,17 +243,24 @@
               <label for="day-notes" data-i18n="notes">Notes</label>
               <textarea id="day-notes" rows="3" data-i18n="how_did_it_feel"></textarea>
             </div>
-            <div style="text-align: center; width: 100%; font-size: 12px; color: var(--text-secondary); margin-top: 8px; grid-column: 1 / -1;" data-i18n="auto_save_notice">
+            <div
+              style="text-align: center; width: 100%; font-size: 12px; color: var(--text-secondary); margin-top: 8px; grid-column: 1 / -1;"
+              data-i18n="auto_save_notice">
               ✨ Data saves automatically as you type
             </div>
           </div>
-          
+
           <!-- Calendar Accordion Content -->
-          <div id="calendar-accordion-content" style="display: none; margin-top: 0; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; box-sizing: border-box; overflow: hidden;">
-            <div class="page-header" style="margin-bottom: 16px; margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
-              <button id="cal-prev-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">◀</button>
-              <span id="cal-week-label" class="week-label" style="font-weight: 700; font-size: 16px; color: var(--text-primary);"></span>
-              <button id="cal-next-week" class="icon-btn" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">▶</button>
+          <div id="calendar-accordion-content"
+            style="display: none; margin-top: 0; padding: 16px; background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; box-sizing: border-box; overflow: hidden;">
+            <div class="page-header"
+              style="margin-bottom: 16px; margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+              <button id="cal-prev-week" class="icon-btn"
+                style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">◀</button>
+              <span id="cal-week-label" class="week-label"
+                style="font-weight: 700; font-size: 16px; color: var(--text-primary);"></span>
+              <button id="cal-next-week" class="icon-btn"
+                style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-primary);">▶</button>
             </div>
             <div id="calendar-grid" class="calendar-grid"></div>
           </div>
@@ -254,21 +271,24 @@
 
         <!-- Exercises List -->
         <div id="exercises-list" class="exercises-list"></div>
-        
+
       </section>
 
       <!-- Exercises Guide Page -->
       <section id="page-exercises" class="page">
         <div id="exercises-sticky-header" class="sticky-header" style="margin-bottom: 8px;">
-          <div class="page-header" style="margin-bottom: 0; display: flex; justify-content: space-between; align-items: center;">
+          <div class="page-header"
+            style="margin-bottom: 0; display: flex; justify-content: space-between; align-items: center;">
             <h1 class="page-title" data-i18n="exercise_list_title">Exercise Directory</h1>
-            <button id="toggle-tree-btn" class="btn-secondary active" style="padding: 8px 12px; gap: 6px; display: flex; align-items: center; border-radius: 8px;">
+            <button id="toggle-tree-btn" class="btn-secondary active"
+              style="padding: 8px 12px; gap: 6px; display: flex; align-items: center; border-radius: 8px;">
               <span>📚</span>
               <span class="tree-btn-text" data-i18n="all_exercises">All Exercises</span>
             </button>
           </div>
           <div class="search-box" id="exercise-search-box" style="display: none; margin-top: 12px;">
-            <input type="search" id="exercise-search" data-i18n="search_exercise_placeholder" placeholder="Search exercise..." class="search-input">
+            <input type="search" id="exercise-search" data-i18n="search_exercise_placeholder"
+              placeholder="Search exercise..." class="search-input">
           </div>
           <div id="exercise-filters" class="exercise-filters" style="display: none; margin-top: 12px;">
             <button class="filter-btn active" data-filter="all" data-i18n="filter_all">All</button>
@@ -289,25 +309,31 @@
 
       <!-- Nutrition & AI Camera Page -->
       <section id="page-nutrition" class="page">
-        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div class="page-header"
+          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
           <h1 class="page-title" style="display: flex; align-items: center; gap: 10px;">
             <span>🍽️</span> <span data-i18n="nutrition_ai_title">Nutrition & AI Log</span>
           </h1>
           <div style="display: flex; gap: 8px;">
-            <button id="nut-settings-btn" class="btn-secondary" style="padding: 8px 12px; font-size: 13px;" data-i18n="ai_settings">⚙️ AI Settings</button>
+            <button id="nut-settings-btn" class="btn-secondary" style="padding: 8px 12px; font-size: 13px;"
+              data-i18n="ai_settings">⚙️ AI Settings</button>
           </div>
         </div>
 
         <!-- Gemini API Key Setup Card (Shown if key is missing) -->
-        <div id="gemini-setup-card" class="settings-card" style="display: none; border: 2px solid var(--accent-primary); background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); border-radius: var(--radius-lg); margin-bottom: 20px; padding: 20px;">
+        <div id="gemini-setup-card" class="settings-card"
+          style="display: none; border: 2px solid var(--accent-primary); background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); border-radius: var(--radius-lg); margin-bottom: 20px; padding: 20px;">
           <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
             <span style="font-size: 32px;">🤖</span>
             <div>
-              <h3 style="margin: 0; font-size: 18px; color: var(--text-primary);" data-i18n="gemini_setup_title">Setup Gemini AI (Food Scanner)</h3>
-              <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-secondary);" data-i18n="gemini_setup_desc">To capture food photos and auto-calculate calories & protein, enter a free Gemini API key</p>
+              <h3 style="margin: 0; font-size: 18px; color: var(--text-primary);" data-i18n="gemini_setup_title">Setup
+                Gemini AI (Food Scanner)</h3>
+              <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-secondary);"
+                data-i18n="gemini_setup_desc">To capture food photos and auto-calculate calories & protein, enter a free
+                Gemini API key</p>
             </div>
           </div>
-          
+
           <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
             <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; background: rgba(59, 130, 246, 0.15); border: 1.5px solid var(--accent-primary); color: var(--accent-primary); font-weight: 800; font-size: 14px; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.background='rgba(59, 130, 246, 0.25)'" onmouseout="this.style.background='rgba(59, 130, 246, 0.15)'">
               <span data-i18n="get_free_key_btn">🔑 Get Free API Key on Google AI Studio ↗</span>
@@ -320,8 +346,12 @@
             </div>
 
             <div>
-              <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;" data-i18n="api_key_label">API Key (Google Gemini)</label>
-              <input type="password" id="gemini-api-key-input" placeholder="AIzaSy..." style="width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-family: monospace;" dir="ltr">
+              <label
+                style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;"
+                data-i18n="api_key_label">API Key (Google Gemini)</label>
+              <input type="password" id="gemini-api-key-input" placeholder="AIzaSy..."
+                style="width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-family: monospace;"
+                dir="ltr">
             </div>
 
             <div>
@@ -334,7 +364,9 @@
               </select>
             </div>
 
-            <button id="save-gemini-key-btn" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px; font-weight: 700; margin-top: 4px;" data-i18n="save_enable_ai">
+            <button id="save-gemini-key-btn" class="btn-primary"
+              style="width: 100%; padding: 12px; font-size: 15px; font-weight: 700; margin-top: 4px;"
+              data-i18n="save_enable_ai">
               ✨ Save & Enable AI Scanner
             </button>
             <div id="gemini-key-error" style="color: var(--danger); font-size: 12px; display: none; text-align: center;"></div>
@@ -343,56 +375,71 @@
 
         <!-- Main Nutrition Content Container -->
         <div id="nutrition-main-content">
-          
+
           <!-- Camera & Food Capture Action Bar -->
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
-            <div style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+          <div
+            style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+            <div
+              style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
               <span data-i18n="ai_meal_capture">📸 AI-based Meal Entry</span>
               <div style="display: flex; align-items: center; gap: 8px;">
-                <span id="current-ai-model-badge" style="font-size: 11px; background: var(--bg-elevated); padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border-light); color: var(--accent-primary);">gemini-3.1-flash-lite</span>
-                <button id="delete-gemini-key-badge-btn" title="מחק מפתח API" style="background: none; border: none; font-size: 14px; cursor: pointer; color: var(--danger); padding: 2px 4px;">🗑️</button>
+                <span id="current-ai-model-badge"
+                  style="font-size: 11px; background: var(--bg-elevated); padding: 2px 8px; border-radius: 12px; border: 1px solid var(--border-light); color: var(--accent-primary);">gemini-3.1-flash-lite</span>
+                <button id="delete-gemini-key-badge-btn" title="מחק מפתח API"
+                  style="background: none; border: none; font-size: 14px; cursor: pointer; color: var(--danger); padding: 2px 4px;">🗑️</button>
               </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
               <!-- Camera capture input -->
-              <label class="btn-primary" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; cursor: pointer; border-radius: 12px; font-weight: 700;">
+              <label class="btn-primary"
+                style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; cursor: pointer; border-radius: 12px; font-weight: 700;">
                 <span style="font-size: 18px;">📸</span>
                 <span data-i18n="capture_food">📸 Capture Food</span>
                 <input type="file" id="food-camera-input" accept="image/*" capture="environment" style="display: none;">
               </label>
 
               <!-- Gallery upload input -->
-              <label class="btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; cursor: pointer; border-radius: 12px; font-weight: 700;">
+              <label class="btn-secondary"
+                style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; cursor: pointer; border-radius: 12px; font-weight: 700;">
                 <span style="font-size: 18px;">🖼️</span>
                 <span data-i18n="upload_image">🖼️ Upload Image</span>
                 <input type="file" id="food-gallery-input" accept="image/*" style="display: none;">
               </label>
             </div>
 
-              <button id="manual-meal-btn" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <button id="manual-meal-btn" class="btn-secondary"
+              style="width: 100%; padding: 10px; font-size: 13px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
               <span>✏️</span> <span data-i18n="add_manual_meal">Add Meal Manually (No Photo)</span>
             </button>
           </div>
 
           <!-- Photo Analysis Preview Modal / Card -->
-          <div id="food-analysis-preview" style="display: none; background: var(--bg-card); border: 2px solid var(--accent-primary); border-radius: 16px; padding: 16px; margin-bottom: 20px; animation: slideDown 0.3s ease;">
+          <div id="food-analysis-preview"
+            style="display: none; background: var(--bg-card); border: 2px solid var(--accent-primary); border-radius: 16px; padding: 16px; margin-bottom: 20px; animation: slideDown 0.3s ease;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <h4 style="margin: 0; font-size: 15px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+              <h4
+                style="margin: 0; font-size: 15px; font-weight: 800; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
                 <span>✨</span> <span data-i18n="dishes_for_ai">Dishes for AI Analysis</span>
               </h4>
-              <button id="cancel-analysis-btn" style="background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-muted);">✕</button>
+              <button id="cancel-analysis-btn"
+                style="background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-muted);">✕</button>
             </div>
 
             <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: center;">
-              <img id="food-preview-img" src="" alt="תמונת אוכל" style="width: 90px; height: 90px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-light); background: #000;">
+              <img id="food-preview-img" src="" alt="תמונת אוכל"
+                style="width: 90px; height: 90px; border-radius: 12px; object-fit: cover; border: 1px solid var(--border-light); background: #000;">
               <div style="flex: 1;">
-                <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;" data-i18n="extra_notes_label">Additional note/description (optional):</label>
-                <input type="text" id="food-user-notes" placeholder="למשל: 200ג חזה עוף, חצי צלחת אורז" style="width: 100%; padding: 8px 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); font-size: 13px; color: var(--text-primary);">
+                <label
+                  style="font-size: 11px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;"
+                  data-i18n="extra_notes_label">Additional note/description (optional):</label>
+                <input type="text" id="food-user-notes" placeholder="למשל: 200ג חזה עוף, חצי צלחת אורז"
+                  style="width: 100%; padding: 8px 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); font-size: 13px; color: var(--text-primary);">
               </div>
             </div>
 
-            <button id="run-ai-analysis-btn" class="btn-primary" style="width: 100%; padding: 12px; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <button id="run-ai-analysis-btn" class="btn-primary"
+              style="width: 100%; padding: 12px; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px;">
               <span>🤖</span> <span data-i18n="analyze_with_ai">Analyze Calories & Protein with AI</span>
             </button>
           </div>
@@ -403,41 +450,56 @@
               <h3 style="font-size: 16px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
                 <span>📊</span> <span data-i18n="daily_nutrition_balance">Daily Calorie & Nutrition Balance</span>
               </h3>
-              <span id="nutrition-date-label" style="font-size: 12px; color: var(--text-muted); font-weight: 600;"></span>
+              <span id="nutrition-date-label"
+                style="font-size: 12px; color: var(--text-muted); font-weight: 600;"></span>
             </div>
 
             <!-- Macro Cards Grid -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
               <!-- Calories Card -->
-              <div style="background: var(--bg-elevated); padding: 14px; border-radius: 14px; display: flex; flex-direction: column; border: 1px solid var(--border-light); position: relative; overflow: hidden;">
+              <div
+                style="background: var(--bg-elevated); padding: 14px; border-radius: 14px; display: flex; flex-direction: column; border: 1px solid var(--border-light); position: relative; overflow: hidden;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <span style="font-size: 12px; color: var(--text-secondary); font-weight: 700;" data-i18n="calories">קלוריות</span>
+                  <span style="font-size: 12px; color: var(--text-secondary); font-weight: 700;"
+                    data-i18n="calories">קלוריות</span>
                   <span style="font-size: 14px;">🔥</span>
                 </div>
                 <div style="display: flex; align-items: baseline; gap: 4px;">
-                  <span id="nut-calories-total" style="font-size: 24px; font-weight: 900; color: var(--warning);">0</span>
-                  <span style="font-size: 12px; color: var(--text-muted);">/ <span id="nut-calories-target">1980</span> <span data-i18n="nut_kcal">kcal</span></span>
+                  <span id="nut-calories-total"
+                    style="font-size: 24px; font-weight: 900; color: var(--warning);">0</span>
+                  <span style="font-size: 12px; color: var(--text-muted);">/ <span id="nut-calories-target">1980</span>
+                    <span data-i18n="nut_kcal">kcal</span></span>
                 </div>
-                <div style="height: 6px; background: var(--bg-input); border-radius: 3px; margin-top: 8px; overflow: hidden;">
-                  <div id="nut-calories-bar" style="height: 100%; width: 0%; background: var(--warning); transition: width 0.5s ease;"></div>
+                <div
+                  style="height: 6px; background: var(--bg-input); border-radius: 3px; margin-top: 8px; overflow: hidden;">
+                  <div id="nut-calories-bar"
+                    style="height: 100%; width: 0%; background: var(--warning); transition: width 0.5s ease;"></div>
                 </div>
               </div>
 
               <!-- Protein Card -->
-              <div style="background: var(--bg-elevated); padding: 14px; border-radius: 14px; display: flex; flex-direction: column; border: 1px solid var(--border-light); position: relative; overflow: hidden;">
+              <div
+                style="background: var(--bg-elevated); padding: 14px; border-radius: 14px; display: flex; flex-direction: column; border: 1px solid var(--border-light); position: relative; overflow: hidden;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <span style="font-size: 12px; color: var(--text-secondary); font-weight: 700;" data-i18n="protein">Protein</span>
+                  <span style="font-size: 12px; color: var(--text-secondary); font-weight: 700;"
+                    data-i18n="protein">Protein</span>
                   <span style="font-size: 14px;">🥩</span>
                 </div>
                 <div style="display: flex; align-items: baseline; gap: 4px;">
-                  <span id="nut-protein-total" style="font-size: 24px; font-weight: 900; color: var(--success);">0</span>
-                  <span style="font-size: 12px; color: var(--text-muted);">/ <span id="nut-protein-target">160</span>g</span>
+                  <span id="nut-protein-total"
+                    style="font-size: 24px; font-weight: 900; color: var(--success);">0</span>
+                  <span style="font-size: 12px; color: var(--text-muted);">/ <span
+                      id="nut-protein-target">160</span>g</span>
                 </div>
-                <div style="height: 6px; background: var(--bg-input); border-radius: 3px; margin-top: 8px; overflow: hidden;">
-                  <div id="nut-protein-bar" style="height: 100%; width: 0%; background: var(--success); transition: width 0.5s ease;"></div>
+                <div
+                  style="height: 6px; background: var(--bg-input); border-radius: 3px; margin-top: 8px; overflow: hidden;">
+                  <div id="nut-protein-bar"
+                    style="height: 100%; width: 0%; background: var(--success); transition: width 0.5s ease;"></div>
                 </div>
-                <button id="quick-protein-powder-btn" style="margin-top: 10px; padding: 8px 6px; font-size: 11px; font-weight: 800; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15)); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; text-align: center; line-height: 1.2;">
-                  🥛 <span data-i18n="quick_protein_consumed">Consumed</span> <span id="quick-protein-amount">0</span>g <span data-i18n="quick_protein_powder">protein powder</span>
+                <button id="quick-protein-powder-btn"
+                  style="margin-top: 10px; padding: 8px 6px; font-size: 11px; font-weight: 800; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15)); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; text-align: center; line-height: 1.2;">
+                  🥛 <span data-i18n="quick_protein_consumed">Consumed</span> <span id="quick-protein-amount">0</span>g
+                  <span data-i18n="quick_protein_powder">protein powder</span>
                 </button>
               </div>
             </div>
@@ -476,14 +538,16 @@
           </div>
 
           <!-- Meals Log -->
-          <div style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 80px;">
-            <div style="font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
+          <div
+            style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 16px; margin-bottom: 80px;">
+            <div
+              style="font-size: 14px; font-weight: 800; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
               <span data-i18n="meals_today_detail">🍽️ Today's Meal Log</span>
               <span id="meals-count-badge" style="font-size: 11px; font-weight: 700; color: var(--text-muted);"></span>
             </div>
 
             <div id="meals-log-container" style="display: flex; flex-direction: column; gap: 10px;">
-               <!-- Injected via JS -->
+              <!-- Injected via JS -->
             </div>
           </div>
 
@@ -496,43 +560,70 @@
           <h1 class="page-title" data-i18n="settings_title">הגדרות</h1>
         </div>
         <div class="settings-content">
-          
+
           <!-- Language Selector Card -->
           <div class="settings-card" style="border: 2px solid var(--accent-primary); background: var(--bg-card);">
             <h3 data-i18n="language_selection">🌐 Language / שפה / اللغة</h3>
             <p data-i18n="select_language_desc">Choose application interface language</p>
-            <div id="settings-lang-buttons" style="margin-top: 12px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
-              <button class="login-lang-btn" data-lang="en" style="padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span style="font-size: 20px; font-weight: 900; color: #ef4444; line-height: 1;">E</span> English</button>
-              <button class="login-lang-btn" data-lang="he" style="padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span style="font-size: 20px; font-weight: 900; color: #3b82f6; line-height: 1;">ע</span> עברית</button>
-              <button class="login-lang-btn" data-lang="ar" style="padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span style="font-size: 20px; font-weight: 900; color: #22c55e; line-height: 1;">ع</span> العربية</button>
+            <div id="settings-lang-buttons"
+              style="margin-top: 12px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+              <button class="login-lang-btn" data-lang="en"
+                style="padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span
+                  style="font-size: 20px; font-weight: 900; color: #ef4444; line-height: 1;">E</span> English</button>
+              <button class="login-lang-btn" data-lang="he"
+                style="padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span
+                  style="font-size: 20px; font-weight: 900; color: #3b82f6; line-height: 1;">ע</span> עברית</button>
+              <button class="login-lang-btn" data-lang="ar"
+                style="padding: 10px 20px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span
+                  style="font-size: 20px; font-weight: 900; color: #22c55e; line-height: 1;">ع</span> العربية</button>
             </div>
           </div>
 
           <!-- Google Account & Drive Sync Card -->
-          <div class="settings-card" style="border: 2px solid var(--accent-primary); background: var(--bg-card); position: relative; overflow: hidden;">
-            <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: var(--accent-primary); opacity: 0.1; filter: blur(20px); border-radius: 50%;"></div>
+          <div class="settings-card"
+            style="border: 2px solid var(--accent-primary); background: var(--bg-card); position: relative; overflow: hidden;">
+            <div
+              style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: var(--accent-primary); opacity: 0.1; filter: blur(20px); border-radius: 50%;">
+            </div>
             <h3 data-i18n="google_drive_sync">☁️ Google Account & Drive Sync</h3>
-            <p data-i18n="google_drive_desc">Save and automatically sync your training data in your personal Google Drive.</p>
+            <p data-i18n="google_drive_desc">Save and automatically sync your training data in your personal Google
+              Drive.</p>
 
-            <div id="google-user-status" style="display: flex; align-items: center; gap: 12px; background: var(--bg-elevated); padding: 12px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border-light);">
+            <div id="google-user-status"
+              style="display: flex; align-items: center; gap: 12px; background: var(--bg-elevated); padding: 12px; border-radius: 12px; margin-bottom: 16px; border: 1px solid var(--border-light);">
               <div style="font-size: 28px;">👤</div>
               <div style="flex: 1;">
-                <div id="google-user-name" style="font-weight: 700; color: var(--text-primary); font-size: 14px;" data-i18n="not_connected_google">Not connected to Google Account</div>
-                <div id="google-user-email" style="font-size: 12px; color: var(--text-secondary);" data-i18n="local_offline_only">Local offline storage only</div>
+                <div id="google-user-name" style="font-weight: 700; color: var(--text-primary); font-size: 14px;"
+                  data-i18n="not_connected_google">Not connected to Google Account</div>
+                <div id="google-user-email" style="font-size: 12px; color: var(--text-secondary);"
+                  data-i18n="local_offline_only">Local offline storage only</div>
               </div>
             </div>
-            
+
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
               <span id="last-sync-status" style="font-size: 11px; font-weight: 600; color: var(--text-muted);"></span>
             </div>
 
             <div class="settings-actions" style="display: flex; flex-direction: column; gap: 8px;">
-              <button id="google-login-btn" class="btn-primary" style="width: 100%; padding: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                <svg width="20" height="20" viewBox="0 0 48 48" style="flex-shrink: 0;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 000 24c0 3.77.9 7.35 2.56 10.54l7.97-5.95z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.95C6.51 42.62 14.62 48 24 48z"/></svg>
+              <button id="google-login-btn" class="btn-primary"
+                style="width: 100%; padding: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 48 48" style="flex-shrink: 0;">
+                  <path fill="#EA4335"
+                    d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+                  <path fill="#4285F4"
+                    d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+                  <path fill="#FBBC05"
+                    d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 000 24c0 3.77.9 7.35 2.56 10.54l7.97-5.95z" />
+                  <path fill="#34A853"
+                    d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.95C6.51 42.62 14.62 48 24 48z" />
+                </svg>
                 <span data-i18n="connect_google">Sign in with Google</span>
               </button>
-              <button id="cloud-sync-btn" class="btn-secondary" style="width: 100%; padding: 10px;" data-i18n="sync_now">🔄 Sync Now with Google Drive</button>
-              <button id="google-logout-btn" class="btn-danger" style="width: 100%; padding: 8px; display: none; font-size: 12px;" data-i18n="logout_google">Sign out of Google</button>
+              <button id="cloud-sync-btn" class="btn-secondary" style="width: 100%; padding: 10px;"
+                data-i18n="sync_now">🔄 Sync Now with Google Drive</button>
+              <button id="google-logout-btn" class="btn-danger"
+                style="width: 100%; padding: 8px; display: none; font-size: 12px;" data-i18n="logout_google">Sign out of
+                Google</button>
             </div>
 
 
@@ -562,19 +653,27 @@
 
               <!-- Key Active / Delete Wrapper (Shown in place of key input ONLY when key IS defined) -->
               <div id="settings-gemini-key-active-wrapper" style="display: none; flex-direction: column; gap: 4px;">
-                <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block;" data-i18n="api_key_label">API Key (Google Gemini)</label>
-                <div style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-elevated); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-light); gap: 12px;">
-                  <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--success);">
+                <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block;"
+                  data-i18n="api_key_label">API Key (Google Gemini)</label>
+                <div
+                  style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-elevated); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-light); gap: 12px;">
+                  <div
+                    style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--success);">
                     <span style="font-size: 16px;">✅</span>
                     <span data-i18n="api_key_active">API Key is Active & Configured</span>
                   </div>
-                  <button id="delete-settings-gemini-btn" class="btn-danger" style="padding: 8px 12px; font-size: 13px; white-space: nowrap;" data-i18n="delete_key">🗑️ Delete Key</button>
+                  <button id="delete-settings-gemini-btn" class="btn-danger"
+                    style="padding: 8px 12px; font-size: 13px; white-space: nowrap;" data-i18n="delete_key">🗑️ Delete
+                    Key</button>
                 </div>
               </div>
 
               <div>
-                <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;" data-i18n="ai_model_label">AI Model</label>
-                <select id="settings-gemini-model" style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary);">
+                <label
+                  style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;"
+                  data-i18n="ai_model_label">AI Model</label>
+                <select id="settings-gemini-model"
+                  style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary);">
                   <option value="gemini-3.1-flash-lite">Gemini 3.1 Flash Lite (Recommended)</option>
                   <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                   <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep & Detailed)</option>
@@ -583,7 +682,8 @@
               </div>
 
               <div style="margin-top: 4px;">
-                <button id="save-settings-gemini-btn" class="btn-primary" style="width: 100%;" data-i18n="save_ai_settings">Save AI Settings</button>
+                <button id="save-settings-gemini-btn" class="btn-primary" style="width: 100%;"
+                  data-i18n="save_ai_settings">Save AI Settings</button>
               </div>
             </div>
           </div>
@@ -601,14 +701,16 @@
             <h3 data-i18n="program_guide_card">📖 Full Program Guide</h3>
             <p data-i18n="program_guide_desc">Generate a detailed 52-week guide with program structure, exercises, and progression stages.</p>
             <div class="settings-actions">
-              <button id="export-guide-btn" class="btn-primary" style="width:100%" data-i18n="view_download_guide">📄 View & Download Full Guide</button>
+              <button id="export-guide-btn" class="btn-primary" style="width:100%" data-i18n="view_download_guide">📄
+                View & Download Full Guide</button>
             </div>
           </div>
           <div class="settings-card">
             <h3 data-i18n="reload_plan_card">🔄 Reset & Reload Plan</h3>
             <p data-i18n="reload_plan_desc">Reload the training program from original source data.</p>
             <div class="settings-actions">
-              <button id="reload-plan-btn" class="btn-warning" data-i18n="reload_plan_btn">🔄 Reload Training Plan</button>
+              <button id="reload-plan-btn" class="btn-warning" data-i18n="reload_plan_btn">🔄 Reload Training
+                Plan</button>
             </div>
           </div>
           <div class="settings-card">
@@ -685,7 +787,8 @@
   <div id="rest-timer" class="rest-timer hidden">
     <div class="rest-timer-header">
       <span class="rest-timer-title" data-i18n="timer_title">⏱️ Rest Timer</span>
-      <button id="rest-timer-close" class="icon-btn" style="width: 24px; height: 24px; font-size: 12px; min-height: 24px; padding: 0;">✕</button>
+      <button id="rest-timer-close" class="icon-btn"
+        style="width: 24px; height: 24px; font-size: 12px; min-height: 24px; padding: 0;">✕</button>
     </div>
     <div class="rest-timer-display" id="rest-timer-display">00:00</div>
     <div class="rest-timer-controls">
@@ -708,10 +811,20 @@
       </div>
       <div class="login-banner-text">
         <h4 id="login-banner-title" class="login-banner-title" data-i18n="auth_prompt_title">Cloud Sync Offline ☁️</h4>
-        <p id="login-banner-sub" class="login-banner-sub" data-i18n="auth_prompt_sub">Sign in with Google to automatically back up your workouts & nutrition data!</p>
+        <p id="login-banner-sub" class="login-banner-sub" data-i18n="auth_prompt_sub">Sign in with Google to
+          automatically back up your workouts & nutrition data!</p>
       </div>
       <button id="login-banner-btn" class="login-banner-btn">
-        <svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink: 0;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 000 24c0 3.77.9 7.35 2.56 10.54l7.97-5.95z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.95C6.51 42.62 14.62 48 24 48z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink: 0;">
+          <path fill="#EA4335"
+            d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+          <path fill="#4285F4"
+            d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+          <path fill="#FBBC05"
+            d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 000 24c0 3.77.9 7.35 2.56 10.54l7.97-5.95z" />
+          <path fill="#34A853"
+            d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.95C6.51 42.62 14.62 48 24 48z" />
+        </svg>
         <span data-i18n="auth_prompt_btn">Sign in with Google</span>
       </button>
     </div>
@@ -753,24 +866,45 @@
       
       <!-- Language Selector -->
       <div style="margin-bottom: 20px;">
-        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;" data-i18n="login_choose_language">Choose Language</p>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;"
+          data-i18n="login_choose_language">Choose Language</p>
         <div style="display: flex; gap: 8px; justify-content: center;">
-          <button class="login-lang-btn active" data-lang="en" onclick="I18n.setLanguage('en')" style="padding: 8px 16px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span style="font-size: 20px; font-weight: 900; color: #ef4444; line-height: 1;">E</span> English</button>
-          <button class="login-lang-btn" data-lang="he" onclick="I18n.setLanguage('he')" style="padding: 8px 16px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span style="font-size: 20px; font-weight: 900; color: #3b82f6; line-height: 1;">ע</span> עברית</button>
-          <button class="login-lang-btn" data-lang="ar" onclick="I18n.setLanguage('ar')" style="padding: 8px 16px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span style="font-size: 20px; font-weight: 900; color: #22c55e; line-height: 1;">ع</span> العربية</button>
+          <button class="login-lang-btn active" data-lang="en" onclick="I18n.setLanguage('en')"
+            style="padding: 8px 16px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span
+              style="font-size: 20px; font-weight: 900; color: #ef4444; line-height: 1;">E</span> English</button>
+          <button class="login-lang-btn" data-lang="he" onclick="I18n.setLanguage('he')"
+            style="padding: 8px 16px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span
+              style="font-size: 20px; font-weight: 900; color: #3b82f6; line-height: 1;">ע</span> עברית</button>
+          <button class="login-lang-btn" data-lang="ar" onclick="I18n.setLanguage('ar')"
+            style="padding: 8px 16px; border-radius: 10px; border: 2px solid var(--border-light); background: var(--bg-elevated); cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary); transition: all 0.2s; display: flex; align-items: center; gap: 6px;"><span
+              style="font-size: 20px; font-weight: 900; color: #22c55e; line-height: 1;">ع</span> العربية</button>
         </div>
       </div>
-      
+
       <div style="font-size: 48px; margin-bottom: 16px;">💪</div>
-      <h2 style="font-size: 24px; margin-bottom: 8px; color: var(--text-primary);" data-i18n="welcome_title">Welcome to FitUp!</h2>
-      <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;" data-i18n="welcome_sub">Sync your workout and nutrition data safely to your Google Drive</p>
-      
-      <button id="login-google-btn" class="btn-primary" style="width: 100%; padding: 14px; font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #4285F4, #34A853);">
-        <svg width="22" height="22" viewBox="0 0 48 48" style="flex-shrink: 0;"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 000 24c0 3.77.9 7.35 2.56 10.54l7.97-5.95z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.95C6.51 42.62 14.62 48 24 48z"/></svg>
+      <h2 style="font-size: 24px; margin-bottom: 8px; color: var(--text-primary);" data-i18n="welcome_title">Welcome to
+        FitUp!</h2>
+      <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 24px;" data-i18n="welcome_sub">Sync your
+        workout and nutrition data safely to your Google Drive</p>
+
+      <button id="login-google-btn" class="btn-primary"
+        style="width: 100%; padding: 14px; font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #4285F4, #34A853);">
+        <svg width="22" height="22" viewBox="0 0 48 48" style="flex-shrink: 0;">
+          <path fill="#EA4335"
+            d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+          <path fill="#4285F4"
+            d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+          <path fill="#FBBC05"
+            d="M10.53 28.59A14.5 14.5 0 019.5 24c0-1.59.28-3.14.76-4.59l-7.98-6.19A23.99 23.99 0 000 24c0 3.77.9 7.35 2.56 10.54l7.97-5.95z" />
+          <path fill="#34A853"
+            d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 5.95C6.51 42.62 14.62 48 24 48z" />
+        </svg>
         <span data-i18n="connect_google">Sign in with Google</span>
       </button>
-      
-      <button id="login-bypass-btn" style="background: none; border: none; color: var(--text-muted); font-size: 13px; text-decoration: underline; cursor: pointer; padding: 8px;" data-i18n="offline_continue">I am a new user / Continue offline only</button>
+
+      <button id="login-bypass-btn"
+        style="background: none; border: none; color: var(--text-muted); font-size: 13px; text-decoration: underline; cursor: pointer; padding: 8px;"
+        data-i18n="offline_continue">I am a new user / Continue offline only</button>
     </div>
   </div>
 
@@ -822,4 +956,5 @@
   <script src="js/export-guide.js?v=140"></script>
   <script src="js/app.js?v=140"></script>
 </body>
+
 </html>
