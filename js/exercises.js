@@ -166,6 +166,7 @@ const ExercisesPage = (() => {
         title: 'warmup_mobility', icon: '⚡', exercises: [
           { name: 'High Knees', unlockWeek: 1 },
           { name: 'Deep Mobility Protocol', unlockWeek: 1 },
+          { name: 'Band Neck Flexion & Extension', unlockWeek: 1 },
           { name: 'Micro Mobility Protocol', unlockWeek: 1 },
           { name: 'Wrist Rocks', unlockWeek: 53 }
         ]
@@ -1167,9 +1168,9 @@ const ExercisesPage = (() => {
           <div class="guide-card-title">
             <span style="flex: 0 1 auto; word-break: break-word;">${ex.name}</span>
             ${(() => {
-              const equips = UI.getEquipments ? UI.getEquipments(ex.name) : [UI.getEquipment(ex.name)];
-              return equips.filter(eq => eq && eq.label !== I18n.t('equip_bodyweight')).map(eq => `<span class="guide-equipment" style="flex-shrink: 0; unicode-bidi: isolate;">${eq.icon} ${eq.label}</span>`).join('');
-            })()}
+        const equips = UI.getEquipments ? UI.getEquipments(ex.name) : [UI.getEquipment(ex.name)];
+        return equips.filter(eq => eq && eq.label !== I18n.t('equip_bodyweight')).map(eq => `<span class="guide-equipment" style="flex-shrink: 0; unicode-bidi: isolate;">${eq.icon} ${eq.label}</span>`).join('');
+      })()}
           </div>
           <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0;">
             <span class="guide-card-category">${ex.category || ''}</span>
