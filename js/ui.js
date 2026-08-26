@@ -224,7 +224,8 @@ const UI = (() => {
     'TUCK HOLD': 'Tuck Hold (Chair).gif',
     'TUCK L SIT': 'Tuck Hold (Bars).gif',
     'WEIGHTED DEFICIT VEST 5KG': 'Weighted Deficit Push-Up.gif',
-    'WEIGHTED DIAMOND VEST 5KG': 'Weighted Diamond Push-Up.gif'
+    'WEIGHTED DIAMOND VEST 5KG': 'Weighted Diamond Push-Up.gif',
+    'BAND NECK FLEXION EXTENSION': 'Band Neck Flexion & Extension.gif'
   };
 
   const EXERCISE_PNG_ALIASES = {
@@ -325,7 +326,8 @@ const UI = (() => {
     'TUCK HOLD': 'TUCK HOLD (CHAIR).png',
     'TUCK L SIT': 'L-SIT TUCK (BARS).png',
     'WEIGHTED DEFICIT VEST 5KG': 'WEIGHTED DEFICIT PUSH-UP.png',
-    'WEIGHTED DIAMOND VEST 5KG': 'WEIGHTED DIAMOND PUSH-UP.png'
+    'WEIGHTED DIAMOND VEST 5KG': 'WEIGHTED DIAMOND PUSH-UP.png',
+    'BAND NECK FLEXION EXTENSION': 'BAND NECK FLEXION & EXTENSION.png'
   };
 
   function handleImageFallback(imgEl, type) {
@@ -476,18 +478,25 @@ const UI = (() => {
     return !NO_GIF_EXERCISES.has(upper);
   }
 
+  function encodeMediaPath(path) {
+    // Percent-encode each segment so names with spaces / & survive innerHTML attribute injection on any protocol
+    return path.split('/').map(encodeURIComponent).join('/');
+  }
+
   function getImageUrl(title) {
     if (!title) return null;
     const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
     const aliasPng = EXERCISE_PNG_ALIASES[cleanTitle];
-    return aliasPng ? `images/exercises/${aliasPng}` : `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
+    const path = aliasPng ? `images/exercises/${aliasPng}` : `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
+    return encodeMediaPath(path);
   }
 
   function getGifUrl(title) {
     if (!title) return null;
     const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
     const aliasGif = EXERCISE_GIF_ALIASES[cleanTitle];
-    return aliasGif ? `images/gifs/${aliasGif}` : `images/gifs/${title}.gif`;
+    const path = aliasGif ? `images/gifs/${aliasGif}` : `images/gifs/${title}.gif`;
+    return encodeMediaPath(path);
   }
 
   function showImageModal(title, src) {
