@@ -379,7 +379,7 @@ const DB = (() => {
     const tracking = await getAll(STORES.TRACKING);
     const settings = await getAll(STORES.SETTINGS);
     const photos = await getAll(STORES.PHOTOS);
-    const progressionState = await getAll(STORES.PROGRESSION_STATE);
+    const rawProgState = await getAll(STORES.PROGRESSION_STATE);
     const progressionHistory = await getAll(STORES.PROGRESSION_HISTORY);
     const adaptiveRestHistory = await getAll(STORES.ADAPTIVE_REST);
     const armBlockStatus = await getAll(STORES.ARM_BLOCK_STATUS);
@@ -387,6 +387,20 @@ const DB = (() => {
     const leanSessionState = await getAll(STORES.LEAN_SESSION);
     const myoClusterHistory = await getAll(STORES.MYO_CLUSTERS);
     
+    // Sanitize progressionState to ensure Zero Decisions protection (no 0 kg on weighted exercises)
+    const progressionState = (rawProgState || []).map(state => {
+      if (state && state.type === 'weighted') {
+        const minLegal = state.minWeight || 3;
+        if (!state.currentWeight || state.currentWeight < minLegal) {
+          return {
+            ...state,
+            currentWeight: Math.max(minLegal, state.startingWeight || minLegal)
+          };
+        }
+      }
+      return state;
+    });
+
     // Fetch nutrition in the format the backend expects
     const nutritionList = await getAll(STORES.NUTRITION);
     const nutrition = {};
@@ -398,6 +412,7 @@ const DB = (() => {
     }
     
     return {
+      schemaVersion: 15.6,
       version: 15.6,
       exportDate: new Date().toISOString(),
       tracking,
@@ -509,22 +524,33 @@ const DB = (() => {
 
     // Progression Engine Stores Import
     const arrayStores = [
-      { key: 'progressionState', store: STORES.PROGRESSION_STATE, idProp: 'exerciseId' },
+      { key: 'progressionState', store: STORES.PROGRESSION_STATE, idProp: 'sessionKey' },
       { key: 'progressionHistory', store: STORES.PROGRESSION_HISTORY, idProp: 'id' },
-      { key: 'adaptiveRestHistory', store: STORES.ADAPTIVE_REST, idProp: 'exerciseId' },
+      { key: 'adaptiveRestHistory', store: STORES.ADAPTIVE_REST, idProp: 'exerciseName' },
       { key: 'armBlockStatus', store: STORES.ARM_BLOCK_STATUS, idProp: 'muscleArea' },
       { key: 'armBlockExposure', store: STORES.ARM_BLOCK_EXPOSURE, idProp: 'id' },
-      { key: 'leanSessionState', store: STORES.LEAN_SESSION, idProp: 'sessionKey' },
+      { key: 'leanSessionState', store: STORES.LEAN_SESSION, idProp: 'dayIndex' },
       { key: 'myoClusterHistory', store: STORES.MYO_CLUSTERS, idProp: 'id' }
     ];
+
+    const getItemKey = (item, preferredProp) => {
+      if (!item) return null;
+      return item[preferredProp] ?? item.sessionKey ?? item.dayIndex ?? item.exerciseId ?? item.exerciseName ?? item.muscleArea ?? item.id;
+    };
 
     for (const item of arrayStores) {
       if (data[item.key] && Array.isArray(data[item.key])) {
         if (merge) {
           const localItems = await getAll(item.store);
           const map = new Map();
-          localItems.forEach(i => map.set(i[item.idProp], i));
-          data[item.key].forEach(i => map.set(i[item.idProp], i));
+          localItems.forEach(i => {
+            const k = getItemKey(i, item.idProp);
+            if (k !== null && k !== undefined) map.set(k, i);
+          });
+          data[item.key].forEach(i => {
+            const k = getItemKey(i, item.idProp);
+            if (k !== null && k !== undefined) map.set(k, i);
+          });
           await putBulk(item.store, Array.from(map.values()));
         } else {
           await clear(item.store);

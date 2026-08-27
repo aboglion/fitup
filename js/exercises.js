@@ -26,10 +26,10 @@ const ExercisesPage = (() => {
     'Pallof Press Progression': [{ weight: 'Band 30 kg', fromWeek: 10 }, { weight: 'Band 40 kg', fromWeek: 34 }],
 
     // Dumbbell Lower Body
-    'Goblet Bulgarian Split Squat': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 26 }],
+    'Goblet Bulgarian Split Squat': [{ weight: '6 kg', fromWeek: 5 }, { weight: '18 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 26 }],
     'Goblet Reverse Lunge': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 18 }, { weight: '24 kg', fromWeek: 42 }],
     'Goblet Romanian Deadlift': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 5 }, { weight: '24 kg', fromWeek: 10 }],
-    'Single-Leg RDL': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }],
+    'Single-Leg RDL': [{ weight: '6 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }],
     'Pistol Squat': [{ weight: '6 kg', fromWeek: 42 }, { weight: '9 kg', fromWeek: 50 }, { weight: '12 kg', fromWeek: 58 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }],
@@ -51,12 +51,12 @@ const ExercisesPage = (() => {
     'Push-Up Volume': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Push-Up Volume (Day 5)': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Single-Arm Curl': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 34 }, { weight: '12 kg', fromWeek: 58 }, { weight: '15 kg', fromWeek: 62 }, { weight: '18 kg', fromWeek: 66 }],
-    'Single-Arm Hammer Curl': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 53 }],
+    'Single-Arm Hammer Curl': [{ weight: '3 kg', fromWeek: 5 }, { weight: '6 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 53 }],
     'Arm Block - Single-Arm Curl': [{ weight: '3-12 kg', fromWeek: 10 }, { weight: '18 kg', fromWeek: 74 }],
 
     // Bodyweight, Mobility, Warmup & Skill Progressions
     'Dead Bug': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '1 kg', fromWeek: 10 }, { weight: '2 kg', fromWeek: 26 }, { weight: '3 kg', fromWeek: 42 }],
-    'Hollow Body Hold': [{ weight: 'Tuck Hold', fromWeek: 1 }, { weight: 'One-Leg Extended', fromWeek: 10 }, { weight: 'Hollow Hold', fromWeek: 26 }],
+    'Hollow Body Hold': [{ weight: 'Tuck Hold', fromWeek: 5 }, { weight: 'One-Leg Extended', fromWeek: 10 }, { weight: 'Hollow Hold', fromWeek: 26 }],
     'Pike Progression': [{ weight: 'Pike Hold', fromWeek: 1 }, { weight: 'Pike Push-Up', fromWeek: 5 }],
     'Push-up Bars Progression': [{ weight: 'Incline Push-Up', fromWeek: 1 }, { weight: 'Push-Up', fromWeek: 5 }],
     'TRX Y-T-W': [{ weight: 'Angle 1', fromWeek: 1 }, { weight: 'Angle 2', fromWeek: 18 }, { weight: 'Angle 3', fromWeek: 42 }],
@@ -161,7 +161,7 @@ const ExercisesPage = (() => {
       {
         title: 'squat_tree', icon: '🏋️', exercises: [
           { name: 'Bodyweight Squat', unlockWeek: 1, id: 'squat-1' },
-          { name: 'Goblet Bulgarian Split Squat', unlockWeek: 1, parentId: 'squat-1', id: 'squat-2', relType: 'replace' }
+          { name: 'Goblet Bulgarian Split Squat', unlockWeek: 5, parentId: 'squat-1', id: 'squat-2', relType: 'replace' }
         ]
       },
       {
@@ -178,9 +178,8 @@ const ExercisesPage = (() => {
       },
       {
         title: 'glutes_calves', icon: '🍑', exercises: [
-          { name: 'Glute Bridge', unlockWeek: 1, id: 'glute-1' },
-          { name: 'DB Glute Bridge', unlockWeek: 1, parentId: 'glute-1', id: 'glute-2', relType: 'replace' },
-          { name: 'DB Hip Thrust', unlockWeek: 5, parentId: 'glute-2', id: 'glute-3', relType: 'replace' },
+          { name: 'DB Glute Bridge', unlockWeek: 1, id: 'glute-1' },
+          { name: 'DB Hip Thrust', unlockWeek: 5, parentId: 'glute-1', id: 'glute-2', relType: 'replace' },
           { name: 'Standing Single-Leg Calf Raise', unlockWeek: 1, id: 'calf-1' },
           { name: 'Seated Single-Leg Calf Raise', unlockWeek: 1, parentId: 'calf-1', id: 'calf-2', relType: 'accessory' }
         ]
@@ -271,8 +270,8 @@ const ExercisesPage = (() => {
       {
         title: 'hanging_core', icon: '🧱', exercises: [
           { name: 'Tuck L-Sit', unlockWeek: 1, id: 'l-sit-1' },
-          { name: 'One-Leg Extended L-Sit', unlockWeek: 1, parentId: 'l-sit-1', id: 'l-sit-2', relType: 'replace', unlockCond: '⚡ 15 שניות Tuck' },
-          { name: 'Full L-Sit', unlockWeek: 1, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace', unlockCond: '⚡ 15 שניות רגל אחת' }
+          { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-1', id: 'l-sit-2', relType: 'replace', unlockCond: '⚡ 15 שניות Tuck' },
+          { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace', unlockCond: '⚡ 15 שניות רגל אחת' }
         ]
       }
     ],

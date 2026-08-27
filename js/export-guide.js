@@ -16,7 +16,7 @@ window.ExporterGuide = (() => {
         "<strong>Protected Compound Lifts:</strong> Heavy compound exercises are strictly performed in straight sets with full adaptive rest to protect performance.",
         "<strong>Lean Pairs (Antagonistic & Non-Competing):</strong> Pair non-competing exercises (Day 3: TRX Row ↔ Single-Arm Lateral Raise; Day 5: Push-Up Volume ↔ Single-Arm Curl; Day 5: Towel Hang ↔ L-Sit). Perform Ex A → Ex B → 45-75s rest.",
         "<strong>Arm Block Myo-Reps Protocol:</strong> Active from Week 10 onwards. Myo-reps cluster (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped objectively after two consecutive tempo losses, capped at 1 exposure per muscle area per week.",
-        "<strong>Weekly Alternating Toggles:</strong> Day 3 rotates TRX Y-T-W (odd weeks) with Band Pull-Apart (even weeks). Day 1 follows a linear progression path.",
+        "<strong>Weekly Alternating Toggles & Progression Trees:</strong> Day 1 features alternating posterior/quad toggles and RPG skill tree unlocks (Bodyweight Squat → BSS, RDL → Single-Leg RDL, Lunge → Pistol Squat). Day 3 alternates TRX Y-T-W (odd weeks) with Band Pull-Apart (even weeks).",
         "<strong>Biceps 3-Week Microcycle:</strong> Weeks 1-2 heavy progressive overload, Week 3 light preservation (Single-Arm Hammer Curl 2 sets, no progression).",
         "<strong>Data Backup & Cloud Sync:</strong> One-click local JSON export/import alongside automatic bidirectional Google Drive cloud synchronization."
       ],
@@ -75,7 +75,7 @@ window.ExporterGuide = (() => {
         "<strong>הגנה על תרגילי בסיס:</strong> תרגילי כוח מורכבים כבדים מבוצעים תמיד כסטים ישרים עם מנוחה אדפטיבית מלאה להגנה על ביצועים.",
         "<strong>זיווגי Lean (אנטגוניסטיים ולא-מתחרים):</strong> זיווג תרגילים לא מתחרים (יום 3: TRX Row ↔ Single-Arm Lateral Raise; יום 5: Push-Up Volume ↔ Single-Arm Curl; יום 5: Towel Hang ↔ L-Sit). מבוצע א' ← ב' ← מנוחה 45-75 שנ'.",
         "<strong>פרוטוקול Arm Block ב-Myo-Reps:</strong> פעיל משבוע 10. צביר Myo-Reps (סט אקטיבציה + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה). עצירה אובייקטיבית ב-2 אובדני טמפו רצופים, מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.",
-        "<strong>רוטציות שבועיות (Toggles):</strong> יום 3 מחליף TRX Y-T-W (אי-זוגי) עם Band Pull-Apart (זוגי). יום 1 מתבסס על התקדמות ליניארית.",
+        "<strong>רוטציות שבועיות ועצי התקדמות:</strong> יום 1 כולל רוטציית שרשרת אחורית/ארבע-ראשי ופתיחת שלבים בעץ היכולות (סקוואט ← BSS, RDL ← Single-Leg RDL, מכרעים ← Pistol Squat). יום 3 מחליף TRX Y-T-W (אי-זוגי) עם Band Pull-Apart (זוגי).",
         "<strong>מיקרו-מחזור בייספס (3 שבועות):</strong> שבועות 1-2 עומס כבד וקידום, שבוע 3 קל (Single-Arm Hammer Curl בלבד, 2 סטים, ללא קידום).",
         "<strong>גיבוי נתונים וסנכרון ענן:</strong> ייצוא/ייבוא קובץ JSON מקומי בלחיצה אחת לצד סנכרון ענן דו-כיווני ל-Google Drive."
       ],

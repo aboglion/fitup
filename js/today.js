@@ -220,7 +220,8 @@ const TodayPage = (() => {
         const startW = exDef?.startingWeight || extractNumericWeight(ex.weight) || minW || 6;
         let currentW = (state && state.currentWeightKg != null && state.currentWeightKg > 0) ? state.currentWeightKg : startW;
         currentW = Math.max(minW, currentW);
-        const targetW = isDeload ? Math.max(minW, currentW - 3) : currentW;
+        const deloadRed = window.TRAINING_DATA?.progressionSettings?.deloadWeightReductionKg || 2;
+        const targetW = isDeload ? Math.max(minW, currentW - deloadRed) : currentW;
 
         ex.targetWeightKg = targetW;
 

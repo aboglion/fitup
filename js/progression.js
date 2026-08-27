@@ -422,7 +422,7 @@
       if (!exercise || !state) return state;
 
       const updated = { ...state };
-      const deloadReduction = window.TRAINING_DATA?.progressionSettings?.deloadWeightReductionKg || 3;
+      const deloadReduction = window.TRAINING_DATA?.progressionSettings?.deloadWeightReductionKg || 2;
 
       if (exercise.type === 'weighted') {
         const minW = exercise.minWeight || 3;
@@ -471,12 +471,13 @@
       const currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || 3);
       const currentStage = state ? (exercise.stages ? exercise.stages[state.currentStageIndex || 0] : null) : (exercise.stages ? exercise.stages[0] : null);
 
+      const deloadRed = window.TRAINING_DATA?.progressionSettings?.deloadWeightReductionKg || 2;
       return {
         exerciseId: exercise.id,
         name: exercise.name,
         sets,
         repWindow: exercise.repWindow || (exercise.windowMin && exercise.windowMax ? exercise.windowMin + "–" + exercise.windowMax : "8–12"),
-        targetWeightKg: isDeload ? Math.max(exercise.minWeight || 3, currentWeight - 3) : currentWeight,
+        targetWeightKg: isDeload ? Math.max(exercise.minWeight || 3, currentWeight - deloadRed) : currentWeight,
         targetStage: currentStage,
         restSeconds: exercise.rest || exercise.restSeconds || 60,
         isDeload,

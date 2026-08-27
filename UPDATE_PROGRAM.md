@@ -350,14 +350,18 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 - שני מצבי ה-progression נשמרים תמיד.
 - המעבר ביניהם אינו מאפס שלבים.
 
-### התקדמות ליניארית — יום 1
+### התקדמות ליניארית ופתחי Unlock לפי עץ היכולות (RPG Skill Tree Schedule)
 
-יום 1 כולל התקדמות ליניארית לפי העץ במקום Toggle Group:
+כל התרגילים בתוכנית כפופים ללוח הזמנים הדרגתי של עץ היכולות (Unlock Weeks):
 
-- **Hamstring Chain**: `Goblet Romanian Deadlift` מבוצע שבועות 1-17. בשבוע 18 ואילך הוא מוחלף ל-`Single-Leg RDL`.
-- **Lunge / Pistol Tree**: `Goblet Reverse Lunge` מבוצע שבועות 1-41. בשבוע 42 ואילך הוא מוחלף ל-`Pistol Squat`.
+- **Squat Tree**: `Bodyweight Squat` מבוצע בשבועות 1–4. בשבוע 5 ואילך נפתח ומוחלף ל-`Goblet Bulgarian Split Squat`.
+- **Glute Tree**: `DB Glute Bridge` מבוצע בשבועות 1–4. בשבוע 5 ואילך נפתח ומוחלף ל-`DB Hip Thrust`.
+- **Hamstring Chain**: `Goblet Romanian Deadlift` מבוצע בשבועות 1–17. בשבוע 18 ואילך נפתח ומוחלף ל-`Single-Leg RDL`.
+- **Lunge / Pistol Tree**: `Goblet Reverse Lunge` מבוצע בשבועות 1–41. בשבוע 42 ואילך נפתח ומוחלף ל-`Pistol Squat`.
+- **Core Citadel**: `Dead Bug` פעיל משבוע 1. `Hollow Body Hold` מתווסף למעגל הליבה משבוע 5 ואילך. `Pallof Press Progression` מתווסף משבוע 10 ואילך.
+- **Biceps Microcycle**: `Single-Arm Curl` פעיל משבוע 1. `Single-Arm Hammer Curl` מתווסף משבוע 5 ואילך. `Arm Block` מתווסף משבוע 10 ואילך.
 
-המערכת מחליפה את התרגילים באופן אוטומטי בהתאם לשבוע הנוכחי. השמירה על סטטוס Progression היא לכל תרגיל בנפרד.
+המערכת מחליפה ופותחת את התרגילים באופן אוטומטי בהתאם לשבוע הנוכחי ולמצב העץ. השמירה על סטטוס Progression היא לכל תרגיל בנפרד.
 
 ==================================================
 ## 8. סוגי Progression
@@ -2293,9 +2297,9 @@ settings.programSchemaVersion
 
 העתק את השלב הנוכחי מ-push-up-progression.
 
-#### Glute Bridge → Hip Thrust
+#### DB Glute Bridge → DB Hip Thrust
 
-אם היה משקל X, התחל Hip Thrust עם אותו משקל אם בטווח.
+אם היה משקל X, התחל DB Hip Thrust עם אותו משקל אם בטווח.
 
 #### Band Pull-Apart
 
