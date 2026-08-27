@@ -18,8 +18,6 @@ Google Drive הוא גיבוי וסנכרון דו-כיווני של כל נתו
 
 מבנה Lean: תרגילי בסיס כבדים בסטים ישרים עם מנוחה מלאה; אביזרים, תדירות שנייה, ליבה ותאומים בזיווגים/מעגלים/בלוקים.
 
-יום 1 כולל Toggle Group בין Single-Leg RDL לבין Lunge/Pistol Slot, לפי זוגיות השבוע.
-
 Myo-Reps ב-Arm Block משתמשים בחוק עצירה אובייקטיבי: אובדן טמפו בשתי חזרות רצופות. חזרות עם אובדן טמפו אינן נספרות כחזרות נקיות.
 
 Arm Block מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.
@@ -70,7 +68,7 @@ Arm Block מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.
 
 | יום | שם | מטרה | משך יעד |
 | --- | --- | --- | --- |
-| 1 | Legs + Core + Carry | רגליים, שרשרת אחורית, המסטרינג, גלוטס, תאומים, core ונשיאה, עם רוטציית Single-Leg RDL / Lunge-Pistol | 42–50 דק׳ |
+| 1 | Legs + Core + Carry | רגליים, שרשרת אחורית, המסטרינג, גלוטס, תאומים, core ונשיאה | 42–50 דק׳ |
 | 2 | Zone 2 + Micro Mobility | בסיס אירובי והתאוששות | 40–50 דק׳ |
 | 3 | Push + Shoulders + Triceps + Back Volume | חזה, כתפיים, טרייספס, rear delts, מיומנות overhead + נפח גב | 44–50 דק׳ |
 | 4 | Active Recovery + Mobility | התאוששות פעילה, תנועתיות ותחזוקת מפרקים | 25–35 דק׳ |
@@ -303,7 +301,7 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 
 רשימת תרגילים מוגנים:
 
-- יום 1: DB RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry
+- יום 1: Goblet Romanian Deadlift, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry
 - יום 3: Pike Progression, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Extension
 - יום 5: Pull-Up, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl
 
@@ -352,30 +350,14 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 - שני מצבי ה-progression נשמרים תמיד.
 - המעבר ביניהם אינו מאפס שלבים.
 
-### רוטציית שרשרת אחורית / ארבע-ראשי — יום 1
+### התקדמות ליניארית — יום 1
 
-Toggle Group: `day1-posterior-quad`
+יום 1 כולל התקדמות ליניארית לפי העץ במקום Toggle Group:
 
-- שבועות אי-זוגיים: Single-Leg RDL פעיל, 2 סטים. Lunge/Pistol Slot מושעה.
-- שבועות זוגיים: Lunge/Pistol Slot פעיל, 2 סטים. Single-Leg RDL מושעה.
+- **Hamstring Chain**: `Goblet Romanian Deadlift` מבוצע שבועות 1-17. בשבוע 18 ואילך הוא מוחלף ל-`Single-Leg RDL`.
+- **Lunge / Pistol Tree**: `Goblet Reverse Lunge` מבוצע שבועות 1-41. בשבוע 42 ואילך הוא מוחלף ל-`Pistol Squat`.
 
-### Lunge/Pistol Slot
-
-ה-Slot הזוגי ביום 1 נפתר אוטומטית כך:
-
-- אם Pistol Squat נעול: מבצעים Goblet Reverse Lunge.
-- אם Pistol Squat פתוח: מבצעים Pistol Squat.
-
-כללים:
-
-- אין בחירת משתמש.
-- המערכת מחליטה לפי זוגיות שבוע + סטטוס unlock.
-- Goblet Reverse Lunge שומר progression גם כאשר אינו פעיל.
-- Pistol Squat שומר progression גם כאשר אינו פעיל.
-- Single-Leg RDL שומר progression גם כאשר אינו פעיל.
-- אין קידום לתרגיל לא פעיל.
-- אין איפוס שלבים או משקל עקב השעיה.
-- Opening Rest מחושב לפי האימון הקודם של התרגיל הפעיל הספציפי.
+המערכת מחליפה את התרגילים באופן אוטומטי בהתאם לשבוע הנוכחי. השמירה על סטטוס Progression היא לכל תרגיל בנפרד.
 
 ==================================================
 ## 8. סוגי Progression
@@ -495,9 +477,9 @@ function getBicepsMicrocycleWeek(weekNumber) {
 
 ---
 
-## תרגיל 1 — Goblet Romanian Deadlift
+## תרגיל 1 א' — Goblet Romanian Deadlift
 
-מוגן, סטים ישרים.
+מוגן, מבוצע בשבועות 1-17. סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
@@ -517,36 +499,9 @@ function getBicepsMicrocycleWeek(weekNumber) {
 
 ---
 
-## Toggle Group יום 1 — Posterior / Quad
+## תרגיל 1 ב' — Single-Leg RDL
 
-| שדה | ערך |
-| --- | --- |
-| toggleGroup | day1-posterior-quad |
-| dayIndex | 1 |
-| structure | straight |
-| odd member | single-leg-rdl |
-| even member | lunge-pistol-slot |
-| slot fallback | goblet-reverse-lunge |
-| slot unlocked replacement | pistol-squat-progression |
-| sets | 2 לתרגיל/Slot הפעיל |
-| progression | רק לתרגיל הפעיל |
-| inactive behavior | state נשמר, אין החלטה, אין איפוס |
-| deload behavior | התרגיל/Slot הפעיל לפי parity מבוצע עם 2 סטים בלבד |
-
-### כלל הפעלה
-
-- שבוע אי-זוגי: Single-Leg RDL פעיל.
-- שבוע זוגי: Lunge/Pistol Slot פעיל.
-- אם Pistol נעול: Goblet Reverse Lunge.
-- אם Pistol פתוח: Pistol Squat.
-
----
-
-## Toggle Member A — Single-Leg RDL
-
-פעיל בשבועות אי-זוגיים בלבד.
-
-מוגן, סטים ישרים.
+מוגן, מבוצע משבוע 18 ואילך. סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
@@ -558,33 +513,13 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | min / max weight | 3 / 24 ק״ג total |
 | rest | 75 (base), 60–90 |
 | structure | straight |
-| toggleGroup | day1-posterior-quad |
-| toggleActiveOn | odd |
 | rule | neutral spine; אם מאבד שיווי משקל, BELOW |
 
 ---
 
-## Toggle Member B — Lunge/Pistol Slot
+## תרגיל 2 א' — Goblet Reverse Lunge
 
-פעיל בשבועות זוגיים בלבד.
-
-### Slot Resolution
-
-```js
-if (!isExerciseUnlocked('pistol-squat-progression')) {
-  activeExercise = 'goblet-reverse-lunge';
-} else {
-  activeExercise = 'pistol-squat-progression';
-}
-```
-
----
-
-## Toggle Member B1 — Goblet Reverse Lunge
-
-פעיל כחלק מה-Slot הזוגי כאשר Pistol נעול.
-
-מוגן, סטים ישרים.
+מוגן, מבוצע בשבועות 1-41. סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
@@ -596,15 +531,12 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 | min / max weight | 3 / 24 ק״ג total |
 | rest | 75 (base), 60–90 |
 | structure | straight |
-| toggleGroup | day1-posterior-quad |
-| toggleActiveOn | even |
-| note | ברירת מחדל ל-Lunge/Pistol Slot כל עוד Pistol נעול |
 
 ---
 
-## Toggle Member B2 — Pistol Squat
+## תרגיל 2 ב' — Pistol Squat
 
-פעיל כחלק מה-Slot הזוגי כאשר Pistol פתוח.
+מוגן, מבוצע משבוע 42 ואילך. סטים ישרים.
 
 נעול עד לעמידה בתנאי Unlock.
 
@@ -620,8 +552,6 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 | min / max weight | 3 / 24 ק״ג total |
 | rest | 105 (base), 90–120 |
 | structure | straight |
-| toggleGroup | day1-posterior-quad |
-| toggleActiveOn | even |
 | unlockCriteria | כל סטי BSS ב-12 חזרות תקינות במשקל 24 ק״ג total |
 | rule | ירידה איטית; אם הברך קורסת פנימה (valgus), BELOW |
 
@@ -813,7 +743,7 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 | שדה | ערך |
 | --- | --- |
-| id | db-oh-triceps-extension |
+| id | db-overhead-triceps-extension |
 | type | weighted |
 | sets | 4 |
 | rep window | 10–15 |
@@ -1167,7 +1097,7 @@ armBlock: {
   muscleAreaMap: {
     3: {
       "single-arm-lateral-raise": "lateral-shoulder",
-      "db-oh-triceps-extension": "triceps"
+      "db-overhead-triceps-extension": "triceps"
     },
     5: {
       "single-arm-curl": "biceps",
@@ -1303,7 +1233,7 @@ window.TRAININGDATA = {
       muscleAreaMap: {
         3: {
           "single-arm-lateral-raise": "lateral-shoulder",
-          "db-oh-triceps-extension": "triceps"
+          "db-overhead-triceps-extension": "triceps"
         },
         5: {
           "single-arm-curl": "biceps",
@@ -1351,7 +1281,7 @@ window.TRAININGDATA = {
         "single-arm-floor-press",
         "push-up-progression",
         "single-arm-seated-ohp",
-        "db-oh-triceps-extension",
+        "db-overhead-triceps-extension",
         "diamond-push-up",
         "pull-up-progression",
         "one-arm-db-row",
