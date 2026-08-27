@@ -173,12 +173,12 @@ const UI = (() => {
     'HOLLOW BODY HOLD': 'Hollow Body Hold.gif',
     'DEEP MOBILITY PROTOCOL': 'Deep Mobility Protocol.gif',
     'MICRO MOBILITY PROTOCOL': 'Deep Mobility Protocol.gif',
-    'BRISK WALKING': 'High Knees.gif',
-    'BRISK WALKING (ZONE 2)': 'High Knees.gif',
-    'RELAXED WALKING': 'High Knees.gif',
-    'ACTIVE RECOVERY WALK': 'High Knees.gif',
-    'ZONE 2 LIGHT WALK': 'High Knees.gif',
-    'VO2 MAX NORWEGIAN 4X4': 'High Knees.gif',
+    'BRISK WALKING': 'Brisk Walking.gif',
+    'BRISK WALKING (ZONE 2)': 'Brisk Walking.gif',
+    'RELAXED WALKING': 'Relaxed Walking.gif',
+    'ACTIVE RECOVERY WALK': 'Relaxed Walking.gif',
+    'ZONE 2 LIGHT WALK': 'Relaxed Walking.gif',
+    'VO2 MAX NORWEGIAN 4X4': 'VO2 Max Norwegian.gif',
     'ONE LEG EXTENDED': 'One Leg Extended.gif',
     'ONE LEG EXTENDED L SIT': 'One Leg Extended.gif',
     'FULL L SIT': 'Full L-Sit.gif',
@@ -484,11 +484,7 @@ const UI = (() => {
     }
   }
 
-  const NO_GIF_EXERCISES = new Set([
-    'BRISK WALKING',
-    'RELAXED WALKING',
-    'VO2 MAX NORWEGIAN 4X4'
-  ]);
+  const NO_GIF_EXERCISES = new Set([]);
 
   function hasGif(title) {
     if (!title) return false;
