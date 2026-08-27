@@ -26,15 +26,10 @@ const ExercisesPage = (() => {
     'Pallof Press Progression': [{ weight: 'Band 30 kg', fromWeek: 10 }, { weight: 'Band 40 kg', fromWeek: 34 }],
 
     // Dumbbell Lower Body
-    'DB Bulgarian Split Squat': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 26 }],
-    'Reverse Lunge + DB': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }],
-    'Reverse Lunge / Pistol Squat': [{ weight: '6 kg each', fromWeek: 1 }],
-    'DB BSS (Goblet)': [{ weight: '15 kg', fromWeek: 34 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 62 }],
-    'Walking Lunge (Goblet)': [{ weight: '18 kg', fromWeek: 62 }],
-    'DB RDL': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }],
-    'DB Romanian Deadlift': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }],
-    'DB Single-Leg RDL': [{ weight: '12 kg', fromWeek: 18 }, { weight: '15 kg', fromWeek: 26 }, { weight: '18 kg', fromWeek: 42 }, { weight: '21 kg', fromWeek: 50 }, { weight: '24 kg', fromWeek: 53 }],
-    'Single-Leg RDL': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 26 }, { weight: '12 kg', fromWeek: 42 }],
+    'Goblet Bulgarian Split Squat': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 26 }],
+    'Goblet Reverse Lunge': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 18 }, { weight: '24 kg', fromWeek: 42 }],
+    'Goblet Romanian Deadlift': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 5 }, { weight: '24 kg', fromWeek: 10 }],
+    'Single-Leg RDL': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }],
     'DB Hip Thrust': [{ weight: '9 kg', fromWeek: 1 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
@@ -44,27 +39,20 @@ const ExercisesPage = (() => {
     'Suitcase Carry': [{ weight: '12 kg', fromWeek: 1 }, { weight: '15 kg', fromWeek: 5 }, { weight: '18 kg', fromWeek: 18 }, { weight: '21 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 53 }],
 
     // Dumbbell Upper Body - Push
-    'DB Floor Press': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }],
-    'Single-Arm Floor Press': [{ weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 42 }],
-    'Seated DB OHP': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }],
-    'Seated DB Overhead Press': [{ weight: '6 kg each', fromWeek: 1 }, { weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }],
-    'Single-Arm Seated OHP': [{ weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 62 }],
-    'DB Lateral Raise': [{ weight: '3 kg each', fromWeek: 1 }, { weight: '6 kg', fromWeek: 42 }, { weight: '9 kg', fromWeek: 53 }],
+    'Single-Arm Floor Press': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 42 }],
+    'Single-Arm Seated OHP': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 62 }],
+    'Single-Arm Lateral Raise': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 42 }, { weight: '9 kg', fromWeek: 53 }],
     'DB OH Triceps Ext': [{ weight: '6 kg total', fromWeek: 1 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 34 }, { weight: '15 kg', fromWeek: 50 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 66 }],
-    'DB Overhead Triceps Extension': [{ weight: '6 kg total', fromWeek: 1 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 34 }, { weight: '15 kg', fromWeek: 50 }, { weight: '18 kg', fromWeek: 53 }],
-    'Arm Block - DB Lateral Raise': [{ weight: '3-9 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 74 }],
+    'Arm Block - Single-Arm Lateral Raise': [{ weight: '3-9 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 74 }],
     'Arm Block - DB OH Triceps Ext': [{ weight: '6-15 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 74 }],
-    'Arm Block - DB Overhead Triceps Ext': [{ weight: '6-15 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 74 }],
     'One-Arm DB Row': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 42 }, { weight: '24 kg', fromWeek: 53 }],
     'TRX Row': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Diamond Push-Up': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '+5 kg', fromWeek: 62 }],
     'Push-Up Volume': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Push-Up Volume (Day 5)': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'DB Curl': [{ weight: '3 kg each', fromWeek: 1 }, { weight: '6 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 34 }, { weight: '12 kg', fromWeek: 58 }],
-    'DB Hammer Curl': [{ weight: '3 kg each', fromWeek: 1 }, { weight: '6 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 53 }],
-    'Hammer Curl': [{ weight: '3 kg each', fromWeek: 1 }, { weight: '6 kg', fromWeek: 5 }],
-    'Arm Block - DB Curl': [{ weight: '3-12 kg', fromWeek: 10 }, { weight: '18 kg', fromWeek: 74 }],
-    'Single-Arm Curl': [{ weight: '15 kg', fromWeek: 62 }, { weight: '18 kg', fromWeek: 66 }],
+    'Single-Arm Curl': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 34 }, { weight: '12 kg', fromWeek: 58 }, { weight: '15 kg', fromWeek: 62 }, { weight: '18 kg', fromWeek: 66 }],
+    'Single-Arm Hammer Curl': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 53 }],
+    'Arm Block - Single-Arm Curl': [{ weight: '3-12 kg', fromWeek: 10 }, { weight: '18 kg', fromWeek: 74 }],
 
     // Bodyweight, Mobility, Warmup & Skill Progressions
     'Pistol Squat Progression': [{ weight: 'Assisted Pistol', fromWeek: 42 }, { weight: 'Full Pistol Squat', fromWeek: 50 }],
@@ -117,7 +105,7 @@ const ExercisesPage = (() => {
     }
     let lookupName = name;
     if (lookupName.startsWith('TRX Face Pull')) lookupName = 'TRX Face Pull';
-    if (lookupName === 'DB BSS') lookupName = 'DB Bulgarian Split Squat';
+    if (lookupName === 'DB BSS') lookupName = 'Goblet Bulgarian Split Squat';
 
     if (EXERCISE_WEIGHT_PROGRESSION[lookupName]) {
       return EXERCISE_WEIGHT_PROGRESSION[lookupName];
@@ -172,18 +160,20 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'squat_lunge_tree', icon: '🏋️', exercises: [
+        title: 'squat_tree', icon: '🏋️', exercises: [
           { name: 'Bodyweight Squat', unlockWeek: 1, id: 'squat-1' },
-          { name: 'DB Bulgarian Split Squat', unlockWeek: 1, parentId: 'squat-1', id: 'squat-2', relType: 'replace' },
-          { name: 'Reverse Lunge + DB', unlockWeek: 18, parentId: 'squat-2', id: 'squat-3', relType: 'replace' },
-          { name: 'DB BSS (Goblet)', unlockWeek: 34, parentId: 'squat-2', id: 'squat-3b', relType: 'replace' },
-          { name: 'Pistol Squat Progression', unlockWeek: 42, parentId: 'squat-3b', id: 'squat-4', relType: 'replace' },
-          { name: 'Walking Lunge (Goblet)', unlockWeek: 62, parentId: 'squat-4', id: 'squat-5', relType: 'replace' }
+          { name: 'Goblet Bulgarian Split Squat', unlockWeek: 1, parentId: 'squat-1', id: 'squat-2', relType: 'replace' }
+        ]
+      },
+      {
+        title: 'lunge_pistol_tree', icon: '🦵', exercises: [
+          { name: 'Goblet Reverse Lunge', unlockWeek: 1, id: 'lunge-1' },
+          { name: 'Pistol Squat Progression', unlockWeek: 42, parentId: 'lunge-1', id: 'lunge-2', relType: 'replace', unlockCond: '⚡ 12 חזרות ב-24 ק״ג BSS' }
         ]
       },
       {
         title: 'hamstring_chain', icon: '🦵', exercises: [
-          { name: 'DB Romanian Deadlift', unlockWeek: 1, id: 'rdl-1' },
+          { name: 'Goblet Romanian Deadlift', unlockWeek: 1, id: 'rdl-1' },
           { name: 'Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2', relType: 'replace' }
         ]
       },
@@ -217,32 +207,30 @@ const ExercisesPage = (() => {
       {
         title: 'push_tree', icon: '💥', exercises: [
           { name: 'Push-up Bars Progression', unlockWeek: 1, id: 'push-1' },
-          { name: 'DB Floor Press', unlockWeek: 1, id: 'floor-1' },
+          { name: 'Single-Arm Floor Press', unlockWeek: 1, id: 'floor-1' },
           { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol', relType: 'accessory', unlockCond: '⚡ נפח משלים' },
           { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up', relType: 'accessory', unlockCond: '⚡ חיזוק יד אחורית' },
           { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a', relType: 'replace', unlockCond: '⚡ 15 חזרות שטוחות' },
           { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b', relType: 'replace', unlockCond: '⚡ 12 דפיציט עמוק' },
-          { name: 'Single-Arm Floor Press', unlockWeek: 18, parentId: 'floor-1', id: 'floor-2', relType: 'replace', unlockCond: '⚡ שליטה חד-צדדית' },
           { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3', relType: 'replace', unlockCond: '⚡ וסט 5kg בטכניקה נקיה' }
         ]
       },
       {
         title: 'overhead_skill', icon: '🎯', exercises: [
           { name: 'Pike Progression', unlockWeek: 1, id: 'pike-1' },
-          { name: 'Seated DB Overhead Press', unlockWeek: 1, id: 'ohp-1' },
+          { name: 'Single-Arm Seated OHP', unlockWeek: 1, id: 'ohp-1' },
           { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2', relType: 'replace', unlockCond: '⚡ 10 פייק פושאפ' },
           { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3', relType: 'replace', unlockCond: '⚡ עמידת ידיים לקיר' },
           { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4', relType: 'replace', unlockCond: '⚡ עמידת ידיים יציבה' },
-          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5', relType: 'replace', unlockCond: '⚡ כוח כתפיים מתקדם' },
-          { name: 'Single-Arm Seated OHP', unlockWeek: 49, parentId: 'ohp-1', id: 'ohp-2', relType: 'replace', unlockCond: '⚡ 10 חזרות ב-OHP' }
+          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5', relType: 'replace', unlockCond: '⚡ כוח כתפיים מתקדם' }
         ]
       },
       {
         title: 'accessory_prehab', icon: '🩹', exercises: [
-          { name: 'DB Lateral Raise', unlockWeek: 1, id: 'lat-1' },
+          { name: 'Single-Arm Lateral Raise', unlockWeek: 1, id: 'lat-1' },
           { name: 'DB Overhead Triceps Extension', unlockWeek: 1, id: 'tri-1' },
           { name: 'TRX Y-T-W', unlockWeek: 1 },
-          { name: 'Arm Block - DB Lateral Raise', unlockWeek: 10, parentId: 'lat-1', id: 'lat-2', relType: 'accessory' },
+          { name: 'Arm Block - Single-Arm Lateral Raise', unlockWeek: 10, parentId: 'lat-1', id: 'lat-2', relType: 'accessory' },
           { name: 'Arm Block - DB Overhead Triceps Ext', unlockWeek: 10, parentId: 'tri-1', id: 'tri-2', relType: 'accessory' }
         ]
       }
@@ -275,10 +263,9 @@ const ExercisesPage = (() => {
       },
       {
         title: 'biceps_grip', icon: '✊', exercises: [
-          { name: 'DB Curl', unlockWeek: 1, id: 'curl-1' },
-          { name: 'Hammer Curl', unlockWeek: 5, parentId: 'curl-1', id: 'curl-2', relType: 'accessory' },
-          { name: 'Arm Block - DB Curl', unlockWeek: 10, parentId: 'curl-1', id: 'curl-2b', relType: 'accessory' },
-          { name: 'Single-Arm Curl', unlockWeek: 49, parentId: 'curl-2', id: 'curl-3', relType: 'replace' },
+          { name: 'Single-Arm Curl', unlockWeek: 1, id: 'curl-1' },
+          { name: 'Single-Arm Hammer Curl', unlockWeek: 5, parentId: 'curl-1', id: 'curl-2', relType: 'accessory' },
+          { name: 'Arm Block - Single-Arm Curl', unlockWeek: 10, parentId: 'curl-1', id: 'curl-2b', relType: 'accessory' },
           { name: 'Towel Hang', unlockWeek: 1, id: 'towel-1' }
         ]
       },

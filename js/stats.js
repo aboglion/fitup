@@ -421,6 +421,7 @@ const StatsPage = (() => {
    */
   const EXERCISE_MUSCLE_MAPPING = {
     'db-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'single-arm-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'obliques', w: 0.3 }],
     'db-single-arm-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'push-up-bars-progression': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
@@ -433,9 +434,11 @@ const StatsPage = (() => {
     'scapular-push-up': [{ m: 'chest', w: 0.5 }, { m: 'shoulders', w: 0.5 }, { m: 'core', w: 0.3 }],
 
     'seated-db-ohp': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
+    'single-arm-seated-ohp': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'obliques', w: 0.3 }],
     'seated-db-overhead-press': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'seated-single-arm-ohp': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'obliques', w: 0.3 }],
     'db-lateral-raise': [{ m: 'shoulders', w: 1.0 }],
+    'single-arm-lateral-raise': [{ m: 'shoulders', w: 1.0 }],
     'pike-push-up': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'pike-progression': [{ m: 'shoulders', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'trx-face-pull': [{ m: 'shoulders', w: 0.8 }, { m: 'traps', w: 0.8 }],
@@ -458,8 +461,9 @@ const StatsPage = (() => {
     'inverted-row': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.5 }],
 
     'db-curl': [{ m: 'biceps', w: 1.0 }],
-    'hammer-curl': [{ m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.5 }],
     'single-arm-curl': [{ m: 'biceps', w: 1.0 }],
+    'hammer-curl': [{ m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.5 }],
+    'single-arm-hammer-curl': [{ m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.5 }],
     'biceps-curl-ladder': [{ m: 'biceps', w: 1.0 }],
 
     'trx-ytw': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }],
@@ -473,11 +477,13 @@ const StatsPage = (() => {
     'goblet-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }, { m: 'core', w: 0.3 }],
     'bodyweight-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.4 }],
     'reverse-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
+    'goblet-reverse-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'reverse-lunge-pistol-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'walking-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'pistol-squat-to-chair': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'core', w: 0.4 }],
 
     'db-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.6 }],
+    'goblet-romanian-deadlift': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.6 }],
     'db-romanian-deadlift': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.6 }],
     'single-leg-db-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.8 }, { m: 'lowerBack', w: 0.6 }],
     'single-leg-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.8 }, { m: 'lowerBack', w: 0.6 }],
@@ -587,15 +593,15 @@ const StatsPage = (() => {
   }
 
   const EXERCISE_MUSCLE_MAP = {
-    'db-floor-press': 'chest', 'db-single-arm-floor-press': 'chest', 'push-up': 'chest', 'deficit-push-up': 'chest', 'incline-push-up': 'chest', 'feet-elevated-push-up': 'chest', 'weighted-push-up': 'chest', 'push-up-bars-progression': 'chest', 'push-up-volume-day5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'db-floor-press': 'chest', 'single-arm-floor-press': 'chest', 'db-single-arm-floor-press': 'chest', 'push-up': 'chest', 'deficit-push-up': 'chest', 'incline-push-up': 'chest', 'feet-elevated-push-up': 'chest', 'weighted-push-up': 'chest', 'push-up-bars-progression': 'chest', 'push-up-volume-day5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'push-up-volume-day5': 'chest', 'push-up-volume-day-5': 'chest', 'scapular-push-up': 'chest',
-    'seated-db-ohp': 'shoulders', 'seated-db-overhead-press': 'shoulders', 'seated-single-arm-ohp': 'shoulders', 'db-lateral-raise': 'shoulders', 'pike-push-up': 'shoulders', 'pike-progression': 'shoulders', 'trx-face-pull': 'shoulders', 'wall-walk': 'shoulders', 'wall-handstand-hold': 'shoulders', 'band-pull-apart': 'shoulders', 'trx-ytw': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }],
+    'seated-db-ohp': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'seated-db-overhead-press': 'shoulders', 'seated-single-arm-ohp': 'shoulders', 'db-lateral-raise': 'shoulders', 'single-arm-lateral-raise': 'shoulders', 'pike-push-up': 'shoulders', 'pike-progression': 'shoulders', 'trx-face-pull': 'shoulders', 'wall-walk': 'shoulders', 'wall-handstand-hold': 'shoulders', 'band-pull-apart': 'shoulders', 'trx-ytw': [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }],
     'trx-ytw': 'traps', 'trx-y-t-w': 'traps',
     'overhead-triceps-ext': 'triceps', 'db-overhead-triceps-extension': 'triceps', 'single-arm-overhead-triceps-ext': 'triceps', 'diamond-push-up': 'triceps',
     'pull-up': 'lats', 'pull-up-progression': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'seated-band-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
-    'db-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
-    'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
-    'db-rdl': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'db-hip-thrust': 'glutes',
+    'db-curl': 'biceps', 'single-arm-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-hammer-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
+    'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'goblet-reverse-lunge': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
+    'db-rdl': 'hamstrings', 'goblet-romanian-deadlift': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'db-hip-thrust': 'glutes',
     'single-leg-calf-raise': 'calves', 'standing-single-leg-calf-raise': 'calves', 'seated-single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves', 'seated-calf-raise': 'calves',
     'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'obliques', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat-progression': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'shoulders', 'chin-up-progression': 'lats', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': null, 'deep-mobility-protocol': null, 'band-neck-flexion': 'neck', 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'lats', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
   };

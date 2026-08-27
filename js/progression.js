@@ -15,8 +15,8 @@
           enabledFromWeek: 10,
           maxArmBlockExposurePerMusclePerWeek: 1,
           muscleAreaMap: {
-            3: { "db-lateral-raise": "lateral-shoulder", "db-oh-triceps-extension": "triceps" },
-            5: { "db-curl": "biceps", "hammer-curl": "biceps" }
+            3: { "db-lateral-raise": "lateral-shoulder", "arm-block-lateral-raise": "lateral-shoulder", "db-oh-triceps-extension": "triceps", "arm-block-triceps-ext": "triceps" },
+            5: { "db-curl": "biceps", "single-arm-curl": "biceps", "hammer-curl": "biceps", "single-arm-hammer-curl": "biceps", "arm-block-biceps-curl": "biceps" }
           }
         },
         leanMode: { enabled: true, pairs: [], circuits: [], blocks: [], toggles: [] }
@@ -194,15 +194,15 @@
     // ----------------------------
     getBicepsMicrocycleWeek(weekNumber) {
       if (weekNumber % (this.settings.deloadEveryWeeks || 8) === 0) {
-        return { type: 'deload', exercises: ['hammer-curl'], sets: 1, progressionAllowed: false };
+        return { type: 'deload', exercises: ['hammer-curl', 'single-arm-hammer-curl'], sets: 1, progressionAllowed: false };
       }
 
       const cyclePosition = ((weekNumber - 1) % 3) + 1;
       if (cyclePosition === 3) {
-        return { type: 'light', exercises: ['hammer-curl'], sets: 2, progressionAllowed: false };
+        return { type: 'light', exercises: ['hammer-curl', 'single-arm-hammer-curl'], sets: 2, progressionAllowed: false };
       }
 
-      return { type: 'heavy', exercises: ['db-curl', 'hammer-curl'], sets: 'progressive', progressionAllowed: true };
+      return { type: 'heavy', exercises: ['db-curl', 'single-arm-curl', 'hammer-curl', 'single-arm-hammer-curl'], sets: 'progressive', progressionAllowed: true };
     }
 
     // ----------------------------
@@ -403,11 +403,12 @@
       if (!exercise) return { unlocked: true, reason: 'Exercise not found' };
       
       if (exercise.id === 'pistol-squat-progression') {
-        const lungeState = allProgressionStates['reverse-lunge'] || allProgressionStates['single-leg-rdl'];
-        if (lungeState && (lungeState.currentWeightKg >= 15 || lungeState.currentStageIndex >= 2)) {
-          return { unlocked: true, reason: 'Prerequisite strength achieved' };
+        // Unlock criteria: Goblet Reverse Lunge at 24kg total (= 24kg on single dumbbell)
+        const lungeState = allProgressionStates['reverse-lunge'] || allProgressionStates['goblet-reverse-lunge'] || allProgressionStates['single-leg-rdl'];
+        if (lungeState && (lungeState.currentWeightKg >= 24 || lungeState.currentStageIndex >= 2)) {
+          return { unlocked: true, reason: 'Prerequisite strength achieved (24kg Goblet Reverse Lunge)' };
         }
-        return { unlocked: false, reason: 'Requires Reverse Lunge 15kg+' };
+        return { unlocked: false, reason: 'Requires Goblet Reverse Lunge 24kg total' };
       }
       
       return { unlocked: exercise.unlocked ?? true, reason: 'Unlocked' };
@@ -463,7 +464,7 @@
 
       let sets = exercise.sets || 3;
       if (isDeload) sets = Math.min(sets, 2);
-      else if (isBicepsLightWeek && (exercise.id === 'db-curl' || exercise.id === 'hammer-curl')) {
+      else if (isBicepsLightWeek && (exercise.id === 'db-curl' || exercise.id === 'single-arm-curl' || exercise.id === 'hammer-curl' || exercise.id === 'single-arm-hammer-curl')) {
         sets = bicepsConfig.lightWeekSets || 2;
       }
 

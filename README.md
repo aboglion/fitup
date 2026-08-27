@@ -20,7 +20,7 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 - **v15.6 Lean Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
 - **Zero Decisions 3-Button Outcome Selector & Minimum Weight Protection Engine**: Objective set classification with guaranteed `minWeight` floor protection (3 kg minimum) preventing invalid 0 kg displays under any fallback.
 - **Objective Myo-Reps & Arm Block Protocol**: Active from Week 10 onwards (1 activation set + 3 mini-sets of 5 reps with 15s rest). Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
-- **Biceps 3-Week Microcycle**: 2 heavy progressive overload weeks + 1 light preservation week (Hammer Curl 2 sets, no progression) to maximize hypertrophy while protecting elbow joints.
+- **Biceps 3-Week Microcycle**: 2 heavy progressive overload weeks + 1 light preservation week (Single-Arm Hammer Curl 2 sets, no progression) to maximize hypertrophy while protecting elbow joints.
 - **Weekly Frequency Additions**: 2nd Back Frequency (TRX Row on Day 3 = 10 weekly back sets) and 2nd Chest Frequency (Push-Up Volume on Day 5 = 8 weekly chest sets).
 - **Cervical Health Protocol**: Dedicated Band Neck Flexion & Extension protocol on Day 4 for neck/postural resilience.
 - **Adaptive Intra-Workout Rest Engine**: Dynamically calculates rest timers with automatic +30s extensions following a mechanical stop (`BELOW` outcome).
@@ -93,7 +93,7 @@ FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a hi
 ### 4. Anatomical Muscle Breakdown & Animated Execution
 <img src="PICS/Pasted%20image%20%284%29.png" alt="Exercise Detail Modal with Muscle Highlights and GIF Demo" width="380" />
 
-- **Target Muscle Visualizer**: Every exercise card (e.g., Dumbbell Romanian Deadlift - DB RDL) opens a high-detail modal highlighting primary target muscle groups (glutes and hamstrings highlighted in vivid red on an anatomical body model).
+- **Target Muscle Visualizer**: Every exercise card (e.g., Dumbbell Romanian Deadlift - Goblet RDL) opens a high-detail modal highlighting primary target muscle groups (glutes and hamstrings highlighted in vivid red on an anatomical body model).
 - **Looping Demonstration GIFs**: Embedded high-definition animation loops demonstrating proper biomechanical form, setup posture, movement cadence, and safety control.
 
 ---
@@ -102,7 +102,7 @@ FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a hi
 <img src="PICS/Pasted%20image%20%285%29.png" alt="Searchable Exercise Library with Category Filters" width="380" />
 
 - **Instant Search & Multi-Category Filters**: Instant search engine with tag filters (All, Arms, Shoulders, Warmup, Pull, Push, Legs, Core) to find any movement in the 52-week dictionary.
-- **Detailed Card Metadata**: Shows required equipment (e.g., Dumbbells, Bodyweight, TRX), difficulty rating (Beginner, Intermediate, Advanced), schedule assignment badges, and primary target muscle diagrams (e.g., DB Biceps Curl, DB Lateral Raise, DB Overhead Triceps Extension).
+- **Detailed Card Metadata**: Shows required equipment (e.g., Dumbbells, Bodyweight, TRX), difficulty rating (Beginner, Intermediate, Advanced), schedule assignment badges, and primary target muscle diagrams (e.g., DB Biceps Curl, Single-Arm Lateral Raise, DB Overhead Triceps Extension).
 
 ---
 
@@ -141,11 +141,11 @@ Each week follows a strictly optimized 7-day routine designed to balance muscula
 
 | Day | Workout Type | Focus / Key Movements | Target Duration |
 | :--- | :--- | :--- | :--- |
-| **Day 1 (Mon)** | **Legs + Core + Carry** | DB RDL, Day 1 Toggle (Single-Leg RDL / Lunge-Pistol Slot), BSS, DB Hip Thrust, Suitcase Carry, Calf Block, Core Circuit | 45 min |
+| **Day 1 (Mon)** | **Legs + Core + Carry** | Goblet RDL, Day 1 Toggle (Single-Leg RDL / Lunge-Pistol Slot), Goblet BSS, DB Hip Thrust, Suitcase Carry, Calf Block, Core Circuit | 45 min |
 | **Day 2 (Tue)** | **Zone 2 Cardio** | Treadmill Walking (4% incline, 5.5 km/h, conversational test), Daily Micro-Mobility | 45 min |
-| **Day 3 (Wed)** | **Push + Shoulders + Triceps + Back Vol** | Pike Hold/Push-Up, DB Floor Press, Push-Up Bars, Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ DB Lateral Raise pair, Rear Delt Toggle, Arm Block (W10+) | 45 min |
+| **Day 3 (Wed)** | **Push + Shoulders + Triceps + Back Vol** | Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ Single-Arm Lateral Raise pair, Rear Delt Toggle, Arm Block (W10+) | 45 min |
 | **Day 4 (Thu)** | **Active Recovery & Joint Health** | Band Neck Flexion & Extension protocol (A1), Light Treadmill Recovery Walk (A2), 10-min Deep Mobility sequence (A3) | 30 min |
-| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression, One-Arm DB Row, TRX Face Pull, Biceps Microcycle (DB Curl & Hammer Curl), Push-Up Volume ↔ DB Curl pair, Towel Hang ↔ L-Sit pair, Arm Block (W10+) | 45 min |
+| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression, One-Arm DB Row, TRX Face Pull, Biceps Microcycle (Single-Arm Curl & Single-Arm Hammer Curl), Push-Up Volume ↔ Single-Arm Curl pair, Towel Hang ↔ L-Sit pair, Arm Block (W10+) | 45 min |
 | **Day 6 (Sat)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 6.5 km/h at phase incline, ≤6% treadmill incline) | 35 min |
 | **Day 7 (Sun)** | **Complete Rest** | System Regeneration, Hydration & Passive Recovery | — |
 
@@ -153,13 +153,13 @@ Each week follows a strictly optimized 7-day routine designed to balance muscula
 
 ### ⏱️ v15.6 Lean Architecture & Structural Optimization
 The program organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts (target session duration: **40–45 minutes**):
-1. **Protected Compound Lifts**: Base compound lifts (DB RDL, Single-Leg RDL, BSS, Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, DB Floor Press, Push-Up Progression, Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, DB Curl, Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
+1. **Protected Compound Lifts**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet BSS, Goblet Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
 2. **Lean Pairs (Antagonistic & Non-Competing)**:
-   - **Day 3**: TRX Row ↔ DB Lateral Raise (75s rest after completing both).
-   - **Day 5**: Push-Up Volume ↔ DB Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
+   - **Day 3**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
+   - **Day 5**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
    - **Day 5**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
 3. **Weekly Alternating Toggles**:
-   - **Day 1 Toggle (Posterior vs Quad/Unilateral)**: Odd weeks = Single-Leg RDL; Even weeks = Lunge/Pistol Slot (resolves to Reverse Lunge or Pistol Squat Progression when unlocked).
+   - **Day 1 Toggle (Posterior vs Quad/Unilateral)**: Odd weeks = Single-Leg RDL; Even weeks = Lunge/Pistol Slot (resolves to Goblet Reverse Lunge or Pistol Squat Progression when unlocked).
    - **Day 3 Rear Delt Toggle**: Odd weeks = TRX Y-T-W; Even weeks = Band Pull-Apart.
 4. **Arm Block Myo-Reps Clusters (W10+)**: 1 activation set + 3 mini-sets of 5 reps with 15s rest. Terminated by 2 consecutive tempo losses (`two_consecutive_tempo_losses`). Maximum 1 exposure per muscle area per week.
 5. **Scheduled Deload Microcycles (Every 8 Weeks)**: Occur on Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104. Sets capped at 2 per exercise, loads reduced by 2 kg (rounded to legal range [3..24] kg). All pairs/circuits/blocks dissolve into straight sets.
@@ -178,12 +178,12 @@ The 52-week program is designed around a minimal yet complete home-gym setup:
 
 | Equipment Item | Specifications & Usage | Purpose in Program |
 | :--- | :--- | :--- |
-| **Modular Dumbbells** | 8 plates × 3 kg (24 kg total plates) + 2 handles. Allows dual dumbbells (3, 6, 9, 12 kg each) and single dumbbell loading (3–24 kg in 3 kg increments). | Floor Press, Seated OHP, RDLs, Split Squats, Single-Arm Rows, Biceps Curls, Triceps Extensions. |
+| **Modular Dumbbells** | 8 plates × 3 kg (24 kg total plates) + 2 handles. Allows dual dumbbells (3, 6, 9, 12 kg each) and single dumbbell loading (3–24 kg in 3 kg increments). | Single-Arm Floor Press, Single-Arm Seated OHP, Goblet RDLs, Goblet Split Squats, Single-Arm Rows, Single-Arm Biceps Curls, Triceps Extensions. |
 | **Mounted Pull-Up Bar** | Secure doorway or wall-mounted pull-up bar. | Overhand Pull-Ups, Chin-Ups, Dead Hangs, Towel Hangs for grip. |
 | **Push-Up Bars** | Ergonomic push-up handles / parallettes. | **Mandatory** for all Push-Ups, Deficit Push-Ups, Elevated Pike Push-Ups, and L-Sit Tucks to prevent wrist hyperextension. |
 | **TRX Suspension Trainer** | Adjustable suspension trainer anchored to door/wall. | TRX Face Pulls (Angles 1–4) and TRX Y-T-W shoulder stability sequences. |
 | **Resistance Bands** | Loop/flat resistance bands: 30 kg band & 40 kg band. | Band Pull-Aparts, Pallof Press (core anti-rotation), and light warmups. |
-| **Sturdy Chair / Box** | Flat, stable chair or workout bench (knee-to-hip height). | Bulgarian Split Squats (BSS), Feet-Elevated Push-Ups, Pistol Squats to chair, Seated OHP. |
+| **Sturdy Chair / Box** | Flat, stable chair or workout bench (knee-to-hip height). | Goblet Bulgarian Split Squats, Feet-Elevated Push-Ups, Pistol Squats to chair, Single-Arm Seated OHP. |
 | **Treadmill** | Home or gym treadmill with adjustable speed & incline. | Zone 2 Aerobic Base walking, Norwegian 4x4 VO2 Max intervals (incline strictly capped at ≤6%). |
 | **Weighted Vest / Pack** | +5 kg weighted vest or loaded backpack. | Advanced Year 2 calisthenics progression (Weighted Pull-Ups & Deficit Push-Ups). |
 

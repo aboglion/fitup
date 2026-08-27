@@ -38,10 +38,10 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 
 ### 2.1 Lean Structure & Time-Efficiency (40–45 Minute Target)
 The v15.6 Lean Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts:
-- **Protected Compound Exercises**: Base compound lifts (DB RDL, Single-Leg RDL, Bulgarian Split Squat, Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, DB Floor Press, Push-Up Progression, Seated DB OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, DB Curl, Hammer Curl) are strictly performed as straight sets with dedicated rest.
+- **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
 - **Lean Pairs (Antagonistic & Non-Competing)**:
-  - **Day 3 (d3-row-lateral)**: TRX Row ↔ DB Lateral Raise (75s rest after completing both).
-  - **Day 5 (d5-pushup-curl)**: Push-Up Volume ↔ DB Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
+  - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
+  - **Day 5 (d5-pushup-curl)**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
   - **Day 5 (d5-grip-lsit)**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
   - *Pair Dissolution Rule*: If any set receives a `BELOW` result, or during Deload/light microcycle weeks, the pair dissolves into straight sets with dedicated rest.
 - **Core Circuit (Day 1 End of Workout)**: Pallof Press Progression → Dead Bug → Hollow Body Hold (30s rest between rounds).
@@ -50,16 +50,16 @@ The v15.6 Lean Edition organizes exercises into optimized structures to maximize
 ### 2.2 Weekly Alternating Toggles
 - **Day 1 Toggle (Posterior vs Quad/Unilateral)**:
   - **Odd Weeks**: Single-Leg RDL (Posterior chain focus).
-  - **Even Weeks**: Lunge/Pistol Slot — automatically resolves to Reverse Lunge + DB (fallback) or Pistol Squat Progression once unlocked (Quad & unilateral focus).
+  - **Even Weeks**: Lunge/Pistol Slot — automatically resolves to Goblet Reverse Lunge (fallback) or Pistol Squat Progression once unlocked (Quad & unilateral focus).
 - **Day 3 Rear Delt Toggle**:
   - **Odd Weeks**: TRX Y-T-W (3-position posterior delt & scapular control).
   - **Even Weeks**: Band Pull-Apart (Scapular retraction & posture density).
 
 ### 2.3 Biceps 3-Week Microcycle
 To prevent elbow tendonitis while maximizing hyper-trophy:
-- **Weeks 1 & 2 (Heavy Progressive)**: Both DB Curl and Hammer Curl active. Full progression rules apply.
-- **Week 3 (Light Myo-Preservation)**: Hammer Curl only (2 sets, capped load), progression frozen, weight preserved.
-- **Week 8 / Deload Weeks**: 1 set of Hammer Curl only.
+- **Weeks 1 & 2 (Heavy Progressive)**: Both Single-Arm Curl and Single-Arm Hammer Curl active. Full progression rules apply.
+- **Week 3 (Light Myo-Preservation)**: Single-Arm Hammer Curl only (2 sets, capped load), progression frozen, weight preserved.
+- **Week 8 / Deload Weeks**: 1 set of Single-Arm Hammer Curl only.
 
 ### 2.4 Weekly Frequency Additions
 - **Day 3 Second Back Frequency**: TRX Row (2 sets) adds volume for back frequency 2/2 (10 total weekly back sets: 3+3+2+2).
@@ -121,7 +121,7 @@ Deload occurs automatically on **Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88
 
 ## Appendix A — Arm Block v15.6 Protocol (Myo-Reps Cluster)
 
-**Activation Conditions**: Active from Week 10 onwards. Executed at the end of Day 3 (Lateral Raise + Overhead Triceps Extension) and Day 5 (DB Curl / Hammer Curl).
+**Activation Conditions**: Active from Week 10 onwards. Executed at the end of Day 3 (Lateral Raise + Overhead Triceps Extension) and Day 5 (Single-Arm Curl / Single-Arm Hammer Curl).
 
 ### Myo-Reps Cluster Mechanics
 1. **Activation Set**: Executed to stage target reps (e.g. 12 reps) at assigned load. Rest 15 seconds.

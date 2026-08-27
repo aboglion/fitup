@@ -14,10 +14,10 @@ window.ExporterGuide = (() => {
       time_efficiency_title: "⏱️ Lean Architecture & Structural Optimization (40–45 min target)",
       time_efficiency_list: [
         "<strong>Protected Compound Lifts:</strong> Heavy compound exercises are strictly performed in straight sets with full adaptive rest to protect performance.",
-        "<strong>Lean Pairs (Antagonistic & Non-Competing):</strong> Pair non-competing exercises (Day 3: TRX Row ↔ DB Lateral Raise; Day 5: Push-Up Volume ↔ DB Curl; Day 5: Towel Hang ↔ L-Sit). Perform Ex A → Ex B → 45-75s rest.",
+        "<strong>Lean Pairs (Antagonistic & Non-Competing):</strong> Pair non-competing exercises (Day 3: TRX Row ↔ Single-Arm Lateral Raise; Day 5: Push-Up Volume ↔ Single-Arm Curl; Day 5: Towel Hang ↔ L-Sit). Perform Ex A → Ex B → 45-75s rest.",
         "<strong>Arm Block Myo-Reps Protocol:</strong> Active from Week 10 onwards. Myo-reps cluster (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped objectively after two consecutive tempo losses, capped at 1 exposure per muscle area per week.",
         "<strong>Weekly Alternating Toggles:</strong> Day 1 rotates Single-Leg RDL (odd weeks) with Lunge/Pistol Slot (even weeks). Day 3 rotates TRX Y-T-W (odd weeks) with Band Pull-Apart (even weeks).",
-        "<strong>Biceps 3-Week Microcycle:</strong> Weeks 1-2 heavy progressive overload, Week 3 light preservation (Hammer Curl 2 sets, no progression).",
+        "<strong>Biceps 3-Week Microcycle:</strong> Weeks 1-2 heavy progressive overload, Week 3 light preservation (Single-Arm Hammer Curl 2 sets, no progression).",
         "<strong>Data Backup & Cloud Sync:</strong> One-click local JSON export/import alongside automatic bidirectional Google Drive cloud synchronization."
       ],
       equipment_title: "🔧 Required Equipment & Specifications",
@@ -27,7 +27,7 @@ window.ExporterGuide = (() => {
         "Push-up Bars / Parallettes (All push exercises: Push-Up, Deficit, Pike, L-sit — no palms flat on floor)",
         "TRX Suspension Trainer (Face Pull, TRX Row, Y-T-W at fixed angles)",
         "Resistance Bands: 30kg (Pull-Apart, Pallof, Neck Flexion/Extension), 40kg, 50kg",
-        "Bench / Sturdy Chair (BSS, Feet-Elevated Push-Up, Pike Hold)",
+        "Bench / Sturdy Chair (Goblet BSS, Feet-Elevated Push-Up, Pike Hold)",
         "Treadmill (Zone 2: 4% incline @ 5.5 km/h; VO2 Max 4x4: 3–6% incline @ 6.5 km/h)",
         "Weighted Vest / Backpack (+2kg, +4kg, +5kg for designated exercises)"
       ],
@@ -36,16 +36,16 @@ window.ExporterGuide = (() => {
       col_type: "Workout Type",
       col_intensity: "Intensity / Focus",
       days_table: [
-        { day: "Day 1", type: "🦵 Legs + Core + Carry", focus: "45 min — RPE 7–9 — DB RDL, Day 1 Toggle (Single-Leg RDL / Lunge-Pistol Slot), BSS, Hip Thrust, Suitcase Carry, Calf Block, Core Circuit" },
+        { day: "Day 1", type: "🦵 Legs + Core + Carry", focus: "45 min — RPE 7–9 — Goblet RDL, Day 1 Toggle (Single-Leg RDL / Lunge-Pistol Slot), Goblet BSS, Hip Thrust, Suitcase Carry, Calf Block, Core Circuit" },
         { day: "Day 2", type: "🫀 Zone 2 Cardio + Daily Mobility", focus: "45 min — Treadmill (4% incline, 5.5 km/h) + 5 min Micro Mobility" },
-        { day: "Day 3", type: "💥 Push + Shoulders + Triceps + Back Volume", focus: "45 min — RPE 7–9 — Pike Hold/Push-Up, Floor Press, Push-Up Bars, Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ DB Lateral Raise pair, Rear Delt Toggle + Arm Block (W10+)" },
+        { day: "Day 3", type: "💥 Push + Shoulders + Triceps + Back Volume", focus: "45 min — RPE 7–9 — Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ Single-Arm Lateral Raise pair, Rear Delt Toggle + Arm Block (W10+)" },
         { day: "Day 4", type: "🌿 Active Recovery + Cervical & Joint Health", focus: "30 min — Cervical Health (Band Neck Flexion & Extension 2x15-20) + 25 min Treadmill (0% incline, 4.5 km/h) + 10 min Deep Mobility" },
-        { day: "Day 5", type: "🧲 Pull + Grip + Core + Chest Volume", focus: "45 min — RPE 7–9 — Pull-Up, One-Arm Row, TRX Face Pull, Biceps Microcycle (DB Curl & Hammer Curl), Push-Up Volume ↔ DB Curl pair, Towel Hang ↔ L-Sit pair + Arm Block (W10+)" },
+        { day: "Day 5", type: "🧲 Pull + Grip + Core + Chest Volume", focus: "45 min — RPE 7–9 — Pull-Up, One-Arm Row, TRX Face Pull, Biceps Microcycle (Single-Arm Curl & Single-Arm Hammer Curl), Push-Up Volume ↔ Single-Arm Curl pair, Towel Hang ↔ L-Sit pair + Arm Block (W10+)" },
         { day: "Day 6", type: "🔴 VO2 Max 4×4 Cardio", focus: "35 min — Norwegian 4x4: 10m warmup, 4x(4m effort @ 6.5 km/h, 3m rest), 5m cooldown (Zone 2 in Deload)" },
         { day: "Day 7", type: "😴 Full Rest Day", focus: "Complete Recovery, Nutrition & Sleep" }
       ],
       arm_block_title: "💪 Arm Block v15.6 (Myo-Reps Cluster Protocol)",
-      arm_block_desc: "Active from Week 10 at end of Day 3 (Lateral Raise + Overhead Triceps Extension) and Day 5 (DB Curl / Hammer Curl). 1 activation set to target + 3 mini-sets of 5 reps with 15s rest. Objective stop rule: 2 consecutive tempo losses terminates cluster. Capped at 1 exposure per muscle area per week.",
+      arm_block_desc: "Active from Week 10 at end of Day 3 (Single-Arm Lateral Raise + Overhead Triceps Extension) and Day 5 (Single-Arm Curl / Single-Arm Hammer Curl). 1 activation set to target + 3 mini-sets of 5 reps with 15s rest. Objective stop rule: 2 consecutive tempo losses terminates cluster. Capped at 1 exposure per muscle area per week.",
       dictionary_title: "📚 Exercise Dictionary",
       dictionary_subtitle: "Comprehensive list of all exercises in the program.",
       full_plan_title: "📅 Full Program Breakdown",
@@ -73,10 +73,10 @@ window.ExporterGuide = (() => {
       time_efficiency_title: "⏱️ מבנה Lean וייעול זמנים (אימון ב-40–45 דקות)",
       time_efficiency_list: [
         "<strong>הגנה על תרגילי בסיס:</strong> תרגילי כוח מורכבים כבדים מבוצעים תמיד כסטים ישרים עם מנוחה אדפטיבית מלאה להגנה על ביצועים.",
-        "<strong>זיווגי Lean (אנטגוניסטיים ולא-מתחרים):</strong> זיווג תרגילים לא מתחרים (יום 3: TRX Row ↔ DB Lateral Raise; יום 5: Push-Up Volume ↔ DB Curl; יום 5: Towel Hang ↔ L-Sit). מבוצע א' ← ב' ← מנוחה 45-75 שנ'.",
+        "<strong>זיווגי Lean (אנטגוניסטיים ולא-מתחרים):</strong> זיווג תרגילים לא מתחרים (יום 3: TRX Row ↔ Single-Arm Lateral Raise; יום 5: Push-Up Volume ↔ Single-Arm Curl; יום 5: Towel Hang ↔ L-Sit). מבוצע א' ← ב' ← מנוחה 45-75 שנ'.",
         "<strong>פרוטוקול Arm Block ב-Myo-Reps:</strong> פעיל משבוע 10. צביר Myo-Reps (סט אקטיבציה + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה). עצירה אובייקטיבית ב-2 אובדני טמפו רצופים, מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.",
         "<strong>רוטציות שבועיות (Toggles):</strong> יום 1 מחליף Single-Leg RDL (שבועות אי-זוגיים) עם Lunge/Pistol Slot (שבועות זוגיים). יום 3 מחליף TRX Y-T-W (אי-זוגי) עם Band Pull-Apart (זוגי).",
-        "<strong>מיקרו-מחזור בייספס (3 שבועות):</strong> שבועות 1-2 עומס כבד וקידום, שבוע 3 קל (Hammer Curl בלבד, 2 סטים, ללא קידום).",
+        "<strong>מיקרו-מחזור בייספס (3 שבועות):</strong> שבועות 1-2 עומס כבד וקידום, שבוע 3 קל (Single-Arm Hammer Curl בלבד, 2 סטים, ללא קידום).",
         "<strong>גיבוי נתונים וסנכרון ענן:</strong> ייצוא/ייבוא קובץ JSON מקומי בלחיצה אחת לצד סנכרון ענן דו-כיווני ל-Google Drive."
       ],
       equipment_title: "🔧 ציוד נדרש ושימוש קבוע",
@@ -86,7 +86,7 @@ window.ExporterGuide = (() => {
         "Push-up Bars (כל תרגילי הדחיפה: Push-Up, Deficit, Pike, L-sit — אין כפות ידיים על הרצפה)",
         "TRX (Face Pull, TRX Row, Y-T-W בזוויות קבועות)",
         "גומיות התנגדות: 30 ק\"ג (Pull-Apart, Pallof, כפיפה/פשיטת צוואר), 40 ק\"ג, 50 ק\"ג",
-        "כיסא / ספסל יציב (BSS, Feet-Elevated Push-Up, Pike Hold)",
+        "כיסא / ספסל יציב (Goblet BSS, Feet-Elevated Push-Up, Pike Hold)",
         "הליכון (Zone 2: שיפוע 4% ב-5.5 קמ\"ש; VO2 Max 4×4: שיפוע 3%–6% ב-6.5 קמ\"ש)",
         "וסט משוקלל (+2, +4, +5 ק\"ג לתרגילים המסומנים בלבד)"
       ],
@@ -95,11 +95,11 @@ window.ExporterGuide = (() => {
       col_type: "סוג אימון",
       col_intensity: "עצימות / דגשים",
       days_table: [
-        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "45 דק' — RPE 7–9 — DB RDL, רוטציית יום 1 (Single-Leg RDL / Lunge-Pistol Slot), BSS, Hip Thrust, Suitcase Carry, בלוק תאומים, מעגל ליבה" },
+        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "45 דק' — RPE 7–9 — Goblet RDL, רוטציית יום 1 (Single-Leg RDL / Lunge-Pistol Slot), Goblet BSS, Hip Thrust, Suitcase Carry, בלוק תאומים, מעגל ליבה" },
         { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — 45 דק' הליכה בשיפוע 4% (5.5 קמ\"ש, דופק Zone 2) + 5 דק' מיקרו-מוביליות" },
-        { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "45 דק' — RPE 7–9 — Pike Hold/Push-Up, Floor Press, Push-Up Bars, OHP, Triceps Ext, Diamond Push-Up, זוג TRX Row ↔ Lateral Raise, רוטציית כתף אחורית + Arm Block (משבוע 10)" },
+        { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "45 דק' — RPE 7–9 — Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, OHP, Triceps Ext, Diamond Push-Up, זוג TRX Row ↔ Single-Arm Lateral Raise, רוטציית כתף אחורית + Arm Block (משבוע 10)" },
         { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 25 דק' הליכון 0% (4.5 קמ\"ש) + 10 דק' מאקרו-מוביליות" },
-        { day: "יום 5", type: "🧲 משיכה + גב + ביספס + נפח חזה", focus: "45 דק' — RPE 7–9 — מתח, One-Arm Row, TRX Face Pull, מיקרו-מחזור בייספס, זוג Push-Up Volume ↔ DB Curl, זוג Towel Hang ↔ L-Sit + Arm Block (משבוע 10)" },
+        { day: "יום 5", type: "🧲 משיכה + גב + ביספס + נפח חזה", focus: "45 דק' — RPE 7–9 — מתח, One-Arm Row, TRX Face Pull, מיקרו-מחזור בייספס, זוג Push-Up Volume ↔ Single-Arm Curl, זוג Towel Hang ↔ L-Sit + Arm Block (משבוע 10)" },
         { day: "יום 6", type: "🔴 VO2 Max 4×4 Cardio", focus: "35 דק' — פרוטוקול נורבגי: 10 דק' חימום, 4×(4 דק' מאמץ 6.5 קמ\"ש בשיפוע השלב / 3 דק' מנוחה), 5 דק' שחרור" },
         { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה, תזונה ושינה" }
       ],
@@ -132,7 +132,7 @@ window.ExporterGuide = (() => {
       time_efficiency_title: "⏱️ بنية Lean وتحسين الوقت (40-45 دقيقة)",
       time_efficiency_list: [
         "<strong>حماية التمارين المركبة:</strong> التمارين المركبة الثقيلة تتم دائماً في مجموعات مستقيمة مع راحة كاملة.",
-        "<strong>ثنائيات Lean (المزدوجة):</strong> دمج تمارين غير متنافسة (اليوم 3: TRX Row ↔ DB Lateral Raise; اليوم 5: Push-Up Volume ↔ DB Curl).",
+        "<strong>ثنائيات Lean (المزدوجة):</strong> دمج تمارين غير متنافسة (اليوم 3: TRX Row ↔ Single-Arm Lateral Raise; اليوم 5: Push-Up Volume ↔ Single-Arm Curl).",
         "<strong>بروتوكول بلوك الذراعين Myo-Reps:</strong> مفعل من الأسبوع 10. مجموعة تنشيط + 3 مجموعات مصغرة (5 تكرارات مع 15 ثانية راحة). توقف عند فقدان الإيقاع مرتين متتاليتين.",
         "<strong>التناوب الأسبوعي (Toggles):</strong> اليوم 1 يتناول Single-Leg RDL واليوم 3 يتناول TRX Y-T-W و Band Pull-Apart.",
         "<strong>دورة البايسبس (3 أسابيع):</strong> أسبوعان حمولة زائدة وأسبوع خفيف."
@@ -153,9 +153,9 @@ window.ExporterGuide = (() => {
       col_type: "نوع التمرين",
       col_intensity: "الشدة / التركيز",
       days_table: [
-        { day: "اليوم 1", type: "Legs + Core + Grip", focus: "45 دقيقة — RPE 7–9 — RDL, Day 1 Toggle, BSS, Hip Thrust, Suitcase Carry, Core" },
+        { day: "اليوم 1", type: "Legs + Core + Grip", focus: "45 دقيقة — RPE 7–9 — RDL, Day 1 Toggle, Goblet BSS, Hip Thrust, Suitcase Carry, Core" },
         { day: "اليوم 2", type: "Zone 2 Cardio + المرونة اليومية", focus: "45 دقيقة — مشي مائل (4%, 5.5 كم/س) + 5 دقائق مرونة" },
-        { day: "اليوم 3", type: "Push + Shoulders + Triceps", focus: "45 دقيقة — RPE 7–9 — Floor Press, OHP, Lateral Raise + بلوك الذراعين (من الأسبوع 10)" },
+        { day: "اليوم 3", type: "Push + Shoulders + Triceps", focus: "45 دقيقة — RPE 7–9 — Single-Arm Floor Press, OHP, Single-Arm Lateral Raise + بلوك الذراعين (من الأسبوع 10)" },
         { day: "اليوم 4", type: "Active Recovery + صحة الرقبة", focus: "30 دقيقة — تمارين الرقبة + مشي 25 دقيقة (0%, 4.5 كم/س) + مرونة عميقة" },
         { day: "اليوم 5", type: "Pull + Back + Biceps", focus: "45 دقيقة — RPE 7–9 — عقلة, Rows, TRX Face Pull, Curls + بلوك الذراعين (من الأسبوع 10)" },
         { day: "اليوم 6", type: "VO2 Max 4×4 Cardio", focus: "35 دقيقة — بروتوكول نرويجي 4x4" },

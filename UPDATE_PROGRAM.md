@@ -147,7 +147,7 @@ Arm Block מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.
 
 ### שילוב Deload עם מיקרו-מחזור בייספס
 
-אם שבוע 3 של המחזור (הקל) חופף לשבוע Deload — אין כפילות. מבצעים סט אחד Hammer Curl בשלב הנוכחי.
+אם שבוע 3 של המחזור (הקל) חופף לשבוע Deload — אין כפילות. מבצעים סט אחד Single-Arm Hammer Curl בשלב הנוכחי.
 
 ### הצגת Deload במסך
 
@@ -265,20 +265,20 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 | --- | ---: | ---: |
 | DB RDL | 105 | 90–120 |
 | Single-Leg RDL | 75 | 60–90 |
-| DB Floor Press | 105 | 90–120 |
+| Single-Arm Floor Press | 105 | 90–120 |
 | Pull-Up/Chin-Up | 105 | 90–120 |
-| Seated DB OHP | 82 | 75–90 |
-| Bulgarian Split Squat | 82 | 75–90 |
+| Single-Arm Seated OHP | 82 | 75–90 |
+| Goblet Bulgarian Split Squat | 82 | 75–90 |
 | One-Arm DB Row | 82 | 75–90 |
-| Reverse Lunge | 75 | 60–90 |
+| Goblet Reverse Lunge | 75 | 60–90 |
 | Pistol Squat Progression | 105 | 90–120 |
 | DB Hip Thrust | 75 | 60–90 |
 | TRX Row | 75 | 60–90 |
 | Push-Up Volume (Day 5) | 75 | 60–90 |
-| DB Lateral Raise | 45 | — |
+| Single-Arm Lateral Raise | 45 | — |
 | DB Overhead Triceps Extension | 45 | — |
-| DB Curl | 45 | — |
-| Hammer Curl | 45 | — |
+| Single-Arm Curl | 45 | — |
+| Single-Arm Hammer Curl | 45 | — |
 | Diamond Push-Up | 45 | — |
 | Band Pull-Apart | 45 | — |
 | TRX Y-T-W | 45 | — |
@@ -303,9 +303,9 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 
 רשימת תרגילים מוגנים:
 
-- יום 1: DB RDL, Single-Leg RDL, Bulgarian Split Squat, Reverse Lunge, Pistol Squat Progression, DB Hip Thrust, Suitcase Carry
-- יום 3: Pike Progression, DB Floor Press, Push-Up Bars, Seated DB OHP, DB Overhead Triceps Extension
-- יום 5: Pull-Up, One-Arm DB Row, DB Curl, Hammer Curl
+- יום 1: DB RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat Progression, DB Hip Thrust, Suitcase Carry
+- יום 3: Pike Progression, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Extension
+- יום 5: Pull-Up, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl
 
 הגנה על תרגיל מוגן פירושה:
 
@@ -363,14 +363,14 @@ Toggle Group: `day1-posterior-quad`
 
 ה-Slot הזוגי ביום 1 נפתר אוטומטית כך:
 
-- אם Pistol Squat Progression נעול: מבצעים Reverse Lunge.
+- אם Pistol Squat Progression נעול: מבצעים Goblet Reverse Lunge.
 - אם Pistol Squat Progression פתוח: מבצעים Pistol Squat Progression.
 
 כללים:
 
 - אין בחירת משתמש.
 - המערכת מחליטה לפי זוגיות שבוע + סטטוס unlock.
-- Reverse Lunge שומר progression גם כאשר אינו פעיל.
+- Goblet Reverse Lunge שומר progression גם כאשר אינו פעיל.
 - Pistol Squat Progression שומר progression גם כאשר אינו פעיל.
 - Single-Leg RDL שומר progression גם כאשר אינו פעיל.
 - אין קידום לתרגיל לא פעיל.
@@ -436,9 +436,9 @@ stopRule: 'two_consecutive_tempo_losses'
 
 | שבוע | תרגילים | סטים | עצימות |
 | --- | --- | --- | --- |
-| שבוע 1 (כבד) | DB Curl + Hammer Curl | 2-3 כל אחד | Progression רגיל |
-| שבוע 2 (כבד) | DB Curl + Hammer Curl | 2-3 כל אחד | המשך Progression |
-| שבוע 3 (קל) | Hammer Curl בלבד | 2 סטים | ~50-60% נפח, ללא קידום |
+| שבוע 1 (כבד) | Single-Arm Curl + Single-Arm Hammer Curl | 2-3 כל אחד | Progression רגיל |
+| שבוע 2 (כבד) | Single-Arm Curl + Single-Arm Hammer Curl | 2-3 כל אחד | המשך Progression |
+| שבוע 3 (קל) | Single-Arm Hammer Curl בלבד | 2 סטים | ~50-60% נפח, ללא קידום |
 
 ### נקודות שילוב
 
@@ -446,12 +446,12 @@ stopRule: 'two_consecutive_tempo_losses'
 - Progression מבוסס רק על שבועות כבדים.
 - תנאי עצירה ללא שינוי.
 - `currentWeight` נשמר בסוף שבוע 2 וחוזר אליו בשבוע 1 הבא.
-- בשבוע קל (3), DB Curl לא פעיל → הזוג push-up-volume ↔ db-curl מתפרק, ו-Push-Up Volume מבוצע כסט ישר.
+- בשבוע קל (3), Single-Arm Curl לא פעיל → הזוג push-up-volume ↔ single-arm-curl מתפרק, ו-Push-Up Volume מבוצע כסט ישר.
 
 ```js
 function getBicepsMicrocycleWeek(weekNumber) {
   if (weekNumber % 8 === 0) {
-    return { type: 'deload', exercises: ['hammer-curl'], sets: 1 };
+    return { type: 'deload', exercises: ['single-arm-hammer-curl'], sets: 1 };
   }
 
   const cyclePosition = ((weekNumber - 1) % 3) + 1;
@@ -460,21 +460,21 @@ function getBicepsMicrocycleWeek(weekNumber) {
     case 1:
       return {
         type: 'heavy',
-        exercises: ['db-curl', 'hammer-curl'],
+        exercises: ['single-arm-curl', 'single-arm-hammer-curl'],
         sets: 'progressive',
         progressionAllowed: true
       };
     case 2:
       return {
         type: 'heavy',
-        exercises: ['db-curl', 'hammer-curl'],
+        exercises: ['single-arm-curl', 'single-arm-hammer-curl'],
         sets: 'progressive',
         progressionAllowed: true
       };
     case 3:
       return {
         type: 'light',
-        exercises: ['hammer-curl'],
+        exercises: ['single-arm-hammer-curl'],
         sets: 2,
         progressionAllowed: false
       };
@@ -495,19 +495,19 @@ function getBicepsMicrocycleWeek(weekNumber) {
 
 ---
 
-## תרגיל 1 — DB Romanian Deadlift
+## תרגיל 1 — Goblet Romanian Deadlift
 
 מוגן, סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
-| id | db-rdl |
+| id | goblet-rdl |
 | type | weighted |
 | sets | 3 |
 | rep window | 6–12 |
-| starting weight | 6 ק״ג each |
-| min / max weight | 3 / 24 ק״ג each |
-| increment | 1 ק״ג each |
+| starting weight | 12 ק״ג total |
+| min / max weight | 3 / 24 ק״ג total |
+| increment | 1 ק״ג total |
 | rest | 105 (base), 90–120 |
 | tempo | 3 שניות ירידה |
 | category | Legs |
@@ -526,7 +526,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | structure | straight |
 | odd member | single-leg-rdl |
 | even member | lunge-pistol-slot |
-| slot fallback | reverse-lunge |
+| slot fallback | goblet-reverse-lunge |
 | slot unlocked replacement | pistol-squat-progression |
 | sets | 2 לתרגיל/Slot הפעיל |
 | progression | רק לתרגיל הפעיל |
@@ -537,7 +537,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 
 - שבוע אי-זוגי: Single-Leg RDL פעיל.
 - שבוע זוגי: Lunge/Pistol Slot פעיל.
-- אם Pistol נעול: Reverse Lunge.
+- אם Pistol נעול: Goblet Reverse Lunge.
 - אם Pistol פתוח: Pistol Squat Progression.
 
 ---
@@ -554,8 +554,8 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | type | weighted |
 | sets | 2 |
 | rep window | 8–10 לכל רגל |
-| starting weight | 6 ק״ג each |
-| min / max weight | 3 / 20 ק״ג each |
+| starting weight | 12 ק״ג total |
+| min / max weight | 3 / 24 ק״ג total |
 | rest | 75 (base), 60–90 |
 | structure | straight |
 | toggleGroup | day1-posterior-quad |
@@ -572,7 +572,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 
 ```js
 if (!isExerciseUnlocked('pistol-squat-progression')) {
-  activeExercise = 'reverse-lunge';
+  activeExercise = 'goblet-reverse-lunge';
 } else {
   activeExercise = 'pistol-squat-progression';
 }
@@ -580,7 +580,7 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 ---
 
-## Toggle Member B1 — Reverse Lunge
+## Toggle Member B1 — Goblet Reverse Lunge
 
 פעיל כחלק מה-Slot הזוגי כאשר Pistol נעול.
 
@@ -588,12 +588,12 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 | שדה | ערך |
 | --- | --- |
-| id | reverse-lunge |
+| id | goblet-reverse-lunge |
 | type | weighted |
 | sets | 2 |
 | rep window | 10–12 לכל רגל |
-| starting weight | 6 ק״ג each |
-| min / max weight | 3 / 20 ק״ג each |
+| starting weight | 12 ק״ג total |
+| min / max weight | 3 / 24 ק״ג total |
 | rest | 75 (base), 60–90 |
 | structure | straight |
 | toggleGroup | day1-posterior-quad |
@@ -621,23 +621,23 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 | toggleGroup | day1-posterior-quad |
 | toggleActiveOn | even |
 | stages | Assisted Pistol → Pistol to High Box → Pistol to Chair → Pistol to Low Box → Full Pistol → Weighted 3kg → Weighted 6kg |
-| unlockCriteria | כל סטי BSS ב-12 חזרות תקינות במשקל 12 ק״ג each |
+| unlockCriteria | כל סטי BSS ב-12 חזרות תקינות במשקל 24 ק״ג total |
 | rule | ירידה איטית; אם הברך קורסת פנימה (valgus), BELOW |
 
 ---
 
-## תרגיל 3 — Bulgarian Split Squat
+## תרגיל 3 — Goblet Bulgarian Split Squat
 
 מוגן, סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
-| id | bulgarian-split-squat |
+| id | goblet-bulgarian-split-squat |
 | type | weighted |
 | sets | 3 |
 | rep window | 6–12 לכל רגל |
-| starting weight | 6 ק״ג each |
-| min / max weight | 3 / 24 ק״ג each |
+| starting weight | 12 ק״ג total |
+| min / max weight | 3 / 24 ק״ג total |
 | rest | 82 (base), 75–90 |
 | structure | straight |
 
@@ -755,18 +755,18 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 ---
 
-## תרגיל 2 — DB Floor Press
+## תרגיל 2 — Single-Arm Floor Press
 
 מוגן, סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
-| id | db-floor-press |
+| id | single-arm-floor-press |
 | type | weighted |
 | sets | 3 |
 | rep window | 6–12 |
-| starting weight | 6 ק״ג each |
-| min / max weight | 3 / 24 ק״ג each |
+| starting weight | 6 ק״ג |
+| min / max weight | 3 / 24 ק״ג |
 | rest | 105 (base), 90–120 |
 | structure | straight |
 
@@ -789,18 +789,18 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 ---
 
-## תרגיל 4 — Seated DB Overhead Press
+## תרגיל 4 — Single-Arm Seated OHP
 
 מוגן, סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
-| id | seated-db-ohp |
+| id | single-arm-seated-ohp |
 | type | weighted |
 | sets | 3 |
 | rep window | 6–12 |
-| starting weight | 6 ק״ג each |
-| min / max weight | 3 / 24 ק״ג each |
+| starting weight | 6 ק״ג |
+| min / max weight | 3 / 24 ק״ג |
 | rest | 82 (base), 75–90 |
 | structure | straight |
 
@@ -839,22 +839,22 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 ---
 
-## זוג Lean — TRX Row ↔ DB Lateral Raise
+## זוג Lean — TRX Row ↔ Single-Arm Lateral Raise
 
 מבנה הזוג:
 
-מבצעים סט TRX Row, אז סט DB Lateral Raise ללא מנוחה ביניהם; מנוחה 75 שניות לאחר השלמת שניהם.
+מבצעים סט TRX Row, אז סט Single-Arm Lateral Raise ללא מנוחה ביניהם; מנוחה 75 שניות לאחר השלמת שניהם.
 
 שני התרגילים בני 2 סטים.
 
-| שדה | TRX Row | DB Lateral Raise |
+| שדה | TRX Row | Single-Arm Lateral Raise |
 | --- | --- | --- |
-| id | trx-row | db-lateral-raise |
+| id | trx-row | single-arm-lateral-raise |
 | type | variation | weighted |
 | sets | 2 | 2 |
 | rep window | 10–15 | 12–20 |
-| starting weight | — | 3 ק״ג each |
-| min / max weight | — | 3 / 12 ק״ג each |
+| starting weight | — | 3 ק״ג |
+| min / max weight | — | 3 / 12 ק״ג |
 | rest | pair:d3-row-lateral, 75 לאחר הזוג | pair:d3-row-lateral, 75 לאחר הזוג |
 | structure | pair | pair |
 | pairId | d3-row-lateral | d3-row-lateral |
@@ -944,18 +944,18 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 ---
 
-## תרגיל 4 — DB Curl
+## תרגיל 4 — Single-Arm Curl
 
 מיקרו-מחזור, מוגן, סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
-| id | db-curl |
+| id | single-arm-curl |
 | type | weighted |
 | sets | 2-3 לפי מיקרו-מחזור |
 | rep window | 10–15 |
-| starting weight | 3 ק״ג each |
-| min / max weight | 3 / 18 ק״ג each |
+| starting weight | 3 ק״ג |
+| min / max weight | 3 / 18 ק״ג |
 | rest | 45 שניות |
 | structure | straight |
 | microcycle | biceps-microcycle |
@@ -964,18 +964,18 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 ---
 
-## תרגיל 5 — Hammer Curl
+## תרגיל 5 — Single-Arm Hammer Curl
 
 מיקרו-מחזור, מוגן, סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
-| id | hammer-curl |
+| id | single-arm-hammer-curl |
 | type | weighted |
 | sets | 2-3 לפי מיקרו-מחזור |
 | rep window | 10–12 |
-| starting weight | 3 ק״ג each |
-| min / max weight | 3 / 18 ק״ג each |
+| starting weight | 3 ק״ג |
+| min / max weight | 3 / 18 ק״ג |
 | rest | 45 שניות |
 | structure | straight |
 | microcycle | biceps-microcycle |
@@ -984,19 +984,19 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 ---
 
-## זוג Lean אנטגוניסט — Push-Up Volume ↔ DB Curl
+## זוג Lean אנטגוניסט — Push-Up Volume ↔ Single-Arm Curl
 
 מבנה הזוג:
 
-מבצעים סט Push-Up Volume, אז סט DB Curl ללא מנוחה ביניהם; מנוחה 75 שניות לאחר השלמת שניהם.
+מבצעים סט Push-Up Volume, אז סט Single-Arm Curl ללא מנוחה ביניהם; מנוחה 75 שניות לאחר השלמת שניהם.
 
-הזוג פעיל רק כאשר DB Curl פעיל, כלומר שבועות מיקרו 1-2.
+הזוג פעיל רק כאשר Single-Arm Curl פעיל, כלומר שבועות מיקרו 1-2.
 
 בשבוע קל (3) או ב-Deload הזוג מתפרק ו-Push-Up Volume מבוצע כסט ישר.
 
-| שדה | Push-Up Volume (Day 5) | DB Curl |
+| שדה | Push-Up Volume (Day 5) | Single-Arm Curl |
 | --- | --- | --- |
-| id | push-up-volume-day5 | db-curl |
+| id | push-up-volume-day5 | single-arm-curl |
 | type | variation | weighted |
 | sets | 2 | 2-3 |
 | rep window | 10–15 | 10–15 |
@@ -1011,7 +1011,7 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 הערה:
 
-כאשר מספר הסטים של DB Curl (3) גדול מזה של Push-Up Volume (2), הסט הנוסף של DB Curl מבוצע כסט ישר נפרד לאחר פירוק הזוג.
+כאשר מספר הסטים של Single-Arm Curl (3) גדול מזה של Push-Up Volume (2), הסט הנוסף של Single-Arm Curl מבוצע כסט ישר נפרד לאחר פירוק הזוג.
 
 ---
 
@@ -1165,12 +1165,12 @@ armBlock: {
   maxArmBlockExposurePerMusclePerWeek: 1,
   muscleAreaMap: {
     3: {
-      "db-lateral-raise": "lateral-shoulder",
+      "single-arm-lateral-raise": "lateral-shoulder",
       "db-oh-triceps-extension": "triceps"
     },
     5: {
-      "db-curl": "biceps",
-      "hammer-curl": "biceps"
+      "single-arm-curl": "biceps",
+      "single-arm-hammer-curl": "biceps"
     }
   }
 }
@@ -1237,7 +1237,7 @@ myoConfig: {
 
 ### Day 3 Arm Block
 
-- DB Lateral Raise + DB Overhead Triceps Extension
+- Single-Arm Lateral Raise + DB Overhead Triceps Extension
 - צביר Myo-Reps לכל תרגיל
 
 שלבי Lateral Raise:
@@ -1254,16 +1254,16 @@ myoConfig: {
 
 ### Day 5 Arm Block — alternation שבועי
 
-- שבועות אי-זוגיים: DB Curl, צביר Myo-Reps.
-- שבועות זוגיים: Hammer Curl, צביר Myo-Reps.
+- שבועות אי-זוגיים: Single-Arm Curl, צביר Myo-Reps.
+- שבועות זוגיים: Single-Arm Hammer Curl, צביר Myo-Reps.
 
-שלבי DB Curl:
+שלבי Single-Arm Curl:
 
 ```text
 3kg → 4kg → 5kg → 6kg → 7kg → 8kg
 ```
 
-שלבי Hammer Curl:
+שלבי Single-Arm Hammer Curl:
 
 ```text
 3kg → 4kg → 5kg → 6kg → 7kg → 8kg
@@ -1301,12 +1301,12 @@ window.TRAININGDATA = {
       maxArmBlockExposurePerMusclePerWeek: 1,
       muscleAreaMap: {
         3: {
-          "db-lateral-raise": "lateral-shoulder",
+          "single-arm-lateral-raise": "lateral-shoulder",
           "db-oh-triceps-extension": "triceps"
         },
         5: {
-          "db-curl": "biceps",
-          "hammer-curl": "biceps"
+          "single-arm-curl": "biceps",
+          "single-arm-hammer-curl": "biceps"
         }
       }
     },
@@ -1314,7 +1314,7 @@ window.TRAININGDATA = {
       cycleLength: 3,
       heavyWeeks: [1, 2],
       lightWeeks: [3],
-      lightWeekExercises: ["hammer-curl"],
+      lightWeekExercises: ["single-arm-hammer-curl"],
       lightWeekSets: 2,
       lightWeekProgressionAllowed: false
     },
@@ -1339,23 +1339,23 @@ window.TRAININGDATA = {
       enabled: true,
       protectCompounds: true,
       protectedExercises: [
-        "db-rdl",
+        "goblet-rdl",
         "single-leg-rdl",
-        "bulgarian-split-squat",
-        "reverse-lunge",
+        "goblet-bulgarian-split-squat",
+        "goblet-reverse-lunge",
         "pistol-squat-progression",
         "db-hip-thrust",
         "suitcase-carry",
         "pike-progression",
-        "db-floor-press",
+        "single-arm-floor-press",
         "push-up-progression",
-        "seated-db-ohp",
+        "single-arm-seated-ohp",
         "db-oh-triceps-extension",
         "diamond-push-up",
         "pull-up-progression",
         "one-arm-db-row",
-        "db-curl",
-        "hammer-curl"
+        "single-arm-curl",
+        "single-arm-hammer-curl"
       ],
       pairs: [
         {
@@ -1364,7 +1364,7 @@ window.TRAININGDATA = {
           type: "non-competing",
           members: [
             { exerciseId: "trx-row", orderInPair: 1 },
-            { exerciseId: "db-lateral-raise", orderInPair: 2 }
+            { exerciseId: "single-arm-lateral-raise", orderInPair: 2 }
           ],
           restAfterPair: 75,
           dissolveOnDeload: true,
@@ -1376,7 +1376,7 @@ window.TRAININGDATA = {
           type: "antagonist",
           members: [
             { exerciseId: "push-up-volume-day5", orderInPair: 1 },
-            { exerciseId: "db-curl", orderInPair: 2 }
+            { exerciseId: "single-arm-curl", orderInPair: 2 }
           ],
           restAfterPair: 75,
           dissolveOnDeload: true,
@@ -1445,7 +1445,7 @@ window.TRAININGDATA = {
             {
               slotId: "lunge-pistol-slot",
               activeOn: "even",
-              fallbackExerciseId: "reverse-lunge",
+              fallbackExerciseId: "goblet-reverse-lunge",
               unlockedExerciseId: "pistol-squat-progression",
               unlockExerciseId: "pistol-squat-progression"
             }
@@ -1550,7 +1550,7 @@ keyPath: `id`
   id: "exposure:2026-W34:day3:lateral-shoulder",
   weekNumber: 34,
   dayIndex: 3,
-  exerciseId: "db-lateral-raise",
+  exerciseId: "single-arm-lateral-raise",
   muscleArea: "lateral-shoulder",
   scheme: "myo-reps",
   setsCompleted: 1,
@@ -1565,7 +1565,7 @@ keyPath: `sessionKey + exerciseId`
 ```js
 {
   sessionKey: "workout:dayIndex:3",
-  exerciseId: "db-lateral-raise",
+  exerciseId: "single-arm-lateral-raise",
   activation: {
     target: 12,
     cleanReps: 12,
@@ -1922,11 +1922,11 @@ evaluateMyoReps(exercise, state, clusterResults) {
   weekNumber: 3,
   microcyclePosition: 3,
   exerciseStatus: {
-    "db-floor-press": true,
+    "single-arm-floor-press": true,
     "trx-row": true
   },
   setData: {
-    "db-floor-press": [
+    "single-arm-floor-press": [
       {
         setNumber: 1,
         result: "window",
@@ -1947,13 +1947,13 @@ evaluateMyoReps(exercise, state, clusterResults) {
         stage: "Angle 2 (45°)",
         restUsed: 75,
         mechanicalStop: false,
-        pairedSetWith: "db-lateral-raise",
+        pairedSetWith: "single-arm-lateral-raise",
         updatedAt: "..."
       }
     ]
   },
   exerciseDecisions: {
-    "db-floor-press": {
+    "single-arm-floor-press": {
       decisionId: "decision:uuid",
       action: "increase",
       reason: "all_window_max_or_max_minus_1_plus_prev_max",
@@ -1979,7 +1979,7 @@ evaluateMyoReps(exercise, state, clusterResults) {
     muscleAreas: ["lateral-shoulder", "triceps"]
   },
   myoClusters: {
-    "db-lateral-raise": {
+    "single-arm-lateral-raise": {
       activation: {
         target: 12,
         cleanReps: 12,
@@ -2087,7 +2087,7 @@ evaluateMyoReps(exercise, state, clusterResults) {
 בשבוע זוגי, אם Pistol נעול:
 
 ```text
-השבוע: Reverse Lunge — מיקוד ארבע-ראשי / כוח חד-צדדי
+השבוע: Goblet Reverse Lunge — מיקוד ארבע-ראשי / כוח חד-צדדי
 ```
 
 בשבוע זוגי, אם Pistol פתוח:
@@ -2128,19 +2128,19 @@ evaluateMyoReps(exercise, state, clusterResults) {
 שבוע כבד:
 
 ```text
-שבוע כבד — DB Curl + Hammer Curl, progression פעיל
+שבוע כבד — Single-Arm Curl + Single-Arm Hammer Curl, progression פעיל
 ```
 
 שבוע קל:
 
 ```text
-שבוע קל — Hammer Curl בלבד, 2 סטים, ללא קידום
+שבוע קל — Single-Arm Hammer Curl בלבד, 2 סטים, ללא קידום
 ```
 
 שבוע Deload:
 
 ```text
-שבוע Deload — סט אחד Hammer Curl
+שבוע Deload — סט אחד Single-Arm Hammer Curl
 ```
 
 ### תצוגת Arm Block
@@ -2376,15 +2376,15 @@ settings.programSchemaVersion
 
 שמור state גם בשבועות שבהם אינו פעיל.
 
-#### Hammer Curl
+#### Single-Arm Hammer Curl
 
-התחל עם משקל DB Curl − 1 ק״ג.
+התחל עם משקל Single-Arm Curl − 1 ק״ג.
 
 #### Pistol Squat
 
 נעול. בדוק unlock criteria.
 
-#### DB Curl
+#### Single-Arm Curl
 
 שמור microcycleSnapshot ראשון.
 
@@ -2399,13 +2399,13 @@ settings.programSchemaVersion
 צור ומלא state עבור:
 
 - single-leg-rdl
-- reverse-lunge
+- goblet-reverse-lunge
 - pistol-squat-progression
 
 כללים:
 
 - Single-Leg RDL שומר state קיים.
-- Reverse Lunge שומר state קיים.
+- Goblet Reverse Lunge שומר state קיים.
 - Pistol Squat Progression נשאר נעול עד עמידה ב-unlock criteria.
 - אם Pistol כבר פתוח, ה-Slot הזוגי יפתח ל-pistol-squat-progression.
 - אין לאפס progression בגלל מעבר ל-Toggle.
@@ -2441,7 +2441,7 @@ settings.programSchemaVersion
 - סטטוס Arm Block: פעיל/מבוטל + סיבה + scheme (myo-reps).
 - גרף זיווגים: כמה סטים בוצעו כזוג לעומת סטים ישרים; תדירות פירוק זוגות וסיבות.
 - גרף רוטציית כתף אחורית: חלוקת נפח בין Y-T-W ל-Band Pull-Apart.
-- גרף רוטציית יום 1: חלוקת נפח בין Single-Leg RDL לבין Reverse Lunge / Pistol Squat Progression.
+- גרף רוטציית יום 1: חלוקת נפח בין Single-Leg RDL לבין Goblet Reverse Lunge / Pistol Squat Progression.
 - גרף Myo-Reps: אחוז צבירים clean, אחוז עצירות tempo loss, אחוז ביטולים בגלל כאב.
 - גרף Arm Block Exposure: חשיפה שבועית לפי אזור שרירי.
 - משך אימון ממוצע לכל יום.
@@ -2613,10 +2613,10 @@ armBlockMuscleAreaBiceps
 | 15 | מעגל Core: Pallof+Dead Bug+Hollow ברצף, 30 בין סבבים | תקין |
 | 16 | מעגל Core מבוצע בסוף האימון בלבד | תקין |
 | 17 | זוג יום 3: TRX Row ↔ Lateral Raise, מנוחה 75 לאחר הזוג | תקין |
-| 18 | זוג יום 5: Push-Up Volume ↔ DB Curl, מנוחה 75 לאחר הזוג | תקין |
+| 18 | זוג יום 5: Push-Up Volume ↔ Single-Arm Curl, מנוחה 75 לאחר הזוג | תקין |
 | 19 | זוג יום 5 מתפרק בשבוע קל (3): Push-Up Volume סט ישר | תקין |
 | 20 | BELOW בזוג: פירוק לשארית הסשן + מנוחה +30 | תקין |
-| 21 | סט נוסף של DB Curl (3 לעומת 2) מבוצע ישר אחרי פירוק | תקין |
+| 21 | סט נוסף של Single-Arm Curl (3 לעומת 2) מבוצע ישר אחרי פירוק | תקין |
 | 22 | זוג Towel Hang ↔ L-Sit, מנוחה 45 לאחר הזוג | תקין |
 | 23 | רוטציה שבוע אי-זוגי: TRX Y-T-W פעיל | תקין |
 | 24 | רוטציה שבוע זוגי: Band Pull-Apart פעיל | תקין |
@@ -2629,7 +2629,7 @@ armBlockMuscleAreaBiceps
 | 31 | Arm Block Deload: סט אקטיבציה יחיד בלבד | תקין |
 | 32 | תרגילים מוגנים לעולם לא מזווגים | תקין |
 | 33 | Pistol Squat: נעול, נפתח אחרי BSS 3x12@12kg | תקין |
-| 34 | מיקרו שבוע 1: DB Curl + Hammer, progression מותר | תקין |
+| 34 | מיקרו שבוע 1: Single-Arm Curl + Hammer, progression מותר | תקין |
 | 35 | מיקרו שבוע 3: Hammer בלבד, 2 סטים, אין קידום | תקין |
 | 36 | מיקרו + Deload: שבוע 8 = סט אחד Hammer | תקין |
 | 37 | microcycleSnapshot: שמירה בסוף שבוע 2, חזרה בשבוע 1 | תקין |
@@ -2640,7 +2640,7 @@ armBlockMuscleAreaBiceps
 | 42 | leanSessionState נשמר ומסונכרן | תקין |
 | 43 | רוטציית יום 1 שבוע אי-זוגי: Single-Leg RDL פעיל, Lunge/Pistol Slot לא פעיל | תקין |
 | 44 | רוטציית יום 1 שבוע זוגי: Lunge/Pistol Slot פעיל, Single-Leg RDL לא פעיל | תקין |
-| 45 | Lunge/Pistol Slot כאשר Pistol נעול: Reverse Lunge פעיל | תקין |
+| 45 | Lunge/Pistol Slot כאשר Pistol נעול: Goblet Reverse Lunge פעיל | תקין |
 | 46 | Lunge/Pistol Slot כאשר Pistol פתוח: Pistol Squat Progression פעיל | תקין |
 | 47 | רוטציית יום 1: שני/כל ה-states נשמרים, אין איפוס | תקין |
 | 48 | Opening Rest לתרגיל Toggle מחושב רק מהאימון הקודם של אותו תרגיל | תקין |
