@@ -32,7 +32,7 @@ const ExercisesPage = (() => {
     'Single-Leg RDL': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }],
-    'DB Hip Thrust': [{ weight: '9 kg', fromWeek: 1 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
+    'DB Hip Thrust': [{ weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
     'Single-Leg Calf Raise': [{ weight: '6 kg in hand', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 18 }, { weight: '15 kg', fromWeek: 34 }, { weight: '18 kg', fromWeek: 42 }, { weight: '21 kg', fromWeek: 50 }, { weight: '24 kg', fromWeek: 58 }],
     'Standing Single-Leg Calf Raise': [{ weight: '6 kg in hand', fromWeek: 1 }],
     'Seated Single-Leg Calf Raise': [{ weight: '6 kg on knee', fromWeek: 1 }],
@@ -55,7 +55,6 @@ const ExercisesPage = (() => {
     'Arm Block - Single-Arm Curl': [{ weight: '3-12 kg', fromWeek: 10 }, { weight: '18 kg', fromWeek: 74 }],
 
     // Bodyweight, Mobility, Warmup & Skill Progressions
-    'Pistol Squat Progression': [{ weight: 'Assisted Pistol', fromWeek: 42 }, { weight: 'Full Pistol Squat', fromWeek: 50 }],
     'Dead Bug': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Hollow Body Hold': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Pike Progression': [{ weight: 'Bodyweight', fromWeek: 1 }],
