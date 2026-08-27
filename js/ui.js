@@ -150,8 +150,9 @@ const UI = (() => {
     'GOBLET REVERSE LUNGE': 'Reverse Lunge (Goblet).gif',
     'REVERSE LUNGE DB': 'Reverse Lunge + DB.gif',
     'REVERSE LUNGE PISTOL SQUAT': 'Reverse Lunge + DB.gif',
-    'PISTOL SQUAT PROGRESSION': 'Pistol Squat to Chair.gif',
-    'PISTOL SQUAT TO CHAIR': 'Pistol Squat to Chair.gif',
+    'PISTOL SQUAT': 'PISTOL SQUAT.gif',
+    'PISTOL SQUAT PROGRESSION': 'PISTOL SQUAT.gif',
+    'PISTOL SQUAT TO CHAIR': 'PISTOL SQUAT.gif',
     'FULL PISTOL SQUAT': 'Full Pistol Squat.gif',
     'SEATED DB OHP': 'Seated DB OHP.gif',
     'SEATED DB OVERHEAD PRESS': 'Seated DB OHP.gif',
@@ -271,7 +272,8 @@ const UI = (() => {
     'REVERSE LUNGE DB': 'REVERSE LUNGE + DB.png',
     'GOBLET REVERSE LUNGE': 'REVERSE LUNGE + DB.png',
     'GOBLET BULGARIAN SPLIT SQUAT': 'DB BSS (GOBLET).png',
-    'PISTOL SQUAT PROGRESSION': 'PISTOL SQUAT TO CHAIR.png',
+    'PISTOL SQUAT': 'PISTOL SQUAT.png',
+    'PISTOL SQUAT PROGRESSION': 'PISTOL SQUAT.png',
     'FULL PISTOL SQUAT': 'FULL PISTOL SQUAT.png',
     'REVERSE LUNGE PISTOL SQUAT': 'REVERSE LUNGE + DB.png',
     'DB HIP THRUST': 'DB GLUTE BRIDGE.png',
@@ -899,7 +901,7 @@ const UI = (() => {
     if (n.includes('vest')) results.push({ label: I18n.t('equip_vest'), icon: icons.vest, key: 'vest' });
     else if (n.includes('trx')) results.push({ label: I18n.t('equip_trx'), icon: icons.trx, key: 'trx' });
     else if (n.includes('bars') || n.includes('push-up bars') || n.includes('parallettes')) results.push({ label: I18n.t('equip_bars'), icon: icons.bars, key: 'bars' });
-    else if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row')) results.push({ label: I18n.t('equip_db'), icon: icons.db, key: 'db' });
+    else if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row') || n.includes('pistol')) results.push({ label: I18n.t('equip_db'), icon: icons.db, key: 'db' });
     else if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) results.push({ label: I18n.t('equip_band'), icon: icons.band, key: 'band' });
     else if (n.includes('wall') || n.includes('handstand')) results.push({ label: I18n.t('equip_wall'), icon: icons.wall, key: 'wall' });
     else if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('chair') || n.includes('elevated')) results.push({ label: I18n.t('equip_bench'), icon: icons.bench, key: 'bench' });
