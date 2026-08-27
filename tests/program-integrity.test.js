@@ -30,24 +30,24 @@ test('Program Integrity - Progression Settings & Deload Parameters', () => {
 
 test('Program Integrity - Exercise Rest Periods & Ranges', () => {
   const expectedRestRanges = {
-    "db-rdl": { base: 105, range: [90, 120] },
+    "goblet-rdl": { base: 105, range: [90, 120] },
     "single-leg-rdl": { base: 75, range: [60, 90] },
-    "db-floor-press": { base: 105, range: [90, 120] },
+    "single-arm-floor-press": { base: 105, range: [90, 120] },
     "pull-up-progression": { base: 105, range: [90, 120] },
-    "seated-db-ohp": { base: 82, range: [75, 90] },
-    "bulgarian-split-squat": { base: 82, range: [75, 90] },
+    "single-arm-seated-ohp": { base: 82, range: [75, 90] },
+    "goblet-bulgarian-split-squat": { base: 82, range: [75, 90] },
     "one-arm-db-row": { base: 82, range: [75, 90] },
-    "reverse-lunge": { base: 75, range: [60, 90] },
+    "goblet-reverse-lunge": { base: 75, range: [60, 90] },
     "pistol-squat-progression": { base: 105, range: [90, 120] },
     "db-hip-thrust": { base: 75, range: [60, 90] },
-    "trx-row": { base: 75, range: [60, 90] },
+    "trx-row": { base: 75 },
     "push-up-volume": { base: 75, range: [60, 90] },
     "push-up-progression": { base: 75, range: [60, 90] },
     "pike-progression": { base: 75, range: [60, 90] },
-    "db-lateral-raise": { base: 45 },
-    "db-oh-triceps-extension": { base: 45 },
-    "db-curl": { base: 45 },
-    "hammer-curl": { base: 45 },
+    "single-arm-lateral-raise": { base: 75 },
+    "db-overhead-triceps-extension": { base: 45 },
+    "single-arm-curl": { base: 45 },
+    "single-arm-hammer-curl": { base: 45 },
     "diamond-push-up": { base: 45 },
     "band-pull-apart": { base: 45 },
     "trx-ytw": { base: 45 },
@@ -82,11 +82,11 @@ test('Program Integrity - Lean Mode Mechanics & Protected Compounds', () => {
   assert.equal(lean.protectCompounds, true);
 
   const expectedProtected = [
-    "db-rdl", "single-leg-rdl", "bulgarian-split-squat", "reverse-lunge",
+    "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "goblet-reverse-lunge",
     "pistol-squat-progression", "db-hip-thrust", "suitcase-carry",
-    "pike-progression", "db-floor-press", "push-up-progression",
-    "seated-db-ohp", "db-oh-triceps-extension", "diamond-push-up",
-    "pull-up-progression", "one-arm-db-row", "db-curl", "hammer-curl"
+    "pike-progression", "single-arm-floor-press", "push-up-progression",
+    "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up",
+    "pull-up-progression", "one-arm-db-row", "single-arm-curl", "single-arm-hammer-curl"
   ];
   expectedProtected.forEach(pEx => {
     assert.ok(lean.protectedExercises.includes(pEx), `Protected exercise ${pEx} missing`);
@@ -98,24 +98,24 @@ test('Program Integrity - Lean Mode Mechanics & Protected Compounds', () => {
   assert.deepEqual(lean.circuits[0].members, ["pallof-press-progression", "dead-bug", "hollow-body-hold"]);
   assert.equal(lean.blocks.length, 1);
   assert.equal(lean.blocks[0].blockId, 'd1-calf-block');
-  assert.equal(lean.toggles.length, 2);
+  assert.equal(lean.toggles.length, 1);
 });
 
 test('Program Integrity - Day 1 & Day 3 Alternating Toggles', () => {
-  // Day 1 (Odd vs Even week)
+  // Day 1 (RPG Skill Tree progression)
   const w1d1 = data.daily.find(d => d.week === 'Week 1' && d.dayOfWeek === 'Monday');
-  const w2d1 = data.daily.find(d => d.week === 'Week 2' && d.dayOfWeek === 'Monday');
+  const w18d1 = data.daily.find(d => d.week === 'Week 18' && d.dayOfWeek === 'Monday');
 
   assert.ok(w1d1, "Week 1 Day 1 missing");
-  assert.ok(w2d1, "Week 2 Day 1 missing");
+  assert.ok(w18d1, "Week 18 Day 1 missing");
 
   const w1d1Ids = w1d1.exercises.filter(e => !e.isWarmup).map(e => e.id);
-  const w2d1Ids = w2d1.exercises.filter(e => !e.isWarmup).map(e => e.id);
+  const w18d1Ids = w18d1.exercises.filter(e => !e.isWarmup).map(e => e.id);
 
-  assert.ok(w1d1Ids.includes('single-leg-rdl'), "Odd week must include single-leg-rdl");
-  assert.ok(!w1d1Ids.includes('reverse-lunge'), "Odd week must NOT include reverse-lunge");
-  assert.ok(!w2d1Ids.includes('single-leg-rdl'), "Even week must NOT include single-leg-rdl");
-  assert.ok(w2d1Ids.includes('reverse-lunge'), "Even week must include reverse-lunge");
+  assert.ok(w1d1Ids.includes('goblet-rdl'), "W1 must include goblet-rdl");
+  assert.ok(!w1d1Ids.includes('single-leg-rdl'), "W1 must NOT include single-leg-rdl");
+  assert.ok(w18d1Ids.includes('single-leg-rdl'), "W18 must include single-leg-rdl");
+  assert.ok(!w18d1Ids.includes('goblet-rdl'), "W18 must NOT include goblet-rdl");
 
   // Day 3 (Rear delt toggle)
   const w1d3 = data.daily.find(d => d.week === 'Week 1' && d.dayOfWeek === 'Wednesday');
@@ -136,19 +136,19 @@ test('Program Integrity - Day 4 Cervical Protocol & Day 5 Biceps Microcycle', ()
   const firstEx = w1d4.exercises[0];
   assert.equal(firstEx.id, 'band-neck-flexion', "Day 4 first exercise must be Band Neck Flexion & Extension");
 
-  // Biceps microcycle
-  const w1d5 = data.daily.find(d => d.week === 'Week 1' && d.dayOfWeek === 'Friday');
-  const w3d5 = data.daily.find(d => d.week === 'Week 3' && d.dayOfWeek === 'Friday');
+  // Biceps microcycle (hammer curl unlocks at week 5, week 6 is light week 3)
+  const w5d5 = data.daily.find(d => d.week === 'Week 5' && d.dayOfWeek === 'Friday');
+  const w6d5 = data.daily.find(d => d.week === 'Week 6' && d.dayOfWeek === 'Friday');
 
-  const w1d5Ids = w1d5.exercises.filter(e => !e.isWarmup).map(e => e.id);
-  const w3d5Ids = w3d5.exercises.filter(e => !e.isWarmup).map(e => e.id);
+  const w5d5Ids = w5d5.exercises.filter(e => !e.isWarmup).map(e => e.id);
+  const w6d5Ids = w6d5.exercises.filter(e => !e.isWarmup).map(e => e.id);
 
-  assert.ok(w1d5Ids.includes('db-curl') && w1d5Ids.includes('hammer-curl'), "Micro W1 must include both curls");
-  assert.ok(!w3d5Ids.includes('db-curl') && w3d5Ids.includes('hammer-curl'), "Micro W3 Light must include hammer-curl only");
+  assert.ok(w5d5Ids.includes('single-arm-curl') && w5d5Ids.includes('single-arm-hammer-curl'), "Micro Heavy week must include both curls");
+  assert.ok(!w6d5Ids.includes('single-arm-curl') && w6d5Ids.includes('single-arm-hammer-curl'), "Micro Light week must include single-arm-hammer-curl only");
 });
 
 test('Program Integrity - Progression Engine Decisions', () => {
-  const testEx = data.exercises.find(e => e.id === 'db-rdl');
+  const testEx = data.exercises.find(e => e.id === 'goblet-rdl');
   assert.ok(testEx);
 
   const resAbove = engine.calculateWeightedDecision(testEx, { currentWeightKg: 6 }, [

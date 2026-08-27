@@ -452,6 +452,7 @@ EXERCISES_CATALOG = [
         "category": "Chest",
         "type": "variation",
         "restSeconds": 75,
+        "restRange": [60, 90],
         "repWindow": "10-15",
         "tempo": "2s descent",
         "compound": True,
