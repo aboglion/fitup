@@ -30,6 +30,7 @@ const ExercisesPage = (() => {
     'Goblet Reverse Lunge': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 18 }, { weight: '24 kg', fromWeek: 42 }],
     'Goblet Romanian Deadlift': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 5 }, { weight: '24 kg', fromWeek: 10 }],
     'Single-Leg RDL': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }],
+    'Pistol Squat Progression': [{ weight: 'Bodyweight', fromWeek: 42 }, { weight: '+3 kg', fromWeek: 50 }, { weight: '+6 kg', fromWeek: 58 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }],
     'DB Hip Thrust': [{ weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
