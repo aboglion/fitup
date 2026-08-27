@@ -396,6 +396,15 @@ const UI = (() => {
           imgEl.src = `images/gifs/${uniqueVariations[trialIndex]}`;
           return;
         }
+
+        if (imgEl.dataset.fallbackExname) {
+          const fallbackName = imgEl.dataset.fallbackExname;
+          delete imgEl.dataset.fallbackExname;
+          delete imageTrials[origKey];
+          imgEl.dataset.origFilename = '';
+          imgEl.src = getGifUrl(fallbackName);
+          return;
+        }
       }
       if (imgEl.parentElement) {
         const b = imgEl.parentElement.querySelector('.fb-gif-badge');
@@ -455,6 +464,15 @@ const UI = (() => {
           imgEl.src = `images/exercises/${uniqueVariations[trialIndex]}`;
           return;
         }
+
+        if (imgEl.dataset.fallbackExname) {
+          const fallbackName = imgEl.dataset.fallbackExname;
+          delete imgEl.dataset.fallbackExname;
+          delete imageTrials[origKey];
+          imgEl.dataset.origFilename = '';
+          imgEl.src = getImageUrl(fallbackName);
+          return;
+        }
       }
       const containerP = imgEl.closest('.skeleton-loading');
       if (containerP) containerP.classList.remove('skeleton-loading');
@@ -499,8 +517,9 @@ const UI = (() => {
     return encodeMediaPath(path);
   }
 
-  function showImageModal(title, src) {
+  function showImageModal(title, src, fallbackTitle) {
     const pngPath = getImageUrl(title);
+    const fallbackAttr = fallbackTitle ? `data-fallback-exname="${fallbackTitle.replace(/"/g, '&quot;')}"` : '';
 
     let gifPath;
     if (src && src.includes('.gif')) {
@@ -589,6 +608,7 @@ const UI = (() => {
           </div>
           <img src="${pngPath}" 
                class="modal-title-img skeleton-img"
+               ${fallbackAttr}
                style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px; mix-blend-mode: multiply;" 
                alt="${title}" 
                loading="eager" 
@@ -618,6 +638,7 @@ const UI = (() => {
           </div>
           <img src="${gifPath}" 
                class="skeleton-img"
+               ${fallbackAttr}
                style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
                alt="${title} GIF" 
                loading="eager" 
@@ -634,6 +655,7 @@ const UI = (() => {
           </div>
           <img src="${pngPath}" 
                class="skeleton-img"
+               ${fallbackAttr}
                style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
                alt="${title}" 
                loading="eager" 

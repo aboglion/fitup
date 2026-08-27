@@ -1862,7 +1862,7 @@ const TodayPage = (() => {
       const gifPath = UI.getGifUrl(activeName);
       let videoBtn = '';
       if (!ex.name.toLowerCase().includes('walking')) {
-        videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${activeName.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>`;
+        videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${activeName.replace(/'/g, "\\'")}', '${gifPath}', '${ex.name.replace(/'/g, "\\'")}'); event.stopPropagation();">▶</button>`;
       }
 
       // Find previous occurrence
@@ -1921,11 +1921,12 @@ const TodayPage = (() => {
             </div>
             <img src="${UI.getImageUrl(activeName)}" 
                  class="exercise-hero-image skeleton-img"
+                 data-fallback-exname="${ex.name.replace(/"/g, '&quot;')}"
                  loading="eager" decoding="async"
                  alt="${activeName}" 
                  onload="UI.handleImageLoaded(this)"
                  onerror="UI.handleImageFallback(this, 'png')"
-                 onclick="TodayPage.handleImageClick(event, ${idx}, '${activeName.replace(/'/g, "\\'")}')">
+                 onclick="TodayPage.handleImageClick(event, ${idx}, '${activeName.replace(/'/g, "\\'")}', '${ex.name.replace(/'/g, "\\'")}')">
             ${newBadgeHTML}
           </div>
           <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
@@ -1997,7 +1998,7 @@ const TodayPage = (() => {
   /**
    * Handle image click: expand accordion if closed, show GIF modal if already expanded
    */
-  function handleImageClick(event, idx, exName) {
+  function handleImageClick(event, idx, exName, fallbackName) {
     event.stopPropagation();
     const card = document.getElementById(`ex-card-${idx}`);
     
@@ -2006,7 +2007,7 @@ const TodayPage = (() => {
       toggleExpand(idx);
     } else {
       // Accordion is already open - show GIF modal
-      UI.showImageModal(exName, '');
+      UI.showImageModal(exName, '', fallbackName);
     }
   }
 
