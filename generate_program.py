@@ -529,7 +529,7 @@ EXERCISES_CATALOG = [
         "structure": "pair",
         "pairId": "d5-grip-lsit",
         "orderInPair": 2,
-        "stages": ["Tuck L-Sit", "One-Leg Extended L-Sit", "L-Sit"]
+        "stages": ["Tuck L-Sit", "One-Leg Extended L-Sit", "Full L-Sit"]
     },
 
     # Warmup & Cardio Utilities

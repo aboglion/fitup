@@ -967,7 +967,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | pairId | d5-grip-lsit | d5-grip-lsit |
 | orderInPair | 1 | 2 |
 | pairType | non-competing | non-competing |
-| stages | Dead Hang → Towel Hang → Towel Hang + וסט 5 ק״ג | Tuck L-Sit → One-Leg Extended L-Sit → L-Sit |
+| stages | Dead Hang → Towel Hang → Towel Hang + וסט 5 ק״ג | Tuck L-Sit → One-Leg Extended L-Sit → Full L-Sit |
 
 ==================================================
 ## 13. אירובי, התאוששות ותנועתיות
