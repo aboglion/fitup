@@ -76,7 +76,7 @@ EXERCISES_CATALOG = [
     },
     {
         "id": "pistol-squat-progression",
-        "name": "Pistol Squat Progression",
+        "name": "Pistol Squat",
         "category": "Legs",
         "type": "weighted",
         "startingWeight": 6,

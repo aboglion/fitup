@@ -234,7 +234,7 @@ const AnatomyMap = (() => {
       forearms: ['Towel Hang', 'Suitcase Carry', 'Dead Hang', 'One-Arm DB Row', 'TRX Row'],
       lats: ['Pull-Up Progression', 'Chin-Up Progression', 'Weighted Pull-Up', 'Weighted Chin-Up', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row', 'Scapular Pull-up'],
       traps: ['Band Neck Flexion & Extension', 'TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'One-Arm DB Row', 'TRX Row', 'Scapular Pull-up'],
-      quads: ['DB Bulgarian Split Squat', 'Reverse Lunge + DB', 'Pistol Squat Progression', 'Bodyweight Squat', 'DB BSS (Goblet)', 'Walking Lunge (Goblet)'],
+      quads: ['DB Bulgarian Split Squat', 'Reverse Lunge + DB', 'Pistol Squat', 'Bodyweight Squat', 'DB BSS (Goblet)', 'Walking Lunge (Goblet)'],
       hamstrings: ['DB Romanian Deadlift', 'Single-Leg RDL', 'Glute Bridge', 'DB Hip Thrust'],
       glutes: ['DB Hip Thrust', 'DB Glute Bridge', 'DB Bulgarian Split Squat', 'Single-Leg RDL', 'Reverse Lunge + DB'],
       calves: ['Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise', 'Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4'],

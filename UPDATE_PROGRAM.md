@@ -271,7 +271,7 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 | Goblet Bulgarian Split Squat | 82 | 75–90 |
 | One-Arm DB Row | 82 | 75–90 |
 | Goblet Reverse Lunge | 75 | 60–90 |
-| Pistol Squat Progression | 105 | 90–120 |
+| Pistol Squat | 105 | 90–120 |
 | DB Hip Thrust | 75 | 60–90 |
 | TRX Row | 75 | 60–90 |
 | Push-Up Volume (Day 5) | 75 | 60–90 |
@@ -303,7 +303,7 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 
 רשימת תרגילים מוגנים:
 
-- יום 1: DB RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat Progression, DB Hip Thrust, Suitcase Carry
+- יום 1: DB RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry
 - יום 3: Pike Progression, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Extension
 - יום 5: Pull-Up, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl
 
@@ -363,15 +363,15 @@ Toggle Group: `day1-posterior-quad`
 
 ה-Slot הזוגי ביום 1 נפתר אוטומטית כך:
 
-- אם Pistol Squat Progression נעול: מבצעים Goblet Reverse Lunge.
-- אם Pistol Squat Progression פתוח: מבצעים Pistol Squat Progression.
+- אם Pistol Squat נעול: מבצעים Goblet Reverse Lunge.
+- אם Pistol Squat פתוח: מבצעים Pistol Squat.
 
 כללים:
 
 - אין בחירת משתמש.
 - המערכת מחליטה לפי זוגיות שבוע + סטטוס unlock.
 - Goblet Reverse Lunge שומר progression גם כאשר אינו פעיל.
-- Pistol Squat Progression שומר progression גם כאשר אינו פעיל.
+- Pistol Squat שומר progression גם כאשר אינו פעיל.
 - Single-Leg RDL שומר progression גם כאשר אינו פעיל.
 - אין קידום לתרגיל לא פעיל.
 - אין איפוס שלבים או משקל עקב השעיה.
@@ -505,7 +505,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | type | weighted |
 | sets | 3 |
 | rep window | 6–12 |
-| starting weight | 12 ק״ג total |
+| starting weight | 6 ק״ג total |
 | min / max weight | 3 / 24 ק״ג total |
 | increment | 1 ק״ג total |
 | rest | 105 (base), 90–120 |
@@ -538,7 +538,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 - שבוע אי-זוגי: Single-Leg RDL פעיל.
 - שבוע זוגי: Lunge/Pistol Slot פעיל.
 - אם Pistol נעול: Goblet Reverse Lunge.
-- אם Pistol פתוח: Pistol Squat Progression.
+- אם Pistol פתוח: Pistol Squat.
 
 ---
 
@@ -554,7 +554,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | type | weighted |
 | sets | 2 |
 | rep window | 8–10 לכל רגל |
-| starting weight | 12 ק״ג total |
+| starting weight | 6 ק״ג total |
 | min / max weight | 3 / 24 ק״ג total |
 | rest | 75 (base), 60–90 |
 | structure | straight |
@@ -592,7 +592,7 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 | type | weighted |
 | sets | 2 |
 | rep window | 10–12 לכל רגל |
-| starting weight | 12 ק״ג total |
+| starting weight | 6 ק״ג total |
 | min / max weight | 3 / 24 ק״ג total |
 | rest | 75 (base), 60–90 |
 | structure | straight |
@@ -602,7 +602,7 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 
 ---
 
-## Toggle Member B2 — Pistol Squat Progression
+## Toggle Member B2 — Pistol Squat
 
 פעיל כחלק מה-Slot הזוגי כאשר Pistol פתוח.
 
@@ -613,14 +613,15 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 | שדה | ערך |
 | --- | --- |
 | id | pistol-squat-progression |
-| type | variation |
+| type | weighted |
 | sets | 2 |
 | rep window | 3–8 לכל רגל |
+| starting weight | 6 ק״ג total |
+| min / max weight | 3 / 24 ק״ג total |
 | rest | 105 (base), 90–120 |
 | structure | straight |
 | toggleGroup | day1-posterior-quad |
 | toggleActiveOn | even |
-| stages | Assisted Pistol → Pistol to High Box → Pistol to Chair → Pistol to Low Box → Full Pistol → Weighted 3kg → Weighted 6kg |
 | unlockCriteria | כל סטי BSS ב-12 חזרות תקינות במשקל 24 ק״ג total |
 | rule | ירידה איטית; אם הברך קורסת פנימה (valgus), BELOW |
 
@@ -636,7 +637,7 @@ if (!isExerciseUnlocked('pistol-squat-progression')) {
 | type | weighted |
 | sets | 3 |
 | rep window | 6–12 לכל רגל |
-| starting weight | 12 ק״ג total |
+| starting weight | 6 ק״ג total |
 | min / max weight | 3 / 24 ק״ג total |
 | rest | 82 (base), 75–90 |
 | structure | straight |
@@ -2093,7 +2094,7 @@ evaluateMyoReps(exercise, state, clusterResults) {
 בשבוע זוגי, אם Pistol פתוח:
 
 ```text
-השבוע: Pistol Squat Progression — מיקוד ארבע-ראשי / כוח חד-צדדי
+השבוע: Pistol Squat — מיקוד ארבע-ראשי / כוח חד-צדדי
 ```
 
 לתרגיל המושעה:
@@ -2406,7 +2407,7 @@ settings.programSchemaVersion
 
 - Single-Leg RDL שומר state קיים.
 - Goblet Reverse Lunge שומר state קיים.
-- Pistol Squat Progression נשאר נעול עד עמידה ב-unlock criteria.
+- Pistol Squat נשאר נעול עד עמידה ב-unlock criteria.
 - אם Pistol כבר פתוח, ה-Slot הזוגי יפתח ל-pistol-squat-progression.
 - אין לאפס progression בגלל מעבר ל-Toggle.
 
@@ -2441,7 +2442,7 @@ settings.programSchemaVersion
 - סטטוס Arm Block: פעיל/מבוטל + סיבה + scheme (myo-reps).
 - גרף זיווגים: כמה סטים בוצעו כזוג לעומת סטים ישרים; תדירות פירוק זוגות וסיבות.
 - גרף רוטציית כתף אחורית: חלוקת נפח בין Y-T-W ל-Band Pull-Apart.
-- גרף רוטציית יום 1: חלוקת נפח בין Single-Leg RDL לבין Goblet Reverse Lunge / Pistol Squat Progression.
+- גרף רוטציית יום 1: חלוקת נפח בין Single-Leg RDL לבין Goblet Reverse Lunge / Pistol Squat.
 - גרף Myo-Reps: אחוז צבירים clean, אחוז עצירות tempo loss, אחוז ביטולים בגלל כאב.
 - גרף Arm Block Exposure: חשיפה שבועית לפי אזור שרירי.
 - משך אימון ממוצע לכל יום.
@@ -2641,7 +2642,7 @@ armBlockMuscleAreaBiceps
 | 43 | רוטציית יום 1 שבוע אי-זוגי: Single-Leg RDL פעיל, Lunge/Pistol Slot לא פעיל | תקין |
 | 44 | רוטציית יום 1 שבוע זוגי: Lunge/Pistol Slot פעיל, Single-Leg RDL לא פעיל | תקין |
 | 45 | Lunge/Pistol Slot כאשר Pistol נעול: Goblet Reverse Lunge פעיל | תקין |
-| 46 | Lunge/Pistol Slot כאשר Pistol פתוח: Pistol Squat Progression פעיל | תקין |
+| 46 | Lunge/Pistol Slot כאשר Pistol פתוח: Pistol Squat פעיל | תקין |
 | 47 | רוטציית יום 1: שני/כל ה-states נשמרים, אין איפוס | תקין |
 | 48 | Opening Rest לתרגיל Toggle מחושב רק מהאימון הקודם של אותו תרגיל | תקין |
 | 49 | Deload יום 1: רק התרגיל/Slot הפעיל לפי parity מבוצע, 2 סטים | תקין |

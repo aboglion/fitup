@@ -26,11 +26,11 @@ const ExercisesPage = (() => {
     'Pallof Press Progression': [{ weight: 'Band 30 kg', fromWeek: 10 }, { weight: 'Band 40 kg', fromWeek: 34 }],
 
     // Dumbbell Lower Body
-    'Goblet Bulgarian Split Squat': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 26 }],
-    'Goblet Reverse Lunge': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 18 }, { weight: '24 kg', fromWeek: 42 }],
-    'Goblet Romanian Deadlift': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 5 }, { weight: '24 kg', fromWeek: 10 }],
-    'Single-Leg RDL': [{ weight: '12 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }],
-    'Pistol Squat Progression': [{ weight: 'Bodyweight', fromWeek: 42 }, { weight: '+3 kg', fromWeek: 50 }, { weight: '+6 kg', fromWeek: 58 }],
+    'Goblet Bulgarian Split Squat': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 26 }],
+    'Goblet Reverse Lunge': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 18 }, { weight: '24 kg', fromWeek: 42 }],
+    'Goblet Romanian Deadlift': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 5 }, { weight: '24 kg', fromWeek: 10 }],
+    'Single-Leg RDL': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }],
+    'Pistol Squat': [{ weight: '6 kg', fromWeek: 42 }, { weight: '9 kg', fromWeek: 50 }, { weight: '12 kg', fromWeek: 58 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }],
     'DB Hip Thrust': [{ weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
@@ -168,7 +168,7 @@ const ExercisesPage = (() => {
       {
         title: 'lunge_pistol_tree', icon: '🦵', exercises: [
           { name: 'Goblet Reverse Lunge', unlockWeek: 1, id: 'lunge-1' },
-          { name: 'Pistol Squat Progression', unlockWeek: 42, parentId: 'lunge-1', id: 'lunge-2', relType: 'replace', unlockCond: '⚡ 12 חזרות ב-24 ק״ג BSS' }
+          { name: 'Pistol Squat', unlockWeek: 42, parentId: 'lunge-1', id: 'lunge-2', relType: 'replace', unlockCond: '⚡ 12 חזרות ב-24 ק״ג BSS' }
         ]
       },
       {

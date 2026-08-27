@@ -50,7 +50,7 @@ The v15.6 Lean Edition organizes exercises into optimized structures to maximize
 ### 2.2 Weekly Alternating Toggles
 - **Day 1 Toggle (Posterior vs Quad/Unilateral)**:
   - **Odd Weeks**: Single-Leg RDL (Posterior chain focus).
-  - **Even Weeks**: Lunge/Pistol Slot — automatically resolves to Goblet Reverse Lunge (fallback) or Pistol Squat Progression once unlocked (Quad & unilateral focus).
+  - **Even Weeks**: Lunge/Pistol Slot — automatically resolves to Goblet Reverse Lunge (fallback) or Pistol Squat once unlocked (Quad & unilateral focus).
 - **Day 3 Rear Delt Toggle**:
   - **Odd Weeks**: TRX Y-T-W (3-position posterior delt & scapular control).
   - **Even Weeks**: Band Pull-Apart (Scapular retraction & posture density).
