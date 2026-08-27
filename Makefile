@@ -1,6 +1,7 @@
 .PHONY: pg gp test
 
 test:
+	python3 tests/check.py
 	node --test tests/*.test.js
 
 pg: gp

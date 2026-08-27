@@ -1,6 +1,9 @@
+import os
 import re
 
-with open('js/exercises.js', 'r') as f:
+exercises_file = os.path.join(os.path.dirname(__file__), '../js/exercises.js')
+
+with open(exercises_file, 'r') as f:
     content = f.read()
 
 # Extract EXERCISE_WEIGHT_PROGRESSION
