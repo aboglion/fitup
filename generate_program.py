@@ -19,7 +19,7 @@ EXERCISES_CATALOG = [
         "name": "DB Romanian Deadlift",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 6,
+        "startingWeight": 3,
         "minWeight": 3,
         "maxWeight": 24,
         "increment": 1,
@@ -38,7 +38,7 @@ EXERCISES_CATALOG = [
         "name": "Single-Leg RDL",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 6,
+        "startingWeight": 3,
         "minWeight": 3,
         "maxWeight": 20,
         "increment": 1,
@@ -59,7 +59,7 @@ EXERCISES_CATALOG = [
         "name": "Reverse Lunge + DB",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 6,
+        "startingWeight": 3,
         "minWeight": 3,
         "maxWeight": 20,
         "increment": 1,
@@ -78,7 +78,12 @@ EXERCISES_CATALOG = [
         "id": "pistol-squat-progression",
         "name": "Pistol Squat Progression",
         "category": "Legs",
-        "type": "variation",
+        "type": "weighted",
+        "startingWeight": 6,
+        "minWeight": 3,
+        "maxWeight": 24,
+        "increment": 1,
+        "loadType": "total",
         "restSeconds": 105,
         "restRange": [90, 120],
         "repWindow": "3-8",
@@ -89,10 +94,6 @@ EXERCISES_CATALOG = [
         "toggleGroup": "day1-posterior-quad",
         "toggleActiveOn": "even",
         "unlocked": False,
-        "stages": [
-            "Assisted Pistol", "Pistol to High Box", "Pistol to Chair",
-            "Pistol to Low Box", "Full Pistol", "Weighted 3kg", "Weighted 6kg"
-        ],
         "unlockCriteria": {
             "exercise": "bulgarian-split-squat",
             "targetReps": 12,
@@ -105,7 +106,7 @@ EXERCISES_CATALOG = [
         "name": "DB Bulgarian Split Squat",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 6,
+        "startingWeight": 3,
         "minWeight": 3,
         "maxWeight": 24,
         "increment": 1,
@@ -724,17 +725,17 @@ def generate_day_exercises(dow, week):
         exs = get_leg_warmup()
 
         # A1: DB RDL
-        exs.append(make_ex_obj("A1", "db-rdl", "DB Romanian Deadlift", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="3s descent", rest=105, structure="straight"))
+        exs.append(make_ex_obj("A1", "db-rdl", "DB Romanian Deadlift", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="3 kg each", tempo="3s descent", rest=105, structure="straight"))
 
         # A2: Toggle Group - Posterior / Quad
         if is_odd:
-            exs.append(make_ex_obj("A2", "single-leg-rdl", "Single-Leg RDL", "2×8/leg" if is_deload else "2×8-10/leg", rep_window="8-10", weight="6 kg each", tempo="3s descent", rest=75, structure="straight", toggle_group="day1-posterior-quad", toggle_active_on="odd"))
+            exs.append(make_ex_obj("A2", "single-leg-rdl", "Single-Leg RDL", "2×8/leg" if is_deload else "2×8-10/leg", rep_window="8-10", weight="3 kg each", tempo="3s descent", rest=75, structure="straight", toggle_group="day1-posterior-quad", toggle_active_on="odd"))
         else:
             # Note: During generation we output the slot. The app will resolve pistol-squat-progression vs reverse-lunge.
-            exs.append(make_ex_obj("A2", "reverse-lunge", "Reverse Lunge + DB", "2×8/leg" if is_deload else "2×10-12/leg", rep_window="10-12", weight="6 kg each", tempo="2s descent", rest=75, structure="straight", toggle_group="day1-posterior-quad", toggle_active_on="even"))
+            exs.append(make_ex_obj("A2", "reverse-lunge", "Reverse Lunge + DB", "2×8/leg" if is_deload else "2×10-12/leg", rep_window="10-12", weight="3 kg each", tempo="2s descent", rest=75, structure="straight", toggle_group="day1-posterior-quad", toggle_active_on="even"))
 
         # A3: DB Bulgarian Split Squat
-        exs.append(make_ex_obj("A3", "bulgarian-split-squat", "DB Bulgarian Split Squat", "2×8/leg" if is_deload else "3×6-12/leg", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=82, structure="straight"))
+        exs.append(make_ex_obj("A3", "bulgarian-split-squat", "DB Bulgarian Split Squat", "2×8/leg" if is_deload else "3×6-12/leg", rep_window="6-12", weight="3 kg each", tempo="2s descent", rest=82, structure="straight"))
 
         # A4: DB Hip Thrust
         exs.append(make_ex_obj("A4", "db-hip-thrust", "DB Hip Thrust", "2×10" if is_deload else "3×10-15", rep_window="10-15", weight="9 kg total", tempo="1s pause", rest=75, structure="straight"))

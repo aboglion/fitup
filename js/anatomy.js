@@ -228,9 +228,9 @@ const AnatomyMap = (() => {
   async function showMuscleDetails(muscleKey, muscleName, pct) {
     const muscleExerciseMap = {
       chest: ['DB Floor Press', 'Push-up Bars Progression', 'Push-Up Volume (Day 5)', 'Push-Up', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Single-Arm Floor Press', 'Weighted Deficit Push-Up', 'Diamond Push-Up', 'Scapular Push-up'],
-      shoulders: ['Seated DB Overhead Press', 'Pike Progression', 'DB Lateral Raise', 'TRX Y-T-W', 'TRX Face Pull', 'Band Pull-Apart', 'Band Neck Flexion & Extension', 'Single-Arm Seated OHP', 'Arm Block - DB Lateral Raise', 'Scapular Push-up'],
+      shoulders: ['Seated DB Overhead Press', 'Pike Progression', 'DB Lateral Raise', 'TRX Y-T-W', 'TRX Face Pull', 'Band Pull-Apart', 'Band Neck Flexion & Extension', 'Single-Arm Seated OHP', 'Arm Block - Single-Arm Lateral Raise', 'Scapular Push-up'],
       triceps: ['DB Overhead Triceps Extension', 'Arm Block - DB Overhead Triceps Ext', 'DB Floor Press', 'Push-up Bars Progression', 'Single-Arm Floor Press', 'Diamond Push-Up'],
-      biceps: ['DB Curl', 'Hammer Curl', 'Arm Block - DB Curl', 'Single-Arm Curl', 'Pull-Up Progression', 'Chin-Up Progression', 'One-Arm DB Row', 'TRX Row'],
+      biceps: ['DB Curl', 'Hammer Curl', 'Arm Block - Single-Arm Curl', 'Single-Arm Curl', 'Pull-Up Progression', 'Chin-Up Progression', 'One-Arm DB Row', 'TRX Row'],
       forearms: ['Towel Hang', 'Suitcase Carry', 'Dead Hang', 'One-Arm DB Row', 'TRX Row'],
       lats: ['Pull-Up Progression', 'Chin-Up Progression', 'Weighted Pull-Up', 'Weighted Chin-Up', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row', 'Scapular Pull-up'],
       traps: ['Band Neck Flexion & Extension', 'TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'One-Arm DB Row', 'TRX Row', 'Scapular Pull-up'],
