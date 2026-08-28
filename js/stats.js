@@ -520,8 +520,8 @@ const StatsPage = (() => {
     'brisk-walking': [{ m: 'calves', w: 0.3 }, { m: 'quads', w: 0.3 }],
     'relaxed-walking': [{ m: 'calves', w: 0.2 }, { m: 'quads', w: 0.2 }],
     'vo2-max-norwegian-4x4': [{ m: 'calves', w: 0.5 }, { m: 'quads', w: 0.5 }],
-    'micro-mobility-protocol': [],
-    'deep-mobility-protocol': [],
+    'micro-mobility-protocol': [{ m: 'neck', w: 0.1 }, { m: 'core', w: 0.1 }],
+    'deep-mobility-protocol': [{ m: 'neck', w: 0.5 }, { m: 'traps', w: 0.3 }],
     'single-arm-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'weighted-deficit-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'weighted-diamond-push-up': [{ m: 'triceps', w: 1.0 }, { m: 'chest', w: 0.6 }],
@@ -602,7 +602,7 @@ const StatsPage = (() => {
     'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'heels-elevated-goblet-squat': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
     'db-rdl': 'hamstrings', 'goblet-romanian-deadlift': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes',
     'single-leg-calf-raise': 'calves', 'standing-single-leg-calf-raise': 'calves', 'seated-single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves', 'seated-calf-raise': 'calves',
-    'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'obliques', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'shoulders', 'chin-up-progression': 'lats', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': null, 'deep-mobility-protocol': null, 'band-neck-flexion': 'neck', 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'lats', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
+    'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'obliques', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'shoulders', 'chin-up-progression': 'lats', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': 'neck', 'deep-mobility-protocol': 'neck', 'band-neck-flexion': 'neck', 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'lats', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
   };
 
   function getMuscleForExercise(ex) {
@@ -679,7 +679,7 @@ const StatsPage = (() => {
    */
   function calculateMuscleProgressions(trackingMap, allProgressionStates, exerciseGuide) {
     const muscles = ['chest', 'shoulders', 'triceps', 'lats', 'traps', 'biceps', 'forearms',
-      'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack'];
+      'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack', 'neck'];
 
     if (!allProgressionStates || !exerciseGuide) {
       const result = {};
