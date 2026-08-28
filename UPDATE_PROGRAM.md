@@ -2297,9 +2297,16 @@ settings.programSchemaVersion
 
 העתק את השלב הנוכחי מ-push-up-progression.
 
-#### DB Glute Bridge → DB Hip Thrust
+#### DB Glute Bridge (תרגיל ישבן מרכזי רציף)
 
-אם היה משקל X, התחל DB Hip Thrust עם אותו משקל אם בטווח.
+התרגיל `DB Glute Bridge` מבוצע ברציפות לאורך כל 52 השבועות ביום 1 (Legs + Core), ללא סרבול ציוד של ספסל/ספה וללא קיטועים. התקדמות המשקלים מבוצעת באופן רציף מ-6 ק"ג עד 24 ק"ג דרך 3 הכפתורים (`ABOVE`, `IN_WINDOW`, `BELOW`).
+
+#### שדרוג תרגילים עפ"י עץ המיומנויות (Skill Tree Replacements)
+
+בשבועות ה-Unlock המוגדרים בעץ המיומנויות (`js/exercises.js`), מחולל התכנית ומנוע ההתקדמות מחליפים באופן דינמי את התרגילים ביומן האימונים היומי:
+- **שבוע 10:** `Push-up Bars Progression` ⬅️ `Deficit Push-Up`, `Pike Progression` ⬅️ `Wall Walk (Partial)`, `Pull-Up Progression` ⬅️ `Pull-Up (Overhand)`.
+- **שבוע 18:** `Feet-Elevated Push-Up`, `Wall Walk (Full)`, `One-Leg Extended L-Sit`, `Single-Leg RDL`.
+- **שבוע 26/34/41/62:** `Wall Handstand`, `Full L-Sit`, `Elevated Pike Push-Up`, `Weighted Deficit Push-Up`, `Weighted Pull-Up`.
 
 #### Band Pull-Apart
 

@@ -300,7 +300,7 @@
       if (isDeload) return false;
 
       // Check biceps microcycle week 3 (light week) where db-curl is disabled
-      if (pair.id === 'd5-pushup-curl') {
+      if (pair.pairId === 'd5-pushup-curl') {
         const cyclePos = ((weekNumber - 1) % 3) + 1;
         if (cyclePos === 3) return false;
       }
@@ -402,8 +402,31 @@
       const exercise = this.getExercise(exerciseId);
       if (!exercise) return { unlocked: true, reason: 'Exercise not found' };
       
-      if (exercise.id === 'pistol-squat-progression') {
-        // Unlock criteria: Goblet Reverse Lunge at 24kg total (= 24kg on single dumbbell)
+      if (exercise.unlockCriteria) {
+        const criteria = exercise.unlockCriteria;
+        const targetState = allProgressionStates[criteria.exercise];
+        
+        if (!targetState) {
+          return { unlocked: false, reason: `Requires previous progression (${criteria.exercise})` };
+        }
+        
+        if (criteria.targetWeightKg !== undefined) {
+          if ((targetState.currentWeightKg || 0) < criteria.targetWeightKg) {
+            return { unlocked: false, reason: `Requires ${criteria.targetWeightKg}kg on ${criteria.exercise}` };
+          }
+        }
+        
+        if (criteria.targetStageIndex !== undefined) {
+          if ((targetState.currentStageIndex || 0) < criteria.targetStageIndex) {
+            return { unlocked: false, reason: `Requires stage level ${criteria.targetStageIndex} on ${criteria.exercise}` };
+          }
+        }
+        
+        return { unlocked: true, reason: 'Prerequisite strength achieved' };
+      }
+      
+      // Fallback for legacy Pistol Squat if criteria isn't structured properly
+      if (exercise.id === 'pistol-squat-progression' && !exercise.unlockCriteria) {
         const lungeState = allProgressionStates['reverse-lunge'] || allProgressionStates['goblet-reverse-lunge'] || allProgressionStates['single-leg-rdl'];
         if (lungeState && (lungeState.currentWeightKg >= 24 || lungeState.currentStageIndex >= 2)) {
           return { unlocked: true, reason: 'Prerequisite strength achieved (24kg Goblet Reverse Lunge)' };
@@ -438,9 +461,32 @@
     // ----------------------------
     // Create Initial State
     // ----------------------------
-    createInitialState(exerciseId) {
+    createInitialState(exerciseId, allProgressionStates = {}) {
       const exercise = this.getExercise(exerciseId);
-      const startWeight = exercise ? (exercise.startingWeight || 3) : 3;
+      let startWeight = exercise ? (exercise.startingWeight || 3) : 3;
+
+      // Parent weight inheritance mapping for direct replacements
+      const parentIdMap = {
+        'db-hip-thrust': ['glute-bridge', 'db-glute-bridge', 'glute-1'],
+        'single-leg-rdl': ['goblet-rdl', 'rdl-1'],
+        'pistol-squat-progression': ['goblet-reverse-lunge', 'goblet-bulgarian-split-squat', 'lunge-1'],
+        'goblet-bulgarian-split-squat': ['bodyweight-squat', 'squat-1'],
+        'weighted-deficit-push-up': ['deficit-push-up', 'push-up-progression', 'push-1'],
+        'weighted-pull-up': ['pull-up-overhand', 'pull-up-progression', 'pull-1'],
+        'weighted-chin-up': ['chin-up', 'chin-up-progression', 'pull-1b']
+      };
+
+      const candidateParents = parentIdMap[exerciseId];
+      if (candidateParents && allProgressionStates) {
+        for (let pId of candidateParents) {
+          const parentState = allProgressionStates[pId];
+          if (parentState && parentState.currentWeightKg > 0) {
+            startWeight = parentState.currentWeightKg;
+            break;
+          }
+        }
+      }
+
       return {
         exerciseId,
         sessionKey: exerciseId,

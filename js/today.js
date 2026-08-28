@@ -161,6 +161,51 @@ const TodayPage = (() => {
       }
     }
 
+    // Dynamic Fallback: Check unlockCond before enriching state (Zero Decisions safety)
+    if (window.ProgressionEngine) {
+      for (let i = 0; i < day.exercises.length; i++) {
+        let ex = day.exercises[i];
+        let exId = ex.id || window.ProgressionEngine.findExerciseIdByName(ex.name) || ex.name.toLowerCase().replace(/\s+/g, '-');
+        
+        let maxDepth = 5;
+        while (maxDepth > 0) {
+          const unlockStatus = window.ProgressionEngine.checkUnlockCriteria(exId, statesMap);
+          if (!unlockStatus.unlocked) {
+            const exDef = window.ProgressionEngine.getExercise(exId);
+            if (exDef && exDef.unlockCriteria && exDef.unlockCriteria.exercise) {
+              const fallbackId = exDef.unlockCriteria.exercise;
+              const fallbackDef = window.ProgressionEngine.getExercise(fallbackId);
+              if (fallbackDef) {
+                console.log(`[Today] Downgrading ${exId} -> ${fallbackId} due to unmet criteria (${unlockStatus.reason})`);
+                ex.id = fallbackDef.id;
+                ex.name = fallbackDef.name;
+                // Inherit prescription details so the user gets the correct fallback parameters
+                if (fallbackDef.sets) ex.sets = String(fallbackDef.sets);
+                if (fallbackDef.repWindow) ex.repWindow = fallbackDef.repWindow;
+                if (fallbackDef.restSeconds) ex.rest = fallbackDef.restSeconds;
+                if (fallbackDef.tempo) ex.tempo = fallbackDef.tempo;
+                if (fallbackDef.type) ex.type = fallbackDef.type;
+                
+                ex.weight = fallbackDef.startingWeight ? `${fallbackDef.startingWeight} kg` : (fallbackDef.type === 'variation' && fallbackDef.stages ? fallbackDef.stages[0] : 'Bodyweight');
+                
+                exId = fallbackId;
+                maxDepth--;
+                continue;
+              }
+            } else if (exId === 'pistol-squat-progression') {
+               // Legacy hardcoded fallback if schema isn't perfect
+               ex.id = 'goblet-reverse-lunge';
+               ex.name = 'Goblet Reverse Lunge';
+               exId = 'goblet-reverse-lunge';
+               maxDepth--;
+               continue;
+            }
+          }
+          break;
+        }
+      }
+    }
+
     for (let ex of day.exercises) {
       const exId = ex.id || (window.ProgressionEngine ? window.ProgressionEngine.findExerciseIdByName(ex.name) : ex.name.toLowerCase().replace(/\s+/g, '-'));
       const exDef = window.ProgressionEngine ? window.ProgressionEngine.getExercise(exId) : null;
@@ -210,6 +255,36 @@ const TodayPage = (() => {
               await DB.saveProgressionState(state);
             }
             break;
+          }
+        }
+      }
+
+      // Parent State Inheritance: If state is missing for direct replacement exercises (e.g. Glute Bridge -> Hip Thrust)
+      if (!state) {
+        const parentIdMap = {
+          'db-hip-thrust': ['glute-bridge', 'db-glute-bridge', 'glute-1', 'DB Glute Bridge'],
+          'weighted-deficit-push-up': ['deficit-push-up', 'push-up-progression', 'push-1'],
+          'weighted-pull-up': ['pull-up-overhand', 'pull-up-progression', 'pull-1'],
+          'weighted-chin-up': ['chin-up', 'chin-up-progression', 'pull-1b']
+        };
+        const candidateParents = parentIdMap[exId];
+        if (candidateParents) {
+          for (let pId of candidateParents) {
+            if (statesMap[pId] && statesMap[pId].currentWeightKg > 0) {
+              state = {
+                exerciseId: exId,
+                sessionKey: exId,
+                currentWeightKg: statesMap[pId].currentWeightKg,
+                currentStageIndex: 0,
+                unlocked: true,
+                lastUpdated: new Date().toISOString()
+              };
+              statesMap[exId] = state;
+              if (window.DB && window.DB.saveProgressionState) {
+                DB.saveProgressionState(state).catch(err => console.warn('[Today] Failed to save inherited state:', err));
+              }
+              break;
+            }
           }
         }
       }

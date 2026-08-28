@@ -164,25 +164,24 @@ const ExercisesPage = (() => {
       {
         title: 'squat_tree', icon: '🏋️', exercises: [
           { name: 'Bodyweight Squat', unlockWeek: 1, id: 'squat-1' },
-          { name: 'Goblet Bulgarian Split Squat', unlockWeek: 5, parentId: 'squat-1', id: 'squat-2', relType: 'replace' }
+          { name: 'Goblet Bulgarian Split Squat', unlockWeek: 5, parentId: 'squat-1', id: 'squat-2', relType: 'replace', weightTransfer: 'stepdown' }
         ]
       },
       {
         title: 'lunge_pistol_tree', icon: '🦵', exercises: [
           { name: 'Goblet Reverse Lunge', unlockWeek: 1, id: 'lunge-1' },
-          { name: 'Pistol Squat', unlockWeek: 42, parentId: 'lunge-1', id: 'lunge-2', relType: 'replace', unlockCond: '⚡ 12 חזרות ב-24 ק״ג BSS' }
+          { name: 'Pistol Squat', unlockWeek: 42, parentId: 'lunge-1', id: 'lunge-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 12 חזרות ב-24 ק״ג BSS' }
         ]
       },
       {
         title: 'hamstring_chain', icon: '🦵', exercises: [
           { name: 'Goblet Romanian Deadlift', unlockWeek: 1, id: 'rdl-1' },
-          { name: 'Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2', relType: 'replace' }
+          { name: 'Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2', relType: 'replace', weightTransfer: 'stepdown' }
         ]
       },
       {
         title: 'glutes_calves', icon: '🍑', exercises: [
           { name: 'DB Glute Bridge', unlockWeek: 1, id: 'glute-1' },
-          { name: 'DB Hip Thrust', unlockWeek: 5, parentId: 'glute-1', id: 'glute-2', relType: 'replace' },
           { name: 'Standing Single-Leg Calf Raise', unlockWeek: 1, id: 'calf-1' },
           { name: 'Seated Single-Leg Calf Raise', unlockWeek: 1, parentId: 'calf-1', id: 'calf-2', relType: 'accessory' }
         ]
@@ -211,19 +210,19 @@ const ExercisesPage = (() => {
           { name: 'Single-Arm Floor Press', unlockWeek: 1, id: 'floor-1' },
           { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol', relType: 'accessory', unlockCond: '⚡ נפח משלים' },
           { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up', relType: 'accessory', unlockCond: '⚡ חיזוק יד אחורית' },
-          { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a', relType: 'replace', unlockCond: '⚡ 15 חזרות שטוחות' },
-          { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b', relType: 'replace', unlockCond: '⚡ 12 דפיציט עמוק' },
-          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3', relType: 'replace', unlockCond: '⚡ וסט 5kg בטכניקה נקיה' }
+          { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 15 חזרות שטוחות' },
+          { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 12 דפיציט עמוק' },
+          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3', relType: 'replace', weightTransfer: 'inherit', unlockCond: '⚡ וסט 5kg בטכניקה נקיה' }
         ]
       },
       {
         title: 'overhead_skill', icon: '🎯', exercises: [
           { name: 'Pike Progression', unlockWeek: 1, id: 'pike-1' },
           { name: 'Single-Arm Seated OHP', unlockWeek: 1, id: 'ohp-1' },
-          { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2', relType: 'replace', unlockCond: '⚡ 10 פייק פושאפ' },
-          { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3', relType: 'replace', unlockCond: '⚡ עמידת ידיים לקיר' },
-          { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4', relType: 'replace', unlockCond: '⚡ עמידת ידיים יציבה' },
-          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5', relType: 'replace', unlockCond: '⚡ כוח כתפיים מתקדם' }
+          { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 10 פייק פושאפ' },
+          { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ עמידת ידיים לקיר' },
+          { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ עמידת ידיים יציבה' },
+          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ כוח כתפיים מתקדם' }
         ]
       },
       {
@@ -248,10 +247,10 @@ const ExercisesPage = (() => {
         title: 'pullup_tree', icon: '🧗', exercises: [
           { name: 'Pull-Up Progression', unlockWeek: 1, id: 'pull-1' },
           { name: 'Chin-Up Progression', unlockWeek: 5, parentId: 'pull-1', id: 'pull-1b', relType: 'accessory' },
-          { name: 'Pull-Up (Overhand)', unlockWeek: 10, parentId: 'pull-1', id: 'pull-2a', relType: 'replace' },
-          { name: 'Chin-Up', unlockWeek: 10, parentId: 'pull-1b', id: 'pull-2b', relType: 'replace' },
-          { name: 'Weighted Pull-Up', unlockWeek: 62, parentId: 'pull-2a', id: 'pull-3a', relType: 'replace' },
-          { name: 'Weighted Chin-Up', unlockWeek: 66, parentId: 'pull-2b', id: 'pull-3b', relType: 'replace' }
+          { name: 'Pull-Up (Overhand)', unlockWeek: 10, parentId: 'pull-1', id: 'pull-2a', relType: 'replace', weightTransfer: 'stepdown' },
+          { name: 'Chin-Up', unlockWeek: 10, parentId: 'pull-1b', id: 'pull-2b', relType: 'replace', weightTransfer: 'stepdown' },
+          { name: 'Weighted Pull-Up', unlockWeek: 62, parentId: 'pull-2a', id: 'pull-3a', relType: 'replace', weightTransfer: 'inherit' },
+          { name: 'Weighted Chin-Up', unlockWeek: 66, parentId: 'pull-2b', id: 'pull-3b', relType: 'replace', weightTransfer: 'inherit' }
         ]
       },
       {
@@ -273,8 +272,8 @@ const ExercisesPage = (() => {
       {
         title: 'hanging_core', icon: '🧱', exercises: [
           { name: 'Tuck L-Sit', unlockWeek: 1, id: 'l-sit-1' },
-          { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-1', id: 'l-sit-2', relType: 'replace', unlockCond: '⚡ 15 שניות Tuck' },
-          { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace', unlockCond: '⚡ 15 שניות רגל אחת' }
+          { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-1', id: 'l-sit-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 15 שניות Tuck' },
+          { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 15 שניות רגל אחת' }
         ]
       }
     ],

@@ -83,7 +83,7 @@ test('Program Integrity - Lean Mode Mechanics & Protected Compounds', () => {
 
   const expectedProtected = [
     "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "goblet-reverse-lunge",
-    "pistol-squat-progression", "db-hip-thrust", "suitcase-carry",
+    "pistol-squat-progression", "glute-bridge", "suitcase-carry",
     "pike-progression", "single-arm-floor-press", "push-up-progression",
     "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up",
     "pull-up-progression", "one-arm-db-row", "single-arm-curl", "single-arm-hammer-curl"

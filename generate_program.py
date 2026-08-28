@@ -19,7 +19,7 @@ EXERCISES_CATALOG = [
         "name": "Goblet Romanian Deadlift",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 3,
+        "startingWeight": 6,
         "minWeight": 3,
         "maxWeight": 24,
         "increment": 1,
@@ -38,9 +38,9 @@ EXERCISES_CATALOG = [
         "name": "Single-Leg RDL",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 3,
+        "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 20,
+        "maxWeight": 24,
         "increment": 1,
         "loadType": "each",
         "restSeconds": 75,
@@ -57,9 +57,9 @@ EXERCISES_CATALOG = [
         "name": "Goblet Reverse Lunge",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 3,
+        "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 20,
+        "maxWeight": 24,
         "increment": 1,
         "loadType": "each",
         "restSeconds": 75,
@@ -91,7 +91,7 @@ EXERCISES_CATALOG = [
         "unlockCriteria": {
             "exercise": "goblet-bulgarian-split-squat",
             "targetReps": 12,
-            "targetWeightKg": 12
+            "targetWeightKg": 24
         },
         "rule": "ירידה איטית; אם הברך קורסת פנימה (valgus), BELOW"
     },
@@ -100,7 +100,7 @@ EXERCISES_CATALOG = [
         "name": "Goblet Bulgarian Split Squat",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 3,
+        "startingWeight": 6,
         "minWeight": 3,
         "maxWeight": 24,
         "increment": 1,
@@ -282,7 +282,183 @@ EXERCISES_CATALOG = [
         "compound": True,
         "sets": 3,
         "structure": "straight",
-        "stages": ["Incline Push-Up", "Push-Up", "Deficit Push-Up", "Weighted Deficit (vest 5kg)"]
+        "stages": ["Incline Push-Up", "Push-Up"]
+    },
+    {
+        "id": "deficit-push-up",
+        "name": "Deficit Push-Up",
+        "category": "Push",
+        "type": "variation",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "repWindow": "8-15",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 3,
+        "structure": "straight"
+    },
+    {
+        "id": "feet-elevated-push-up",
+        "name": "Feet-Elevated Push-Up",
+        "category": "Push",
+        "type": "variation",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "repWindow": "8-12",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 3,
+        "structure": "straight",
+        "unlocked": False,
+        "unlockCriteria": {
+            "exercise": "deficit-push-up",
+            "targetReps": 12
+        }
+    },
+    {
+        "id": "weighted-deficit-push-up",
+        "name": "Weighted Deficit Push-Up",
+        "category": "Push",
+        "type": "weighted",
+        "startingWeight": 5,
+        "minWeight": 5,
+        "maxWeight": 20,
+        "increment": 1,
+        "loadType": "total",
+        "restSeconds": 90,
+        "repWindow": "6-12",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 3,
+        "structure": "straight",
+        "unlocked": False,
+        "unlockCriteria": {
+            "exercise": "feet-elevated-push-up"
+        }
+    },
+    {
+        "id": "wall-walk-partial",
+        "name": "Wall Walk (Partial)",
+        "category": "Shoulders",
+        "type": "variation",
+        "restSeconds": 75,
+        "repWindow": "3-6",
+        "tempo": "controlled",
+        "compound": True,
+        "sets": 2,
+        "structure": "straight",
+        "unlocked": False,
+        "unlockCriteria": {
+            "exercise": "pike-progression",
+            "targetStageIndex": 2,
+            "targetReps": 10
+        }
+    },
+    {
+        "id": "wall-walk-full",
+        "name": "Wall Walk (Full)",
+        "category": "Shoulders",
+        "type": "variation",
+        "restSeconds": 90,
+        "repWindow": "3-6",
+        "tempo": "controlled",
+        "compound": True,
+        "sets": 2,
+        "structure": "straight",
+        "unlocked": False,
+        "unlockCriteria": {
+            "exercise": "wall-walk-partial"
+        }
+    },
+    {
+        "id": "wall-handstand",
+        "name": "Wall Handstand",
+        "category": "Shoulders",
+        "type": "timebased",
+        "restSeconds": 90,
+        "repWindow": "20-45s",
+        "tempo": "static hold",
+        "compound": True,
+        "sets": 2,
+        "structure": "straight",
+        "unlocked": False,
+        "unlockCriteria": {
+            "exercise": "wall-walk-full"
+        }
+    },
+    {
+        "id": "elevated-pike-push-up",
+        "name": "Elevated Pike Push-Up",
+        "category": "Shoulders",
+        "type": "variation",
+        "restSeconds": 90,
+        "repWindow": "6-10",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 2,
+        "structure": "straight",
+        "unlocked": False,
+        "unlockCriteria": {
+            "exercise": "wall-handstand"
+        }
+    },
+    {
+        "id": "pull-up-overhand",
+        "name": "Pull-Up (Overhand)",
+        "category": "Pull",
+        "type": "variation",
+        "restSeconds": 105,
+        "repWindow": "4-8",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 3,
+        "structure": "straight"
+    },
+    {
+        "id": "chin-up",
+        "name": "Chin-Up",
+        "category": "Pull",
+        "type": "variation",
+        "restSeconds": 105,
+        "repWindow": "4-8",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 3,
+        "structure": "straight"
+    },
+    {
+        "id": "weighted-pull-up",
+        "name": "Weighted Pull-Up",
+        "category": "Pull",
+        "type": "weighted",
+        "startingWeight": 5,
+        "minWeight": 5,
+        "maxWeight": 20,
+        "increment": 1,
+        "loadType": "total",
+        "restSeconds": 120,
+        "repWindow": "4-8",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 3,
+        "structure": "straight"
+    },
+    {
+        "id": "weighted-chin-up",
+        "name": "Weighted Chin-Up",
+        "category": "Pull",
+        "type": "weighted",
+        "startingWeight": 5,
+        "minWeight": 5,
+        "maxWeight": 20,
+        "increment": 1,
+        "loadType": "total",
+        "restSeconds": 120,
+        "repWindow": "4-8",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 3,
+        "structure": "straight"
     },
     {
         "id": "single-arm-seated-ohp",
@@ -531,6 +707,44 @@ EXERCISES_CATALOG = [
         "orderInPair": 2,
         "stages": ["Tuck L-Sit", "One-Leg Extended L-Sit", "Full L-Sit"]
     },
+    {
+        "id": "one-leg-extended-l-sit",
+        "name": "One-Leg Extended L-Sit",
+        "category": "Core",
+        "type": "timebased",
+        "restSeconds": 45,
+        "repWindow": "8-20s",
+        "tempo": "static hold",
+        "compound": False,
+        "sets": 2,
+        "structure": "pair",
+        "pairId": "d5-grip-lsit",
+        "orderInPair": 2,
+        "unlocked": False,
+        "unlockCriteria": {
+            "exercise": "l-sit-progression",
+            "targetStageIndex": 0,
+            "targetTime": 15
+        }
+    },
+    {
+        "id": "full-l-sit",
+        "name": "Full L-Sit",
+        "category": "Core",
+        "type": "timebased",
+        "restSeconds": 45,
+        "repWindow": "8-20s",
+        "tempo": "static hold",
+        "compound": False,
+        "sets": 2,
+        "structure": "pair",
+        "pairId": "d5-grip-lsit",
+        "orderInPair": 2,
+        "unlocked": False,
+        "unlockCriteria": {
+            "exercise": "one-leg-extended-l-sit"
+        }
+    },
 
     # Warmup & Cardio Utilities
     { "id": "high-knees", "name": "High Knees", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "30s" },
@@ -560,7 +774,7 @@ EXERCISES_CATALOG = [
         "rule": "סט 1 (כפיפה): פנים הרחק מהעגינה (גומייה על מצח) | סט 2 (פשיטה): פנים לכיוון העגינה (גומייה על עורף). עגינה אופקית בגובה הראש!",
         "stages": ["Band 30kg (Close Anchor)", "Band 30kg (1 Step Back)", "Band 40kg", "Band 50kg"]
     },
-    { "id": "glute-bridge", "name": "Glute Bridge", "category": "Warmup", "type": "timebased", "restSeconds": 30, "repWindow": "12" },
+    { "id": "glute-bridge", "name": "DB Glute Bridge", "category": "Warmup", "type": "weighted", "startingWeight": 9, "restSeconds": 60, "repWindow": "10-15" },
 
     # Arm Blocks (Myo-reps)
     {
@@ -737,11 +951,8 @@ def generate_day_exercises(dow, week):
         else:
             exs.append(make_ex_obj("A3", "goblet-bulgarian-split-squat", "Goblet Bulgarian Split Squat", "2×8/leg" if is_deload else "3×6-12/leg", rep_window="6-12", weight="6 kg total", tempo="2s descent", rest=82, structure="straight"))
 
-        # A4: Glute Tree
-        if week < 5:
-            exs.append(make_ex_obj("A4", "glute-bridge", "DB Glute Bridge", "2×10" if is_deload else "3×10-15", rep_window="10-15", weight="9 kg total", tempo="1s pause", rest=60, structure="straight"))
-        else:
-            exs.append(make_ex_obj("A4", "db-hip-thrust", "DB Hip Thrust", "2×10" if is_deload else "3×10-15", rep_window="10-15", weight="9 kg total", tempo="1s pause", rest=75, structure="straight"))
+        # A4: Glute Progression (DB Glute Bridge — all weeks)
+        exs.append(make_ex_obj("A4", "glute-bridge", "DB Glute Bridge", "2×10" if is_deload else "3×10-15", rep_window="10-15", weight="9 kg total", tempo="1s pause", rest=75 if week >= 5 else 60, structure="straight"))
 
         # A5: Suitcase Carry
         exs.append(make_ex_obj("A5", "suitcase-carry", "Suitcase Carry", "2×25m/side" if is_deload else "3×25-40m/side", rep_window="25-40m", weight="12 kg", tempo="walk", rest=60, structure="straight"))
@@ -768,14 +979,30 @@ def generate_day_exercises(dow, week):
         rpe = "5-6" if is_deload else "7-8"
         exs = get_push_warmup()
 
-        # A1: Pike Progression
-        exs.append(make_ex_obj("A1", "pike-progression", "Pike Progression", "2×15 secs" if is_deload else "2×15-30 secs", rep_window="15-30s or 6-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        # A1: Pike / Overhead Skill Tree
+        if week < 10:
+            exs.append(make_ex_obj("A1", "pike-progression", "Pike Progression", "2×15 secs" if is_deload else "2×15-30 secs", rep_window="15-30s or 6-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        elif week < 18:
+            exs.append(make_ex_obj("A1", "wall-walk-partial", "Wall Walk (Partial)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=75, structure="straight"))
+        elif week < 26:
+            exs.append(make_ex_obj("A1", "wall-walk-full", "Wall Walk (Full)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=90, structure="straight"))
+        elif week < 41:
+            exs.append(make_ex_obj("A1", "wall-handstand", "Wall Handstand", "2×15 secs" if is_deload else "2×20-45 secs", rep_window="20-45s", weight="Bodyweight", tempo="static", rest=90, structure="straight"))
+        else:
+            exs.append(make_ex_obj("A1", "elevated-pike-push-up", "Elevated Pike Push-Up", "2×5" if is_deload else "2×6-10", rep_window="6-10", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
 
         # A2: Single-Arm Floor Press
         exs.append(make_ex_obj("A2", "single-arm-floor-press", "Single-Arm Floor Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=105, structure="straight"))
 
-        # A3: Push-Up Bars Progression
-        exs.append(make_ex_obj("A3", "push-up-progression", "Push-up Bars Progression", "2×6" if is_deload else "3×8-15", rep_window="8-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        # A3: Push-Up Tree
+        if week < 10:
+            exs.append(make_ex_obj("A3", "push-up-progression", "Push-up Bars Progression", "2×6" if is_deload else "3×8-15", rep_window="8-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        elif week < 18:
+            exs.append(make_ex_obj("A3", "deficit-push-up", "Deficit Push-Up", "2×6" if is_deload else "3×8-15", rep_window="8-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        elif week < 62:
+            exs.append(make_ex_obj("A3", "feet-elevated-push-up", "Feet-Elevated Push-Up", "2×6" if is_deload else "3×8-12", rep_window="8-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        else:
+            exs.append(make_ex_obj("A3", "weighted-deficit-push-up", "Weighted Deficit Push-Up", "2×6" if is_deload else "3×6-12", rep_window="6-12", weight="5 kg vest", tempo="2s descent", rest=90, structure="straight"))
 
         # A4: Single-Arm Seated OHP
         exs.append(make_ex_obj("A4", "single-arm-seated-ohp", "Single-Arm Seated OHP", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=82, structure="straight"))
@@ -809,8 +1036,13 @@ def generate_day_exercises(dow, week):
         rpe = "5-6" if is_deload else "7-8"
         exs = get_pull_warmup()
 
-        # A1: Pull-Up Progression
-        exs.append(make_ex_obj("A1", "pull-up-progression", "Pull-Up Progression", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=105, structure="straight"))
+        # A1: Pull-Up Progression Tree
+        if week < 10:
+            exs.append(make_ex_obj("A1", "pull-up-progression", "Pull-Up Progression", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=105, structure="straight"))
+        elif week < 62:
+            exs.append(make_ex_obj("A1", "pull-up-overhand", "Pull-Up (Overhand)", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=105, structure="straight"))
+        else:
+            exs.append(make_ex_obj("A1", "weighted-pull-up", "Weighted Pull-Up", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="5 kg vest", tempo="2s descent", rest=120, structure="straight"))
 
         # A2: One-Arm DB Row
         exs.append(make_ex_obj("A2", "one-arm-db-row", "One-Arm DB Row", "2×8/side" if is_deload else "3×6-12/side", rep_window="6-12", weight="6 kg", tempo="2s descent", rest=82, structure="straight"))
@@ -821,7 +1053,7 @@ def generate_day_exercises(dow, week):
         biceps_cycle_week = ((week - 1) % 3) + 1
         is_biceps_light = (biceps_cycle_week == 3)
         
-        # A4 & A6: Pair: Push-Up Volume ↔ Biceps Curl
+        # A4 & A5: Pair: Push-Up Volume ↔ Biceps Curl
         if not is_biceps_light and not is_deload:
             exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="pair", pair_id="d5-pushup-curl", order_in_pair=1))
             exs.append(make_ex_obj("A5", "single-arm-curl", "Single-Arm Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="pair", pair_id="d5-pushup-curl", order_in_pair=2, microcycle="biceps-microcycle", active_weeks=[1, 2]))
@@ -834,7 +1066,13 @@ def generate_day_exercises(dow, week):
 
         # Pair: Towel Hang ↔ L-Sit Progression
         exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=1))
-        exs.append(make_ex_obj("A8", "l-sit-progression", "L-Sit Progression", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+        
+        if week < 18:
+            exs.append(make_ex_obj("A8", "l-sit-progression", "L-Sit Progression", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+        elif week < 34:
+            exs.append(make_ex_obj("A8", "one-leg-extended-l-sit", "One-Leg Extended L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+        else:
+            exs.append(make_ex_obj("A8", "full-l-sit", "Full L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
 
         if week >= 10 and not is_deload:
             exs.append(make_ex_obj("A9", "arm-block-biceps-curl", "Arm Block - Single-Arm Curl", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
@@ -1035,7 +1273,7 @@ def generate_program():
             "protectCompounds": True,
             "protectedExercises": [
                 "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "goblet-reverse-lunge", "pistol-squat-progression",
-                "db-hip-thrust", "suitcase-carry", "pike-progression", "single-arm-floor-press", "push-up-progression",
+                "glute-bridge", "suitcase-carry", "pike-progression", "single-arm-floor-press", "push-up-progression",
                 "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up", "pull-up-progression",
                 "one-arm-db-row", "single-arm-curl", "single-arm-hammer-curl"
             ],
