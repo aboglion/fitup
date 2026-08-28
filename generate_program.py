@@ -693,8 +693,8 @@ EXERCISES_CATALOG = [
         "stages": ["Dead Hang", "Towel Hang", "Towel Hang + vest 5kg"]
     },
     {
-        "id": "l-sit-progression",
-        "name": "L-Sit Progression",
+        "id": "tuck-l-sit",
+        "name": "Tuck L-Sit",
         "category": "Core",
         "type": "timebased",
         "restSeconds": 45,
@@ -705,7 +705,7 @@ EXERCISES_CATALOG = [
         "structure": "pair",
         "pairId": "d5-grip-lsit",
         "orderInPair": 2,
-        "stages": ["Tuck L-Sit", "One-Leg Extended L-Sit", "Full L-Sit"]
+        "stages": ["Tuck L-Sit"]
     },
     {
         "id": "one-leg-extended-l-sit",
@@ -722,8 +722,7 @@ EXERCISES_CATALOG = [
         "orderInPair": 2,
         "unlocked": False,
         "unlockCriteria": {
-            "exercise": "l-sit-progression",
-            "targetStageIndex": 0,
+            "exercise": "tuck-l-sit",
             "targetTime": 15
         }
     },
@@ -1064,11 +1063,11 @@ def generate_day_exercises(dow, week):
         if week >= 5:
             exs.append(make_ex_obj("A6", "single-arm-hammer-curl", "Single-Arm Hammer Curl", "1×10" if is_deload else "2×10-12", rep_window="10-12", weight="3 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[1, 2, 3]))
 
-        # Pair: Towel Hang ↔ L-Sit Progression
+        # Pair: Towel Hang ↔ Tuck L-Sit
         exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=1))
         
         if week < 18:
-            exs.append(make_ex_obj("A8", "l-sit-progression", "L-Sit Progression", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+            exs.append(make_ex_obj("A8", "tuck-l-sit", "Tuck L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
         elif week < 34:
             exs.append(make_ex_obj("A8", "one-leg-extended-l-sit", "One-Leg Extended L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
         else:

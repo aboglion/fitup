@@ -1403,38 +1403,56 @@ const TodayPage = (() => {
           if (isW) {
             const weightInfo = parseWeightDetails(ex.weight, ex.name);
             if (weightInfo) {
-              const reqKey = `weight_${weightInfo.isPerHand ? '2x' : '1x'}_${weightInfo.cleanWeight}`;
+              const nameLower = ex.name.toLowerCase();
+              const weightLower = String(ex.weight).toLowerCase();
+              const isVest = nameLower.includes('weighted') || weightLower.includes('vest') || weightLower.includes('+');
+              const isBand = nameLower.includes('band') || weightLower.includes('band') || nameLower.includes('pallof');
+              
+              let equipLabel = I18n.t('equip_db') || 'משקולות DB';
+              let equipIcon = `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>`;
+              
+              if (isBand) {
+                equipLabel = I18n.t('equip_band') || 'גומיית התנגדות';
+                equipIcon = `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="7" ry="7" transform="rotate(-45 12 12)"/><path d="M12 2v20" opacity="0.3" transform="rotate(-45 12 12)"/></svg>`;
+              } else if (isVest) {
+                equipLabel = I18n.t('equip_vest') || 'וסט משקל';
+                equipIcon = `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12v6l-2 2v10H8V10L6 8V2z"/><path d="M9 2v4"/><path d="M15 2v4"/></svg>`;
+              } else {
+                equipLabel = weightInfo.isPerHand ? `${equipLabel} (זוג)` : `${equipLabel} (אחת)`;
+              }
+
+              const reqKey = `weight_${isBand ? 'band' : (isVest ? 'vest' : (weightInfo.isPerHand ? '2x' : '1x'))}_${weightInfo.cleanWeight}`;
               if (!unifiedRequirementsMap.has(reqKey)) {
                 unifiedRequirementsMap.set(reqKey, {
                   type: 'weight',
-                  icon: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>`,
-                  label: weightInfo.isPerHand ? `${I18n.t('equip_db') || 'משקולות DB'} (זוג)` : `${I18n.t('equip_db') || 'משקולות DB'} (אחת)`,
+                  icon: equipIcon,
+                  label: equipLabel,
                   weightInfo: weightInfo,
                   exercises: []
                 });
               }
               unifiedRequirementsMap.get(reqKey).exercises.push(exNum);
             }
-          } else {
-            const equips = UI.getEquipments ? UI.getEquipments(ex.name) : [UI.getEquipment(ex.name)];
-            equips.forEach(equip => {
-              if (equip && equip.label !== I18n.t('equip_bodyweight') && equip.label !== I18n.t('equip_wall') && equip.label !== I18n.t('equip_db')) {
-                const reqKey = `equip_${equip.label}`;
-                if (!unifiedRequirementsMap.has(reqKey)) {
-                  unifiedRequirementsMap.set(reqKey, {
-                    type: 'equipment',
-                    icon: equip.icon,
-                    label: equip.label,
-                    weightInfo: null,
-                    exercises: []
-                  });
-                }
-                if (!unifiedRequirementsMap.get(reqKey).exercises.includes(exNum)) {
-                  unifiedRequirementsMap.get(reqKey).exercises.push(exNum);
-                }
-              }
-            });
           }
+          
+          const equips = UI.getEquipments ? UI.getEquipments(ex.name) : [UI.getEquipment(ex.name)];
+          equips.forEach(equip => {
+            if (equip && equip.label !== I18n.t('equip_bodyweight') && equip.label !== I18n.t('equip_wall') && equip.label !== I18n.t('equip_db') && equip.key !== 'weighted' && equip.key !== 'vest' && equip.key !== 'band') {
+              const reqKey = `equip_${equip.label}`;
+              if (!unifiedRequirementsMap.has(reqKey)) {
+                unifiedRequirementsMap.set(reqKey, {
+                  type: 'equipment',
+                  icon: equip.icon,
+                  label: equip.label,
+                  weightInfo: null,
+                  exercises: []
+                });
+              }
+              if (!unifiedRequirementsMap.get(reqKey).exercises.includes(exNum)) {
+                unifiedRequirementsMap.get(reqKey).exercises.push(exNum);
+              }
+            }
+          });
           
           let prevEx = null;
           for (let i = currentDayIndex - 1; i >= 0; i--) {
