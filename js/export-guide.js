@@ -16,13 +16,13 @@ window.ExporterGuide = (() => {
         "<strong>Protected Compound Lifts:</strong> Heavy compound exercises are strictly performed in straight sets with full adaptive rest to protect performance.",
         "<strong>Lean Pairs (Antagonistic & Non-Competing):</strong> Pair non-competing exercises (Day 3: TRX Row ↔ Single-Arm Lateral Raise; Day 5: Push-Up Volume ↔ Single-Arm Curl; Day 5: Towel Hang ↔ L-Sit). Perform Ex A → Ex B → 45-75s rest.",
         "<strong>Arm Block Myo-Reps Protocol:</strong> Active from Week 10 onwards. Myo-reps cluster (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped objectively after two consecutive tempo losses, capped at 1 exposure per muscle area per week.",
-        "<strong>Progression Trees & Weekly Alternating Toggles:</strong> Day 1 features linear RPG skill tree unlocks (Bodyweight Squat → BSS, RDL → Single-Leg RDL, Lunge → Pistol Squat). Day 3 alternates TRX Y-T-W (odd weeks) with Band Pull-Apart (even weeks).",
+        "<strong>Progression Trees & Weekly Alternating Toggles:</strong> Day 1 features continuous quad focus (Heels-Elevated Goblet Squat) and linear posterior unlocks (Single-Leg RDL). Day 3 alternates TRX Y-T-W (odd weeks) with Band Pull-Apart (even weeks).",
         "<strong>Biceps 3-Week Microcycle:</strong> Weeks 1-2 heavy progressive overload, Week 3 light preservation (Single-Arm Hammer Curl 2 sets, no progression).",
         "<strong>Data Backup & Cloud Sync:</strong> One-click local JSON export/import alongside automatic bidirectional Google Drive cloud synchronization."
       ],
       equipment_title: "🔧 Required Equipment & Specifications",
       equipment_list: [
-        "Modular Dumbbells: 8 plates × 3kg (32kg max weight) + 2 handles (3–32kg legal range per dumbbell)",
+        "Modular Dumbbells: 8 plates × 3kg (32kg max weight capacity) + 2 handles (3–32kg legal range per dumbbell)",
         "Pull-up Bar (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "Push-up Bars / Parallettes (All push exercises: Push-Up, Deficit, Pike, L-sit — no palms flat on floor)",
         "TRX Suspension Trainer (Face Pull, TRX Row, Y-T-W at fixed angles)",
@@ -75,13 +75,13 @@ window.ExporterGuide = (() => {
         "<strong>הגנה על תרגילי בסיס:</strong> תרגילי כוח מורכבים כבדים מבוצעים תמיד כסטים ישרים עם מנוחה אדפטיבית מלאה להגנה על ביצועים.",
         "<strong>זיווגי Lean (אנטגוניסטיים ולא-מתחרים):</strong> זיווג תרגילים לא מתחרים (יום 3: TRX Row ↔ Single-Arm Lateral Raise; יום 5: Push-Up Volume ↔ Single-Arm Curl; יום 5: Towel Hang ↔ L-Sit). מבוצע א' ← ב' ← מנוחה 45-75 שנ'.",
         "<strong>פרוטוקול Arm Block ב-Myo-Reps:</strong> פעיל משבוע 10. צביר Myo-Reps (סט אקטיבציה + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה). עצירה אובייקטיבית ב-2 אובדני טמפו רצופים, מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.",
-        "<strong>עצי התקדמות ורוטציות שבועיות:</strong> יום 1 כולל פתיחת שלבים ליניארית בעץ היכולות (סקוואט ← BSS, RDL ← Single-Leg RDL, מכרעים ← Pistol Squat). יום 3 מחליף TRX Y-T-W (אי-זוגי) עם Band Pull-Apart (זוגי).",
+        "<strong>עצי התקדמות ורוטציות שבועיות:</strong> יום 1 כולל פוקוס קוואדס רציף (Heels-Elevated Goblet Squat) ופתיחת שלבים ליניארית בשרשרת האחורית (Single-Leg RDL). יום 3 מחליף TRX Y-T-W (אי-זוגי) עם Band Pull-Apart (זוגי).",
         "<strong>מיקרו-מחזור בייספס (3 שבועות):</strong> שבועות 1-2 עומס כבד וקידום, שבוע 3 קל (Single-Arm Hammer Curl בלבד, 2 סטים, ללא קידום).",
         "<strong>גיבוי נתונים וסנכרון ענן:</strong> ייצוא/ייבוא קובץ JSON מקומי בלחיצה אחת לצד סנכרון ענן דו-כיווני ל-Google Drive."
       ],
       equipment_title: "🔧 ציוד נדרש ושימוש קבוע",
       equipment_list: [
-        "משקולות מודולריות: 8 פלטות × 3 ק\"ג (24 ק\"ג סה\"כ) + 2 ידיות (משקל חוקי 3–24 ק\"ג ליד)",
+        "משקולות מודולריות: 8 פלטות × 3 ק\"ג (קיבולת 32 ק\"ג max) + 2 ידיות (טווח חוקי 3–32 ק\"ג ליד)",
         "מוט מתח (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "Push-up Bars (כל תרגילי הדחיפה: Push-Up, Deficit, Pike, L-sit — אין כפות ידיים על הרצפה)",
         "TRX (Face Pull, TRX Row, Y-T-W בזוויות קבועות)",
@@ -95,7 +95,7 @@ window.ExporterGuide = (() => {
       col_type: "סוג אימון",
       col_intensity: "עצימות / דגשים",
       days_table: [
-        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "45 דק' — RPE 7–9 — שרשרת המסטרינג (Goblet RDL / Single-Leg RDL), עץ קוואדס (Heels-Elevated Goblet Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, בלוק תאומים, מעגל ליבה" },
+        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "45 דק' — RPE 7–9 — שרשרת המסטרינג (Goblet RDL / Single-Leg RDL), פוקוס קוואדס (Heels-Elevated Goblet Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, בלוק תאומים, מעגל ליבה" },
         { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — 45 דק' הליכה בשיפוע 4% (5.5 קמ\"ש, דופק Zone 2) + 5 דק' מיקרו-מוביליות" },
         { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "45 דק' — RPE 7–9 — Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, OHP, Triceps Ext, Diamond Push-Up, זוג TRX Row ↔ Single-Arm Lateral Raise, רוטציית כתף אחורית + Arm Block (משבוע 10)" },
         { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 25 דק' הליכון 0% (4.5 קמ\"ש) + 10 דק' מאקרו-מוביליות" },
@@ -134,7 +134,7 @@ window.ExporterGuide = (() => {
         "<strong>حماية التمارين المركبة:</strong> التمارين المركبة الثقيلة تتم دائماً في مجموعات مستقيمة مع راحة كاملة.",
         "<strong>ثنائيات Lean (المزدوجة):</strong> دمج تمارين غير متنافسة (اليوم 3: TRX Row ↔ Single-Arm Lateral Raise; اليوم 5: Push-Up Volume ↔ Single-Arm Curl).",
         "<strong>بروتوكول بلوك الذراعين Myo-Reps:</strong> مفعل من الأسبوع 10. مجموعة تنشيط + 3 مجموعات مصغرة (5 تكرارات مع 15 ثانية راحة). توقف عند فقدان الإيقاع مرتين متتاليتين.",
-        "<strong>التناوب الأسبوعي (Toggles):</strong> اليوم 3 يتناول TRX Y-T-W و Band Pull-Apart. اليوم 1 يتبع مسار التقدم الخطي.",
+        "<strong>التناوب الأسبوعي (Toggles):</strong> اليوم 3 يتناول TRX Y-T-W و Band Pull-Apart. اليوم 1 يتبع مسار التقدم الخطي (Heels-Elevated Goblet Squat & Single-Leg RDL).",
         "<strong>دورة البايسبس (3 أسابيع):</strong> أسبوعان حمولة زائدة وأسبوع خفيف."
       ],
       equipment_title: "🔧 المعدات المطلوبة",
@@ -153,7 +153,7 @@ window.ExporterGuide = (() => {
       col_type: "نوع التمرين",
       col_intensity: "الشدة / التركيز",
       days_table: [
-        { day: "اليوم 1", type: "Legs + Core + Grip", focus: "45 دقيقة — RPE 7–9 — Hamstring Chain (RDL), Lunge/Pistol Tree, Goblet BSS, DB Glute Bridge, Suitcase Carry, Core" },
+        { day: "اليوم 1", type: "Legs + Core + Grip", focus: "45 دقيقة — RPE 7–9 — Hamstring Chain (RDL), Quad Focus (Heels-Elevated Goblet Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, Core" },
         { day: "اليوم 2", type: "Zone 2 Cardio + المرونة اليومية", focus: "45 دقيقة — مشي مائل (4%, 5.5 كم/س) + 5 دقائق مرونة" },
         { day: "اليوم 3", type: "Push + Shoulders + Triceps", focus: "45 دقيقة — RPE 7–9 — Single-Arm Floor Press, OHP, Single-Arm Lateral Raise + بلوك الذراعين (من الأسبوع 10)" },
         { day: "اليوم 4", type: "Active Recovery + صحة الرقبة", focus: "30 دقيقة — تمارين الرقبة + مشي 25 دقيقة (0%, 4.5 كم/س) + مرونة عميقة" },

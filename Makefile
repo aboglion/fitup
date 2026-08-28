@@ -2,7 +2,9 @@
 
 test:
 	python3 tests/check.py
+	python3 tests/check_mismatches.py
 	node --test tests/*.test.js
+	node tests/deep_audit.js
 
 pg: gp
 

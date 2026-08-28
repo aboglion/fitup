@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 START_DATE = datetime(2026, 7, 6)
 DAYS_ENG = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
-# Deload occurs every 8 weeks: 8, 16, 24, 32, 40, 48, 56, 64, 72
-DELOAD_WEEKS = set(range(8, 79, 8))
+# Deload occurs every 8 weeks: 8, 16, 24, 32, 40, 48, 56, 64, 72, 80
+DELOAD_WEEKS = set(range(8, 81, 8))
 
 # ---------------------------------------------------------
 # 1. Master Exercise Catalog Metadata Definition
@@ -1284,7 +1284,7 @@ def to_training_data_json(program):
             else:
                 mapped[f"A{idx}"] = e
                 idx += 1
-        for slot in ["W1","W2","W3","W4","W5","W6","W7","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11"]:
+        for slot in ["W1","W2","W3","W4","W5","W6","W7","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11","A12"]:
             e = mapped.get(slot)
             row[f"{slot} - Exercise"] = e["name"] if e else None
             row[f"{slot} - Sets×reps"] = e["sets"] if e else None
