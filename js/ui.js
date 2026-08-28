@@ -902,8 +902,8 @@ const UI = (() => {
     if (n.includes('vest')) results.push({ label: I18n.t('equip_vest'), icon: icons.vest, key: 'vest' });
     else if (n.includes('trx')) results.push({ label: I18n.t('equip_trx'), icon: icons.trx, key: 'trx' });
     else if (n.includes('bars') || n.includes('push-up bars') || n.includes('parallettes')) results.push({ label: I18n.t('equip_bars'), icon: icons.bars, key: 'bars' });
-    else if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row') || n.includes('pistol')) results.push({ label: I18n.t('equip_db'), icon: icons.db, key: 'db' });
     else if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) results.push({ label: I18n.t('equip_band'), icon: icons.band, key: 'band' });
+    else if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row') || n.includes('pistol') || n.includes('goblet') || n.includes('calf raise') || n.includes('lunge') || n.includes('lateral raise') || n.includes('lateral')) results.push({ label: I18n.t('equip_db'), icon: icons.db, key: 'db' });
     else if (n.includes('wall') || n.includes('handstand')) results.push({ label: I18n.t('equip_wall'), icon: icons.wall, key: 'wall' });
     else if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('chair') || n.includes('elevated')) results.push({ label: I18n.t('equip_bench'), icon: icons.bench, key: 'bench' });
     else if (n.includes('walking') || n.includes('vo2') || n.includes('zone 2')) results.push({ label: I18n.t('equip_treadmill'), icon: icons.treadmill, key: 'treadmill' });

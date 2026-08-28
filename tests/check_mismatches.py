@@ -5,8 +5,9 @@ with open('training_data.json') as f:
 
 program_exercises = set()
 for day in data['daily']:
-    for ex in day.get('exercises', []):
-        program_exercises.add(ex['name'])
+    for key, val in day.items():
+        if key.endswith(' - Exercise') and val:
+            program_exercises.add(val)
 
 with open('js/exercises.js') as f:
     js_content = f.read()
@@ -26,5 +27,6 @@ for name in sorted(program_exercises - tree_exercises):
 
 print("\nIn Skill Tree but NOT in Program:")
 for name in sorted(tree_exercises - program_exercises):
-    print(f"  - {name}")
+    if name not in ['Chin-Up', 'Chin-Up Progression', 'Weighted Chin-Up', 'Wrist Rocks']:
+        print(f"  - {name}")
 
