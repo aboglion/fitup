@@ -192,13 +192,6 @@ const TodayPage = (() => {
                 maxDepth--;
                 continue;
               }
-            } else if (exId === 'pistol-squat-progression') {
-               // Legacy hardcoded fallback if schema isn't perfect
-               ex.id = 'heels-elevated-goblet-squat';
-               ex.name = 'Heels-Elevated Goblet Squat';
-               exId = 'heels-elevated-goblet-squat';
-               maxDepth--;
-               continue;
             }
           }
           break;
@@ -262,7 +255,6 @@ const TodayPage = (() => {
       // Parent State Inheritance: If state is missing for direct replacement exercises (e.g. Glute Bridge -> DB Glute Bridge)
       if (!state) {
         const parentIdMap = {
-          'db-hip-thrust': ['glute-bridge', 'db-glute-bridge', 'glute-1', 'DB Glute Bridge'],
           'weighted-deficit-push-up': ['deficit-push-up', 'push-up-progression', 'push-1'],
           'weighted-pull-up': ['pull-up-overhand', 'pull-up-progression', 'pull-1'],
           'weighted-chin-up': ['chin-up', 'chin-up-progression', 'pull-1b']
@@ -3182,8 +3174,8 @@ const TodayPage = (() => {
       rule: 'אגן אופקי ומקביל לרצפה, רגל אחורית מתוחה קדימה/אחורה בקו ישר.',
       belowTrigger: 'סיבוב אגן צידי מופרז, איבוד יציבות מוחלט, או עגלת גב.'
     },
-    'DB HIP THRUST': {
-      rule: 'כיווץ מלא ונעילה של הגלוטאוס בשיא התנועה, מבט קדימה וסנטר אסוף (Posterior tilt).',
+    'DB GLUTE BRIDGE': {
+      rule: 'כיווץ מלא ונעילה של הגלוטאוס בשיא התנועה, סנטר אסוף (Posterior tilt).',
       belowTrigger: 'פשיטת יתר של הגב התחתון (Hyper-extension) או אי-הגעה לנעילה מלאה בשיא.'
     },
     'SUITCASE CARRY': {

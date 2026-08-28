@@ -363,13 +363,13 @@ const StatsPage = (() => {
     hamstrings: [
       // Primary Hip Hinge (DB RDL -> DB Single-Leg RDL 12-24kg)
       { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.65, category: 'Legs' },
-      // Posterior Chain Synergist (DB Glute Bridge -> DB Hip Thrust 9-24kg)
+      // Posterior Chain Synergist (DB Glute Bridge 9-32kg)
       { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.25, category: 'Legs' },
       // Unilateral Squat Assistance
       { stages: [1, 5, 18, 34, 53, 66], weight: 0.10, category: 'Legs' },
     ],
     glutes: [
-      // Primary Hip Extension (DB Glute Bridge -> DB Hip Thrust 9-24kg with 2-3s pauses)
+      // Primary Hip Extension (DB Glute Bridge 9-32kg with pauses)
       { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.50, category: 'Legs' },
       // Single-Leg Hinge & Squat (Single-Leg RDL & BSS Goblet 12-24kg)
       { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.40, category: 'Legs' },
@@ -401,7 +401,7 @@ const StatsPage = (() => {
     lowerBack: [
       // Lumbar Extension & Hinge (DB RDL -> DB Single-Leg RDL 12-24kg)
       { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.60, category: 'Legs' },
-      // Hip Thrust Lumbar Stabilization
+      // DB Glute Bridge Lumbar Stabilization
       { stages: [1, 5, 10, 18, 26, 34, 42, 50, 53, 66], weight: 0.25, category: 'Legs' },
       // Loaded Carry & Anti-Flexion Bracing (Suitcase Carry & Dead Bug)
       { stages: [1, 5, 18, 26, 34, 53, 66], weight: 0.15, category: 'Legs' },
@@ -477,7 +477,7 @@ const StatsPage = (() => {
     'goblet-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }, { m: 'core', w: 0.3 }],
     'bodyweight-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.4 }],
     'reverse-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
-    'goblet-reverse-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
+    'heels-elevated-goblet-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }, { m: 'core', w: 0.3 }],
     'reverse-lunge-pistol-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'walking-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'pistol-squat-to-chair': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'core', w: 0.4 }],
@@ -489,7 +489,6 @@ const StatsPage = (() => {
     'single-leg-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.8 }, { m: 'lowerBack', w: 0.6 }],
     'db-glute-bridge': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }],
     'glute-bridge': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }],
-    'db-hip-thrust': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }, { m: 'lowerBack', w: 0.4 }],
 
     'single-leg-calf-raise': [{ m: 'calves', w: 1.0 }],
     'standing-single-leg-calf-raise': [{ m: 'calves', w: 1.0 }],
@@ -506,7 +505,7 @@ const StatsPage = (() => {
     'suitcase-carry': [{ m: 'core', w: 0.8 }, { m: 'obliques', w: 1.0 }, { m: 'forearms', w: 0.8 }, { m: 'lowerBack', w: 0.5 }],
     'towel-hang': [{ m: 'forearms', w: 1.0 }],
     'dead-hang': [{ m: 'forearms', w: 1.0 }],
-    'pistol-squat-progression': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'core', w: 0.4 }],
+    'pistol-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'core', w: 0.4 }],
     'bulgarian-split-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
     'push-up-progression': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'db-oh-triceps-extension': [{ m: 'triceps', w: 1.0 }],
@@ -600,10 +599,10 @@ const StatsPage = (() => {
     'overhead-triceps-ext': 'triceps', 'db-overhead-triceps-extension': 'triceps', 'single-arm-overhead-triceps-ext': 'triceps', 'diamond-push-up': 'triceps',
     'pull-up': 'lats', 'pull-up-progression': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'seated-band-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
     'db-curl': 'biceps', 'single-arm-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-hammer-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
-    'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'goblet-reverse-lunge': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
-    'db-rdl': 'hamstrings', 'goblet-romanian-deadlift': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'db-hip-thrust': 'glutes',
+    'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'heels-elevated-goblet-squat': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads',
+    'db-rdl': 'hamstrings', 'goblet-romanian-deadlift': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes',
     'single-leg-calf-raise': 'calves', 'standing-single-leg-calf-raise': 'calves', 'seated-single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves', 'seated-calf-raise': 'calves',
-    'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'obliques', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat-progression': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'shoulders', 'chin-up-progression': 'lats', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': null, 'deep-mobility-protocol': null, 'band-neck-flexion': 'neck', 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'lats', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
+    'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'obliques', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'shoulders', 'chin-up-progression': 'lats', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': null, 'deep-mobility-protocol': null, 'band-neck-flexion': 'neck', 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'lats', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
   };
 
   function getMuscleForExercise(ex) {

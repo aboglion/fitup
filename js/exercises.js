@@ -27,7 +27,7 @@ const ExercisesPage = (() => {
 
     // Dumbbell Lower Body
     'Goblet Bulgarian Split Squat': [{ weight: '6 kg', fromWeek: 5 }, { weight: '18 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 26 }, { weight: '28 kg', fromWeek: 42 }, { weight: '32 kg', fromWeek: 58 }],
-    'Heels-Elevated Goblet Squat': [{ weight: '6 kg', fromWeek: 1 }],
+    'Heels-Elevated Goblet Squat': [{ weight: '6 kg', fromWeek: 1 }, { weight: '12 kg', fromWeek: 10 }, { weight: '18 kg', fromWeek: 18 }, { weight: '24 kg', fromWeek: 34 }, { weight: '28 kg', fromWeek: 50 }, { weight: '32 kg', fromWeek: 66 }],
     'Goblet Romanian Deadlift': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 5 }, { weight: '24 kg', fromWeek: 10 }, { weight: '28 kg', fromWeek: 18 }, { weight: '32 kg', fromWeek: 34 }],
     'Single-Leg RDL': [{ weight: '6 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }, { weight: '28 kg', fromWeek: 58 }, { weight: '32 kg', fromWeek: 74 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
@@ -205,28 +205,29 @@ const ExercisesPage = (() => {
         title: 'push_tree', icon: '💥', exercises: [
           { name: 'Push-up Bars Progression', unlockWeek: 1, id: 'push-1' },
           { name: 'Single-Arm Floor Press', unlockWeek: 1, id: 'floor-1' },
-          { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol', relType: 'accessory', unlockCond: '⚡ נפח משלים' },
-          { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up', relType: 'accessory', unlockCond: '⚡ חיזוק יד אחורית' },
-          { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 15 חזרות שטוחות' },
-          { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 12 דפיציט עמוק' },
-          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3', relType: 'replace', weightTransfer: 'inherit', unlockCond: '⚡ וסט 5kg בטכניקה נקיה' }
+          { name: 'Push-Up Volume (Day 5)', unlockWeek: 1, parentId: 'push-1', id: 'push-vol', relType: 'accessory', unlockCond: 'cond_push_vol' },
+          { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up', relType: 'accessory', unlockCond: 'cond_diamond' },
+          { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_15_flat' },
+          { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_12_deficit' },
+          { name: 'Weighted Deficit Push-Up', unlockWeek: 62, parentId: 'push-2a', id: 'push-3', relType: 'replace', weightTransfer: 'inherit', unlockCond: 'cond_12_feet_elevated' }
         ]
       },
       {
         title: 'overhead_skill', icon: '🎯', exercises: [
           { name: 'Pike Progression', unlockWeek: 1, id: 'pike-1' },
           { name: 'Single-Arm Seated OHP', unlockWeek: 1, id: 'ohp-1' },
-          { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 10 פייק פושאפ' },
-          { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ עמידת ידיים לקיר' },
-          { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ עמידת ידיים יציבה' },
-          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ כוח כתפיים מתקדם' }
+          { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_10_pike' },
+          { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_6_partial_walk' },
+          { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_6_full_walk' },
+          { name: 'Elevated Pike Push-Up', unlockWeek: 41, parentId: 'pike-4', id: 'pike-5', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_handstand_45s' }
         ]
       },
       {
         title: 'accessory_prehab', icon: '🩹', exercises: [
           { name: 'Single-Arm Lateral Raise', unlockWeek: 1, id: 'lat-1' },
           { name: 'DB Overhead Triceps Extension', unlockWeek: 1, id: 'tri-1' },
-          { name: 'TRX Y-T-W', unlockWeek: 1 },
+          { name: 'TRX Y-T-W', unlockWeek: 1, id: 'rear-delt-1' },
+          { name: 'Band Pull-Apart', unlockWeek: 1, parentId: 'rear-delt-1', id: 'rear-delt-2', relType: 'accessory', unlockCond: 'cond_weekly_rotation' },
           { name: 'Arm Block - Single-Arm Lateral Raise', unlockWeek: 10, parentId: 'lat-1', id: 'lat-2', relType: 'accessory' },
           { name: 'Arm Block - DB Overhead Triceps Ext', unlockWeek: 10, parentId: 'tri-1', id: 'tri-2', relType: 'accessory' }
         ]
@@ -269,8 +270,8 @@ const ExercisesPage = (() => {
       {
         title: 'hanging_core', icon: '🧱', exercises: [
           { name: 'Tuck L-Sit', unlockWeek: 1, id: 'l-sit-1' },
-          { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-1', id: 'l-sit-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 15 שניות Tuck' },
-          { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 15 שניות רגל אחת' }
+          { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-1', id: 'l-sit-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_15s_tuck' },
+          { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_15s_one_leg' }
         ]
       }
     ],
@@ -657,15 +658,15 @@ const ExercisesPage = (() => {
           <span style="display:inline-block; width:28px; height:3px; background:#3b82f6; box-shadow:0 0 6px #3b82f6; border-radius:2px; position:relative;">
             <span style="position:absolute; right:-4px; top:-3.5px; font-size:8px; color:#3b82f6;">►</span>
           </span>
-          <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">🔵 חץ כחול — 🔄 התפתחות & החלפה</span>
-          <span>(מחליף את התרגיל הקודם כשאנו מגיעים לשבוע הפתיחה)</span>
+          <span style="background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">${I18n.t('legend_blue_arrow')}</span>
+          <span>${I18n.t('legend_blue_desc')}</span>
         </div>
         <div class="rpg-legend-item" style="display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-secondary);">
           <span style="display:inline-block; width:28px; height:0; border-top:2.5px dashed #ef4444; position:relative;">
             <span style="position:absolute; right:-4px; top:-4px; font-size:8px; color:#ef4444;">►</span>
           </span>
-          <span style="background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">🔴 חץ אדום — ➕ חיזוק & בידוד</span>
-          <span>(מתווסף כחיזוק משלים ומתקיים במקביל בתכנית)</span>
+          <span style="background:rgba(239,68,68,0.15); color:#fca5a5; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:6px; font-weight:700; font-size:11px;">${I18n.t('legend_red_arrow')}</span>
+          <span>${I18n.t('legend_red_desc')}</span>
         </div>
       </div>
     `;
@@ -1054,7 +1055,7 @@ const ExercisesPage = (() => {
         timingText.setAttribute('font-size', isMobile ? '9' : '10');
         timingText.setAttribute('font-weight', '800');
         timingText.setAttribute('fill', isActive ? (isReplace ? '#93c5fd' : '#fca5a5') : '#94a3b8');
-        timingText.textContent = unlockCond ? unlockCond : (unlockWeekNum ? `📅 שבוע פתיחה ${unlockWeekNum}` : '📅 פתיחה מדורגת');
+        timingText.textContent = unlockCond ? I18n.t(unlockCond) : (unlockWeekNum ? `${I18n.t('locked_week')} ${unlockWeekNum}`.replace('🔒 ', '📅 ') : `📅 ${I18n.t('staged_unlock')}`);
 
         const condText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         condText.setAttribute('x', badgeX);
@@ -1063,9 +1064,7 @@ const ExercisesPage = (() => {
         condText.setAttribute('font-size', isMobile ? '8' : '9');
         condText.setAttribute('font-weight', '700');
         condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
-        condText.textContent = unlockCond
-          ? '🎯 תנאי מעבר דרגה'
-          : (isReplace ? (parentShort ? `🔄 החלפת ${parentShort}` : '🔄 החלפת מקור') : '🔴 חיזוק: מתווסף במקביל');
+        condText.textContent = unlockCond ? I18n.t('level_up_condition') : (isReplace ? (parentShort ? `🔄 ${I18n.t('cond_replace') || 'Replacing'} ${parentShort}` : `🔄 ${I18n.t('cond_replace_orig') || 'Original replaced'}`) : `🔴 ${I18n.t('cond_parallel') || 'Added in parallel'}`);
 
         badgeGroup.appendChild(badgeBg);
         badgeGroup.appendChild(timingText);
@@ -1133,8 +1132,8 @@ const ExercisesPage = (() => {
 
     const unlockWeek = ex.unlockWeek || 1;
     const weekBadgeHTML = unlockWeek > 1
-      ? `<span class="guide-unlock-badge locked" style="background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 11px;">🔒 ${I18n.t('locked_week') || 'שבוע'} ${unlockWeek}</span>`
-      : `<span class="guide-unlock-badge unlocked" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 11px;">🔓 ${I18n.t('unlocked_week') || 'שבוע'} 1</span>`;
+      ? `<span class="guide-unlock-badge locked" style="background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 11px;">🔒 ${I18n.t('locked_week') || I18n.t('week_label')} ${unlockWeek}</span>`
+      : `<span class="guide-unlock-badge unlocked" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 11px;">🔓 ${I18n.t('unlocked_week') || I18n.t('week_label')} 1</span>`;
 
     const parentLineHTML = ex.parentName
       ? `<div style="font-size: 11px; color: var(--accent-orange, #f97316); margin-top: 4px; font-weight: 600;">🔗 תנאי קדם: ${ex.parentName}</div>`

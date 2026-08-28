@@ -24,8 +24,8 @@ EXERCISES_CATALOG = [
         "maxWeight": 32,
         "increment": 1,
         "loadType": "each",
-        "restSeconds": 90,
-        "restRange": [75, 105],
+        "restSeconds": 105,
+        "restRange": [90, 135],
         "repWindow": "6-12",
         "tempo": "3s descent",
         "compound": True,
@@ -68,8 +68,7 @@ EXERCISES_CATALOG = [
         "tempo": "3s descent, 1s pause at bottom, 1s ascent",
         "compound": True,
         "structure": "straight",
-        "sets": 2,
-        "equipment": "ספר/בלוק 2–5 ס״מ מתחת לשני העקבים"
+        "sets": 2
     },
     {
         "id": "goblet-bulgarian-split-squat",
@@ -81,8 +80,8 @@ EXERCISES_CATALOG = [
         "maxWeight": 32,
         "increment": 1,
         "loadType": "each",
-        "restSeconds": 75,
-        "restRange": [60, 90],
+        "restSeconds": 82,
+        "restRange": [75, 90],
         "repWindow": "6-12",
         "tempo": "2s descent",
         "compound": True,
@@ -1245,7 +1244,7 @@ def generate_program():
             "protectCompounds": True,
             "protectedExercises": [
                 "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "heels-elevated-goblet-squat",
-                "glute-bridge", "suitcase-carry", "pike-progression", "single-arm-floor-press", "push-up-progression",
+                "db-glute-bridge", "suitcase-carry", "pike-progression", "single-arm-floor-press", "push-up-progression",
                 "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up", "pull-up-progression",
                 "one-arm-db-row", "single-arm-curl", "single-arm-hammer-curl"
             ],

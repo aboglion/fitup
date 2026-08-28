@@ -7,9 +7,96 @@ const I18n = (() => {
   let currentLang = 'en';
 
   const CONFIG = {
-    en: { dir: 'ltr', name: 'English', flag: '🇺🇸', font: "'Inter', sans-serif" },
-    he: { dir: 'rtl', name: 'עברית', flag: '🇮🇱', font: "'Heebo', sans-serif" },
-    ar: { dir: 'rtl', name: 'العربية', flag: '🇸🇦', font: "'Cairo', 'Tajawal', sans-serif" }
+    en: {
+
+      staged_unlock: "Staged Unlock",
+      prerequisite: "Prerequisite",
+
+
+      cond_replace: "Replacing",
+      cond_replace_orig: "Original replaced",
+      cond_parallel: "Added in parallel",
+
+
+      // Skill tree conditions and legends
+      legend_blue_arrow: "🔵 Blue Arrow — 🔄 Evolution & Replacement",
+      legend_blue_desc: "(Replaces the previous exercise when reaching the unlock week)",
+      legend_red_arrow: "🔴 Red Arrow — ➕ Strengthening & Isolation",
+      legend_red_desc: "(Added as a complementary exercise and runs parallel in the program)",
+      level_up_condition: "🎯 Level-up condition",
+      cond_push_vol: "⚡ Complementary volume",
+      cond_diamond: "⚡ Triceps strengthening",
+      cond_15_flat: "⚡ 15 flat reps",
+      cond_12_deficit: "⚡ 12 deep deficit",
+      cond_12_feet_elevated: "⚡ 12 feet elevated reps",
+      cond_10_pike: "⚡ 10 pike push-ups",
+      cond_6_partial_walk: "⚡ 6 partial walk reps",
+      cond_6_full_walk: "⚡ 6 full walk reps",
+      cond_handstand_45s: "⚡ Handstand hold (45s)",
+      cond_weekly_rotation: "⚡ Weekly rotation",
+      cond_15s_tuck: "⚡ 15 seconds Tuck",
+      cond_15s_one_leg: "⚡ 15 seconds one leg",
+ dir: 'ltr', name: 'English', flag: '🇺🇸', font: "'Inter', sans-serif" },
+    he: {
+
+      staged_unlock: "פתיחה מדורגת",
+      prerequisite: "תנאי קדם",
+
+
+      cond_replace: "החלפת",
+      cond_replace_orig: "החלפת מקור",
+      cond_parallel: "חיזוק: מתווסף במקביל",
+
+
+      // Skill tree conditions and legends
+      legend_blue_arrow: "🔵 חץ כחול — 🔄 התפתחות & החלפה",
+      legend_blue_desc: "(מחליף את התרגיל הקודם כשאנו מגיעים לשבוע הפתיחה)",
+      legend_red_arrow: "🔴 חץ אדום — ➕ חיזוק & בידוד",
+      legend_red_desc: "(מתווסף כחיזוק משלים ומתקיים במקביל בתכנית)",
+      level_up_condition: "🎯 תנאי מעבר דרגה",
+      cond_push_vol: "⚡ נפח משלים",
+      cond_diamond: "⚡ חיזוק יד אחורית",
+      cond_15_flat: "⚡ 15 חזרות שטוחות",
+      cond_12_deficit: "⚡ 12 דפיציט עמוק",
+      cond_12_feet_elevated: "⚡ 12 חזרות רגליים מוגבהות",
+      cond_10_pike: "⚡ 10 פייק פושאפ",
+      cond_6_partial_walk: "⚡ 6 חזרות טיפוס חלקי",
+      cond_6_full_walk: "⚡ 6 חזרות טיפוס מלא",
+      cond_handstand_45s: "⚡ עמידת ידיים (45 שנ׳)",
+      cond_weekly_rotation: "⚡ רוטציה שבועית",
+      cond_15s_tuck: "⚡ 15 שניות Tuck",
+      cond_15s_one_leg: "⚡ 15 שניות רגל אחת",
+ dir: 'rtl', name: 'עברית', flag: '🇮🇱', font: "'Heebo', sans-serif" },
+    ar: {
+
+      staged_unlock: "فتح تدريجي",
+      prerequisite: "شرط مسبق",
+
+
+      cond_replace: "استبدال",
+      cond_replace_orig: "استبدال الأصل",
+      cond_parallel: "يضاف بالتوازي",
+
+
+      // Skill tree conditions and legends
+      legend_blue_arrow: "🔵 سهم أزرق — 🔄 تطور واستبدال",
+      legend_blue_desc: "(يستبدل التمرين السابق عند الوصول إلى أسبوع الفتح)",
+      legend_red_arrow: "🔴 سهم أحمر — ➕ تقوية وعزل",
+      legend_red_desc: "(يُضاف كتمرين تكميلي ويستمر بالتوازي في البرنامج)",
+      level_up_condition: "🎯 شرط الترقية",
+      cond_push_vol: "⚡ حجم تكميلي",
+      cond_diamond: "⚡ تقوية الترايسبس",
+      cond_15_flat: "⚡ 15 تكرار مسطح",
+      cond_12_deficit: "⚡ 12 تكرار عميق",
+      cond_12_feet_elevated: "⚡ 12 تكرار بأقدام مرتفعة",
+      cond_10_pike: "⚡ 10 تكرارات بايك",
+      cond_6_partial_walk: "⚡ 6 تكرارات مشي جزئي",
+      cond_6_full_walk: "⚡ 6 تكرارات مشي كامل",
+      cond_handstand_45s: "⚡ وقوف على اليدين (45 ثانية)",
+      cond_weekly_rotation: "⚡ تناوب أسبوعي",
+      cond_15s_tuck: "⚡ 15 ثانية ثني",
+      cond_15s_one_leg: "⚡ 15 ثانية قدم واحدة",
+ dir: 'rtl', name: 'العربية', flag: '🇸🇦', font: "'Cairo', 'Tajawal', sans-serif" }
   };
 
   const TRANSLATIONS = {
@@ -817,7 +904,8 @@ const I18n = (() => {
       wakelock_disabled: "Keep Screen Awake: Disabled 💤",
       wakelock_not_supported: "Screen Wake Lock is not supported on this browser.",
       wakelock_toast_on: "Screen will stay awake during workout 💡",
-      wakelock_toast_off: "Screen sleep restored 💤"
+      wakelock_toast_off: "Screen sleep restored 💤",
+      rule_heels_elevated_goblet_squat: "Must be performed with elevated heels (weight plate/book/block 2-5cm thick) throughout the entire exercise"
     },
     he: {
       // App & Nav
@@ -1575,7 +1663,8 @@ const I18n = (() => {
       sync_conflict_title: "נמצא קונפליקט בסנכרון ענן ☁️",
       sync_conflict_desc: "יומן האימונים במכשיר זה שונה מהגיבוי השמור ב-Google Drive. אנא בחר באיזו גרסה להשתמש:",
       keep_local_data: "📱 שמור נתונים מקומיים (דרוס את הענן)",
-      keep_cloud_data: "☁️ טען נתונים מהענן (דרוס את המכשיר)"
+      keep_cloud_data: "☁️ טען נתונים מהענן (דרוס את המכשיר)",
+      rule_heels_elevated_goblet_squat: "חובה לבצע עם הגבהת עקבים (פלטה/ספר/בלוק בעובי 2-5 ס״מ) לאורך כל התרגיל"
     },
     ar: {
       // App & Nav
@@ -2051,7 +2140,8 @@ const I18n = (() => {
       wakelock_disabled: "إبقاء الشاشة نشطة: معطل 💤",
       wakelock_not_supported: "ميزة منع إيقاف الشاشة غير مدعومة في هذا المتصفح.",
       wakelock_toast_on: "ستظل الشاشة نشطة أثناء التمرين 💡",
-      wakelock_toast_off: "تم استعادة وضع سكون الشاشة 💤"
+      wakelock_toast_off: "تم استعادة وضع سكون الشاشة 💤",
+      rule_heels_elevated_goblet_squat: "يجب أداؤه بكعب مرتفع (لوح وزن/كتاب/مكعب بسمك 2-5 سم) طوال التمرين بأكمله"
     }
   };
 

@@ -19,7 +19,7 @@ const data = global.window.TRAINING_DATA;
 const engine = global.window.ProgressionEngine;
 
 test('Program Integrity - Progression Settings & Deload Parameters', () => {
-  const expectedLegalWeights = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24];
+  const expectedLegalWeights = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32];
   assert.deepEqual(data.progressionSettings.legalWeights, expectedLegalWeights);
 
   assert.equal(data.progressionSettings.deloadEveryWeeks, 8);
@@ -30,16 +30,14 @@ test('Program Integrity - Progression Settings & Deload Parameters', () => {
 
 test('Program Integrity - Exercise Rest Periods & Ranges', () => {
   const expectedRestRanges = {
-    "goblet-rdl": { base: 105, range: [90, 120] },
+    "goblet-rdl": { base: 105, range: [90, 135] },
     "single-leg-rdl": { base: 75, range: [60, 90] },
-    "single-arm-floor-press": { base: 105, range: [90, 120] },
-    "pull-up-progression": { base: 105, range: [90, 120] },
-    "single-arm-seated-ohp": { base: 82, range: [75, 90] },
+    "single-arm-floor-press": { base: 90, range: [75, 105] },
+    "pull-up-progression": { base: 90, range: [75, 105] },
+    "single-arm-seated-ohp": { base: 75, range: [60, 90] },
     "goblet-bulgarian-split-squat": { base: 82, range: [75, 90] },
-    "one-arm-db-row": { base: 82, range: [75, 90] },
-    "goblet-reverse-lunge": { base: 75, range: [60, 90] },
-    "pistol-squat-progression": { base: 105, range: [90, 120] },
-    "db-hip-thrust": { base: 75, range: [60, 90] },
+    "one-arm-db-row": { base: 75, range: [60, 90] },
+    "heels-elevated-goblet-squat": { base: 75, range: [60, 90] },
     "trx-row": { base: 75 },
     "push-up-volume": { base: 75, range: [60, 90] },
     "push-up-progression": { base: 75, range: [60, 90] },
@@ -82,8 +80,8 @@ test('Program Integrity - Lean Mode Mechanics & Protected Compounds', () => {
   assert.equal(lean.protectCompounds, true);
 
   const expectedProtected = [
-    "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "goblet-reverse-lunge",
-    "pistol-squat-progression", "glute-bridge", "suitcase-carry",
+    "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "heels-elevated-goblet-squat",
+    "db-glute-bridge", "suitcase-carry",
     "pike-progression", "single-arm-floor-press", "push-up-progression",
     "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up",
     "pull-up-progression", "one-arm-db-row", "single-arm-curl", "single-arm-hammer-curl"

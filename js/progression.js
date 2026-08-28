@@ -425,8 +425,7 @@
         return { unlocked: true, reason: 'Prerequisite strength achieved' };
       }
       
-      // Fallback for Pistol Squat if unlockCriteria is not explicitly defined
-      if ((exercise.id === 'pistol-squat' || exercise.id === 'pistol-squat-progression') && !exercise.unlockCriteria) {
+      if (exercise.id === 'pistol-squat' && !exercise.unlockCriteria) {
         const squatState = allProgressionStates['heels-elevated-goblet-squat'] || allProgressionStates['goblet-bulgarian-split-squat'] || allProgressionStates['single-leg-rdl'];
         if (squatState && (squatState.currentWeightKg >= 12 || squatState.currentStageIndex >= 2)) {
           return { unlocked: true, reason: 'Prerequisite strength achieved (BSS / Heels-Elevated Goblet Squat)' };
@@ -467,11 +466,9 @@
 
       // Parent weight inheritance mapping for direct replacements
       const parentIdMap = {
-        'db-glute-bridge': ['glute-bridge', 'db-hip-thrust', 'glute-1'],
-        'db-hip-thrust': ['glute-bridge', 'db-glute-bridge', 'glute-1'],
+        'db-glute-bridge': ['glute-bridge', 'glute-1'],
         'single-leg-rdl': ['goblet-rdl', 'rdl-1'],
-        'pistol-squat': ['heels-elevated-goblet-squat', 'goblet-bulgarian-split-squat', 'pistol-squat-progression', 'lunge-1'],
-        'pistol-squat-progression': ['heels-elevated-goblet-squat', 'goblet-bulgarian-split-squat', 'lunge-1'],
+        'pistol-squat': ['heels-elevated-goblet-squat', 'goblet-bulgarian-split-squat', 'lunge-1'],
         'heels-elevated-goblet-squat': ['bodyweight-squat', 'squat-1'],
         'goblet-bulgarian-split-squat': ['bodyweight-squat', 'squat-1'],
         'weighted-deficit-push-up': ['deficit-push-up', 'push-up-progression', 'push-1'],
