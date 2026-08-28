@@ -139,6 +139,7 @@ const UI = (() => {
     'GOBLET BULGARIAN SPLIT SQUAT': 'DB BSS (Goblet).gif',
     'DB BSS': 'DB Bulgarian Split Squat.gif',
     'DB BSS (GOBLET)': 'DB BSS (Goblet).gif',
+    'HEELS ELEVATED GOBLET SQUAT': 'DB BSS (Goblet).gif',
     'DB GLUTE BRIDGE': 'DB Glute Bridge.gif',
     'GLUTE BRIDGE': 'Glute Bridge.gif',
     'DB HIP THRUST': 'DB Glute Bridge.gif',
@@ -273,6 +274,7 @@ const UI = (() => {
     'REVERSE LUNGE DB': 'REVERSE LUNGE + DB.png',
     'GOBLET REVERSE LUNGE': 'REVERSE LUNGE + DB.png',
     'GOBLET BULGARIAN SPLIT SQUAT': 'DB BSS (GOBLET).png',
+    'HEELS ELEVATED GOBLET SQUAT': 'DB BSS (GOBLET).png',
     'PISTOL SQUAT': 'PISTOL SQUAT.png',
     'PISTOL SQUAT PROGRESSION': 'PISTOL SQUAT.png',
     'FULL PISTOL SQUAT': 'FULL PISTOL SQUAT.png',
@@ -591,7 +593,7 @@ const UI = (() => {
 
       const restText = exData.restRange ? `${exData.restRange[0]}-${exData.restRange[1]} ${secLabel}` : (exData.restSeconds ? `${exData.restSeconds} ${secLabel}` : null);
       const repText = (exData.windowMin && exData.windowMax) ? `${exData.windowMin}-${exData.windowMax} ${repsLabel}` : null;
-      const weightText = exData.startingWeight != null ? `${exData.startingWeight} ${kgLabel} (${exData.loadType || perSideLabel}) [${minLbl} ${exData.minWeight || 3}${kgLabel} | ${maxLbl} ${exData.maxWeight || 24}${kgLabel}]` : null;
+      const weightText = exData.startingWeight != null ? `${exData.startingWeight} ${kgLabel} (${exData.loadType || perSideLabel}) [${minLbl} ${exData.minWeight || 3}${kgLabel} | ${maxLbl} ${exData.maxWeight || 32}${kgLabel}]` : null;
 
       const ruleKey = 'rule_' + (exData.id || '').replace(/[-_]+/g, '_');
       const ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (exData.rule || '');

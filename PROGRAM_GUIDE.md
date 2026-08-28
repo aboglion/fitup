@@ -38,7 +38,7 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 
 ### 2.1 Lean Structure & Time-Efficiency (40–45 Minute Target)
 The v15.6 Lean Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts:
-- **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
+- **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
 - **Lean Pairs (Antagonistic & Non-Competing)**:
   - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
   - **Day 5 (d5-pushup-curl)**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
@@ -50,7 +50,7 @@ The v15.6 Lean Edition organizes exercises into optimized structures to maximize
 ### 2.2 Weekly Alternating Toggles
 - **Day 1 Toggle (Posterior vs Quad/Unilateral)**:
   - **Odd Weeks**: Single-Leg RDL (Posterior chain focus).
-  - **Even Weeks**: Lunge/Pistol Slot — automatically resolves to Goblet Reverse Lunge (fallback) or Pistol Squat once unlocked (Quad & unilateral focus).
+  - **Quad Focus**: Heels-Elevated Goblet Squat is performed continuously from Week 1.
 - **Day 3 Rear Delt Toggle**:
   - **Odd Weeks**: TRX Y-T-W (3-position posterior delt & scapular control).
   - **Even Weeks**: Band Pull-Apart (Scapular retraction & posture density).

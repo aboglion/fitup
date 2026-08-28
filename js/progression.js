@@ -86,7 +86,7 @@
 
       if (evaluation === 'all_above' || softened) {
         const increment = exercise.increment || 1;
-        const newWeight = Math.min(exercise.maxWeight || 24, currentWeight + increment);
+        const newWeight = Math.min(exercise.maxWeight || 32, currentWeight + increment);
         return {
           action: 'increase',
           newWeight,
@@ -469,7 +469,7 @@
       const parentIdMap = {
         'db-hip-thrust': ['glute-bridge', 'db-glute-bridge', 'glute-1'],
         'single-leg-rdl': ['goblet-rdl', 'rdl-1'],
-        'pistol-squat-progression': ['goblet-reverse-lunge', 'goblet-bulgarian-split-squat', 'lunge-1'],
+        'pistol-squat-progression': ['heels-elevated-goblet-squat', 'goblet-bulgarian-split-squat', 'lunge-1'],
         'goblet-bulgarian-split-squat': ['bodyweight-squat', 'squat-1'],
         'weighted-deficit-push-up': ['deficit-push-up', 'push-up-progression', 'push-1'],
         'weighted-pull-up': ['pull-up-overhand', 'pull-up-progression', 'pull-1'],

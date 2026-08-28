@@ -26,32 +26,31 @@ const ExercisesPage = (() => {
     'Pallof Press Progression': [{ weight: 'Band 30 kg', fromWeek: 10 }, { weight: 'Band 40 kg', fromWeek: 34 }],
 
     // Dumbbell Lower Body
-    'Goblet Bulgarian Split Squat': [{ weight: '6 kg', fromWeek: 5 }, { weight: '18 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 26 }],
-    'Goblet Reverse Lunge': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 18 }, { weight: '24 kg', fromWeek: 42 }],
-    'Goblet Romanian Deadlift': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 5 }, { weight: '24 kg', fromWeek: 10 }],
-    'Single-Leg RDL': [{ weight: '6 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }],
-    'Pistol Squat': [{ weight: '6 kg', fromWeek: 42 }, { weight: '9 kg', fromWeek: 50 }, { weight: '12 kg', fromWeek: 58 }],
+    'Goblet Bulgarian Split Squat': [{ weight: '6 kg', fromWeek: 5 }, { weight: '18 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 26 }, { weight: '28 kg', fromWeek: 42 }, { weight: '32 kg', fromWeek: 58 }],
+    'Heels-Elevated Goblet Squat': [{ weight: '6 kg', fromWeek: 1 }],
+    'Goblet Romanian Deadlift': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 5 }, { weight: '24 kg', fromWeek: 10 }, { weight: '28 kg', fromWeek: 18 }, { weight: '32 kg', fromWeek: 34 }],
+    'Single-Leg RDL': [{ weight: '6 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }, { weight: '28 kg', fromWeek: 58 }, { weight: '32 kg', fromWeek: 74 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }],
-    'Standing Single-Leg Calf Raise': [{ weight: '6 kg in hand', fromWeek: 1 }, { weight: '9 kg in hand', fromWeek: 5 }, { weight: '12 kg in hand', fromWeek: 18 }, { weight: '15 kg in hand', fromWeek: 34 }, { weight: '18 kg in hand', fromWeek: 42 }, { weight: '21 kg in hand', fromWeek: 50 }, { weight: '24 kg in hand', fromWeek: 58 }],
-    'Seated Single-Leg Calf Raise': [{ weight: '6 kg on knee', fromWeek: 1 }, { weight: '9 kg on knee', fromWeek: 5 }, { weight: '12 kg on knee', fromWeek: 18 }, { weight: '15 kg on knee', fromWeek: 34 }, { weight: '18 kg on knee', fromWeek: 42 }, { weight: '21 kg on knee', fromWeek: 50 }, { weight: '24 kg on knee', fromWeek: 58 }],
-    'Suitcase Carry': [{ weight: '12 kg', fromWeek: 1 }, { weight: '15 kg', fromWeek: 5 }, { weight: '18 kg', fromWeek: 18 }, { weight: '21 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 53 }],
+    'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }, { weight: '28 kg', fromWeek: 66 }, { weight: '32 kg', fromWeek: 78 }],
+    'Standing Single-Leg Calf Raise': [{ weight: '6 kg in hand', fromWeek: 1 }, { weight: '9 kg in hand', fromWeek: 5 }, { weight: '12 kg in hand', fromWeek: 18 }, { weight: '15 kg in hand', fromWeek: 34 }, { weight: '18 kg in hand', fromWeek: 42 }, { weight: '21 kg in hand', fromWeek: 50 }, { weight: '24 kg in hand', fromWeek: 58 }, { weight: '28 kg in hand', fromWeek: 66 }, { weight: '32 kg in hand', fromWeek: 78 }],
+    'Seated Single-Leg Calf Raise': [{ weight: '6 kg on knee', fromWeek: 1 }, { weight: '9 kg on knee', fromWeek: 5 }, { weight: '12 kg on knee', fromWeek: 18 }, { weight: '15 kg on knee', fromWeek: 34 }, { weight: '18 kg on knee', fromWeek: 42 }, { weight: '21 kg on knee', fromWeek: 50 }, { weight: '24 kg on knee', fromWeek: 58 }, { weight: '28 kg on knee', fromWeek: 66 }, { weight: '32 kg on knee', fromWeek: 78 }],
+    'Suitcase Carry': [{ weight: '12 kg', fromWeek: 1 }, { weight: '15 kg', fromWeek: 5 }, { weight: '18 kg', fromWeek: 18 }, { weight: '21 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 53 }, { weight: '28 kg', fromWeek: 66 }, { weight: '32 kg', fromWeek: 78 }],
 
     // Dumbbell Upper Body - Push
-    'Single-Arm Floor Press': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 42 }],
-    'Single-Arm Seated OHP': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 62 }],
+    'Single-Arm Floor Press': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 42 }, { weight: '28 kg', fromWeek: 58 }, { weight: '32 kg', fromWeek: 74 }],
+    'Single-Arm Seated OHP': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 62 }, { weight: '28 kg', fromWeek: 70 }, { weight: '32 kg', fromWeek: 78 }],
     'Single-Arm Lateral Raise': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 42 }, { weight: '9 kg', fromWeek: 53 }],
-    'DB Overhead Triceps Extension': [{ weight: '6 kg total', fromWeek: 1 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 34 }, { weight: '15 kg', fromWeek: 50 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 66 }],
+    'DB Overhead Triceps Extension': [{ weight: '6 kg total', fromWeek: 1 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 34 }, { weight: '15 kg', fromWeek: 50 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 66 }, { weight: '28 kg', fromWeek: 74 }, { weight: '32 kg', fromWeek: 80 }],
     'Arm Block - Single-Arm Lateral Raise': [{ weight: '3-9 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 74 }],
-    'Arm Block - DB Overhead Triceps Ext': [{ weight: '6-15 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 74 }],
-    'One-Arm DB Row': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 42 }, { weight: '24 kg', fromWeek: 53 }],
+    'Arm Block - DB Overhead Triceps Ext': [{ weight: '6-15 kg', fromWeek: 10 }, { weight: '24 kg', fromWeek: 74 }, { weight: '32 kg', fromWeek: 80 }],
+    'One-Arm DB Row': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 42 }, { weight: '24 kg', fromWeek: 53 }, { weight: '28 kg', fromWeek: 66 }, { weight: '32 kg', fromWeek: 78 }],
     'TRX Row': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Diamond Push-Up': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '+5 kg', fromWeek: 62 }],
     'Push-Up Volume': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Push-Up Volume (Day 5)': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'Single-Arm Curl': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 34 }, { weight: '12 kg', fromWeek: 58 }, { weight: '15 kg', fromWeek: 62 }, { weight: '18 kg', fromWeek: 66 }],
-    'Single-Arm Hammer Curl': [{ weight: '3 kg', fromWeek: 5 }, { weight: '6 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 53 }],
-    'Arm Block - Single-Arm Curl': [{ weight: '3-12 kg', fromWeek: 10 }, { weight: '18 kg', fromWeek: 74 }],
+    'Single-Arm Curl': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 34 }, { weight: '12 kg', fromWeek: 58 }, { weight: '15 kg', fromWeek: 62 }, { weight: '18 kg', fromWeek: 66 }, { weight: '20 kg', fromWeek: 74 }],
+    'Single-Arm Hammer Curl': [{ weight: '3 kg', fromWeek: 5 }, { weight: '6 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 53 }, { weight: '18 kg', fromWeek: 66 }, { weight: '20 kg', fromWeek: 74 }],
+    'Arm Block - Single-Arm Curl': [{ weight: '3-12 kg', fromWeek: 10 }, { weight: '18 kg', fromWeek: 74 }, { weight: '20 kg', fromWeek: 80 }],
 
     // Bodyweight, Mobility, Warmup & Skill Progressions
     'Dead Bug': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '1 kg', fromWeek: 10 }, { weight: '2 kg', fromWeek: 26 }, { weight: '3 kg', fromWeek: 42 }],
@@ -167,9 +166,8 @@ const ExercisesPage = (() => {
         ]
       },
       {
-        title: 'lunge_pistol_tree', icon: '🦵', exercises: [
-          { name: 'Goblet Reverse Lunge', unlockWeek: 1, id: 'lunge-1' },
-          { name: 'Pistol Squat', unlockWeek: 42, parentId: 'lunge-1', id: 'lunge-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: '⚡ 12 חזרות ב-24 ק״ג BSS' }
+        title: 'quad_focus', icon: '🦵', exercises: [
+          { name: 'Heels-Elevated Goblet Squat', unlockWeek: 1, id: 'squat-heels-1' }
         ]
       },
       {

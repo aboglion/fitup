@@ -30,8 +30,8 @@ Arm Block מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.
 
 - זוג דאמבלים מתכווננים
 - פלטות של 1 ק״ג ו-2 ק״ג
-- משקל עבודה חוקי לכל יד: 3–24 ק״ג בקפיצות של 1 ק״ג
-- משקל עבודה חוקי לדאמבל יחיד: 3–24 ק״ג בקפיצות של 1 ק״ג
+- משקל עבודה חוקי לכל יד: 3–32 ק״ג בקפיצות של 1 ק״ג
+- משקל עבודה חוקי לדאמבל יחיד: 3–32 ק״ג בקפיצות של 1 ק״ג
 - מתח
 - מקבילים / Push-Up Bars
 - TRX
@@ -59,7 +59,7 @@ Arm Block מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.
 ### רשימת משקלים חוקיים
 
 ```js
-[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]
 ```
 
 ==================================================
@@ -263,13 +263,12 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 | --- | ---: | ---: |
 | DB RDL | 105 | 90–120 |
 | Single-Leg RDL | 75 | 60–90 |
-| Single-Arm Floor Press | 105 | 90–120 |
-| Pull-Up/Chin-Up | 105 | 90–120 |
-| Single-Arm Seated OHP | 82 | 75–90 |
+| Single-Arm Floor Press | 90 | 75–105 |
+| Pull-Up/Chin-Up | 90 | 75–105 |
+| Single-Arm Seated OHP | 75 | 60–90 |
 | Goblet Bulgarian Split Squat | 82 | 75–90 |
-| One-Arm DB Row | 82 | 75–90 |
-| Goblet Reverse Lunge | 75 | 60–90 |
-| Pistol Squat | 105 | 90–120 |
+| One-Arm DB Row | 75 | 60–90 |
+| Heels-Elevated Goblet Squat | 75 | 60–90 |
 | DB Glute Bridge | 75 | 60–90 |
 | TRX Row | 75 | 60–90 |
 | Push-Up Volume (Day 5) | 75 | 60–90 |
@@ -301,7 +300,7 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 
 רשימת תרגילים מוגנים:
 
-- יום 1: Goblet Romanian Deadlift, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat, DB Glute Bridge, Suitcase Carry
+- יום 1: Goblet Romanian Deadlift, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry
 - יום 3: Pike Progression, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Extension
 - יום 5: Pull-Up, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl
 
@@ -357,7 +356,7 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 - **Squat Tree**: `Bodyweight Squat` מבוצע בשבועות 1–4. בשבוע 5 ואילך נפתח ומוחלף ל-`Goblet Bulgarian Split Squat`.
 - **Glute Focus**: `DB Glute Bridge` מבוצע החל משבוע 1 ברציפות לאורך כל התוכנית.
 - **Hamstring Chain**: `Goblet Romanian Deadlift` מבוצע בשבועות 1–17. בשבוע 18 ואילך נפתח ומוחלף ל-`Single-Leg RDL`.
-- **Lunge / Pistol Tree**: `Goblet Reverse Lunge` מבוצע בשבועות 1–41. בשבוע 42 ואילך נפתח ומוחלף ל-`Pistol Squat`.
+- **Quad Focus**: `Heels-Elevated Goblet Squat` מבוצע החל משבוע 1 ברציפות לאורך כל התוכנית.
 - **Core Citadel**: `Dead Bug` פעיל משבוע 1. `Hollow Body Hold` מתווסף למעגל הליבה משבוע 5 ואילך. `Pallof Press Progression` מתווסף משבוע 10 ואילך.
 - **Biceps Microcycle**: `Single-Arm Curl` פעיל משבוע 1. `Single-Arm Hammer Curl` מתווסף משבוע 5 ואילך. `Arm Block` מתווסף משבוע 10 ואילך.
 
@@ -492,7 +491,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 3 |
 | rep window | 6–12 |
 | starting weight | 6 ק״ג total |
-| min / max weight | 3 / 24 ק״ג total |
+| min / max weight | 3 / 32 ק״ג total |
 | increment | 1 ק״ג total |
 | rest | 105 (base), 90–120 |
 | tempo | 3 שניות ירידה |
@@ -514,50 +513,30 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 2 |
 | rep window | 8–10 לכל רגל |
 | starting weight | 6 ק״ג total |
-| min / max weight | 3 / 24 ק״ג total |
+| min / max weight | 3 / 32 ק״ג total |
 | rest | 75 (base), 60–90 |
 | structure | straight |
 | rule | neutral spine; אם מאבד שיווי משקל, BELOW |
 
 ---
 
-## תרגיל 2 א' — Goblet Reverse Lunge
+## תרגיל 2 — Heels-Elevated Goblet Squat
 
-מוגן, מבוצע בשבועות 1-41. סטים ישרים.
+מוגן, סטים ישרים. מבוצע משבוע 1 לאורך כל התוכנית.
 
 | שדה | ערך |
 | --- | --- |
-| id | goblet-reverse-lunge |
+| id | heels-elevated-goblet-squat |
 | type | weighted |
 | sets | 2 |
-| rep window | 10–12 לכל רגל |
+| rep window | 8–12 |
 | starting weight | 6 ק״ג total |
-| min / max weight | 3 / 24 ק״ג total |
+| min / max weight | 3 / 32 ק״ג total |
+| increment | 1 ק״ג total |
 | rest | 75 (base), 60–90 |
+| tempo | 3s ירידה, 1s השהייה בתחתית, 1s עלייה |
 | structure | straight |
-
----
-
-## תרגיל 2 ב' — Pistol Squat
-
-מוגן, מבוצע משבוע 42 ואילך. סטים ישרים.
-
-נעול עד לעמידה בתנאי Unlock.
-
-מוגן, סטים ישרים.
-
-| שדה | ערך |
-| --- | --- |
-| id | pistol-squat-progression |
-| type | weighted |
-| sets | 2 |
-| rep window | 3–8 לכל רגל |
-| starting weight | 6 ק״ג total |
-| min / max weight | 3 / 24 ק״ג total |
-| rest | 105 (base), 90–120 |
-| structure | straight |
-| unlockCriteria | כל סטי BSS ב-12 חזרות תקינות במשקל 24 ק״ג total |
-| rule | ירידה איטית; אם הברך קורסת פנימה (valgus), BELOW |
+| equipment | ספר/בלוק 2–5 ס״מ מתחת לשני העקבים |
 
 ---
 
@@ -572,7 +551,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 3 |
 | rep window | 6–12 לכל רגל |
 | starting weight | 6 ק״ג total |
-| min / max weight | 3 / 24 ק״ג total |
+| min / max weight | 3 / 32 ק״ג total |
 | rest | 82 (base), 75–90 |
 | structure | straight |
 
@@ -589,7 +568,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 3 |
 | rep window | 10–15 |
 | starting weight | 9 ק״ג total |
-| min / max weight | 3 / 24 ק״ג total |
+| min / max weight | 3 / 32 ק״ג total |
 | rest | 75 (base), 60–90 |
 | structure | straight |
 | rule | כתפיים על ספסל; כפות רגליים רחבות; squeeze glutes |
@@ -607,7 +586,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 3 |
 | window | 25–40 מטר לכל צד |
 | starting weight | 12 ק״ג |
-| min / max weight | 6 / 24 ק״ג |
+| min / max weight | 6 / 32 ק״ג |
 | rest | 60 שניות |
 | structure | straight |
 
@@ -633,7 +612,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 3 | 2 |
 | rep window | 12–20 לכל רגל | 15–25 לכל רגל |
 | starting weight | 6 ק״ג ביד אחת | 6 ק״ג על הברך |
-| min / max weight | 3 / 24 ק״ג | 3 / 24 ק״ג |
+| min / max weight | 3 / 32 ק״ג | 3 / 32 ק״ג |
 | rest | בלוק, 45 לאחר הזוג | בלוק, 45 לאחר הזוג |
 | tempo | 2s ירידה, 1s עצירה בתחתית, 1s כיווץ | 2s ירידה, 1s עצירה בתחתית, 1s כיווץ |
 | structure | block:d1-calf-block | block:d1-calf-block |
@@ -701,8 +680,8 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 3 |
 | rep window | 6–12 |
 | starting weight | 6 ק״ג |
-| min / max weight | 3 / 24 ק״ג |
-| rest | 105 (base), 90–120 |
+| min / max weight | 3 / 32 ק״ג |
+| rest | 90 (base), 75–105 |
 | structure | straight |
 
 ---
@@ -735,8 +714,8 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 3 |
 | rep window | 6–12 |
 | starting weight | 6 ק״ג |
-| min / max weight | 3 / 24 ק״ג |
-| rest | 82 (base), 75–90 |
+| min / max weight | 3 / 32 ק״ג |
+| rest | 75 (base), 60–90 |
 | structure | straight |
 
 ---
@@ -752,7 +731,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 4 |
 | rep window | 10–15 |
 | starting weight | 6 ק״ג total |
-| min / max weight | 3 / 24 ק״ג total |
+| min / max weight | 3 / 32 ק״ג total |
 | rest | 45 שניות |
 | structure | straight |
 
@@ -839,7 +818,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | type | variation |
 | sets | 3 |
 | rep window | 4–8 |
-| rest | 105 (base), 90–120 |
+| rest | 90 (base), 75–105 |
 | structure | straight |
 | stages | Negative Pull-Up → Pull-Up → Chin-Up → Pull-Up + וסט 2 ק״ג → + וסט 4 ק״ג → + וסט 5 ק״ג |
 
@@ -856,8 +835,8 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 3 |
 | rep window | 6–12 לכל צד |
 | starting weight | 6 ק״ג |
-| min / max weight | 3 / 24 ק״ג |
-| rest | 82 (base), 75–90 |
+| min / max weight | 3 / 32 ק״ג |
+| rest | 75 (base), 60–90 |
 | structure | straight |
 | rule | neutral spine; ללא סיבוב גוף מפצה |
 
@@ -890,7 +869,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 2-3 לפי מיקרו-מחזור |
 | rep window | 10–15 |
 | starting weight | 3 ק״ג |
-| min / max weight | 3 / 18 ק״ג |
+| min / max weight | 3 / 20 ק״ג |
 | rest | 45 שניות |
 | structure | straight |
 | microcycle | biceps-microcycle |
@@ -910,7 +889,7 @@ function getBicepsMicrocycleWeek(weekNumber) {
 | sets | 2-3 לפי מיקרו-מחזור |
 | rep window | 10–12 |
 | starting weight | 3 ק״ג |
-| min / max weight | 3 / 18 ק״ג |
+| min / max weight | 3 / 20 ק״ג |
 | rest | 45 שניות |
 | structure | straight |
 | microcycle | biceps-microcycle |
@@ -1225,7 +1204,7 @@ window.TRAININGDATA = {
     deloadWeightReductionKg: 2,
     deloadTimeTargetPercent: 70,
     deloadSetsCeiling: 2,
-    legalWeights: [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24],
+    legalWeights: [3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32],
     decisionPolicy: "softened-all-above-progress_max-or-max-minus-1-plus-prev-max-maintain",
     allowUndoLastDecision: true,
     zeroDecisions: true,
@@ -2022,7 +2001,7 @@ evaluateMyoReps(exercise, state, clusterResults) {
 בשבוע זוגי, אם Pistol נעול:
 
 ```text
-השבוע: Goblet Reverse Lunge — מיקוד ארבע-ראשי / כוח חד-צדדי
+השבוע: Heels-Elevated Goblet Squat — מיקוד ארבע-ראשי
 ```
 
 בשבוע זוגי, אם Pistol פתוח:
@@ -2299,7 +2278,7 @@ settings.programSchemaVersion
 
 #### DB Glute Bridge (תרגיל ישבן מרכזי רציף)
 
-התרגיל `DB Glute Bridge` מבוצע ברציפות לאורך כל 80 השבועות ביום 1 (Legs + Core), ללא סרבול ציוד של ספסל/ספה וללא קיטועים. התקדמות המשקלים מבוצעת באופן רציף מ-6 ק"ג עד 24 ק"ג דרך 3 הכפתורים (`ABOVE`, `IN_WINDOW`, `BELOW`).
+התרגיל `DB Glute Bridge` מבוצע ברציפות לאורך כל 80 השבועות ביום 1 (Legs + Core), ללא סרבול ציוד של ספסל/ספה וללא קיטועים. התקדמות המשקלים מבוצעת באופן רציף מ-6 ק"ג עד 32 ק"ג דרך 3 הכפתורים (`ABOVE`, `IN_WINDOW`, `BELOW`).
 
 #### שדרוג תרגילים עפ"י עץ המיומנויות (Skill Tree Replacements)
 
@@ -2341,15 +2320,12 @@ settings.programSchemaVersion
 צור ומלא state עבור:
 
 - single-leg-rdl
-- goblet-reverse-lunge
-- pistol-squat-progression
+- heels-elevated-goblet-squat
 
 כללים:
 
 - Single-Leg RDL שומר state קיים.
-- Goblet Reverse Lunge שומר state קיים.
-- Pistol Squat נשאר נעול עד עמידה ב-unlock criteria.
-- אם Pistol כבר פתוח, ה-Slot הזוגי יפתח ל-pistol-squat-progression.
+- Heels-Elevated Goblet Squat שומר state קיים.
 - אין לאפס progression בגלל מעבר ל-Toggle.
 
 #### microcyclePosition
@@ -2383,7 +2359,7 @@ settings.programSchemaVersion
 - סטטוס Arm Block: פעיל/מבוטל + סיבה + scheme (myo-reps).
 - גרף זיווגים: כמה סטים בוצעו כזוג לעומת סטים ישרים; תדירות פירוק זוגות וסיבות.
 - גרף רוטציית כתף אחורית: חלוקת נפח בין Y-T-W ל-Band Pull-Apart.
-- גרף רוטציית יום 1: חלוקת נפח בין Single-Leg RDL לבין Goblet Reverse Lunge / Pistol Squat.
+- גרף רוטציית יום 1: חלוקת נפח בין Single-Leg RDL לבין Heels-Elevated Goblet Squat.
 - גרף Myo-Reps: אחוז צבירים clean, אחוז עצירות tempo loss, אחוז ביטולים בגלל כאב.
 - גרף Arm Block Exposure: חשיפה שבועית לפי אזור שרירי.
 - משך אימון ממוצע לכל יום.
@@ -2582,7 +2558,7 @@ armBlockMuscleAreaBiceps
 | 42 | leanSessionState נשמר ומסונכרן | תקין |
 | 43 | רוטציית יום 1 שבוע אי-זוגי: Single-Leg RDL פעיל, Lunge/Pistol Slot לא פעיל | תקין |
 | 44 | רוטציית יום 1 שבוע זוגי: Lunge/Pistol Slot פעיל, Single-Leg RDL לא פעיל | תקין |
-| 45 | Lunge/Pistol Slot כאשר Pistol נעול: Goblet Reverse Lunge פעיל | תקין |
+| 45 | Heels-Elevated Goblet Squat פעיל | תקין |
 | 46 | Lunge/Pistol Slot כאשר Pistol פתוח: Pistol Squat פעיל | תקין |
 | 47 | רוטציית יום 1: שני/כל ה-states נשמרים, אין איפוס | תקין |
 | 48 | Opening Rest לתרגיל Toggle מחושב רק מהאימון הקודם של אותו תרגיל | תקין |

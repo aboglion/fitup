@@ -36,7 +36,7 @@ window.ExporterGuide = (() => {
       col_type: "Workout Type",
       col_intensity: "Intensity / Focus",
       days_table: [
-        { day: "Day 1", type: "🦵 Legs + Core + Carry", focus: "45 min — RPE 7–9 — Hamstring Chain (Goblet RDL / Single-Leg RDL), Lunge/Pistol Tree (Goblet Reverse Lunge / Pistol Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, Calf Block, Core Circuit" },
+        { day: "Day 1", type: "🦵 Legs + Core + Carry", focus: "45 min — RPE 7–9 — Hamstring Chain (Goblet RDL / Single-Leg RDL), Quad Focus (Heels-Elevated Goblet Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, Calf Block, Core Circuit" },
         { day: "Day 2", type: "🫀 Zone 2 Cardio + Daily Mobility", focus: "45 min — Treadmill (4% incline, 5.5 km/h) + 5 min Micro Mobility" },
         { day: "Day 3", type: "💥 Push + Shoulders + Triceps + Back Volume", focus: "45 min — RPE 7–9 — Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ Single-Arm Lateral Raise pair, Rear Delt Toggle + Arm Block (W10+)" },
         { day: "Day 4", type: "🌿 Active Recovery + Cervical & Joint Health", focus: "30 min — Cervical Health (Band Neck Flexion & Extension 2x15-20) + 25 min Treadmill (0% incline, 4.5 km/h) + 10 min Deep Mobility" },
@@ -95,7 +95,7 @@ window.ExporterGuide = (() => {
       col_type: "סוג אימון",
       col_intensity: "עצימות / דגשים",
       days_table: [
-        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "45 דק' — RPE 7–9 — שרשרת המסטרינג (Goblet RDL / Single-Leg RDL), עץ מכרעים (Goblet Reverse Lunge / Pistol Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, בלוק תאומים, מעגל ליבה" },
+        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "45 דק' — RPE 7–9 — שרשרת המסטרינג (Goblet RDL / Single-Leg RDL), עץ קוואדס (Heels-Elevated Goblet Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, בלוק תאומים, מעגל ליבה" },
         { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — 45 דק' הליכה בשיפוע 4% (5.5 קמ\"ש, דופק Zone 2) + 5 דק' מיקרו-מוביליות" },
         { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "45 דק' — RPE 7–9 — Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, OHP, Triceps Ext, Diamond Push-Up, זוג TRX Row ↔ Single-Arm Lateral Raise, רוטציית כתף אחורית + Arm Block (משבוע 10)" },
         { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 25 דק' הליכון 0% (4.5 קמ\"ש) + 10 דק' מאקרו-מוביליות" },

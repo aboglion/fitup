@@ -153,13 +153,13 @@ Each week follows a strictly optimized 7-day routine designed to balance muscula
 
 ### ⏱️ v15.6 Lean Architecture & Structural Optimization
 The program organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts (target session duration: **40–45 minutes**):
-1. **Protected Compound Lifts**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet BSS, Goblet Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
+1. **Protected Compound Lifts**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet BSS, Heels-Elevated Goblet Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
 2. **Lean Pairs (Antagonistic & Non-Competing)**:
    - **Day 3**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
    - **Day 5**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
    - **Day 5**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
 3. **Weekly Alternating Toggles**:
-   - **Day 1 Toggle (Posterior vs Quad/Unilateral)**: Odd weeks = Single-Leg RDL; Even weeks = Lunge/Pistol Slot (resolves to Goblet Reverse Lunge or Pistol Squat when unlocked).
+   - **Quad Focus**: Heels-Elevated Goblet Squat is performed continuously from Week 1.
    - **Day 3 Rear Delt Toggle**: Odd weeks = TRX Y-T-W; Even weeks = Band Pull-Apart.
 4. **Arm Block Myo-Reps Clusters (W10+)**: 1 activation set + 3 mini-sets of 5 reps with 15s rest. Terminated by 2 consecutive tempo losses (`two_consecutive_tempo_losses`). Maximum 1 exposure per muscle area per week.
 5. **Scheduled Deload Microcycles (Every 8 Weeks)**: Occur on Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104. Sets capped at 2 per exercise, loads reduced by 2 kg (rounded to legal range [3..24] kg). All pairs/circuits/blocks dissolve into straight sets.

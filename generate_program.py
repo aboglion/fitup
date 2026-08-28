@@ -21,11 +21,11 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "each",
-        "restSeconds": 105,
-        "restRange": [90, 120],
+        "restSeconds": 90,
+        "restRange": [75, 105],
         "repWindow": "6-12",
         "tempo": "3s descent",
         "compound": True,
@@ -40,7 +40,7 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "each",
         "restSeconds": 75,
@@ -53,47 +53,23 @@ EXERCISES_CATALOG = [
         "rule": "neutral spine; אם מאבד שיווי משקל, BELOW"
     },
     {
-        "id": "goblet-reverse-lunge",
-        "name": "Goblet Reverse Lunge",
+        "id": "heels-elevated-goblet-squat",
+        "name": "Heels-Elevated Goblet Squat",
         "category": "Legs",
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
-        "increment": 1,
-        "loadType": "each",
-        "restSeconds": 75,
-        "restRange": [60, 90],
-        "repWindow": "10-12",
-        "tempo": "2s descent",
-        "compound": True,
-        "structure": "straight",
-        "sets": 2
-    },
-    {
-        "id": "pistol-squat-progression",
-        "name": "Pistol Squat",
-        "category": "Legs",
-        "type": "weighted",
-        "startingWeight": 6,
-        "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "total",
-        "restSeconds": 105,
-        "restRange": [90, 120],
-        "repWindow": "3-8",
-        "tempo": "slow descent",
+        "restSeconds": 75,
+        "restRange": [60, 90],
+        "repWindow": "8-12",
+        "tempo": "3s descent, 1s pause at bottom, 1s ascent",
         "compound": True,
         "structure": "straight",
         "sets": 2,
-        "unlocked": False,
-        "unlockCriteria": {
-            "exercise": "goblet-bulgarian-split-squat",
-            "targetReps": 12,
-            "targetWeightKg": 24
-        },
-        "rule": "ירידה איטית; אם הברך קורסת פנימה (valgus), BELOW"
+        "equipment": "ספר/בלוק 2–5 ס״מ מתחת לשני העקבים"
     },
     {
         "id": "goblet-bulgarian-split-squat",
@@ -102,11 +78,11 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "each",
-        "restSeconds": 82,
-        "restRange": [75, 90],
+        "restSeconds": 75,
+        "restRange": [60, 90],
         "repWindow": "6-12",
         "tempo": "2s descent",
         "compound": True,
@@ -120,7 +96,7 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 9,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "total",
         "restSeconds": 75,
@@ -139,7 +115,7 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 12,
         "minWeight": 6,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "total",
         "restSeconds": 60,
@@ -156,7 +132,7 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "single_hand",
         "restSeconds": 45,
@@ -175,7 +151,7 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "on_knee",
         "restSeconds": 45,
@@ -259,11 +235,11 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "each",
-        "restSeconds": 105,
-        "restRange": [90, 120],
+        "restSeconds": 90,
+        "restRange": [75, 105],
         "repWindow": "6-12",
         "tempo": "2s descent",
         "compound": True,
@@ -407,7 +383,7 @@ EXERCISES_CATALOG = [
         "name": "Pull-Up (Overhand)",
         "category": "Pull",
         "type": "variation",
-        "restSeconds": 105,
+        "restSeconds": 90,
         "repWindow": "4-8",
         "tempo": "2s descent",
         "compound": True,
@@ -419,7 +395,7 @@ EXERCISES_CATALOG = [
         "name": "Chin-Up",
         "category": "Pull",
         "type": "variation",
-        "restSeconds": 105,
+        "restSeconds": 90,
         "repWindow": "4-8",
         "tempo": "2s descent",
         "compound": True,
@@ -467,11 +443,11 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "each",
-        "restSeconds": 82,
-        "restRange": [75, 90],
+        "restSeconds": 75,
+        "restRange": [60, 90],
         "repWindow": "6-12",
         "tempo": "2s descent",
         "compound": True,
@@ -485,7 +461,7 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "total",
         "restSeconds": 45,
@@ -579,8 +555,8 @@ EXERCISES_CATALOG = [
         "name": "Pull-Up Progression",
         "category": "Pull",
         "type": "variation",
-        "restSeconds": 105,
-        "restRange": [90, 120],
+        "restSeconds": 90,
+        "restRange": [75, 105],
         "repWindow": "4-8",
         "tempo": "2s descent",
         "compound": True,
@@ -598,11 +574,11 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "each",
-        "restSeconds": 82,
-        "restRange": [75, 90],
+        "restSeconds": 75,
+        "restRange": [60, 90],
         "repWindow": "6-12",
         "tempo": "2s descent",
         "compound": True,
@@ -645,7 +621,7 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 3,
         "minWeight": 3,
-        "maxWeight": 18,
+        "maxWeight": 20,
         "increment": 1,
         "loadType": "each",
         "restSeconds": 45,
@@ -664,7 +640,7 @@ EXERCISES_CATALOG = [
         "type": "weighted",
         "startingWeight": 3,
         "minWeight": 3,
-        "maxWeight": 18,
+        "maxWeight": 20,
         "increment": 1,
         "loadType": "each",
         "restSeconds": 45,
@@ -803,7 +779,7 @@ EXERCISES_CATALOG = [
         "type": "myo-reps",
         "startingWeight": 6,
         "minWeight": 3,
-        "maxWeight": 24,
+        "maxWeight": 32,
         "increment": 1,
         "loadType": "total",
         "restSeconds": 15,
@@ -823,7 +799,7 @@ EXERCISES_CATALOG = [
         "type": "myo-reps",
         "startingWeight": 3,
         "minWeight": 3,
-        "maxWeight": 18,
+        "maxWeight": 20,
         "increment": 1,
         "loadType": "each",
         "restSeconds": 15,
@@ -938,11 +914,8 @@ def generate_day_exercises(dow, week):
         else:
             exs.append(make_ex_obj("A1", "single-leg-rdl", "Single-Leg RDL", "2×8/leg" if is_deload else "2×8-10/leg", rep_window="8-10", weight="6 kg total", tempo="3s descent", rest=75, structure="straight"))
 
-        # A2: Lunge/Pistol Tree
-        if week < 42:
-            exs.append(make_ex_obj("A2", "goblet-reverse-lunge", "Goblet Reverse Lunge", "2×8/leg" if is_deload else "2×10-12/leg", rep_window="10-12", weight="6 kg total", tempo="2s descent", rest=75, structure="straight"))
-        else:
-            exs.append(make_ex_obj("A2", "pistol-squat-progression", "Pistol Squat", "2×8/leg" if is_deload else "2×3-8/leg", rep_window="3-8", weight="6 kg total", tempo="slow descent", rest=105, structure="straight"))
+        # A2: Heels-Elevated Goblet Squat
+        exs.append(make_ex_obj("A2", "heels-elevated-goblet-squat", "Heels-Elevated Goblet Squat", "2×8" if is_deload else "2×8-12", rep_window="8-12", weight="6 kg total", tempo="3s descent, 1s pause at bottom, 1s ascent", rest=75, structure="straight"))
 
         # A3: Squat Tree
         if week < 5:
@@ -991,7 +964,7 @@ def generate_day_exercises(dow, week):
             exs.append(make_ex_obj("A1", "elevated-pike-push-up", "Elevated Pike Push-Up", "2×5" if is_deload else "2×6-10", rep_window="6-10", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
 
         # A2: Single-Arm Floor Press
-        exs.append(make_ex_obj("A2", "single-arm-floor-press", "Single-Arm Floor Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=105, structure="straight"))
+        exs.append(make_ex_obj("A2", "single-arm-floor-press", "Single-Arm Floor Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=90, structure="straight"))
 
         # A3: Push-Up Tree
         if week < 10:
@@ -1004,7 +977,7 @@ def generate_day_exercises(dow, week):
             exs.append(make_ex_obj("A3", "weighted-deficit-push-up", "Weighted Deficit Push-Up", "2×6" if is_deload else "3×6-12", rep_window="6-12", weight="5 kg vest", tempo="2s descent", rest=90, structure="straight"))
 
         # A4: Single-Arm Seated OHP
-        exs.append(make_ex_obj("A4", "single-arm-seated-ohp", "Single-Arm Seated OHP", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=82, structure="straight"))
+        exs.append(make_ex_obj("A4", "single-arm-seated-ohp", "Single-Arm Seated OHP", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=75, structure="straight"))
 
         # A5: DB Overhead Triceps Extension
         exs.append(make_ex_obj("A5", "db-overhead-triceps-extension", "DB Overhead Triceps Extension", "2×10" if is_deload else "4×10-15", rep_window="10-15", weight="6 kg total", tempo="2s descent", rest=45, structure="straight"))
@@ -1037,14 +1010,14 @@ def generate_day_exercises(dow, week):
 
         # A1: Pull-Up Progression Tree
         if week < 10:
-            exs.append(make_ex_obj("A1", "pull-up-progression", "Pull-Up Progression", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=105, structure="straight"))
+            exs.append(make_ex_obj("A1", "pull-up-progression", "Pull-Up Progression", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
         elif week < 62:
-            exs.append(make_ex_obj("A1", "pull-up-overhand", "Pull-Up (Overhand)", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=105, structure="straight"))
+            exs.append(make_ex_obj("A1", "pull-up-overhand", "Pull-Up (Overhand)", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
         else:
-            exs.append(make_ex_obj("A1", "weighted-pull-up", "Weighted Pull-Up", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="5 kg vest", tempo="2s descent", rest=120, structure="straight"))
+            exs.append(make_ex_obj("A1", "weighted-pull-up", "Weighted Pull-Up", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="5 kg vest", tempo="2s descent", rest=105, structure="straight"))
 
         # A2: One-Arm DB Row
-        exs.append(make_ex_obj("A2", "one-arm-db-row", "One-Arm DB Row", "2×8/side" if is_deload else "3×6-12/side", rep_window="6-12", weight="6 kg", tempo="2s descent", rest=82, structure="straight"))
+        exs.append(make_ex_obj("A2", "one-arm-db-row", "One-Arm DB Row", "2×8/side" if is_deload else "3×6-12/side", rep_window="6-12", weight="6 kg", tempo="2s descent", rest=75, structure="straight"))
 
         # A3: TRX Face Pull
         exs.append(make_ex_obj("A3", "trx-face-pull", "TRX Face Pull", "2×10" if is_deload else "2×12-20", rep_window="12-20", weight="Bodyweight", tempo="2s descent", rest=45, structure="straight"))
@@ -1236,7 +1209,7 @@ def generate_program():
         "deloadWeightReductionKg": 2,
         "deloadTimeTargetPercent": 70,
         "deloadSetsCeiling": 2,
-        "legalWeights": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+        "legalWeights": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
         "allowUndoLastDecision": True,
         "zeroDecisions": True,
         "adaptiveRest": True,
@@ -1271,7 +1244,7 @@ def generate_program():
             "enabled": True,
             "protectCompounds": True,
             "protectedExercises": [
-                "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "goblet-reverse-lunge", "pistol-squat-progression",
+                "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "heels-elevated-goblet-squat",
                 "glute-bridge", "suitcase-carry", "pike-progression", "single-arm-floor-press", "push-up-progression",
                 "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up", "pull-up-progression",
                 "one-arm-db-row", "single-arm-curl", "single-arm-hammer-curl"

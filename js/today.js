@@ -194,9 +194,9 @@ const TodayPage = (() => {
               }
             } else if (exId === 'pistol-squat-progression') {
                // Legacy hardcoded fallback if schema isn't perfect
-               ex.id = 'goblet-reverse-lunge';
-               ex.name = 'Goblet Reverse Lunge';
-               exId = 'goblet-reverse-lunge';
+               ex.id = 'heels-elevated-goblet-squat';
+               ex.name = 'Heels-Elevated Goblet Squat';
+               exId = 'heels-elevated-goblet-squat';
                maxDepth--;
                continue;
             }
