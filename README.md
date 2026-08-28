@@ -1,6 +1,6 @@
 # 🏋️‍♂️ FitUp Pro v15.6 Lean Edition
 
-> **A 52-Week (364-Day) Prescriptive FitUp v15.6 Lean Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Objective Myo-Reps Arm Block Clusters, Biceps 3-Week Microcycle, Cervical Health Protocol, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
+> **A 80-Week (560-Day) Prescriptive FitUp v15.6 Lean Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Objective Myo-Reps Arm Block Clusters, Biceps 3-Week Microcycle, Cervical Health Protocol, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
 
 ---
 
@@ -8,7 +8,7 @@
 
 **FitUp Pro v15.6 Lean Edition** is an advanced, offline-first Web Application designed for long-term physical progression, hypertrophic gains, cardiovascular conditioning, and precision workout tracking.
 
-Built on a strict **"Zero Decisions" Philosophy**, every single workout day across the 52-week (364-day) period is fully prescribed—down to exact exercise ordering, target rep ranges, weight progressions, legal dumbbell increments, tempo control, rest intervals, structural tags, and micro-mobility integration.
+Built on a strict **"Zero Decisions" Philosophy**, every single workout day across the 80-week (560-day) period is fully prescribed—down to exact exercise ordering, target rep ranges, weight progressions, legal dumbbell increments, tempo control, rest intervals, structural tags, and micro-mobility integration.
 
 Set completion operates under an objective **3-Button Outcome Classifier** (🚀 **ABOVE**, ✅ **IN_WINDOW**, ⚠️ **BELOW** / Mechanical Stop), which feeds the atomic progression engine and adjusts intra-workout rest timers dynamically (+30s extension on mechanical stop).
 
@@ -16,7 +16,7 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ## ✨ Key Features
 
-### 🏋️‍♂️ Prescriptive 52-Week Lean Training Engine
+### 🏋️‍♂️ Prescriptive 80-Week Lean Training Engine
 - **v15.6 Lean Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
 - **Zero Decisions 3-Button Outcome Selector & Minimum Weight Protection Engine**: Objective set classification with guaranteed `minWeight` floor protection (3 kg minimum) preventing invalid 0 kg displays under any fallback.
 - **Objective Myo-Reps & Arm Block Protocol**: Active from Week 10 onwards (1 activation set + 3 mini-sets of 5 reps with 15s rest). Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
@@ -47,9 +47,9 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 ### 🌳 RPG Skill Tree & Level Progression
 - Leveling and XP system (500 XP per completed strength day, 200 XP for active recovery walk/cardio days), streak tracking, and interactive exercise skill tree nodes unlocked week-by-week.
 
-### 📷 Progress Photo Tracker & 364-Day Consistency Map
+### 📷 Progress Photo Tracker & 560-Day Consistency Map
 - In-app progress photo logging with automated client-side WebP image compression.
-- 364-day visual consistency matrix tracking adherence across 5 day classifications (Strength, Deload, Walk, Rest, Skipped).
+- 560-day visual consistency matrix tracking adherence across 5 day classifications (Strength, Deload, Walk, Rest, Skipped).
 
 ### 🌐 Multi-Language & RTL Support (I18n)
 - Full internationalization supporting **English**, **Hebrew** (RTL), and **Arabic** (RTL).
@@ -86,7 +86,7 @@ FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a hi
 <img src="PICS/Pasted%20image%20%283%29.png" alt="RPG Skill Tree & Exercise Directory" width="380" />
 
 - **Categorized Movement Domains**: Filterable exercise directory divided into four primary disciplines: **Legs + Core**, **Push + Skill**, **Pull + Grip**, and **Cardio & Recovery**.
-- **Interactive Progression Skill Tree**: Visual node tree displaying week-by-week exercise unlocks across the 52-week roadmap. Features dedicated warmups (High Knees, Deep Mobility Protocol) and locked future skill nodes (e.g., Week 53 Wrist Rocks, Pistol Squats to chair).
+- **Interactive Progression Skill Tree**: Visual node tree displaying week-by-week exercise unlocks across the 80-week roadmap. Features dedicated warmups (High Knees, Deep Mobility Protocol) and locked future skill nodes (e.g., Week 53 Wrist Rocks, Pistol Squats to chair).
 
 ---
 
@@ -101,7 +101,7 @@ FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a hi
 ### 5. Searchable Exercise Library & Muscle Filtering
 <img src="PICS/Pasted%20image%20%285%29.png" alt="Searchable Exercise Library with Category Filters" width="380" />
 
-- **Instant Search & Multi-Category Filters**: Instant search engine with tag filters (All, Arms, Shoulders, Warmup, Pull, Push, Legs, Core) to find any movement in the 52-week dictionary.
+- **Instant Search & Multi-Category Filters**: Instant search engine with tag filters (All, Arms, Shoulders, Warmup, Pull, Push, Legs, Core) to find any movement in the 80-week dictionary.
 - **Detailed Card Metadata**: Shows required equipment (e.g., Dumbbells, Bodyweight, TRX), difficulty rating (Beginner, Intermediate, Advanced), schedule assignment badges, and primary target muscle diagrams (e.g., DB Biceps Curl, Single-Arm Lateral Raise, DB Overhead Triceps Extension).
 
 ---
@@ -109,16 +109,16 @@ FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a hi
 ### 6. Today View Workout Tracker & 3-Button Set Outcome Execution
 <img src="PICS/Pasted%20image%20%286%29.png" alt="Today View Interactive Set Logger & Rest Timer" width="380" />
 
-- **Prescriptive Workout Execution**: Displays the exact daily schedule generated by the 52-week training engine. Outlines exact exercise sequence, prescribed set counts, target reps, structural Lean tags, and tempo instructions (e.g., Bodyweight Squat with slow eccentric control, 2 sets of 8 reps, 30s rest interval).
+- **Prescriptive Workout Execution**: Displays the exact daily schedule generated by the 80-week training engine. Outlines exact exercise sequence, prescribed set counts, target reps, structural Lean tags, and tempo instructions (e.g., Bodyweight Squat with slow eccentric control, 2 sets of 8 reps, 30s rest interval).
 - **3-Button Outcome Logger**: Objective set completion buttons (🚀 **ABOVE**, ✅ **IN_WINDOW**, ⚠️ **BELOW** / Mechanical Stop) replacing guesswork and automatically triggering adaptive rest timers (+30s extension on mechanical stop).
 
 ---
 
 ### 7. Progress Photo Tracker, Consistency Map & Performance Metrics
-<img src="PICS/Pasted%20image%20%287%29.png" alt="Progress Photo Tracker, 364-Day Consistency Map & Analytics" width="380" />
+<img src="PICS/Pasted%20image%20%287%29.png" alt="Progress Photo Tracker, 560-Day Consistency Map & Analytics" width="380" />
 
 - **Private Progress Photo Journal**: Client-side progress photo recorder (prompted every 4 weeks) compressed into lightweight WebP format and stored locally in IndexedDB for 100% private physical transformation tracking.
-- **364-Day Visual Consistency Map**: Grid-style calendar matrix tracking overall program adherence across all 364 days, color-coded by day type (Strength, Deload, Walk, Rest, Skipped).
+- **560-Day Visual Consistency Map**: Grid-style calendar matrix tracking overall program adherence across all 560 days, color-coded by day type (Strength, Deload, Walk, Rest, Skipped).
 - **Summary Analytics Grid**: Live dashboard metrics displaying total Days Completed, Strength Workouts Logged, Walk Days Completed, Average Session RPE (Rate of Perceived Exertion), Monthly Completion Rate %, and Weekly Trend %.
 
 ---
@@ -128,20 +128,20 @@ FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a hi
 
 - **Gemini AI API Configuration**: Secure setup interface for Google Gemini API key with AES-256 client-side encryption and model selector dropdown (`gemini-3.1-flash-lite`, `gemini-1.5-flash`, etc.).
 - **Google Drive & Local Data Backup/Restore**: One-click local JSON file export/import, alongside automatic background sync to Google Drive (`drive.file` scope) to preserve workout logs across all devices without central server data exposure.
-- **Full Program Guide Exporter**: Quick launcher to view, print, or export the complete 52-week master program guide and exercise manual in English, Hebrew, or Arabic.
+- **Full Program Guide Exporter**: Quick launcher to view, print, or export the complete 80-week master program guide and exercise manual in English, Hebrew, or Arabic.
 
 ---
 
 ## 📋 Training Program Deep Dive
 
-The **FitUp Pro Ultimate v15.6 Lean** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 52 weeks (364 days).
+The **FitUp Pro Ultimate v15.6 Lean** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 80 weeks (560 days).
 
 ### 🗓️ Weekly Microcycle Architecture (7 Days)
 Each week follows a strictly optimized 7-day routine designed to balance muscular stimulus, joint recovery, and metabolic conditioning:
 
 | Day | Workout Type | Focus / Key Movements | Target Duration |
 | :--- | :--- | :--- | :--- |
-| **Day 1 (Mon)** | **Legs + Core + Carry** | Goblet RDL, Day 1 Toggle (Single-Leg RDL / Lunge-Pistol Slot), Goblet BSS, DB Hip Thrust, Suitcase Carry, Calf Block, Core Circuit | 45 min |
+| **Day 1 (Mon)** | **Legs + Core + Carry** | Goblet RDL, Day 1 Toggle (Single-Leg RDL / Heels-Elevated Goblet Squat / Pistol Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, Calf Block, Core Circuit | 45 min |
 | **Day 2 (Tue)** | **Zone 2 Cardio** | Treadmill Walking (4% incline, 5.5 km/h, conversational test), Daily Micro-Mobility | 45 min |
 | **Day 3 (Wed)** | **Push + Shoulders + Triceps + Back Vol** | Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ Single-Arm Lateral Raise pair, Rear Delt Toggle, Arm Block (W10+) | 45 min |
 | **Day 4 (Thu)** | **Active Recovery & Joint Health** | Band Neck Flexion & Extension protocol (A1), Light Treadmill Recovery Walk (A2), 10-min Deep Mobility sequence (A3) | 30 min |
@@ -153,7 +153,7 @@ Each week follows a strictly optimized 7-day routine designed to balance muscula
 
 ### ⏱️ v15.6 Lean Architecture & Structural Optimization
 The program organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts (target session duration: **40–45 minutes**):
-1. **Protected Compound Lifts**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet BSS, Heels-Elevated Goblet Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
+1. **Protected Compound Lifts**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet BSS, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
 2. **Lean Pairs (Antagonistic & Non-Competing)**:
    - **Day 3**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
    - **Day 5**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
@@ -167,18 +167,18 @@ The program organizes exercises into optimized structures to maximize metabolic 
 ---
 
 ### 🛡️ Injury Prevention & Biomechanical Safety Rules
-- **Spine & Lumbar Protection**: Hinge movements (RDLs & Hip Thrusts) enforce rigid neutral spine alignment with 2–3 second eccentric control; heavy axial loading is replaced with high-stimulus unilateral Dumbbell Loading.
+- **Spine & Lumbar Protection**: Hinge movements (RDLs & Glute Bridges) enforce rigid neutral spine alignment with 2–3 second eccentric control; heavy axial loading is replaced with high-stimulus unilateral Dumbbell Loading.
 - **Wrist & Joint Integrity**: Floor pressing and push-up variations strictly utilize Push-Up Bars or dumbbells to prevent wrist hyperextension.
 - **Achilles Tendon Guard**: Treadmill running in Norwegian 4x4 intervals is capped at a maximum of **6% incline** to prevent excessive Achilles strain.
 
 ---
 
 ### 🏋️‍♂️ Required Equipment & Home Setup
-The 52-week program is designed around a minimal yet complete home-gym setup:
+The 80-week program is designed around a minimal yet complete home-gym setup:
 
 | Equipment Item | Specifications & Usage | Purpose in Program |
 | :--- | :--- | :--- |
-| **Modular Dumbbells** | 8 plates × 3 kg (24 kg total plates) + 2 handles. Allows dual dumbbells (3, 6, 9, 12 kg each) and single dumbbell loading (3–24 kg in 3 kg increments). | Single-Arm Floor Press, Single-Arm Seated OHP, Goblet RDLs, Goblet Split Squats, Single-Arm Rows, Single-Arm Biceps Curls, Triceps Extensions. |
+| **Modular Dumbbells** | Modular Dumbbell System (3–32 kg legal weight range per dumbbell in 1 kg increments). | Single-Arm Floor Press, Single-Arm Seated OHP, Goblet RDLs, Goblet Split Squats, Single-Arm Rows, Single-Arm Biceps Curls, Triceps Extensions. |
 | **Mounted Pull-Up Bar** | Secure doorway or wall-mounted pull-up bar. | Overhand Pull-Ups, Chin-Ups, Dead Hangs, Towel Hangs for grip. |
 | **Push-Up Bars** | Ergonomic push-up handles / parallettes. | **Mandatory** for all Push-Ups, Deficit Push-Ups, Elevated Pike Push-Ups, and L-Sit Tucks to prevent wrist hyperextension. |
 | **TRX Suspension Trainer** | Adjustable suspension trainer anchored to door/wall. | TRX Face Pulls (Angles 1–4) and TRX Y-T-W shoulder stability sequences. |
@@ -208,7 +208,7 @@ The 52-week program is designed around a minimal yet complete home-gym setup:
 ```text
 fitup/
 ├── index.html              # Main Single-Page Application (SPA) entry point
-├── generate_program.py     # Central Python engine generating 52-week program dataset
+├── generate_program.py     # Central Python engine generating 80-week program dataset
 ├── PROGRAM_GUIDE.md        # Source of truth program manual & methodology guide
 ├── Makefile                # Automation commands (make gp)
 ├── PICS/                   # Interface screenshots and feature showcase images
@@ -218,7 +218,7 @@ fitup/
 │   └── responsive.css      # Mobile, tablet, and desktop breakpoints
 ├── js/                     # Application logic modules
 │   ├── app.js              # Application lifecycle & router
-│   ├── data.js             # Serialized 52-week training dataset (generated)
+│   ├── data.js             # Serialized 80-week training dataset (generated)
 │   ├── db.js               # IndexedDB data access layer
 │   ├── anatomy.js          # SVG & CSS 14-muscle visualizer module
 │   ├── stats.js            # Progression metrics, XP, and muscle calculation
@@ -228,7 +228,7 @@ fitup/
 │   ├── i18n.js             # Language translations dictionary
 │   └── UI.js               # UI renderers, toast notifications, modals
 ├── images/                 # App assets, exercise thumbnails, and anatomy backgrounds
-└── training_data.json      # Structured JSON dump of the 52-week program
+└── training_data.json      # Structured JSON dump of the 80-week program
 ```
 
 ---
@@ -261,7 +261,7 @@ make gp
 
 ## 📖 Methodology & Training Guidelines
 
-For complete details regarding the 52-week periodization scheme, exercise substitutions, RPE target guidelines, and the Time Efficiency Protocol, refer to [PROGRAM_GUIDE.md](PROGRAM_GUIDE.md).
+For complete details regarding the 80-week periodization scheme, exercise substitutions, RPE target guidelines, and the Time Efficiency Protocol, refer to [PROGRAM_GUIDE.md](PROGRAM_GUIDE.md).
 
 ---
 

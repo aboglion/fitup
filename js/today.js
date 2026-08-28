@@ -259,7 +259,7 @@ const TodayPage = (() => {
         }
       }
 
-      // Parent State Inheritance: If state is missing for direct replacement exercises (e.g. Glute Bridge -> Hip Thrust)
+      // Parent State Inheritance: If state is missing for direct replacement exercises (e.g. Glute Bridge -> DB Glute Bridge)
       if (!state) {
         const parentIdMap = {
           'db-hip-thrust': ['glute-bridge', 'db-glute-bridge', 'glute-1', 'DB Glute Bridge'],
@@ -3154,6 +3154,22 @@ const TodayPage = (() => {
   }
 
   const EXERCISE_FORM_RULES = {
+    'DB GLUTE BRIDGE': {
+      rule: 'כיווץ מלא ונעילה של הגלוטאוס בשיא התנועה, מבט קדימה וסנטר אסוף (Posterior tilt).',
+      belowTrigger: 'פשיטת יתר של הגב התחתון (Hyper-extension) או אי-הגעה לנעילה מלאה בשיא.'
+    },
+    'HEELS ELEVATED GOBLET SQUAT': {
+      rule: 'חזה זקוף לחלוטין, ירידה עמוקה ומבוקרת (2-3 שניות) עם עקבים מוגבהים בבטחה.',
+      belowTrigger: 'קריסת חזה לפנים, עילוי עקבים מההגבהה, או איבוד שיווי משקל.'
+    },
+    'HEELS-ELEVATED GOBLET SQUAT': {
+      rule: 'חזה זקוף לחלוטין, ירידה עמוקה ומבוקרת (2-3 שניות) עם עקבים מוגבהים בבטחה.',
+      belowTrigger: 'קריסת חזה לפנים, עילוי עקבים מההגבהה, או איבוד שיווי משקל.'
+    },
+    'PISTOL SQUAT': {
+      rule: 'ירידה מבוקרת על רגל אחת בלבד, עקב נעוץ ברצפה ואיזון מלא.',
+      belowTrigger: 'איבוד שיווי משקל חמור, קריסת ברך פנימה (Valgus), או עילוי עקב.'
+    },
     'DB RDL': {
       rule: 'גב ניטרלי לגמרי לאורך כל התנועה, ציר ירך (Hip Hinge) הדוק ומתיחה מבוקרת בהמסטרינג.',
       belowTrigger: 'עגלת גב (Lumbopelvic flexion), כיפוף ברכיים מוגזם למצב סקואט, או חוסר מתיחה.'

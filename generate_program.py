@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate FitUp Pro v15.6 Lean Edition — 52-week training program matching UPDATE_PROGRAM.md schema."""
+"""Generate FitUp Pro v15.6 Lean Edition — 80-week training program matching UPDATE_PROGRAM.md schema."""
 import json, os, shutil
 from datetime import datetime, timedelta
 

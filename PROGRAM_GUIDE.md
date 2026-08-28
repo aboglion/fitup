@@ -38,7 +38,7 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 
 ### 2.1 Lean Structure & Time-Efficiency (40–45 Minute Target)
 The v15.6 Lean Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts:
-- **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Hip Thrust, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
+- **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
 - **Lean Pairs (Antagonistic & Non-Competing)**:
   - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
   - **Day 5 (d5-pushup-curl)**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
@@ -93,7 +93,7 @@ Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase inclin
 | **Weeks 1–4** | 3% |
 | **Weeks 5–8** | 4% |
 | **Weeks 10–16** | 5% |
-| **Weeks 18–52+** | 6% |
+| **Weeks 18–80+** | 6% |
 
 🟡 **Active Recovery (Day 4):** 5 min Cervical Health protocol (Band Neck Flexion & Extension 2×15–20 each direction, 45s rest, 3-1-3 tempo, chin-tuck focus) + Treadmill 25 min @ 0% 4.5 km/h + 10 min deep mobility.
 

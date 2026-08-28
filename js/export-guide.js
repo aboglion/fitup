@@ -22,7 +22,7 @@ window.ExporterGuide = (() => {
       ],
       equipment_title: "🔧 Required Equipment & Specifications",
       equipment_list: [
-        "Modular Dumbbells: 8 plates × 3kg (24kg total) + 2 handles (3–24kg legal range per dumbbell)",
+        "Modular Dumbbells: 8 plates × 3kg (32kg max weight) + 2 handles (3–32kg legal range per dumbbell)",
         "Pull-up Bar (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "Push-up Bars / Parallettes (All push exercises: Push-Up, Deficit, Pike, L-sit — no palms flat on floor)",
         "TRX Suspension Trainer (Face Pull, TRX Row, Y-T-W at fixed angles)",
@@ -139,7 +139,7 @@ window.ExporterGuide = (() => {
       ],
       equipment_title: "🔧 المعدات المطلوبة",
       equipment_list: [
-        "أثقال يدوية قابلة للتعديل (3–24 كغم)",
+        "أثقال يدوية قابلة للتعديل (3–32 كغم)",
         "عقلة (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "مقابض ضغط / Parallettes (جميع تمارين الضغط)",
         "حبال TRX (Face Pull, TRX Row, Y-T-W)",

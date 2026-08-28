@@ -91,6 +91,14 @@ const UI = (() => {
   const imageTrials = {};
 
   const EXERCISE_GIF_ALIASES = {
+        'ARM BLOCK - SINGLE-ARM LATERAL RAISE': 'Dumbbell Lateral Raise.gif',
+    'ARM BLOCK - DB OVERHEAD TRICEPS EXT': 'DB OH Triceps Ext.gif',
+    'ARM BLOCK - SINGLE-ARM CURL': 'Single-Arm Curl.gif',
+    'ONE-ARM DB ROW': 'One-Arm DB Row.gif',
+    'ONE ARM DB ROW': 'One-Arm DB Row.gif',
+    'TUCK L-SIT': 'L-Sit Tuck (Bars).gif',
+    'PUSH-UP BARS PROGRESSION': 'Incline Push-Up.gif',
+    'PUSH-UP VOLUME (DAY 5)': 'Push-up.gif',
     'CHIN UP': 'Chin-up.gif',
     'CHIN UP NEGATIVE': 'Chin-up Negative.gif',
     'CHIN UP NEGATIVE (3S)': 'Chin-up Negative.gif',
@@ -140,6 +148,7 @@ const UI = (() => {
     'DB BSS': 'DB Bulgarian Split Squat.gif',
     'DB BSS (GOBLET)': 'DB BSS (Goblet).gif',
     'HEELS ELEVATED GOBLET SQUAT': 'DB BSS (Goblet).gif',
+    'HEELS-ELEVATED GOBLET SQUAT': 'DB BSS (Goblet).gif',
     'DB GLUTE BRIDGE': 'DB Glute Bridge.gif',
     'GLUTE BRIDGE': 'Glute Bridge.gif',
     'DB HIP THRUST': 'DB Glute Bridge.gif',
@@ -238,6 +247,13 @@ const UI = (() => {
   };
 
   const EXERCISE_PNG_ALIASES = {
+        'ARM BLOCK - SINGLE-ARM LATERAL RAISE': 'DB LATERAL RAISE.png',
+    'ARM BLOCK - DB OVERHEAD TRICEPS EXT': 'DB OH TRICEPS EXT.png',
+    'ARM BLOCK - SINGLE-ARM CURL': 'SINGLE-ARM CURL.png',
+    'ONE-ARM DB ROW': 'ONE-ARM DB ROW.png',
+    'ONE ARM DB ROW': 'ONE-ARM DB ROW.png',
+    'TUCK L-SIT': 'L-SIT TUCK (BARS).png',
+    'TUCK L SIT': 'L-SIT TUCK (BARS).png',
     'DB ROMANIAN DEADLIFT': 'DB RDL.png',
     'GOBLET ROMANIAN DEADLIFT': 'DB RDL.png',
     'SINGLE LEG RDL': 'DB SINGLE-LEG RDL.png',
@@ -275,11 +291,13 @@ const UI = (() => {
     'GOBLET REVERSE LUNGE': 'REVERSE LUNGE + DB.png',
     'GOBLET BULGARIAN SPLIT SQUAT': 'DB BSS (GOBLET).png',
     'HEELS ELEVATED GOBLET SQUAT': 'DB BSS (GOBLET).png',
+    'HEELS-ELEVATED GOBLET SQUAT': 'DB BSS (GOBLET).png',
     'PISTOL SQUAT': 'PISTOL SQUAT.png',
     'PISTOL SQUAT PROGRESSION': 'PISTOL SQUAT.png',
     'FULL PISTOL SQUAT': 'FULL PISTOL SQUAT.png',
     'REVERSE LUNGE PISTOL SQUAT': 'REVERSE LUNGE + DB.png',
     'DB HIP THRUST': 'DB GLUTE BRIDGE.png',
+    'DB GLUTE BRIDGE': 'DB GLUTE BRIDGE.png',
     'BRISK WALKING (ZONE 2)': 'BRISK WALKING.png',
     'ACTIVE RECOVERY WALK': 'RELAXED WALKING.png',
     'ZONE 2 LIGHT WALK': 'BRISK WALKING.png',
@@ -905,7 +923,7 @@ const UI = (() => {
     else if (n.includes('trx')) results.push({ label: I18n.t('equip_trx'), icon: icons.trx, key: 'trx' });
     else if (n.includes('bars') || n.includes('push-up bars') || n.includes('parallettes')) results.push({ label: I18n.t('equip_bars'), icon: icons.bars, key: 'bars' });
     else if (n.includes('band') || n.includes('pallof') || n.includes('face pull') || n.includes('woodchop')) results.push({ label: I18n.t('equip_band'), icon: icons.band, key: 'band' });
-    else if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row') || n.includes('pistol') || n.includes('goblet') || n.includes('calf raise') || n.includes('lunge') || n.includes('lateral raise') || n.includes('lateral')) results.push({ label: I18n.t('equip_db'), icon: icons.db, key: 'db' });
+    else if (n.includes('db') || n.includes('dumbbell') || n.includes('suitcase') || n.includes('rdl') || n.includes('floor press') || n.includes('ohp') || n.includes('curl') || n.includes('row') || n.includes('pistol') || n.includes('goblet') || n.includes('calf raise') || n.includes('lunge') || n.includes('lateral raise') || n.includes('lateral') || n.includes('bridge')) results.push({ label: I18n.t('equip_db'), icon: icons.db, key: 'db' });
     else if (n.includes('wall') || n.includes('handstand')) results.push({ label: I18n.t('equip_wall'), icon: icons.wall, key: 'wall' });
     else if (n.includes('bench dip') || n.includes('step-up') || n.includes('bulgarian') || n.includes('chair') || n.includes('elevated')) results.push({ label: I18n.t('equip_bench'), icon: icons.bench, key: 'bench' });
     else if (n.includes('walking') || n.includes('vo2') || n.includes('zone 2')) results.push({ label: I18n.t('equip_treadmill'), icon: icons.treadmill, key: 'treadmill' });
