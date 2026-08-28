@@ -1085,7 +1085,7 @@ def generate_day_exercises(dow, week):
 def generate_program():
     daily = []
     day_num = 0
-    total_weeks = 52
+    total_weeks = 80
 
     for week in range(1, total_weeks + 1):
         for dow in [1, 2, 3, 4, 5, 6, 0]:
@@ -1346,5 +1346,5 @@ if __name__ == "__main__":
             if not os.path.exists(path) and os.path.exists(fallback):
                 shutil.copy(fallback, path)
 
-    print(f"Done — FitUp Pro v15.6 Lean Edition generated successfully!")
+    print(f"Done — FitUp Pro v15.6 Lean Edition (Complete 80-Week) generated successfully!")
     print(f"Total days: {len(program['daily'])}, Master exercises in catalog: {len(program['exercises'])}")
