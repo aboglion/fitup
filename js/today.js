@@ -1990,8 +1990,11 @@ const TodayPage = (() => {
         detailParts.push(`<span style="color: var(--text-muted);">💤 ${ex.rest}s</span>`);
       }
 
+      const lowerExName = (ex.name || '').toLowerCase();
+      let cardioTimerBtn = '';
       let protocolBannerHTML = '';
       if (lowerExName.includes('vo2 max') || lowerExName.includes('norwegian')) {
+        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); TodayPage.startIntervalTimer('${ex.name.replace(/'/g, "\\'")}');">⏱️ ${I18n.t('timer_4x4')}</button>`;
         protocolBannerHTML = `
           <div class="vo2-protocol-card-banner" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.5;">
             <div style="font-weight: 800; color: var(--accent-primary, #3b82f6); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 14px;">
