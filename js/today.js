@@ -1990,10 +1990,23 @@ const TodayPage = (() => {
         detailParts.push(`<span style="color: var(--text-muted);">💤 ${ex.rest}s</span>`);
       }
 
-      let cardioTimerBtn = '';
-      const lowerExName = ex.name.toLowerCase();
+      let protocolBannerHTML = '';
       if (lowerExName.includes('vo2 max') || lowerExName.includes('norwegian')) {
-        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); TodayPage.startIntervalTimer('${ex.name.replace(/'/g, "\\'")}');">⏱️ ${I18n.t('timer_4x4')}</button>`;
+        protocolBannerHTML = `
+          <div class="vo2-protocol-card-banner" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.5;">
+            <div style="font-weight: 800; color: var(--accent-primary, #3b82f6); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 14px;">
+              <span>🏃 ${I18n.t('vo2_protocol_title')}</span>
+              <span style="font-size: 11px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 2px 8px; border-radius: 6px; font-weight: 700;">35 min</span>
+            </div>
+            <div style="color: var(--text-primary); margin-bottom: 8px;">
+              ${I18n.t('rule_vo2_max_norwegian_4x4')}
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--text-secondary); border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 8px; margin-top: 4px;">
+              <span>🔴 <b style="color: var(--text-primary);">${I18n.t('vo2_effort_label')}:</b> 4m @ 6.5 km/h</span>
+              <span>🟢 <b style="color: var(--text-primary);">${I18n.t('vo2_rest_label')}:</b> 3m @ 4.5 km/h</span>
+            </div>
+          </div>
+        `;
       }
 
       return `
@@ -2041,6 +2054,7 @@ const TodayPage = (() => {
             </div>
           </div>
           <div class="exercise-card-body">
+            ${protocolBannerHTML}
             ${setsHTML}
             <div class="exercise-note">
               <textarea placeholder="${I18n.t('exercise_notes_placeholder')}" rows="2" ${checkDisabledAttr}
@@ -3265,6 +3279,14 @@ const TodayPage = (() => {
     'L-SIT PROGRESSION': {
       rule: 'דחיפה חזקה של הרצפה/מקבילים כלפי מטה, ברכיים אסופות ואגן מורם.',
       belowTrigger: 'נגיעת עקבים/אגן ברצפה במהלך הזמן המתוכנן.'
+    },
+    'VO2 MAX NORWEGIAN 4X4': {
+      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-6.5 קמ״ש בשיפוע השלב + 3 דק׳ הליכת התאוששות ב-4.5 קמ״ש) | 5 דק׳ שחרור.',
+      belowTrigger: 'אי-יכולת לשמור על מהירות 6.5 קמ״ש במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
+    },
+    'VO2 MAX 4X4': {
+      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-6.5 קמ״ש בשיפוע השלב + 3 דק׳ הליכת התאוששות ב-4.5 קמ״ש) | 5 דק׳ שחרור.',
+      belowTrigger: 'אי-יכולת לשמור על מהירות 6.5 קמ״ש במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
     }
   };
 
@@ -3277,8 +3299,9 @@ const TodayPage = (() => {
     };
 
     const ruleKey = 'rule_' + (exName || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+    const ruleBelowKey = 'rule_below_trigger_' + (exName || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
     const ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (typeof ruleObj === 'string' ? ruleObj : ruleObj.rule);
-    const belowTriggerText = typeof ruleObj === 'object' ? ruleObj.belowTrigger : 'איבוד טכניקה חמור או אובדן קצב (Tempo Loss > 2 שניות).';
+    const belowTriggerText = (I18n.t(ruleBelowKey) !== ruleBelowKey) ? I18n.t(ruleBelowKey) : (typeof ruleObj === 'object' ? ruleObj.belowTrigger : 'איבוד טכניקה חמור או אובדן קצב (Tempo Loss > 2 שניות).');
 
     UI.showModal(`ℹ️ ${exName} — ${I18n.t('form_rules_title') || 'חוקי טכניקה'}`, `
       <div style="padding: 12px; display: flex; flex-direction: column; gap: 14px; text-align: start;">
