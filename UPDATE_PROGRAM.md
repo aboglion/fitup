@@ -270,7 +270,7 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 | One-Arm DB Row | 82 | 75–90 |
 | Goblet Reverse Lunge | 75 | 60–90 |
 | Pistol Squat | 105 | 90–120 |
-| DB Hip Thrust | 75 | 60–90 |
+| DB Glute Bridge | 75 | 60–90 |
 | TRX Row | 75 | 60–90 |
 | Push-Up Volume (Day 5) | 75 | 60–90 |
 | Single-Arm Lateral Raise | 45 | — |
@@ -301,7 +301,7 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 
 רשימת תרגילים מוגנים:
 
-- יום 1: Goblet Romanian Deadlift, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat, DB Hip Thrust, Suitcase Carry
+- יום 1: Goblet Romanian Deadlift, Single-Leg RDL, Goblet Bulgarian Split Squat, Goblet Reverse Lunge, Pistol Squat, DB Glute Bridge, Suitcase Carry
 - יום 3: Pike Progression, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Extension
 - יום 5: Pull-Up, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl
 
@@ -355,7 +355,7 @@ function calculateIntraWorkoutRest(exercise, currentSetResult, baseRest) {
 כל התרגילים בתוכנית כפופים ללוח הזמנים הדרגתי של עץ היכולות (Unlock Weeks):
 
 - **Squat Tree**: `Bodyweight Squat` מבוצע בשבועות 1–4. בשבוע 5 ואילך נפתח ומוחלף ל-`Goblet Bulgarian Split Squat`.
-- **Glute Tree**: `DB Glute Bridge` מבוצע בשבועות 1–4. בשבוע 5 ואילך נפתח ומוחלף ל-`DB Hip Thrust`.
+- **Glute Focus**: `DB Glute Bridge` מבוצע החל משבוע 1 ברציפות לאורך כל התוכנית.
 - **Hamstring Chain**: `Goblet Romanian Deadlift` מבוצע בשבועות 1–17. בשבוע 18 ואילך נפתח ומוחלף ל-`Single-Leg RDL`.
 - **Lunge / Pistol Tree**: `Goblet Reverse Lunge` מבוצע בשבועות 1–41. בשבוע 42 ואילך נפתח ומוחלף ל-`Pistol Squat`.
 - **Core Citadel**: `Dead Bug` פעיל משבוע 1. `Hollow Body Hold` מתווסף למעגל הליבה משבוע 5 ואילך. `Pallof Press Progression` מתווסף משבוע 10 ואילך.
@@ -578,13 +578,13 @@ function getBicepsMicrocycleWeek(weekNumber) {
 
 ---
 
-## תרגיל 4 — DB Hip Thrust
+## תרגיל 4 — DB Glute Bridge
 
 מוגן, סטים ישרים.
 
 | שדה | ערך |
 | --- | --- |
-| id | db-hip-thrust |
+| id | db-glute-bridge |
 | type | weighted |
 | sets | 3 |
 | rep window | 10–15 |

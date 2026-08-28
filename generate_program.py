@@ -114,8 +114,8 @@ EXERCISES_CATALOG = [
         "structure": "straight"
     },
     {
-        "id": "db-hip-thrust",
-        "name": "DB Hip Thrust",
+        "id": "db-glute-bridge",
+        "name": "DB Glute Bridge",
         "category": "Glutes",
         "type": "weighted",
         "startingWeight": 9,
@@ -130,7 +130,7 @@ EXERCISES_CATALOG = [
         "compound": True,
         "sets": 3,
         "structure": "straight",
-        "rule": "כתפיים על ספסל; כפות רגליים רחבות; squeeze glutes"
+        "rule": "כתפיים על הרצפה; squeeze glutes"
     },
     {
         "id": "suitcase-carry",
@@ -774,7 +774,7 @@ EXERCISES_CATALOG = [
         "rule": "סט 1 (כפיפה): פנים הרחק מהעגינה (גומייה על מצח) | סט 2 (פשיטה): פנים לכיוון העגינה (גומייה על עורף). עגינה אופקית בגובה הראש!",
         "stages": ["Band 30kg (Close Anchor)", "Band 30kg (1 Step Back)", "Band 40kg", "Band 50kg"]
     },
-    { "id": "glute-bridge", "name": "DB Glute Bridge", "category": "Warmup", "type": "weighted", "startingWeight": 9, "restSeconds": 60, "repWindow": "10-15" },
+    { "id": "glute-bridge", "name": "Glute Bridge", "category": "Warmup", "type": "variation", "restSeconds": 30, "repWindow": "12" },
 
     # Arm Blocks (Myo-reps)
     {
@@ -952,7 +952,7 @@ def generate_day_exercises(dow, week):
             exs.append(make_ex_obj("A3", "goblet-bulgarian-split-squat", "Goblet Bulgarian Split Squat", "2×8/leg" if is_deload else "3×6-12/leg", rep_window="6-12", weight="6 kg total", tempo="2s descent", rest=82, structure="straight"))
 
         # A4: Glute Progression (DB Glute Bridge — all weeks)
-        exs.append(make_ex_obj("A4", "glute-bridge", "DB Glute Bridge", "2×10" if is_deload else "3×10-15", rep_window="10-15", weight="9 kg total", tempo="1s pause", rest=75 if week >= 5 else 60, structure="straight"))
+        exs.append(make_ex_obj("A4", "db-glute-bridge", "DB Glute Bridge", "2×10" if is_deload else "3×10-15", rep_window="10-15", weight="9 kg total", tempo="1s pause at top", rest=75 if week >= 5 else 60, structure="straight"))
 
         # A5: Suitcase Carry
         exs.append(make_ex_obj("A5", "suitcase-carry", "Suitcase Carry", "2×25m/side" if is_deload else "3×25-40m/side", rep_window="25-40m", weight="12 kg", tempo="walk", rest=60, structure="straight"))
