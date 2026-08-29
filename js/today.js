@@ -2010,6 +2010,89 @@ const TodayPage = (() => {
             </div>
           </div>
         `;
+      } else if (lowerExName.includes('deep mobility')) {
+        const subSteps = (currentTracking && currentTracking.deepMobilitySteps) || {};
+        const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
+        let doneCount = 0;
+        subExercises.forEach(sub => {
+          if (subSteps[sub.id]) doneCount++;
+        });
+        const isAllSubDone = subExercises.length > 0 && doneCount === subExercises.length;
+        const subPct = subExercises.length > 0 ? Math.round((doneCount / subExercises.length) * 100) : 0;
+
+        const subItemsHTML = subExercises.map(sub => {
+          const isSubChecked = !!subSteps[sub.id];
+          const subTitle = I18n.t(sub.nameKey);
+          const subTarget = I18n.t(sub.targetKey);
+          const subDesc = I18n.t(sub.descKey);
+          const subGifUrl = UI.getGifUrl(sub.gif);
+
+          return `
+            <div class="mobility-sub-item ${isSubChecked ? 'checked' : ''}" 
+                 style="background: ${isSubChecked ? 'rgba(34, 197, 94, 0.12)' : 'rgba(0, 0, 0, 0.22)'}; border: 1px solid ${isSubChecked ? 'rgba(34, 197, 94, 0.4)' : 'var(--border-light, rgba(255, 255, 255, 0.1))'}; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: all 0.2s ease;">
+              <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                <div style="width: 48px; height: 48px; min-width: 48px; border-radius: 8px; overflow: hidden; background: #ffffff; border: 1px solid rgba(255,255,255,0.25); cursor: pointer; flex-shrink: 0; position: relative;"
+                     onclick="event.stopPropagation(); UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}');"
+                     title="${I18n.t('view_gif_title')}">
+                  <img src="${subGifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
+                  <span style="position: absolute; bottom: 2px; right: 2px; font-size: 8px; background: rgba(0,0,0,0.7); color: #fff; padding: 1px 4px; border-radius: 3px; font-weight: 700;">▶</span>
+                </div>
+                <div style="display: flex; flex-direction: column; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-weight: 700; font-size: 13px; color: ${isSubChecked ? '#4ade80' : 'var(--text-primary)'}; ${isSubChecked ? 'text-decoration: line-through;' : ''}">${subTitle}</span>
+                    <span style="font-size: 11px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 6px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
+                  </div>
+                  <span style="font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${subDesc}</span>
+                </div>
+              </div>
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; margin: 0; flex-shrink: 0;" onclick="event.stopPropagation();">
+                <input type="checkbox" 
+                       ${isSubChecked ? 'checked' : ''} 
+                       style="width: 22px; height: 22px; accent-color: #22c55e; cursor: pointer;"
+                       onchange="TodayPage.toggleDeepMobilitySubStep('${sub.id}', ${idx})">
+              </label>
+            </div>
+          `;
+        }).join('');
+
+        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px; background: linear-gradient(135deg, #10b981, #059669);" onclick="event.stopPropagation(); TodayPage.openDeepMobilityModal(${idx});">🧘 ${I18n.t('deep_mobility_open_runner')}</button>`;
+
+        protocolBannerHTML = `
+          <div class="deep-mobility-banner" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+              <div>
+                <div style="font-weight: 800; color: #34d399; font-size: 15px; display: flex; align-items: center; gap: 6px;">
+                  <span>🧘</span> <span>${I18n.t('deep_mobility_title')}</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+                  ${I18n.t('deep_mobility_subtitle')}
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12px; font-weight: 800; background: ${isAllSubDone ? 'rgba(34, 197, 94, 0.2)' : 'rgba(59, 130, 246, 0.2)'}; border: 1px solid ${isAllSubDone ? 'rgba(34, 197, 94, 0.4)' : 'rgba(59, 130, 246, 0.4)'}; color: ${isAllSubDone ? '#4ade80' : '#60a5fa'}; padding: 4px 10px; border-radius: 20px;">
+                  ${doneCount}/${subExercises.length} ${I18n.t('deep_mobility_progress')}
+                </span>
+              </div>
+            </div>
+
+            <div style="width: 100%; height: 6px; background: rgba(0, 0, 0, 0.3); border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+              <div style="height: 100%; width: ${subPct}%; background: linear-gradient(90deg, #10b981, #34d399); transition: width 0.3s ease;"></div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+              ${subItemsHTML}
+            </div>
+
+            <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.12);">
+              <button type="button" class="btn-secondary" style="font-size: 11px; padding: 5px 12px;" onclick="event.stopPropagation(); TodayPage.toggleAllDeepMobilitySteps(${idx});">
+                ${isAllSubDone ? I18n.t('deep_mobility_unmark_all') : I18n.t('deep_mobility_mark_all')}
+              </button>
+              <button type="button" class="btn-primary" style="font-size: 12px; padding: 6px 14px; background: linear-gradient(135deg, #059669, #10b981);" onclick="event.stopPropagation(); TodayPage.openDeepMobilityModal(${idx});">
+                🧘 ${I18n.t('deep_mobility_open_runner')}
+              </button>
+            </div>
+          </div>
+        `;
       }
 
       return `
@@ -3069,75 +3152,271 @@ const TodayPage = (() => {
   }
 
   let intervalTimerId = null;
+  let vo2WakeLockSentinel = null;
+
+  async function requestVo2WakeLock() {
+    if ('wakeLock' in navigator && !vo2WakeLockSentinel) {
+      try {
+        vo2WakeLockSentinel = await navigator.wakeLock.request('screen');
+      } catch (e) {
+        console.warn('Wake Lock request failed:', e);
+      }
+    }
+  }
+
+  function releaseVo2WakeLock() {
+    if (vo2WakeLockSentinel) {
+      vo2WakeLockSentinel.release().catch(() => {});
+      vo2WakeLockSentinel = null;
+    }
+  }
+
+  function speakVo2VoiceCue(text) {
+    if (!('speechSynthesis' in window)) return;
+    try {
+      window.speechSynthesis.cancel();
+      const lang = I18n.currentLang || 'he';
+      const langTag = lang === 'he' ? 'he-IL' : lang === 'ar' ? 'ar-SA' : 'en-US';
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = langTag;
+      utterance.rate = 1.05;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      console.warn('Speech synthesis error:', e);
+    }
+  }
+
+  function playVo2AudioCue(type = 'countdown') {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    try {
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      if (type === 'countdown') {
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+      } else if (type === 'work_start') {
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1046.50, ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.4, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.4);
+      } else if (type === 'rest_start') {
+        osc.frequency.setValueAtTime(659.25, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(329.63, ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.4);
+      }
+    } catch (e) {
+      console.warn('AudioContext error:', e);
+    }
+  }
 
   function startIntervalTimer(exName) {
-    let currentRound = 1;
-    let isWorkPhase = true; // true = 4m Work, false = 3m Rest
-    let secondsLeft = 4 * 60;
+    const day = allPlanDays[currentDayIndex];
+    const ex = (day && day.exercises) ? day.exercises[0] : null;
+    const currentIncline = (ex && ex.weight) ? ex.weight : 'Incline 3%';
+
+    const PHASES = [
+      { id: 'warmup', type: 'cyan', duration: 10 * 60, titleKey: 'vo2_phase_warmup', descKey: 'vo2_phase_warmup_desc', speed: '5.0 km/h', incline: '0%', hr: '50-60%', voiceKey: 'vo2_voice_warmup' },
+      { id: 'work_1', type: 'work', round: 1, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5 km/h', incline: currentIncline, hr: '85-95%', voiceKey: 'vo2_voice_work' },
+      { id: 'rest_1', type: 'rest', round: 1, duration: 3 * 60, titleKey: 'vo2_phase_rest', descKey: 'vo2_phase_rest_desc', speed: '4.5 km/h', incline: '0%', hr: '60-70%', voiceKey: 'vo2_voice_rest' },
+      { id: 'work_2', type: 'work', round: 2, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5 km/h', incline: currentIncline, hr: '85-95%', voiceKey: 'vo2_voice_work' },
+      { id: 'rest_2', type: 'rest', round: 2, duration: 3 * 60, titleKey: 'vo2_phase_rest', descKey: 'vo2_phase_rest_desc', speed: '4.5 km/h', incline: '0%', hr: '60-70%', voiceKey: 'vo2_voice_rest' },
+      { id: 'work_3', type: 'work', round: 3, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5 km/h', incline: currentIncline, hr: '85-95%', voiceKey: 'vo2_voice_work' },
+      { id: 'rest_3', type: 'rest', round: 3, duration: 3 * 60, titleKey: 'vo2_phase_rest', descKey: 'vo2_phase_rest_desc', speed: '4.5 km/h', incline: '0%', hr: '60-70%', voiceKey: 'vo2_voice_rest' },
+      { id: 'work_4', type: 'work', round: 4, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5 km/h', incline: currentIncline, hr: '85-95%', voiceKey: 'vo2_voice_work' },
+      { id: 'cooldown', type: 'cyan', duration: 5 * 60, titleKey: 'vo2_phase_cooldown', descKey: 'vo2_phase_cooldown_desc', speed: '4.0 km/h', incline: '0%', hr: '50-60%', voiceKey: 'vo2_voice_cooldown' }
+    ];
+
+    let phaseIndex = 0;
+    let secondsLeft = PHASES[phaseIndex].duration;
     let isPaused = true;
 
+    requestVo2WakeLock();
+
+    function getVoiceTextForPhase(p) {
+      let raw = I18n.t(p.voiceKey);
+      if (p.round) {
+        raw = raw.replace('{n}', p.round);
+      }
+      raw = raw.replace('{incline}', p.incline);
+      return raw;
+    }
+
     function renderModalContent() {
+      const p = PHASES[phaseIndex];
       const mins = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
       const secs = (secondsLeft % 60).toString().padStart(2, '0');
-      const statusText = isWorkPhase ? `🔴 ${I18n.t('vo2_round')} ${currentRound}/4 — ${I18n.t('vo2_effort')}` : `🟢 ${I18n.t('vo2_rest_phase')}`;
-      const statusClass = isWorkPhase ? 'interval-status-work' : 'interval-status-rest';
+
+      let titleText = I18n.t(p.titleKey);
+      if (p.round) {
+        titleText = titleText.replace('{n}', p.round);
+      }
+
+      let bgGradient = 'linear-gradient(135deg, rgba(6,182,212,0.12), rgba(14,116,144,0.22))';
+      let borderColor = 'rgba(6,182,212,0.4)';
+      let accentColor = 'var(--accent-primary, #3b82f6)';
+      let badgeIcon = '🔵';
+
+      if (p.type === 'work') {
+        bgGradient = 'linear-gradient(135deg, rgba(239,68,68,0.15), rgba(185,28,28,0.28))';
+        borderColor = 'rgba(239,68,68,0.5)';
+        accentColor = '#ef4444';
+        badgeIcon = '🔴';
+      } else if (p.type === 'rest') {
+        bgGradient = 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.28))';
+        borderColor = 'rgba(16,185,129,0.5)';
+        accentColor = '#10b981';
+        badgeIcon = '🟢';
+      }
+
+      let stepperDotsHTML = '<div style="display: flex; gap: 4px; justify-content: center; margin-bottom: 12px; width: 100%; flex-wrap: wrap;">';
+      PHASES.forEach((phase, idx) => {
+        let dotStyle = 'width: 10px; height: 10px; border-radius: 50%; transition: all 0.3s;';
+        if (idx < phaseIndex) {
+          dotStyle += ' background: var(--accent-primary, #3b82f6); opacity: 0.6;';
+        } else if (idx === phaseIndex) {
+          dotStyle += ` background: ${accentColor}; transform: scale(1.3); box-shadow: 0 0 8px ${accentColor};`;
+        } else {
+          dotStyle += ' background: var(--border-light, rgba(255,255,255,0.2));';
+        }
+        stepperDotsHTML += `<div style="${dotStyle}" title="Phase ${idx+1}"></div>`;
+      });
+      stepperDotsHTML += '</div>';
 
       return `
-        <div class="interval-timer-container">
-          <div class="interval-status-badge ${statusClass}">
-            ${statusText}
+        <div class="interval-timer-container" style="background: ${bgGradient}; border: 1px solid ${borderColor}; border-radius: 16px; padding: 20px 14px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.2);">
+          ${stepperDotsHTML}
+          
+          <div style="font-size: 13px; font-weight: 700; color: ${accentColor}; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px;">
+            ${badgeIcon} ${titleText} (${phaseIndex + 1}/${PHASES.length})
           </div>
-          <div class="interval-ring-wrapper">
-            <div class="interval-timer-time" id="interval-display">${mins}:${secs}</div>
+
+          <!-- Giant Treadmill Display -->
+          <div style="font-size: 4rem; font-weight: 900; font-family: monospace; line-height: 1; letter-spacing: 2px; color: var(--text-primary); margin: 12px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.3);" id="interval-display">
+            ${mins}:${secs}
           </div>
-          <p style="font-size: 13px; color: var(--text-secondary); text-align: center;">
-            ${isWorkPhase ? I18n.t('vo2_work_desc') : I18n.t('vo2_rest_desc')}
-          </p>
-          <div style="display: flex; gap: 10px; width: 100%; margin-top: 10px;">
-            <button id="interval-toggle-btn" class="btn-primary" style="flex: 1;">${isPaused ? `▶️ ${I18n.t('vo2_start')}` : `⏸️ ${I18n.t('vo2_pause')}`}</button>
-            <button id="interval-skip-btn" class="btn-secondary" style="flex: 1;">⏭️ ${I18n.t('vo2_skip')}</button>
+
+          <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; min-height: 38px; display: flex; align-items: center; justify-content: center;">
+            ${I18n.t(p.descKey)}
+          </div>
+
+          <!-- Target HUD Card -->
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: rgba(0,0,0,0.25); border-radius: 12px; padding: 10px; margin-bottom: 18px; border: 1px solid rgba(255,255,255,0.08);">
+            <div>
+              <div style="font-size: 10px; color: var(--text-secondary);">${I18n.t('vo2_target_speed')}</div>
+              <div style="font-size: 14px; font-weight: 800; color: var(--text-primary);">${p.speed}</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; color: var(--text-secondary);">${I18n.t('vo2_target_incline')}</div>
+              <div style="font-size: 14px; font-weight: 800; color: ${accentColor};">${p.incline}</div>
+            </div>
+            <div>
+              <div style="font-size: 10px; color: var(--text-secondary);">${I18n.t('vo2_target_hr')}</div>
+              <div style="font-size: 14px; font-weight: 800; color: var(--text-primary);">${p.hr}</div>
+            </div>
+          </div>
+
+          <!-- Treadmill Touch Controls -->
+          <div style="display: flex; gap: 10px; width: 100%;">
+            <button id="interval-prev-btn" class="btn-secondary" style="flex: 1; padding: 12px 6px; font-weight: 700; font-size: 13px;" ${phaseIndex === 0 ? 'disabled style="opacity:0.4;"' : ''}>
+              ${I18n.t('vo2_prev_phase')}
+            </button>
+
+            <button id="interval-toggle-btn" class="btn-primary" style="flex: 2; padding: 12px; font-weight: 800; font-size: 16px; background: ${accentColor}; border: none;">
+              ${isPaused ? `▶️ ${I18n.t('vo2_start')}` : `⏸️ ${I18n.t('vo2_pause')}`}
+            </button>
+
+            <button id="interval-skip-btn" class="btn-secondary" style="flex: 1; padding: 12px 6px; font-weight: 700; font-size: 13px;">
+              ${I18n.t('vo2_skip')}
+            </button>
           </div>
         </div>
       `;
     }
 
-    UI.showModal('🏃 VO2 Max Norwegian 4×4', renderModalContent());
+    UI.showModal('🏃 Tactical VO2 Max Norwegian 4×4', renderModalContent());
 
     function bindEvents() {
       const toggleBtn = document.getElementById('interval-toggle-btn');
       const skipBtn = document.getElementById('interval-skip-btn');
-      
+      const prevBtn = document.getElementById('interval-prev-btn');
+
       if (toggleBtn) {
         toggleBtn.onclick = () => {
           isPaused = !isPaused;
-          toggleBtn.textContent = isPaused ? `▶️ ${I18n.t('vo2_start')}` : `⏸️ ${I18n.t('vo2_pause')}`;
+          if (!isPaused) {
+            requestVo2WakeLock();
+            speakVo2VoiceCue(getVoiceTextForPhase(PHASES[phaseIndex]));
+          }
+          const p = PHASES[phaseIndex];
+          const accentColor = p.type === 'work' ? '#ef4444' : p.type === 'rest' ? '#10b981' : 'var(--accent-primary, #3b82f6)';
+          toggleBtn.style.background = accentColor;
+          toggleBtn.innerHTML = isPaused ? `▶️ ${I18n.t('vo2_start')}` : `⏸️ ${I18n.t('vo2_pause')}`;
         };
       }
-      
+
       if (skipBtn) {
         skipBtn.onclick = () => {
-          advancePhase();
+          advancePhase(1);
+        };
+      }
+
+      if (prevBtn && phaseIndex > 0) {
+        prevBtn.onclick = () => {
+          advancePhase(-1);
         };
       }
     }
 
-    function advancePhase() {
-      if (isWorkPhase) {
-        if (currentRound >= 4) {
-          clearInterval(intervalTimerId);
+    async function advancePhase(dir = 1) {
+      if (dir === 1) {
+        if (phaseIndex >= PHASES.length - 1) {
+          if (intervalTimerId) clearInterval(intervalTimerId);
+          releaseVo2WakeLock();
+          speakVo2VoiceCue(I18n.t('vo2_voice_complete'));
           UI.toast(I18n.t('vo2_complete'), 'success', 5000);
           UI.hideModal();
+
+          // Auto complete Day 6 workout
+          if (typeof selectSetOutcome === 'function') {
+            await selectSetOutcome(0, 0, 'in_window');
+          }
           return;
         }
-        isWorkPhase = false;
-        secondsLeft = 3 * 60;
-        UI.toast(`🟢 ${I18n.t('vo2_switching_rest')} (${I18n.t('vo2_round')} ${currentRound})`, 'info');
-      } else {
-        currentRound++;
-        isWorkPhase = true;
-        secondsLeft = 4 * 60;
-        UI.toast(`🔴 ${I18n.t('vo2_round')} ${currentRound}/4 — ${I18n.t('vo2_effort')}`, 'warning');
+        phaseIndex++;
+      } else if (dir === -1 && phaseIndex > 0) {
+        phaseIndex--;
       }
+
+      const p = PHASES[phaseIndex];
+      secondsLeft = p.duration;
+
+      if (!isPaused) {
+        if (p.type === 'work') {
+          playVo2AudioCue('work_start');
+        } else if (p.type === 'rest') {
+          playVo2AudioCue('rest_start');
+        }
+        speakVo2VoiceCue(getVoiceTextForPhase(p));
+      }
+
+      let toastText = I18n.t(p.titleKey);
+      if (p.round) toastText = toastText.replace('{n}', p.round);
+      UI.toast(toastText, p.type === 'work' ? 'warning' : 'info');
+
       document.getElementById('modal-body').innerHTML = renderModalContent();
       bindEvents();
     }
@@ -3153,9 +3432,14 @@ const TodayPage = (() => {
           const secs = (secondsLeft % 60).toString().padStart(2, '0');
           display.textContent = `${mins}:${secs}`;
         }
+
+        // T-3s, T-2s, T-1s countdown pings
+        if (secondsLeft >= 1 && secondsLeft <= 3) {
+          playVo2AudioCue('countdown');
+        }
       } else if (!isPaused && secondsLeft <= 0) {
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-        advancePhase();
+        if (navigator.vibrate) navigator.vibrate([300, 150, 300]);
+        advancePhase(1);
       }
     }, 1000);
 
@@ -3315,18 +3599,186 @@ const TodayPage = (() => {
           <div style="font-size: 13px; color: var(--text-primary); line-height: 1.5;">${ruleText}</div>
         </div>
 
-        <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 12px 14px;">
-          <strong style="color: var(--warning); display: flex; align-items: center; gap: 6px; font-size: 14px; margin-bottom: 6px;">
-            ⚠️ ${I18n.t('form_rule_below_trigger') || 'קריטריון לסימון BELOW (⚠️):'}
-          </strong>
-          <div style="font-size: 13px; color: var(--text-primary); line-height: 1.5;">${belowTriggerText}</div>
-        </div>
-
         <button type="button" class="btn-primary" onclick="UI.hideModal()" style="width: 100%; padding: 12px; margin-top: 6px;">
           ${I18n.t('modal_got_it') || 'הבנתי, תודה!'}
         </button>
       </div>
     `);
+  }
+
+  /**
+   * Toggle individual sub-step for Deep Mobility Protocol
+   */
+  async function toggleDeepMobilitySubStep(subId, exIdx) {
+    if (!checkIsTodayOrWarn()) return;
+    if (!currentTracking) currentTracking = {};
+    if (!currentTracking.deepMobilitySteps) currentTracking.deepMobilitySteps = {};
+
+    currentTracking.deepMobilitySteps[subId] = !currentTracking.deepMobilitySteps[subId];
+
+    const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
+    let doneCount = 0;
+    subExercises.forEach(sub => {
+      if (currentTracking.deepMobilitySteps[sub.id]) doneCount++;
+    });
+
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+
+    if (doneCount === subExercises.length) {
+      currentTracking.exerciseStatus[exIdx] = true;
+    } else {
+      currentTracking.exerciseStatus[exIdx] = false;
+    }
+
+    await autoSave();
+    render();
+  }
+
+  /**
+   * Toggle all sub-steps for Deep Mobility Protocol
+   */
+  async function toggleAllDeepMobilitySteps(exIdx) {
+    if (!checkIsTodayOrWarn()) return;
+    if (!currentTracking) currentTracking = {};
+    if (!currentTracking.deepMobilitySteps) currentTracking.deepMobilitySteps = {};
+
+    const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
+    let doneCount = 0;
+    subExercises.forEach(sub => {
+      if (currentTracking.deepMobilitySteps[sub.id]) doneCount++;
+    });
+
+    const shouldMarkAll = doneCount < subExercises.length;
+    subExercises.forEach(sub => {
+      currentTracking.deepMobilitySteps[sub.id] = shouldMarkAll;
+    });
+
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    currentTracking.exerciseStatus[exIdx] = shouldMarkAll;
+
+    await autoSave();
+    render();
+  }
+
+  /**
+   * Deep Mobility Modal Runner active step index
+   */
+  let currentMobilityModalIndex = 0;
+
+  /**
+   * Open Interactive Deep Mobility Modal Runner
+   */
+  function openDeepMobilityModal(exIdx, initialSubIdx = 0) {
+    currentMobilityModalIndex = initialSubIdx;
+    renderDeepMobilityModalView(exIdx);
+  }
+
+  function renderDeepMobilityModalView(exIdx) {
+    const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
+    if (subExercises.length === 0) return;
+    if (currentMobilityModalIndex < 0) currentMobilityModalIndex = 0;
+    if (currentMobilityModalIndex >= subExercises.length) currentMobilityModalIndex = subExercises.length - 1;
+
+    const sub = subExercises[currentMobilityModalIndex];
+    const subSteps = (currentTracking && currentTracking.deepMobilitySteps) || {};
+    const isSubChecked = !!subSteps[sub.id];
+
+    const title = I18n.t('deep_mobility_title');
+    const subTitle = I18n.t(sub.nameKey);
+    const subTarget = I18n.t(sub.targetKey);
+    const subDesc = I18n.t(sub.descKey);
+    const gifUrl = UI.getGifUrl(sub.gif);
+
+    const dotsHTML = subExercises.map((s, i) => {
+      const isDone = !!subSteps[s.id];
+      const isActive = i === currentMobilityModalIndex;
+      let bg = 'rgba(255,255,255,0.2)';
+      if (isActive) bg = 'var(--accent-primary, #3b82f6)';
+      else if (isDone) bg = '#22c55e';
+
+      return `
+        <button type="button" 
+                onclick="TodayPage.navDeepMobilityModal(${exIdx}, ${i})" 
+                style="width: ${isActive ? '24px' : '10px'}; height: 10px; border-radius: 5px; background: ${bg}; border: none; cursor: pointer; transition: all 0.2s ease; padding: 0;" 
+                title="Step ${i + 1}: ${I18n.t(s.nameKey)}"></button>
+      `;
+    }).join('');
+
+    const modalTitleHTML = `
+      <div style="display: flex; flex-direction: column; gap: 4px; width: 100%;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <span style="font-size: 15px; font-weight: 800; color: var(--accent-primary, #3b82f6); display: flex; align-items: center; gap: 6px;">
+            <span>🧘</span> <span>${title}</span>
+          </span>
+          <span style="font-size: 12px; font-weight: 700; background: rgba(59,130,246,0.15); color: #93c5fd; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">
+            ${currentMobilityModalIndex + 1} / ${subExercises.length}
+          </span>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center; justify-content: center; margin-top: 4px;">
+          ${dotsHTML}
+        </div>
+      </div>
+    `;
+
+    const bodyHTML = `
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 100%;">
+        <div style="background: var(--bg-card, rgba(0,0,0,0.3)); border: 1px solid var(--border-color, rgba(255,255,255,0.1)); border-radius: 14px; overflow: hidden; padding: 12px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 900; color: var(--text-primary); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+            <span>${subTitle}</span>
+            <span style="font-size: 12px; font-weight: 700; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; padding: 2px 8px; border-radius: 6px;">🎯 ${subTarget}</span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 10px 0; line-height: 1.4;">${subDesc}</p>
+          <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 220px; background: #ffffff; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);">
+            <img src="${gifUrl}" 
+                 style="width: 100%; max-height: 48vh; object-fit: contain; border-radius: 8px; mix-blend-mode: multiply;" 
+                 alt="${subTitle} GIF"
+                 onload="UI.handleImageLoaded(this)"
+                 onerror="UI.handleImageFallback(this, 'gif')">
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button type="button" class="btn-primary" 
+                  style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; background: ${isSubChecked ? 'linear-gradient(135deg, #16a34a, #22c55e)' : 'linear-gradient(135deg, #2563eb, #3b82f6)'}; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" 
+                  onclick="TodayPage.completeSubStepAndNext(${exIdx}, '${sub.id}')">
+            ${isSubChecked ? '✓ הושלם (לחץ לביטול / מעבר להבא)' : '✓ סמן תרגיל זה כהושלם ועבור להבא'}
+          </button>
+
+          <div style="display: flex; justify-content: space-between; gap: 10px;">
+            <button type="button" class="btn-secondary" 
+                    style="flex: 1; padding: 10px; font-size: 13px;" 
+                    ${currentMobilityModalIndex === 0 ? 'disabled style="opacity: 0.4; pointer-events: none;"' : ''}
+                    onclick="TodayPage.navDeepMobilityModal(${exIdx}, ${currentMobilityModalIndex - 1})">
+              ◀ תרגיל קודם
+            </button>
+            <button type="button" class="btn-secondary" 
+                    style="flex: 1; padding: 10px; font-size: 13px;" 
+                    ${currentMobilityModalIndex === subExercises.length - 1 ? 'disabled style="opacity: 0.4; pointer-events: none;"' : ''}
+                    onclick="TodayPage.navDeepMobilityModal(${exIdx}, ${currentMobilityModalIndex + 1})">
+              תרגיל הבא ▶
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    UI.showModal(modalTitleHTML, bodyHTML);
+  }
+
+  function navDeepMobilityModal(exIdx, newSubIdx) {
+    currentMobilityModalIndex = newSubIdx;
+    renderDeepMobilityModalView(exIdx);
+  }
+
+  async function completeSubStepAndNext(exIdx, subId) {
+    await toggleDeepMobilitySubStep(subId, exIdx);
+    const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
+    if (currentMobilityModalIndex < subExercises.length - 1) {
+      currentMobilityModalIndex++;
+      renderDeepMobilityModalView(exIdx);
+    } else {
+      UI.hideModal();
+    }
   }
 
   return {
@@ -3356,6 +3808,11 @@ const TodayPage = (() => {
     performSwap,
     startIntervalTimer,
     showFormRuleModal,
+    toggleDeepMobilitySubStep,
+    toggleAllDeepMobilitySteps,
+    openDeepMobilityModal,
+    navDeepMobilityModal,
+    completeSubStepAndNext,
     getCurrentDayIndex: () => currentDayIndex,
     parseWeightDetails,
     buildWeightBadgeHTML,

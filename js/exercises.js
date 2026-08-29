@@ -1181,6 +1181,42 @@ const ExercisesPage = (() => {
 
     const html = generateGuideCardHTML(ex);
 
+    let subExercisesHtml = '';
+    if (ex.name.toLowerCase().includes('deep mobility')) {
+      const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
+      subExercisesHtml = `
+        <div style="background: rgba(16, 185, 129, 0.08); border-radius: 12px; padding: 16px; border: 1px solid rgba(16, 185, 129, 0.3); margin-top: 8px;">
+          <h3 style="color: #34d399; font-size: 16px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; text-align: center; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>🧘</span> <span>${I18n.t('deep_mobility_title')}</span>
+          </h3>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            ${subExercises.map((sub, idx) => {
+              const subTitle = I18n.t(sub.nameKey);
+              const subTarget = I18n.t(sub.targetKey);
+              const subDesc = I18n.t(sub.descKey);
+              const gifUrl = UI.getGifUrl(sub.gif);
+
+              return `
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 12px; cursor: pointer;"
+                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${gifUrl}', 'Deep Mobility Protocol')">
+                  <div style="width: 52px; height: 52px; min-width: 52px; border-radius: 8px; overflow: hidden; background: #ffffff; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;">
+                    <img src="${gifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
+                  </div>
+                  <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                      <span style="font-weight: 800; font-size: 13px; color: var(--text-primary);">${idx + 1}. ${subTitle}</span>
+                      <span style="font-size: 11px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 6px; border-radius: 4px; font-weight: 700; flex-shrink: 0;">🎯 ${subTarget}</span>
+                    </div>
+                    <span style="font-size: 11px; color: var(--text-muted); margin-top: 3px; line-height: 1.3;">${subDesc}</span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     let progressionHubHtml = '';
     if (ex.stages && ex.stages.length > 0) {
       progressionHubHtml = `
@@ -1208,10 +1244,13 @@ const ExercisesPage = (() => {
     }
 
     const gifPath = UI.getGifUrl(ex.name);
+    const showSingleGif = !ex.name.toLowerCase().includes('deep mobility') && gifPath;
     const fullHtml = `
       <div style="display: flex; flex-direction: column; gap: 16px;">
         ${html}
+        ${subExercisesHtml}
         ${progressionHubHtml}
+        ${showSingleGif ? `
         <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 200px; border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;">
           <div class="skeleton-placeholder">
             <div class="skeleton-spinner"></div>
@@ -1226,6 +1265,7 @@ const ExercisesPage = (() => {
                onload="UI.handleImageLoaded(this)"
                onerror="UI.handleImageFallback(this, 'gif')">
         </div>
+        ` : ''}
       </div>
     `;
     UI.showModal(ex.name, fullHtml);

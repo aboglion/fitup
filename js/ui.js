@@ -241,8 +241,26 @@ const UI = (() => {
     'TUCK L SIT': 'Tuck Hold (Bars).gif',
     'WEIGHTED DEFICIT VEST 5KG': 'Weighted Deficit Push-Up.gif',
     'WEIGHTED DIAMOND VEST 5KG': 'Weighted Diamond Push-Up.gif',
-    'BAND NECK FLEXION EXTENSION': 'Band Neck Flexion & Extension.gif'
+    'BAND NECK FLEXION EXTENSION': 'Band Neck Flexion & Extension.gif',
+    'CAT COW': 'Cat-Cow.gif',
+    'CAT-COW': 'Cat-Cow.gif',
+    '90 90 HIP STRETCH': '90-90 Hip Stretch.gif',
+    '90/90 HIP STRETCH': '90-90 Hip Stretch.gif',
+    'THORACIC ROTATIONS': 'Thoracic Rotations.gif',
+    'COUCH STRETCH': 'Couch Stretch.gif',
+    'SLEEPER STRETCH': 'Sleeper Stretch.gif',
+    'PRONE Y T W': 'Prone Y-T-W.gif',
+    'PRONE Y-T-W': 'Prone Y-T-W.gif'
   };
+
+  const DEEP_MOBILITY_SUB_EXERCISES = [
+    { id: 'cat-cow', nameKey: 'sub_ex_cat_cow', targetKey: 'sub_target_cat_cow', descKey: 'sub_desc_cat_cow', gif: 'Cat-Cow.gif', defaultTarget: '10 reps' },
+    { id: 'hip-stretch-9090', nameKey: 'sub_ex_hip_stretch', targetKey: 'sub_target_hip_stretch', descKey: 'sub_desc_hip_stretch', gif: '90-90 Hip Stretch.gif', defaultTarget: '8 / side' },
+    { id: 'thoracic-rotations', nameKey: 'sub_ex_thoracic_rotations', targetKey: 'sub_target_thoracic_rotations', descKey: 'sub_desc_thoracic_rotations', gif: 'Thoracic Rotations.gif', defaultTarget: '8 / side' },
+    { id: 'couch-stretch', nameKey: 'sub_ex_couch_stretch', targetKey: 'sub_target_couch_stretch', descKey: 'sub_desc_couch_stretch', gif: 'Couch Stretch.gif', defaultTarget: '45s / side' },
+    { id: 'sleeper-stretch', nameKey: 'sub_ex_sleeper_stretch', targetKey: 'sub_target_sleeper_stretch', descKey: 'sub_desc_sleeper_stretch', gif: 'Sleeper Stretch.gif', defaultTarget: '30s / side' },
+    { id: 'prone-ytw', nameKey: 'sub_ex_prone_ytw', targetKey: 'sub_target_prone_ytw', descKey: 'sub_desc_prone_ytw', gif: 'Prone Y-T-W.gif', defaultTarget: '8 / shape' }
+  ];
 
   const EXERCISE_PNG_ALIASES = {
         'ARM BLOCK - SINGLE-ARM LATERAL RAISE': 'DB LATERAL RAISE.png',
@@ -297,7 +315,7 @@ const UI = (() => {
     'BRISK WALKING (ZONE 2)': 'BRISK WALKING.png',
     'ACTIVE RECOVERY WALK': 'RELAXED WALKING.png',
     'ZONE 2 LIGHT WALK': 'BRISK WALKING.png',
-    'MICRO MOBILITY PROTOCOL': 'DEEP MOBILITY PROTOCOL.png',
+    'MICRO MOBILITY PROTOCOL': 'MICRO MOBILITY PROTOCOL.png',
     'DEFICIT PUSH UP': 'DEFICIT PUSH-UP.png',
     'INCLINE PUSH UP': 'INCLINE PUSH-UP.png',
     'WEIGHTED DIAMOND PUSH UP': 'DIAMOND PUSH-UP.png',
@@ -544,9 +562,16 @@ const UI = (() => {
 
   function getGifUrl(title) {
     if (!title) return null;
+    if (title.startsWith('images/') || title.startsWith('http://') || title.startsWith('https://')) {
+      return encodeMediaPath(title);
+    }
     const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
     const aliasGif = EXERCISE_GIF_ALIASES[cleanTitle];
-    const path = aliasGif ? `images/gifs/${aliasGif}` : `images/gifs/${title}.gif`;
+    let fileName = aliasGif || title;
+    if (!fileName.toLowerCase().endsWith('.gif')) {
+      fileName += '.gif';
+    }
+    const path = `images/gifs/${fileName}`;
     return encodeMediaPath(path);
   }
 
@@ -633,22 +658,44 @@ const UI = (() => {
       `;
     }
 
+    const isDeepMobilitySub = (DEEP_MOBILITY_SUB_EXERCISES || []).some(s => {
+      const sName = (I18n.t(s.nameKey) || '').toLowerCase();
+      const tLower = (title || '').toLowerCase();
+      return sName.includes(tLower) || tLower.includes(sName) || s.id.toLowerCase() === tLower || (s.gif && s.gif.toLowerCase().includes(tLower));
+    }) || (fallbackTitle && fallbackTitle.toLowerCase().includes('deep mobility'));
+
+    const parentTitle = fallbackTitle || 'Deep Mobility Protocol';
+
+    const headerBoxHTML = isDeepMobilitySub ? `
+      <button type="button" class="btn-secondary" 
+              style="width: 130px; height: 130px; min-width: 130px; border-radius: 14px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; color: #93c5fd; font-weight: 800; font-size: 13px; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.25); flex-shrink: 0;"
+              onclick="UI.showImageModal('${parentTitle.replace(/'/g, "\\'")}')"
+              onmouseover="this.style.background='rgba(59, 130, 246, 0.25)'; this.style.transform='translateY(-2px)';"
+              onmouseout="this.style.background='rgba(59, 130, 246, 0.15)'; this.style.transform='none';"
+              title="${I18n.t('back_to_protocol', 'חזור לפרוטוקול המלא')}">
+        <span style="font-size: 24px;">↩️</span>
+        <span style="font-size: 12px; font-weight: 800;">${I18n.t('back_btn', 'חזור לפרוטוקול')}</span>
+      </button>
+    ` : `
+      <div class="skeleton-loading" style="width: 140px; height: 140px; min-width: 140px; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); flex-shrink: 0; position: relative;">
+        <div class="skeleton-placeholder" style="gap: 4px;">
+          <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
+        </div>
+        <img src="${pngPath}" 
+             class="modal-title-img skeleton-img"
+             ${fallbackAttr}
+             style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px; mix-blend-mode: multiply;" 
+             alt="${title}" 
+             loading="eager" 
+             decoding="async" 
+             onload="UI.handleImageLoaded(this)"
+             onerror="UI.handleImageFallback(this, 'png')">
+      </div>
+    `;
+
     const modalTitleHTML = `
       <div style="display: flex; align-items: center; gap: 16px; width: 100%;">
-        <div class="skeleton-loading" style="width: 140px; height: 140px; min-width: 140px; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); flex-shrink: 0; position: relative;">
-          <div class="skeleton-placeholder" style="gap: 4px;">
-            <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
-          </div>
-          <img src="${pngPath}" 
-               class="modal-title-img skeleton-img"
-               ${fallbackAttr}
-               style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px; mix-blend-mode: multiply;" 
-               alt="${title}" 
-               loading="eager" 
-               decoding="async" 
-               onload="UI.handleImageLoaded(this)"
-               onerror="UI.handleImageFallback(this, 'png')">
-        </div>
+        ${headerBoxHTML}
         <div style="display: flex; flex-direction: column; gap: 6px; justify-content: center;">
           <span style="font-size: 19px; font-weight: 900; color: var(--text-primary); line-height: 1.25;">${title}</span>
           ${(() => {
@@ -662,7 +709,40 @@ const UI = (() => {
 
     let mediaHTML = '';
 
-    if (gifExists) {
+    if (lowerTitle.includes('deep mobility')) {
+      const subExercises = DEEP_MOBILITY_SUB_EXERCISES || [];
+      mediaHTML = `
+        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-weight: 800; font-size: 14px; color: #34d399; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+            <span>🧘 ${I18n.t('deep_mobility_title')} (${subExercises.length} תרגילים)</span>
+            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">פרוטוקול מלא</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
+            ${subExercises.map((sub, idx) => {
+              const subTitle = I18n.t(sub.nameKey);
+              const subTarget = I18n.t(sub.targetKey);
+              const subGifUrl = getGifUrl(sub.gif);
+              return `
+                <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
+                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}')"
+                     onmouseover="this.style.borderColor='rgba(52, 211, 153, 0.6)'"
+                     onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.12)'">
+                  <div style="width: 100%; height: 95px; border-radius: 8px; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <img src="${subGifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
+                    <span style="position: absolute; top: 4px; right: 4px; font-size: 10px; font-weight: 800; background: rgba(0,0,0,0.75); color: #34d399; padding: 1px 5px; border-radius: 4px;">#${idx + 1}</span>
+                  </div>
+                  <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); line-height: 1.2; word-break: break-word;">${subTitle}</div>
+                  <span style="font-size: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 5px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          <button type="button" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); margin-top: 4px;" onclick="UI.hideModal(); if (window.TodayPage && TodayPage.openDeepMobilityModal) TodayPage.openDeepMobilityModal(0);">
+            🧘 הפעל מדריך מוביליות אינטראקטיבי
+          </button>
+        </div>
+      `;
+    } else if (gifExists) {
       mediaHTML = `
         <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 240px; background: rgba(0, 0, 0, 0.25); border-radius: 14px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); padding: 6px; box-shadow: inset 0 0 20px rgba(0,0,0,0.15);">
           <div class="skeleton-placeholder">
@@ -1288,7 +1368,8 @@ const UI = (() => {
     speakVoiceCue,
     compressImage,
     EXERCISE_GIF_ALIASES,
-    EXERCISE_PNG_ALIASES
+    EXERCISE_PNG_ALIASES,
+    DEEP_MOBILITY_SUB_EXERCISES
   };
 })();
 
