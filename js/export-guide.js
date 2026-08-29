@@ -471,7 +471,7 @@ window.ExporterGuide = (() => {
     init: () => {
       const btn = document.getElementById('export-guide-btn');
       if (btn) {
-        btn.addEventListener('click', handleExport);
+        btn.onclick = handleExport;
       }
     }
   };
