@@ -2095,9 +2095,9 @@ const TodayPage = (() => {
         `;
       } else if (lowerExName.includes('micro mobility')) {
         const subSteps = (currentTracking && currentTracking.microMobilitySteps) || {};
-        const dayNumber = (currentDayIndex % 5) + 1;
-        const variant = (dayNumber === 1 || dayNumber === 3 || dayNumber === 5) ? 'A' : 'B';
-        const subExercises = UI.getMicroMobilitySubExercises(dayNumber);
+        const dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
+        const variant = (dayNum === 3 || dayNum === 5) ? 'A' : 'B';
+        const subExercises = UI.getMicroMobilitySubExercises(dayNum);
         const bannerTitle = variant === 'A' ? I18n.t('micro_mobility_a_title') : I18n.t('micro_mobility_b_title');
         const bannerDesc = variant === 'A' ? I18n.t('micro_mobility_a_banner_desc') : I18n.t('micro_mobility_b_banner_desc');
 
@@ -3879,8 +3879,8 @@ const TodayPage = (() => {
 
     currentTracking.microMobilitySteps[subId] = !currentTracking.microMobilitySteps[subId];
 
-    const dayNumber = (currentDayIndex % 5) + 1;
-    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNumber) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+    const dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
+    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNum) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
     let doneCount = 0;
     subExercises.forEach(sub => {
       if (currentTracking.microMobilitySteps[sub.id]) doneCount++;
@@ -3905,8 +3905,8 @@ const TodayPage = (() => {
     if (!currentTracking) currentTracking = {};
     if (!currentTracking.microMobilitySteps) currentTracking.microMobilitySteps = {};
 
-    const dayNumber = (currentDayIndex % 5) + 1;
-    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNumber) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+    const dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
+    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNum) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
     let doneCount = 0;
     subExercises.forEach(sub => {
       if (currentTracking.microMobilitySteps[sub.id]) doneCount++;
@@ -3938,9 +3938,9 @@ const TodayPage = (() => {
   }
 
   function renderMicroMobilityModalView(exIdx) {
-    const dayNumber = (currentDayIndex % 5) + 1;
-    const variant = (dayNumber === 1 || dayNumber === 3 || dayNumber === 5) ? 'A' : 'B';
-    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNumber) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+    const dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
+    const variant = (dayNum === 3 || dayNum === 5) ? 'A' : 'B';
+    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNum) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
     if (subExercises.length === 0) return;
     if (currentMicroMobilityModalIndex < 0) currentMicroMobilityModalIndex = 0;
     if (currentMicroMobilityModalIndex >= subExercises.length) currentMicroMobilityModalIndex = subExercises.length - 1;
@@ -4038,8 +4038,8 @@ const TodayPage = (() => {
 
   async function completeMicroSubStepAndNext(exIdx, subId) {
     await toggleMicroMobilitySubStep(subId, exIdx);
-    const dayNumber = (currentDayIndex % 5) + 1;
-    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNumber) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+    const dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
+    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNum) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
     if (currentMicroMobilityModalIndex < subExercises.length - 1) {
       currentMicroMobilityModalIndex++;
       renderMicroMobilityModalView(exIdx);

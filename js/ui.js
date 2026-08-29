@@ -283,13 +283,27 @@ const UI = (() => {
   ];
 
   function getMicroMobilitySubExercises(dayIndexOrVariant) {
-    if (dayIndexOrVariant === 'A' || dayIndexOrVariant === 'a' || dayIndexOrVariant === 1 || dayIndexOrVariant === 3 || dayIndexOrVariant === 5) {
+    if (typeof dayIndexOrVariant === 'string') {
+      const v = dayIndexOrVariant.toUpperCase();
+      if (v === 'A') return MICRO_MOBILITY_A_SUB_EXERCISES;
+      if (v === 'B') return MICRO_MOBILITY_B_SUB_EXERCISES;
+    }
+
+    let dayNum = 1;
+    if (typeof dayIndexOrVariant === 'number') {
+      if (dayIndexOrVariant >= 1 && dayIndexOrVariant <= 7) {
+        dayNum = dayIndexOrVariant;
+      } else {
+        dayNum = ((dayIndexOrVariant % 7) + 7) % 7 + 1;
+      }
+    }
+
+    // Days 3 (Push) & 5 (Pull) are Upper Focus (Variant A)
+    if (dayNum === 3 || dayNum === 5) {
       return MICRO_MOBILITY_A_SUB_EXERCISES;
     }
-    if (dayIndexOrVariant === 'B' || dayIndexOrVariant === 'b' || dayIndexOrVariant === 2 || dayIndexOrVariant === 4) {
-      return MICRO_MOBILITY_B_SUB_EXERCISES;
-    }
-    return MICRO_MOBILITY_SUB_EXERCISES;
+    // Days 1 (Legs), 2 (Cardio) are Lower Focus (Variant B)
+    return MICRO_MOBILITY_B_SUB_EXERCISES;
   }
 
   const EXERCISE_PNG_ALIASES = {
