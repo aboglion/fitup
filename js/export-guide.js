@@ -376,50 +376,81 @@ window.ExporterGuide = (() => {
   }
 
   function generateWeeksHtml(allPlan, t) {
-    const weeks = {};
-    allPlan.forEach(day => {
-      if (!weeks[day.week]) weeks[day.week] = [];
-      weeks[day.week].push(day);
-    });
+    const lang = (window.I18n ? window.I18n.getLang() : 'en');
+    
+    // Extract Standard Week (Week 1) & Deload Week (Week 8)
+    const stdDays = allPlan.filter(d => d.week === 'Week 1' || d.dayIndex < 7);
+    const deloadDays = allPlan.filter(d => d.week === 'Week 8' || (d.dayIndex >= 49 && d.dayIndex < 56));
 
-    let html = '';
-    for (const [weekName, days] of Object.entries(weeks)) {
-      html += `<div class="week-block">
-        <h3>${weekName}</h3>`;
-      
-      days.forEach(day => {
-        html += `
-        <div class="day-block">
-          <h4 class="day-title">Day <span dir="ltr">#${day.dayNum}</span>: ${day.dayOfWeek} <span class="${getBadgeClass(day.dayType)}">${day.dayType}</span> <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span></h4>
-          `;
-          
-          if (day.exercises && day.exercises.length > 0) {
-            html += `<table>
-              <tr>
-                <th>${t.table_ex}</th>
-                <th width="140">${t.table_sets}</th>
-                <th width="120">${t.table_weight}</th>
-                <th width="100">${t.table_tempo}</th>
-                <th width="90">${t.table_rest}</th>
-              </tr>`;
-            day.exercises.forEach(ex => {
-              html += `<tr>
-                <td><strong>${ex.name}</strong></td>
-                <td dir="ltr" style="text-align: right;">${ex.sets || '-'}</td>
-                <td dir="ltr" style="text-align: right;"><bdi dir="ltr">${ex.weight || '-'}</bdi></td>
-                <td dir="ltr" style="text-align: right;">${ex.tempo ? (UI.formatTempo ? UI.formatTempo(ex.tempo) : ex.tempo) : '-'}</td>
-                <td dir="ltr" style="text-align: right;">${ex.rest ? ex.rest + 's' : '-'}</td>
-              </tr>`;
-            });
-            html += `</table>`;
-          } else {
-            html += `<p style="color: var(--text-muted);">${t.days_table[6]?.focus || 'Rest Day'}</p>`;
-          }
-          
-        html += `</div>`;
-      });
+    const renderDayBlock = (day) => {
+      let html = `<div class="day-block">
+        <h4 class="day-title">${day.dayOfWeek} <span class="${getBadgeClass(day.dayType)}">${day.dayType}</span> <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span></h4>`;
+      if (day.exercises && day.exercises.length > 0) {
+        html += `<table>
+          <tr>
+            <th>${t.table_ex}</th>
+            <th width="140">${t.table_sets}</th>
+            <th width="120">${t.table_weight}</th>
+            <th width="100">${t.table_tempo}</th>
+            <th width="90">${t.table_rest}</th>
+          </tr>`;
+        day.exercises.forEach(ex => {
+          html += `<tr>
+            <td><strong>${ex.name}</strong></td>
+            <td dir="ltr" style="text-align: right;">${ex.sets || '-'}</td>
+            <td dir="ltr" style="text-align: right;"><bdi dir="ltr">${ex.weight || '-'}</bdi></td>
+            <td dir="ltr" style="text-align: right;">${ex.tempo ? (UI.formatTempo ? UI.formatTempo(ex.tempo) : ex.tempo) : '-'}</td>
+            <td dir="ltr" style="text-align: right;">${ex.rest ? ex.rest + 's' : '-'}</td>
+          </tr>`;
+        });
+        html += `</table>`;
+      } else {
+        html += `<p style="color: var(--text-muted);">${t.days_table[6]?.focus || 'Rest Day'}</p>`;
+      }
       html += `</div>`;
-    }
+      return html;
+    };
+
+    let html = `
+    <div class="week-block">
+      <h3>${lang === 'he' ? '🗓️ מיקרו-מחזור שבועי רגיל (Standard Weekly Microcycle — ימים 1–7)' : (lang === 'ar' ? '🗓️ الجدول الأسبوعي القياسي (الأيام 1–7)' : '🗓️ Standard Weekly Microcycle (Days 1–7)')}</h3>
+      <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">
+        ${lang === 'he' ? 'המבנה השבועי הקבוע של התוכנית (שבועות 1–7, 9–15, 17–23 וכן הלאה).' : 'Standard weekly structure active on all non-deload weeks.'}
+      </p>
+      ${stdDays.map(renderDayBlock).join('')}
+    </div>
+
+    <div class="week-block" style="border-top-color: #ef4444;">
+      <h3 style="color: #dc2626;">${lang === 'he' ? '🔄 מיקרו-מחזור דילואד (Deload Microcycle — שבועות 8, 16, 24, 32...)' : (lang === 'ar' ? '🔄 جدول أسبوع التعافي (Deload)' : '🔄 Deload Microcycle (Weeks 8, 16, 24, 32...)')}</h3>
+      <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">
+        ${lang === 'he' ? 'מופעל אוטומטית כל שבוע 8 (שבועות 8, 16, 24, 32, 40, 48, 56, 64, 72, 80...). הנפח מוגבל ל-2 סטים והעומס מופחת ב-2 ק"ג.' : 'Active automatically every 8 weeks. Volume capped at 2 sets and loads reduced by 2 kg.'}
+      </p>
+      ${deloadDays.map(renderDayBlock).join('')}
+    </div>
+
+    <div class="week-block" style="border-top-color: #8b5cf6;">
+      <h3>${lang === 'he' ? '🗺️ מפת דרכים תקופתית (80-Week Periodization Roadmap)' : (lang === 'ar' ? '🗺️ خريطة الطريق لـ 80 أسبوعاً' : '🗺️ 80-Week Periodization Roadmap')}</h3>
+      <table>
+        <tr>
+          <th>${lang === 'he' ? 'טווח שבועות' : 'Week Range'}</th>
+          <th>${lang === 'he' ? 'שלב תקופתי' : 'Periodization Phase'}</th>
+          <th>${lang === 'he' ? 'אלמנטים פעילים ורוטציות' : 'Active Protocols & Toggles'}</th>
+          <th>${lang === 'he' ? 'סוג שבוע' : 'Week Type'}</th>
+        </tr>
+        <tr><td>Weeks 1–7</td><td>Phase 1: Foundation Hypertrophy</td><td>Heels-Elevated Squat, Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart)</td><td><span class="badge">Standard</span></td></tr>
+        <tr><td>Week 8</td><td>Phase 1 Deload</td><td>Volume ceiling 2 sets, -2kg load reduction, straight sets</td><td><span class="badge rest">Deload</span></td></tr>
+        <tr><td>Weeks 9–15</td><td>Phase 2: Arm Block Activation</td><td>Arm Block Myo-Reps active from Week 10 onwards (Day 3 & Day 5)</td><td><span class="badge">Standard + Myo-Reps</span></td></tr>
+        <tr><td>Week 16</td><td>Phase 2 Deload</td><td>Volume ceiling 2 sets, -2kg load reduction, 1 activation set only</td><td><span class="badge rest">Deload</span></td></tr>
+        <tr><td>Weeks 17–23</td><td>Phase 3: Unilateral Posterior Unlocks</td><td>Single-Leg RDL unlocks on Day 1 (Odd weeks toggle with Goblet RDL)</td><td><span class="badge">Standard + Progression</span></td></tr>
+        <tr><td>Week 24</td><td>Phase 3 Deload</td><td>Volume ceiling 2 sets, -2kg load reduction</td><td><span class="badge rest">Deload</span></td></tr>
+        <tr><td>Weeks 25–31</td><td>Phase 4: Advanced Density</td><td>Antagonistic Lean Pairs, Biceps 3-Week Microcycle</td><td><span class="badge">Standard + Density</span></td></tr>
+        <tr><td>Week 32</td><td>Phase 4 Deload</td><td>Volume ceiling 2 sets, -2kg load reduction</td><td><span class="badge rest">Deload</span></td></tr>
+        <tr><td>Weeks 33–79</td><td>Phase 5: Athletic Peak Mastery</td><td>Full 80-week progression engine active with 32kg max capacity</td><td><span class="badge">Mastery</span></td></tr>
+        <tr><td>Week 80</td><td>Phase 5 Deload & Cycle Completion</td><td>Final program deload and longevity maintenance</td><td><span class="badge rest">Deload</span></td></tr>
+      </table>
+    </div>
+    `;
+
     return html;
   }
 
