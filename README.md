@@ -18,6 +18,7 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ### 🏋️‍♂️ Prescriptive 80-Week Lean Training Engine
 - **v15.6 Lean Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
+- **Phase 0 Anatomical Foundation (Weeks 1–4) & Week 5 Graduation**: Reduced initial volume (5–6 anchor exercises per session, 20m light walks) protecting connective tissue and lumbar spine, with an automatic Week 5 Graduation Event unlocking VO2 Max 4x4, BSS, OHP/Pike, Towel Hang, and L-Sits.
 - **Zero Decisions 3-Button Outcome Selector & Minimum Weight Protection Engine**: Objective set classification with guaranteed `minWeight` floor protection (3 kg minimum) preventing invalid 0 kg displays under any fallback.
 - **Objective Myo-Reps & Arm Block Protocol**: Active from Week 10 onwards (1 activation set + 3 mini-sets of 5 reps with 15s rest). Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
 - **Biceps 3-Week Microcycle**: 2 heavy progressive overload weeks + 1 light preservation week (Single-Arm Hammer Curl 2 sets, no progression) to maximize hypertrophy while protecting elbow joints.

@@ -86,7 +86,9 @@ EXERCISES_CATALOG = [
         "tempo": "2s descent",
         "compound": True,
         "sets": 3,
-        "structure": "straight"
+        "structure": "straight",
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "db-glute-bridge",
@@ -122,7 +124,9 @@ EXERCISES_CATALOG = [
         "tempo": "controlled walk",
         "compound": False,
         "sets": 3,
-        "structure": "straight"
+        "structure": "straight",
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "standing-single-leg-calf-raise",
@@ -141,7 +145,9 @@ EXERCISES_CATALOG = [
         "sets": 3,
         "structure": "block",
         "blockId": "d1-calf-block",
-        "blockOrder": 1
+        "blockOrder": 1,
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "seated-single-leg-calf-raise",
@@ -160,7 +166,9 @@ EXERCISES_CATALOG = [
         "sets": 2,
         "structure": "block",
         "blockId": "d1-calf-block",
-        "blockOrder": 2
+        "blockOrder": 2,
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "pallof-press-progression",
@@ -179,7 +187,9 @@ EXERCISES_CATALOG = [
             "Pallof Hold (2h,30kg)", "Pallof Press (2h,30kg)", "Single-Arm (30kg)",
             "Single-Arm (40kg)", "Single-Arm Split Stance (40kg)", "Single-Arm (50kg)", "Single-Arm One Leg (50kg)"
         ],
-        "rule": "אין תנועה בגב; אם הגוף מסתובב, BELOW"
+        "rule": "אין תנועה בגב; אם הגוף מסתובב, BELOW",
+        "startingWeek": 10,
+        "unlocked": False
     },
     {
         "id": "dead-bug",
@@ -209,7 +219,9 @@ EXERCISES_CATALOG = [
         "structure": "circuit",
         "circuitId": "d1-core-circuit",
         "circuitOrder": 3,
-        "stages": ["Tuck Hold", "One-Leg Extended", "Hollow Hold"]
+        "stages": ["Tuck Hold", "One-Leg Extended", "Hollow Hold"],
+        "startingWeek": 5,
+        "unlocked": False
     },
 
     # Day 3 - Push, Shoulders, Rear Delts, Triceps
@@ -225,7 +237,9 @@ EXERCISES_CATALOG = [
         "compound": True,
         "sets": 2,
         "structure": "straight",
-        "stages": ["Pike Hold", "Feet-Elevated Pike Hold", "Pike Push-Up", "Elevated Pike Push-Up"]
+        "stages": ["Pike Hold", "Feet-Elevated Pike Hold", "Pike Push-Up", "Elevated Pike Push-Up"],
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "single-arm-floor-press",
@@ -451,7 +465,9 @@ EXERCISES_CATALOG = [
         "tempo": "2s descent",
         "compound": True,
         "sets": 3,
-        "structure": "straight"
+        "structure": "straight",
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "db-overhead-triceps-extension",
@@ -468,7 +484,9 @@ EXERCISES_CATALOG = [
         "tempo": "2s descent",
         "compound": False,
         "sets": 4,
-        "structure": "straight"
+        "structure": "straight",
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "diamond-push-up",
@@ -515,7 +533,9 @@ EXERCISES_CATALOG = [
         "sets": 2,
         "structure": "pair",
         "pairId": "d3-row-lateral",
-        "orderInPair": 2
+        "orderInPair": 2,
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "trx-ytw",
@@ -611,7 +631,9 @@ EXERCISES_CATALOG = [
         "structure": "pair",
         "pairId": "d5-pushup-curl",
         "orderInPair": 1,
-        "progressionLink": "push-up-progression"
+        "progressionLink": "push-up-progression",
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "single-arm-curl",
@@ -650,7 +672,9 @@ EXERCISES_CATALOG = [
         "structure": "straight",
         "microcycle": "biceps-microcycle",
         "activeWeeks": [1, 2, 3],
-        "lightWeekConfig": { "sets": 2, "progressionAllowed": False }
+        "lightWeekConfig": { "sets": 2, "progressionAllowed": False },
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "towel-hang",
@@ -665,7 +689,9 @@ EXERCISES_CATALOG = [
         "structure": "pair",
         "pairId": "d5-grip-lsit",
         "orderInPair": 1,
-        "stages": ["Dead Hang", "Towel Hang", "Towel Hang + vest 5kg"]
+        "stages": ["Dead Hang", "Towel Hang", "Towel Hang + vest 5kg"],
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "tuck-l-sit",
@@ -680,7 +706,9 @@ EXERCISES_CATALOG = [
         "structure": "pair",
         "pairId": "d5-grip-lsit",
         "orderInPair": 2,
-        "stages": ["Tuck L-Sit"]
+        "stages": ["Tuck L-Sit"],
+        "startingWeek": 5,
+        "unlocked": False
     },
     {
         "id": "one-leg-extended-l-sit",
@@ -729,11 +757,11 @@ EXERCISES_CATALOG = [
     { "id": "scapular-pull-up", "name": "Scapular Pull-up", "category": "Warmup", "type": "variation", "restSeconds": 30, "repWindow": "6" },
     { "id": "dead-hang", "name": "Dead Hang", "category": "Warmup", "type": "timebased", "restSeconds": 30, "repWindow": "15s" },
     { "id": "seated-band-row", "name": "Seated Band Row", "category": "Warmup", "type": "variation", "restSeconds": 30, "repWindow": "12" },
-    { "id": "brisk-walking", "name": "Brisk Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "30-45m" },
+    { "id": "brisk-walking", "name": "Brisk Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "30-45m", "startingWeek": 5, "unlocked": False },
     { "id": "relaxed-walking", "name": "Relaxed Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "25-30m" },
-    { "id": "vo2-max-norwegian-4x4", "name": "VO2 Max Norwegian 4x4", "category": "Cardio", "type": "interval", "restSeconds": 0, "repWindow": "16m" },
+    { "id": "vo2-max-norwegian-4x4", "name": "VO2 Max Norwegian 4x4", "category": "Cardio", "type": "interval", "restSeconds": 0, "repWindow": "16m", "startingWeek": 5, "unlocked": False },
     { "id": "micro-mobility-protocol", "name": "Micro Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "5m" },
-    { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "10m" },
+    { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "10m", "startingWeek": 5, "unlocked": False },
     {
         "id": "band-neck-flexion",
         "name": "Band Neck Flexion & Extension",
@@ -769,7 +797,9 @@ EXERCISES_CATALOG = [
             "miniSets": 3,
             "miniReps": 5,
             "stopRule": "two_consecutive_tempo_losses"
-        }
+        },
+        "startingWeek": 10,
+        "unlocked": False
     },
     {
         "id": "arm-block-triceps-ext",
@@ -789,7 +819,9 @@ EXERCISES_CATALOG = [
             "miniSets": 3,
             "miniReps": 5,
             "stopRule": "two_consecutive_tempo_losses"
-        }
+        },
+        "startingWeek": 10,
+        "unlocked": False
     },
     {
         "id": "arm-block-biceps-curl",
@@ -809,7 +841,9 @@ EXERCISES_CATALOG = [
             "miniSets": 3,
             "miniReps": 5,
             "stopRule": "two_consecutive_tempo_losses"
-        }
+        },
+        "startingWeek": 10,
+        "unlocked": False
     }
 ]
 
