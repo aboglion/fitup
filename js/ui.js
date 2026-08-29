@@ -273,7 +273,7 @@ const UI = (() => {
   ];
 
   const MICRO_MOBILITY_B_SUB_EXERCISES = [
-    { id: 'kneeling-hip-flexor', nameKey: 'micro_ex_kneeling_hip_flexor', targetKey: 'micro_target_30s_side', descKey: 'micro_desc_kneeling_hip_flexor', gif: 'Couch Stretch.gif', defaultTarget: '30s / side' },
+    { id: 'kneeling-hip-flexor', nameKey: 'micro_ex_kneeling_hip_flexor', targetKey: 'micro_target_30s_side', descKey: 'micro_desc_kneeling_hip_flexor', gif: 'Kneeling Hip Flexor Stretch.gif', defaultTarget: '30s / side' },
     { id: 'deep-squat-hold', nameKey: 'micro_ex_deep_squat_hold', targetKey: 'micro_target_30s', descKey: 'micro_desc_deep_squat_hold', gif: 'Deep Squat Hold.gif', defaultTarget: '30s' }
   ];
 
