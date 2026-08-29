@@ -251,6 +251,8 @@
         "L-SIT PROGRESSION.png",
         "L-SIT TUCK (BARS).png",
         "MICRO MOBILITY PROTOCOL.png",
+        "MICRO MOBILITY A.png",
+        "MICRO MOBILITY B.png",
         "ONE-ARM DB ROW.png",
         "ONE-LEG EXTENDED L-SIT.png",
         "PALLOF HOLD.png",
