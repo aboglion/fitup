@@ -22,9 +22,9 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
   - **🚀 ABOVE**: Exceeded target rep window at prescribed tempo.
   - **✅ IN_WINDOW**: Achieved target rep window at prescribed tempo.
   - **⚠️ BELOW / Mechanical Stop**: Failed to reach minimum window or suffered tempo loss (triggers automatic +30s adaptive rest extension).
-- **Softened Progression Policy**: Weight increases when all sets are `🚀 ABOVE`, OR under Softened criteria (current session reps $\ge \text{max}-1$ for all sets AND previous session reps reached maximum for all sets without mechanical stops).
+- **Softened Progression Policy**: Weight increases when all sets are `🚀 ABOVE`, OR under Softened criteria (current session reps $\ge \text{max}-1$ for all sets AND previous session reps reached maximum for all sets without mechanical stops). **Note: Softened progression is automatically disabled if there is a gap of more than 10 days since the previous session (Time Decay) to prevent injury from detraining.**
 - **Adaptive Intra-Workout Rest**: Rest timers adapt automatically (+30s extension following a BELOW / Mechanical Stop outcome) to guarantee full recovery before subsequent sets.
-- **Arm Block Protocol (Myo-Reps)**: Active from Week 10 onwards. Executed using objective Myo-Reps clusters (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped automatically by 2 consecutive tempo losses or joint pain.
+- **Arm Block Protocol (Myo-Reps)**: Active from Week 10 onwards. Executed using objective Myo-Reps clusters (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped automatically by 2 consecutive tempo losses or joint pain (reported via an interactive prompt when selecting `⚠️ BELOW`).
 - **Arm Block Exposure Limit**: Maximum 1 exposure per muscle area per week (Lateral Shoulder, Triceps, Biceps).
 - **Push-Up Bars**: All push-up variations must strictly use Push-Up Bars. Palms flat on the floor is strictly forbidden.
 - **TRX**: Strictly for Face Pulls, TRX Rows, and TRX Y-T-W. Fixed body angles assigned per phase.
@@ -113,7 +113,7 @@ Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase inclin
 
 Deload occurs automatically on **Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104**:
 - **Volume Ceiling**: Maximum 2 sets per strength exercise.
-- **Load Reduction**: Loads reduced by 2 kg (rounded to nearest legal increment [3..24] kg).
+- **Load Reduction**: Loads reduced by 2 kg (rounded to nearest legal increment [3..32] kg).
 - **Structure**: All pairs, circuits, and blocks dissolve into straight sets.
 - **Toggles**: Toggles remain active according to week parity.
 - **Arm Block**: Single activation set only, no mini-sets.

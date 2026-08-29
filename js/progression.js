@@ -60,6 +60,28 @@
       if (!previousSessionData || !previousSessionData.sets || previousSessionData.sets.length === 0) {
         return false;
       }
+
+      // Time Decay Check: If more than 10 days passed since previous session, disable softened progression
+      if (previousSessionData.lastUpdated) {
+        let prevDate;
+        if (previousSessionData.lastUpdated.includes('/')) {
+          // DD/MM/YYYY format
+          const [d, m, y] = previousSessionData.lastUpdated.split('/');
+          prevDate = new Date(`${y}-${m}-${d}`);
+        } else {
+          // ISO string
+          prevDate = new Date(previousSessionData.lastUpdated);
+        }
+        
+        if (!isNaN(prevDate.getTime())) {
+          const daysGap = (Date.now() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
+          if (daysGap > 10) {
+            console.log(`[ProgressionEngine] Softened progression canceled due to time decay (gap: ${Math.round(daysGap)} days)`);
+            return false;
+          }
+        }
+      }
+
       const prevSets = previousSessionData.sets;
       const prevAllMax = prevSets.every(s => (s.reps || 0) >= (exercise.windowMax || 12) && !s.mechanicalStop);
 
@@ -562,7 +584,11 @@
             }
           }
           if (sets.length > 0) {
-            return { dayIndex: i, sets };
+            return { 
+              dayIndex: i, 
+              sets, 
+              lastUpdated: tracking.lastUpdated || tracking.date 
+            };
           }
         }
       } catch (err) {

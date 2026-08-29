@@ -2143,7 +2143,7 @@ const TodayPage = (() => {
           `;
         }).join('');
 
-        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px; background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="event.stopPropagation(); TodayPage.openMicroMobilityModal(${idx});">⚡ ${I18n.t('micro_mobility_open_runner')}</button>`;
+        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px; white-space: nowrap; flex-shrink: 0; background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="event.stopPropagation(); TodayPage.openMicroMobilityModal(${idx});">${I18n.t('micro_mobility_open_runner_short')}</button>`;
 
         protocolBannerHTML = `
           <div class="micro-mobility-banner" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
@@ -2176,7 +2176,7 @@ const TodayPage = (() => {
                 ${isAllSubDone ? I18n.t('micro_mobility_unmark_all') : I18n.t('micro_mobility_mark_all')}
               </button>
               <button type="button" class="btn-primary" style="font-size: 12px; padding: 6px 14px; background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="event.stopPropagation(); TodayPage.openMicroMobilityModal(${idx});">
-                ⚡ ${I18n.t('micro_mobility_open_runner')}
+                ${I18n.t('micro_mobility_open_runner')}
               </button>
             </div>
           </div>
@@ -2755,10 +2755,35 @@ const TodayPage = (() => {
   async function selectSetOutcome(exIdx, setIdx, outcome, triggerEl = null) {
     if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
 
+    const day = allPlanDays[currentDayIndex];
+    const ex = day.exercises[exIdx];
+
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
 
     const exData = currentTracking.setData[exIdx];
+    
+    // JOINT PAIN REPORTING POPUP FOR ARM BLOCK
+    if (outcome === 'below') {
+      const lowerName = (ex.name || '').toLowerCase();
+      const isArmExercise = lowerName.includes('arm block') || lowerName.includes('curl') || lowerName.includes('triceps') || lowerName.includes('lateral raise');
+      
+      if (isArmExercise) {
+        // Halt and ask the user
+        const isPain = window.confirm(I18n.t('joint_pain_prompt'));
+        if (isPain) {
+          exData.jointPainReported = true;
+          // Also set globally for progression engine
+          currentTracking.elbowPain = true;
+          currentTracking.shoulderPain = true;
+          
+          if (window.UI && window.UI.toast) {
+            UI.toast(I18n.t('joint_pain_reported_toast'), 'warning');
+          }
+        }
+      }
+    }
+
     exData[`set_${setIdx}_result`] = outcome;
     exData[`set_${setIdx}_done`] = true;
 
@@ -2767,8 +2792,6 @@ const TodayPage = (() => {
       window.Effects3D.triggerSetEffect(triggerEl, outcome);
     }
 
-    const day = allPlanDays[currentDayIndex];
-    const ex = day.exercises[exIdx];
     const setsCount = UI.parseSetsCount(ex.sets);
     let allSetsDone = true;
     for (let s = 0; s < setsCount; s++) {

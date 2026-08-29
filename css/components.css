@@ -617,6 +617,28 @@ html.light-theme .exercise-hero-container::after {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .exercise-card-header {
+    padding: 10px 12px;
+    gap: 6px;
+  }
+
+  .exercise-card-actions {
+    gap: 4px;
+  }
+
+  .exercise-card-actions .btn-primary,
+  .exercise-card-actions .btn-secondary {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .exercise-check {

@@ -285,8 +285,12 @@ const UI = (() => {
   function getMicroMobilitySubExercises(dayIndexOrVariant) {
     if (typeof dayIndexOrVariant === 'string') {
       const v = dayIndexOrVariant.toUpperCase();
-      if (v === 'A') return MICRO_MOBILITY_A_SUB_EXERCISES;
-      if (v === 'B') return MICRO_MOBILITY_B_SUB_EXERCISES;
+      if (/\bA\b/.test(v) || v.includes(' A') || v.includes('A ') || v.includes('A(') || v.includes('פוקוס עליון') || v.includes('UPPER FOCUS')) {
+        return MICRO_MOBILITY_A_SUB_EXERCISES;
+      }
+      if (/\bB\b/.test(v) || v.includes(' B') || v.includes('B ') || v.includes('B(') || v.includes('פוקוס תחתון') || v.includes('LOWER FOCUS')) {
+        return MICRO_MOBILITY_B_SUB_EXERCISES;
+      }
     }
 
     let dayNum = 1;
@@ -295,6 +299,14 @@ const UI = (() => {
         dayNum = dayIndexOrVariant;
       } else {
         dayNum = ((dayIndexOrVariant % 7) + 7) % 7 + 1;
+      }
+    } else {
+      if (window.TodayPage && typeof window.TodayPage.getCurrentDayIndex === 'function') {
+        const idx = window.TodayPage.getCurrentDayIndex();
+        dayNum = ((idx % 7) + 7) % 7 + 1;
+      } else if (window.TodayPage && window.TodayPage.currentDayIndex !== undefined) {
+        const idx = window.TodayPage.currentDayIndex;
+        dayNum = ((idx % 7) + 7) % 7 + 1;
       }
     }
 
@@ -818,12 +830,14 @@ const UI = (() => {
           </button>
         </div>
       `;
-    } else if (lowerTitle.includes('micro mobility')) {
-      const subExercises = MICRO_MOBILITY_SUB_EXERCISES || [];
+    } else if (lowerTitle.includes('micro mobility') || lowerTitle.includes('מיקרו-מוביליות')) {
+      const subExercises = getMicroMobilitySubExercises(title);
+      const isVariantA = subExercises === MICRO_MOBILITY_A_SUB_EXERCISES;
+      const variantTitle = isVariantA ? I18n.t('micro_mobility_a_title') : I18n.t('micro_mobility_b_title');
       mediaHTML = `
         <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
           <div style="font-weight: 800; font-size: 14px; color: #60a5fa; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-            <span>⚡ ${I18n.t('micro_mobility_title')} (${subExercises.length} ${I18n.t('unit_exercises', 'תרגילים')})</span>
+            <span>⚡ ${variantTitle} (${subExercises.length} ${I18n.t('unit_exercises', 'תרגילים')})</span>
             <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">${I18n.t('fast_protocol_badge', 'פרוטוקול מהיר')}</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
@@ -833,7 +847,7 @@ const UI = (() => {
               const subGifUrl = getGifUrl(sub.gif);
               return `
                 <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
-                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}', 'Micro Mobility Protocol')"
+                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}', '${variantTitle.replace(/'/g, "\\'")}')"
                      onmouseover="this.style.borderColor='rgba(96, 165, 250, 0.6)'"
                      onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.12)'">
                   <div style="width: 100%; height: 95px; border-radius: 8px; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center; position: relative;">
@@ -847,7 +861,7 @@ const UI = (() => {
             }).join('')}
           </div>
           <button type="button" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: 800; background: linear-gradient(135deg, #3b82f6, #1d4ed8); margin-top: 4px;" onclick="UI.hideModal(); if (window.TodayPage && TodayPage.openMicroMobilityModal) TodayPage.openMicroMobilityModal(0);">
-            ⚡ ${I18n.t('micro_mobility_open_runner')}
+            ${I18n.t('micro_mobility_open_runner')}
           </button>
         </div>
       `;
