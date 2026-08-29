@@ -572,7 +572,7 @@ const App = (() => {
       return; // Snoozed
     }
 
-    // Best frequency for a 52-week plan is 1 month (28 days / 4 weeks)
+    // Best frequency for an 80-week plan is 1 month (28 days / 4 weeks)
     // It perfectly aligns with a typical mesocycle.
     const REMINDER_DAYS = 28;
 

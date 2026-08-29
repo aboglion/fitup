@@ -973,7 +973,7 @@ const StatsPage = (() => {
 
           <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">
             <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;">🛡️ Arm Block Exposure Guard</div>
-            <div style="font-size: 13px; font-weight: 800; color: #10b981; margin-top: 2px;">Max 2/wk per area (Active)</div>
+            <div style="font-size: 13px; font-weight: 800; color: #10b981; margin-top: 2px;">Max 1/wk per area (Active)</div>
           </div>
 
           <div style="background: rgba(0, 0, 0, 0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px;">

@@ -14,21 +14,38 @@ const WorkoutSummary = (() => {
     let totalVolumeKg = 0;
     let totalSetsCount = 0;
 
-    if (!dayData || !dayData.exercises) {
-      return { totalCompletedExercises: 0, totalVolumeKg: 0, totalSetsCount: 0 };
+    if (!dayData || !dayData.exercises || !trackingData) {
+      return { totalCompletedExercises: 0, totalExercises: 0, totalVolumeKg: 0, totalSetsCount: 0 };
     }
 
     const setData = trackingData.setData || {};
 
     dayData.exercises.forEach((ex, exIndex) => {
-      const isCompleted = trackingData.exerciseStatus && trackingData.exerciseStatus[`ex_${exIndex}`];
+      const isCompleted = (trackingData.exerciseStatus && trackingData.exerciseStatus[exIndex]) ||
+                          (trackingData.exerciseStatus && trackingData.exerciseStatus[`ex_${exIndex}`]);
       if (isCompleted) totalCompletedExercises++;
 
-      const setNum = ex.sets || 3;
+      const setNum = typeof ex.sets === 'number' ? ex.sets : (parseInt(ex.sets, 10) || 3);
       for (let s = 0; s < setNum; s++) {
-        const weight = parseFloat(setData[`ex_${exIndex}_set_${s}_weight`]) || 0;
-        const reps = parseInt(setData[`ex_${exIndex}_set_${s}_reps`], 10) || 0;
-        if (reps > 0) {
+        let weight = 0;
+        let reps = 0;
+        let setDone = false;
+
+        // Format A: Nested Object setData[exIndex] = { set_0_done: true, set_0_reps: 10, set_0_weight: 12 }
+        if (setData[exIndex]) {
+          setDone = setData[exIndex][`set_${s}_done`] || setData[exIndex][`set_${s}_result`];
+          reps = parseInt(setData[exIndex][`set_${s}_reps`], 10) || 0;
+          weight = parseFloat(setData[exIndex][`set_${s}_weight`]) || 0;
+        }
+
+        // Format B: Flat keys setData[`ex_${exIndex}_set_${s}_...`]
+        if (!setDone && !reps) {
+          setDone = setData[`ex_${exIndex}_set_${s}_done`] || setData[`ex_${exIndex}_set_${s}_result`];
+          reps = parseInt(setData[`ex_${exIndex}_set_${s}_reps`], 10) || 0;
+          weight = parseFloat(setData[`ex_${exIndex}_set_${s}_weight`]) || 0;
+        }
+
+        if (reps > 0 || setDone) {
           totalSetsCount++;
           totalVolumeKg += (weight * reps);
         }
