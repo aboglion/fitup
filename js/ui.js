@@ -619,11 +619,7 @@ const UI = (() => {
       }
       let dayNum = 1;
       if (typeof currentDayIndex === 'number') {
-        if (currentDayIndex >= 1 && currentDayIndex <= 7) {
-          dayNum = currentDayIndex;
-        } else {
-          dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
-        }
+        dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
       }
       const isVariantA = (dayNum === 3 || dayNum === 5);
       return encodeMediaPath(isVariantA ? 'images/exercises/MICRO MOBILITY A.png' : 'images/exercises/MICRO MOBILITY B.png');

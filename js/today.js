@@ -2192,7 +2192,7 @@ const TodayPage = (() => {
             <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-weight: 800; font-family: 'Inter', sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid rgba(255,255,255,0.1);">
               #${idx + 1}
             </div>
-            <img src="${UI.getImageUrl(activeName, day.dayIndex)}" 
+            <img src="${UI.getImageUrl(activeName, currentDayIndex)}" 
                  class="exercise-hero-image skeleton-img"
                  data-fallback-exname="${ex.name.replace(/"/g, '&quot;')}"
                  loading="eager" decoding="async"
