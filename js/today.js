@@ -3829,7 +3829,7 @@ const TodayPage = (() => {
           <button type="button" class="btn-primary" 
                   style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; background: ${isSubChecked ? 'linear-gradient(135deg, #16a34a, #22c55e)' : 'linear-gradient(135deg, #2563eb, #3b82f6)'}; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" 
                   onclick="TodayPage.completeSubStepAndNext(${exIdx}, '${sub.id}')">
-            ${isSubChecked ? '✓ הושלם (לחץ לביטול / מעבר להבא)' : '✓ סמן תרגיל זה כהושלם ועבור להבא'}
+            ${isSubChecked ? I18n.t('mobility_completed_toggle') : I18n.t('mobility_mark_completed')}
           </button>
 
           <div style="display: flex; justify-content: space-between; gap: 10px;">
@@ -3837,13 +3837,13 @@ const TodayPage = (() => {
                     style="flex: 1; padding: 10px; font-size: 13px;" 
                     ${currentMobilityModalIndex === 0 ? 'disabled style="opacity: 0.4; pointer-events: none;"' : ''}
                     onclick="TodayPage.navDeepMobilityModal(${exIdx}, ${currentMobilityModalIndex - 1})">
-              ◀ תרגיל קודם
+              ${I18n.t('mobility_prev_exercise')}
             </button>
             <button type="button" class="btn-secondary" 
                     style="flex: 1; padding: 10px; font-size: 13px;" 
                     ${currentMobilityModalIndex === subExercises.length - 1 ? 'disabled style="opacity: 0.4; pointer-events: none;"' : ''}
                     onclick="TodayPage.navDeepMobilityModal(${exIdx}, ${currentMobilityModalIndex + 1})">
-              תרגיל הבא ▶
+              ${I18n.t('mobility_next_exercise')}
             </button>
           </div>
         </div>
@@ -4007,7 +4007,7 @@ const TodayPage = (() => {
           <button type="button" class="btn-primary" 
                   style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; background: ${isSubChecked ? 'linear-gradient(135deg, #16a34a, #22c55e)' : 'linear-gradient(135deg, #2563eb, #3b82f6)'}; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" 
                   onclick="TodayPage.completeMicroSubStepAndNext(${exIdx}, '${sub.id}')">
-            ${isSubChecked ? '✓ הושלם (לחץ לביטול / מעבר להבא)' : '✓ סמן תרגיל זה כהושלם ועבור להבא'}
+            ${isSubChecked ? I18n.t('mobility_completed_toggle') : I18n.t('mobility_mark_completed')}
           </button>
 
           <div style="display: flex; justify-content: space-between; gap: 10px;">
@@ -4015,13 +4015,13 @@ const TodayPage = (() => {
                     style="flex: 1; padding: 10px; font-size: 13px;" 
                     ${currentMicroMobilityModalIndex === 0 ? 'disabled style="opacity: 0.4; pointer-events: none;"' : ''}
                     onclick="TodayPage.navMicroMobilityModal(${exIdx}, ${currentMicroMobilityModalIndex - 1})">
-              ◀ תרגיל קודם
+              ${I18n.t('mobility_prev_exercise')}
             </button>
             <button type="button" class="btn-secondary" 
                     style="flex: 1; padding: 10px; font-size: 13px;" 
                     ${currentMicroMobilityModalIndex === subExercises.length - 1 ? 'disabled style="opacity: 0.4; pointer-events: none;"' : ''}
                     onclick="TodayPage.navMicroMobilityModal(${exIdx}, ${currentMicroMobilityModalIndex + 1})">
-              תרגיל הבא ▶
+              ${I18n.t('mobility_next_exercise')}
             </button>
           </div>
         </div>

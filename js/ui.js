@@ -790,8 +790,8 @@ const UI = (() => {
       mediaHTML = `
         <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
           <div style="font-weight: 800; font-size: 14px; color: #34d399; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-            <span>🧘 ${I18n.t('deep_mobility_title')} (${subExercises.length} תרגילים)</span>
-            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">פרוטוקול מלא</span>
+            <span>🧘 ${I18n.t('deep_mobility_title')} (${subExercises.length} ${I18n.t('unit_exercises', 'תרגילים')})</span>
+            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">${I18n.t('full_protocol_badge', 'פרוטוקול מלא')}</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
             ${subExercises.map((sub, idx) => {
@@ -814,7 +814,7 @@ const UI = (() => {
             }).join('')}
           </div>
           <button type="button" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); margin-top: 4px;" onclick="UI.hideModal(); if (window.TodayPage && TodayPage.openDeepMobilityModal) TodayPage.openDeepMobilityModal(0);">
-            🧘 הפעל מדריך מוביליות אינטראקטיבי
+            ${I18n.t('deep_mobility_open_runner', '🧘 הפעל מדריך מוביליות אינטראקטיבי')}
           </button>
         </div>
       `;
@@ -823,8 +823,8 @@ const UI = (() => {
       mediaHTML = `
         <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
           <div style="font-weight: 800; font-size: 14px; color: #60a5fa; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-            <span>⚡ ${I18n.t('micro_mobility_title')} (${subExercises.length} תרגילים)</span>
-            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">פרוטוקול מהיר</span>
+            <span>⚡ ${I18n.t('micro_mobility_title')} (${subExercises.length} ${I18n.t('unit_exercises', 'תרגילים')})</span>
+            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">${I18n.t('fast_protocol_badge', 'פרוטוקול מהיר')}</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
             ${subExercises.map((sub, idx) => {
@@ -847,7 +847,7 @@ const UI = (() => {
             }).join('')}
           </div>
           <button type="button" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: 800; background: linear-gradient(135deg, #3b82f6, #1d4ed8); margin-top: 4px;" onclick="UI.hideModal(); if (window.TodayPage && TodayPage.openMicroMobilityModal) TodayPage.openMicroMobilityModal(0);">
-            ⚡ הפעל מדריך מיקרו-מוביליות אינטראקטיבי
+            ⚡ ${I18n.t('micro_mobility_open_runner')}
           </button>
         </div>
       `;
