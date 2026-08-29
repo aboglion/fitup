@@ -1215,6 +1215,49 @@ const ExercisesPage = (() => {
           </div>
         </div>
       `;
+    } else if (ex.name.toLowerCase().includes('micro mobility')) {
+      const subA = UI.MICRO_MOBILITY_A_SUB_EXERCISES || [];
+      const subB = UI.MICRO_MOBILITY_B_SUB_EXERCISES || [];
+      
+      const renderGroupHTML = (title, desc, exercises, badge) => `
+        <div style="background: rgba(59, 130, 246, 0.08); border-radius: 12px; padding: 14px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 10px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <span style="color: #60a5fa; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+              <span>⚡</span> <span>${title}</span>
+            </span>
+            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 2px 8px; border-radius: 6px; font-weight: 700;">${badge}</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 10px 0;">${desc}</p>
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            ${exercises.map((sub, idx) => {
+              const subTitle = I18n.t(sub.nameKey);
+              const subTarget = I18n.t(sub.targetKey);
+              const subDesc = I18n.t(sub.descKey);
+              const gifUrl = UI.getGifUrl(sub.gif);
+              return `
+                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; cursor: pointer;"
+                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${gifUrl}', '${title.replace(/'/g, "\\\'")}')">
+                  <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 8px; overflow: hidden; background: #ffffff; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;">
+                    <img src="${gifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
+                  </div>
+                  <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                      <span style="font-weight: 800; font-size: 13px; color: var(--text-primary);">${idx + 1}. ${subTitle}</span>
+                      <span style="font-size: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 6px; border-radius: 4px; font-weight: 700; flex-shrink: 0;">🎯 ${subTarget}</span>
+                    </div>
+                    <span style="font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.3;">${subDesc}</span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+
+      subExercisesHtml = `
+        ${renderGroupHTML(I18n.t('micro_mobility_a_title'), I18n.t('micro_mobility_a_banner_desc'), subA, 'ימים 1, 3, 5')}
+        ${renderGroupHTML(I18n.t('micro_mobility_b_title'), I18n.t('micro_mobility_b_banner_desc'), subB, 'ימים 2, 4')}
+      `;
     }
 
     let progressionHubHtml = '';

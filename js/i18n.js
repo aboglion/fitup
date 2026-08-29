@@ -955,6 +955,31 @@ const I18n = (() => {
       sub_target_prone_ytw: "8 per shape",
       sub_desc_prone_ytw: "Mid/lower trap, rear delt & scapular stability raises",
 
+      micro_mobility_title: "Micro Mobility Protocol",
+      micro_mobility_a_title: "Micro Mobility A (Upper Focus)",
+      micro_mobility_b_title: "Micro Mobility B (Lower Focus)",
+      micro_mobility_banner_desc: "Quick cool-down & recovery protocol after strength training",
+      micro_mobility_a_banner_desc: "Targeted 90-second cool-down for chest, shoulders & thoracic spine (Days 1, 3, 5)",
+      micro_mobility_b_banner_desc: "Targeted 90-second cool-down for hip flexors, hips & ankles (Days 2, 4)",
+      micro_mobility_open_runner: "⚡ Open Interactive Micro Mobility Guide",
+      micro_mobility_mark_all: "Check All 4 Steps as Completed",
+      micro_mobility_unmark_all: "Reset All Steps",
+
+      micro_target_30s: "30s",
+      micro_target_30s_side: "30s per side",
+
+      micro_ex_kneeling_hip_flexor: "Kneeling Hip Flexor Stretch",
+      micro_desc_kneeling_hip_flexor: "Decompress hips & stretch quad flexors in kneeling position",
+
+      micro_ex_deep_squat_hold: "Deep Squat Hold",
+      micro_desc_deep_squat_hold: "Open ankles, pelvic floor & hips in deep squat position",
+
+      micro_ex_doorway_chest_stretch: "Doorway Chest Stretch",
+      micro_desc_doorway_chest_stretch: "Open chest, anterior shoulders & posture correction against wall/doorframe",
+
+      micro_ex_worlds_greatest_stretch: "World's Greatest Stretch",
+      micro_desc_worlds_greatest_stretch: "Full body rotational lunge stretch for thoracic, hip & hamstring mobility",
+
       // Gemini service
       gemini_key_not_set: "Gemini API key is not configured. Please set a key in nutrition settings.",
       gemini_no_response: "Gemini did not return a response. Try taking a clearer photo.",
@@ -1844,6 +1869,31 @@ const I18n = (() => {
       sub_ex_prone_ytw: "Prone Y-T-W (הרמות Y-T-W בשכיבה)",
       sub_target_prone_ytw: "8 חזרות לכל אות",
       sub_desc_prone_ytw: "חיזוק וייצוב מעוינים, כתף אחורית ומייצבי שכמה בשכיבה על הבטן",
+
+      micro_mobility_title: "פרוטוקול מיקרו-מוביליות (Micro Mobility)",
+      micro_mobility_a_title: "מיקרו-מוביליות A (פוקוס עליון)",
+      micro_mobility_b_title: "מיקרו-מוביליות B (פוקוס תחתון)",
+      micro_mobility_banner_desc: "פרוטוקול שחרור מהיר בסיום אימון כוח להרפיית שרירים ודה-קומפרסיה",
+      micro_mobility_a_banner_desc: "שחרור ממוקד (90 שניות) לחזה, כתפיים ועמוד שדרה חזי בסיום אימון עליון (ימים 1, 3, 5)",
+      micro_mobility_b_banner_desc: "שחרור ממוקד (90 שניות) לכופפי ירך, אגן וקרסוליים בסיום אימון תחתון (ימים 2, 4)",
+      micro_mobility_open_runner: "⚡ פתח מדריך מיקרו-מוביליות אינטראקטיבי",
+      micro_mobility_mark_all: "סמן את כל 4 התרגילים כהושלמו",
+      micro_mobility_unmark_all: "איפוס סימון תרגילים",
+
+      micro_target_30s: "30 שניות",
+      micro_target_30s_side: "30 שניות לכל צד",
+
+      micro_ex_kneeling_hip_flexor: "Kneeling Hip Flexor Stretch (מתיחת כופפי ירך בכריעה)",
+      micro_desc_kneeling_hip_flexor: "שחרור כופפי הירך והארבע-ראשי בכריעה יציבה",
+
+      micro_ex_deep_squat_hold: "Deep Squat Hold (שהייה בסקואט עמוק)",
+      micro_desc_deep_squat_hold: "פתיחת קרסוליים, אגן וירכיים בשהייה פסיבית בסקואט עמוק",
+
+      micro_ex_doorway_chest_stretch: "Doorway Chest Stretch (מתיחת חזה במשקוף/קיר)",
+      micro_desc_doorway_chest_stretch: "פתיחת בית החזה, הכתפיים והזרועות כנגד משקוף או קיר",
+
+      micro_ex_worlds_greatest_stretch: "World's Greatest Stretch (מתיחת ה-World's Greatest)",
+      micro_desc_worlds_greatest_stretch: "מתיחה משולבת של לאנג', פיתול גב עליון, ירך והאמסטרינג",
       vo2_voice_warmup: "מתחילים 10 דקות חימום הליכה",
       vo2_voice_work: "אינטרוול {n} מאמץ! העלה מהירות ל-6.5 קילומטר בשעה ושיפוע ל-{incline}",
       vo2_voice_rest: "הליכת התאוששות! 3 דקות הליכה קלה ב-4.5 קילומטר בשעה",
@@ -2072,6 +2122,31 @@ const I18n = (() => {
       sub_ex_prone_ytw: "Prone Y-T-W (رفع Y-T-W على البطن)",
       sub_target_prone_ytw: "8 تكرارات لكل حرف",
       sub_desc_prone_ytw: "تقوية وثبات الكتف الخلفي وأعلى الظهر",
+
+      micro_mobility_title: "بروتوكول المرونة المصغرة (Micro Mobility)",
+      micro_mobility_a_title: "المرونة المصغرة أ (التركيز العلوي)",
+      micro_mobility_b_title: "المرونة المصغرة ب (التركيز السفلي)",
+      micro_mobility_banner_desc: "بروتوكول تهدئة سريع بعد تمارين القوة لفك التشنجات والاسترخاء",
+      micro_mobility_a_banner_desc: "تهدئة مستهدفة (90 ثانية) للصدر والكتفين والظهر العلوي (الأيام 1، 3، 5)",
+      micro_mobility_b_banner_desc: "تهدئة مستهدفة (90 ثانية) لعضلات الورك والقرفصاء (الأيام 2، 4)",
+      micro_mobility_open_runner: "⚡ فتح دليل المرونة المصغرة التفاعلي",
+      micro_mobility_mark_all: "تحديد جميع التمارين الـ 4 كمكتملة",
+      micro_mobility_unmark_all: "إعادة ضبط التحديد",
+
+      micro_target_30s: "30 ثانية",
+      micro_target_30s_side: "30 ثانية لكل جانب",
+
+      micro_ex_kneeling_hip_flexor: "Kneeling Hip Flexor Stretch (إطالة الورك جثواً)",
+      micro_desc_kneeling_hip_flexor: "إطالة عضلات الورك والفخذ في وضع الجثو",
+
+      micro_ex_deep_squat_hold: "Deep Squat Hold (الثبات في القرفصاء العميقة)",
+      micro_desc_deep_squat_hold: "فتح الكاحلين والحوض والورك في القرفصاء",
+
+      micro_ex_doorway_chest_stretch: "Doorway Chest Stretch (إطالة الصدر على الباب)",
+      micro_desc_doorway_chest_stretch: "فتح الصدر والكتفين والأذرع أمام الإطار",
+
+      micro_ex_worlds_greatest_stretch: "World's Greatest Stretch (إطالة العظماء)",
+      micro_desc_worlds_greatest_stretch: "إطالة شاملة للظهر والورك والأفخاذ والدوران",
       vo2_voice_cooldown: "عمل ممتاز! 5 دقائق مشي تهدئة لخفض نبض القلب",
       vo2_voice_complete: "تم إكمال بروتوكول 4×4 النرويجي بنجاح! عمل ممتاز!",
       gemini_key_not_set: "لم يتم ضبط مفتاح Gemini API",

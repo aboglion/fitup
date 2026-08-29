@@ -2093,6 +2093,94 @@ const TodayPage = (() => {
             </div>
           </div>
         `;
+      } else if (lowerExName.includes('micro mobility')) {
+        const subSteps = (currentTracking && currentTracking.microMobilitySteps) || {};
+        const dayNumber = (currentDayIndex % 5) + 1;
+        const variant = (dayNumber === 1 || dayNumber === 3 || dayNumber === 5) ? 'A' : 'B';
+        const subExercises = UI.getMicroMobilitySubExercises(dayNumber);
+        const bannerTitle = variant === 'A' ? I18n.t('micro_mobility_a_title') : I18n.t('micro_mobility_b_title');
+        const bannerDesc = variant === 'A' ? I18n.t('micro_mobility_a_banner_desc') : I18n.t('micro_mobility_b_banner_desc');
+
+        let doneCount = 0;
+        subExercises.forEach(sub => {
+          if (subSteps[sub.id]) doneCount++;
+        });
+        const isAllSubDone = subExercises.length > 0 && doneCount === subExercises.length;
+        const subPct = subExercises.length > 0 ? Math.round((doneCount / subExercises.length) * 100) : 0;
+
+        const subItemsHTML = subExercises.map(sub => {
+          const isSubChecked = !!subSteps[sub.id];
+          const subTitle = I18n.t(sub.nameKey);
+          const subTarget = I18n.t(sub.targetKey);
+          const subDesc = I18n.t(sub.descKey);
+          const subGifUrl = UI.getGifUrl(sub.gif);
+
+          return `
+            <div class="mobility-sub-item ${isSubChecked ? 'checked' : ''}" 
+                 style="background: ${isSubChecked ? 'rgba(59, 130, 246, 0.12)' : 'rgba(0, 0, 0, 0.22)'}; border: 1px solid ${isSubChecked ? 'rgba(59, 130, 246, 0.4)' : 'var(--border-light, rgba(255, 255, 255, 0.1))'}; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: all 0.2s ease;">
+              <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+                <div style="width: 48px; height: 48px; min-width: 48px; border-radius: 8px; overflow: hidden; background: #ffffff; border: 1px solid rgba(255,255,255,0.25); cursor: pointer; flex-shrink: 0; position: relative;"
+                     onclick="event.stopPropagation(); UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}', '${bannerTitle.replace(/'/g, "\\'")}');"
+                     title="${I18n.t('view_gif_title')}">
+                  <img src="${subGifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
+                  <span style="position: absolute; bottom: 2px; right: 2px; font-size: 8px; background: rgba(0,0,0,0.7); color: #fff; padding: 1px 4px; border-radius: 3px; font-weight: 700;">▶</span>
+                </div>
+                <div style="display: flex; flex-direction: column; min-width: 0;">
+                  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span style="font-weight: 700; font-size: 13px; color: ${isSubChecked ? '#60a5fa' : 'var(--text-primary)'}; ${isSubChecked ? 'text-decoration: line-through;' : ''}">${subTitle}</span>
+                    <span style="font-size: 11px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 6px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
+                  </div>
+                  <span style="font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${subDesc}</span>
+                </div>
+              </div>
+              <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; margin: 0; flex-shrink: 0;" onclick="event.stopPropagation();">
+                <input type="checkbox" 
+                       ${isSubChecked ? 'checked' : ''} 
+                       style="width: 22px; height: 22px; accent-color: #3b82f6; cursor: pointer;"
+                       onchange="TodayPage.toggleMicroMobilitySubStep('${sub.id}', ${idx})">
+              </label>
+            </div>
+          `;
+        }).join('');
+
+        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px; background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="event.stopPropagation(); TodayPage.openMicroMobilityModal(${idx});">⚡ ${I18n.t('micro_mobility_open_runner')}</button>`;
+
+        protocolBannerHTML = `
+          <div class="micro-mobility-banner" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+              <div>
+                <div style="font-weight: 800; color: #60a5fa; font-size: 15px; display: flex; align-items: center; gap: 6px;">
+                  <span>⚡</span> <span>${bannerTitle}</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+                  ${bannerDesc}
+                </div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 12px; font-weight: 800; background: ${isAllSubDone ? 'rgba(59, 130, 246, 0.25)' : 'rgba(59, 130, 246, 0.15)'}; border: 1px solid ${isAllSubDone ? 'rgba(59, 130, 246, 0.5)' : 'rgba(59, 130, 246, 0.3)'}; color: #93c5fd; padding: 4px 10px; border-radius: 20px;">
+                  ${doneCount}/${subExercises.length} ${I18n.t('deep_mobility_progress', 'הושלמו')}
+                </span>
+              </div>
+            </div>
+
+            <div style="width: 100%; height: 6px; background: rgba(0, 0, 0, 0.3); border-radius: 3px; overflow: hidden; margin-bottom: 12px;">
+              <div style="height: 100%; width: ${subPct}%; background: linear-gradient(90deg, #3b82f6, #60a5fa); transition: width 0.3s ease;"></div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+              ${subItemsHTML}
+            </div>
+
+            <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.12);">
+              <button type="button" class="btn-secondary" style="font-size: 11px; padding: 5px 12px;" onclick="event.stopPropagation(); TodayPage.toggleAllMicroMobilitySteps(${idx});">
+                ${isAllSubDone ? I18n.t('micro_mobility_unmark_all') : I18n.t('micro_mobility_mark_all')}
+              </button>
+              <button type="button" class="btn-primary" style="font-size: 12px; padding: 6px 14px; background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="event.stopPropagation(); TodayPage.openMicroMobilityModal(${idx});">
+                ⚡ ${I18n.t('micro_mobility_open_runner')}
+              </button>
+            </div>
+          </div>
+        `;
       }
 
       return `
@@ -3781,6 +3869,185 @@ const TodayPage = (() => {
     }
   }
 
+  /**
+   * Toggle individual sub-step for Micro Mobility Protocol
+   */
+  async function toggleMicroMobilitySubStep(subId, exIdx) {
+    if (!checkIsTodayOrWarn()) return;
+    if (!currentTracking) currentTracking = {};
+    if (!currentTracking.microMobilitySteps) currentTracking.microMobilitySteps = {};
+
+    currentTracking.microMobilitySteps[subId] = !currentTracking.microMobilitySteps[subId];
+
+    const dayNumber = (currentDayIndex % 5) + 1;
+    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNumber) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+    let doneCount = 0;
+    subExercises.forEach(sub => {
+      if (currentTracking.microMobilitySteps[sub.id]) doneCount++;
+    });
+
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    if (doneCount === subExercises.length) {
+      currentTracking.exerciseStatus[exIdx] = true;
+    } else {
+      currentTracking.exerciseStatus[exIdx] = false;
+    }
+
+    await autoSave();
+    render();
+  }
+
+  /**
+   * Toggle all sub-steps for Micro Mobility Protocol
+   */
+  async function toggleAllMicroMobilitySteps(exIdx) {
+    if (!checkIsTodayOrWarn()) return;
+    if (!currentTracking) currentTracking = {};
+    if (!currentTracking.microMobilitySteps) currentTracking.microMobilitySteps = {};
+
+    const dayNumber = (currentDayIndex % 5) + 1;
+    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNumber) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+    let doneCount = 0;
+    subExercises.forEach(sub => {
+      if (currentTracking.microMobilitySteps[sub.id]) doneCount++;
+    });
+
+    const shouldMarkAll = doneCount < subExercises.length;
+    subExercises.forEach(sub => {
+      currentTracking.microMobilitySteps[sub.id] = shouldMarkAll;
+    });
+
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    currentTracking.exerciseStatus[exIdx] = shouldMarkAll;
+
+    await autoSave();
+    render();
+  }
+
+  /**
+   * Micro Mobility Modal Runner active step index
+   */
+  let currentMicroMobilityModalIndex = 0;
+
+  /**
+   * Open Interactive Micro Mobility Modal Runner
+   */
+  function openMicroMobilityModal(exIdx, initialSubIdx = 0) {
+    currentMicroMobilityModalIndex = initialSubIdx;
+    renderMicroMobilityModalView(exIdx);
+  }
+
+  function renderMicroMobilityModalView(exIdx) {
+    const dayNumber = (currentDayIndex % 5) + 1;
+    const variant = (dayNumber === 1 || dayNumber === 3 || dayNumber === 5) ? 'A' : 'B';
+    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNumber) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+    if (subExercises.length === 0) return;
+    if (currentMicroMobilityModalIndex < 0) currentMicroMobilityModalIndex = 0;
+    if (currentMicroMobilityModalIndex >= subExercises.length) currentMicroMobilityModalIndex = subExercises.length - 1;
+
+    const sub = subExercises[currentMicroMobilityModalIndex];
+    const subSteps = (currentTracking && currentTracking.microMobilitySteps) || {};
+    const isSubChecked = !!subSteps[sub.id];
+
+    const title = variant === 'A' ? I18n.t('micro_mobility_a_title') : I18n.t('micro_mobility_b_title');
+    const subTitle = I18n.t(sub.nameKey);
+    const subTarget = I18n.t(sub.targetKey);
+    const subDesc = I18n.t(sub.descKey);
+    const gifUrl = UI.getGifUrl(sub.gif);
+
+    const dotsHTML = subExercises.map((s, i) => {
+      const isDone = !!subSteps[s.id];
+      const isActive = i === currentMicroMobilityModalIndex;
+      let bg = 'rgba(255,255,255,0.2)';
+      if (isActive) bg = '#3b82f6';
+      else if (isDone) bg = '#22c55e';
+
+      return `
+        <button type="button" 
+                onclick="TodayPage.navMicroMobilityModal(${exIdx}, ${i})" 
+                style="width: ${isActive ? '24px' : '10px'}; height: 10px; border-radius: 5px; background: ${bg}; border: none; cursor: pointer; transition: all 0.2s ease; padding: 0;" 
+                title="Step ${i + 1}: ${I18n.t(s.nameKey)}"></button>
+      `;
+    }).join('');
+
+    const modalTitleHTML = `
+      <div style="display: flex; flex-direction: column; gap: 4px; width: 100%;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+          <span style="font-size: 15px; font-weight: 800; color: #60a5fa; display: flex; align-items: center; gap: 6px;">
+            <span>⚡</span> <span>${title}</span>
+          </span>
+          <span style="font-size: 12px; font-weight: 700; background: rgba(59,130,246,0.15); color: #93c5fd; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">
+            ${currentMicroMobilityModalIndex + 1} / ${subExercises.length}
+          </span>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center; justify-content: center; margin-top: 4px;">
+          ${dotsHTML}
+        </div>
+      </div>
+    `;
+
+    const bodyHTML = `
+      <div style="display: flex; flex-direction: column; gap: 14px; width: 100%;">
+        <div style="background: var(--bg-card, rgba(0,0,0,0.3)); border: 1px solid var(--border-color, rgba(255,255,255,0.1)); border-radius: 14px; overflow: hidden; padding: 12px; text-align: center;">
+          <div style="font-size: 18px; font-weight: 900; color: var(--text-primary); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+            <span>${subTitle}</span>
+            <span style="font-size: 12px; font-weight: 700; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 2px 8px; border-radius: 6px;">🎯 ${subTarget}</span>
+          </div>
+          <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 10px 0; line-height: 1.4;">${subDesc}</p>
+          <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 220px; background: #ffffff; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);">
+            <img src="${gifUrl}" 
+                 style="width: 100%; max-height: 48vh; object-fit: contain; border-radius: 8px; mix-blend-mode: multiply;" 
+                 alt="${subTitle} GIF"
+                 onload="UI.handleImageLoaded(this)"
+                 onerror="UI.handleImageFallback(this, 'gif')">
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button type="button" class="btn-primary" 
+                  style="width: 100%; padding: 12px; font-size: 14px; font-weight: 800; background: ${isSubChecked ? 'linear-gradient(135deg, #16a34a, #22c55e)' : 'linear-gradient(135deg, #2563eb, #3b82f6)'}; box-shadow: 0 4px 12px rgba(0,0,0,0.2);" 
+                  onclick="TodayPage.completeMicroSubStepAndNext(${exIdx}, '${sub.id}')">
+            ${isSubChecked ? '✓ הושלם (לחץ לביטול / מעבר להבא)' : '✓ סמן תרגיל זה כהושלם ועבור להבא'}
+          </button>
+
+          <div style="display: flex; justify-content: space-between; gap: 10px;">
+            <button type="button" class="btn-secondary" 
+                    style="flex: 1; padding: 10px; font-size: 13px;" 
+                    ${currentMicroMobilityModalIndex === 0 ? 'disabled style="opacity: 0.4; pointer-events: none;"' : ''}
+                    onclick="TodayPage.navMicroMobilityModal(${exIdx}, ${currentMicroMobilityModalIndex - 1})">
+              ◀ תרגיל קודם
+            </button>
+            <button type="button" class="btn-secondary" 
+                    style="flex: 1; padding: 10px; font-size: 13px;" 
+                    ${currentMicroMobilityModalIndex === subExercises.length - 1 ? 'disabled style="opacity: 0.4; pointer-events: none;"' : ''}
+                    onclick="TodayPage.navMicroMobilityModal(${exIdx}, ${currentMicroMobilityModalIndex + 1})">
+              תרגיל הבא ▶
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    UI.showModal(modalTitleHTML, bodyHTML);
+  }
+
+  function navMicroMobilityModal(exIdx, newSubIdx) {
+    currentMicroMobilityModalIndex = newSubIdx;
+    renderMicroMobilityModalView(exIdx);
+  }
+
+  async function completeMicroSubStepAndNext(exIdx, subId) {
+    await toggleMicroMobilitySubStep(subId, exIdx);
+    const dayNumber = (currentDayIndex % 5) + 1;
+    const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNumber) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+    if (currentMicroMobilityModalIndex < subExercises.length - 1) {
+      currentMicroMobilityModalIndex++;
+      renderMicroMobilityModalView(exIdx);
+    } else {
+      UI.hideModal();
+    }
+  }
+
   return {
     init,
     render,
@@ -3813,6 +4080,11 @@ const TodayPage = (() => {
     openDeepMobilityModal,
     navDeepMobilityModal,
     completeSubStepAndNext,
+    toggleMicroMobilitySubStep,
+    toggleAllMicroMobilitySteps,
+    openMicroMobilityModal,
+    navMicroMobilityModal,
+    completeMicroSubStepAndNext,
     getCurrentDayIndex: () => currentDayIndex,
     parseWeightDetails,
     buildWeightBadgeHTML,

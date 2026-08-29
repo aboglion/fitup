@@ -250,7 +250,12 @@ const UI = (() => {
     'COUCH STRETCH': 'Couch Stretch.gif',
     'SLEEPER STRETCH': 'Sleeper Stretch.gif',
     'PRONE Y T W': 'Prone Y-T-W.gif',
-    'PRONE Y-T-W': 'Prone Y-T-W.gif'
+    'PRONE Y-T-W': 'Prone Y-T-W.gif',
+    'KNEELING HIP FLEXOR STRETCH': 'Couch Stretch.gif',
+    'DEEP SQUAT HOLD': 'Deep Squat Hold.gif',
+    'DOORWAY CHEST STRETCH': 'Doorway Chest Stretch.gif',
+    'WORLDS GREATEST STRETCH': 'Worlds Greatest Stretch.gif',
+    'WORLD\'S GREATEST STRETCH': 'Worlds Greatest Stretch.gif'
   };
 
   const DEEP_MOBILITY_SUB_EXERCISES = [
@@ -261,6 +266,31 @@ const UI = (() => {
     { id: 'sleeper-stretch', nameKey: 'sub_ex_sleeper_stretch', targetKey: 'sub_target_sleeper_stretch', descKey: 'sub_desc_sleeper_stretch', gif: 'Sleeper Stretch.gif', defaultTarget: '30s / side' },
     { id: 'prone-ytw', nameKey: 'sub_ex_prone_ytw', targetKey: 'sub_target_prone_ytw', descKey: 'sub_desc_prone_ytw', gif: 'Prone Y-T-W.gif', defaultTarget: '8 / shape' }
   ];
+
+  const MICRO_MOBILITY_A_SUB_EXERCISES = [
+    { id: 'doorway-chest-stretch', nameKey: 'micro_ex_doorway_chest_stretch', targetKey: 'micro_target_30s_side', descKey: 'micro_desc_doorway_chest_stretch', gif: 'Doorway Chest Stretch.gif', defaultTarget: '30s / side' },
+    { id: 'worlds-greatest-stretch', nameKey: 'micro_ex_worlds_greatest_stretch', targetKey: 'micro_target_30s_side', descKey: 'micro_desc_worlds_greatest_stretch', gif: 'Worlds Greatest Stretch.gif', defaultTarget: '30s / side' }
+  ];
+
+  const MICRO_MOBILITY_B_SUB_EXERCISES = [
+    { id: 'kneeling-hip-flexor', nameKey: 'micro_ex_kneeling_hip_flexor', targetKey: 'micro_target_30s_side', descKey: 'micro_desc_kneeling_hip_flexor', gif: 'Couch Stretch.gif', defaultTarget: '30s / side' },
+    { id: 'deep-squat-hold', nameKey: 'micro_ex_deep_squat_hold', targetKey: 'micro_target_30s', descKey: 'micro_desc_deep_squat_hold', gif: 'Deep Squat Hold.gif', defaultTarget: '30s' }
+  ];
+
+  const MICRO_MOBILITY_SUB_EXERCISES = [
+    ...MICRO_MOBILITY_A_SUB_EXERCISES,
+    ...MICRO_MOBILITY_B_SUB_EXERCISES
+  ];
+
+  function getMicroMobilitySubExercises(dayIndexOrVariant) {
+    if (dayIndexOrVariant === 'A' || dayIndexOrVariant === 'a' || dayIndexOrVariant === 1 || dayIndexOrVariant === 3 || dayIndexOrVariant === 5) {
+      return MICRO_MOBILITY_A_SUB_EXERCISES;
+    }
+    if (dayIndexOrVariant === 'B' || dayIndexOrVariant === 'b' || dayIndexOrVariant === 2 || dayIndexOrVariant === 4) {
+      return MICRO_MOBILITY_B_SUB_EXERCISES;
+    }
+    return MICRO_MOBILITY_SUB_EXERCISES;
+  }
 
   const EXERCISE_PNG_ALIASES = {
         'ARM BLOCK - SINGLE-ARM LATERAL RAISE': 'DB LATERAL RAISE.png',
@@ -662,11 +692,18 @@ const UI = (() => {
       const sName = (I18n.t(s.nameKey) || '').toLowerCase();
       const tLower = (title || '').toLowerCase();
       return sName.includes(tLower) || tLower.includes(sName) || s.id.toLowerCase() === tLower || (s.gif && s.gif.toLowerCase().includes(tLower));
-    }) || (fallbackTitle && fallbackTitle.toLowerCase().includes('deep mobility'));
+    });
 
-    const parentTitle = fallbackTitle || 'Deep Mobility Protocol';
+    const isMicroMobilitySub = (MICRO_MOBILITY_SUB_EXERCISES || []).some(s => {
+      const sName = (I18n.t(s.nameKey) || '').toLowerCase();
+      const tLower = (title || '').toLowerCase();
+      return sName.includes(tLower) || tLower.includes(sName) || s.id.toLowerCase() === tLower || (s.gif && s.gif.toLowerCase().includes(tLower));
+    });
 
-    const headerBoxHTML = isDeepMobilitySub ? `
+    const isMobilitySub = isDeepMobilitySub || isMicroMobilitySub || (fallbackTitle && fallbackTitle.toLowerCase().includes('mobility'));
+    const parentTitle = fallbackTitle || (isMicroMobilitySub ? 'Micro Mobility Protocol' : 'Deep Mobility Protocol');
+
+    const headerBoxHTML = isMobilitySub ? `
       <button type="button" class="btn-secondary" 
               style="width: 130px; height: 130px; min-width: 130px; border-radius: 14px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; color: #93c5fd; font-weight: 800; font-size: 13px; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.25); flex-shrink: 0;"
               onclick="UI.showImageModal('${parentTitle.replace(/'/g, "\\'")}')"
@@ -724,7 +761,7 @@ const UI = (() => {
               const subGifUrl = getGifUrl(sub.gif);
               return `
                 <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
-                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}')"
+                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}', 'Deep Mobility Protocol')"
                      onmouseover="this.style.borderColor='rgba(52, 211, 153, 0.6)'"
                      onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.12)'">
                   <div style="width: 100%; height: 95px; border-radius: 8px; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center; position: relative;">
@@ -739,6 +776,39 @@ const UI = (() => {
           </div>
           <button type="button" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); margin-top: 4px;" onclick="UI.hideModal(); if (window.TodayPage && TodayPage.openDeepMobilityModal) TodayPage.openDeepMobilityModal(0);">
             🧘 הפעל מדריך מוביליות אינטראקטיבי
+          </button>
+        </div>
+      `;
+    } else if (lowerTitle.includes('micro mobility')) {
+      const subExercises = MICRO_MOBILITY_SUB_EXERCISES || [];
+      mediaHTML = `
+        <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-weight: 800; font-size: 14px; color: #60a5fa; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+            <span>⚡ ${I18n.t('micro_mobility_title')} (${subExercises.length} תרגילים)</span>
+            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">פרוטוקול מהיר</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
+            ${subExercises.map((sub, idx) => {
+              const subTitle = I18n.t(sub.nameKey);
+              const subTarget = I18n.t(sub.targetKey);
+              const subGifUrl = getGifUrl(sub.gif);
+              return `
+                <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
+                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}', 'Micro Mobility Protocol')"
+                     onmouseover="this.style.borderColor='rgba(96, 165, 250, 0.6)'"
+                     onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.12)'">
+                  <div style="width: 100%; height: 95px; border-radius: 8px; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <img src="${subGifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
+                    <span style="position: absolute; top: 4px; right: 4px; font-size: 10px; font-weight: 800; background: rgba(0,0,0,0.75); color: #60a5fa; padding: 1px 5px; border-radius: 4px;">#${idx + 1}</span>
+                  </div>
+                  <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); line-height: 1.2; word-break: break-word;">${subTitle}</div>
+                  <span style="font-size: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 5px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+          <button type="button" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: 800; background: linear-gradient(135deg, #3b82f6, #1d4ed8); margin-top: 4px;" onclick="UI.hideModal(); if (window.TodayPage && TodayPage.openMicroMobilityModal) TodayPage.openMicroMobilityModal(0);">
+            ⚡ הפעל מדריך מיקרו-מוביליות אינטראקטיבי
           </button>
         </div>
       `;
@@ -1369,7 +1439,11 @@ const UI = (() => {
     compressImage,
     EXERCISE_GIF_ALIASES,
     EXERCISE_PNG_ALIASES,
-    DEEP_MOBILITY_SUB_EXERCISES
+    DEEP_MOBILITY_SUB_EXERCISES,
+    MICRO_MOBILITY_SUB_EXERCISES,
+    MICRO_MOBILITY_A_SUB_EXERCISES,
+    MICRO_MOBILITY_B_SUB_EXERCISES,
+    getMicroMobilitySubExercises
   };
 })();
 

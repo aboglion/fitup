@@ -95,11 +95,11 @@ window.ExporterGuide = (() => {
       col_type: "סוג אימון",
       col_intensity: "עצימות / דגשים",
       days_table: [
-        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "45 דק' — RPE 7–9 — שרשרת המסטרינג (Goblet RDL / Single-Leg RDL), פוקוס קוואדס (Heels-Elevated Goblet Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, בלוק תאומים, מעגל ליבה" },
-        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — 45 דק' הליכה בשיפוע 4% (5.5 קמ\"ש, דופק Zone 2) + 5 דק' מיקרו-מוביליות" },
-        { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "45 דק' — RPE 7–9 — Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, OHP, Triceps Ext, Diamond Push-Up, זוג TRX Row ↔ Single-Arm Lateral Raise, רוטציית כתף אחורית + Arm Block (משבוע 10)" },
-        { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 25 דק' הליכון 0% (4.5 קמ\"ש) + 10 דק' מאקרו-מוביליות" },
-        { day: "יום 5", type: "🧲 משיכה + גב + ביספס + נפח חזה", focus: "45 דק' — RPE 7–9 — מתח, One-Arm Row, TRX Face Pull, מיקרו-מחזור בייספס, זוג Push-Up Volume ↔ Single-Arm Curl, זוג Towel Hang ↔ L-Sit + Arm Block (משבוע 10)" },
+        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "45 דק' — RPE 7–9 — שרשרת המסטרינג (Goblet RDL / Single-Leg RDL), פוקוס קוואדס (Heels-Elevated Goblet Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, בלוק תאומים, מעגל ליבה + מיקרו-מוביליות A" },
+        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — 45 דק' הליכה בשיפוע 4% (5.5 קמ\"ש, דופק Zone 2) + מיקרו-מוביליות B" },
+        { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "45 דק' — RPE 7–9 — Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, OHP, Triceps Ext, Diamond Push-Up, זוג TRX Row ↔ Single-Arm Lateral Raise, רוטציית כתף אחורית + Arm Block (משבוע 10) + מיקרו-מוביליות A" },
+        { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 25 דק' הליכון 0% (4.5 קמ\"ש) + 10 דק' דיפ-מוביליות" },
+        { day: "יום 5", type: "🧲 משיכה + גב + ביספס + נפח חזה", focus: "45 דק' — RPE 7–9 — מתח, One-Arm Row, TRX Face Pull, מיקרו-מחזור בייספס, זוג Push-Up Volume ↔ Single-Arm Curl, זוג Towel Hang ↔ L-Sit + Arm Block (משבוע 10) + מיקרו-מוביליות A" },
         { day: "יום 6", type: "🔴 VO2 Max 4×4 Cardio", focus: "35 דק' — פרוטוקול נורבגי: 10 דק' חימום, 4×(4 דק' מאמץ 6.5 קמ\"ש בשיפוע השלב / 3 דק' מנוחה), 5 דק' שחרור" },
         { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה, תזונה ושינה" }
       ],

@@ -985,12 +985,15 @@ function getBicepsMicrocycleWeek(weekNumber) {
 - אין ספרינטים.
 - ב-Deload: החלף ל-30 דקות Zone 2 קל.
 
-### Micro Mobility לאחר כל יום כוח
+### Micro Mobility (שחרור ממוקד 90 שניות בסיום אימון כוח)
 
-- Dead Hang 30 שניות
-- Deep Squat Hold 60 שניות
-- Doorway Chest Stretch 30 שניות לכל צד
-- World's Greatest Stretch 5 לכל צד
+- **Micro Mobility A (ימי פלג גוף עליון — ימים 1, 3, 5)**:
+  1. **Doorway Chest Stretch** — 30 שניות לכל צד (שחרור חזה וכתפיים קדמיות)
+  2. **World's Greatest Stretch** — 30 שניות לכל צד (תנועתיות עמוד שדרה חזי ובירכיים)
+
+- **Micro Mobility B (ימי פלג גוף תחתון — ימים 2, 4)**:
+  1. **Kneeling Hip Flexor Stretch** — 30 שניות לכל צד (שחרור כופפי ירך בכריעה)
+  2. **Deep Squat Hold** — 30 שניות (פתחי אגן וקרסוליים בסקואט עמוק)
 
 ==================================================
 ## 14. Arm Block — Myo-Reps מותנה בהתאוששות
