@@ -343,13 +343,18 @@ window.ExporterGuide = (() => {
         <div class="grid-container">
           ${exercises.map(ex => {
             const hasNoGif = ex.name.toLowerCase().includes('walking') || ['Slow Jogging', 'Dead Hang', 'Full Pistol Squat'].includes(ex.name);
+            let gifUrl = '';
+            if (!hasNoGif) {
+              const relPath = (window.UI && window.UI.getGifUrl) ? window.UI.getGifUrl(ex.name) : `images/gifs/${encodeURIComponent(ex.name)}.gif`;
+              gifUrl = relPath.startsWith('http') ? relPath : `http://aboglion.github.io/fitup/${relPath.replace(/^\/+/, '')}`;
+            }
             return `
             <div class="exercise-card">
               <h4 style="margin-top: 0; margin-bottom: 8px; color: var(--primary);">${ex.name}</h4>
               <p style="margin: 0 0 6px 0;"><span class="badge">${ex.category || 'General'}</span> ${ex.difficulty ? `<span class="badge" style="background: #fef3c7; color: #92400e;">${ex.difficulty}</span>` : ''}</p>
               ${ex.weight ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>Resistance:</strong> <bdi dir="ltr">${ex.weight}</bdi></p>` : ''}
               ${ex.setsProgression ? `<p style="font-size: 0.9em; margin: 4px 0;"><strong>Progression:</strong> ${ex.setsProgression}</p>` : ''}
-              ${!hasNoGif ? `<p style="font-size: 0.9em; margin: 4px 0;"><a href="images/gifs/${ex.name}.gif" target="_blank" style="color: var(--primary);">▶ Watch GIF</a></p>` : ''}
+              ${!hasNoGif ? `<p style="font-size: 0.9em; margin: 4px 0;"><a href="${gifUrl}" target="_blank" style="color: var(--primary);">▶ Watch GIF</a></p>` : ''}
             </div>
             `;
           }).join('')}
@@ -377,13 +382,46 @@ window.ExporterGuide = (() => {
   }
 
   function generateWeeksHtml(allPlan, t) {
+    const DAY_NAME_MAP_EN = {
+      'ראשון': 'Sunday',
+      'שני': 'Monday',
+      'שלישי': 'Tuesday',
+      'רביעי': 'Wednesday',
+      'חמישי': 'Thursday',
+      'שישי': 'Friday',
+      'שבת': 'Saturday',
+      'Sunday': 'Sunday',
+      'Monday': 'Monday',
+      'Tuesday': 'Tuesday',
+      'Wednesday': 'Wednesday',
+      'Thursday': 'Thursday',
+      'Friday': 'Friday',
+      'Saturday': 'Saturday'
+    };
+
+    const DAY_TYPE_MAP_EN = {
+      'Legs + Core': 'Legs + Core',
+      'Zone 2 Cardio': 'Zone 2 Cardio',
+      'Push + Skill': 'Push + Skill',
+      'Active Recovery': 'Active Recovery',
+      'Pull + Grip': 'Pull + Grip',
+      'VO2 Max': 'VO2 Max',
+      'Rest': 'Rest',
+      'אימון כוח': 'Strength Training',
+      'אירובי Zone 2': 'Zone 2 Cardio',
+      'התאוששות פעילה': 'Active Recovery',
+      'מנוחה': 'Rest Day'
+    };
+
     // Extract Standard Week (Week 1) & Deload Week (Week 8)
     const stdDays = allPlan.filter(d => d.week === 'Week 1' || d.dayIndex < 7);
     const deloadDays = allPlan.filter(d => d.week === 'Week 8' || (d.dayIndex >= 49 && d.dayIndex < 56));
 
     const renderDayBlock = (day) => {
+      const dayOfWeekEn = DAY_NAME_MAP_EN[day.dayOfWeek] || day.dayOfWeek;
+      const dayTypeEn = DAY_TYPE_MAP_EN[day.dayType] || day.dayType;
       let html = `<div class="day-block">
-        <h4 class="day-title">${day.dayOfWeek} <span class="${getBadgeClass(day.dayType)}">${day.dayType}</span> <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span></h4>`;
+        <h4 class="day-title">${dayOfWeekEn} <span class="${getBadgeClass(day.dayType)}">${dayTypeEn}</span> <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span></h4>`;
       if (day.exercises && day.exercises.length > 0) {
         html += `<table>
           <tr>
@@ -398,7 +436,7 @@ window.ExporterGuide = (() => {
             <td><strong>${ex.name}</strong></td>
             <td dir="ltr" style="text-align: right;">${ex.sets || '-'}</td>
             <td dir="ltr" style="text-align: right;"><bdi dir="ltr">${ex.weight || '-'}</bdi></td>
-            <td dir="ltr" style="text-align: right;">${ex.tempo ? (UI.formatTempo ? UI.formatTempo(ex.tempo) : ex.tempo) : '-'}</td>
+            <td dir="ltr" style="text-align: right;">${ex.tempo || '-'}</td>
             <td dir="ltr" style="text-align: right;">${ex.rest ? ex.rest + 's' : '-'}</td>
           </tr>`;
         });
