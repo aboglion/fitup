@@ -876,7 +876,11 @@ def generate_day_exercises(dow, week):
     if dow == 0:  # Sunday - Rest
         return "Rest", "—", []
 
-    if dow == 2:  # Tuesday - Zone 2 Cardio
+    if dow == 2:  # Tuesday - Zone 2 Cardio / Light Walk (Weeks 1-4)
+        if week <= 4:
+            return "Zone 2 Cardio", "—", [
+                make_ex_obj("A1", "relaxed-walking", "Relaxed Walking", "20 mins", weight="Incline 0%", tempo="4.5 km/h", rest=0)
+            ]
         walking_time = "30 mins" if is_deload else "45 mins"
         incline = "Incline 2%" if is_deload else "Incline 4%"
         speed = "5.0 km/h" if is_deload else "5.5 km/h"
@@ -885,13 +889,21 @@ def generate_day_exercises(dow, week):
         ]
 
     if dow == 4:  # Thursday - Active Recovery
+        walk_time = "20 mins" if week <= 4 else "25 mins"
+        mob_time = "5 mins" if week <= 4 else "10 mins"
+        mob_id = "micro-mobility-protocol" if week <= 4 else "deep-mobility-protocol"
+        mob_name = "Micro Mobility Protocol" if week <= 4 else "Deep Mobility Protocol"
         return "Active Recovery", "—", [
             make_ex_obj("A1", "band-neck-flexion", "Band Neck Flexion & Extension", "2×15-20", rep_window="15-20", weight="Band 30 kg", tempo="3-1-3 slow", rest=45, structure="straight"),
-            make_ex_obj("A2", "relaxed-walking", "Relaxed Walking", "25 mins", weight="Incline 0%", tempo="4.5 km/h", rest=0),
-            make_ex_obj("A3", "deep-mobility-protocol", "Deep Mobility Protocol", "10 mins", weight="Bodyweight", tempo="slow", rest=0)
+            make_ex_obj("A2", "relaxed-walking", "Relaxed Walking", walk_time, weight="Incline 0%", tempo="4.5 km/h", rest=0),
+            make_ex_obj("A3", mob_id, mob_name, mob_time, weight="Bodyweight", tempo="slow", rest=0)
         ]
 
-    if dow == 6:  # Saturday - VO2 Max / Cardio
+    if dow == 6:  # Saturday - VO2 Max / Light Walk (Weeks 1-4)
+        if week <= 4:
+            return "Zone 2 Cardio", "—", [
+                make_ex_obj("A1", "relaxed-walking", "Relaxed Walking", "20 mins", weight="Incline 0%", tempo="4.5 km/h", rest=0)
+            ]
         if is_deload:
             return "Zone 2 Cardio", "—", [
                 make_ex_obj("A1", "brisk-walking", "Brisk Walking", "30 mins", weight="Incline 2%", tempo="5.0 km/h", rest=0)
@@ -916,23 +928,23 @@ def generate_day_exercises(dow, week):
         # A2: Heels-Elevated Goblet Squat
         exs.append(make_ex_obj("A2", "heels-elevated-goblet-squat", "Heels-Elevated Goblet Squat", "2×8" if is_deload else "2×8-12", rep_window="8-12", weight="6 kg total", tempo="3s descent, 1s pause at bottom, 1s ascent", rest=75, structure="straight"))
 
-        # A3: Squat Tree
-        if week < 5:
-            exs.append(make_ex_obj("A3", "bodyweight-squat", "Bodyweight Squat", "2×8" if is_deload else "3×12", rep_window="8-15", weight="Bodyweight", tempo="2s descent", rest=60, structure="straight"))
-        else:
+        # A3: Squat Tree (Unlocks at Week 5)
+        if week >= 5:
             exs.append(make_ex_obj("A3", "goblet-bulgarian-split-squat", "Goblet Bulgarian Split Squat", "2×8/leg" if is_deload else "3×6-12/leg", rep_window="6-12", weight="6 kg total", tempo="2s descent", rest=82, structure="straight"))
 
         # A4: Glute Progression (DB Glute Bridge — all weeks)
         exs.append(make_ex_obj("A4", "db-glute-bridge", "DB Glute Bridge", "2×10" if is_deload else "3×10-15", rep_window="10-15", weight="9 kg total", tempo="1s pause at top", rest=75 if week >= 5 else 60, structure="straight"))
 
-        # A5: Suitcase Carry
-        exs.append(make_ex_obj("A5", "suitcase-carry", "Suitcase Carry", "2×25m/side" if is_deload else "3×25-40m/side", rep_window="25-40m", weight="12 kg", tempo="walk", rest=60, structure="straight"))
+        # A5: Suitcase Carry (Unlocks at Week 5)
+        if week >= 5:
+            exs.append(make_ex_obj("A5", "suitcase-carry", "Suitcase Carry", "2×25m/side" if is_deload else "3×25-40m/side", rep_window="25-40m", weight="12 kg", tempo="walk", rest=60, structure="straight"))
 
-        # A6, A7: Calf Block (Standing + Seated Calf Raise)
-        calf_standing_sets = "2×15/leg" if is_deload else "3×12-20/leg"
-        calf_seated_sets = "2×15/leg" if is_deload else "2×15-25/leg"
-        exs.append(make_ex_obj("A6", "standing-single-leg-calf-raise", "Standing Single-Leg Calf Raise", calf_standing_sets, rep_window="12-20", weight="6 kg in hand", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=1))
-        exs.append(make_ex_obj("A7", "seated-single-leg-calf-raise", "Seated Single-Leg Calf Raise", calf_seated_sets, rep_window="15-25", weight="6 kg on knee", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=2))
+        # A6, A7: Calf Block (Standing + Seated Calf Raise — Unlocks at Week 5)
+        if week >= 5:
+            calf_standing_sets = "2×15/leg" if is_deload else "3×12-20/leg"
+            calf_seated_sets = "2×15/leg" if is_deload else "2×15-25/leg"
+            exs.append(make_ex_obj("A6", "standing-single-leg-calf-raise", "Standing Single-Leg Calf Raise", calf_standing_sets, rep_window="12-20", weight="6 kg in hand", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=1))
+            exs.append(make_ex_obj("A7", "seated-single-leg-calf-raise", "Seated Single-Leg Calf Raise", calf_seated_sets, rep_window="15-25", weight="6 kg on knee", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=2))
 
         # Core Circuit
         if week >= 10:
@@ -950,17 +962,18 @@ def generate_day_exercises(dow, week):
         rpe = "5-6" if is_deload else "7-8"
         exs = get_push_warmup()
 
-        # A1: Pike / Overhead Skill Tree
-        if week < 10:
-            exs.append(make_ex_obj("A1", "pike-progression", "Pike Progression", "2×15 secs" if is_deload else "2×15-30 secs", rep_window="15-30s or 6-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
-        elif week < 18:
-            exs.append(make_ex_obj("A1", "wall-walk-partial", "Wall Walk (Partial)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=75, structure="straight"))
-        elif week < 26:
-            exs.append(make_ex_obj("A1", "wall-walk-full", "Wall Walk (Full)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=90, structure="straight"))
-        elif week < 41:
-            exs.append(make_ex_obj("A1", "wall-handstand", "Wall Handstand", "2×15 secs" if is_deload else "2×20-45 secs", rep_window="20-45s", weight="Bodyweight", tempo="static", rest=90, structure="straight"))
-        else:
-            exs.append(make_ex_obj("A1", "elevated-pike-push-up", "Elevated Pike Push-Up", "2×5" if is_deload else "2×6-10", rep_window="6-10", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
+        # A1: Pike / Overhead Skill Tree (Unlocks at Week 5)
+        if week >= 5:
+            if week < 10:
+                exs.append(make_ex_obj("A1", "pike-progression", "Pike Progression", "2×15 secs" if is_deload else "2×15-30 secs", rep_window="15-30s or 6-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+            elif week < 18:
+                exs.append(make_ex_obj("A1", "wall-walk-partial", "Wall Walk (Partial)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=75, structure="straight"))
+            elif week < 26:
+                exs.append(make_ex_obj("A1", "wall-walk-full", "Wall Walk (Full)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=90, structure="straight"))
+            elif week < 41:
+                exs.append(make_ex_obj("A1", "wall-handstand", "Wall Handstand", "2×15 secs" if is_deload else "2×20-45 secs", rep_window="20-45s", weight="Bodyweight", tempo="static", rest=90, structure="straight"))
+            else:
+                exs.append(make_ex_obj("A1", "elevated-pike-push-up", "Elevated Pike Push-Up", "2×5" if is_deload else "2×6-10", rep_window="6-10", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
 
         # A2: Single-Arm Floor Press
         exs.append(make_ex_obj("A2", "single-arm-floor-press", "Single-Arm Floor Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=90, structure="straight"))
@@ -975,18 +988,23 @@ def generate_day_exercises(dow, week):
         else:
             exs.append(make_ex_obj("A3", "weighted-deficit-push-up", "Weighted Deficit Push-Up", "2×6" if is_deload else "3×6-12", rep_window="6-12", weight="5 kg vest", tempo="2s descent", rest=90, structure="straight"))
 
-        # A4: Single-Arm Seated OHP
-        exs.append(make_ex_obj("A4", "single-arm-seated-ohp", "Single-Arm Seated OHP", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=75, structure="straight"))
+        # A4: Single-Arm Seated OHP (Unlocks at Week 5)
+        if week >= 5:
+            exs.append(make_ex_obj("A4", "single-arm-seated-ohp", "Single-Arm Seated OHP", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=75, structure="straight"))
 
-        # A5: DB Overhead Triceps Extension
-        exs.append(make_ex_obj("A5", "db-overhead-triceps-extension", "DB Overhead Triceps Extension", "2×10" if is_deload else "4×10-15", rep_window="10-15", weight="6 kg total", tempo="2s descent", rest=45, structure="straight"))
+        # A5: DB Overhead Triceps Extension (Unlocks at Week 5)
+        if week >= 5:
+            exs.append(make_ex_obj("A5", "db-overhead-triceps-extension", "DB Overhead Triceps Extension", "2×10" if is_deload else "4×10-15", rep_window="10-15", weight="6 kg total", tempo="2s descent", rest=45, structure="straight"))
 
         # A6: Diamond Push-Up
         exs.append(make_ex_obj("A6", "diamond-push-up", "Diamond Push-Up", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=45, structure="straight"))
 
-        # Pair: TRX Row ↔ Single-Arm Lateral Raise
-        exs.append(make_ex_obj("A7", "trx-row", "TRX Row", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=1))
-        exs.append(make_ex_obj("A8", "single-arm-lateral-raise", "Single-Arm Lateral Raise", "2×12" if is_deload else "2×12-20", rep_window="12-20", weight="3 kg each", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=2))
+        # Pair: TRX Row ↔ Single-Arm Lateral Raise (Lateral Raise Unlocks at Week 5)
+        if week < 5:
+            exs.append(make_ex_obj("A7", "trx-row", "TRX Row", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        else:
+            exs.append(make_ex_obj("A7", "trx-row", "TRX Row", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=1))
+            exs.append(make_ex_obj("A8", "single-arm-lateral-raise", "Single-Arm Lateral Raise", "2×12" if is_deload else "2×12-20", rep_window="12-20", weight="3 kg each", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=2))
 
         # Rear Delt Toggle
         if is_odd:
@@ -1023,27 +1041,30 @@ def generate_day_exercises(dow, week):
 
         biceps_cycle_week = ((week - 1) % 3) + 1
         is_biceps_light = (biceps_cycle_week == 3)
-        
-        # A4 & A5: Pair: Push-Up Volume ↔ Biceps Curl
-        if not is_biceps_light and not is_deload:
-            exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="pair", pair_id="d5-pushup-curl", order_in_pair=1))
-            exs.append(make_ex_obj("A5", "single-arm-curl", "Single-Arm Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="pair", pair_id="d5-pushup-curl", order_in_pair=2, microcycle="biceps-microcycle", active_weeks=[1, 2]))
-        else:
-            exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
 
-        # A6: Secondary Biceps
+        # A4 & A5: Pair: Push-Up Volume ↔ Biceps Curl (Push-Up Volume Unlocks at Week 5)
+        if week >= 5:
+            if not is_biceps_light and not is_deload:
+                exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="pair", pair_id="d5-pushup-curl", order_in_pair=1))
+                exs.append(make_ex_obj("A5", "single-arm-curl", "Single-Arm Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="pair", pair_id="d5-pushup-curl", order_in_pair=2, microcycle="biceps-microcycle", active_weeks=[1, 2]))
+            else:
+                exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        else:
+            exs.append(make_ex_obj("A5", "single-arm-curl", "Single-Arm Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="straight"))
+
+        # A6: Secondary Biceps (Single-Arm Hammer Curl — Unlocks at Week 5)
         if week >= 5:
             exs.append(make_ex_obj("A6", "single-arm-hammer-curl", "Single-Arm Hammer Curl", "1×10" if is_deload else "2×10-12", rep_window="10-12", weight="3 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[1, 2, 3]))
 
-        # Pair: Towel Hang ↔ Tuck L-Sit
-        exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=1))
-        
-        if week < 18:
-            exs.append(make_ex_obj("A8", "tuck-l-sit", "Tuck L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
-        elif week < 34:
-            exs.append(make_ex_obj("A8", "one-leg-extended-l-sit", "One-Leg Extended L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
-        else:
-            exs.append(make_ex_obj("A8", "full-l-sit", "Full L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+        # Pair: Towel Hang ↔ Tuck L-Sit (Unlocks at Week 5)
+        if week >= 5:
+            exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=1))
+            if week < 18:
+                exs.append(make_ex_obj("A8", "tuck-l-sit", "Tuck L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+            elif week < 34:
+                exs.append(make_ex_obj("A8", "one-leg-extended-l-sit", "One-Leg Extended L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+            else:
+                exs.append(make_ex_obj("A8", "full-l-sit", "Full L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
 
         if week >= 10 and not is_deload:
             exs.append(make_ex_obj("A9", "arm-block-biceps-curl", "Arm Block - Single-Arm Curl", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))

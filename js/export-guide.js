@@ -474,7 +474,9 @@ window.ExporterGuide = (() => {
           <th>Active Protocols & Toggles</th>
           <th>Week Type</th>
         </tr>
-        <tr><td>Weeks 1–7</td><td>Phase 1: Foundation Hypertrophy</td><td>Heels-Elevated Squat, Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart)</td><td><span class="badge">Standard</span></td></tr>
+        <tr><td>Weeks 1–4</td><td>Phase 0: Anatomical Foundation Ramp-Up</td><td>5–6 Anchor exercises/day, 20m light walks, protected joints & spine</td><td><span class="badge rest">Ramp-Up</span></td></tr>
+        <tr><td>Week 5</td><td>🎓 Week 5 Graduation Event</td><td>Unlocks Goblet BSS, VO2 Max 4x4, Pike/OHP, Towel Hang, L-Sit, Suitcase Carry, Calf Block</td><td><span class="badge" style="background: #fef3c7; color: #92400e;">Graduation</span></td></tr>
+        <tr><td>Weeks 6–7</td><td>Phase 1: Foundation Hypertrophy</td><td>Heels-Elevated Squat, Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart)</td><td><span class="badge">Standard</span></td></tr>
         <tr><td>Week 8</td><td>Phase 1 Deload</td><td>Volume ceiling 2 sets, -2kg load reduction, straight sets</td><td><span class="badge rest">Deload</span></td></tr>
         <tr><td>Weeks 9–15</td><td>Phase 2: Arm Block Activation</td><td>Arm Block Myo-Reps active from Week 10 onwards (Day 3 & Day 5)</td><td><span class="badge">Standard + Myo-Reps</span></td></tr>
         <tr><td>Week 16</td><td>Phase 2 Deload</td><td>Volume ceiling 2 sets, -2kg load reduction, 1 activation set only</td><td><span class="badge rest">Deload</span></td></tr>

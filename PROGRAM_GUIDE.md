@@ -69,7 +69,12 @@ To prevent elbow tendonitis while maximizing hyper-trophy:
 
 ## Part 3 — Master Weekly Microcycle Architecture & Cardio Protocols
 
-### 3.1 Weekly Schedule Structure
+### 3.0 Phase 0 — Anatomical Foundation Ramp-Up (Weeks 1–4) & Week 5 Graduation
+To protect connective tissue, adapt the lumbar spine, and prevent Achilles & shoulder impingement in novice trainees:
+- **Weeks 1–4 (Ramp-Up Foundation)**: Exercise volume is reduced to 5–6 anchor exercises per session (25–30 min target). High-peak-load and complex unilateral movements are locked (`Suitcase Carry`, `Calf Block`, `Goblet BSS`, `Hollow Body Hold`, `Pike Progression`, `Single-Arm Seated OHP`, `Single-Arm Lateral Raise`, `DB Overhead Triceps Ext`, `Single-Arm Hammer Curl`, `Towel Hang`, `Tuck L-Sit`, `Push-Up Volume Day 5`). Days 2 & 6 feature 20-min light walks (0% incline, 4.5 km/h) instead of Zone 2 / VO2 Max.
+- **Week 5 (Graduation Event)**: The system automatically unlocks the full exercise suit (`Goblet BSS`, `VO2 Max Norwegian 4x4`, `Pike/OHP`, `Lateral Raise`, `Hammer Curl`, `Towel Hang`, `L-Sit`, `Suitcase Carry`, `Calf Block`, `Hollow Body Hold`).
+
+### 3.1 Weekly Schedule Structure (Full Protocol - Week 5 Onwards)
 
 | Day | Workout Type | Target Focus & Modules | Target Duration |
 | :--- | :--- | :--- | :--- |
@@ -83,19 +88,19 @@ To prevent elbow tendonitis while maximizing hyper-trophy:
 
 ### 3.2 Cardio Protocols
 
-🟢 **Zone 2 Base (Day 2):** 4% incline | 5.5 km/h | 45 min continuous | Conversational test: Must speak full sentences, otherwise lower to 5.0 km/h. *Deload*: 30 min, 2% incline, 5.0 km/h.
+🟢 **Zone 2 Base (Day 2):** 4% incline | 5.5 km/h | 45 min continuous | Conversational test: Must speak full sentences, otherwise lower to 5.0 km/h. *Weeks 1–4*: 20 min light walk (0% incline). *Deload*: 30 min, 2% incline, 5.0 km/h.
 
-🔴 **Norwegian 4×4 VO2 Max (Day 6):** Achilles Protection — Max 6% incline, NO sprinting.
-Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase incline | Active recovery 3×3 min @ 0% 4.5 km/h | Cooldown 5 min @ 0% 4.0 km/h. *Deload*: Replaced with 30 min Zone 2 walk.
+🔴 **Norwegian 4×4 VO2 Max (Day 6):** Active from Week 5. Achilles Protection — Max 6% incline, NO sprinting.
+Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase incline | Active recovery 3×3 min @ 0% 4.5 km/h | Cooldown 5 min @ 0% 4.0 km/h. *Weeks 1–4*: Replaced with 20 min light walk. *Deload*: Replaced with 30 min Zone 2 walk.
 
 | Phase Weeks | Work Interval Incline |
 | :--- | :--- |
-| **Weeks 1–4** | 3% |
+| **Weeks 1–4** | Replaced with 20m Light Walk (0% Incline) |
 | **Weeks 5–8** | 4% |
 | **Weeks 10–16** | 5% |
 | **Weeks 18–80+** | 6% |
 
-🟡 **Active Recovery (Day 4):** 5 min Cervical Health protocol (Band Neck Flexion & Extension 2×15–20 each direction, 45s rest, 3-1-3 tempo, chin-tuck focus) + Treadmill 25 min @ 0% 4.5 km/h + 10 min deep mobility.
+🟡 **Active Recovery (Day 4):** 5 min Cervical Health protocol (Band Neck Flexion & Extension 2×15–20 each direction, 45s rest, 3-1-3 tempo, chin-tuck focus) + Treadmill 25 min @ 0% 4.5 km/h (20 min in W1-4) + 10 min deep mobility (5 min in W1-4).
 
 ---
 
