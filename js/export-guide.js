@@ -184,13 +184,14 @@ window.ExporterGuide = (() => {
     allPlan.sort((a, b) => a.dayIndex - b.dayIndex);
     const exercises = await DB.getExerciseGuide();
     
-    const lang = (window.I18n ? window.I18n.getLang() : 'en');
-    const dir = (window.I18n ? window.I18n.getDir() : 'ltr');
-    const t = GUIDE_I18N[lang] || GUIDE_I18N['en'];
+    // Always export the master guide in English for consistency and single source of truth
+    const lang = 'en';
+    const dir = 'ltr';
+    const t = GUIDE_I18N['en'];
 
     let html = `
     <!DOCTYPE html>
-    <html lang="${lang}" dir="${dir}">
+    <html lang="en" dir="ltr">
     <head>
       <meta charset="UTF-8">
       <title>${t.title}</title>
@@ -329,10 +330,10 @@ window.ExporterGuide = (() => {
         <h3>${t.arm_block_title}</h3>
         <p>${t.arm_block_desc}</p>
         <ul>
-          <li><strong>${lang === 'he' ? 'סט אקטיבציה:' : (lang === 'ar' ? 'مجموعة التنشيط:' : 'Activation Set:')}</strong> ${lang === 'he' ? 'ביצוע ליעד החזרות של השלב הנוכחי (למשל 12 חזרות). מנוחה 15 שניות.' : (lang === 'ar' ? 'التنفيذ لهدف التكرارات. راحة 15 ثانية.' : 'Executed to stage target reps. Rest 15 seconds.')}</li>
-          <li><strong>${lang === 'he' ? 'מיני-סטים:' : (lang === 'ar' ? 'المجموعات المصغرة:' : 'Mini-Sets:')}</strong> ${lang === 'he' ? '3 מיני-סטים של 5 חזרות נקיות, 15 שניות מנוחה ביניהם.' : (lang === 'ar' ? '3 مجموعات مصغرة من 5 تكرارات، 15 ثانية راحة بينها.' : '3 mini-sets of 5 clean reps each, 15s rest between mini-sets.')}</li>
-          <li><strong>${lang === 'he' ? 'חוק עצירה אובייקטיבי (two_consecutive_tempo_losses):' : (lang === 'ar' ? 'قانون التوقف الموضوعي:' : 'Objective Stop Rule (two_consecutive_tempo_losses):')}</strong> ${lang === 'he' ? 'שני אובדני טמפו רצופים (אקסצנטרי מתחת ל-2 שניות, תנופה או שינוי טכניקה) מסיימים את הצביר מיד. חזרות עם אובדן טמפו אינן נספרות.' : (lang === 'ar' ? 'فقدان الإيقاع مرتين متتاليتين ينهي التجميع فوراً.' : 'Two consecutive tempo losses immediately terminates the cluster. Non-tempo reps are not counted.')}</li>
-          <li><strong>${lang === 'he' ? 'מגבלת חשיפה שבועית:' : (lang === 'ar' ? 'حد التعرض الأسبوعي:' : 'Weekly Exposure Limit:')}</strong> ${lang === 'he' ? 'חשיפה אחת בלבד בשבוע לכל אזור שרירי (כתף צדית, טריספס, בייספס).' : (lang === 'ar' ? 'تعرض واحد فقط أسبوعياً لكل منطقة عضلية.' : 'Max 1 exposure per muscle area per week (Lateral Shoulder, Triceps, Biceps).')}</li>
+          <li><strong>Activation Set:</strong> Executed to stage target reps (e.g. 12 reps). Rest 15 seconds.</li>
+          <li><strong>Mini-Sets:</strong> 3 mini-sets of 5 clean reps each, with 15 seconds rest between mini-sets.</li>
+          <li><strong>Objective Stop Rule (two_consecutive_tempo_losses):</strong> Two consecutive tempo losses (eccentric under 2 seconds, momentum/swinging) or joint pain (reported via interactive prompt on BELOW outcome) terminates the cluster immediately. Non-tempo reps are not counted.</li>
+          <li><strong>Weekly Exposure Limit:</strong> Max 1 exposure per muscle area per week (Lateral Shoulder, Triceps, Biceps).</li>
         </ul>
       </div>
 
@@ -376,8 +377,6 @@ window.ExporterGuide = (() => {
   }
 
   function generateWeeksHtml(allPlan, t) {
-    const lang = (window.I18n ? window.I18n.getLang() : 'en');
-    
     // Extract Standard Week (Week 1) & Deload Week (Week 8)
     const stdDays = allPlan.filter(d => d.week === 'Week 1' || d.dayIndex < 7);
     const deloadDays = allPlan.filter(d => d.week === 'Week 8' || (d.dayIndex >= 49 && d.dayIndex < 56));
@@ -413,29 +412,29 @@ window.ExporterGuide = (() => {
 
     let html = `
     <div class="week-block">
-      <h3>${lang === 'he' ? '🗓️ מיקרו-מחזור שבועי רגיל (Standard Weekly Microcycle — ימים 1–7)' : (lang === 'ar' ? '🗓️ الجدول الأسبوعي القياسي (الأيام 1–7)' : '🗓️ Standard Weekly Microcycle (Days 1–7)')}</h3>
+      <h3>🗓️ Standard Weekly Microcycle (Days 1–7)</h3>
       <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">
-        ${lang === 'he' ? 'המבנה השבועי הקבוע של התוכנית (שבועות 1–7, 9–15, 17–23 וכן הלאה).' : 'Standard weekly structure active on all non-deload weeks.'}
+        Standard weekly structure active on all non-deload weeks (Weeks 1–7, 9–15, 17–23, etc.).
       </p>
       ${stdDays.map(renderDayBlock).join('')}
     </div>
 
     <div class="week-block" style="border-top-color: #ef4444;">
-      <h3 style="color: #dc2626;">${lang === 'he' ? '🔄 מיקרו-מחזור דילואד (Deload Microcycle — שבועות 8, 16, 24, 32...)' : (lang === 'ar' ? '🔄 جدول أسبوع التعافي (Deload)' : '🔄 Deload Microcycle (Weeks 8, 16, 24, 32...)')}</h3>
+      <h3 style="color: #dc2626;">🔄 Deload Microcycle (Weeks 8, 16, 24, 32...)</h3>
       <p style="color: var(--text-muted); font-size: 0.9em; margin-bottom: 15px;">
-        ${lang === 'he' ? 'מופעל אוטומטית כל שבוע 8 (שבועות 8, 16, 24, 32, 40, 48, 56, 64, 72, 80...). הנפח מוגבל ל-2 סטים והעומס מופחת ב-2 ק"ג.' : 'Active automatically every 8 weeks. Volume capped at 2 sets and loads reduced by 2 kg.'}
+        Active automatically every 8 weeks (Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80...). Volume capped at 2 sets and loads reduced by 2 kg.
       </p>
       ${deloadDays.map(renderDayBlock).join('')}
     </div>
 
     <div class="week-block" style="border-top-color: #8b5cf6;">
-      <h3>${lang === 'he' ? '🗺️ מפת דרכים תקופתית (80-Week Periodization Roadmap)' : (lang === 'ar' ? '🗺️ خريطة الطريق لـ 80 أسبوعاً' : '🗺️ 80-Week Periodization Roadmap')}</h3>
+      <h3>🗺️ 80-Week Periodization Roadmap</h3>
       <table>
         <tr>
-          <th>${lang === 'he' ? 'טווח שבועות' : 'Week Range'}</th>
-          <th>${lang === 'he' ? 'שלב תקופתי' : 'Periodization Phase'}</th>
-          <th>${lang === 'he' ? 'אלמנטים פעילים ורוטציות' : 'Active Protocols & Toggles'}</th>
-          <th>${lang === 'he' ? 'סוג שבוע' : 'Week Type'}</th>
+          <th>Week Range</th>
+          <th>Periodization Phase</th>
+          <th>Active Protocols & Toggles</th>
+          <th>Week Type</th>
         </tr>
         <tr><td>Weeks 1–7</td><td>Phase 1: Foundation Hypertrophy</td><td>Heels-Elevated Squat, Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart)</td><td><span class="badge">Standard</span></td></tr>
         <tr><td>Week 8</td><td>Phase 1 Deload</td><td>Volume ceiling 2 sets, -2kg load reduction, straight sets</td><td><span class="badge rest">Deload</span></td></tr>
@@ -471,7 +470,7 @@ window.ExporterGuide = (() => {
       
       const a = document.createElement('a');
       a.href = url;
-      a.download = `FitUp-Pro-Guide-${lang}.html`;
+      a.download = `FitUp-Pro-Guide-Master.html`;
       a.click();
       
       setTimeout(() => {
