@@ -285,7 +285,7 @@ const I18n = (() => {
       export_data: "📤 Export Data",
       import_data: "📥 Import Data",
       program_guide_card: "📖 Full Program Guide",
-      program_guide_desc: "Generate a detailed 52-week guide with program structure, exercises, and progression stages.",
+      program_guide_desc: "Generate a detailed 80-week guide with program structure, exercises, and progression stages.",
       view_download_guide: "📄 View & Download Full Guide",
       reload_plan_card: "🔄 Reset & Reload Plan",
       reload_plan_desc: "Reload the training program from original source data.",
@@ -298,7 +298,7 @@ const I18n = (() => {
       toggle_theme_btn: "Toggle Theme",
       about_card: "ℹ️ About FitUp",
       about_desc: "FitUp Pro v15.6 Lean Edition - AI Workout & Nutrition Tracker",
-      about_sub: "52-Week Training Program • 364 Days",
+      about_sub: "80-Week Training Program • 560 Days",
       about_note: "All data stored locally in your browser and personal Google Drive.",
 
       // Login Modal
@@ -1260,7 +1260,7 @@ const I18n = (() => {
       export_data: "📤 ייצוא נתונים",
       import_data: "📥 ייבוא נתונים",
       program_guide_card: "📖 מדריך התוכנית המלא",
-      program_guide_desc: "הפק מדריך מפורט של התוכנית השנתית, הכולל הסברים על מבנה התוכנית והתרגילים",
+      program_guide_desc: "הפק מדריך מפורט של 80 שבועות, הכולל הסברים על מבנה התוכנית והתרגילים",
       view_download_guide: "📄 צפה והורד מדריך מלא",
       reload_plan_card: "🔄 איפוס תוכנית",
       reload_plan_desc: "טען מחדש את תוכנית האימונים מהנתונים המקוריים",
@@ -1273,7 +1273,7 @@ const I18n = (() => {
       toggle_theme_btn: "החלף מצב תצוגה",
       about_card: "ℹ️ אודות",
       about_desc: "FitUp Pro v15.6 Lean Edition - אפליקציית מעקב אימונים ותזונה AI",
-      about_sub: "תוכנית 52 שבועות • 364 ימים",
+      about_sub: "תוכנית 80 שבועות • 560 ימים",
       about_note: "כל הנתונים נשמרים מקומית בדפדפן ובדרייב האישי שלך",
 
       // Login Modal
@@ -2369,7 +2369,7 @@ const I18n = (() => {
       export_data: "📤 تصدير البيانات",
       import_data: "📥 استيراد البيانات",
       program_guide_card: "📖 دليل البرنامج الكامل",
-      program_guide_desc: "إنشاء دليل مفصل لبرنامج الـ 52 أسبوعاً يتضمن شرح الهيكل والتمارين",
+      program_guide_desc: "إنشاء دليل مفصل لبرنامج الـ 80 أسبوعاً يتضمن شرح الهيكل والتمارين",
       view_download_guide: "📄 عرض وتحميل الدليل الكامل",
       reload_plan_card: "🔄 إعادة تحميل البرنامج",
       reload_plan_desc: "إعادة تحميل خطة التدريب من المصدر الأصلي",
@@ -2382,7 +2382,7 @@ const I18n = (() => {
       toggle_theme_btn: "تغيير المظهر",
       about_card: "ℹ️ حول التطبيق",
       about_desc: "FitUp Pro v15.6 Lean Edition - تطبيق تتبع التمارين والتغذية بالذكاء الاصطناعي",
-      about_sub: "برنامج 52 أسبوعاً • 364 يوماً",
+      about_sub: "برنامج 80 أسبوعاً • 560 يوماً",
       about_note: "يتم حفظ جميع البيانات محلياً في متصفحك وحساب Google Drive الخاص بك",
 
       // Login Modal
