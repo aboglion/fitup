@@ -600,9 +600,20 @@ const UI = (() => {
     return path.split('/').map(encodeURIComponent).join('/');
   }
 
-  function getImageUrl(title) {
+  function getImageUrl(title, dayIndex) {
     if (!title) return null;
     const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+    if (cleanTitle === 'MICRO MOBILITY PROTOCOL' || cleanTitle === 'MICRO MOBILITY') {
+      let currentDayIndex = dayIndex;
+      if (currentDayIndex === undefined || currentDayIndex === null) {
+        if (window.TodayPage && window.TodayPage.currentDayIndex) {
+          currentDayIndex = window.TodayPage.currentDayIndex;
+        }
+      }
+      const dayNum = currentDayIndex ? (((currentDayIndex - 1) % 7) + 7) % 7 + 1 : 1;
+      const isVariantA = (dayNum === 3 || dayNum === 5);
+      return encodeMediaPath(isVariantA ? 'images/exercises/MICRO MOBILITY A.png' : 'images/exercises/MICRO MOBILITY B.png');
+    }
     const aliasPng = EXERCISE_PNG_ALIASES[cleanTitle];
     const path = aliasPng ? `images/exercises/${aliasPng}` : `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
     return encodeMediaPath(path);
