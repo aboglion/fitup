@@ -363,7 +363,6 @@ const UI = (() => {
     'BRISK WALKING (ZONE 2)': 'BRISK WALKING.png',
     'ACTIVE RECOVERY WALK': 'RELAXED WALKING.png',
     'ZONE 2 LIGHT WALK': 'BRISK WALKING.png',
-    'MICRO MOBILITY PROTOCOL': 'MICRO MOBILITY PROTOCOL.png',
     'DEFICIT PUSH UP': 'DEFICIT PUSH-UP.png',
     'INCLINE PUSH UP': 'INCLINE PUSH-UP.png',
     'WEIGHTED DIAMOND PUSH UP': 'DIAMOND PUSH-UP.png',
@@ -603,14 +602,29 @@ const UI = (() => {
   function getImageUrl(title, dayIndex) {
     if (!title) return null;
     const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+    if (cleanTitle.includes('MICRO MOBILITY A')) {
+      return encodeMediaPath('images/exercises/MICRO MOBILITY A.png');
+    }
+    if (cleanTitle.includes('MICRO MOBILITY B')) {
+      return encodeMediaPath('images/exercises/MICRO MOBILITY B.png');
+    }
     if (cleanTitle === 'MICRO MOBILITY PROTOCOL' || cleanTitle === 'MICRO MOBILITY') {
       let currentDayIndex = dayIndex;
       if (currentDayIndex === undefined || currentDayIndex === null) {
-        if (window.TodayPage && window.TodayPage.currentDayIndex) {
+        if (window.TodayPage && typeof window.TodayPage.getCurrentDayIndex === 'function') {
+          currentDayIndex = window.TodayPage.getCurrentDayIndex();
+        } else if (window.TodayPage && window.TodayPage.currentDayIndex !== undefined) {
           currentDayIndex = window.TodayPage.currentDayIndex;
         }
       }
-      const dayNum = currentDayIndex ? (((currentDayIndex - 1) % 7) + 7) % 7 + 1 : 1;
+      let dayNum = 1;
+      if (typeof currentDayIndex === 'number') {
+        if (currentDayIndex >= 1 && currentDayIndex <= 7) {
+          dayNum = currentDayIndex;
+        } else {
+          dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
+        }
+      }
       const isVariantA = (dayNum === 3 || dayNum === 5);
       return encodeMediaPath(isVariantA ? 'images/exercises/MICRO MOBILITY A.png' : 'images/exercises/MICRO MOBILITY B.png');
     }
