@@ -802,6 +802,35 @@ const App = (() => {
       });
     }
 
+    // Body Weight Setting Handler
+    const saveUserWeightBtn = document.getElementById('save-user-weight-btn');
+    const userWeightInput = document.getElementById('settings-user-weight');
+    if (userWeightInput) {
+      DB.getSetting('userWeight').then(savedW => {
+        const val = savedW ? parseFloat(savedW) : 83;
+        userWeightInput.value = val;
+        window._cachedUserWeight = val;
+      });
+    }
+    if (saveUserWeightBtn && userWeightInput) {
+      saveUserWeightBtn.addEventListener('click', async () => {
+        const val = parseFloat(userWeightInput.value);
+        if (!val || isNaN(val) || val < 30 || val > 250) {
+          UI.toast(I18n.t('invalid_weight'), 'warning');
+          return;
+        }
+        window._cachedUserWeight = val;
+        await DB.setSetting('userWeight', val);
+        if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+          CloudSync.scheduleSync();
+        }
+        UI.toast(I18n.t('weight_saved'), 'success');
+        if (window.TodayPage && window.TodayPage.render) {
+          window.TodayPage.render();
+        }
+      });
+    }
+
     // Export data
     document.getElementById('export-data-btn').addEventListener('click', async () => {
       await shareBackup();

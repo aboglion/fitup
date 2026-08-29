@@ -265,6 +265,10 @@ const I18n = (() => {
 
       // Settings Page
       settings_title: "Settings",
+      user_weight_card_title: "⚖️ Body Weight Settings",
+      user_weight_card_desc: "Set your default body weight (83 kg) for accurate workout calorie burn calculations.",
+      weight_saved: "Body weight updated and scheduled for Google Drive sync! ⚖️",
+      invalid_weight: "Please enter a valid weight between 30 and 250 kg",
       language_selection: "🌐 Language / اللغة / שפה",
       select_language_desc: "Choose application interface language",
       google_drive_sync: "☁️ Google Account & Drive Sync",
@@ -1243,6 +1247,10 @@ const I18n = (() => {
 
       // Settings Page
       settings_title: "הגדרות",
+      user_weight_card_title: "⚖️ הגדרת משקל גוף",
+      user_weight_card_desc: "הגדר את משקל הגוף המעודכן שלך (ברירת מחדל 83 ק\"ג) לחישוב מדויק של שריפת קלוריות באימונים.",
+      weight_saved: "משקל הגוף עודכן וסונכרן ל-Google Drive! ⚖️",
+      invalid_weight: "נא להזין משקל תקין בין 30 ל-250 ק\"ג",
       language_selection: "🌐 Language / שפה / اللغة",
       select_language_desc: "בחר שפת ממשק לאפליקציה",
       google_drive_sync: "☁️ חיבור לחשבון Google & סנכרון דרייב",
@@ -2356,6 +2364,10 @@ const I18n = (() => {
 
       // Settings Page
       settings_title: "الإعدادات",
+      user_weight_card_title: "⚖️ إعداد وزن الجسم",
+      user_weight_card_desc: "حدد وزن جسمك الافتراضي (83 كجم) لحساب السعرات الحرارية المحروقة بدقة.",
+      weight_saved: "تم تحديث وزن الجسم ومزامنته مع Google Drive! ⚖️",
+      invalid_weight: "يرجى إدخال وزن صحيح بين 30 و 250 كجم",
       language_selection: "🌐 Language / اللغة / שפה",
       select_language_desc: "اختر لغة واجهة التطبيق",
       google_drive_sync: "☁️ ربط حساب Google والمزامنة",

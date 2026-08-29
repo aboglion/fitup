@@ -74,16 +74,28 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 - **Weeks 1–4 (Ramp-Up Foundation)**: Exercise volume is reduced to 5–6 anchor exercises per session (25–30 min target). High-peak-load and complex unilateral movements are locked (`Suitcase Carry`, `Calf Block`, `Goblet BSS`, `Hollow Body Hold`, `Pike Progression`, `Single-Arm Seated OHP`, `Single-Arm Lateral Raise`, `DB Overhead Triceps Ext`, `Single-Arm Hammer Curl`, `Towel Hang`, `Tuck L-Sit`, `Push-Up Volume Day 5`). Days 2 & 6 feature 20-min light walks (0% incline, 4.5 km/h) instead of Zone 2 / VO2 Max.
 - **Week 5 (Graduation Event)**: The system automatically unlocks the full exercise suit (`Goblet BSS`, `VO2 Max Norwegian 4x4`, `Pike/OHP`, `Lateral Raise`, `Hammer Curl`, `Towel Hang`, `L-Sit`, `Suitcase Carry`, `Calf Block`, `Hollow Body Hold`).
 
-### 3.1 Weekly Schedule Structure (Full Protocol - Week 5 Onwards)
+### 3.1a Ramp-Up Microcycle Structure (Phase 0 — Weeks 1–4 ONLY)
+
+| Day | Workout Type | Target Focus & Exercises | Target Duration |
+| :--- | :--- | :--- | :--- |
+| **Day 1** | **Legs + Core Foundation** | Warmup + Goblet RDL + Heels-Elevated Goblet Squat + DB Glute Bridge + Dead Bug + Micro Mobility B (5 anchor exercises) | 30 min |
+| **Day 2** | **Active Recovery Walk** | Relaxed Walking (0% incline, 4.5 km/h) + Micro Mobility B | 20 min |
+| **Day 3** | **Push + Upper Foundation** | Warmup + Single-Arm Floor Press + Push-Up Bars + Diamond Push-Up + TRX Row + TRX Y-T-W + Micro Mobility A (5 anchor exercises) | 30 min |
+| **Day 4** | **Active Recovery + Neck** | Cervical Protocol (Band Neck Flexion & Extension 2x15-20) + 20 min Relaxed Walking + Micro Mobility B | 25 min |
+| **Day 5** | **Pull + Core Foundation** | Warmup + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + Micro Mobility A (5 anchor exercises) | 30 min |
+| **Day 6** | **Active Recovery (VO2 Locked)**| Relaxed Walking (0% incline, 4.5 km/h) — VO2 Max 4x4 locked until Week 5 Graduation | 20 min |
+| **Day 7** | **Complete Rest** | Passive recovery, hydration & CNS regeneration | — |
+
+### 3.1b Standard Weekly Microcycle Structure (Phase 1 — Weeks 5–7, 9–15, 17–23...)
 
 | Day | Workout Type | Target Focus & Modules | Target Duration |
 | :--- | :--- | :--- | :--- |
-| **Day 1** | **Legs + Core + Carry** | Lower body unilateral strength, Day 1 Toggle, Calf Block & Core Circuit | 45 min |
-| **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building, treadmill walking & daily micro-mobility | 45 min |
-| **Day 3** | **Push + Shoulders + Triceps + Handstand** | Chest, delts, overhead pressing, Day 3 Rear Delt Toggle, Lean Pair & Arm Block (W10+) | 45 min |
+| **Day 1** | **Legs + Core + Carry** | Lower body unilateral strength (Goblet BSS), Single-Leg RDL, Heels-Elevated Squat, Suitcase Carry, Calf Block & Core Circuit | 45 min |
+| **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building, treadmill brisk walking (4% incline, 5.5 km/h) & daily micro-mobility | 45 min |
+| **Day 3** | **Push + Shoulders + Triceps** | Pike Progression, Floor Press, Push-Up Bars, Single-Arm OHP, DB Triceps Ext, Rear Delt Toggle, Lean Pair & Arm Block (W10+) | 45 min |
 | **Day 4** | **Active Recovery + Joint Health** | Band Neck Flexion/Extension protocol (A1), light treadmill recovery walk (A2) & 10-min deep mobility sequence (A3) | 30 min |
-| **Day 5** | **Pull + Back + Biceps + Grip + Core** | Pull-Up progressions, One-Arm DB Row, Biceps Microcycle, Lean Pairs & Arm Block (W10+) | 45 min |
-| **Day 6** | **Cardio VO2 Max** | Norwegian 4x4 interval protocol (or Zone 2 during Deload weeks) | 35 min |
+| **Day 5** | **Pull + Back + Biceps + Grip** | Pull-Up progressions, One-Arm DB Row, TRX Face Pull, Biceps Microcycle, Towel Hang ↔ L-Sit Lean Pair & Arm Block (W10+) | 45 min |
+| **Day 6** | **Cardio VO2 Max 4x4** | Norwegian 4x4 interval treadmill protocol (or Zone 2 during Deload weeks) | 35 min |
 | **Day 7** | **Complete Rest** | Passive recovery, hydration & CNS regeneration | — |
 
 ### 3.2 Cardio Protocols

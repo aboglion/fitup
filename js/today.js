@@ -380,6 +380,7 @@ const TodayPage = (() => {
 
     const streak = completedDays;
     const avgRPE = rpeCount > 0 ? (rpeSum / rpeCount).toFixed(1) : null;
+    if (!bodyWeight) bodyWeight = window._cachedUserWeight || 83;
 
     const historyContext = {
       streak,
@@ -593,13 +594,17 @@ const TodayPage = (() => {
     // Dynamic enrichment with Progression Engine states BEFORE rendering UI
     await enrichDayWithProgression(day);
 
+    // Fetch & Cache User Weight
+    const savedUserWeight = await DB.getSetting('userWeight');
+    window._cachedUserWeight = (savedUserWeight && !isNaN(parseFloat(savedUserWeight))) ? parseFloat(savedUserWeight) : 83;
+
     // Load tracking data
     currentTracking = await DB.getDayTracking(currentDayIndex) || {
       exerciseStatus: {},
       setData: {},
       exerciseNotes: {},
       actualRPE: null,
-      bodyWeight: null,
+      bodyWeight: window._cachedUserWeight,
       notes: '',
       completed: false
     };
@@ -757,7 +762,7 @@ const TodayPage = (() => {
   function calculateWorkoutBurn(day, tracking) {
     if (!day || !day.exercises || day.dayType === 'Rest') return 0;
 
-    let userWeightKg = 70;
+    let userWeightKg = window._cachedUserWeight || 83;
     if (tracking && tracking.bodyWeight) {
       const bw = parseFloat(tracking.bodyWeight);
       if (!isNaN(bw) && bw > 30) userWeightKg = bw;
@@ -1564,7 +1569,7 @@ const TodayPage = (() => {
 
     // Update inputs
     document.getElementById('actual-rpe').value = currentTracking.actualRPE || '';
-    document.getElementById('body-weight').value = currentTracking.bodyWeight || '';
+    document.getElementById('body-weight').value = currentTracking.bodyWeight || window._cachedUserWeight || 83;
     document.getElementById('day-notes').value = currentTracking.notes || '';
 
     // Update navigation info and arrows direction according to language direction
@@ -3127,6 +3132,19 @@ const TodayPage = (() => {
     currentTracking.notes = notes;
     currentTracking.lastUpdated = new Date().toISOString();
     currentTracking.date = currentTracking.date || UI.getLocalDateString();
+
+    if (weight) {
+      const parsedW = parseFloat(weight);
+      if (!isNaN(parsedW) && parsedW > 30) {
+        window._cachedUserWeight = parsedW;
+        await DB.setSetting('userWeight', parsedW);
+        const settingsInput = document.getElementById('settings-user-weight');
+        if (settingsInput) settingsInput.value = parsedW;
+        if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+          CloudSync.scheduleSync();
+        }
+      }
+    }
 
     await DB.saveDayTracking(currentDayIndex, currentTracking);
 
