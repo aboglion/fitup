@@ -288,6 +288,11 @@ const App = (() => {
       await DB.init();
       await DB.ensureV15LeanSchema();
 
+      // Check for Google OAuth callback token if returning from external browser redirect
+      if (window.CloudSync && window.CloudSync.handleOAuthRedirect) {
+        await window.CloudSync.handleOAuthRedirect();
+      }
+
       // Initialize i18n
       if (window.I18n) {
         await window.I18n.init();
