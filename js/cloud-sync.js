@@ -56,11 +56,16 @@ const CloudSync = (() => {
   }
 
   /**
-   * Save Google Access Token
+   * Save Google Access Token with expiration TTL calculation
    */
-  async function setAccessToken(token, userProfile = null) {
+  async function setAccessToken(token, userProfile = null, expiresIn = 3600) {
     await DB.setSetting('googleAccessToken', token);
     await DB.setSetting('googleTokenExpired', false);
+
+    const ttlSeconds = typeof expiresIn === 'number' && expiresIn > 0 ? expiresIn : parseInt(expiresIn, 10) || 3600;
+    const expiryTimestamp = Date.now() + (ttlSeconds - 120) * 1000;
+    await DB.setSetting('googleTokenExpiry', expiryTimestamp);
+
     if (userProfile) {
       await DB.setSetting('googleUserProfile', userProfile);
     }
@@ -77,12 +82,38 @@ const CloudSync = (() => {
   }
 
   /**
-   * Check if active valid token is ready for API calls
+   * Check if active valid token is ready for API calls (checks TTL timestamp)
    */
   async function hasValidToken() {
     const token = await getAccessToken();
-    const isExpired = await DB.getSetting('googleTokenExpired');
-    return Boolean(token && token.length > 10 && !isExpired);
+    const isExpiredFlag = await DB.getSetting('googleTokenExpired');
+    const expiryTimestamp = await DB.getSetting('googleTokenExpiry');
+
+    if (!token || token.length < 10 || isExpiredFlag) return false;
+    if (expiryTimestamp && Date.now() >= expiryTimestamp) return false;
+
+    return true;
+  }
+
+  /**
+   * Ensure active valid access token, performing silent refresh in background if expired
+   */
+  async function ensureValidToken() {
+    const isValid = await hasValidToken();
+    if (isValid) {
+      return await getAccessToken();
+    }
+
+    const profile = await getUserProfile();
+    if (profile && (profile.email || profile.name)) {
+      console.log('Token expired or near expiry. Executing silent token refresh...');
+      const refreshed = await trySilentRefresh();
+      if (refreshed) {
+        return await getAccessToken();
+      }
+    }
+
+    return await getAccessToken();
   }
 
   /**
@@ -113,7 +144,8 @@ const CloudSync = (() => {
             prompt: '',
             callback: async (response) => {
               if (response.access_token) {
-                await setAccessToken(response.access_token, profile);
+                const expiresIn = response.expires_in || 3600;
+                await setAccessToken(response.access_token, profile, expiresIn);
                 await DB.setSetting('googleTokenExpired', false);
                 setStatus('synced');
                 console.log('Silent token refresh succeeded for:', profile.email);
@@ -149,6 +181,7 @@ const CloudSync = (() => {
     await DB.setSetting('googleAccessToken', null);
     await DB.setSetting('googleUserProfile', null);
     await DB.setSetting('googleTokenExpired', false);
+    await DB.setSetting('googleTokenExpiry', null);
     setStatus('idle');
     if (typeof UI !== 'undefined' && UI.toast) UI.toast('התנתקת מחשבון גוגל', 'info');
   }
@@ -189,7 +222,7 @@ const CloudSync = (() => {
 
     if (isSyncing) return { success: false, error: 'כבר מתבצע סנכרון כרגע.' };
 
-    const token = await getAccessToken();
+    const token = await ensureValidToken();
     const legacyUrl = await DB.getSetting('cloudSyncUrl');
 
     if (!token && !legacyUrl) {
@@ -312,7 +345,7 @@ const CloudSync = (() => {
       return { success: false, error: 'Offline' };
     }
 
-    const token = await getAccessToken();
+    const token = await ensureValidToken();
     const legacyUrl = await DB.getSetting('cloudSyncUrl');
 
     if (!token && !legacyUrl) {
@@ -650,6 +683,7 @@ const CloudSync = (() => {
     setAccessToken,
     isLoggedIn,
     hasValidToken,
+    ensureValidToken,
     trySilentRefresh,
     getUserProfile,
     logout,
