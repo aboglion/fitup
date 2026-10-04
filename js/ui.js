@@ -680,10 +680,10 @@ const UI = (() => {
     if (!title) return null;
     const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
     if (cleanTitle.includes('MICRO MOBILITY A')) {
-      return encodeMediaPath('images/exercises/MICRO MOBILITY A.png') + '?v=129';
+      return encodeMediaPath('images/exercises/MICRO MOBILITY A.png') + '?v=130';
     }
     if (cleanTitle.includes('MICRO MOBILITY B')) {
-      return encodeMediaPath('images/exercises/MICRO MOBILITY B.png') + '?v=129';
+      return encodeMediaPath('images/exercises/MICRO MOBILITY B.png') + '?v=130';
     }
     if (cleanTitle === 'MICRO MOBILITY PROTOCOL' || cleanTitle === 'MICRO MOBILITY') {
       let currentDayIndex = dayIndex;
@@ -699,11 +699,11 @@ const UI = (() => {
         dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
       }
       const isVariantA = (dayNum === 3 || dayNum === 5);
-      return encodeMediaPath(isVariantA ? 'images/exercises/MICRO MOBILITY A.png' : 'images/exercises/MICRO MOBILITY B.png') + '?v=129';
+      return encodeMediaPath(isVariantA ? 'images/exercises/MICRO MOBILITY A.png' : 'images/exercises/MICRO MOBILITY B.png') + '?v=130';
     }
     const aliasPng = EXERCISE_PNG_ALIASES[cleanTitle];
     const path = aliasPng ? `images/exercises/${aliasPng}` : `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
-    return encodeMediaPath(path) + '?v=129';
+    return encodeMediaPath(path) + '?v=130';
   }
 
   function getGifUrl(title) {
