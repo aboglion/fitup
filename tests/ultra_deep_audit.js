@@ -16,23 +16,23 @@ let info = [];
 // ----------------------------------------------------
 
 const mockElement = () => ({
-  addEventListener: () => {},
-  classList: { add: () => {}, remove: () => {}, contains: () => false },
-  appendChild: () => {},
+  addEventListener: () => { },
+  classList: { add: () => { }, remove: () => { }, contains: () => false },
+  appendChild: () => { },
   style: {},
   dataset: {}
 });
 
 // i18n
 const i18nContent = fs.readFileSync(path.join(root, 'js/i18n.js'), 'utf8');
-const i18nSandbox = { 
-  window: { addEventListener: () => {} }, 
-  console: console, 
-  document: { 
-    documentElement: { style: { setProperty: () => {} }, setAttribute: () => {} }, 
+const i18nSandbox = {
+  window: { addEventListener: () => { } },
+  console: console,
+  document: {
+    documentElement: { style: { setProperty: () => { } }, setAttribute: () => { } },
     querySelectorAll: () => [],
     getElementById: mockElement
-  } 
+  }
 };
 vm.createContext(i18nSandbox);
 vm.runInContext(i18nContent, i18nSandbox);
@@ -40,44 +40,44 @@ const I18n = i18nSandbox.window.I18n;
 
 // data.js
 const dataJsContent = fs.readFileSync(path.join(root, 'js/data.js'), 'utf8');
-const dataSandbox = { window: { addEventListener: () => {} }, console: console };
+const dataSandbox = { window: { addEventListener: () => { } }, console: console };
 vm.createContext(dataSandbox);
 vm.runInContext(dataJsContent, dataSandbox);
 const TRAINING_DATA = dataSandbox.window.TRAINING_DATA;
 
 // exercises.js
 const exercisesContent = fs.readFileSync(path.join(root, 'js/exercises.js'), 'utf8');
-const exercisesSandbox = { window: { TRAINING_DATA, addEventListener: () => {} }, console: console, UI: { getEquipment: () => '' } };
+const exercisesSandbox = { window: { TRAINING_DATA, addEventListener: () => { } }, console: console, UI: { getEquipment: () => '' } };
 vm.createContext(exercisesSandbox);
 vm.runInContext(exercisesContent, exercisesSandbox);
 const SKILL_TREES = exercisesSandbox.window.SKILL_TREES;
 
 // stats.js
 const statsContent = fs.readFileSync(path.join(root, 'js/stats.js'), 'utf8');
-const statsSandbox = { window: { TRAINING_DATA, addEventListener: () => {} }, console: console, DB: {}, UI: { findTodayIndex: () => 0, getLocalDateString: () => '2026-08-29' }, I18n };
+const statsSandbox = { window: { TRAINING_DATA, addEventListener: () => { } }, console: console, DB: {}, UI: { findTodayIndex: () => 0, getLocalDateString: () => '2026-08-29' }, I18n };
 vm.createContext(statsSandbox);
 vm.runInContext(statsContent, statsSandbox);
 const StatsPage = statsSandbox.window.StatsPage;
 
 // progression.js
 const progressionContent = fs.readFileSync(path.join(root, 'js/progression.js'), 'utf8');
-const progressionSandbox = { window: { TRAINING_DATA, addEventListener: () => {} }, console: console, DB: {}, UI: { toast: () => {} }, I18n };
+const progressionSandbox = { window: { TRAINING_DATA, addEventListener: () => { } }, console: console, DB: {}, UI: { toast: () => { } }, I18n };
 vm.createContext(progressionSandbox);
 vm.runInContext(progressionContent, progressionSandbox);
 const ProgressionEngine = progressionSandbox.window.ProgressionEngine;
 
 // ui.js
 const uiContent = fs.readFileSync(path.join(root, 'js/ui.js'), 'utf8');
-const uiSandbox = { 
-  window: { TRAINING_DATA, addEventListener: () => {} }, 
-  console: console, 
-  document: { 
-    getElementById: mockElement, 
-    querySelectorAll: () => [], 
+const uiSandbox = {
+  window: { TRAINING_DATA, addEventListener: () => { } },
+  console: console,
+  document: {
+    getElementById: mockElement,
+    querySelectorAll: () => [],
     createElement: mockElement
   },
-  history: { pushState: () => {}, back: () => {} },
-  addEventListener: () => {},
+  history: { pushState: () => { }, back: () => { } },
+  addEventListener: () => { },
   I18n
 };
 vm.createContext(uiSandbox);
@@ -179,17 +179,17 @@ if (maxDec.newWeight > 32) {
   info.push("ProgressionEngine maximum weight bound (32kg ceiling) verified.");
 }
 
-// Test 3: Deload Week Weight Maintenance in calculateWeightedDecision
+// Test 3: Deload Week Weight Maintenance in calculateWeightedDecision (v15.7: week 12)
 const deloadState = { currentWeightKg: 14 };
-const deloadDec = ProgressionEngine.calculateWeightedDecision(dummyExercise, deloadState, [{ result: 'above' }], 8);
+const deloadDec = ProgressionEngine.calculateWeightedDecision(dummyExercise, deloadState, [{ result: 'above' }], 12);
 if (deloadDec.newWeight !== 14 || deloadDec.action !== 'maintain') {
   errors.push(`ProgressionEngine Bug: Deload week did not maintain weight (expected 14kg, got ${deloadDec.newWeight}kg)`);
 } else {
   info.push("ProgressionEngine deload week decision logic (action maintain) verified.");
 }
 
-// Test 4: Prescription Deload Reduction (-2kg)
-const deloadPrescription = ProgressionEngine.getDisplayPrescription('heels-elevated-goblet-squat', 8, { currentWeightKg: 14 });
+// Test 4: Prescription Deload Reduction (-2kg) (v15.7: week 12)
+const deloadPrescription = ProgressionEngine.getDisplayPrescription('heels-elevated-goblet-squat', 12, { currentWeightKg: 14 });
 if (deloadPrescription && deloadPrescription.targetWeightKg === 12) {
   info.push("ProgressionEngine getDisplayPrescription deload load reduction (14kg -> 12kg) verified.");
 } else {
@@ -233,9 +233,9 @@ console.log("\n--- TESTING EXPORT GUIDE GENERATOR ---");
 
 try {
   const exportGuideContent = fs.readFileSync(path.join(root, 'js/export-guide.js'), 'utf8');
-  const exportSandbox = { 
-    window: { TRAINING_DATA, addEventListener: () => {} }, 
-    console: console, 
+  const exportSandbox = {
+    window: { TRAINING_DATA, addEventListener: () => { } },
+    console: console,
     I18n,
     document: { createElement: mockElement },
     URL: { createObjectURL: () => 'blob://dummy' }
@@ -248,7 +248,7 @@ try {
     const htmlOutput = exportFunc();
     if (typeof htmlOutput === 'string' && htmlOutput.length > 5000) {
       if (htmlOutput.includes('32kg') && htmlOutput.includes('Zero Decisions')) {
-        info.push("exportProgramGuideHTML() generates valid HTML matching v15.6 specs (32kg, Zero Decisions)!");
+        info.push("exportProgramGuideHTML() generates valid HTML matching v15.7 specs (32kg, Zero Decisions)!");
       } else {
         warnings.push("exportProgramGuideHTML() generated HTML but might be missing updated keywords.");
       }

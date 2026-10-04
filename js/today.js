@@ -42,19 +42,19 @@ const TodayPage = (() => {
     if (!weightStr) return null;
     const str = String(weightStr).trim();
     const lowerStr = str.toLowerCase();
-    
+
     if (lowerStr === '' || lowerStr === '—' || lowerStr.startsWith('bodyweight') || lowerStr.startsWith('משקל גוף') || lowerStr.startsWith('incline') || lowerStr.includes('%')) {
       return null;
     }
-    
+
     const isPerHand = lowerStr.includes('each') || lowerStr.includes('per hand') || lowerStr.includes('כל יד') || lowerStr.includes('לכל יד');
-    
+
     // Clean display weight string by removing "each", "per hand", etc.
     let cleanWeight = str;
     if (isPerHand) {
       cleanWeight = str.replace(/\b(each|per hand)\b/gi, '').replace(/(כל יד|לכל יד)/gi, '').trim();
     }
-    
+
     return {
       raw: str,
       cleanWeight: cleanWeight,
@@ -69,7 +69,7 @@ const TodayPage = (() => {
    */
   function buildWeightBadgeHTML(weightInfo, isCompact = false) {
     if (!weightInfo) return '';
-    
+
     if (weightInfo.isPerHand) {
       const tagText = I18n.t('per_hand_tag') || 'כל יד';
       return `
@@ -133,7 +133,9 @@ const TodayPage = (() => {
   async function enrichDayWithProgression(day) {
     if (!day || !day.exercises || !Array.isArray(day.exercises)) return;
     const weekNum = day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1;
-    const isDeload = weekNum % 8 === 0;
+    // v15.7 Accelerated: deload cadence is settings-driven (every 12 weeks)
+    const deloadEvery = window.TRAINING_DATA?.progressionSettings?.deloadEveryWeeks || 12;
+    const isDeload = weekNum % deloadEvery === 0;
 
     let statesList = [];
     try {
@@ -162,18 +164,21 @@ const TodayPage = (() => {
     }
 
     // Dynamic Fallback: Check unlockCond before enriching state (Zero Decisions safety)
+    // v15.7 Accelerated: honors explicit fallbackId (swap) or fallbackId null (hide slot — Phase 0 volume)
     if (window.ProgressionEngine) {
       for (let i = 0; i < day.exercises.length; i++) {
         let ex = day.exercises[i];
         let exId = ex.id || window.ProgressionEngine.findExerciseIdByName(ex.name) || ex.name.toLowerCase().replace(/\s+/g, '-');
-        
+
         let maxDepth = 5;
         while (maxDepth > 0) {
-          const unlockStatus = window.ProgressionEngine.checkUnlockCriteria(exId, statesMap);
+          const unlockStatus = window.ProgressionEngine.checkUnlockCriteria(exId, statesMap, weekNum);
           if (!unlockStatus.unlocked) {
             const exDef = window.ProgressionEngine.getExercise(exId);
-            if (exDef && exDef.unlockCriteria && exDef.unlockCriteria.exercise) {
-              const fallbackId = exDef.unlockCriteria.exercise;
+            const fallbackId = exDef && exDef.fallbackId !== undefined
+              ? exDef.fallbackId
+              : (exDef && exDef.unlockCriteria ? exDef.unlockCriteria.exercise : null);
+            if (fallbackId) {
               const fallbackDef = window.ProgressionEngine.getExercise(fallbackId);
               if (fallbackDef) {
                 console.log(`[Today] Downgrading ${exId} -> ${fallbackId} due to unmet criteria (${unlockStatus.reason})`);
@@ -185,17 +190,52 @@ const TodayPage = (() => {
                 if (fallbackDef.restSeconds) ex.rest = fallbackDef.restSeconds;
                 if (fallbackDef.tempo) ex.tempo = fallbackDef.tempo;
                 if (fallbackDef.type) ex.type = fallbackDef.type;
-                
+
                 ex.weight = fallbackDef.startingWeight ? `${fallbackDef.startingWeight} kg` : (fallbackDef.type === 'variation' && fallbackDef.stages ? fallbackDef.stages[0] : 'Bodyweight');
-                
+
                 exId = fallbackId;
                 maxDepth--;
                 continue;
               }
             }
+            // v15.7 Accelerated: explicit fallbackId null (or no fallback) = hide the slot (Phase 0 volume)
+            if (exDef && exDef.fallbackId === null) {
+              console.log(`[Today] Hiding ${exId} (locked, no fallback) — Phase 0 volume`);
+              day.exercises.splice(i, 1);
+              i--;
+            }
+            break;
           }
           break;
         }
+      }
+    }
+
+    // v15.7 Accelerated: auto-regulated deload detection (2 consecutive failed sessions,
+    // excessive demotions, or repeated joint-pain flags) — applies deload caps to this session.
+    if (window.ProgressionEngine && window.ProgressionEngine.checkAutoDeloadTrigger && !isDeload) {
+      try {
+        const autoDeload = await window.ProgressionEngine.checkAutoDeloadTrigger(currentDayIndex);
+        if (autoDeload && autoDeload.triggered) {
+          day.autoDeload = true;
+          day.autoDeloadReason = autoDeload.reason;
+          console.log(`[Today] Auto-regulated deload triggered: ${autoDeload.reason}`);
+          const ceiling = window.TRAINING_DATA?.progressionSettings?.deloadSetsCeiling || 2;
+          day.exercises.forEach(ex => {
+            if (!ex.sets || typeof ex.sets !== 'string') return;
+            const mult = ex.sets.match(/^(\d+)\s*×/);
+            if (mult && parseInt(mult[1]) > ceiling) {
+              ex.sets = ex.sets.replace(/^\d+\s*×/, `${ceiling}×`);
+            } else {
+              const range = ex.sets.match(/^(\d+)\s*-\s*(\d+)$/);
+              if (range && parseInt(range[2]) > ceiling) {
+                ex.sets = `${ceiling}`;
+              }
+            }
+          });
+        }
+      } catch (e) {
+        console.warn('[Today] Auto-deload check failed:', e);
       }
     }
 
@@ -288,7 +328,7 @@ const TodayPage = (() => {
         let currentW = (state && state.currentWeightKg != null && state.currentWeightKg > 0) ? state.currentWeightKg : startW;
         currentW = Math.max(minW, currentW);
         const deloadRed = window.TRAINING_DATA?.progressionSettings?.deloadWeightReductionKg || 2;
-        const targetW = isDeload ? Math.max(minW, currentW - deloadRed) : currentW;
+        const targetW = (isDeload || day.autoDeload) ? Math.max(minW, currentW - deloadRed) : currentW;
 
         ex.targetWeightKg = targetW;
 
@@ -357,90 +397,90 @@ const TodayPage = (() => {
 
       content.innerHTML = `<div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">${(typeof I18n !== 'undefined' && I18n.t('briefing_loading')) || 'Generating today\'s AI tactical briefing...'}</div>`;
 
-    // Gather History Context
-    let allTracking = [];
-    try {
-      allTracking = await DB.getAllTracking();
-    } catch (e) {
-      console.warn('Briefing DB fetch tracking error:', e);
-    }
-    let completedDays = 0;
-    let rpeSum = 0;
-    let rpeCount = 0;
-    let bodyWeight = null;
-
-    Object.values(allTracking || {}).forEach(tr => {
-      if (tr.completed) completedDays++;
-      if (tr.actualRPE) {
-        rpeSum += parseFloat(tr.actualRPE);
-        rpeCount++;
-      }
-      if (tr.bodyWeight) bodyWeight = tr.bodyWeight;
-    });
-
-    const streak = completedDays;
-    const avgRPE = rpeCount > 0 ? (rpeSum / rpeCount).toFixed(1) : null;
-    if (!bodyWeight) bodyWeight = window._cachedUserWeight || 83;
-
-    const historyContext = {
-      streak,
-      completedDays,
-      avgRPE,
-      bodyWeight
-    };
-
-    // Gather Today's Workout Context
-    let planDaysList = allPlanDays;
-    if (!planDaysList || planDaysList.length === 0) {
+      // Gather History Context
+      let allTracking = [];
       try {
-        planDaysList = await DB.getAllPlan();
-      } catch (e) {}
-    }
-    const day = (planDaysList || [])[currentDayIndex] || {};
-    let totalSets = 0;
-    let requiredEquipment = [];
-
-    (day.exercises || []).forEach(ex => {
-      totalSets += UI.parseSetsCount(ex.sets);
-      if (ex.weight && isWeighted(ex)) {
-        requiredEquipment.push(`${ex.name}: ${ex.weight}`);
-      }
-    });
-
-    const todayContext = {
-      title: day.title || `Day ${day.day || (currentDayIndex + 1)}`,
-      dayNum: day.day || (currentDayIndex + 1),
-      dayType: day.dayType || 'Strength',
-      muscles: day.targetMuscles || 'Full Body',
-      exerciseCount: (day.exercises || []).length,
-      totalSets: totalSets,
-      plannedRPE: day.plannedRPE || 8,
-      equipment: requiredEquipment.length > 0 ? requiredEquipment.join(', ') : 'Standard / Bodyweight'
-    };
-
-    // Gather Google Fit Context silently with timeout race to prevent popup blocking
-    let fitContext = {};
-    if (window.GoogleFitService && window.GoogleFitService.fetchDailyFitData) {
-      try {
-        const fitPromise = window.GoogleFitService.fetchDailyFitData();
-        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 400));
-        const fitData = await Promise.race([fitPromise, timeoutPromise]);
-        if (fitData) fitContext = fitData;
+        allTracking = await DB.getAllTracking();
       } catch (e) {
-        console.warn('Google Fit context for briefing error:', e);
+        console.warn('Briefing DB fetch tracking error:', e);
       }
-    }
+      let completedDays = 0;
+      let rpeSum = 0;
+      let rpeCount = 0;
+      let bodyWeight = null;
 
-    try {
-      if (typeof GeminiService !== 'undefined' && GeminiService.getDailySmartBriefing) {
-        const briefingText = await GeminiService.getDailySmartBriefing(historyContext, todayContext, fitContext);
-        if (briefingText) {
-          const formattedHtml = briefingText
-            .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--accent-primary);">$1</strong>')
-            .replace(/\n\n/g, '<br><br>')
-            .replace(/\n/g, '<br>');
+      Object.values(allTracking || {}).forEach(tr => {
+        if (tr.completed) completedDays++;
+        if (tr.actualRPE) {
+          rpeSum += parseFloat(tr.actualRPE);
+          rpeCount++;
+        }
+        if (tr.bodyWeight) bodyWeight = tr.bodyWeight;
+      });
 
-          const htmlContainer = `
+      const streak = completedDays;
+      const avgRPE = rpeCount > 0 ? (rpeSum / rpeCount).toFixed(1) : null;
+      if (!bodyWeight) bodyWeight = window._cachedUserWeight || 83;
+
+      const historyContext = {
+        streak,
+        completedDays,
+        avgRPE,
+        bodyWeight
+      };
+
+      // Gather Today's Workout Context
+      let planDaysList = allPlanDays;
+      if (!planDaysList || planDaysList.length === 0) {
+        try {
+          planDaysList = await DB.getAllPlan();
+        } catch (e) { }
+      }
+      const day = (planDaysList || [])[currentDayIndex] || {};
+      let totalSets = 0;
+      let requiredEquipment = [];
+
+      (day.exercises || []).forEach(ex => {
+        totalSets += UI.parseSetsCount(ex.sets);
+        if (ex.weight && isWeighted(ex)) {
+          requiredEquipment.push(`${ex.name}: ${ex.weight}`);
+        }
+      });
+
+      const todayContext = {
+        title: day.title || `Day ${day.day || (currentDayIndex + 1)}`,
+        dayNum: day.day || (currentDayIndex + 1),
+        dayType: day.dayType || 'Strength',
+        muscles: day.targetMuscles || 'Full Body',
+        exerciseCount: (day.exercises || []).length,
+        totalSets: totalSets,
+        plannedRPE: day.plannedRPE || 8,
+        equipment: requiredEquipment.length > 0 ? requiredEquipment.join(', ') : 'Standard / Bodyweight'
+      };
+
+      // Gather Google Fit Context silently with timeout race to prevent popup blocking
+      let fitContext = {};
+      if (window.GoogleFitService && window.GoogleFitService.fetchDailyFitData) {
+        try {
+          const fitPromise = window.GoogleFitService.fetchDailyFitData();
+          const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(null), 400));
+          const fitData = await Promise.race([fitPromise, timeoutPromise]);
+          if (fitData) fitContext = fitData;
+        } catch (e) {
+          console.warn('Google Fit context for briefing error:', e);
+        }
+      }
+
+      try {
+        if (typeof GeminiService !== 'undefined' && GeminiService.getDailySmartBriefing) {
+          const briefingText = await GeminiService.getDailySmartBriefing(historyContext, todayContext, fitContext);
+          if (briefingText) {
+            const formattedHtml = briefingText
+              .replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--accent-primary);">$1</strong>')
+              .replace(/\n\n/g, '<br><br>')
+              .replace(/\n/g, '<br>');
+
+            const htmlContainer = `
             <div style="background: var(--bg-elevated); padding: 16px; border-radius: 14px; border: 1px solid var(--border-light); line-height: 1.7;">
               ${formattedHtml}
             </div>
@@ -448,17 +488,17 @@ const TodayPage = (() => {
               <button onclick="TodayPage.openDailyBriefing(true)" style="background: none; border: none; color: var(--text-muted); font-size: 11px; cursor: pointer; text-decoration: underline;">🔄 ${I18n.t('refresh_advice') || 'רענן תדריך'}</button>
             </div>
           `;
-          content.innerHTML = htmlContainer;
-          localStorage.setItem(cacheKey, htmlContainer);
-          return;
+            content.innerHTML = htmlContainer;
+            localStorage.setItem(cacheKey, htmlContainer);
+            return;
+          }
         }
+      } catch (e) {
+        console.warn('Gemini briefing error, falling back to local smart summary:', e);
       }
-    } catch (e) {
-      console.warn('Gemini briefing error, falling back to local smart summary:', e);
-    }
 
-    // Local Rule-Based Fallback Briefing
-    const fallbackHtml = `
+      // Local Rule-Based Fallback Briefing
+      const fallbackHtml = `
       <div style="background: var(--bg-elevated); padding: 16px; border-radius: 14px; border: 1px solid var(--border-light); line-height: 1.7;">
         <div style="margin-bottom: 10px;">
           🏆 <strong style="color: var(--accent-primary);">${I18n.t('briefing_momentum')}:</strong> ${completedDays > 0 ? `Great momentum with ${completedDays} completed workouts!` : 'Welcome to Day 1! Ready to build momentum!'}
@@ -474,8 +514,8 @@ const TodayPage = (() => {
         <button onclick="TodayPage.openDailyBriefing(true)" style="background: none; border: none; color: var(--text-muted); font-size: 11px; cursor: pointer; text-decoration: underline;">🔄 ${I18n.t('refresh_advice') || 'רענן תדריך'}</button>
       </div>
     `;
-    content.innerHTML = fallbackHtml;
-    localStorage.setItem(cacheKey, fallbackHtml);
+      content.innerHTML = fallbackHtml;
+      localStorage.setItem(cacheKey, fallbackHtml);
     } catch (err) {
       console.error('checkAndShowDailyBriefing error:', err);
     }
@@ -614,7 +654,7 @@ const TodayPage = (() => {
 
     // Update header badges
     const typeInfo = UI.getDayTypeInfo(day.dayType);
-    const isDeloadDay = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload')) || (day.week && day.week.includes('Deload'));
+    const isDeloadDay = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload')) || (day.week && day.week.includes('Deload')) || Boolean(day.autoDeload);
 
     // Deload UI Background differentiation
     if (isDeloadDay) {
@@ -624,12 +664,12 @@ const TodayPage = (() => {
       document.body.classList.remove('recovery-mode');
       document.body.classList.remove('deload-mode');
     }
-    
+
     // Check if program started to show preview banner
     const isProgramStarted = await DB.getSetting('planStartDate');
     const summaryCard = document.getElementById('day-summary');
     let previewBanner = document.getElementById('preview-mode-banner');
-    
+
     if (!isProgramStarted) {
       if (!previewBanner) {
         previewBanner = document.createElement('div');
@@ -660,8 +700,8 @@ const TodayPage = (() => {
         deloadBanner.innerHTML = `
           <div class="deload-banner-icon">🌿</div>
           <div class="deload-banner-content">
-            <strong class="deload-banner-title">${I18n.t('deload_title')}</strong>
-            <span class="deload-banner-sub">${I18n.t('deload_desc')}</span>
+            <strong class="deload-banner-title">${day.autoDeload ? I18n.t('auto_deload_title') : I18n.t('deload_title')}</strong>
+            <span class="deload-banner-sub">${day.autoDeload ? I18n.t('auto_deload_desc') : I18n.t('deload_desc')}</span>
           </div>
         `;
         summaryCard.parentNode.insertBefore(deloadBanner, summaryCard);
@@ -678,30 +718,63 @@ const TodayPage = (() => {
 
     const realTodayIndex = UI.findTodayIndex(allPlanDays);
     const isToday = currentDayIndex === realTodayIndex;
+    const isPastDay = currentDayIndex < realTodayIndex;
+    const isFutureDay = currentDayIndex > realTodayIndex;
+    const isUnlockedEarly = Boolean(currentTracking && currentTracking.unlockedEarly);
     const todayBtn = document.getElementById('today-btn');
     if (todayBtn) {
       todayBtn.style.display = isToday ? 'none' : 'flex';
     }
 
     let nonTodayBanner = document.getElementById('non-today-mode-banner');
-    if (!isToday) {
+    if (isPastDay) {
       if (!nonTodayBanner && summaryCard) {
         nonTodayBanner = document.createElement('div');
         nonTodayBanner.id = 'non-today-mode-banner';
+        summaryCard.parentNode.insertBefore(nonTodayBanner, summaryCard);
+      }
+      if (nonTodayBanner) {
         nonTodayBanner.innerHTML = `
-          <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+          <div style="background: rgba(139, 92, 246, 0.12); border: 1px solid rgba(139, 92, 246, 0.35); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span style="font-size: 18px;">👁️</span>
-              <div style="font-size: 13px; color: var(--warning, #f59e0b); font-weight: 700;">
-                ${I18n.t('view_only_mode_banner')}
+              <span style="font-size: 18px;">🕒</span>
+              <div style="font-size: 13px; color: #c084fc; font-weight: 700;">
+                ${I18n.t('retroactive_entry_badge')} (#${day.dayNum})
               </div>
             </div>
-            <button type="button" class="btn-warning" style="padding: 6px 12px; font-size: 12px; font-weight: 700; white-space: nowrap; border-radius: 8px; border: none; cursor: pointer;" onclick="TodayPage.goToToday()">
+            <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; font-weight: 700; white-space: nowrap; border-radius: 8px; cursor: pointer;" onclick="TodayPage.goToToday()">
               ${I18n.t('back_to_today')}
             </button>
           </div>
         `;
+      }
+    } else if (isFutureDay) {
+      if (!nonTodayBanner && summaryCard) {
+        nonTodayBanner = document.createElement('div');
+        nonTodayBanner.id = 'non-today-mode-banner';
         summaryCard.parentNode.insertBefore(nonTodayBanner, summaryCard);
+      }
+      if (nonTodayBanner) {
+        nonTodayBanner.innerHTML = `
+          <div style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="font-size: 18px;">📅</span>
+              <div style="font-size: 13px; color: #60a5fa; font-weight: 700;">
+                ${isUnlockedEarly ? I18n.t('future_day_preview') + ' (🔓)' : I18n.t('future_day_preview')}
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              ${!isUnlockedEarly ? `
+                <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px; font-weight: 700; white-space: nowrap; border-radius: 8px; cursor: pointer;" onclick="TodayPage.unlockEarly()">
+                  ${I18n.t('unlock_early_entry')}
+                </button>
+              ` : ''}
+              <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; font-weight: 700; white-space: nowrap; border-radius: 8px; cursor: pointer;" onclick="TodayPage.goToToday()">
+                ${I18n.t('back_to_today')}
+              </button>
+            </div>
+          </div>
+        `;
       }
     } else if (nonTodayBanner) {
       nonTodayBanner.remove();
@@ -727,7 +800,7 @@ const TodayPage = (() => {
     } else if (workoutCompletedBanner) {
       workoutCompletedBanner.remove();
     }
-    
+
 
     const typeBadge = document.getElementById('day-type');
     typeBadge.textContent = typeInfo.label;
@@ -756,164 +829,173 @@ const TodayPage = (() => {
 
 
 
-  /**
-   * Calculate burned calories from today's workout based on completed exercises, sets, volume, and body weight
-   */
-  function calculateWorkoutBurn(day, tracking) {
-    if (!day || !day.exercises || day.dayType === 'Rest') return 0;
+    /**
+     * Calculate burned calories from today's workout based on completed exercises, sets, volume, and body weight
+     */
+    function calculateWorkoutBurn(day, tracking) {
+      if (!day || !day.exercises || day.dayType === 'Rest') return 0;
 
-    let userWeightKg = window._cachedUserWeight || 83;
-    if (tracking && tracking.bodyWeight) {
-      const bw = parseFloat(tracking.bodyWeight);
-      if (!isNaN(bw) && bw > 30) userWeightKg = bw;
-    }
+      let userWeightKg = window._cachedUserWeight || 83;
+      if (tracking && tracking.bodyWeight) {
+        const bw = parseFloat(tracking.bodyWeight);
+        if (!isNaN(bw) && bw > 30) userWeightKg = bw;
+      }
 
-    const setData = (tracking && tracking.setData) || {};
-    let totalCompletedSets = 0;
-    let totalVolumeKg = 0;
+      const setData = (tracking && tracking.setData) || {};
+      let totalCompletedSets = 0;
+      let totalVolumeKg = 0;
 
-    day.exercises.forEach((ex, exIndex) => {
-      const setsCount = UI.parseSetsCount(ex.sets);
-      for (let s = 0; s < setsCount; s++) {
-        if (setData[`ex_${exIndex}_set_${s}_done`]) {
-          totalCompletedSets++;
-          const weight = parseFloat(setData[`ex_${exIndex}_set_${s}_weight`]) || 0;
-          const reps = parseInt(setData[`ex_${exIndex}_set_${s}_reps`], 10) || 0;
-          if (reps > 0) {
-            totalVolumeKg += (weight * reps);
+      day.exercises.forEach((ex, exIndex) => {
+        const setsCount = UI.parseSetsCount(ex.sets);
+        for (let s = 0; s < setsCount; s++) {
+          if (setData[`ex_${exIndex}_set_${s}_done`]) {
+            totalCompletedSets++;
+            const weight = parseFloat(setData[`ex_${exIndex}_set_${s}_weight`]) || 0;
+            const reps = parseInt(setData[`ex_${exIndex}_set_${s}_reps`], 10) || 0;
+            if (reps > 0) {
+              totalVolumeKg += (weight * reps);
+            }
           }
         }
+      });
+
+      if (totalCompletedSets === 0) return 0;
+
+      const dayType = String(day.dayType || '').toLowerCase();
+      let caloriesBurned = 0;
+
+      if (dayType.includes('zone 2') || dayType.includes('cardio') || dayType.includes('vo2 max')) {
+        const totalPlannedSets = day.exercises.reduce((sum, ex) => sum + UI.parseSetsCount(ex.sets), 0) || 1;
+        const completionRatio = totalCompletedSets / totalPlannedSets;
+        caloriesBurned = Math.round(350 * completionRatio * (userWeightKg / 70));
+      } else if (dayType.includes('active recovery')) {
+        caloriesBurned = Math.round(totalCompletedSets * 8 * (userWeightKg / 70));
+      } else {
+        const baseSetBurn = totalCompletedSets * 11 * (userWeightKg / 70);
+        const volumeBonus = (totalVolumeKg / 100) * 1.5;
+        caloriesBurned = Math.round(baseSetBurn + volumeBonus);
       }
-    });
 
-    if (totalCompletedSets === 0) return 0;
-
-    const dayType = String(day.dayType || '').toLowerCase();
-    let caloriesBurned = 0;
-
-    if (dayType.includes('zone 2') || dayType.includes('cardio') || dayType.includes('vo2 max')) {
-      const totalPlannedSets = day.exercises.reduce((sum, ex) => sum + UI.parseSetsCount(ex.sets), 0) || 1;
-      const completionRatio = totalCompletedSets / totalPlannedSets;
-      caloriesBurned = Math.round(350 * completionRatio * (userWeightKg / 70));
-    } else if (dayType.includes('active recovery')) {
-      caloriesBurned = Math.round(totalCompletedSets * 8 * (userWeightKg / 70));
-    } else {
-      const baseSetBurn = totalCompletedSets * 11 * (userWeightKg / 70);
-      const volumeBonus = (totalVolumeKg / 100) * 1.5;
-      caloriesBurned = Math.round(baseSetBurn + volumeBonus);
+      return Math.max(0, caloriesBurned);
     }
 
-    return Math.max(0, caloriesBurned);
-  }
-
-  /**
-   * Render Nutrition Section with Gemini AI & Photo Scanner
-   */
-  async function renderNutritionSection(queryDateStr) {
-    renderNutritionSectionRef = renderNutritionSection;
-    if (!queryDateStr) {
-      if (!selectedNutritionDate) {
-        selectedNutritionDate = UI.getLocalDateString();
+    /**
+     * Render Nutrition Section with Gemini AI & Photo Scanner
+     */
+    async function renderNutritionSection(queryDateStr) {
+      renderNutritionSectionRef = renderNutritionSection;
+      if (!queryDateStr) {
+        if (!selectedNutritionDate) {
+          selectedNutritionDate = UI.getLocalDateString();
+        }
+        queryDateStr = selectedNutritionDate;
+      } else {
+        selectedNutritionDate = queryDateStr;
       }
-      queryDateStr = selectedNutritionDate;
-    } else {
-      selectedNutritionDate = queryDateStr;
-    }
 
-    const parts = queryDateStr.split('-').map(Number);
-    const dObj = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
-    const prevD = new Date(dObj); prevD.setDate(prevD.getDate() - 1);
-    const nextD = new Date(dObj); nextD.setDate(nextD.getDate() + 1);
-    const yesterdayStr = UI.getLocalDateString(prevD);
-    const tomorrowStr = UI.getLocalDateString(nextD);
-    const todayStr = UI.getLocalDateString();
+      const parts = queryDateStr.split('-').map(Number);
+      const dObj = new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
+      const prevD = new Date(dObj); prevD.setDate(prevD.getDate() - 1);
+      const nextD = new Date(dObj); nextD.setDate(nextD.getDate() + 1);
+      const yesterdayStr = UI.getLocalDateString(prevD);
+      const tomorrowStr = UI.getLocalDateString(nextD);
+      const todayStr = UI.getLocalDateString();
 
-    const setupCard = document.getElementById('gemini-setup-card');
-    const mainContent = document.getElementById('nutrition-main-content');
-    
-    if (typeof GeminiService === 'undefined') return;
-    if (GeminiService.initSelects) GeminiService.initSelects();
-    GeminiService.getApiKey().then(key => {
-      if (key && GeminiService.discoverAvailableModels) GeminiService.discoverAvailableModels(key);
-    });
+      const setupCard = document.getElementById('gemini-setup-card');
+      const mainContent = document.getElementById('nutrition-main-content');
 
-    const isConfigured = await GeminiService.isConfigured();
+      if (typeof GeminiService === 'undefined') return;
+      if (GeminiService.initSelects) GeminiService.initSelects();
+      GeminiService.getApiKey().then(key => {
+        if (key && GeminiService.discoverAvailableModels) GeminiService.discoverAvailableModels(key);
+      });
 
-    if (!isConfigured) {
-      if (setupCard) setupCard.style.display = 'block';
-      if (mainContent) mainContent.style.display = 'none';
+      const isConfigured = await GeminiService.isConfigured();
 
-      // Bind setup button
-      const saveKeyBtn = document.getElementById('save-gemini-key-btn');
-      if (saveKeyBtn && !saveKeyBtn.hasAttribute('data-bound')) {
-        saveKeyBtn.setAttribute('data-bound', 'true');
-        saveKeyBtn.onclick = async () => {
-          const keyInput = document.getElementById('gemini-api-key-input');
-          const modelSelect = document.getElementById('gemini-model-select');
-          const errorDiv = document.getElementById('gemini-key-error');
-          const key = keyInput ? keyInput.value.trim() : '';
-          const model = modelSelect ? modelSelect.value : 'gemini-3.1-flash-lite';
+      if (!isConfigured) {
+        if (setupCard) setupCard.style.display = 'block';
+        if (mainContent) mainContent.style.display = 'none';
 
-          if (!key) {
-            if (errorDiv) { errorDiv.textContent = I18n.t('enter_api_key'); errorDiv.style.display = 'block'; }
-            return;
-          }
+        // Bind setup button
+        const saveKeyBtn = document.getElementById('save-gemini-key-btn');
+        if (saveKeyBtn && !saveKeyBtn.hasAttribute('data-bound')) {
+          saveKeyBtn.setAttribute('data-bound', 'true');
+          saveKeyBtn.onclick = async () => {
+            const keyInput = document.getElementById('gemini-api-key-input');
+            const modelSelect = document.getElementById('gemini-model-select');
+            const errorDiv = document.getElementById('gemini-key-error');
+            const key = keyInput ? keyInput.value.trim() : '';
+            const model = modelSelect ? modelSelect.value : 'gemini-3.1-flash-lite';
 
-          saveKeyBtn.disabled = true;
-          saveKeyBtn.textContent = I18n.t('checking_key');
-          if (errorDiv) errorDiv.style.display = 'none';
+            if (!key) {
+              if (errorDiv) { errorDiv.textContent = I18n.t('enter_api_key'); errorDiv.style.display = 'block'; }
+              return;
+            }
 
-          try {
-            await GeminiService.testApiKey(key, model);
-            await GeminiService.setApiKey(key);
-            await GeminiService.setModel(model);
-            UI.toast(I18n.t('key_saved_success'), 'success');
+            saveKeyBtn.disabled = true;
+            saveKeyBtn.textContent = I18n.t('checking_key');
+            if (errorDiv) errorDiv.style.display = 'none';
+
+            try {
+              await GeminiService.testApiKey(key, model);
+              await GeminiService.setApiKey(key);
+              await GeminiService.setModel(model);
+              UI.toast(I18n.t('key_saved_success'), 'success');
+              if (window.updateGeminiSettingsUI) window.updateGeminiSettingsUI();
+              renderNutritionSection(queryDateStr);
+            } catch (err) {
+              saveKeyBtn.disabled = false;
+              saveKeyBtn.textContent = I18n.t('save_enable_ai');
+              if (errorDiv) { errorDiv.textContent = err.message; errorDiv.style.display = 'block'; }
+            }
+          };
+        }
+        return;
+      }
+
+      if (setupCard) setupCard.style.display = 'none';
+      if (mainContent) mainContent.style.display = 'block';
+
+      // Display current model badge
+      const modelBadge = document.getElementById('current-ai-model-badge');
+      if (modelBadge) {
+        const currentModel = await GeminiService.getModel();
+        modelBadge.textContent = currentModel;
+      }
+
+      const deleteBadgeBtn = document.getElementById('delete-gemini-key-badge-btn');
+      if (deleteBadgeBtn) {
+        deleteBadgeBtn.onclick = async () => {
+          const confirmed = window.UI && window.UI.confirm
+            ? await UI.confirm({
+              title: I18n.t('delete_key') || 'מחיקת מפתח API',
+              message: I18n.t('delete_key_confirm'),
+              confirmText: I18n.t('delete_btn') || 'מחק',
+              type: 'danger',
+              icon: '🗑️'
+            })
+            : confirm(I18n.t('delete_key_confirm'));
+          if (confirmed) {
+            await GeminiService.removeApiKey();
+            UI.toast(I18n.t('key_deleted'), 'info');
             if (window.updateGeminiSettingsUI) window.updateGeminiSettingsUI();
             renderNutritionSection(queryDateStr);
-          } catch (err) {
-            saveKeyBtn.disabled = false;
-            saveKeyBtn.textContent = I18n.t('save_enable_ai');
-            if (errorDiv) { errorDiv.textContent = err.message; errorDiv.style.display = 'block'; }
           }
         };
       }
-      return;
-    }
 
-    if (setupCard) setupCard.style.display = 'none';
-    if (mainContent) mainContent.style.display = 'block';
+      // Set date label & nav controls
+      const dateLabel = document.getElementById('nutrition-date-label');
+      if (dateLabel) {
+        const formattedDate = queryDateStr.split('-').reverse().join('/');
+        const isToday = queryDateStr === todayStr;
+        const todayText = isToday ? ` (${I18n.t('nav_today')})` : '';
 
-    // Display current model badge
-    const modelBadge = document.getElementById('current-ai-model-badge');
-    if (modelBadge) {
-      const currentModel = await GeminiService.getModel();
-      modelBadge.textContent = currentModel;
-    }
+        const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
+        const prevArrow = isRTL ? '▶' : '◀';
+        const nextArrow = isRTL ? '◀' : '▶';
 
-    const deleteBadgeBtn = document.getElementById('delete-gemini-key-badge-btn');
-    if (deleteBadgeBtn) {
-      deleteBadgeBtn.onclick = async () => {
-        if (confirm(I18n.t('delete_key_confirm'))) {
-          await GeminiService.removeApiKey();
-          UI.toast(I18n.t('key_deleted'), 'info');
-          if (window.updateGeminiSettingsUI) window.updateGeminiSettingsUI();
-          renderNutritionSection(queryDateStr);
-        }
-      };
-    }
-
-    // Set date label & nav controls
-    const dateLabel = document.getElementById('nutrition-date-label');
-    if (dateLabel) {
-      const formattedDate = queryDateStr.split('-').reverse().join('/');
-      const isToday = queryDateStr === todayStr;
-      const todayText = isToday ? ` (${I18n.t('nav_today')})` : '';
-
-      const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
-      const prevArrow = isRTL ? '▶' : '◀';
-      const nextArrow = isRTL ? '◀' : '▶';
-
-      dateLabel.innerHTML = `
+        dateLabel.innerHTML = `
         <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
           <button id="nut-prev-day-btn" style="background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-primary); border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700;" title="${I18n.t('nav_prev_nut_day')}">${prevArrow}</button>
           <span style="font-weight: 700; color: var(--text-primary); font-size: 12px; margin: 0 2px;">${I18n.t('nut_date_label')} ${formattedDate}${todayText}</span>
@@ -921,241 +1003,241 @@ const TodayPage = (() => {
           ${!isToday ? `<button id="nut-today-btn" style="background: var(--accent-primary); border: none; color: #fff; border-radius: 6px; padding: 2px 8px; cursor: pointer; font-size: 11px; font-weight: 700; margin-left: 4px;" title="${I18n.t('back_to_today')}">📅 ${I18n.t('nav_today')}</button>` : ''}
         </div>
       `;
-      const prevBtn = document.getElementById('nut-prev-day-btn');
-      const nextBtn = document.getElementById('nut-next-day-btn');
-      const todayBtn = document.getElementById('nut-today-btn');
-      if (prevBtn) prevBtn.onclick = () => renderNutritionSection(yesterdayStr);
-      if (nextBtn) nextBtn.onclick = () => renderNutritionSection(tomorrowStr);
-      if (todayBtn) todayBtn.onclick = () => renderNutritionSection(todayStr);
-    }
+        const prevBtn = document.getElementById('nut-prev-day-btn');
+        const nextBtn = document.getElementById('nut-next-day-btn');
+        const todayBtn = document.getElementById('nut-today-btn');
+        if (prevBtn) prevBtn.onclick = () => renderNutritionSection(yesterdayStr);
+        if (nextBtn) nextBtn.onclick = () => renderNutritionSection(tomorrowStr);
+        if (todayBtn) todayBtn.onclick = () => renderNutritionSection(todayStr);
+      }
 
-    // Load nutrition data from DB for queryDateStr
-    let nutrition = await DB.getNutrition(queryDateStr);
-    if (!nutrition) nutrition = { meals: [], supplements_taken: [] };
+      // Load nutrition data from DB for queryDateStr
+      let nutrition = await DB.getNutrition(queryDateStr);
+      if (!nutrition) nutrition = { meals: [], supplements_taken: [] };
 
-    // Calculate totals
-    let totalCals = 0;
-    let totalProtein = 0;
-    if (nutrition.meals && nutrition.meals.length > 0) {
-      nutrition.meals.forEach(m => {
-        totalCals += (m.calories || 0);
-        totalProtein += (m.protein || 0);
-      });
-    }
+      // Calculate totals
+      let totalCals = 0;
+      let totalProtein = 0;
+      if (nutrition.meals && nutrition.meals.length > 0) {
+        nutrition.meals.forEach(m => {
+          totalCals += (m.calories || 0);
+          totalProtein += (m.protein || 0);
+        });
+      }
 
-    const targetCals = 1980; // 2200 with 10% reduction
-    const targetProtein = 160;
+      const targetCals = 1980; // 2200 with 10% reduction
+      const targetProtein = 160;
 
-    // Calculate Workout Burn & Info
-    let workoutBurn = 0;
-    let workoutInfo = { dayType: '', completedSets: 0, volumeKg: 0, burnedCals: 0 };
-    if (allPlanDays && allPlanDays[currentDayIndex]) {
-      const activeDay = allPlanDays[currentDayIndex];
-      const tracking = currentTracking || {};
-      workoutBurn = calculateWorkoutBurn(activeDay, tracking);
+      // Calculate Workout Burn & Info
+      let workoutBurn = 0;
+      let workoutInfo = { dayType: '', completedSets: 0, volumeKg: 0, burnedCals: 0 };
+      if (allPlanDays && allPlanDays[currentDayIndex]) {
+        const activeDay = allPlanDays[currentDayIndex];
+        const tracking = currentTracking || {};
+        workoutBurn = calculateWorkoutBurn(activeDay, tracking);
 
-      const setData = tracking.setData || {};
-      let setsDone = 0;
-      let vol = 0;
-      (activeDay.exercises || []).forEach((ex, exIndex) => {
-        const count = UI.parseSetsCount(ex.sets);
-        for (let s = 0; s < count; s++) {
-          if (setData[`ex_${exIndex}_set_${s}_done`]) {
-            setsDone++;
-            const weight = parseFloat(setData[`ex_${exIndex}_set_${s}_weight`]) || 0;
-            const reps = parseInt(setData[`ex_${exIndex}_set_${s}_reps`], 10) || 0;
-            vol += (weight * reps);
-          }
-        }
-      });
-
-      workoutInfo = {
-        dayType: activeDay.dayType,
-        completedSets: setsDone,
-        volumeKg: vol,
-        burnedCals: workoutBurn
-      };
-    }
-
-    // Update HUD
-    const nutCalsEl = document.getElementById('nut-calories-total');
-    const nutProtEl = document.getElementById('nut-protein-total');
-    const nutCalsTargetEl = document.getElementById('nut-calories-target');
-    const nutBurnEl = document.getElementById('nut-workout-burned');
-    const nutNetEl = document.getElementById('nut-net-calories');
-    const nutNetTargetEl = document.getElementById('nut-net-target');
-
-    if (nutCalsEl) nutCalsEl.textContent = totalCals;
-    if (nutProtEl) nutProtEl.textContent = totalProtein;
-    if (nutCalsTargetEl) nutCalsTargetEl.textContent = targetCals;
-
-    const netCals = totalCals - workoutBurn;
-    if (nutBurnEl) nutBurnEl.textContent = workoutBurn;
-    if (nutNetEl) nutNetEl.textContent = netCals;
-    if (nutNetTargetEl) nutNetTargetEl.textContent = targetCals;
-
-    const calsPercent = Math.round((totalCals / targetCals) * 100);
-    const proteinPercent = Math.round((totalProtein / targetProtein) * 100);
-
-    const calsBar = document.getElementById('nut-calories-bar');
-    const protBar = document.getElementById('nut-protein-bar');
-    if (calsBar) calsBar.style.width = `${Math.min(100, (totalCals / targetCals) * 100)}%`;
-    if (protBar) protBar.style.width = `${Math.min(100, (totalProtein / targetProtein) * 100)}%`;
-
-    // Nav HUD
-    const navCals = document.getElementById('nav-cals-text');
-    const navProt = document.getElementById('nav-protein-text');
-    const navCalsPercent = document.getElementById('nav-cals-percent');
-    const navProtPercent = document.getElementById('nav-protein-percent');
-
-    if (navCals) navCals.textContent = `${totalCals}`;
-    if (navProt) navProt.textContent = `${totalProtein}`;
-    if (navCalsPercent) navCalsPercent.textContent = `${calsPercent}%`;
-    if (navProtPercent) navProtPercent.textContent = `${proteinPercent}%`;
-
-    const desktopNavNut = document.getElementById('desktop-nav-nutrition');
-    if (desktopNavNut) {
-      desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} ${I18n.t('nut_kcal_label')} (${calsPercent}%)</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}g ${I18n.t('nut_protein_label')} (${proteinPercent}%)</span>`;
-    }
-
-    // Render AI Daily Advice Card
-    const aiCard = document.getElementById('ai-advice-card');
-    const aiContent = document.getElementById('ai-advice-content');
-    const refreshAiBtn = document.getElementById('refresh-ai-advice-btn');
-
-    if (aiCard && aiContent) {
-      const currentStateFingerprint = `${queryDateStr}_cals${totalCals}_prot${totalProtein}_meals${(nutrition.meals || []).length}_burn${workoutBurn}_comp${workoutInfo.completedSets > 0 ? 1 : 0}`;
-      const adviceCacheKey = `fitup_ai_advice_cache_${queryDateStr}`;
-
-      const fetchAdvice = async (forceRefresh = false) => {
-        let cachedData = null;
-        try {
-          const raw = localStorage.getItem(adviceCacheKey);
-          if (raw) {
-            if (raw.startsWith('{')) {
-              cachedData = JSON.parse(raw);
-            } else {
-              // Legacy plain string cache - clear
-              localStorage.removeItem(adviceCacheKey);
+        const setData = tracking.setData || {};
+        let setsDone = 0;
+        let vol = 0;
+        (activeDay.exercises || []).forEach((ex, exIndex) => {
+          const count = UI.parseSetsCount(ex.sets);
+          for (let s = 0; s < count; s++) {
+            if (setData[`ex_${exIndex}_set_${s}_done`]) {
+              setsDone++;
+              const weight = parseFloat(setData[`ex_${exIndex}_set_${s}_weight`]) || 0;
+              const reps = parseInt(setData[`ex_${exIndex}_set_${s}_reps`], 10) || 0;
+              vol += (weight * reps);
             }
           }
-        } catch (e) {
-          localStorage.removeItem(adviceCacheKey);
-        }
+        });
 
-        if (cachedData && cachedData.fingerprint === currentStateFingerprint && !forceRefresh) {
-          aiContent.textContent = cachedData.text;
-          return;
-        }
-
-        aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('ai_advice_loading')}</span>`;
-        try {
-          const adviceText = await GeminiService.getDailyAdvice(
-            { calories: totalCals, protein: totalProtein },
-            { calories: targetCals, protein: targetProtein },
-            workoutInfo
-          );
-          if (adviceText) {
-            aiContent.textContent = adviceText;
-            localStorage.setItem(adviceCacheKey, JSON.stringify({
-              fingerprint: currentStateFingerprint,
-              text: adviceText
-            }));
-          } else {
-            aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('gemini_key_not_set')}</span>`;
-          }
-        } catch (err) {
-          console.warn('AI advice fetch error:', err);
-          aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('gemini_no_response')}</span>`;
-        }
-      };
-
-      if (refreshAiBtn) {
-        refreshAiBtn.onclick = (e) => {
-          e.stopPropagation();
-          fetchAdvice(true);
+        workoutInfo = {
+          dayType: activeDay.dayType,
+          completedSets: setsDone,
+          volumeKg: vol,
+          burnedCals: workoutBurn
         };
       }
-      fetchAdvice(false);
-    }
 
-    // Update Quick Protein Powder Completion Button
-    const quickProtBtn = document.getElementById('quick-protein-powder-btn');
-    if (quickProtBtn) {
-      const remainingNeeded = Math.max(0, targetProtein - totalProtein);
-      if (remainingNeeded <= 0) {
-        quickProtBtn.innerHTML = I18n.t('protein_goal_reached');
-        quickProtBtn.disabled = true;
-        quickProtBtn.style.opacity = '0.6';
-        quickProtBtn.style.cursor = 'default';
-        quickProtBtn.onclick = null;
-      } else {
-        const powderAmount = Math.ceil(remainingNeeded * 1.1);
-        quickProtBtn.innerHTML = `🥛 ${I18n.t('quick_protein_consumed')} ${powderAmount}g ${I18n.t('quick_protein_powder')}`;
-        quickProtBtn.disabled = false;
-        quickProtBtn.style.opacity = '1';
-        quickProtBtn.style.cursor = 'pointer';
+      // Update HUD
+      const nutCalsEl = document.getElementById('nut-calories-total');
+      const nutProtEl = document.getElementById('nut-protein-total');
+      const nutCalsTargetEl = document.getElementById('nut-calories-target');
+      const nutBurnEl = document.getElementById('nut-workout-burned');
+      const nutNetEl = document.getElementById('nut-net-calories');
+      const nutNetTargetEl = document.getElementById('nut-net-target');
 
-        quickProtBtn.onclick = async () => {
-          const targetDateStr = UI.getLocalDateString();
-          let currentNut = await DB.getNutrition(targetDateStr);
-          if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
-          if (!currentNut.meals) currentNut.meals = [];
+      if (nutCalsEl) nutCalsEl.textContent = totalCals;
+      if (nutProtEl) nutProtEl.textContent = totalProtein;
+      if (nutCalsTargetEl) nutCalsTargetEl.textContent = targetCals;
 
-          const now = new Date();
-          const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+      const netCals = totalCals - workoutBurn;
+      if (nutBurnEl) nutBurnEl.textContent = workoutBurn;
+      if (nutNetEl) nutNetEl.textContent = netCals;
+      if (nutNetTargetEl) nutNetTargetEl.textContent = targetCals;
 
-          const newMeal = {
-            id: 'meal_' + Date.now(),
-            name: I18n.t('protein_powder_name'),
-            calories: Math.round(powderAmount * 4),
-            protein: powderAmount,
-            time: timeStr,
-            analysis: I18n.t('protein_powder_analysis')
+      const calsPercent = Math.round((totalCals / targetCals) * 100);
+      const proteinPercent = Math.round((totalProtein / targetProtein) * 100);
+
+      const calsBar = document.getElementById('nut-calories-bar');
+      const protBar = document.getElementById('nut-protein-bar');
+      if (calsBar) calsBar.style.width = `${Math.min(100, (totalCals / targetCals) * 100)}%`;
+      if (protBar) protBar.style.width = `${Math.min(100, (totalProtein / targetProtein) * 100)}%`;
+
+      // Nav HUD
+      const navCals = document.getElementById('nav-cals-text');
+      const navProt = document.getElementById('nav-protein-text');
+      const navCalsPercent = document.getElementById('nav-cals-percent');
+      const navProtPercent = document.getElementById('nav-protein-percent');
+
+      if (navCals) navCals.textContent = `${totalCals}`;
+      if (navProt) navProt.textContent = `${totalProtein}`;
+      if (navCalsPercent) navCalsPercent.textContent = `${calsPercent}%`;
+      if (navProtPercent) navProtPercent.textContent = `${proteinPercent}%`;
+
+      const desktopNavNut = document.getElementById('desktop-nav-nutrition');
+      if (desktopNavNut) {
+        desktopNavNut.innerHTML = `<span style="color: var(--warning);">${totalCals} ${I18n.t('nut_kcal_label')} (${calsPercent}%)</span><span style="color: var(--border-color);">|</span><span style="color: var(--success);">${totalProtein}g ${I18n.t('nut_protein_label')} (${proteinPercent}%)</span>`;
+      }
+
+      // Render AI Daily Advice Card
+      const aiCard = document.getElementById('ai-advice-card');
+      const aiContent = document.getElementById('ai-advice-content');
+      const refreshAiBtn = document.getElementById('refresh-ai-advice-btn');
+
+      if (aiCard && aiContent) {
+        const currentStateFingerprint = `${queryDateStr}_cals${totalCals}_prot${totalProtein}_meals${(nutrition.meals || []).length}_burn${workoutBurn}_comp${workoutInfo.completedSets > 0 ? 1 : 0}`;
+        const adviceCacheKey = `fitup_ai_advice_cache_${queryDateStr}`;
+
+        const fetchAdvice = async (forceRefresh = false) => {
+          let cachedData = null;
+          try {
+            const raw = localStorage.getItem(adviceCacheKey);
+            if (raw) {
+              if (raw.startsWith('{')) {
+                cachedData = JSON.parse(raw);
+              } else {
+                // Legacy plain string cache - clear
+                localStorage.removeItem(adviceCacheKey);
+              }
+            }
+          } catch (e) {
+            localStorage.removeItem(adviceCacheKey);
+          }
+
+          if (cachedData && cachedData.fingerprint === currentStateFingerprint && !forceRefresh) {
+            aiContent.textContent = cachedData.text;
+            return;
+          }
+
+          aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('ai_advice_loading')}</span>`;
+          try {
+            const adviceText = await GeminiService.getDailyAdvice(
+              { calories: totalCals, protein: totalProtein },
+              { calories: targetCals, protein: targetProtein },
+              workoutInfo
+            );
+            if (adviceText) {
+              aiContent.textContent = adviceText;
+              localStorage.setItem(adviceCacheKey, JSON.stringify({
+                fingerprint: currentStateFingerprint,
+                text: adviceText
+              }));
+            } else {
+              aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('gemini_key_not_set')}</span>`;
+            }
+          } catch (err) {
+            console.warn('AI advice fetch error:', err);
+            aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('gemini_no_response')}</span>`;
+          }
+        };
+
+        if (refreshAiBtn) {
+          refreshAiBtn.onclick = (e) => {
+            e.stopPropagation();
+            fetchAdvice(true);
           };
-
-          currentNut.meals.push(newMeal);
-          await DB.saveNutrition(targetDateStr, currentNut);
-
-          UI.toast(I18n.t('protein_added_toast'), 'success');
-          if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
-            CloudSync.scheduleSync();
-          }
-          renderNutritionSection(targetDateStr);
-        };
+        }
+        fetchAdvice(false);
       }
-    }
 
-    // Render Meals Log List
-    const mealsContainer = document.getElementById('meals-log-container');
-    const countBadge = document.getElementById('meals-count-badge');
+      // Update Quick Protein Powder Completion Button
+      const quickProtBtn = document.getElementById('quick-protein-powder-btn');
+      if (quickProtBtn) {
+        const remainingNeeded = Math.max(0, targetProtein - totalProtein);
+        if (remainingNeeded <= 0) {
+          quickProtBtn.innerHTML = I18n.t('protein_goal_reached');
+          quickProtBtn.disabled = true;
+          quickProtBtn.style.opacity = '0.6';
+          quickProtBtn.style.cursor = 'default';
+          quickProtBtn.onclick = null;
+        } else {
+          const powderAmount = Math.ceil(remainingNeeded * 1.1);
+          quickProtBtn.innerHTML = `🥛 ${I18n.t('quick_protein_consumed')} ${powderAmount}g ${I18n.t('quick_protein_powder')}`;
+          quickProtBtn.disabled = false;
+          quickProtBtn.style.opacity = '1';
+          quickProtBtn.style.cursor = 'pointer';
 
-    if (countBadge) {
-      countBadge.textContent = `${nutrition.meals ? nutrition.meals.length : 0} ${I18n.t('nut_meals_count')}`;
-    }
+          quickProtBtn.onclick = async () => {
+            const targetDateStr = UI.getLocalDateString();
+            let currentNut = await DB.getNutrition(targetDateStr);
+            if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
+            if (!currentNut.meals) currentNut.meals = [];
 
-    if (mealsContainer) {
-      mealsContainer.innerHTML = '';
+            const now = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-      if (nutrition.meals && nutrition.meals.length > 0) {
-        nutrition.meals.forEach(meal => {
-          const mealCard = document.createElement('div');
-          mealCard.style.cssText = "background: var(--bg-input); border-radius: 12px; padding: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px;";
+            const newMeal = {
+              id: 'meal_' + Date.now(),
+              name: I18n.t('protein_powder_name'),
+              calories: Math.round(powderAmount * 4),
+              protein: powderAmount,
+              time: timeStr,
+              analysis: I18n.t('protein_powder_analysis')
+            };
 
-          const imgHtml = meal.image ? `
+            currentNut.meals.push(newMeal);
+            await DB.saveNutrition(targetDateStr, currentNut);
+
+            UI.toast(I18n.t('protein_added_toast'), 'success');
+            if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+              CloudSync.scheduleSync();
+            }
+            renderNutritionSection(targetDateStr);
+          };
+        }
+      }
+
+      // Render Meals Log List
+      const mealsContainer = document.getElementById('meals-log-container');
+      const countBadge = document.getElementById('meals-count-badge');
+
+      if (countBadge) {
+        countBadge.textContent = `${nutrition.meals ? nutrition.meals.length : 0} ${I18n.t('nut_meals_count')}`;
+      }
+
+      if (mealsContainer) {
+        mealsContainer.innerHTML = '';
+
+        if (nutrition.meals && nutrition.meals.length > 0) {
+          nutrition.meals.forEach(meal => {
+            const mealCard = document.createElement('div');
+            mealCard.style.cssText = "background: var(--bg-input); border-radius: 12px; padding: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px;";
+
+            const imgHtml = meal.image ? `
             <img src="${meal.image}" alt="${meal.name}" loading="eager" decoding="async" style="width: 60px; height: 60px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-light); flex-shrink: 0;">
           ` : '';
 
-          const analysisHtml = meal.analysis ? `
+            const analysisHtml = meal.analysis ? `
             <div style="font-size: 11px; color: var(--text-secondary); background: var(--bg-card); padding: 8px 10px; border-radius: 8px; border-right: 3px solid var(--accent-primary); line-height: 1.4;">
               🤖 <em>${meal.analysis}</em>
             </div>
           ` : '';
 
-          const targetMoveDate = (queryDateStr === todayStr) ? yesterdayStr : todayStr;
-          const targetMoveLabel = (queryDateStr === todayStr) ? I18n.t('move_to_yesterday') : I18n.t('move_to_today');
+            const targetMoveDate = (queryDateStr === todayStr) ? yesterdayStr : todayStr;
+            const targetMoveLabel = (queryDateStr === todayStr) ? I18n.t('move_to_yesterday') : I18n.t('move_to_today');
 
-          mealCard.innerHTML = `
+            mealCard.innerHTML = `
             <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
               ${imgHtml}
               <div style="flex: 1;">
@@ -1176,134 +1258,199 @@ const TodayPage = (() => {
             ${analysisHtml}
           `;
 
-          mealsContainer.appendChild(mealCard);
-        });
+            mealsContainer.appendChild(mealCard);
+          });
 
-        // Bind move handlers
-        mealsContainer.querySelectorAll('.move-meal-btn').forEach(btn => {
-          btn.onclick = async () => {
-            const id = btn.dataset.id;
-            const targetDateStr = btn.dataset.target;
-            let currentNut = await DB.getNutrition(queryDateStr);
-            if (currentNut && currentNut.meals) {
-              const mealToMove = currentNut.meals.find(m => m.id === id);
-              if (mealToMove) {
-                currentNut.meals = currentNut.meals.filter(m => m.id !== id);
-                await DB.saveNutrition(queryDateStr, currentNut);
-
-                let targetNut = await DB.getNutrition(targetDateStr);
-                if (!targetNut) targetNut = { meals: [], supplements_taken: [] };
-                if (!targetNut.meals) targetNut.meals = [];
-                targetNut.meals.push(mealToMove);
-                await DB.saveNutrition(targetDateStr, targetNut);
-
-                UI.toast(I18n.t('meal_moved_success'), 'success');
-                if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
-                  CloudSync.scheduleSync();
-                }
-                renderNutritionSection(queryDateStr);
-              }
-            }
-          };
-        });
-
-        // Bind delete handlers
-        mealsContainer.querySelectorAll('.delete-meal-btn').forEach(btn => {
-          btn.onclick = async () => {
-            if (confirm(I18n.t('delete_meal_confirm'))) {
+          // Bind move handlers
+          mealsContainer.querySelectorAll('.move-meal-btn').forEach(btn => {
+            btn.onclick = async () => {
               const id = btn.dataset.id;
+              const targetDateStr = btn.dataset.target;
               let currentNut = await DB.getNutrition(queryDateStr);
               if (currentNut && currentNut.meals) {
-                currentNut.meals = currentNut.meals.filter(m => m.id !== id);
-                await DB.saveNutrition(queryDateStr, currentNut);
-                UI.toast(I18n.t('meal_deleted'), 'info');
-                if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
-                  CloudSync.scheduleSync();
-                }
-                renderNutritionSection(queryDateStr);
-              }
-            }
-          };
-        });
+                const mealToMove = currentNut.meals.find(m => m.id === id);
+                if (mealToMove) {
+                  currentNut.meals = currentNut.meals.filter(m => m.id !== id);
+                  await DB.saveNutrition(queryDateStr, currentNut);
 
-      } else {
-        mealsContainer.innerHTML = `<div style="text-align: center; font-size: 13px; color: var(--text-muted); padding: 24px;">${I18n.t('no_meals_yet')}</div>`;
+                  let targetNut = await DB.getNutrition(targetDateStr);
+                  if (!targetNut) targetNut = { meals: [], supplements_taken: [] };
+                  if (!targetNut.meals) targetNut.meals = [];
+                  targetNut.meals.push(mealToMove);
+                  await DB.saveNutrition(targetDateStr, targetNut);
+
+                  UI.toast(I18n.t('meal_moved_success'), 'success');
+                  if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+                    CloudSync.scheduleSync();
+                  }
+                  renderNutritionSection(queryDateStr);
+                }
+              }
+            };
+          });
+
+          // Bind delete handlers
+          mealsContainer.querySelectorAll('.delete-meal-btn').forEach(btn => {
+            btn.onclick = async () => {
+              const confirmed = window.UI && window.UI.confirm
+                ? await UI.confirm({
+                  title: I18n.t('delete_meal_title') || 'מחיקת ארוחה',
+                  message: I18n.t('delete_meal_confirm'),
+                  confirmText: I18n.t('delete_btn') || 'מחק',
+                  type: 'danger',
+                  icon: '🗑️'
+                })
+                : confirm(I18n.t('delete_meal_confirm'));
+              if (confirmed) {
+                const id = btn.dataset.id;
+                let currentNut = await DB.getNutrition(queryDateStr);
+                if (currentNut && currentNut.meals) {
+                  currentNut.meals = currentNut.meals.filter(m => m.id !== id);
+                  await DB.saveNutrition(queryDateStr, currentNut);
+                  UI.toast(I18n.t('meal_deleted'), 'info');
+                  if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+                    CloudSync.scheduleSync();
+                  }
+                  renderNutritionSection(queryDateStr);
+                }
+              }
+            };
+          });
+
+        } else {
+          mealsContainer.innerHTML = `<div style="text-align: center; font-size: 13px; color: var(--text-muted); padding: 24px;">${I18n.t('no_meals_yet')}</div>`;
+        }
       }
+
+      // Wire Camera & Gallery Inputs
+      setupCameraAndPhotoHandlers(queryDateStr);
     }
 
-    // Wire Camera & Gallery Inputs
-    setupCameraAndPhotoHandlers(queryDateStr);
-  }
+    function setupCameraAndPhotoHandlers(queryDateStr) {
+      const cameraInput = document.getElementById('food-camera-input');
+      const galleryInput = document.getElementById('food-gallery-input');
+      const previewBox = document.getElementById('food-analysis-preview');
+      const previewImg = document.getElementById('food-preview-img');
+      const cancelBtn = document.getElementById('cancel-analysis-btn');
+      const runAiBtn = document.getElementById('run-ai-analysis-btn');
+      const userNotesInput = document.getElementById('food-user-notes');
+      const manualMealBtn = document.getElementById('manual-meal-btn');
 
-  function setupCameraAndPhotoHandlers(queryDateStr) {
-    const cameraInput = document.getElementById('food-camera-input');
-    const galleryInput = document.getElementById('food-gallery-input');
-    const previewBox = document.getElementById('food-analysis-preview');
-    const previewImg = document.getElementById('food-preview-img');
-    const cancelBtn = document.getElementById('cancel-analysis-btn');
-    const runAiBtn = document.getElementById('run-ai-analysis-btn');
-    const userNotesInput = document.getElementById('food-user-notes');
-    const manualMealBtn = document.getElementById('manual-meal-btn');
+      let activeBase64Image = null;
+      let activeMimeType = 'image/jpeg';
 
-    let activeBase64Image = null;
-    let activeMimeType = 'image/jpeg';
-
-    const handleFileSelect = async (file) => {
-      if (!file) return;
-      activeMimeType = 'image/jpeg';
-      try {
-        const compressedBase64 = await UI.compressImage(file, 500, 0.65);
-        activeBase64Image = compressedBase64;
-        if (previewImg) previewImg.src = activeBase64Image;
-        if (previewBox) previewBox.style.display = 'block';
-      } catch (err) {
-        console.error('Error compressing food image:', err);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          activeBase64Image = e.target.result;
+      const handleFileSelect = async (file) => {
+        if (!file) return;
+        activeMimeType = 'image/jpeg';
+        try {
+          const compressedBase64 = await UI.compressImage(file, 500, 0.65);
+          activeBase64Image = compressedBase64;
           if (previewImg) previewImg.src = activeBase64Image;
           if (previewBox) previewBox.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-
-    if (cameraInput && !cameraInput.hasAttribute('data-bound')) {
-      cameraInput.setAttribute('data-bound', 'true');
-      cameraInput.onchange = (e) => handleFileSelect(e.target.files[0]);
-    }
-
-    if (galleryInput && !galleryInput.hasAttribute('data-bound')) {
-      galleryInput.setAttribute('data-bound', 'true');
-      galleryInput.onchange = (e) => handleFileSelect(e.target.files[0]);
-    }
-
-    if (cancelBtn && !cancelBtn.hasAttribute('data-bound')) {
-      cancelBtn.setAttribute('data-bound', 'true');
-      cancelBtn.onclick = () => {
-        if (previewBox) previewBox.style.display = 'none';
-        activeBase64Image = null;
-        if (cameraInput) cameraInput.value = '';
-        if (galleryInput) galleryInput.value = '';
-      };
-    }
-
-    if (runAiBtn && !runAiBtn.hasAttribute('data-bound')) {
-      runAiBtn.setAttribute('data-bound', 'true');
-      runAiBtn.onclick = async () => {
-        if (!activeBase64Image) {
-          UI.toast(I18n.t('select_photo'), 'warning');
-          return;
+        } catch (err) {
+          console.error('Error compressing food image:', err);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            activeBase64Image = e.target.result;
+            if (previewImg) previewImg.src = activeBase64Image;
+            if (previewBox) previewBox.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
         }
+      };
 
-        const notes = userNotesInput ? userNotesInput.value.trim() : '';
+      if (cameraInput && !cameraInput.hasAttribute('data-bound')) {
+        cameraInput.setAttribute('data-bound', 'true');
+        cameraInput.onchange = (e) => handleFileSelect(e.target.files[0]);
+      }
 
-        runAiBtn.disabled = true;
-        runAiBtn.innerHTML = `<span>⏳</span> ${I18n.t('analyzing_ai')}`;
+      if (galleryInput && !galleryInput.hasAttribute('data-bound')) {
+        galleryInput.setAttribute('data-bound', 'true');
+        galleryInput.onchange = (e) => handleFileSelect(e.target.files[0]);
+      }
 
-        try {
-          const analysisResult = await GeminiService.analyzeFood(activeBase64Image, activeMimeType, notes);
-          
+      if (cancelBtn && !cancelBtn.hasAttribute('data-bound')) {
+        cancelBtn.setAttribute('data-bound', 'true');
+        cancelBtn.onclick = () => {
+          if (previewBox) previewBox.style.display = 'none';
+          activeBase64Image = null;
+          if (cameraInput) cameraInput.value = '';
+          if (galleryInput) galleryInput.value = '';
+        };
+      }
+
+      if (runAiBtn && !runAiBtn.hasAttribute('data-bound')) {
+        runAiBtn.setAttribute('data-bound', 'true');
+        runAiBtn.onclick = async () => {
+          if (!activeBase64Image) {
+            UI.toast(I18n.t('select_photo'), 'warning');
+            return;
+          }
+
+          const notes = userNotesInput ? userNotesInput.value.trim() : '';
+
+          runAiBtn.disabled = true;
+          runAiBtn.innerHTML = `<span>⏳</span> ${I18n.t('analyzing_ai')}`;
+
+          try {
+            const analysisResult = await GeminiService.analyzeFood(activeBase64Image, activeMimeType, notes);
+
+            const targetDateStr = UI.getLocalDateString();
+            let currentNut = await DB.getNutrition(targetDateStr);
+            if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
+            if (!currentNut.meals) currentNut.meals = [];
+
+            const now = new Date();
+            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+            const newMeal = {
+              id: 'meal_' + Date.now(),
+              name: analysisResult.meal_name,
+              calories: analysisResult.calories,
+              protein: analysisResult.protein,
+              carbs: analysisResult.carbs,
+              fat: analysisResult.fat,
+              analysis: analysisResult.analysis,
+              time: timeStr,
+              image: activeBase64Image
+            };
+
+            currentNut.meals.push(newMeal);
+            await DB.saveNutrition(targetDateStr, currentNut);
+
+            UI.toast(`${I18n.t('meal_added_toast')} ${analysisResult.meal_name} (${analysisResult.calories} ${I18n.t('nut_kcal_label')}) 🎉`, 'success');
+            CloudSync.scheduleSync();
+
+            // Reset inputs
+            if (previewBox) previewBox.style.display = 'none';
+            activeBase64Image = null;
+            if (cameraInput) cameraInput.value = '';
+            if (galleryInput) galleryInput.value = '';
+            if (userNotesInput) userNotesInput.value = '';
+
+            renderNutritionSection(targetDateStr);
+
+          } catch (err) {
+            console.error('AI analysis error:', err);
+            UI.toast(I18n.t('ai_analysis_error') + err.message, 'error');
+          } finally {
+            runAiBtn.disabled = false;
+            runAiBtn.innerHTML = `<span>🤖</span> ${I18n.t('analyze_with_ai')}`;
+          }
+        };
+      }
+
+      if (manualMealBtn && !manualMealBtn.hasAttribute('data-bound')) {
+        manualMealBtn.setAttribute('data-bound', 'true');
+        manualMealBtn.onclick = async () => {
+          const name = prompt(I18n.t('manual_meal_name'));
+          if (!name || !name.trim()) return;
+          const calsStr = prompt(I18n.t('manual_meal_cals'), '500');
+          const protStr = prompt(I18n.t('manual_meal_protein'), '35');
+
+          const cals = parseInt(calsStr) || 0;
+          const prot = parseInt(protStr) || 0;
+
           const targetDateStr = UI.getLocalDateString();
           let currentNut = await DB.getNutrition(targetDateStr);
           if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
@@ -1312,79 +1459,23 @@ const TodayPage = (() => {
           const now = new Date();
           const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-          const newMeal = {
+          currentNut.meals.push({
             id: 'meal_' + Date.now(),
-            name: analysisResult.meal_name,
-            calories: analysisResult.calories,
-            protein: analysisResult.protein,
-            carbs: analysisResult.carbs,
-            fat: analysisResult.fat,
-            analysis: analysisResult.analysis,
+            name: name.trim(),
+            calories: cals,
+            protein: prot,
             time: timeStr,
-            image: activeBase64Image
-          };
+            analysis: I18n.t('manual_entry')
+          });
 
-          currentNut.meals.push(newMeal);
           await DB.saveNutrition(targetDateStr, currentNut);
-
-          UI.toast(`${I18n.t('meal_added_toast')} ${analysisResult.meal_name} (${analysisResult.calories} ${I18n.t('nut_kcal_label')}) 🎉`, 'success');
+          UI.toast(I18n.t('meal_added_success'), 'success');
           CloudSync.scheduleSync();
-
-          // Reset inputs
-          if (previewBox) previewBox.style.display = 'none';
-          activeBase64Image = null;
-          if (cameraInput) cameraInput.value = '';
-          if (galleryInput) galleryInput.value = '';
-          if (userNotesInput) userNotesInput.value = '';
-
           renderNutritionSection(targetDateStr);
-
-        } catch (err) {
-          console.error('AI analysis error:', err);
-          UI.toast(I18n.t('ai_analysis_error') + err.message, 'error');
-        } finally {
-          runAiBtn.disabled = false;
-          runAiBtn.innerHTML = `<span>🤖</span> ${I18n.t('analyze_with_ai')}`;
-        }
-      };
+        };
+      }
     }
 
-    if (manualMealBtn && !manualMealBtn.hasAttribute('data-bound')) {
-      manualMealBtn.setAttribute('data-bound', 'true');
-      manualMealBtn.onclick = async () => {
-        const name = prompt(I18n.t('manual_meal_name'));
-        if (!name || !name.trim()) return;
-        const calsStr = prompt(I18n.t('manual_meal_cals'), '500');
-        const protStr = prompt(I18n.t('manual_meal_protein'), '35');
-
-        const cals = parseInt(calsStr) || 0;
-        const prot = parseInt(protStr) || 0;
-
-        const targetDateStr = UI.getLocalDateString();
-        let currentNut = await DB.getNutrition(targetDateStr);
-        if (!currentNut) currentNut = { meals: [], supplements_taken: [] };
-        if (!currentNut.meals) currentNut.meals = [];
-
-        const now = new Date();
-        const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-
-        currentNut.meals.push({
-          id: 'meal_' + Date.now(),
-          name: name.trim(),
-          calories: cals,
-          protein: prot,
-          time: timeStr,
-          analysis: I18n.t('manual_entry')
-        });
-
-        await DB.saveNutrition(targetDateStr, currentNut);
-        UI.toast(I18n.t('meal_added_success'), 'success');
-        CloudSync.scheduleSync();
-        renderNutritionSection(targetDateStr);
-      };
-    }
-  }
-    
     // Equipment Banner (Accordion & Unified Equipment List)
     const eqBanner = document.getElementById('day-equipment-banner');
     if (eqBanner) {
@@ -1404,10 +1495,10 @@ const TodayPage = (() => {
               const weightLower = String(ex.weight).toLowerCase();
               const isVest = nameLower.includes('weighted') || weightLower.includes('vest') || weightLower.includes('+');
               const isBand = nameLower.includes('band') || weightLower.includes('band') || nameLower.includes('pallof');
-              
+
               let equipLabel = I18n.t('equip_db') || 'משקולות DB';
               let equipIcon = `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>`;
-              
+
               if (isBand) {
                 equipLabel = I18n.t('equip_band') || 'גומיית התנגדות';
                 equipIcon = `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="7" ry="7" transform="rotate(-45 12 12)"/><path d="M12 2v20" opacity="0.3" transform="rotate(-45 12 12)"/></svg>`;
@@ -1431,7 +1522,7 @@ const TodayPage = (() => {
               unifiedRequirementsMap.get(reqKey).exercises.push(exNum);
             }
           }
-          
+
           const equips = UI.getEquipments ? UI.getEquipments(ex.name) : [UI.getEquipment(ex.name)];
           equips.forEach(equip => {
             if (equip && equip.label !== I18n.t('equip_bodyweight') && equip.label !== I18n.t('equip_wall') && equip.label !== I18n.t('equip_db') && equip.key !== 'weighted' && equip.key !== 'vest' && equip.key !== 'band') {
@@ -1450,7 +1541,7 @@ const TodayPage = (() => {
               }
             }
           });
-          
+
           let prevEx = null;
           for (let i = currentDayIndex - 1; i >= 0; i--) {
             const pastDay = allPlanDays[i];
@@ -1459,15 +1550,15 @@ const TodayPage = (() => {
               if (prevEx) break;
             }
           }
-          
+
           const isNewExercise = !prevEx && currentDayIndex > 0 && day.dayType !== 'Rest';
           if (isNewExercise) newExercisesList.push(exNum);
-          
+
           const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
           const isWeightChanged = prevEx && ex.weight !== prevEx.weight && isWeighted(ex);
           if (isSetsChanged || isWeightChanged) changedExercisesList.push(exNum);
         });
-        
+
         const reportSvgs = {
           report: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>`,
           sparkles: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>`,
@@ -1643,7 +1734,7 @@ const TodayPage = (() => {
     circles.forEach(circle => {
       circle.style.strokeDasharray = circumference;
       circle.style.strokeDashoffset = offset;
-      
+
       // Add gradient definition if not exists
       const svg = circle.closest('svg');
       if (svg && !svg.querySelector('defs')) {
@@ -1670,22 +1761,22 @@ const TodayPage = (() => {
    */
   function findPrevPerformance(exerciseName, beforeDayIndex) {
     if (!allTrackingCache || !exerciseName) return null;
-    
+
     // Build tracking map for quick lookup
     const trackingMap = {};
     allTrackingCache.forEach(t => { trackingMap[t.dayIndex] = t; });
-    
+
     // Search backwards from the day before current
     for (let i = beforeDayIndex - 1; i >= 0; i--) {
       const pastDay = allPlanDays[i];
       if (!pastDay || !pastDay.exercises) continue;
-      
+
       const exIdx = pastDay.exercises.findIndex(e => e.name === exerciseName);
       if (exIdx === -1) continue;
-      
+
       const tracking = trackingMap[i];
       if (!tracking || !tracking.setData || !tracking.setData[exIdx]) continue;
-      
+
       // Found tracking data for this exercise
       return {
         dayIndex: i,
@@ -1750,9 +1841,8 @@ const TodayPage = (() => {
    * Render exercise cards
    */
   function renderExercises(day) {
-    const realTodayIndex = UI.findTodayIndex(allPlanDays);
-    const isToday = currentDayIndex === realTodayIndex;
-    const disabledAttr = isToday ? '' : 'disabled style="opacity: 0.5; cursor: not-allowed;"';
+    const isEditable = isDayEditable();
+    const disabledAttr = isEditable ? '' : 'disabled style="opacity: 0.5; cursor: not-allowed;"';
 
     const container = document.getElementById('exercises-list');
     if (!container) return;
@@ -1797,7 +1887,7 @@ const TodayPage = (() => {
     container.innerHTML = day.exercises.map((ex, idx) => {
       const setsCount = UI.parseSetsCount(ex.sets);
       const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
-      
+
       // Auto-evaluate exercise completion from set status:
       if (setsCount > 0) {
         let allDone = true;
@@ -1814,10 +1904,32 @@ const TodayPage = (() => {
       }
 
       const isCompleted = currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx];
-      const isExUnlocked = isToday && isExerciseUnlocked(idx);
+      const isSkippedTemp = !!(currentTracking.skippedExercises && currentTracking.skippedExercises[idx]);
+      const isExUnlocked = isEditable && isExerciseUnlocked(idx);
       const checkDisabledAttr = isExUnlocked ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"';
       const exCheckContent = isExUnlocked ? '✓' : '🔒';
       const exCheckTitle = !isExUnlocked ? I18n.t('exercise_locked') : (setsCount > 1 && !isCompleted ? I18n.t('complete_sets_individually') : '');
+
+      let skipBtnHTML = '';
+      if (isEditable && !isCompleted && isExUnlocked) {
+        if (isSkippedTemp) {
+          skipBtnHTML = `
+            <button type="button" class="btn-secondary btn-unskip-temp" 
+                    style="padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; cursor: pointer;" 
+                    onclick="event.stopPropagation(); TodayPage.toggleSkipExerciseTemp(${idx});" 
+                    title="${I18n.t('return_to_exercise')}">
+              ↩️ ${I18n.t('return_to_exercise')}
+            </button>`;
+        } else {
+          skipBtnHTML = `
+            <button type="button" class="btn-secondary btn-skip-temp" 
+                    style="padding: 4px 8px; font-size: 11px; font-weight: 700; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border-color); color: var(--text-secondary); cursor: pointer;" 
+                    onclick="event.stopPropagation(); TodayPage.toggleSkipExerciseTemp(${idx});" 
+                    title="${I18n.t('skip_exercise_temp')}">
+              ⏭️ ${I18n.t('skip_exercise_temp')}
+            </button>`;
+        }
+      }
 
       const cardId = `ex-card-${idx}`;
       const isExpanded = expandedIds.has(cardId) || (expandedIds.size === 0 && idx === defaultExpandedIdx);
@@ -1852,7 +1964,7 @@ const TodayPage = (() => {
             prevPerfHTML = `
               <div class="prev-performance">
                 <span class="prev-perf-label">${I18n.t('prev_performance')}</span>
-                <span class="prev-perf-values">${prevSets.map((r, i) => `<span class="prev-set">Set ${i+1}: ${r}</span>`).join('')}</span>
+                <span class="prev-perf-values">${prevSets.map((r, i) => `<span class="prev-set">Set ${i + 1}: ${r}</span>`).join('')}</span>
                 ${maxReps > 0 ? `<span class="prev-perf-pr">${I18n.t('prev_record')} ${maxReps}</span>` : ''}
               </div>
             `;
@@ -1865,7 +1977,7 @@ const TodayPage = (() => {
           const setReps = setData[`set_${s}_reps`] || '';
           const setWeight = setData[`set_${s}_weight`] || '';
 
-          const isSetRowUnlocked = isToday && isSetUnlocked(idx, s);
+          const isSetRowUnlocked = isEditable && isSetUnlocked(idx, s);
           const setDisabledAttr = isSetRowUnlocked ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"';
 
           // Use previous performance as placeholder hint
@@ -1906,25 +2018,33 @@ const TodayPage = (() => {
           if (setResult === 'above') {
             outcomeBadgeHTML = `
               <button type="button" class="set-feedback-btn badge-above" 
-                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${setDisabledAttr} title="${I18n.t('set_outcome_above')}">
+                      onclick="TodayPage.handleSetClick(${idx}, ${s}, this)" 
+                      oncontextmenu="TodayPage.openSetOutcomeModal(${idx}, ${s}); return false;" 
+                      ${setDisabledAttr} title="${I18n.t('set_outcome_above')} • ${I18n.t('hold_to_change')}">
                 🚀
               </button>`;
           } else if (setResult === 'in_window') {
             outcomeBadgeHTML = `
               <button type="button" class="set-feedback-btn badge-in-window" 
-                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${setDisabledAttr} title="${I18n.t('set_outcome_in_window')}">
+                      onclick="TodayPage.handleSetClick(${idx}, ${s}, this)" 
+                      oncontextmenu="TodayPage.openSetOutcomeModal(${idx}, ${s}); return false;" 
+                      ${setDisabledAttr} title="${I18n.t('set_outcome_in_window')} • ${I18n.t('hold_to_change')}">
                 ✅
               </button>`;
           } else if (setResult === 'below') {
             outcomeBadgeHTML = `
               <button type="button" class="set-feedback-btn badge-below" 
-                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${setDisabledAttr} title="${I18n.t('set_outcome_below')}">
+                      onclick="TodayPage.handleSetClick(${idx}, ${s}, this)" 
+                      oncontextmenu="TodayPage.openSetOutcomeModal(${idx}, ${s}); return false;" 
+                      ${setDisabledAttr} title="${I18n.t('set_outcome_below')} • ${I18n.t('hold_to_change')}">
                 ⚠️
               </button>`;
           } else {
             outcomeBadgeHTML = `
               <button type="button" class="set-feedback-btn badge-pending" 
-                      onclick="TodayPage.openSetOutcomeModal(${idx}, ${s})" ${setDisabledAttr} title="${I18n.t('how_was_it')}">
+                      onclick="TodayPage.handleSetClick(${idx}, ${s}, this)" 
+                      oncontextmenu="TodayPage.openSetOutcomeModal(${idx}, ${s}); return false;" 
+                      ${setDisabledAttr} title="${I18n.t('how_was_it')} • ${I18n.t('set_outcome_in_window')}">
                 ✓
               </button>`;
           }
@@ -1977,9 +2097,9 @@ const TodayPage = (() => {
       if (ex.sets) {
         detailParts.push(isSetsChanged ? `<span class="alert-pulse-text" title="${I18n.t('sets_changed_title')}">${ex.sets}</span>` : ex.sets);
       }
-      
+
       const equip = UI.getEquipment(ex.name);
-      
+
       if (hasWeight) {
         const weightInfo = parseWeightDetails(ex.weight, ex.name);
         const weightHTML = buildWeightBadgeHTML(weightInfo, true);
@@ -2189,7 +2309,7 @@ const TodayPage = (() => {
       }
 
       return `
-        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
+        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isSkippedTemp ? 'skipped-temp' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
           <div class="exercise-hero-container skeleton-loading" style="position: relative;">
             <div class="skeleton-placeholder" style="gap: 4px;">
               <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
@@ -2217,6 +2337,7 @@ const TodayPage = (() => {
                   <button type="button" class="form-rule-info-btn" onclick="event.stopPropagation(); TodayPage.showFormRuleModal('${ex.name.replace(/'/g, "\\'")}')" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-primary); border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 2px;" title="${I18n.t('form_rules_title') || 'חוקי טכניקה'}">ℹ️</button>
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
                   ${!isExUnlocked ? `<span class="locked-badge">🔒 ${I18n.t('exercise_locked')}</span>` : ''}
+                  ${isSkippedTemp ? `<span class="skipped-temp-badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">⏭️ ${I18n.t('skipped_temp_badge')}</span>` : ''}
                   ${equip ? `<span style="background: var(--bg-hover, rgba(255,255,255,0.05)); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: normal; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px;">${equip.icon} ${equip.label}</span>` : ''}
                 </div>
                 ${getLeanBadgesHTML(ex, day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1)}
@@ -2226,6 +2347,7 @@ const TodayPage = (() => {
               </div>
             </div>
             <div class="exercise-card-actions">
+              ${skipBtnHTML}
               ${cardioTimerBtn}
               ${videoBtn}
               <button class="exercise-check ${isCompleted ? 'checked' : ''} ${!isExUnlocked ? 'locked-btn' : ''}" 
@@ -2251,20 +2373,20 @@ const TodayPage = (() => {
   function toggleExpand(idx) {
     const card = document.getElementById(`ex-card-${idx}`);
     const isExpanding = !card.classList.contains('expanded');
-    
+
     // First, close all other cards and remove focus
     document.querySelectorAll('.exercise-card').forEach(c => {
       c.classList.remove('expanded');
       c.classList.remove('focused');
     });
-    
+
     const listContainer = document.getElementById('exercises-list');
 
     if (isExpanding) {
       card.classList.add('expanded');
       card.classList.add('focused');
       listContainer.classList.add('has-focus');
-      
+
       // Small delay before scrolling to allow expansion animation to start
       setTimeout(() => {
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2280,7 +2402,7 @@ const TodayPage = (() => {
   function handleImageClick(event, idx, exName, fallbackName) {
     event.stopPropagation();
     const card = document.getElementById(`ex-card-${idx}`);
-    
+
     if (card && !card.classList.contains('expanded')) {
       // Accordion is closed - expand it (don't show GIF)
       toggleExpand(idx);
@@ -2290,23 +2412,52 @@ const TodayPage = (() => {
     }
   }
 
-  function checkIsTodayOrWarn() {
+  function isDayEditable() {
     if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return false;
     const realTodayIndex = UI.findTodayIndex(allPlanDays);
-    if (currentDayIndex !== realTodayIndex) {
-      if (window.UI && window.UI.toast) {
-        UI.toast(I18n.t('not_today_warning'), 'warning');
-      }
-      return false;
+    if (currentDayIndex <= realTodayIndex) return true; // Today and past days are always editable!
+    if (currentTracking && currentTracking.unlockedEarly) return true;
+    return false;
+  }
+
+  function checkDayEditableOrWarn() {
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return false;
+    const realTodayIndex = UI.findTodayIndex(allPlanDays);
+    if (currentDayIndex <= realTodayIndex) return true;
+    if (currentTracking && currentTracking.unlockedEarly) return true;
+    if (window.UI && window.UI.toast) {
+      UI.toast(I18n.t('future_day_preview'), 'info');
     }
-    return true;
+    return false;
+  }
+
+  function checkIsTodayOrWarn() {
+    return checkDayEditableOrWarn();
+  }
+
+  async function unlockEarly() {
+    if (!currentTracking) currentTracking = {};
+    currentTracking.unlockedEarly = true;
+    await autoSave();
+    render();
+    if (window.UI && window.UI.toast) {
+      UI.toast(I18n.t('unlock_early_entry'), 'success');
+    }
   }
 
   function isExerciseUnlocked(exIdx) {
     if (exIdx <= 0) return true;
-    if (!currentTracking.exerciseStatus) return false;
+    if (!currentTracking) return false;
+
+    // An exercise that was skipped temporarily is itself unlocked to allow returning to it
+    const skipped = currentTracking.skippedExercises || {};
+    if (skipped[exIdx]) return true;
+
+    // Check all previous exercises: must be completed OR skipped temporarily
     for (let i = 0; i < exIdx; i++) {
-      if (!currentTracking.exerciseStatus[i]) {
+      const isDone = currentTracking.exerciseStatus && currentTracking.exerciseStatus[i];
+      const isSkipped = skipped[i];
+      if (!isDone && !isSkipped) {
         return false;
       }
     }
@@ -2314,12 +2465,17 @@ const TodayPage = (() => {
   }
 
   function checkExerciseUnlockedOrWarn(exIdx) {
-    if (!checkIsTodayOrWarn()) return false;
+    if (!checkDayEditableOrWarn()) return false;
     if (exIdx <= 0) return true;
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    const skipped = currentTracking.skippedExercises || {};
+    if (skipped[exIdx]) return true;
+
     const day = allPlanDays[currentDayIndex];
     for (let i = 0; i < exIdx; i++) {
-      if (!currentTracking.exerciseStatus[i]) {
+      const isDone = currentTracking.exerciseStatus[i];
+      const isSkipped = skipped[i];
+      if (!isDone && !isSkipped) {
         const prevExName = (day && day.exercises && day.exercises[i]) ? day.exercises[i].name : `Exercise #${i + 1}`;
         if (window.UI && window.UI.toast) {
           UI.toast(I18n.t('must_complete_prev_exercise', '', { num: i + 1, name: prevExName }), 'warning');
@@ -2328,6 +2484,27 @@ const TodayPage = (() => {
       }
     }
     return true;
+  }
+
+  async function toggleSkipExerciseTemp(exIdx) {
+    if (!checkDayEditableOrWarn()) return;
+    if (!currentTracking.skippedExercises) currentTracking.skippedExercises = {};
+    const day = allPlanDays[currentDayIndex];
+    const exName = (day && day.exercises && day.exercises[exIdx]) ? day.exercises[exIdx].name : `Exercise #${exIdx + 1}`;
+
+    if (currentTracking.skippedExercises[exIdx]) {
+      delete currentTracking.skippedExercises[exIdx];
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('return_to_exercise') + ': ' + exName, 'info');
+      }
+    } else {
+      currentTracking.skippedExercises[exIdx] = true;
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('skipped_temp_badge') + ': ' + exName, 'warning');
+      }
+    }
+    await autoSave();
+    renderExercises(day);
   }
 
   function isSetUnlocked(exIdx, setIdx) {
@@ -2362,7 +2539,7 @@ const TodayPage = (() => {
    */
   async function toggleExercise(idx, btn) {
     if (!checkExerciseUnlockedOrWarn(idx)) return;
-    
+
     const day = allPlanDays[currentDayIndex];
     const ex = (day && day.exercises) ? day.exercises[idx] : null;
     const setsCount = ex ? UI.parseSetsCount(ex.sets) : 0;
@@ -2397,7 +2574,7 @@ const TodayPage = (() => {
     const weightInfo = parseWeightDetails(ex, setData);
     const weightBadge = weightInfo && weightInfo.suggestedWeightNum > 0 ? `<span style="color: #f59e0b; font-weight: 700; margin-inline-start: 4px;">• ${weightInfo.suggestedWeightNum} kg</span>` : '';
     const repTarget = UI.parseReps(ex.sets || '');
-    
+
     return `
       <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 10px 14px; margin: 10px 0 16px 0; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
         <span style="font-size: 13px; color: var(--text-secondary); font-weight: 600;">${I18n.t('planned_target')}</span>
@@ -2429,7 +2606,7 @@ const TodayPage = (() => {
     }
 
     const title = `⚡ ${I18n.t('exercise_outcome_modal_title', '', { name: ex.name })}`;
-    
+
     const modalHTML = `
       <div style="text-align: center; padding: 4px 0;">
         <div style="font-size: 16px; font-weight: 800; color: var(--accent-primary); margin-bottom: 4px;">
@@ -2552,7 +2729,7 @@ const TodayPage = (() => {
     const lastBackupStr = await DB.getSetting('lastBackupDate');
     let needsBackupPrompt = false;
     let backupMessage = "";
-    
+
     if (!lastBackupStr) {
       const allTracking = await DB.getAllTracking();
       const completedWorkouts = allTracking.filter(t => t.completed).length;
@@ -2570,7 +2747,7 @@ const TodayPage = (() => {
         backupMessage = I18n.t('backup_overdue', '', { days: diffDays });
       }
     }
-    
+
     UI.showModal(I18n.t('celebration_title'), `
       <div style="text-align: center; padding: 16px;">
         <div class="celebration-confetti">🎊</div>
@@ -2610,11 +2787,11 @@ const TodayPage = (() => {
 
     document.getElementById('celebration-continue-btn').onclick = async () => {
       UI.hideModal();
-      
+
       if (typeof App !== 'undefined' && App.recalculatePlanIndex) {
         await App.recalculatePlanIndex();
       }
-      
+
       const activeIdx = UI.findTodayIndex(allPlanDays);
       if (currentDayIndex !== activeIdx) {
         goToDay(activeIdx);
@@ -2647,7 +2824,7 @@ const TodayPage = (() => {
 
   function getRestTime(ex) {
     if (!ex || !ex.name) return 90;
-    
+
     const lowerName = ex.name.toLowerCase();
     if (lowerName.includes('walking') || lowerName.includes('jogging') || lowerName.includes('dorsiflexion')) {
       return 0;
@@ -2692,7 +2869,7 @@ const TodayPage = (() => {
     }
 
     let restTime = getRestTime(day.exercises[idx]);
-    
+
     // Apply intra-workout adaptive rest extension (+30s) if any set was BELOW
     let hasBelow = false;
     for (let s = 0; s < setsCount; s++) {
@@ -2704,7 +2881,7 @@ const TodayPage = (() => {
         UI.toast(`${I18n.t('adaptive_rest_label')}: +30s (${restTime}s)`, 'warning');
       }
     }
-    
+
     // Start rest timer IMMEDIATELY for zero delay on exercise completion (only if workout is not fully completed)
     if (!currentTracking.completed && restTime > 0 && window.UI && window.UI.startTimer) {
       UI.startTimer(restTime, null);
@@ -2767,21 +2944,50 @@ const TodayPage = (() => {
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
 
     const exData = currentTracking.setData[exIdx];
-    
+
+    // Auto-fill reps & weight if left empty
+    const prevPerf = findPrevPerformance(ex.name, currentDayIndex);
+    const repsTarget = UI.parseReps(ex.sets);
+    const prevReps = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${setIdx}_reps`]) || repsTarget;
+    const setsCount = UI.parseSetsCount(ex.sets);
+    const suggestedWeightNum = getSuggestedWeightForSet(ex, setIdx, setsCount, prevPerf);
+
+    if (!exData[`set_${setIdx}_reps`]) {
+      if (prevReps) {
+        const cleanReps = prevReps.toString().replace(/\s*(secs?|mins?|seconds?|minutes?|reps?)/gi, '').trim();
+        exData[`set_${setIdx}_reps`] = cleanReps;
+      }
+    }
+
+    if (isWeighted(ex) && !exData[`set_${setIdx}_weight`]) {
+      if (suggestedWeightNum && suggestedWeightNum > 0) {
+        exData[`set_${setIdx}_weight`] = suggestedWeightNum.toString();
+      }
+    }
+
     // JOINT PAIN REPORTING POPUP FOR ARM BLOCK
     if (outcome === 'below') {
       const lowerName = (ex.name || '').toLowerCase();
       const isArmExercise = lowerName.includes('arm block') || lowerName.includes('curl') || lowerName.includes('triceps') || lowerName.includes('lateral raise');
-      
+
       if (isArmExercise) {
-        // Halt and ask the user
-        const isPain = window.confirm(I18n.t('joint_pain_prompt'));
+        // Halt and ask the user with modern UI modal
+        const isPain = window.UI && window.UI.confirm
+          ? await UI.confirm({
+            title: I18n.t('joint_pain_title') || 'דיווח על עומס מפרקי',
+            message: I18n.t('joint_pain_prompt'),
+            confirmText: I18n.t('yes_pain') || 'כן, דיווח על כאב',
+            cancelText: I18n.t('no_pain') || 'לא, עייפות שריר בלבד',
+            type: 'warning',
+            icon: '🩹'
+          })
+          : window.confirm(I18n.t('joint_pain_prompt'));
         if (isPain) {
           exData.jointPainReported = true;
           // Also set globally for progression engine
           currentTracking.elbowPain = true;
           currentTracking.shoulderPain = true;
-          
+
           if (window.UI && window.UI.toast) {
             UI.toast(I18n.t('joint_pain_reported_toast'), 'warning');
           }
@@ -2789,6 +2995,7 @@ const TodayPage = (() => {
       }
     }
 
+    const wasAlreadyDone = !!exData[`set_${setIdx}_done`];
     exData[`set_${setIdx}_result`] = outcome;
     exData[`set_${setIdx}_done`] = true;
 
@@ -2797,7 +3004,6 @@ const TodayPage = (() => {
       window.Effects3D.triggerSetEffect(triggerEl, outcome);
     }
 
-    const setsCount = UI.parseSetsCount(ex.sets);
     let allSetsDone = true;
     for (let s = 0; s < setsCount; s++) {
       if (!exData[`set_${s}_done`]) {
@@ -2808,6 +3014,11 @@ const TodayPage = (() => {
 
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     currentTracking.exerciseStatus[exIdx] = allSetsDone;
+
+    // Clean up skipped state once exercise is completed
+    if (allSetsDone && currentTracking.skippedExercises && currentTracking.skippedExercises[exIdx]) {
+      delete currentTracking.skippedExercises[exIdx];
+    }
 
     // Update day completion status (check if ALL exercises are done)
     const total = day.exercises.length;
@@ -2830,7 +3041,7 @@ const TodayPage = (() => {
       if (currentTracking.completed) {
         showWorkoutCelebration(day);
       }
-    } else if (exData[`set_${setIdx}_done`]) {
+    } else if (exData[`set_${setIdx}_done`] && !wasAlreadyDone) {
       // Individual set completed (not all sets yet) — start intra-workout rest timer
       let restTime = getRestTime(ex);
       if (outcome === 'below') {
@@ -2842,6 +3053,24 @@ const TodayPage = (() => {
       if (!currentTracking.completed && restTime > 0 && window.UI && window.UI.startTimer) {
         UI.startTimer(restTime, null);
       }
+    }
+  }
+
+  /**
+   * 1-Tap Set Completion handler:
+   * If not completed: instantly completes set as 'in_window' with feedback.
+   * If already completed: opens modal to allow switching outcome (above/in_window/below) or resetting.
+   */
+  async function handleSetClick(exIdx, setIdx, triggerEl) {
+    if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
+
+    const setData = (currentTracking.setData && currentTracking.setData[exIdx]) || {};
+    const isAlreadyDone = setData[`set_${setIdx}_done`];
+
+    if (!isAlreadyDone) {
+      await selectSetOutcome(exIdx, setIdx, 'in_window', triggerEl);
+    } else {
+      openSetOutcomeModal(exIdx, setIdx);
     }
   }
 
@@ -2869,91 +3098,67 @@ const TodayPage = (() => {
     const currentResult = setData[`set_${setIdx}_result`];
     const isAlreadyDone = setData[`set_${setIdx}_done`];
 
-    const title = `⚡ ${I18n.t('set_outcome_modal_title', '', { set: setIdx + 1 })}`;
-    
-    let modalHTML = '';
+    const title = (isAlreadyDone || currentResult)
+      ? `⚡ ${I18n.t('change_set_outcome_title')} (${I18n.t('set_label', 'סט')} ${setIdx + 1})`
+      : `⚡ ${I18n.t('set_outcome_modal_title', '', { set: setIdx + 1 })}`;
 
-    if (isAlreadyDone || currentResult) {
-      // IF ALREADY MARKED: Show ONLY the Reset button!
-      let currentResultText = I18n.t('how_was_it');
-      let badgeClass = 'badge-in-window';
-      if (currentResult === 'above') {
-        currentResultText = I18n.t('set_outcome_above');
-        badgeClass = 'badge-above';
-      } else if (currentResult === 'in_window') {
-        currentResultText = I18n.t('set_outcome_in_window');
-        badgeClass = 'badge-in-window';
-      } else if (currentResult === 'below') {
-        currentResultText = I18n.t('set_outcome_below');
-        badgeClass = 'badge-below';
-      }
+    const descText = (isAlreadyDone || currentResult)
+      ? I18n.t('change_set_outcome_desc')
+      : I18n.t('set_outcome_prompt');
 
-      modalHTML = `
-        <div style="text-align: center; padding: 12px 0;">
-          <div style="font-size: 15px; font-weight: 800; color: var(--accent-primary); margin-bottom: 6px;">
-            ${ex.name}
-          </div>
-          <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <span>${I18n.t('set_label', 'סט')} ${setIdx + 1}</span> • <span class="set-feedback-btn ${badgeClass}" style="display: inline-flex; pointer-events: none; width: auto; padding: 4px 12px;">${currentResultText}</span>
-          </div>
+    const resetButtonHTML = (isAlreadyDone || currentResult) ? `
+      <button type="button" class="btn-secondary hero-reset-option" 
+              style="width: 100%; padding: 12px; font-size: 14px; font-weight: 700; color: var(--danger, #ef4444); border: 2px dashed rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08); border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;"
+              onclick="TodayPage.clearSetOutcomeFromModal(${exIdx}, ${setIdx}, false)">
+        🔄 ${I18n.t('clear_set_status')}
+      </button>
+    ` : '';
 
-          <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">
-            ${I18n.t('set_already_completed_prompt')}
-          </p>
+    const modalHTML = `
+      <div style="text-align: center; padding: 4px 0;">
+        <div style="font-size: 15px; font-weight: 800; color: var(--accent-primary); margin-bottom: 4px;">
+          ${ex.name}
+        </div>
+        ${buildModalTargetBannerHTML(ex, exIdx)}
+        <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
+          ${descText}
+        </p>
 
-          <button type="button" class="btn-secondary hero-reset-option" 
-                  style="width: 100%; padding: 14px; font-size: 15px; font-weight: 700; color: var(--danger, #ef4444); border: 2px dashed rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08); border-radius: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;"
-                  onclick="TodayPage.clearSetOutcomeFromModal(${exIdx}, ${setIdx}, true)">
-            🔄 ${I18n.t('clear_set_status')}
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px;">
+          <!-- Option 1: In Window -->
+          <button type="button" class="set-modal-option-btn option-in-window hero-primary-option ${currentResult === 'in_window' ? 'selected' : ''}"
+                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'in_window')">
+            <div class="option-icon">✅</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_in_window')} ${currentResult === 'in_window' ? '✓' : ''}</div>
+              <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
+            </div>
+          </button>
+
+          <!-- Option 2: Above Target -->
+          <button type="button" class="set-modal-option-btn option-above ${currentResult === 'above' ? 'selected' : ''}"
+                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'above')">
+            <div class="option-icon">🚀</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_above')} ${currentResult === 'above' ? '✓' : ''}</div>
+              <div class="option-desc">${I18n.t('set_outcome_above_desc')}</div>
+            </div>
+          </button>
+
+          <!-- Option 3: Below Target / Mechanical Stop -->
+          <button type="button" class="set-modal-option-btn option-below ${currentResult === 'below' ? 'selected' : ''}"
+                  onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'below')">
+            <div class="option-icon">⚠️</div>
+            <div class="option-content">
+              <div class="option-title">${I18n.t('set_outcome_below')} ${currentResult === 'below' ? '✓' : ''}</div>
+              <div class="option-desc">${I18n.t('set_outcome_below_desc')}</div>
+            </div>
           </button>
         </div>
-      `;
-    } else {
-      // IF NOT MARKED (OR POST-RESET): Show the 3 outcome choices!
-      modalHTML = `
-        <div style="text-align: center; padding: 4px 0;">
-          <div style="font-size: 15px; font-weight: 800; color: var(--accent-primary); margin-bottom: 4px;">
-            ${ex.name}
-          </div>
-          ${buildModalTargetBannerHTML(ex, exIdx)}
-          <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
-            ${I18n.t('set_outcome_prompt')}
-          </p>
 
-          <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px;">
-            <!-- Option 1: In Window -->
-            <button type="button" class="set-modal-option-btn option-in-window hero-primary-option"
-                    onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'in_window')">
-              <div class="option-icon">✅</div>
-              <div class="option-content">
-                <div class="option-title">${I18n.t('set_outcome_in_window')}</div>
-                <div class="option-desc">${I18n.t('set_outcome_in_window_desc')}</div>
-              </div>
-            </button>
-
-            <!-- Option 2: Above Target -->
-            <button type="button" class="set-modal-option-btn option-above"
-                    onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'above')">
-              <div class="option-icon">🚀</div>
-              <div class="option-content">
-                <div class="option-title">${I18n.t('set_outcome_above')}</div>
-                <div class="option-desc">${I18n.t('set_outcome_above_desc')}</div>
-              </div>
-            </button>
-
-            <!-- Option 3: Below Target / Mechanical Stop -->
-            <button type="button" class="set-modal-option-btn option-below"
-                    onclick="TodayPage.selectSetOutcomeFromModal(${exIdx}, ${setIdx}, 'below')">
-              <div class="option-icon">⚠️</div>
-              <div class="option-content">
-                <div class="option-title">${I18n.t('set_outcome_below')}</div>
-                <div class="option-desc">${I18n.t('set_outcome_below_desc')}</div>
-              </div>
-            </button>
-          </div>
-        </div>
-      `;
-    }
+        ${resetButtonHTML}
+      </div>
+    `;
 
     UI.showModal(title, modalHTML);
   }
@@ -2970,13 +3175,13 @@ const TodayPage = (() => {
       const day = allPlanDays[currentDayIndex];
       const ex = day ? day.exercises[exIdx] : null;
       const setsCount = ex ? UI.parseSetsCount(ex.sets) : 10;
-      
+
       // Cascading reset: clear current set and all subsequent sets for this exercise
       for (let s = setIdx; s < setsCount; s++) {
         delete currentTracking.setData[exIdx][`set_${s}_result`];
         delete currentTracking.setData[exIdx][`set_${s}_done`];
       }
-      
+
       if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
       currentTracking.exerciseStatus[exIdx] = false;
       currentTracking.completed = false;
@@ -3005,7 +3210,7 @@ const TodayPage = (() => {
     const key = `set_${setIdx}_done`;
     const isNowDone = !currentTracking.setData[exIdx][key];
     currentTracking.setData[exIdx][key] = isNowDone;
-    
+
     // Auto-sync set outcome result if toggled
     if (isNowDone && !currentTracking.setData[exIdx][`set_${setIdx}_result`]) {
       currentTracking.setData[exIdx][`set_${setIdx}_result`] = 'in_window';
@@ -3047,7 +3252,7 @@ const TodayPage = (() => {
       if (currentTracking.exerciseStatus[i]) completed++;
     });
     currentTracking.completed = completed === total;
-    
+
     await autoSave();
     renderExercises(day);
 
@@ -3102,13 +3307,13 @@ const TodayPage = (() => {
 
   async function toggleRestDayComplete() {
     if (!checkIsTodayOrWarn()) return;
-    
+
     currentTracking.completed = !currentTracking.completed;
     currentTracking.lastUpdated = new Date().toISOString();
     currentTracking.date = currentTracking.date || UI.getLocalDateString();
-    
+
     await autoSave();
-    
+
     const day = allPlanDays[currentDayIndex];
     if (currentTracking.completed) {
       showWorkoutCelebration(day);
@@ -3122,7 +3327,7 @@ const TodayPage = (() => {
    */
   async function autoSave() {
     await checkAndLockStartDate();
-    
+
     const rpe = document.getElementById('actual-rpe').value;
     const weight = document.getElementById('body-weight').value;
     const notes = document.getElementById('day-notes').value;
@@ -3177,14 +3382,14 @@ const TodayPage = (() => {
         }
       }
     }
-    
+
     if (newActiveIndex !== window.appCurrentPlanIndex) {
       window.appCurrentPlanIndex = newActiveIndex;
       await DB.setSetting('currentPlanIndex', newActiveIndex);
       if (typeof App !== 'undefined' && App.updatePlanDates) {
         await App.updatePlanDates(newActiveIndex);
       }
-      
+
       // Re-render calendar so the correct today column is highlighted
       if (typeof CalendarPage !== 'undefined') {
         CalendarPage.render();
@@ -3210,32 +3415,32 @@ const TodayPage = (() => {
   async function showSwapModal() {
     const currentDay = allPlanDays[currentDayIndex];
     const currentTypeInfo = UI.getDayTypeInfo(currentDay.dayType);
-    
+
     // Find all other days in the same week
     const weekDays = allPlanDays.filter(d => d.week === currentDay.week);
-    
+
     const validSwapTargets = [];
     for (const day of weekDays) {
       if (day.dayIndex === currentDayIndex) continue;
-      
+
       // Check if it's already completed
       const track = await DB.getDayTracking(day.dayIndex);
       if (track && track.completed) continue;
-      
+
       validSwapTargets.push(day);
     }
-    
+
     if (validSwapTargets.length === 0) {
       UI.toast(I18n.t('swap_no_days'), 'warning');
       return;
     }
-    
+
     let html = `<p style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary); line-height: 1.4;">
       ${I18n.t('swap_instructions', '', { dayType: `<b style="color: var(--text-primary);">${currentTypeInfo.label}</b>` })}
     </p>`;
-    
+
     html += `<div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">`;
-    
+
     validSwapTargets.forEach(targetDay => {
       const typeInfo = UI.getDayTypeInfo(targetDay.dayType);
       html += `
@@ -3248,7 +3453,7 @@ const TodayPage = (() => {
       `;
     });
     html += `</div>`;
-    
+
     html += `
       <div style="background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 12px; display: flex; align-items: flex-start; gap: 10px;">
         <span style="font-size: 16px; margin-top: 1px;">💡</span>
@@ -3258,7 +3463,7 @@ const TodayPage = (() => {
         </div>
       </div>
     `;
-    
+
     UI.showModal(I18n.t('swap_modal_title'), html);
   }
 
@@ -3268,11 +3473,11 @@ const TodayPage = (() => {
       await DB.swapWorkouts(currentDayIndex, targetDayIndex);
       allPlanDays = await DB.getAllPlan();
       UI.toast(I18n.t('swap_success'), 'success');
-      
+
       if (typeof CalendarPage !== 'undefined' && document.getElementById('calendar-accordion-content')?.style.display === 'block') {
         CalendarPage.render();
       }
-      
+
       render();
     } catch (e) {
       console.error(e);
@@ -3295,7 +3500,7 @@ const TodayPage = (() => {
 
   function releaseVo2WakeLock() {
     if (vo2WakeLockSentinel) {
-      vo2WakeLockSentinel.release().catch(() => {});
+      vo2WakeLockSentinel.release().catch(() => { });
       vo2WakeLockSentinel = null;
     }
   }
@@ -3421,7 +3626,7 @@ const TodayPage = (() => {
         } else {
           dotStyle += ' background: var(--border-light, rgba(255,255,255,0.2));';
         }
-        stepperDotsHTML += `<div style="${dotStyle}" title="Phase ${idx+1}"></div>`;
+        stepperDotsHTML += `<div style="${dotStyle}" title="Phase ${idx + 1}"></div>`;
       });
       stepperDotsHTML += '</div>';
 
@@ -4129,7 +4334,12 @@ const TodayPage = (() => {
     getCurrentDayIndex: () => currentDayIndex,
     parseWeightDetails,
     buildWeightBadgeHTML,
-    toggleEqBanner
+    toggleEqBanner,
+    handleSetClick,
+    toggleSkipExerciseTemp,
+    unlockEarly,
+    isDayEditable,
+    checkDayEditableOrWarn
   };
 })();
 

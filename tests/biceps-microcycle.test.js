@@ -28,23 +28,30 @@ test('Biceps Microcycle - Week 2 is heavy', () => {
   assert.deepEqual(cycle.exercises, ['db-curl', 'single-arm-curl', 'hammer-curl', 'single-arm-hammer-curl']);
 });
 
-test('Biceps Microcycle - Week 3 is light', () => {
+test('Biceps Microcycle - Week 3 is heavy (3:1 cycle)', () => {
   const cycle = ProgressionEngine.getBicepsMicrocycleWeek(3);
+  assert.equal(cycle.type, 'heavy');
+  assert.equal(cycle.progressionAllowed, true);
+  assert.deepEqual(cycle.exercises, ['db-curl', 'single-arm-curl', 'hammer-curl', 'single-arm-hammer-curl']);
+});
+
+test('Biceps Microcycle - Week 4 is light', () => {
+  const cycle = ProgressionEngine.getBicepsMicrocycleWeek(4);
   assert.equal(cycle.type, 'light');
   assert.equal(cycle.progressionAllowed, false);
   assert.deepEqual(cycle.exercises, ['hammer-curl', 'single-arm-hammer-curl']);
   assert.equal(cycle.sets, 2);
 });
 
-test('Biceps Microcycle - Week 4 loops back to heavy', () => {
-  const cycle = ProgressionEngine.getBicepsMicrocycleWeek(4);
+test('Biceps Microcycle - Week 5 loops back to heavy', () => {
+  const cycle = ProgressionEngine.getBicepsMicrocycleWeek(5);
   assert.equal(cycle.type, 'heavy');
   assert.equal(cycle.progressionAllowed, true);
   assert.deepEqual(cycle.exercises, ['db-curl', 'single-arm-curl', 'hammer-curl', 'single-arm-hammer-curl']);
 });
 
-test('Biceps Microcycle - Week 8 is deload', () => {
-  const cycle = ProgressionEngine.getBicepsMicrocycleWeek(8);
+test('Biceps Microcycle - Week 12 is deload (12-week cadence)', () => {
+  const cycle = ProgressionEngine.getBicepsMicrocycleWeek(12);
   assert.equal(cycle.type, 'deload');
   assert.equal(cycle.progressionAllowed, false);
   assert.deepEqual(cycle.exercises, ['hammer-curl', 'single-arm-hammer-curl']);

@@ -153,7 +153,7 @@ const ExercisesPage = (() => {
       {
         title: 'warmup_mobility', icon: '⚡', exercises: [
           { name: 'High Knees', unlockWeek: 1 },
-          { name: 'Deep Mobility Protocol', unlockWeek: 5 },
+          { name: 'Deep Mobility Protocol', unlockWeek: 3 },
           { name: 'Band Neck Flexion & Extension', unlockWeek: 1 },
           { name: 'Micro Mobility Protocol', unlockWeek: 1 },
           { name: 'Wrist Rocks', unlockWeek: 53 }
@@ -162,7 +162,7 @@ const ExercisesPage = (() => {
       {
         title: 'squat_tree', icon: '🏋️', exercises: [
           { name: 'Bodyweight Squat', unlockWeek: 1, id: 'squat-1' },
-          { name: 'Goblet Bulgarian Split Squat', unlockWeek: 5, parentId: 'squat-1', id: 'squat-2', relType: 'replace', weightTransfer: 'stepdown' }
+          { name: 'Goblet Bulgarian Split Squat', unlockWeek: 3, parentId: 'squat-1', id: 'squat-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_10kg_squat' }
         ]
       },
       {
@@ -179,16 +179,16 @@ const ExercisesPage = (() => {
       {
         title: 'glutes_calves', icon: '🍑', exercises: [
           { name: 'DB Glute Bridge', unlockWeek: 1, id: 'glute-1' },
-          { name: 'Standing Single-Leg Calf Raise', unlockWeek: 5, id: 'calf-1' },
-          { name: 'Seated Single-Leg Calf Raise', unlockWeek: 5, parentId: 'calf-1', id: 'calf-2', relType: 'accessory' }
+          { name: 'Standing Single-Leg Calf Raise', unlockWeek: 3, id: 'calf-1' },
+          { name: 'Seated Single-Leg Calf Raise', unlockWeek: 3, parentId: 'calf-1', id: 'calf-2', relType: 'accessory' }
         ]
       },
       {
         title: 'core_citadel', icon: '🛡️', exercises: [
           { name: 'Dead Bug', unlockWeek: 1, id: 'core-1' },
-          { name: 'Hollow Body Hold', unlockWeek: 5, parentId: 'core-1', id: 'core-2', relType: 'accessory' },
-          { name: 'Suitcase Carry', unlockWeek: 5, id: 'carry-1' },
-          { name: 'Pallof Press Progression', unlockWeek: 10, parentId: 'carry-1', id: 'carry-2', relType: 'accessory' }
+          { name: 'Hollow Body Hold', unlockWeek: 3, parentId: 'core-1', id: 'core-2', relType: 'accessory', unlockCond: 'cond_16_deadbug' },
+          { name: 'Suitcase Carry', unlockWeek: 4, id: 'carry-1', unlockCond: 'cond_10kg_rdl' },
+          { name: 'Pallof Press Progression', unlockWeek: 6, parentId: 'carry-1', id: 'carry-2', relType: 'accessory', unlockCond: 'cond_deadbug_stage2' }
         ]
       }
     ],
@@ -205,7 +205,7 @@ const ExercisesPage = (() => {
         title: 'push_tree', icon: '💥', exercises: [
           { name: 'Push-up Bars Progression', unlockWeek: 1, id: 'push-1' },
           { name: 'Single-Arm Floor Press', unlockWeek: 1, id: 'floor-1' },
-          { name: 'Push-Up Volume (Day 5)', unlockWeek: 5, parentId: 'push-1', id: 'push-vol', relType: 'accessory', unlockCond: 'cond_push_vol' },
+          { name: 'Push-Up Volume (Day 5)', unlockWeek: 3, parentId: 'push-1', id: 'push-vol', relType: 'accessory', unlockCond: 'cond_push_vol' },
           { name: 'Diamond Push-Up', unlockWeek: 1, parentId: 'push-1', id: 'diamond-push-up', relType: 'accessory', unlockCond: 'cond_diamond' },
           { name: 'Deficit Push-Up', unlockWeek: 10, parentId: 'push-1', id: 'push-2a', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_15_flat' },
           { name: 'Feet-Elevated Push-Up', unlockWeek: 18, parentId: 'push-1', id: 'push-2b', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_12_deficit' },
@@ -214,8 +214,8 @@ const ExercisesPage = (() => {
       },
       {
         title: 'overhead_skill', icon: '🎯', exercises: [
-          { name: 'Pike Progression', unlockWeek: 5, id: 'pike-1' },
-          { name: 'Single-Arm Seated OHP', unlockWeek: 5, id: 'ohp-1' },
+          { name: 'Pike Progression', unlockWeek: 3, id: 'pike-1', unlockCond: 'cond_10_push' },
+          { name: 'Single-Arm Seated OHP', unlockWeek: 3, id: 'ohp-1', unlockCond: 'cond_10_push' },
           { name: 'Wall Walk (Partial)', unlockWeek: 10, parentId: 'pike-1', id: 'pike-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_10_pike' },
           { name: 'Wall Walk (Full)', unlockWeek: 18, parentId: 'pike-2', id: 'pike-3', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_6_partial_walk' },
           { name: 'Wall Handstand', unlockWeek: 26, parentId: 'pike-3', id: 'pike-4', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_6_full_walk' },
@@ -224,12 +224,12 @@ const ExercisesPage = (() => {
       },
       {
         title: 'accessory_prehab', icon: '🩹', exercises: [
-          { name: 'Single-Arm Lateral Raise', unlockWeek: 5, id: 'lat-1' },
-          { name: 'DB Overhead Triceps Extension', unlockWeek: 5, id: 'tri-1' },
+          { name: 'Single-Arm Lateral Raise', unlockWeek: 3, id: 'lat-1' },
+          { name: 'DB Overhead Triceps Extension', unlockWeek: 3, id: 'tri-1', unlockCond: 'cond_10_push' },
           { name: 'TRX Y-T-W', unlockWeek: 1, id: 'rear-delt-1' },
           { name: 'Band Pull-Apart', unlockWeek: 2, parentId: 'rear-delt-1', id: 'rear-delt-2', relType: 'accessory', unlockCond: 'cond_weekly_rotation' },
-          { name: 'Arm Block - Single-Arm Lateral Raise', unlockWeek: 10, parentId: 'lat-1', id: 'lat-2', relType: 'accessory' },
-          { name: 'Arm Block - DB Overhead Triceps Ext', unlockWeek: 10, parentId: 'tri-1', id: 'tri-2', relType: 'accessory' }
+          { name: 'Arm Block - Single-Arm Lateral Raise', unlockWeek: 6, parentId: 'lat-1', id: 'lat-2', relType: 'accessory', unlockCond: 'cond_12_lat' },
+          { name: 'Arm Block - DB Overhead Triceps Ext', unlockWeek: 6, parentId: 'tri-1', id: 'tri-2', relType: 'accessory', unlockCond: 'cond_12_tri' }
         ]
       }
     ],
@@ -262,14 +262,14 @@ const ExercisesPage = (() => {
       {
         title: 'biceps_grip', icon: '✊', exercises: [
           { name: 'Single-Arm Curl', unlockWeek: 1, id: 'curl-1' },
-          { name: 'Single-Arm Hammer Curl', unlockWeek: 5, parentId: 'curl-1', id: 'curl-2', relType: 'accessory' },
-          { name: 'Arm Block - Single-Arm Curl', unlockWeek: 10, parentId: 'curl-1', id: 'curl-2b', relType: 'accessory' },
-          { name: 'Towel Hang', unlockWeek: 5, id: 'towel-1' }
+          { name: 'Single-Arm Hammer Curl', unlockWeek: 3, parentId: 'curl-1', id: 'curl-2', relType: 'accessory', unlockCond: 'cond_12_curl' },
+          { name: 'Arm Block - Single-Arm Curl', unlockWeek: 6, parentId: 'curl-1', id: 'curl-2b', relType: 'accessory', unlockCond: 'cond_12_curl' },
+          { name: 'Towel Hang', unlockWeek: 3, id: 'towel-1' }
         ]
       },
       {
         title: 'hanging_core', icon: '🧱', exercises: [
-          { name: 'Tuck L-Sit', unlockWeek: 5, id: 'l-sit-1' },
+          { name: 'Tuck L-Sit', unlockWeek: 3, id: 'l-sit-1', unlockCond: 'cond_16_deadbug' },
           { name: 'One-Leg Extended L-Sit', unlockWeek: 18, parentId: 'l-sit-1', id: 'l-sit-2', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_15s_tuck' },
           { name: 'Full L-Sit', unlockWeek: 34, parentId: 'l-sit-2', id: 'l-sit-3', relType: 'replace', weightTransfer: 'stepdown', unlockCond: 'cond_15s_one_leg' }
         ]
@@ -279,8 +279,8 @@ const ExercisesPage = (() => {
       {
         title: 'cardio_recovery', icon: '🫀', exercises: [
           { name: 'Relaxed Walking', unlockWeek: 1 },
-          { name: 'Brisk Walking', unlockWeek: 5 },
-          { name: 'VO2 Max Norwegian 4x4', unlockWeek: 5 },
+          { name: 'Brisk Walking', unlockWeek: 3 },
+          { name: 'VO2 Max Norwegian 4x4', unlockWeek: 4 },
           { name: 'Band Neck Flexion & Extension', unlockWeek: 1 }
         ]
       }
@@ -1191,12 +1191,12 @@ const ExercisesPage = (() => {
           </h3>
           <div style="display: flex; flex-direction: column; gap: 10px;">
             ${subExercises.map((sub, idx) => {
-              const subTitle = I18n.t(sub.nameKey);
-              const subTarget = I18n.t(sub.targetKey);
-              const subDesc = I18n.t(sub.descKey);
-              const gifUrl = UI.getGifUrl(sub.gif);
+        const subTitle = I18n.t(sub.nameKey);
+        const subTarget = I18n.t(sub.targetKey);
+        const subDesc = I18n.t(sub.descKey);
+        const gifUrl = UI.getGifUrl(sub.gif);
 
-              return `
+        return `
                 <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 12px; cursor: pointer;"
                      onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${gifUrl}', 'Deep Mobility Protocol')">
                   <div style="width: 52px; height: 52px; min-width: 52px; border-radius: 8px; overflow: hidden; background: #ffffff; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;">
@@ -1211,14 +1211,14 @@ const ExercisesPage = (() => {
                   </div>
                 </div>
               `;
-            }).join('')}
+      }).join('')}
           </div>
         </div>
       `;
     } else if (ex.name.toLowerCase().includes('micro mobility')) {
       const subA = UI.MICRO_MOBILITY_A_SUB_EXERCISES || [];
       const subB = UI.MICRO_MOBILITY_B_SUB_EXERCISES || [];
-      
+
       const renderGroupHTML = (title, desc, exercises, badge) => `
         <div style="background: rgba(59, 130, 246, 0.08); border-radius: 12px; padding: 14px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 10px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
@@ -1230,11 +1230,11 @@ const ExercisesPage = (() => {
           <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 10px 0;">${desc}</p>
           <div style="display: flex; flex-direction: column; gap: 8px;">
             ${exercises.map((sub, idx) => {
-              const subTitle = I18n.t(sub.nameKey);
-              const subTarget = I18n.t(sub.targetKey);
-              const subDesc = I18n.t(sub.descKey);
-              const gifUrl = UI.getGifUrl(sub.gif);
-              return `
+        const subTitle = I18n.t(sub.nameKey);
+        const subTarget = I18n.t(sub.targetKey);
+        const subDesc = I18n.t(sub.descKey);
+        const gifUrl = UI.getGifUrl(sub.gif);
+        return `
                 <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; cursor: pointer;"
                      onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${gifUrl}', '${title.replace(/'/g, "\\\'")}')">
                   <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 8px; overflow: hidden; background: #ffffff; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;">
@@ -1249,7 +1249,7 @@ const ExercisesPage = (() => {
                   </div>
                 </div>
               `;
-            }).join('')}
+      }).join('')}
           </div>
         </div>
       `;

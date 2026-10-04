@@ -18,13 +18,13 @@ const App = (() => {
         if (wakeLock !== null && !wakeLock.released) return true;
         wakeLock = await navigator.wakeLock.request('screen');
         console.log('Wake Lock activated');
-        
+
         wakeLock.addEventListener('release', () => {
           console.log('Wake Lock released');
           wakeLock = null;
           updateWakeLockUI();
         });
-        
+
         updateWakeLockUI();
         return true;
       }
@@ -113,8 +113,8 @@ const App = (() => {
     const pwaBannerSub = document.getElementById('pwa-banner-sub');
 
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-                         window.navigator.standalone === true ||
-                         document.referrer.includes('android-app://');
+      window.navigator.standalone === true ||
+      document.referrer.includes('android-app://');
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     let isBannerDismissed = localStorage.getItem('pwaBannerDismissed') === 'true';
@@ -141,7 +141,7 @@ const App = (() => {
       const loginScreen = document.getElementById('login-screen');
       const splashScreen = document.getElementById('splash-screen');
       const isIntroScreenActive = (loginScreen && !loginScreen.classList.contains('hidden')) ||
-                                  (splashScreen && !splashScreen.classList.contains('hidden'));
+        (splashScreen && !splashScreen.classList.contains('hidden'));
 
       if (isStandalone || isBannerDismissed || isIntroScreenActive) {
         pwaBanner.classList.add('hidden');
@@ -284,7 +284,7 @@ const App = (() => {
       // Setup PWA install prompt
       setupInstallPrompt();
 
-      // Initialize IndexedDB with self-healing v15.6 Lean schema check
+      // Initialize IndexedDB with self-healing v15.7 Accelerated schema check
       await DB.init();
       await DB.ensureV15LeanSchema();
 
@@ -330,7 +330,7 @@ const App = (() => {
    */
   async function loadAppCore() {
     try {
-      const currentDataVersion = '15.6.4'; // FitUp v15.6.4 neck exercise at A1 update
+      const currentDataVersion = '15.7.0'; // FitUp v15.7 Accelerated — plan re-seed (deload cadence, arm block week, biceps 3:1, performance unlocks)
       const savedDataVersion = await DB.getSetting('dataVersion');
 
       let planStartDate = await DB.getSetting('planStartDate');
@@ -877,8 +877,26 @@ const App = (() => {
 
     // Clear all data
     document.getElementById('clear-all-btn').addEventListener('click', async () => {
-      if (confirm(I18n.t('confirm_delete_all'))) {
-        if (confirm(I18n.t('confirm_delete_final'))) {
+      const step1 = window.UI && window.UI.confirm
+        ? await UI.confirm({
+          title: I18n.t('clear_all_card') || 'מחיקת כל הנתונים',
+          message: I18n.t('confirm_delete_all'),
+          confirmText: I18n.t('clear_all_btn') || 'מחק',
+          type: 'danger',
+          icon: '⚠️'
+        })
+        : confirm(I18n.t('confirm_delete_all'));
+      if (step1) {
+        const step2 = window.UI && window.UI.confirm
+          ? await UI.confirm({
+            title: I18n.t('clear_all_card') || 'אישור סופי למחיקה',
+            message: I18n.t('confirm_delete_final'),
+            confirmText: I18n.t('delete_btn') || 'מחק לצמיתות',
+            type: 'danger',
+            icon: '💥'
+          })
+          : confirm(I18n.t('confirm_delete_final'));
+        if (step2) {
           try {
             await DB.deleteDatabase();
             UI.toast(I18n.t('all_data_deleted'), 'info');
@@ -1182,7 +1200,16 @@ const App = (() => {
 
       if (deleteSettingsGeminiBtn) {
         deleteSettingsGeminiBtn.onclick = async () => {
-          if (confirm(I18n.t('delete_key_confirm'))) {
+          const confirmed = window.UI && window.UI.confirm
+            ? await UI.confirm({
+              title: I18n.t('delete_key') || 'מחיקת מפתח API',
+              message: I18n.t('delete_key_confirm'),
+              confirmText: I18n.t('delete_btn') || 'מחק',
+              type: 'danger',
+              icon: '🗑️'
+            })
+            : confirm(I18n.t('delete_key_confirm'));
+          if (confirmed) {
             await window.GeminiService.removeApiKey();
             UI.toast(I18n.t('key_deleted'), 'info');
             await updateGeminiSettingsUI();

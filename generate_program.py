@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Generate FitUp Pro v15.6 Lean Edition — 80-week training program matching PROGRAM_GUIDE.md schema."""
+"""Generate FitUp Pro v15.7 Accelerated — 80-week training program matching PROGRAM_GUIDE.md schema."""
 import json, os, shutil
 from datetime import datetime, timedelta
 
 START_DATE = datetime(2026, 7, 6)
 DAYS_ENG = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
 
-# Deload occurs every 8 weeks: 8, 16, 24, 32, 40, 48, 56, 64, 72, 80
-DELOAD_WEEKS = set(range(8, 81, 8))
+# v15.7 Accelerated: Deload occurs every 12 weeks: 12, 24, 36, 48, 60, 72
+# (previously every 8 weeks). An auto-regulated early deload trigger is handled at runtime.
+DELOAD_WEEKS = set(range(12, 81, 12))
 
 # ---------------------------------------------------------
 # 1. Master Exercise Catalog Metadata Definition
@@ -88,7 +89,10 @@ EXERCISES_CATALOG = [
         "sets": 3,
         "structure": "straight",
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "heels-elevated-goblet-squat", "targetWeightKg": 10 },
+        "fallbackId": None
     },
     {
         "id": "db-glute-bridge",
@@ -126,7 +130,10 @@ EXERCISES_CATALOG = [
         "sets": 3,
         "structure": "straight",
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 4,
+        "unlockCriteria": { "exercise": "goblet-rdl", "targetWeightKg": 10 },
+        "fallbackId": None
     },
     {
         "id": "standing-single-leg-calf-raise",
@@ -147,7 +154,9 @@ EXERCISES_CATALOG = [
         "blockId": "d1-calf-block",
         "blockOrder": 1,
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "fallbackId": None
     },
     {
         "id": "seated-single-leg-calf-raise",
@@ -168,7 +177,9 @@ EXERCISES_CATALOG = [
         "blockId": "d1-calf-block",
         "blockOrder": 2,
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "fallbackId": None
     },
     {
         "id": "pallof-press-progression",
@@ -188,8 +199,11 @@ EXERCISES_CATALOG = [
             "Single-Arm (40kg)", "Single-Arm Split Stance (40kg)", "Single-Arm (50kg)", "Single-Arm One Leg (50kg)"
         ],
         "rule": "אין תנועה בגב; אם הגוף מסתובב, BELOW",
-        "startingWeek": 10,
-        "unlocked": False
+        "startingWeek": 6,
+        "unlocked": False,
+        "earliestWeek": 6,
+        "unlockCriteria": { "exercise": "dead-bug", "targetStageIndex": 2 },
+        "fallbackId": None
     },
     {
         "id": "dead-bug",
@@ -221,7 +235,10 @@ EXERCISES_CATALOG = [
         "circuitOrder": 3,
         "stages": ["Tuck Hold", "One-Leg Extended", "Hollow Hold"],
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "dead-bug", "targetReps": 16 },
+        "fallbackId": None
     },
 
     # Day 3 - Push, Shoulders, Rear Delts, Triceps
@@ -239,7 +256,10 @@ EXERCISES_CATALOG = [
         "structure": "straight",
         "stages": ["Pike Hold", "Feet-Elevated Pike Hold", "Pike Push-Up", "Elevated Pike Push-Up"],
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "push-up-progression", "targetReps": 10 },
+        "fallbackId": None
     },
     {
         "id": "single-arm-floor-press",
@@ -467,7 +487,10 @@ EXERCISES_CATALOG = [
         "sets": 3,
         "structure": "straight",
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "push-up-progression", "targetReps": 10 },
+        "fallbackId": None
     },
     {
         "id": "db-overhead-triceps-extension",
@@ -477,7 +500,7 @@ EXERCISES_CATALOG = [
         "startingWeight": 6,
         "minWeight": 3,
         "maxWeight": 32,
-        "increment": 1,
+        "increment": 0.5,
         "loadType": "total",
         "restSeconds": 45,
         "repWindow": "10-15",
@@ -486,7 +509,10 @@ EXERCISES_CATALOG = [
         "sets": 4,
         "structure": "straight",
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "push-up-progression", "targetReps": 10 },
+        "fallbackId": None
     },
     {
         "id": "diamond-push-up",
@@ -524,7 +550,7 @@ EXERCISES_CATALOG = [
         "startingWeight": 3,
         "minWeight": 3,
         "maxWeight": 12,
-        "increment": 1,
+        "increment": 0.5,
         "loadType": "each",
         "restSeconds": 75,
         "repWindow": "12-20",
@@ -535,7 +561,9 @@ EXERCISES_CATALOG = [
         "pairId": "d3-row-lateral",
         "orderInPair": 2,
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "fallbackId": None
     },
     {
         "id": "trx-ytw",
@@ -633,7 +661,10 @@ EXERCISES_CATALOG = [
         "orderInPair": 1,
         "progressionLink": "push-up-progression",
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "push-up-progression", "targetReps": 10 },
+        "fallbackId": None
     },
     {
         "id": "single-arm-curl",
@@ -643,7 +674,7 @@ EXERCISES_CATALOG = [
         "startingWeight": 3,
         "minWeight": 3,
         "maxWeight": 20,
-        "increment": 1,
+        "increment": 0.5,
         "loadType": "each",
         "restSeconds": 45,
         "repWindow": "10-15",
@@ -652,7 +683,7 @@ EXERCISES_CATALOG = [
         "sets": "2-3",
         "structure": "straight",
         "microcycle": "biceps-microcycle",
-        "activeWeeks": [1, 2]
+        "activeWeeks": [1, 2, 3]
     },
     {
         "id": "single-arm-hammer-curl",
@@ -662,7 +693,7 @@ EXERCISES_CATALOG = [
         "startingWeight": 3,
         "minWeight": 3,
         "maxWeight": 20,
-        "increment": 1,
+        "increment": 0.5,
         "loadType": "each",
         "restSeconds": 45,
         "repWindow": "10-12",
@@ -671,10 +702,13 @@ EXERCISES_CATALOG = [
         "sets": "2-3",
         "structure": "straight",
         "microcycle": "biceps-microcycle",
-        "activeWeeks": [1, 2, 3],
+        "activeWeeks": [1, 2, 3, 4],
         "lightWeekConfig": { "sets": 2, "progressionAllowed": False },
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "single-arm-curl", "targetReps": 12 },
+        "fallbackId": None
     },
     {
         "id": "towel-hang",
@@ -691,7 +725,9 @@ EXERCISES_CATALOG = [
         "orderInPair": 1,
         "stages": ["Dead Hang", "Towel Hang", "Towel Hang + vest 5kg"],
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "fallbackId": None
     },
     {
         "id": "tuck-l-sit",
@@ -708,7 +744,10 @@ EXERCISES_CATALOG = [
         "orderInPair": 2,
         "stages": ["Tuck L-Sit"],
         "startingWeek": 5,
-        "unlocked": False
+        "unlocked": False,
+        "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "dead-bug", "targetReps": 16 },
+        "fallbackId": None
     },
     {
         "id": "one-leg-extended-l-sit",
@@ -757,11 +796,11 @@ EXERCISES_CATALOG = [
     { "id": "scapular-pull-up", "name": "Scapular Pull-up", "category": "Warmup", "type": "variation", "restSeconds": 30, "repWindow": "6" },
     { "id": "dead-hang", "name": "Dead Hang", "category": "Warmup", "type": "timebased", "restSeconds": 30, "repWindow": "15s" },
     { "id": "seated-band-row", "name": "Seated Band Row", "category": "Warmup", "type": "variation", "restSeconds": 30, "repWindow": "12" },
-    { "id": "brisk-walking", "name": "Brisk Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "30-45m", "startingWeek": 5, "unlocked": False },
+    { "id": "brisk-walking", "name": "Brisk Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "30-45m", "startingWeek": 5, "unlocked": False, "earliestWeek": 3, "fallbackId": "relaxed-walking" },
     { "id": "relaxed-walking", "name": "Relaxed Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "25-30m" },
-    { "id": "vo2-max-norwegian-4x4", "name": "VO2 Max Norwegian 4x4", "category": "Cardio", "type": "interval", "restSeconds": 0, "repWindow": "16m", "startingWeek": 5, "unlocked": False },
+    { "id": "vo2-max-norwegian-4x4", "name": "VO2 Max Norwegian 4x4", "category": "Cardio", "type": "interval", "restSeconds": 0, "repWindow": "16m", "startingWeek": 5, "unlocked": False, "earliestWeek": 4, "fallbackId": "relaxed-walking" },
     { "id": "micro-mobility-protocol", "name": "Micro Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "5m" },
-    { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "10m", "startingWeek": 5, "unlocked": False },
+    { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "10m", "startingWeek": 5, "unlocked": False, "earliestWeek": 3, "fallbackId": "micro-mobility-protocol" },
     {
         "id": "band-neck-flexion",
         "name": "Band Neck Flexion & Extension",
@@ -787,7 +826,7 @@ EXERCISES_CATALOG = [
         "startingWeight": 3,
         "minWeight": 3,
         "maxWeight": 12,
-        "increment": 1,
+        "increment": 0.5,
         "loadType": "each",
         "restSeconds": 15,
         "repWindow": "Myo-Reps Cluster",
@@ -798,8 +837,11 @@ EXERCISES_CATALOG = [
             "miniReps": 5,
             "stopRule": "two_consecutive_tempo_losses"
         },
-        "startingWeek": 10,
-        "unlocked": False
+        "startingWeek": 6,
+        "unlocked": False,
+        "earliestWeek": 6,
+        "unlockCriteria": { "exercise": "single-arm-lateral-raise", "targetReps": 12 },
+        "fallbackId": None
     },
     {
         "id": "arm-block-triceps-ext",
@@ -809,7 +851,7 @@ EXERCISES_CATALOG = [
         "startingWeight": 6,
         "minWeight": 3,
         "maxWeight": 32,
-        "increment": 1,
+        "increment": 0.5,
         "loadType": "total",
         "restSeconds": 15,
         "repWindow": "Myo-Reps Cluster",
@@ -820,8 +862,11 @@ EXERCISES_CATALOG = [
             "miniReps": 5,
             "stopRule": "two_consecutive_tempo_losses"
         },
-        "startingWeek": 10,
-        "unlocked": False
+        "startingWeek": 6,
+        "unlocked": False,
+        "earliestWeek": 6,
+        "unlockCriteria": { "exercise": "db-overhead-triceps-extension", "targetReps": 12 },
+        "fallbackId": None
     },
     {
         "id": "arm-block-biceps-curl",
@@ -831,7 +876,7 @@ EXERCISES_CATALOG = [
         "startingWeight": 3,
         "minWeight": 3,
         "maxWeight": 20,
-        "increment": 1,
+        "increment": 0.5,
         "loadType": "each",
         "restSeconds": 15,
         "repWindow": "Myo-Reps Cluster",
@@ -842,8 +887,11 @@ EXERCISES_CATALOG = [
             "miniReps": 5,
             "stopRule": "two_consecutive_tempo_losses"
         },
-        "startingWeek": 10,
-        "unlocked": False
+        "startingWeek": 6,
+        "unlocked": False,
+        "earliestWeek": 6,
+        "unlockCriteria": { "exercise": "single-arm-curl", "targetReps": 12 },
+        "fallbackId": None
     }
 ]
 
@@ -876,6 +924,13 @@ def make_ex_obj(slot, ex_id, name, sets_str, rep_window=None, weight=None, tempo
     }
     if active_weeks is not None:
         obj["activeWeeks"] = active_weeks
+    # v15.7 Accelerated: propagate performance-unlock metadata from the master catalog
+    # (earliestWeek safety floor, unlockCriteria, fallbackId, calendar startingWeek)
+    cat = next((e for e in EXERCISES_CATALOG if e["id"] == ex_id), None)
+    if cat:
+        for k in ("earliestWeek", "unlockCriteria", "fallbackId", "startingWeek"):
+            if k in cat:
+                obj[k] = cat[k]
     return obj
 
 def get_leg_warmup():
@@ -910,8 +965,8 @@ def generate_day_exercises(dow, week):
     if dow == 0:  # Sunday - Rest
         return "Rest", "—", []
 
-    if dow == 2:  # Tuesday - Zone 2 Cardio / Light Walk (Weeks 1-4)
-        if week <= 4:
+    if dow == 2:  # Tuesday - Zone 2 Cardio / Light Walk (Weeks 1-2)
+        if week <= 2:
             return "Zone 2 Cardio", "—", [
                 make_ex_obj("A1", "relaxed-walking", "Relaxed Walking", "20 mins", weight="Incline 0%", tempo="4.5 km/h", rest=0)
             ]
@@ -923,18 +978,18 @@ def generate_day_exercises(dow, week):
         ]
 
     if dow == 4:  # Thursday - Active Recovery
-        walk_time = "20 mins" if week <= 4 else "25 mins"
-        mob_time = "5 mins" if week <= 4 else "10 mins"
-        mob_id = "micro-mobility-protocol" if week <= 4 else "deep-mobility-protocol"
-        mob_name = "Micro Mobility Protocol" if week <= 4 else "Deep Mobility Protocol"
+        walk_time = "20 mins" if week <= 2 else "25 mins"
+        mob_time = "5 mins" if week <= 2 else "10 mins"
+        mob_id = "micro-mobility-protocol" if week <= 2 else "deep-mobility-protocol"
+        mob_name = "Micro Mobility Protocol" if week <= 2 else "Deep Mobility Protocol"
         return "Active Recovery", "—", [
             make_ex_obj("A1", "band-neck-flexion", "Band Neck Flexion & Extension", "2×15-20", rep_window="15-20", weight="Band 30 kg", tempo="3-1-3 slow", rest=45, structure="straight"),
             make_ex_obj("A2", "relaxed-walking", "Relaxed Walking", walk_time, weight="Incline 0%", tempo="4.5 km/h", rest=0),
             make_ex_obj("A3", mob_id, mob_name, mob_time, weight="Bodyweight", tempo="slow", rest=0)
         ]
 
-    if dow == 6:  # Saturday - VO2 Max / Light Walk (Weeks 1-4)
-        if week <= 4:
+    if dow == 6:  # Saturday - VO2 Max / Light Walk (Weeks 1-3)
+        if week <= 3:
             return "Zone 2 Cardio", "—", [
                 make_ex_obj("A1", "relaxed-walking", "Relaxed Walking", "20 mins", weight="Incline 0%", tempo="4.5 km/h", rest=0)
             ]
@@ -942,7 +997,7 @@ def generate_day_exercises(dow, week):
             return "Zone 2 Cardio", "—", [
                 make_ex_obj("A1", "brisk-walking", "Brisk Walking", "30 mins", weight="Incline 2%", tempo="5.0 km/h", rest=0)
             ]
-        incline_val = "3%" if week <= 4 else ("4%" if week <= 8 else ("5%" if week <= 16 else "6%"))
+        incline_val = "4%" if week <= 8 else ("5%" if week <= 16 else "6%")
         return "VO2 Max", "9-10", [
             make_ex_obj("A1", "vo2-max-norwegian-4x4", "VO2 Max Norwegian 4x4", "4x4 mins (3 min rest)", weight=f"Incline {incline_val}", tempo="6.5 km/h effort / 4.5 km/h rest", rest=0)
         ]
@@ -962,30 +1017,26 @@ def generate_day_exercises(dow, week):
         # A2: Heels-Elevated Goblet Squat
         exs.append(make_ex_obj("A2", "heels-elevated-goblet-squat", "Heels-Elevated Goblet Squat", "2×8" if is_deload else "2×8-12", rep_window="8-12", weight="6 kg total", tempo="3s descent, 1s pause at bottom, 1s ascent", rest=75, structure="straight"))
 
-        # A3: Squat Tree (Unlocks at Week 5)
-        if week >= 5:
-            exs.append(make_ex_obj("A3", "goblet-bulgarian-split-squat", "Goblet Bulgarian Split Squat", "2×8/leg" if is_deload else "3×6-12/leg", rep_window="6-12", weight="6 kg total", tempo="2s descent", rest=82, structure="straight"))
+        # A3: Squat Tree (v15.7: performance unlock from Week 3, calendar gate Week 5)
+        exs.append(make_ex_obj("A3", "goblet-bulgarian-split-squat", "Goblet Bulgarian Split Squat", "2×8/leg" if is_deload else "3×6-12/leg", rep_window="6-12", weight="6 kg total", tempo="2s descent", rest=82, structure="straight"))
 
         # A4: Glute Progression (DB Glute Bridge — all weeks)
         exs.append(make_ex_obj("A4", "db-glute-bridge", "DB Glute Bridge", "2×10" if is_deload else "3×10-15", rep_window="10-15", weight="9 kg total", tempo="1s pause at top", rest=75 if week >= 5 else 60, structure="straight"))
 
-        # A5: Suitcase Carry (Unlocks at Week 5)
-        if week >= 5:
-            exs.append(make_ex_obj("A5", "suitcase-carry", "Suitcase Carry", "2×25m/side" if is_deload else "3×25-40m/side", rep_window="25-40m", weight="12 kg", tempo="walk", rest=60, structure="straight"))
+        # A5: Suitcase Carry (v15.7: performance unlock from Week 4, calendar gate Week 5)
+        exs.append(make_ex_obj("A5", "suitcase-carry", "Suitcase Carry", "2×25m/side" if is_deload else "3×25-40m/side", rep_window="25-40m", weight="12 kg", tempo="walk", rest=60, structure="straight"))
 
-        # A6, A7: Calf Block (Standing + Seated Calf Raise — Unlocks at Week 5)
-        if week >= 5:
-            calf_standing_sets = "2×15/leg" if is_deload else "3×12-20/leg"
-            calf_seated_sets = "2×15/leg" if is_deload else "2×15-25/leg"
-            exs.append(make_ex_obj("A6", "standing-single-leg-calf-raise", "Standing Single-Leg Calf Raise", calf_standing_sets, rep_window="12-20", weight="6 kg in hand", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=1))
-            exs.append(make_ex_obj("A7", "seated-single-leg-calf-raise", "Seated Single-Leg Calf Raise", calf_seated_sets, rep_window="15-25", weight="6 kg on knee", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=2))
+        # A6, A7: Calf Block (v15.7: performance unlock from Week 3, calendar gate Week 5)
+        calf_standing_sets = "2×15/leg" if is_deload else "3×12-20/leg"
+        calf_seated_sets = "2×15/leg" if is_deload else "2×15-25/leg"
+        exs.append(make_ex_obj("A6", "standing-single-leg-calf-raise", "Standing Single-Leg Calf Raise", calf_standing_sets, rep_window="12-20", weight="6 kg in hand", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=1))
+        exs.append(make_ex_obj("A7", "seated-single-leg-calf-raise", "Seated Single-Leg Calf Raise", calf_seated_sets, rep_window="15-25", weight="6 kg on knee", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d1-calf-block", block_order=2))
 
-        # Core Circuit
-        if week >= 10:
+        # Core Circuit (v15.7: Pallof from Week 6, Hollow Body performance unlock from Week 3)
+        if week >= 6:
             exs.append(make_ex_obj("A8", "pallof-press-progression", "Pallof Press Progression", "2×10-12/side", rep_window="10-12", weight="Band 30 kg", tempo="1s pause", rest=30, structure="straight" if is_deload else "circuit", circuit_id="d1-core-circuit", circuit_order=1))
         exs.append(make_ex_obj("A9", "dead-bug", "Dead Bug", "2×8/side" if is_deload else "3×12-20/side", rep_window="12-20", weight="Bodyweight", tempo="slow", rest=30, structure="straight" if is_deload else "circuit", circuit_id="d1-core-circuit", circuit_order=2))
-        if week >= 5:
-            exs.append(make_ex_obj("A10", "hollow-body-hold", "Hollow Body Hold", "2×15 secs" if is_deload else "2×20-30 secs", rep_window="20-30s", weight="Bodyweight", tempo="static", rest=30, structure="straight" if is_deload else "circuit", circuit_id="d1-core-circuit", circuit_order=3))
+        exs.append(make_ex_obj("A10", "hollow-body-hold", "Hollow Body Hold", "2×15 secs" if is_deload else "2×20-30 secs", rep_window="20-30s", weight="Bodyweight", tempo="static", rest=30, structure="straight" if is_deload else "circuit", circuit_id="d1-core-circuit", circuit_order=3))
 
         exs.append(make_ex_obj("A11", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
         return day_title, rpe, exs
@@ -996,18 +1047,17 @@ def generate_day_exercises(dow, week):
         rpe = "5-6" if is_deload else "7-8"
         exs = get_push_warmup()
 
-        # A1: Pike / Overhead Skill Tree (Unlocks at Week 5)
-        if week >= 5:
-            if week < 10:
-                exs.append(make_ex_obj("A1", "pike-progression", "Pike Progression", "2×15 secs" if is_deload else "2×15-30 secs", rep_window="15-30s or 6-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
-            elif week < 18:
-                exs.append(make_ex_obj("A1", "wall-walk-partial", "Wall Walk (Partial)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=75, structure="straight"))
-            elif week < 26:
-                exs.append(make_ex_obj("A1", "wall-walk-full", "Wall Walk (Full)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=90, structure="straight"))
-            elif week < 41:
-                exs.append(make_ex_obj("A1", "wall-handstand", "Wall Handstand", "2×15 secs" if is_deload else "2×20-45 secs", rep_window="20-45s", weight="Bodyweight", tempo="static", rest=90, structure="straight"))
-            else:
-                exs.append(make_ex_obj("A1", "elevated-pike-push-up", "Elevated Pike Push-Up", "2×5" if is_deload else "2×6-10", rep_window="6-10", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
+        # A1: Pike / Overhead Skill Tree (v15.7: performance unlock from Week 3, calendar gate Week 5)
+        if week < 10:
+            exs.append(make_ex_obj("A1", "pike-progression", "Pike Progression", "2×15 secs" if is_deload else "2×15-30 secs", rep_window="15-30s or 6-12", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        elif week < 18:
+            exs.append(make_ex_obj("A1", "wall-walk-partial", "Wall Walk (Partial)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=75, structure="straight"))
+        elif week < 26:
+            exs.append(make_ex_obj("A1", "wall-walk-full", "Wall Walk (Full)", "2×3" if is_deload else "2×3-6", rep_window="3-6", weight="Bodyweight", tempo="controlled", rest=90, structure="straight"))
+        elif week < 41:
+            exs.append(make_ex_obj("A1", "wall-handstand", "Wall Handstand", "2×15 secs" if is_deload else "2×20-45 secs", rep_window="20-45s", weight="Bodyweight", tempo="static", rest=90, structure="straight"))
+        else:
+            exs.append(make_ex_obj("A1", "elevated-pike-push-up", "Elevated Pike Push-Up", "2×5" if is_deload else "2×6-10", rep_window="6-10", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
 
         # A2: Single-Arm Floor Press
         exs.append(make_ex_obj("A2", "single-arm-floor-press", "Single-Arm Floor Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=90, structure="straight"))
@@ -1022,23 +1072,18 @@ def generate_day_exercises(dow, week):
         else:
             exs.append(make_ex_obj("A3", "weighted-deficit-push-up", "Weighted Deficit Push-Up", "2×6" if is_deload else "3×6-12", rep_window="6-12", weight="5 kg vest", tempo="2s descent", rest=90, structure="straight"))
 
-        # A4: Single-Arm Seated OHP (Unlocks at Week 5)
-        if week >= 5:
-            exs.append(make_ex_obj("A4", "single-arm-seated-ohp", "Single-Arm Seated OHP", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=75, structure="straight"))
+        # A4: Single-Arm Seated OHP (v15.7: performance unlock from Week 3, calendar gate Week 5)
+        exs.append(make_ex_obj("A4", "single-arm-seated-ohp", "Single-Arm Seated OHP", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="6 kg each", tempo="2s descent", rest=75, structure="straight"))
 
-        # A5: DB Overhead Triceps Extension (Unlocks at Week 5)
-        if week >= 5:
-            exs.append(make_ex_obj("A5", "db-overhead-triceps-extension", "DB Overhead Triceps Extension", "2×10" if is_deload else "4×10-15", rep_window="10-15", weight="6 kg total", tempo="2s descent", rest=45, structure="straight"))
+        # A5: DB Overhead Triceps Extension (v15.7: performance unlock from Week 3, calendar gate Week 5)
+        exs.append(make_ex_obj("A5", "db-overhead-triceps-extension", "DB Overhead Triceps Extension", "2×10" if is_deload else "4×10-15", rep_window="10-15", weight="6 kg total", tempo="2s descent", rest=45, structure="straight"))
 
         # A6: Diamond Push-Up
         exs.append(make_ex_obj("A6", "diamond-push-up", "Diamond Push-Up", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=45, structure="straight"))
 
-        # Pair: TRX Row ↔ Single-Arm Lateral Raise (Lateral Raise Unlocks at Week 5)
-        if week < 5:
-            exs.append(make_ex_obj("A7", "trx-row", "TRX Row", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
-        else:
-            exs.append(make_ex_obj("A7", "trx-row", "TRX Row", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=1))
-            exs.append(make_ex_obj("A8", "single-arm-lateral-raise", "Single-Arm Lateral Raise", "2×12" if is_deload else "2×12-20", rep_window="12-20", weight="3 kg each", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=2))
+        # Pair: TRX Row ↔ Single-Arm Lateral Raise (v15.7: lateral raise performance unlock from Week 3)
+        exs.append(make_ex_obj("A7", "trx-row", "TRX Row", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=1))
+        exs.append(make_ex_obj("A8", "single-arm-lateral-raise", "Single-Arm Lateral Raise", "2×12" if is_deload else "2×12-20", rep_window="12-20", weight="3 kg each", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=2))
 
         # Rear Delt Toggle
         if is_odd:
@@ -1046,7 +1091,7 @@ def generate_day_exercises(dow, week):
         else:
             exs.append(make_ex_obj("A9", "band-pull-apart", "Band Pull-Apart", "2×15" if is_deload else "3×15-20", rep_window="15-20", weight="Band 30kg", tempo="1s squeeze", rest=45, structure="straight", toggle_group="rear-delt", toggle_active_on="even"))
 
-        if week >= 10 and not is_deload:
+        if week >= 6 and not is_deload:
             exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
             exs.append(make_ex_obj("A11", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="6 kg total", tempo="2s descent", rest=15, structure="myo-reps"))
 
@@ -1073,34 +1118,29 @@ def generate_day_exercises(dow, week):
         # A3: TRX Face Pull
         exs.append(make_ex_obj("A3", "trx-face-pull", "TRX Face Pull", "2×10" if is_deload else "2×12-20", rep_window="12-20", weight="Bodyweight", tempo="2s descent", rest=45, structure="straight"))
 
-        biceps_cycle_week = ((week - 1) % 3) + 1
-        is_biceps_light = (biceps_cycle_week == 3)
+        biceps_cycle_week = ((week - 1) % 4) + 1
+        is_biceps_light = (biceps_cycle_week == 4)
 
-        # A4 & A5: Pair: Push-Up Volume ↔ Biceps Curl (Push-Up Volume Unlocks at Week 5)
-        if week >= 5:
-            if not is_biceps_light and not is_deload:
-                exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="pair", pair_id="d5-pushup-curl", order_in_pair=1))
-                exs.append(make_ex_obj("A5", "single-arm-curl", "Single-Arm Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="pair", pair_id="d5-pushup-curl", order_in_pair=2, microcycle="biceps-microcycle", active_weeks=[1, 2]))
-            else:
-                exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+        # A4 & A5: Pair: Push-Up Volume ↔ Biceps Curl (v15.7: 3:1 microcycle, push-up volume performance unlock from Week 3)
+        if not is_biceps_light and not is_deload:
+            exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="pair", pair_id="d5-pushup-curl", order_in_pair=1))
+            exs.append(make_ex_obj("A5", "single-arm-curl", "Single-Arm Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="pair", pair_id="d5-pushup-curl", order_in_pair=2, microcycle="biceps-microcycle", active_weeks=[1, 2, 3]))
         else:
-            exs.append(make_ex_obj("A5", "single-arm-curl", "Single-Arm Curl", "2×10-15", rep_window="10-15", weight="3 kg each", tempo="2s descent", rest=45, structure="straight"))
+            exs.append(make_ex_obj("A4", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
 
-        # A6: Secondary Biceps (Single-Arm Hammer Curl — Unlocks at Week 5)
-        if week >= 5:
-            exs.append(make_ex_obj("A6", "single-arm-hammer-curl", "Single-Arm Hammer Curl", "1×10" if is_deload else "2×10-12", rep_window="10-12", weight="3 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[1, 2, 3]))
+        # A6: Secondary Biceps (Single-Arm Hammer Curl — v15.7: performance unlock from Week 3, calendar gate Week 5)
+        exs.append(make_ex_obj("A6", "single-arm-hammer-curl", "Single-Arm Hammer Curl", "1×10" if is_deload else "2×10-12", rep_window="10-12", weight="3 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[1, 2, 3, 4]))
 
-        # Pair: Towel Hang ↔ Tuck L-Sit (Unlocks at Week 5)
-        if week >= 5:
-            exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=1))
-            if week < 18:
-                exs.append(make_ex_obj("A8", "tuck-l-sit", "Tuck L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
-            elif week < 34:
-                exs.append(make_ex_obj("A8", "one-leg-extended-l-sit", "One-Leg Extended L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
-            else:
-                exs.append(make_ex_obj("A8", "full-l-sit", "Full L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+        # Pair: Towel Hang ↔ Tuck L-Sit (v15.7: performance unlock from Week 3, calendar gate Week 5)
+        exs.append(make_ex_obj("A7", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=1))
+        if week < 18:
+            exs.append(make_ex_obj("A8", "tuck-l-sit", "Tuck L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+        elif week < 34:
+            exs.append(make_ex_obj("A8", "one-leg-extended-l-sit", "One-Leg Extended L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+        else:
+            exs.append(make_ex_obj("A8", "full-l-sit", "Full L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
 
-        if week >= 10 and not is_deload:
+        if week >= 6 and not is_deload:
             exs.append(make_ex_obj("A9", "arm-block-biceps-curl", "Arm Block - Single-Arm Curl", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="3 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
 
         exs.append(make_ex_obj("A10", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
@@ -1259,17 +1299,17 @@ def generate_program():
     }
 
     progression_settings = {
-        "deloadEveryWeeks": 8,
+        "deloadEveryWeeks": 12,
         "deloadWeightReductionKg": 2,
         "deloadTimeTargetPercent": 70,
         "deloadSetsCeiling": 2,
-        "legalWeights": [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32],
+        "legalWeights": [round(3 + i * 0.5, 1) for i in range(0, 59)],
         "allowUndoLastDecision": True,
         "zeroDecisions": True,
         "adaptiveRest": True,
         "armBlockConditional": True,
         "armBlock": {
-            "enabledFromWeek": 10,
+            "enabledFromWeek": 6,
             "maxArmBlockExposurePerMusclePerWeek": 1,
             "muscleAreaMap": {
                 "3": { "single-arm-lateral-raise": "lateral-shoulder", "db-overhead-triceps-extension": "triceps" },
@@ -1277,9 +1317,9 @@ def generate_program():
             }
         },
         "bicepsMicrocycle": {
-            "cycleLength": 3,
-            "heavyWeeks": [1, 2],
-            "lightWeeks": [3],
+            "cycleLength": 4,
+            "heavyWeeks": [1, 2, 3],
+            "lightWeeks": [4],
             "lightWeekExercises": ["single-arm-hammer-curl"],
             "lightWeekSets": 2,
             "lightWeekProgressionAllowed": False
@@ -1287,8 +1327,16 @@ def generate_program():
         "softenedProgression": {
             "enabled": True,
             "requireCurrentSessionMaxOrMaxMinus1": True,
-            "requirePreviousSessionAllMax": True,
+            "requirePreviousSessionAllMax": False,
             "requireNoMechanicalStop": True
+        },
+        "autoDeload": {
+            "enabled": True,
+            "consecutiveFailedSessions": 2,
+            "minFailedExercisesPerSession": 2,
+            "demotionsInDays": 7,
+            "demotionThreshold": 3,
+            "painFlagThreshold": 2
         },
         "frequencyAdditions": {
             "day3_backVolume": {"exerciseId": "trx-row", "sets": 2, "purpose": "back_frequency_2"},
@@ -1311,7 +1359,7 @@ def generate_program():
     }
 
     return {
-        "version": "15.6 Lean",
+        "version": "15.7 Accelerated",
         "progressionSettings": progression_settings,
         "leanStructures": root_lean_structures,
         "daily": daily,
@@ -1331,9 +1379,13 @@ def to_training_data_json(program):
             "Day Type": day["dayType"],
             "Planned RPE": day["plannedRPE"],
         }
+        week_num = int(day["week"].replace("Week ", "")) if day["week"] else 1
         mapped = {}
         idx = 1
         for e in day["exercises"]:
+            # v15.7 Accelerated: hide calendar-locked exercises in the flat export
+            if e.get("startingWeek") and week_num < e["startingWeek"]:
+                continue
             if e["slot"].startswith("W"):
                 mapped[e["slot"]] = e
             else:
@@ -1373,5 +1425,5 @@ if __name__ == "__main__":
             if not os.path.exists(path) and os.path.exists(fallback):
                 shutil.copy(fallback, path)
 
-    print(f"Done — FitUp Pro v15.6 Lean Edition (Complete 80-Week) generated successfully!")
+    print(f"Done — FitUp Pro v15.7 Accelerated (Complete 80-Week) generated successfully!")
     print(f"Total days: {len(program['daily'])}, Master exercises in catalog: {len(program['exercises'])}")

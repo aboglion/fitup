@@ -2,7 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 function isDeloadWeek(weekNumber) {
-  return weekNumber > 0 && weekNumber % 8 === 0;
+  // v15.7 Accelerated: deloads every 12 weeks
+  return weekNumber > 0 && weekNumber % 12 === 0;
 }
 
 function calculateDeloadSets(standardSets, isDeload) {
@@ -16,13 +17,13 @@ function calculateDeloadWeight(weightKg, isDeload) {
   return Math.max(3, weightKg - 2);
 }
 
-test('Deload Engine - Identifies week 8, 16, 24 as Deload weeks', () => {
+test('Deload Engine - Identifies weeks 12, 24, 36 as Deload weeks', () => {
   assert.equal(isDeloadWeek(1), false);
-  assert.equal(isDeloadWeek(7), false);
-  assert.equal(isDeloadWeek(8), true);
-  assert.equal(isDeloadWeek(16), true);
+  assert.equal(isDeloadWeek(11), false);
+  assert.equal(isDeloadWeek(12), true);
   assert.equal(isDeloadWeek(24), true);
-  assert.equal(isDeloadWeek(25), false);
+  assert.equal(isDeloadWeek(36), true);
+  assert.equal(isDeloadWeek(37), false);
 });
 
 test('Deload Engine - Enforces volume ceiling of 2 sets during deload', () => {

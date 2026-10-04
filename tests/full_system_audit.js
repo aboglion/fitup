@@ -11,7 +11,7 @@ let info = [];
 
 // 1. Load I18n
 const i18nContent = fs.readFileSync(path.join(root, 'js/i18n.js'), 'utf8');
-const i18nSandbox = { window: {}, console: console, document: { documentElement: { style: { setProperty: () => {} } }, querySelectorAll: () => [] } };
+const i18nSandbox = { window: {}, console: console, document: { documentElement: { style: { setProperty: () => { } } }, querySelectorAll: () => [] } };
 vm.createContext(i18nSandbox);
 vm.runInContext(i18nContent, i18nSandbox);
 const I18n = i18nSandbox.window.I18n;
@@ -62,7 +62,7 @@ let positioningViolations = [];
 
 jsTrainingData.daily.forEach((day, index) => {
   const weekNum = parseInt(day.week.replace('Week ', ''));
-  const isDeload = (weekNum % 8 === 0);
+  const isDeload = (weekNum % 12 === 0);
 
   let warmupsDone = false;
   let mainWorkDone = false;
@@ -115,7 +115,7 @@ if (positioningViolations.length > 0) {
 if (deloadViolations.length > 0) {
   errors.push(`Deload set count violations (${deloadViolations.length}): ${deloadViolations.slice(0, 3).join('; ')}`);
 } else {
-  info.push("Deload week set limits (max 2 sets on weeks 8,16,24,32,40,48,56,64,72,80) verified 100%!");
+  info.push("Deload week set limits (max 2 sets on weeks 12,24,36,48,60,72) verified 100%!");
 }
 
 // 6. Test Muscle Mapping for all distinct exercises in stats.js

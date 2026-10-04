@@ -8,8 +8,8 @@ global.window = global;
 global.document = {
   querySelector: () => null,
   querySelectorAll: () => [],
-  addEventListener: () => {},
-  createElement: () => ({ setAttribute: () => {}, appendChild: () => {}, style: {} }),
+  addEventListener: () => { },
+  createElement: () => ({ setAttribute: () => { }, appendChild: () => { }, style: {} }),
 };
 
 await import('../js/data.js');
@@ -19,10 +19,11 @@ const data = global.window.TRAINING_DATA;
 const engine = global.window.ProgressionEngine;
 
 test('Program Integrity - Progression Settings & Deload Parameters', () => {
-  const expectedLegalWeights = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32];
+  // v15.7 Accelerated: fine-grained 0.5 kg legal weight grid (3.0 → 32.0)
+  const expectedLegalWeights = Array.from({ length: 59 }, (_, i) => 3 + i * 0.5);
   assert.deepEqual(data.progressionSettings.legalWeights, expectedLegalWeights);
 
-  assert.equal(data.progressionSettings.deloadEveryWeeks, 8);
+  assert.equal(data.progressionSettings.deloadEveryWeeks, 12);
   assert.equal(data.progressionSettings.deloadWeightReductionKg, 2);
   assert.equal(data.progressionSettings.deloadTimeTargetPercent, 70);
   assert.equal(data.progressionSettings.deloadSetsCeiling, 2);
@@ -134,15 +135,16 @@ test('Program Integrity - Day 4 Cervical Protocol & Day 5 Biceps Microcycle', ()
   const firstEx = w1d4.exercises[0];
   assert.equal(firstEx.id, 'band-neck-flexion', "Day 4 first exercise must be Band Neck Flexion & Extension");
 
-  // Biceps microcycle (hammer curl unlocks at week 5, week 6 is light week 3)
+  // v15.7 Accelerated: 4-week biceps microcycle (3 heavy : 1 light).
+  // Week 5 = heavy (position 1), Week 8 = light (position 4).
   const w5d5 = data.daily.find(d => d.week === 'Week 5' && d.dayOfWeek === 'Friday');
-  const w6d5 = data.daily.find(d => d.week === 'Week 6' && d.dayOfWeek === 'Friday');
+  const w8d5 = data.daily.find(d => d.week === 'Week 8' && d.dayOfWeek === 'Friday');
 
   const w5d5Ids = w5d5.exercises.filter(e => !e.isWarmup).map(e => e.id);
-  const w6d5Ids = w6d5.exercises.filter(e => !e.isWarmup).map(e => e.id);
+  const w8d5Ids = w8d5.exercises.filter(e => !e.isWarmup).map(e => e.id);
 
   assert.ok(w5d5Ids.includes('single-arm-curl') && w5d5Ids.includes('single-arm-hammer-curl'), "Micro Heavy week must include both curls");
-  assert.ok(!w6d5Ids.includes('single-arm-curl') && w6d5Ids.includes('single-arm-hammer-curl'), "Micro Light week must include single-arm-hammer-curl only");
+  assert.ok(!w8d5Ids.includes('single-arm-curl') && w8d5Ids.includes('single-arm-hammer-curl'), "Micro Light week must include single-arm-hammer-curl only");
 });
 
 test('Program Integrity - Progression Engine Decisions', () => {
@@ -165,10 +167,11 @@ test('Program Integrity - Progression Engine Decisions', () => {
   assert.equal(resBelow.action, 'decrease');
   assert.equal(resBelow.newWeight, 5);
 
+  // v15.7 Accelerated: deloads occur every 12 weeks (week 12 is a deload week)
   const resDeload = engine.calculateWeightedDecision(testEx, { currentWeightKg: 6 }, [
     { result: 'above', reps: 13 },
     { result: 'above', reps: 13 }
-  ], 8);
+  ], 12);
   assert.equal(resDeload.action, 'maintain');
   assert.equal(resDeload.newWeight, 6);
 });

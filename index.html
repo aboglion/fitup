@@ -799,14 +799,20 @@
     <div class="rest-timer-header">
       <span class="rest-timer-title" data-i18n="timer_title">⏱️ Rest Timer</span>
       <button id="rest-timer-close" class="icon-btn"
-        style="width: 24px; height: 24px; font-size: 12px; min-height: 24px; padding: 0;">✕</button>
+        style="width: 24px; height: 24px; font-size: 12px; min-height: 24px; padding: 0;" aria-label="Close Timer">✕</button>
     </div>
     <div class="rest-timer-display" id="rest-timer-display">00:00</div>
-    <div class="rest-timer-controls">
-      <button class="timer-btn" data-time="60">+60ש</button>
-      <button class="timer-btn" data-time="90">+90ש</button>
-      <button class="timer-btn" data-time="120">+120ש</button>
+    <div class="rest-timer-progress-track">
+      <div id="rest-timer-progress-bar" class="rest-timer-progress-fill"></div>
     </div>
+    <div class="rest-timer-controls">
+      <button class="timer-btn" id="timer-minus-15" data-time="-15">-15s</button>
+      <button class="timer-btn" id="timer-plus-30" data-time="30">+30s</button>
+      <button class="timer-btn" id="timer-plus-60" data-time="60">+60s</button>
+    </div>
+    <button id="rest-timer-skip-btn" class="rest-timer-skip-btn">
+      <span>⏭️</span> <span data-i18n="timer_skip_ready">Skip / Ready</span>
+    </button>
   </div>
 
   <!-- Toast Container -->

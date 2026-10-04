@@ -1,12 +1,12 @@
-# 🏋️‍♂️ FitUp Pro v15.6 Lean Edition
+# 🏋️‍♂️ FitUp Pro v15.7 Accelerated
 
-> **A 80-Week (560-Day) Prescriptive FitUp v15.6 Lean Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Objective Myo-Reps Arm Block Clusters, Biceps 3-Week Microcycle, Cervical Health Protocol, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
+> **A 80-Week (560-Day) Prescriptive FitUp v15.7 Accelerated Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Performance-Based Unlocks, Objective Myo-Reps Arm Block Clusters (from Week 6), Biceps 4-Week Microcycle (3:1), Auto-Regulated Deloads, Fine-Grained 0.5 kg Load Increments, Cervical Health Protocol, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
 
 ---
 
 ## 🌟 Overview
 
-**FitUp Pro v15.6 Lean Edition** is an advanced, offline-first Web Application designed for long-term physical progression, hypertrophic gains, cardiovascular conditioning, and precision workout tracking.
+**FitUp Pro v15.7 Accelerated** is an advanced, offline-first Web Application designed for long-term physical progression, hypertrophic gains, cardiovascular conditioning, and precision workout tracking.
 
 Built on a strict **"Zero Decisions" Philosophy**, every single workout day across the 80-week (560-day) period is fully prescribed—down to exact exercise ordering, target rep ranges, weight progressions, legal dumbbell increments, tempo control, rest intervals, structural tags, and micro-mobility integration.
 
@@ -16,12 +16,14 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ## ✨ Key Features
 
-### 🏋️‍♂️ Prescriptive 80-Week Lean Training Engine
-- **v15.6 Lean Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
-- **Phase 0 Anatomical Foundation (Weeks 1–4) & Week 5 Graduation**: Reduced initial volume (5–6 anchor exercises per session, 20m light walks) protecting connective tissue and lumbar spine, with an automatic Week 5 Graduation Event unlocking VO2 Max 4x4, BSS, OHP/Pike, Towel Hang, and L-Sits.
+### 🏋️‍♂️ Prescriptive 80-Week Accelerated Training Engine
+- **v15.7 Accelerated Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
+- **Phase 0 Anatomical Foundation (Weeks 1–4) & Performance-Based Graduation**: Reduced initial volume (5–6 anchor exercises per session, 20m light walks) protecting connective tissue and lumbar spine. From Week 3, locked movements unlock as soon as performance criteria are met (Calendar Ceiling Rule — performance can only accelerate, never delay), with an automatic Week 5 Graduation Event unlocking VO2 Max 4x4, BSS, OHP/Pike, Towel Hang, and L-Sits.
 - **Zero Decisions 3-Button Outcome Selector & Minimum Weight Protection Engine**: Objective set classification with guaranteed `minWeight` floor protection (3 kg minimum) preventing invalid 0 kg displays under any fallback.
-- **Objective Myo-Reps & Arm Block Protocol**: Active from Week 10 onwards (1 activation set + 3 mini-sets of 5 reps with 15s rest). Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
-- **Biceps 3-Week Microcycle**: 2 heavy progressive overload weeks + 1 light preservation week (Single-Arm Hammer Curl 2 sets, no progression) to maximize hypertrophy while protecting elbow joints.
+- **Objective Myo-Reps & Arm Block Protocol**: Active from Week 6 onwards (v15.7; previously Week 10) — 1 activation set + 3 mini-sets of 5 reps with 15s rest. Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
+- **Biceps 4-Week Microcycle (3:1)**: 3 heavy progressive overload weeks + 1 light preservation week (Single-Arm Hammer Curl 2 sets, no progression) to maximize hypertrophy while protecting elbow joints.
+- **Faster Progression Engine (v15.7)**: Single-session softened progression gate (~2× faster load increases) + fine-grained **0.5 kg increments** for isolation exercises (lateral raise, curls, hammer curls, arm blocks, triceps extension) eliminating the 3→4 kg stall trap.
+- **Deload Every 12 Weeks + Auto-Regulated Deload**: Calendar deloads on Weeks 12/24/36/48/60/72, plus an automatic early deload triggered by 2 consecutive failed sessions, excessive load demotions, or repeated joint-pain flags — with an explanatory banner.
 - **Weekly Frequency Additions**: 2nd Back Frequency (TRX Row on Day 3 = 10 weekly back sets) and 2nd Chest Frequency (Push-Up Volume on Day 5 = 8 weekly chest sets).
 - **Cervical Health Protocol**: Dedicated Band Neck Flexion & Extension protocol on Day 4 for neck/postural resilience.
 - **Adaptive Intra-Workout Rest Engine**: Dynamically calculates rest timers with automatic +30s extensions following a mechanical stop (`BELOW` outcome).

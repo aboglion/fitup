@@ -2336,9 +2336,52 @@ html.light-theme .rest-timer {
   transition: background 0.2s;
 }
 
-.timer-btn:hover {
-  background: var(--accent-primary);
-  color: white;
+.rest-timer-progress-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 4px 0 6px 0;
+}
+
+.rest-timer-progress-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #10b981, #3b82f6);
+  border-radius: 999px;
+  transition: width 1s linear;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+}
+
+.rest-timer-skip-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(59, 130, 246, 0.16));
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.rest-timer-skip-btn:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.38), rgba(59, 130, 246, 0.28));
+  border-color: rgba(16, 185, 129, 0.6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.rest-timer-skip-btn:active {
+  transform: translateY(0);
 }
 
 .exercise-image {
@@ -4079,6 +4122,39 @@ html.light-theme .login-prompt-banner {
     bottom: 105px;
     inset-inline-end: 24px;
   }
+}
+
+/* --- Feature 2 & 1 Upgrades: Temporary Skip & Set Modal Options --- */
+.exercise-card.skipped-temp {
+  border: 2px dashed rgba(245, 158, 11, 0.45) !important;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.04), rgba(0, 0, 0, 0.2)) !important;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.08) !important;
+}
+
+.btn-skip-temp {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-skip-temp:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--text-primary) !important;
+  transform: translateY(-1px);
+}
+
+.btn-unskip-temp {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+}
+
+.btn-unskip-temp:hover {
+  background: rgba(245, 158, 11, 0.25) !important;
+  transform: translateY(-1px);
+}
+
+.set-modal-option-btn.selected {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
 }
 
 

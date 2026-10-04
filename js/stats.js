@@ -953,7 +953,7 @@ const StatsPage = (() => {
           </div>
           <div style="display: flex; align-items: center; gap: 6px;">
             ${deloadBadgeHTML}
-            <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">Active v15.6</span>
+            <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">Active v15.7</span>
           </div>
         </div>
 
@@ -1198,7 +1198,16 @@ const StatsPage = (() => {
     document.querySelectorAll('.delete-photo-btn').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         e.stopPropagation();
-        if (confirm(I18n.t('delete_photo_confirm'))) {
+        const confirmed = window.UI && window.UI.confirm
+          ? await UI.confirm({
+            title: I18n.t('delete_photo_title') || 'מחיקת תמונת התקדמות',
+            message: I18n.t('delete_photo_confirm'),
+            confirmText: I18n.t('delete_btn') || 'מחק',
+            type: 'danger',
+            icon: '📷'
+          })
+          : confirm(I18n.t('delete_photo_confirm'));
+        if (confirmed) {
           const id = btn.dataset.id;
           const photo = photos.find(p => String(p.id) === id);
           await DB.deletePhoto(photo ? photo.id : id);

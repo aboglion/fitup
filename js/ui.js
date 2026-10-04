@@ -80,6 +80,71 @@ const UI = (() => {
     }
   }
 
+  /**
+   * Modern, Promise-based confirm dialog (replaces native window.confirm)
+   */
+  function confirm(options) {
+    return new Promise((resolve) => {
+      const opts = typeof options === 'string' ? { message: options } : (options || {});
+      const title = opts.title || (window.I18n ? I18n.t('confirmation_title') : 'Confirmation');
+      const message = opts.message || '';
+      const confirmText = opts.confirmText || (window.I18n ? I18n.t('confirm_btn') : 'Confirm');
+      const cancelText = opts.cancelText || (window.I18n ? I18n.t('cancel_btn') : 'Cancel');
+      const confirmType = opts.type || 'primary';
+      const icon = opts.icon || (confirmType === 'danger' ? '⚠️' : (confirmType === 'warning' ? '⚡' : '❓'));
+
+      let confirmBtnClass = 'btn-primary';
+      let confirmBtnStyle = 'padding: 12px; font-size: 14px; font-weight: 800; border-radius: 12px; width: 100%; border: none;';
+      if (confirmType === 'danger') {
+        confirmBtnClass = 'btn-danger';
+        confirmBtnStyle += ' background: linear-gradient(135deg, #ef4444, #dc2626); color: #fff;';
+      } else if (confirmType === 'warning') {
+        confirmBtnStyle += ' background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff;';
+      }
+
+      const bodyHTML = `
+        <div class="custom-confirm-modal" style="text-align: center; padding: 12px 6px;">
+          <div style="font-size: 42px; margin-bottom: 12px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">${icon}</div>
+          <p style="font-size: 14.5px; line-height: 1.55; color: var(--text-primary); margin-bottom: 22px; font-weight: 500;">
+            ${message}
+          </p>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <button id="ui-confirm-cancel" class="btn-secondary" style="padding: 12px; font-size: 14px; font-weight: 700; border-radius: 12px; width: 100%;">
+              ${cancelText}
+            </button>
+            <button id="ui-confirm-ok" class="${confirmBtnClass}" style="${confirmBtnStyle}">
+              ${confirmText}
+            </button>
+          </div>
+        </div>
+      `;
+
+      showModal(title, bodyHTML);
+
+      let isSettled = false;
+      const finish = (result) => {
+        if (isSettled) return;
+        isSettled = true;
+        hideModal();
+        resolve(result);
+      };
+
+      const okBtn = document.getElementById('ui-confirm-ok');
+      const cancelBtn = document.getElementById('ui-confirm-cancel');
+      if (okBtn) okBtn.onclick = () => finish(true);
+      if (cancelBtn) cancelBtn.onclick = () => finish(false);
+
+      const closeBtn = document.getElementById('modal-close');
+      const onDismiss = () => {
+        if (!isSettled) {
+          isSettled = true;
+          resolve(false);
+        }
+      };
+      if (closeBtn) closeBtn.addEventListener('click', onDismiss, { once: true });
+    });
+  }
+
   // Handle browser back button for modals
   window.addEventListener('popstate', (e) => {
     if (modalStack.length > 0) {
@@ -1193,36 +1258,86 @@ const UI = (() => {
   let timerInterval;
   let timerEndTime;
   let timerOnComplete = null;
+  let timerTotalSeconds = 60;
+
+  function updateTimerButtonLabels() {
+    const lang = window.I18n ? window.I18n.getLang() : 'en';
+    const unit = lang === 'he' ? 'ש' : (lang === 'ar' ? 'ث' : 's');
+
+    const bMinus15 = document.getElementById('timer-minus-15');
+    const bPlus30 = document.getElementById('timer-plus-30');
+    const bPlus60 = document.getElementById('timer-plus-60');
+    if (bMinus15) bMinus15.textContent = `-15${unit}`;
+    if (bPlus30) bPlus30.textContent = `+30${unit}`;
+    if (bPlus60) bPlus60.textContent = `+60${unit}`;
+  }
 
   function initTimer() {
-    document.getElementById('rest-timer-close').addEventListener('click', () => {
-      document.getElementById('rest-timer').classList.add('hidden');
-      clearInterval(timerInterval);
-      timerOnComplete = null;
-    });
+    const closeBtn = document.getElementById('rest-timer-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        stopTimer();
+      });
+    }
+
+    const skipBtn = document.getElementById('rest-timer-skip-btn');
+    if (skipBtn) {
+      skipBtn.addEventListener('click', () => {
+        stopTimer();
+        if (window.Effects3D && window.Effects3D.playTimerBeep) {
+          Effects3D.playTimerBeep();
+        } else {
+          playTimerSound(true);
+        }
+        if (navigator.vibrate) navigator.vibrate([150]);
+        UI.toast(window.I18n ? I18n.t('timer_skip_ready') : 'Ready for next set! 💪', 'success');
+        if (typeof timerOnComplete === 'function') {
+          timerOnComplete();
+        }
+        timerOnComplete = null;
+      });
+    }
 
     document.querySelectorAll('.timer-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        const seconds = parseInt(e.target.dataset.time);
+        const seconds = parseInt(e.currentTarget.dataset.time, 10) || 0;
         let remaining = 0;
         if (timerEndTime && timerEndTime > Date.now()) {
           remaining = Math.round((timerEndTime - Date.now()) / 1000);
         }
-        // If timer is already running, add time. Otherwise set it.
-        startTimer(remaining > 0 ? remaining + seconds : seconds, timerOnComplete);
+        const newSeconds = remaining > 0 ? remaining + seconds : seconds;
+        if (newSeconds <= 0) {
+          // Immediately complete if time reduced to zero
+          stopTimer();
+          playTimerSound(true);
+          UI.toast(window.I18n ? I18n.t('rest_complete_toast') : 'Rest complete!', 'success');
+          if (typeof timerOnComplete === 'function') {
+            timerOnComplete();
+          }
+          timerOnComplete = null;
+          return;
+        }
+        // Update timer
+        timerTotalSeconds = Math.max(timerTotalSeconds, newSeconds);
+        startTimer(newSeconds, timerOnComplete);
       });
     });
+
+    updateTimerButtonLabels();
   }
 
   function startTimer(seconds, onComplete = null) {
-    document.getElementById('rest-timer').classList.remove('hidden');
+    const timerContainer = document.getElementById('rest-timer');
+    if (timerContainer) timerContainer.classList.remove('hidden');
     clearInterval(timerInterval);
 
     if (onComplete !== undefined) {
       timerOnComplete = onComplete;
     }
 
+    timerTotalSeconds = Math.max(1, seconds);
     timerEndTime = Date.now() + seconds * 1000;
+    updateTimerButtonLabels();
     updateTimerDisplay(seconds);
 
     timerInterval = setInterval(() => {
@@ -1231,18 +1346,20 @@ const UI = (() => {
         clearInterval(timerInterval);
         updateTimerDisplay(0);
         playTimerSound(true);
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
         UI.toast(I18n.t('rest_complete_toast'), 'success');
 
         setTimeout(() => {
-          document.getElementById('rest-timer').classList.add('hidden');
+          if (timerContainer) timerContainer.classList.add('hidden');
           if (typeof timerOnComplete === 'function') {
             timerOnComplete();
           }
           timerOnComplete = null;
-        }, 1500);
+        }, 1200);
       } else {
         if (remaining <= 3 && remaining >= 1) {
           playTimerSound(false);
+          if (navigator.vibrate) navigator.vibrate(60);
         }
         updateTimerDisplay(remaining);
       }
@@ -1250,10 +1367,17 @@ const UI = (() => {
   }
 
   function updateTimerDisplay(seconds) {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    document.getElementById('rest-timer-display').textContent =
-      `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    const mins = Math.floor(Math.max(0, seconds) / 60);
+    const secs = Math.max(0, seconds) % 60;
+    const display = document.getElementById('rest-timer-display');
+    if (display) {
+      display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    const progressBar = document.getElementById('rest-timer-progress-bar');
+    if (progressBar) {
+      const pct = timerTotalSeconds > 0 ? Math.max(0, Math.min(100, (seconds / timerTotalSeconds) * 100)) : 0;
+      progressBar.style.width = `${pct}%`;
+    }
   }
 
   function playBeepSound(freq = 800, duration = 0.15) {
@@ -1462,6 +1586,7 @@ const UI = (() => {
     toast,
     showModal,
     hideModal,
+    confirm,
     showImageModal,
     hasGif,
     handleImageLoaded,

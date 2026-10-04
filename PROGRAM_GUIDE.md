@@ -1,4 +1,4 @@
-# FitUp Pro v15.6 Lean Edition — Master Program Guide
+# FitUp Pro v15.7 Accelerated — Master Program Guide
 **Target Objective**: Sculpted Athletic Physique | V-Taper | Prominent Arms | Strong Back | Resilient Tendons | Anti-Aging | Aerobic Engine | Flexibility  
 **Starting Level**: Beginner (0 years formal training) | Clean Pull-Ups: 2 | Clean Push-Ups: 7  
 **Core Philosophy**: **Zero Decisions. Everything is prescriptive. You only execute.**
@@ -22,9 +22,9 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
   - **🚀 ABOVE**: Exceeded target rep window at prescribed tempo.
   - **✅ IN_WINDOW**: Achieved target rep window at prescribed tempo.
   - **⚠️ BELOW / Mechanical Stop**: Failed to reach minimum window or suffered tempo loss (triggers automatic +30s adaptive rest extension).
-- **Softened Progression Policy**: Weight increases when all sets are `🚀 ABOVE`, OR under Softened criteria (current session reps $\ge \text{max}-1$ for all sets AND previous session reps reached maximum for all sets without mechanical stops). **Note: Softened progression is automatically disabled if there is a gap of more than 10 days since the previous session (Time Decay) to prevent injury from detraining.**
+- **Softened Progression Policy (v15.7)**: Weight increases when all sets are `🚀 ABOVE`, OR under single-session Softened criteria (all sets `✅ IN_WINDOW` at $\ge \text{max}-1$ reps with no mechanical stops). The previous-session all-max requirement was removed in v15.7 to accelerate progression for consistent trainees. **Note: Softened progression is automatically disabled if there is a gap of more than 10 days since the previous session (Time Decay) to prevent injury from detraining.**
 - **Adaptive Intra-Workout Rest**: Rest timers adapt automatically (+30s extension following a BELOW / Mechanical Stop outcome) to guarantee full recovery before subsequent sets.
-- **Arm Block Protocol (Myo-Reps)**: Active from Week 10 onwards. Executed using objective Myo-Reps clusters (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped automatically by 2 consecutive tempo losses or joint pain (reported via an interactive prompt when selecting `⚠️ BELOW`).
+- **Arm Block Protocol (Myo-Reps)**: Active from Week 6 onwards (v15.7; previously Week 10). Executed using objective Myo-Reps clusters (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped automatically by 2 consecutive tempo losses or joint pain (reported via an interactive prompt when selecting `⚠️ BELOW`).
 - **Arm Block Exposure Limit**: Maximum 1 exposure per muscle area per week (Lateral Shoulder, Triceps, Biceps).
 - **Push-Up Bars**: All push-up variations must strictly use Push-Up Bars. Palms flat on the floor is strictly forbidden.
 - **TRX**: Strictly for Face Pulls, TRX Rows, and TRX Y-T-W. Fixed body angles assigned per phase.
@@ -37,7 +37,7 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 ## Part 2 — Lean Architecture & Frequency Optimization
 
 ### 2.1 Lean Structure & Time-Efficiency (40–45 Minute Target)
-The v15.6 Lean Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts:
+The v15.7 Accelerated Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts:
 - **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
 - **Lean Pairs (Antagonistic & Non-Competing)**:
   - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
@@ -55,11 +55,11 @@ The v15.6 Lean Edition organizes exercises into optimized structures to maximize
   - **Odd Weeks**: TRX Y-T-W (3-position posterior delt & scapular control).
   - **Even Weeks**: Band Pull-Apart (Scapular retraction & posture density).
 
-### 2.3 Biceps 3-Week Microcycle
+### 2.3 Biceps 4-Week Microcycle (3:1)
 To prevent elbow tendonitis while maximizing hyper-trophy:
-- **Weeks 1 & 2 (Heavy Progressive)**: Both Single-Arm Curl and Single-Arm Hammer Curl active. Full progression rules apply.
-- **Week 3 (Light Myo-Preservation)**: Single-Arm Hammer Curl only (2 sets, capped load), progression frozen, weight preserved.
-- **Week 8 / Deload Weeks**: 1 set of Single-Arm Hammer Curl only.
+- **Weeks 1–3 (Heavy Progressive)**: Both Single-Arm Curl and Single-Arm Hammer Curl active. Full progression rules apply.
+- **Week 4 (Light Myo-Preservation)**: Single-Arm Hammer Curl only (2 sets, capped load), progression frozen, weight preserved.
+- **Deload Weeks**: 1 set of Single-Arm Hammer Curl only.
 
 ### 2.4 Weekly Frequency Additions
 - **Day 3 Second Back Frequency**: TRX Row (2 sets) adds volume for back frequency 2/2 (10 total weekly back sets: 3+3+2+2).
@@ -69,9 +69,10 @@ To prevent elbow tendonitis while maximizing hyper-trophy:
 
 ## Part 3 — Master Weekly Microcycle Architecture & Cardio Protocols
 
-### 3.0 Phase 0 — Anatomical Foundation Ramp-Up (Weeks 1–4) & Week 5 Graduation
+### 3.0 Phase 0 — Anatomical Foundation Ramp-Up (Weeks 1–4) & Performance-Based Graduation
 To protect connective tissue, adapt the lumbar spine, and prevent Achilles & shoulder impingement in novice trainees:
-- **Weeks 1–4 (Ramp-Up Foundation)**: Exercise volume is reduced to 5–6 anchor exercises per session (25–30 min target). High-peak-load and complex unilateral movements are locked (`Suitcase Carry`, `Calf Block`, `Goblet BSS`, `Hollow Body Hold`, `Pike Progression`, `Single-Arm Seated OHP`, `Single-Arm Lateral Raise`, `DB Overhead Triceps Ext`, `Single-Arm Hammer Curl`, `Towel Hang`, `Tuck L-Sit`, `Push-Up Volume Day 5`). Days 2 & 6 feature 20-min light walks (0% incline, 4.5 km/h) instead of Zone 2 / VO2 Max.
+- **Weeks 1–2 (Ramp-Up Foundation)**: Exercise volume is reduced to 5–6 anchor exercises per session (25–30 min target). High-peak-load and complex unilateral movements are locked (`Suitcase Carry`, `Calf Block`, `Goblet BSS`, `Hollow Body Hold`, `Pike Progression`, `Single-Arm Seated OHP`, `Single-Arm Lateral Raise`, `DB Overhead Triceps Ext`, `Single-Arm Hammer Curl`, `Towel Hang`, `Tuck L-Sit`, `Push-Up Volume Day 5`). Days 2 & 6 feature 20-min light walks (0% incline, 4.5 km/h) instead of Zone 2 / VO2 Max.
+- **Weeks 3–4 (Performance-Based Early Graduation)**: Locked movements unlock as soon as their performance criteria are met (e.g., Heels-Elevated Goblet Squat ≥ 10 kg for Goblet BSS; Push-Up Progression ≥ 10 reps for OHP / Pike / Triceps Ext; Dead Bug ≥ 16 reps for Hollow Body / Tuck L-Sit; Single-Arm Curl ≥ 12 reps for Hammer Curl). **Calendar Ceiling Rule**: nothing unlocks later than the old Week-5 gate — performance can only accelerate, never delay.
 - **Week 5 (Graduation Event)**: The system automatically unlocks the full exercise suit (`Goblet BSS`, `VO2 Max Norwegian 4x4`, `Pike/OHP`, `Lateral Raise`, `Hammer Curl`, `Towel Hang`, `L-Sit`, `Suitcase Carry`, `Calf Block`, `Hollow Body Hold`).
 
 ### 3.1a Ramp-Up Microcycle Structure (Phase 0 — Weeks 1–4 ONLY)
@@ -79,11 +80,11 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 | Day | Workout Type | Target Focus & Exercises | Target Duration |
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **Legs + Core Foundation** | Warmup + Goblet RDL + Heels-Elevated Goblet Squat + DB Glute Bridge + Dead Bug + Micro Mobility B (5 anchor exercises) | 30 min |
-| **Day 2** | **Active Recovery Walk** | Relaxed Walking (0% incline, 4.5 km/h) + Micro Mobility B | 20 min |
+| **Day 2** | **Zone 2 / Active Recovery Walk** | Weeks 1–2: Relaxed Walking 20 min (0% incline, 4.5 km/h); Weeks 3+: Brisk Walking Zone 2 (4% incline, 5.5 km/h) + Micro Mobility B | 20–45 min |
 | **Day 3** | **Push + Upper Foundation** | Warmup + Single-Arm Floor Press + Push-Up Bars + Diamond Push-Up + TRX Row + TRX Y-T-W + Micro Mobility A (5 anchor exercises) | 30 min |
 | **Day 4** | **Active Recovery + Neck** | Cervical Protocol (Band Neck Flexion & Extension 2x15-20) + 20 min Relaxed Walking + Micro Mobility B | 25 min |
 | **Day 5** | **Pull + Core Foundation** | Warmup + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + Micro Mobility A (5 anchor exercises) | 30 min |
-| **Day 6** | **Active Recovery (VO2 Locked)**| Relaxed Walking (0% incline, 4.5 km/h) — VO2 Max 4x4 locked until Week 5 Graduation | 20 min |
+| **Day 6** | **Cardio (VO2 from Week 4)** | Weeks 1–3: Relaxed Walking 20 min (0% incline, 4.5 km/h); Week 4+: VO2 Max 4x4 (4% incline) | 20–35 min |
 | **Day 7** | **Complete Rest** | Passive recovery, hydration & CNS regeneration | — |
 
 ### 3.1b Standard Weekly Microcycle Structure (Phase 1 — Weeks 5–7, 9–15, 17–23...)
@@ -100,15 +101,15 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 
 ### 3.2 Cardio Protocols
 
-🟢 **Zone 2 Base (Day 2):** 4% incline | 5.5 km/h | 45 min continuous | Conversational test: Must speak full sentences, otherwise lower to 5.0 km/h. *Weeks 1–4*: 20 min light walk (0% incline). *Deload*: 30 min, 2% incline, 5.0 km/h.
+🟢 **Zone 2 Base (Day 2):** 4% incline | 5.5 km/h | 45 min continuous | Conversational test: Must speak full sentences, otherwise lower to 5.0 km/h. *Weeks 1–2*: 20 min light walk (0% incline). *Deload*: 30 min, 2% incline, 5.0 km/h.
 
-🔴 **Norwegian 4×4 VO2 Max (Day 6):** Active from Week 5. Achilles Protection — Max 6% incline, NO sprinting.
-Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase incline | Active recovery 3×3 min @ 0% 4.5 km/h | Cooldown 5 min @ 0% 4.0 km/h. *Weeks 1–4*: Replaced with 20 min light walk. *Deload*: Replaced with 30 min Zone 2 walk.
+🔴 **Norwegian 4×4 VO2 Max (Day 6):** Active from Week 4 (v15.7; previously Week 5). Achilles Protection — Max 6% incline, NO sprinting.
+Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase incline | Active recovery 3×3 min @ 0% 4.5 km/h | Cooldown 5 min @ 0% 4.0 km/h. *Weeks 1–3*: Replaced with 20 min light walk. *Deload*: Replaced with 30 min Zone 2 walk.
 
 | Phase Weeks | Work Interval Incline |
 | :--- | :--- |
-| **Weeks 1–4** | Replaced with 20m Light Walk (0% Incline) |
-| **Weeks 5–8** | 4% |
+| **Weeks 1–3** | Replaced with 20m Light Walk (0% Incline) |
+| **Weeks 4–8** | 4% |
 | **Weeks 10–16** | 5% |
 | **Weeks 18–80+** | 6% |
 
@@ -128,7 +129,7 @@ Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase inclin
 
 ## Part 5 — Deload Architecture (Every 8 Weeks)
 
-Deload occurs automatically on **Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104**:
+Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks; v15.7 — previously every 8 weeks), plus an **auto-regulated early deload** triggered when performance drops over consecutive sessions (2 consecutive strength sessions with ≥2 main compounds all-`BELOW`, or ≥3 load demotions within 7 days, or repeated joint-pain flags). The auto-regulated deload applies to the next session only (max 2 sets, reduced load, no progression) and is announced with an explanatory banner.
 - **Volume Ceiling**: Maximum 2 sets per strength exercise.
 - **Load Reduction**: Loads reduced by 2 kg (rounded to nearest legal increment [3..32] kg).
 - **Structure**: All pairs, circuits, and blocks dissolve into straight sets.
@@ -140,7 +141,7 @@ Deload occurs automatically on **Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88
 
 ## Appendix A — Arm Block v15.6 Protocol (Myo-Reps Cluster)
 
-**Activation Conditions**: Active from Week 10 onwards. Executed at the end of Day 3 (Lateral Raise + Overhead Triceps Extension) and Day 5 (Single-Arm Curl / Single-Arm Hammer Curl).
+**Activation Conditions**: Active from Week 6 onwards (v15.7; previously Week 10). Executed at the end of Day 3 (Lateral Raise + Overhead Triceps Extension) and Day 5 (Single-Arm Curl / Single-Arm Hammer Curl).
 
 ### Myo-Reps Cluster Mechanics
 1. **Activation Set**: Executed to stage target reps (e.g. 12 reps) at assigned load. Rest 15 seconds.
@@ -156,11 +157,12 @@ Deload occurs automatically on **Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88
 ---
 
 ## Appendix B — System Definition & Master References
-- **Program Dataset**: `window.TRAINING_DATA` in `js/data.js` (FitUp v15.6 Lean).
+- **Program Dataset**: `window.TRAINING_DATA` in `js/data.js` (FitUp v15.7 Accelerated).
 - **Progression Engine**: `ProgressionEngine` in `js/progression.js`.
 - **Zero-0-Kg Weight Protection Engine**: All weighted exercises strictly enforce prescribed starting weights (`startingWeight`) and a hard `minWeight` floor (3 kg minimum). Loads are guaranteed never to calculate or display as 0 kg / 0 kg each under any fallback or parsing state.
+- **Fine-Grained Load Increments (v15.7)**: Isolation exercises (Single-Arm Lateral Raise, Single-Arm Curl, Single-Arm Hammer Curl, DB Overhead Triceps Extension, Arm Blocks) progress in **0.5 kg steps**; `legalWeights` includes 0.5 kg increments to eliminate the 3→4 kg (33%) stall trap.
 - **Database Version**: IndexedDB Version 9 (`DBVERSION = 9`).
 - **Cloud Synchronization & Local Data Export**: Automatic bidirectional sync with Google Drive alongside one-click local JSON data backup (`fitup_backup_[DATE].json`) and import verification.
 
 ---
-FitUp Pro v15.6 Lean Edition — Built for Precision, Zero Decisions, and Zero Regrets.
+FitUp Pro v15.7 Accelerated — Built for Precision, Zero Decisions, and Zero Regrets.

@@ -1,5 +1,5 @@
 /**
- * FitUp v15.6 Lean Progression Engine
+ * FitUp v15.7 Accelerated Progression Engine
  * Zero Decisions Automation Engine for Progressive Overload, Rest Adaptation,
  * Myo-Reps Cluster Tracking, Microcycle Management, and Structural Toggles.
  */
@@ -10,9 +10,9 @@
   class ProgressionEngine {
     constructor(settings) {
       this.settings = settings || window.TRAINING_DATA?.progressionSettings || {
-        deloadEveryWeeks: 8,
+        deloadEveryWeeks: 12,
         armBlock: {
-          enabledFromWeek: 10,
+          enabledFromWeek: 6,
           maxArmBlockExposurePerMusclePerWeek: 1,
           muscleAreaMap: {
             3: { "db-lateral-raise": "lateral-shoulder", "arm-block-lateral-raise": "lateral-shoulder", "db-oh-triceps-extension": "triceps", "arm-block-triceps-ext": "triceps" },
@@ -56,13 +56,8 @@
       const currentRepsValid = setResults.every(s => (s.reps || 0) >= currentMinTarget && !s.mechanicalStop);
       if (!currentRepsValid) return false;
 
-      // Condition 3: Previous session exists, all sets were at windowMax, no mechanical stop
-      if (!previousSessionData || !previousSessionData.sets || previousSessionData.sets.length === 0) {
-        return false;
-      }
-
       // Time Decay Check: If more than 10 days passed since previous session, disable softened progression
-      if (previousSessionData.lastUpdated) {
+      if (previousSessionData && previousSessionData.lastUpdated) {
         let prevDate;
         if (previousSessionData.lastUpdated.includes('/')) {
           // DD/MM/YYYY format
@@ -72,7 +67,7 @@
           // ISO string
           prevDate = new Date(previousSessionData.lastUpdated);
         }
-        
+
         if (!isNaN(prevDate.getTime())) {
           const daysGap = (Date.now() - prevDate.getTime()) / (1000 * 60 * 60 * 24);
           if (daysGap > 10) {
@@ -82,10 +77,9 @@
         }
       }
 
-      const prevSets = previousSessionData.sets;
-      const prevAllMax = prevSets.every(s => (s.reps || 0) >= (exercise.windowMax || 12) && !s.mechanicalStop);
-
-      return prevAllMax;
+      // v15.7 Accelerated: single-session softened gate — the previous-session all-max
+      // requirement is removed so consistent trainees progress ~2x faster.
+      return true;
     }
 
     // ----------------------------
@@ -215,23 +209,24 @@
     // 4. Biceps Microcycle Controller
     // ----------------------------
     getBicepsMicrocycleWeek(weekNumber) {
-      if (weekNumber % (this.settings.deloadEveryWeeks || 8) === 0) {
+      const bicepsCfg = this.settings.bicepsMicrocycle || { cycleLength: 4, heavyWeeks: [1, 2, 3], lightWeeks: [4], lightWeekExercises: ['hammer-curl', 'single-arm-hammer-curl'], lightWeekSets: 2 };
+      if (weekNumber % (this.settings.deloadEveryWeeks || 12) === 0) {
         return { type: 'deload', exercises: ['hammer-curl', 'single-arm-hammer-curl'], sets: 1, progressionAllowed: false };
       }
 
-      const cyclePosition = ((weekNumber - 1) % 3) + 1;
-      if (cyclePosition === 3) {
-        return { type: 'light', exercises: ['hammer-curl', 'single-arm-hammer-curl'], sets: 2, progressionAllowed: false };
+      const cyclePosition = ((weekNumber - 1) % bicepsCfg.cycleLength) + 1;
+      if (bicepsCfg.lightWeeks && bicepsCfg.lightWeeks.includes(cyclePosition)) {
+        return { type: 'light', exercises: bicepsCfg.lightWeekExercises || ['hammer-curl', 'single-arm-hammer-curl'], sets: bicepsCfg.lightWeekSets || 2, progressionAllowed: false };
       }
 
-      return { type: 'heavy', exercises: ['db-curl', 'single-arm-curl', 'hammer-curl', 'single-arm-hammer-curl'], sets: 'progressive', progressionAllowed: true };
+      return { type: 'heavy', exercises: bicepsCfg.heavyWeekExercises || ['db-curl', 'single-arm-curl', 'hammer-curl', 'single-arm-hammer-curl'], sets: 'progressive', progressionAllowed: true };
     }
 
     // ----------------------------
     // 5. Arm Block & Frequency Guard
     // ----------------------------
     isArmBlockAllowed(dayTrackingData, weekNumber, existingExposures = []) {
-      const armBlockCfg = this.settings.armBlock || { enabledFromWeek: 10, maxArmBlockExposurePerMusclePerWeek: 1 };
+      const armBlockCfg = this.settings.armBlock || { enabledFromWeek: 6, maxArmBlockExposurePerMusclePerWeek: 1 };
 
       if (weekNumber < armBlockCfg.enabledFromWeek) {
         return { active: false, reason: 'arm_block_not_started_yet' };
@@ -318,13 +313,14 @@
     }
 
     isPairActive(pair, weekNumber, allProgressionStates = {}) {
-      const isDeload = weekNumber % (this.settings.deloadEveryWeeks || 8) === 0;
+      const isDeload = weekNumber % (this.settings.deloadEveryWeeks || 12) === 0;
       if (isDeload) return false;
 
-      // Check biceps microcycle week 3 (light week) where db-curl is disabled
+      // Check biceps microcycle light week where the curl member is disabled
       if (pair.pairId === 'd5-pushup-curl') {
-        const cyclePos = ((weekNumber - 1) % 3) + 1;
-        if (cyclePos === 3) return false;
+        const bicepsCfg = this.settings.bicepsMicrocycle || { cycleLength: 4, lightWeeks: [4] };
+        const cyclePos = ((weekNumber - 1) % bicepsCfg.cycleLength) + 1;
+        if (bicepsCfg.lightWeeks && bicepsCfg.lightWeeks.includes(cyclePos)) return false;
       }
 
       return true;
@@ -420,33 +416,61 @@
     // ----------------------------
     // Check Unlock Criteria
     // ----------------------------
-    checkUnlockCriteria(exerciseId, allProgressionStates = {}) {
+    checkUnlockCriteria(exerciseId, allProgressionStates = {}, weekNumber = 0) {
       const exercise = this.getExercise(exerciseId);
       if (!exercise) return { unlocked: true, reason: 'Exercise not found' };
-      
+
+      // v15.7 Accelerated — "Calendar ceiling, performance accelerator":
+      // An exercise is never locked later than its calendar gate, but can unlock
+      // earlier (from earliestWeek onward) when performance criteria are met.
+      const calendarGate = exercise.calendarGate !== undefined ? exercise.calendarGate : (exercise.startingWeek || 0);
+      if (weekNumber > 0 && calendarGate > 0 && weekNumber >= calendarGate) {
+        return { unlocked: true, reason: 'Calendar gate reached' };
+      }
+
+      // Earliest-week safety floor (connective tissue adaptation)
+      const earliestWeek = exercise.earliestWeek || 1;
+      if (weekNumber > 0 && weekNumber < earliestWeek) {
+        return { unlocked: false, reason: `Earliest unlock week ${earliestWeek}` };
+      }
+
       if (exercise.unlockCriteria) {
         const criteria = exercise.unlockCriteria;
         const targetState = allProgressionStates[criteria.exercise];
-        
+
         if (!targetState) {
           return { unlocked: false, reason: `Requires previous progression (${criteria.exercise})` };
         }
-        
+
         if (criteria.targetWeightKg !== undefined) {
           if ((targetState.currentWeightKg || 0) < criteria.targetWeightKg) {
             return { unlocked: false, reason: `Requires ${criteria.targetWeightKg}kg on ${criteria.exercise}` };
           }
         }
-        
+
         if (criteria.targetStageIndex !== undefined) {
           if ((targetState.currentStageIndex || 0) < criteria.targetStageIndex) {
             return { unlocked: false, reason: `Requires stage level ${criteria.targetStageIndex} on ${criteria.exercise}` };
           }
         }
-        
+
+        if (criteria.targetReps !== undefined) {
+          const lastReps = targetState.lastSessionReps || 0;
+          if (lastReps < criteria.targetReps) {
+            return { unlocked: false, reason: `Requires ${criteria.targetReps} reps on ${criteria.exercise}` };
+          }
+        }
+
+        if (criteria.minSessionsCompleted !== undefined) {
+          const sessions = targetState.sessionsCompleted || 0;
+          if (sessions < criteria.minSessionsCompleted) {
+            return { unlocked: false, reason: `Requires ${criteria.minSessionsCompleted} sessions of ${criteria.exercise}` };
+          }
+        }
+
         return { unlocked: true, reason: 'Prerequisite strength achieved' };
       }
-      
+
       if (exercise.id === 'pistol-squat' && !exercise.unlockCriteria) {
         const squatState = allProgressionStates['heels-elevated-goblet-squat'] || allProgressionStates['goblet-bulgarian-split-squat'] || allProgressionStates['single-leg-rdl'];
         if (squatState && (squatState.currentWeightKg >= 12 || squatState.currentStageIndex >= 2)) {
@@ -454,7 +478,7 @@
         }
         return { unlocked: false, reason: 'Requires Bulgarian Split Squat / Heels-Elevated Goblet Squat strength threshold' };
       }
-      
+
       return { unlocked: exercise.unlocked ?? true, reason: 'Unlocked' };
     }
 
@@ -477,6 +501,88 @@
 
       updated.lastUpdated = new Date().toISOString();
       return updated;
+    }
+
+    // ----------------------------
+    // 9. Auto-Regulated Deload (v15.7 Accelerated)
+    // ----------------------------
+    async checkAutoDeloadTrigger(currentDayIndex) {
+      const cfg = this.settings.autoDeload || {
+        consecutiveFailedSessions: 2,
+        minFailedExercisesPerSession: 2,
+        demotionsInDays: 7,
+        demotionThreshold: 3,
+        painFlagThreshold: 2
+      };
+      try {
+        if (!window.DB || !window.DB.getAllTracking || !window.DB.getAllPlan) {
+          return { triggered: false, reason: 'db_unavailable' };
+        }
+
+        const allTracking = await window.DB.getAllTracking();
+        const planDays = await window.DB.getAllPlan();
+        if (!allTracking || !Array.isArray(allTracking) || !planDays || !Array.isArray(planDays)) {
+          return { triggered: false, reason: 'no_data' };
+        }
+
+        // Scan the last 7 plan days before the current day
+        const startIdx = Math.max(0, currentDayIndex - 7);
+        let consecutiveFailures = 0;
+        let painFlags = 0;
+
+        for (let i = startIdx; i < currentDayIndex; i++) {
+          const day = planDays[i];
+          if (!day || !day.exercises) continue;
+          const tracking = allTracking.find(t => t.dayIndex === i);
+          if (!tracking || !tracking.setData) continue;
+
+          const isStrengthDay = /strength|push|pull|legs|skill/i.test(String(day.dayType || ''));
+          let failedExercises = 0;
+          for (let exIdx = 0; exIdx < day.exercises.length; exIdx++) {
+            const setData = tracking.setData[exIdx];
+            if (!setData) continue;
+            const results = Object.keys(setData)
+              .filter(k => k.startsWith('set_') && k.endsWith('_result'))
+              .map(k => setData[k]);
+            if (results.length > 0 && results.every(r => r === 'below')) failedExercises++;
+          }
+
+          if (tracking.elbowPain || tracking.shoulderPain || tracking.jointPain) painFlags++;
+
+          if (isStrengthDay) {
+            if (failedExercises >= (cfg.minFailedExercisesPerSession || 2)) {
+              consecutiveFailures++;
+            } else {
+              consecutiveFailures = 0;
+            }
+          }
+        }
+
+        if (consecutiveFailures >= (cfg.consecutiveFailedSessions || 2)) {
+          return { triggered: true, reason: 'two_consecutive_failed_sessions', consecutiveFailures };
+        }
+
+        // Count load demotions from progression history within the window
+        if (window.DB.getAllProgressionHistory) {
+          const history = await window.DB.getAllProgressionHistory();
+          if (history && Array.isArray(history)) {
+            const cutoff = Date.now() - (cfg.demotionsInDays || 7) * 86400000;
+            const demotions = history.filter(h => h.action === 'decrease' && new Date(h.timestamp).getTime() >= cutoff).length;
+            if (demotions >= (cfg.demotionThreshold || 3)) {
+              return { triggered: true, reason: 'excessive_demotions', demotions };
+            }
+          }
+        }
+
+        if (painFlags >= (cfg.painFlagThreshold || 2)) {
+          return { triggered: true, reason: 'repeated_joint_pain', painFlags };
+        }
+
+        return { triggered: false, reason: 'ok' };
+      } catch (err) {
+        console.warn('[ProgressionEngine] Auto-deload check failed:', err);
+        return { triggered: false, reason: 'error' };
+      }
     }
 
     // ----------------------------
@@ -526,9 +632,9 @@
       const exercise = this.getExercise(exerciseId);
       if (!exercise) return null;
 
-      const isDeload = weekNumber % 8 === 0;
+      const isDeload = weekNumber % (this.settings.deloadEveryWeeks || 12) === 0;
       const bicepsConfig = window.TRAINING_DATA?.progressionSettings?.bicepsMicrocycle;
-      const isBicepsLightWeek = bicepsConfig && (weekNumber % bicepsConfig.cycleLength === 0);
+      const isBicepsLightWeek = bicepsConfig && bicepsConfig.lightWeeks && bicepsConfig.lightWeeks.includes(((weekNumber - 1) % bicepsConfig.cycleLength) + 1);
 
       let sets = exercise.sets || 3;
       if (isDeload) sets = Math.min(sets, 2);
@@ -584,10 +690,10 @@
             }
           }
           if (sets.length > 0) {
-            return { 
-              dayIndex: i, 
-              sets, 
-              lastUpdated: tracking.lastUpdated || tracking.date 
+            return {
+              dayIndex: i,
+              sets,
+              lastUpdated: tracking.lastUpdated || tracking.date
             };
           }
         }
@@ -603,7 +709,7 @@
       const exId = exerciseData.exerciseId || this.findExerciseIdByName(exerciseData.exerciseName);
       const dayIndex = exerciseData.dayIndex || 1;
       const weekNumber = exerciseData.weekNumber || 1;
-      
+
       let setResults = exerciseData.setResults;
       if (!setResults || setResults.length === 0) {
         if (exerciseData.actualReps !== undefined) {
@@ -620,7 +726,7 @@
       }
 
       const previousSessionData = exerciseData.previousSessionData || (await this.getPreviousSessionData(exId, dayIndex));
-      
+
       const exercise = this.getExercise(exId);
       if (!exercise) return null;
 
@@ -637,6 +743,15 @@
       } else {
         decision = this.calculateStageDecision(exercise, state, setResults, weekNumber, previousSessionData);
         state.currentStageIndex = decision.newStageIndex;
+      }
+
+      // v15.7 Accelerated: track performance metrics used by performance-based unlocks
+      if (setResults && setResults.length > 0) {
+        const repsList = setResults.map(s => s.reps || 0).filter(r => r > 0);
+        if (repsList.length > 0) {
+          state.lastSessionReps = Math.max(...repsList);
+        }
+        state.sessionsCompleted = (state.sessionsCompleted || 0) + 1;
       }
 
       state.lastUpdated = new Date().toISOString();

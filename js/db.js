@@ -67,7 +67,7 @@ const DB = (() => {
           const photoStore = database.createObjectStore(STORES.PHOTOS, { keyPath: 'id' });
           photoStore.createIndex('date', 'date', { unique: false });
         }
-        
+
         // Nutrition store
         if (!database.objectStoreNames.contains(STORES.NUTRITION)) {
           database.createObjectStore(STORES.NUTRITION, { keyPath: 'date' });
@@ -249,7 +249,7 @@ const DB = (() => {
       plannedRPE: '—',
       exercises: []
     };
-    
+
     const restTemplate2 = {
       dayType: 'Rest',
       plannedRPE: '—',
@@ -290,21 +290,21 @@ const DB = (() => {
           exercises: JSON.parse(JSON.stringify(originalDay.exercises || []))
         };
       }
-        
-        dayObj.dayIndex = globalDayIndex;
-        dayObj.dayNum = globalDayIndex + 1;
-        
-        // Add a sequence ID for reliable migration
-        if (dayObj.dayType !== 'Rest') {
-          dayObj.workoutSeq = globalWorkoutSeq++;
-        } else {
-          dayObj.restSeq = globalRestSeq++;
-        }
 
-        dayObj.date = UI.getLocalDateString(currentDate).split('-').reverse().join('/');
-        
-        newPlanData.push(dayObj);
-        globalDayIndex++;
+      dayObj.dayIndex = globalDayIndex;
+      dayObj.dayNum = globalDayIndex + 1;
+
+      // Add a sequence ID for reliable migration
+      if (dayObj.dayType !== 'Rest') {
+        dayObj.workoutSeq = globalWorkoutSeq++;
+      } else {
+        dayObj.restSeq = globalRestSeq++;
+      }
+
+      dayObj.date = UI.getLocalDateString(currentDate).split('-').reverse().join('/');
+
+      newPlanData.push(dayObj);
+      globalDayIndex++;
     });
 
     await clear(STORES.PLAN);
@@ -386,7 +386,7 @@ const DB = (() => {
     const armBlockExposure = await getAll(STORES.ARM_BLOCK_EXPOSURE);
     const leanSessionState = await getAll(STORES.LEAN_SESSION);
     const myoClusterHistory = await getAll(STORES.MYO_CLUSTERS);
-    
+
     // Sanitize progressionState to ensure Zero Decisions protection (no 0 kg on weighted exercises)
     const progressionState = (rawProgState || []).map(state => {
       if (state && state.type === 'weighted') {
@@ -410,10 +410,10 @@ const DB = (() => {
         nutrition[date] = rest;
       });
     }
-    
+
     return {
-      schemaVersion: 15.6,
-      version: 15.6,
+      schemaVersion: 15.7,
+      version: 15.7,
       exportDate: new Date().toISOString(),
       tracking,
       settings,
@@ -616,7 +616,7 @@ const DB = (() => {
 
     // If tracking data doesn't exist yet, we still need to swap the slots if they do later,
     // but the easiest is just to swap the tracking records and their dayIndex pointers.
-    
+
     // 3. Swap plan properties (dayType, plannedRPE, exercises, workoutSeq, restSeq)
     // We KEEP dayIndex, dayNum, dayOfWeek, date, week intact
     const tempDayType = day1.dayType;
@@ -669,11 +669,11 @@ const DB = (() => {
    */
   async function syncRestDays(allPlanDays) {
     const allTracking = await getAllTracking();
-    
+
     // Find the last completed workout day
     let lastWorkoutIndex = -1;
     let lastWorkoutDate = null;
-    
+
     for (let i = 0; i < allPlanDays.length; i++) {
       const day = allPlanDays[i];
       if (day.dayType !== 'Rest') {
@@ -731,7 +731,7 @@ const DB = (() => {
               const mm = String(restDate.getMonth() + 1).padStart(2, '0');
               const dd = String(restDate.getDate()).padStart(2, '0');
               const trackDateStr = `${dd}/${mm}/${yyyy}`;
-              
+
               const newTrack = {
                 dayIndex: i,
                 completed: true,
@@ -858,7 +858,7 @@ const DB = (() => {
   }
 
   /**
-   * Self-healing database migration function to ensure v15.6 Lean schema and stores exist.
+   * Self-healing database migration function to ensure v15.7 Accelerated schema and stores exist.
    */
   async function ensureV15LeanSchema() {
     if (!db) {
@@ -873,8 +873,10 @@ const DB = (() => {
     let needsPlanReload = false;
 
     // Check if training plan is missing or empty
+    // v15.7 Accelerated: version bump triggers plan re-seed (deload cadence, arm block week,
+    // biceps microcycle, performance-unlock metadata) while preserving tracking/progression state.
     const planCount = await count(STORES.PLAN).catch(() => 0);
-    if (planCount === 0 || currentSchemaVer !== '15.6.2') {
+    if (planCount === 0 || currentSchemaVer !== '15.7.0') {
       needsPlanReload = true;
     }
 
@@ -915,12 +917,12 @@ const DB = (() => {
 
     if (needsPlanReload && window.TRAINING_DATA) {
       await loadTrainingPlan();
-      await setSetting('v15LeanSchemaVersion', '15.6.2');
-      return { migrated: true, version: '15.6.2' };
+      await setSetting('v15LeanSchemaVersion', '15.7.0');
+      return { migrated: true, version: '15.7.0' };
     }
 
-    await setSetting('v15LeanSchemaVersion', '15.6.2');
-    return { migrated: false, version: '15.6.2' };
+    await setSetting('v15LeanSchemaVersion', '15.7.0');
+    return { migrated: false, version: '15.7.0' };
   }
 
   return {

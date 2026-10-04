@@ -12,14 +12,14 @@ let info = [];
 
 // 1. Load i18n.js
 const i18nContent = fs.readFileSync(path.join(root, 'js/i18n.js'), 'utf8');
-const i18nSandbox = { window: {}, console: console, document: { documentElement: { style: { setProperty: () => {} } }, querySelectorAll: () => [] } };
+const i18nSandbox = { window: {}, console: console, document: { documentElement: { style: { setProperty: () => { } } }, querySelectorAll: () => [] } };
 vm.createContext(i18nSandbox);
 let I18n = null;
 try {
   vm.runInContext(i18nContent, i18nSandbox);
   I18n = i18nSandbox.window.I18n || i18nSandbox.I18n;
   const translations = I18n ? I18n.translations : null;
-  
+
   if (!translations) {
     errors.push("Failed to load I18n.translations from js/i18n.js");
   } else {
@@ -95,7 +95,12 @@ if (trainingData && jsTrainingData) {
       const jsDay = jsTrainingData.daily[i];
       const jsonDay = trainingData.daily[i];
 
-      const jsExNames = jsDay.exercises.map(e => e.name);
+      // v15.7 Accelerated: the flat export hides calendar-locked exercises
+      // (startingWeek > current week) — apply the same filter to js/data.js for comparison
+      const weekNum = parseInt(jsDay.week.replace('Week ', ''));
+      const jsExNames = jsDay.exercises
+        .filter(e => !(e.startingWeek && weekNum < e.startingWeek))
+        .map(e => e.name);
       const jsonExNames = [];
       Object.keys(jsonDay).forEach(k => {
         if (k.endsWith(' - Exercise') && jsonDay[k]) {
@@ -161,12 +166,12 @@ if (translations) {
   }
 }
 
-// Audit Deload Weeks in Program Data (weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80)
+// Audit Deload Weeks in Program Data (v15.7: weeks 12, 24, 36, 48, 60, 72)
 if (jsTrainingData && jsTrainingData.daily) {
   let deloadViolations = [];
   jsTrainingData.daily.forEach(day => {
     const weekNum = parseInt(day.week.replace('Week ', ''));
-    const isDeload = (weekNum % 8 === 0);
+    const isDeload = (weekNum % 12 === 0);
     if (isDeload && !day.dayType.includes('Rest') && !day.dayType.includes('Cardio') && !day.dayType.includes('Recovery')) {
       day.exercises.forEach(ex => {
         if (!ex.isWarmup && !ex.name.includes('Walking') && !ex.name.includes('Protocol') && !ex.name.includes('Mobility')) {
@@ -183,7 +188,7 @@ if (jsTrainingData && jsTrainingData.daily) {
   if (deloadViolations.length > 0) {
     errors.push(`Deload set count violations found (${deloadViolations.length}): ${deloadViolations.slice(0, 5).join('; ')}`);
   } else {
-    info.push("Deload set counts (2 sets on week 8, 16, 24, 32, 40, 48, 56, 64, 72, 80) verified 100%!");
+    info.push("Deload set counts (2 sets on weeks 12, 24, 36, 48, 60, 72) verified 100%!");
   }
 }
 

@@ -36,7 +36,18 @@ const I18n = (() => {
       cond_weekly_rotation: "⚡ Weekly rotation",
       cond_15s_tuck: "⚡ 15 seconds Tuck",
       cond_15s_one_leg: "⚡ 15 seconds one leg",
- dir: 'ltr', name: 'English', flag: '🇺🇸', font: "'Inter', sans-serif" },
+      cond_10kg_squat: "⚡ 10kg Heels-Elevated Squat",
+      cond_10kg_rdl: "⚡ 10kg Goblet RDL",
+      cond_10_push: "⚡ 10 push-up reps",
+      cond_12_curl: "⚡ 12 curl reps",
+      cond_12_lat: "⚡ 12 lateral raise reps",
+      cond_12_tri: "⚡ 12 triceps ext reps",
+      cond_16_deadbug: "⚡ 16 dead-bug reps",
+      cond_deadbug_stage2: "⚡ Dead-bug stage 2",
+      auto_deload_title: "🌿 Auto-Regulated Deload",
+      auto_deload_desc: "Performance dropped over consecutive sessions — this session runs in deload mode (max 2 sets, reduced load, no progression).",
+      dir: 'ltr', name: 'English', flag: '🇺🇸', font: "'Inter', sans-serif"
+    },
     he: {
 
       staged_unlock: "פתיחה מדורגת",
@@ -66,7 +77,18 @@ const I18n = (() => {
       cond_weekly_rotation: "⚡ רוטציה שבועית",
       cond_15s_tuck: "⚡ 15 שניות Tuck",
       cond_15s_one_leg: "⚡ 15 שניות רגל אחת",
- dir: 'rtl', name: 'עברית', flag: '🇮🇱', font: "'Heebo', sans-serif" },
+      cond_10kg_squat: "⚡ 10 ק\"ג סקוואט עקבים מוגבהים",
+      cond_10kg_rdl: "⚡ 10 ק\"ג RDL גובלט",
+      cond_10_push: "⚡ 10 חזרות פושאפ",
+      cond_12_curl: "⚡ 12 חזרות קרל",
+      cond_12_lat: "⚡ 12 חזרות הרחקה צידית",
+      cond_12_tri: "⚡ 12 חזרות טרייספס",
+      cond_16_deadbug: "⚡ 16 חזרות דד-באג",
+      cond_deadbug_stage2: "⚡ דד-באג דרגה 2",
+      auto_deload_title: "🌿 דילואוד אוטומטי",
+      auto_deload_desc: "הביצוע ירד במספר אימונים רצופים — האימון הזה רץ במצב דילואוד (מקס 2 סטים, עומס מופחת, ללא פרוגרסיה).",
+      dir: 'rtl', name: 'עברית', flag: '🇮🇱', font: "'Heebo', sans-serif"
+    },
     ar: {
 
       staged_unlock: "فتح تدريجي",
@@ -96,7 +118,18 @@ const I18n = (() => {
       cond_weekly_rotation: "⚡ تناوب أسبوعي",
       cond_15s_tuck: "⚡ 15 ثانية ثني",
       cond_15s_one_leg: "⚡ 15 ثانية قدم واحدة",
- dir: 'rtl', name: 'العربية', flag: '🇸🇦', font: "'Cairo', 'Tajawal', sans-serif" }
+      cond_10kg_squat: "⚡ 10 كغم قرفصاء كوب",
+      cond_10kg_rdl: "⚡ 10 كغم RDL",
+      cond_10_push: "⚡ 10 تكرارات ضغط",
+      cond_12_curl: "⚡ 12 تكرار ثني",
+      cond_12_lat: "⚡ 12 تكرار رفع جانبي",
+      cond_12_tri: "⚡ 12 تكرار ترايسبس",
+      cond_16_deadbug: "⚡ 16 تكرار حشرة ميتة",
+      cond_deadbug_stage2: "⚡ مرحلة 2 حشرة ميتة",
+      auto_deload_title: "🌿 تخفيف تلقائي",
+      auto_deload_desc: "انخفض الأداء في جلسات متتالية — تعمل هذه الجلسة بوضع التخفيف (حد أقصى مجموعتان، حمل مخفض، بدون تقدم).",
+      dir: 'rtl', name: 'العربية', flag: '🇸🇦', font: "'Cairo', 'Tajawal', sans-serif"
+    }
   };
 
   const TRANSLATIONS = {
@@ -301,7 +334,7 @@ const I18n = (() => {
       appearance_desc: "Toggle between light and dark mode.",
       toggle_theme_btn: "Toggle Theme",
       about_card: "ℹ️ About FitUp",
-      about_desc: "FitUp Pro v15.6 Lean Edition - AI Workout & Nutrition Tracker",
+      about_desc: "FitUp Pro v15.7 Accelerated - AI Workout & Nutrition Tracker",
       about_sub: "80-Week Training Program • 560 Days",
       about_note: "All data stored locally in your browser and personal Google Drive.",
 
@@ -1002,8 +1035,8 @@ const I18n = (() => {
       meal_logged_success: "Meal logged successfully.",
       ai_meal_name: "AI Meal",
 
-      // FitUp v15.6 Lean Program
-      lean_program_title: "v15.6 Lean Program",
+      // FitUp v15.7 Accelerated Program
+      lean_program_title: "v15.7 Accelerated Program",
       myo_reps_title: "Myo-Reps Cluster",
       tempo_loss_warning: "⚠️ Stop Rule: 2 Tempo Losses Reached!",
       arm_block_limit_warning: "⚠️ Arm Block limit reached for this week (Max 2)",
@@ -1061,7 +1094,26 @@ const I18n = (() => {
       wakelock_not_supported: "Screen Wake Lock is not supported on this browser.",
       wakelock_toast_on: "Screen will stay awake during workout 💡",
       wakelock_toast_off: "Screen sleep restored 💤",
-      rule_heels_elevated_goblet_squat: "Must be performed with elevated heels (weight plate/book/block 2-5cm thick) throughout the entire exercise"
+      rule_heels_elevated_goblet_squat: "Must be performed with elevated heels (weight plate/book/block 2-5cm thick) throughout the entire exercise",
+      timer_skip_ready: "Skip / Ready",
+      skip_exercise_temp: "Skip for now",
+      skipped_temp_badge: "Skipped for now",
+      return_to_exercise: "Return to exercise",
+      retroactive_entry_badge: "Editing Past Day",
+      future_day_preview: "Future Day Preview",
+      unlock_early_entry: "Unlock Early Entry",
+      set_quick_logged: "Set {set} logged: In-Window ✅",
+      hold_to_change: "Click to edit outcome or reset",
+      confirmation_title: "Confirm Action",
+      confirm_btn: "Confirm",
+      cancel_btn: "Cancel",
+      delete_btn: "Delete",
+      yes_pain: "Yes, report joint pain",
+      no_pain: "No, muscular fatigue only",
+      delete_photo_title: "Delete Progress Photo",
+      delete_meal_title: "Delete Meal",
+      change_set_outcome_title: "Change Set Outcome",
+      change_set_outcome_desc: "Change classification or reset this set:"
     },
     he: {
 
@@ -1283,7 +1335,7 @@ const I18n = (() => {
       appearance_desc: "החלף בין מצב תצוגה בהיר לכהה",
       toggle_theme_btn: "החלף מצב תצוגה",
       about_card: "ℹ️ אודות",
-      about_desc: "FitUp Pro v15.6 Lean Edition - אפליקציית מעקב אימונים ותזונה AI",
+      about_desc: "FitUp Pro v15.7 Accelerated - אפליקציית מעקב אימונים ותזונה AI",
       about_sub: "תוכנית 80 שבועות • 560 ימים",
       about_note: "כל הנתונים נשמרים מקומית בדפדפן ובדרייב האישי שלך",
 
@@ -1936,8 +1988,8 @@ const I18n = (() => {
       meal_logged_success: "הארוחה הוקלדה בהצלחה.",
       ai_meal_name: "ארוחת AI",
 
-      // FitUp v15.6 Lean Program
-      lean_program_title: "תוכנית v15.6 Lean",
+      // FitUp v15.7 Accelerated Program
+      lean_program_title: "תוכנית v15.7 Accelerated",
       myo_reps_title: "סט מיו-רפס (Myo-Reps)",
       tempo_loss_warning: "⚠️ חוק עצירה: הגעת ל-2 אובדני קצב!",
       arm_block_limit_warning: "⚠️ הגעת למגבלת בלוק זרועות לשבוע זה (מקסימום 2)",
@@ -1976,7 +2028,26 @@ const I18n = (() => {
       sync_conflict_desc: "יומן האימונים במכשיר זה שונה מהגיבוי השמור ב-Google Drive. אנא בחר באיזו גרסה להשתמש:",
       keep_local_data: "📱 שמור נתונים מקומיים (דרוס את הענן)",
       keep_cloud_data: "☁️ טען נתונים מהענן (דרוס את המכשיר)",
-      rule_heels_elevated_goblet_squat: "חובה לבצע עם הגבהת עקבים (פלטה/ספר/בלוק בעובי 2-5 ס״מ) לאורך כל התרגיל"
+      rule_heels_elevated_goblet_squat: "חובה לבצע עם הגבהת עקבים (פלטה/ספר/בלוק בעובי 2-5 ס״מ) לאורך כל התרגיל",
+      timer_skip_ready: "מוכן לסט הבא / דלג",
+      skip_exercise_temp: "דלג זמנית",
+      skipped_temp_badge: "דולג זמנית",
+      return_to_exercise: "חזור לתרגיל",
+      retroactive_entry_badge: "עריכת יום קודם",
+      future_day_preview: "תצוגת יום עתידי",
+      unlock_early_entry: "אפשר הזנה מוקדמת",
+      set_quick_logged: "סט {set} נרשם: בטווח ✅",
+      hold_to_change: "לחץ לעריכה או לאיפוס",
+      confirmation_title: "אישור פעולה",
+      confirm_btn: "אישור",
+      cancel_btn: "ביטול",
+      delete_btn: "מחק",
+      yes_pain: "כן, דיווח על כאב",
+      no_pain: "לא, עייפות שריר בלבד",
+      delete_photo_title: "מחיקת תמונת התקדמות",
+      delete_meal_title: "מחיקת ארוחה",
+      change_set_outcome_title: "עדכון תוצאת סט",
+      change_set_outcome_desc: "שנה דירוג או אפס את הסט:"
     },
     ar: {
 
@@ -2400,7 +2471,7 @@ const I18n = (() => {
       appearance_desc: "التبديل بين الوضع الفاتح والداكن",
       toggle_theme_btn: "تغيير المظهر",
       about_card: "ℹ️ حول التطبيق",
-      about_desc: "FitUp Pro v15.6 Lean Edition - تطبيق تتبع التمارين والتغذية بالذكاء الاصطناعي",
+      about_desc: "FitUp Pro v15.7 Accelerated - تطبيق تتبع التمارين والتغذية بالذكاء الاصطناعي",
       about_sub: "برنامج 80 أسبوعاً • 560 يوماً",
       about_note: "يتم حفظ جميع البيانات محلياً في متصفحك وحساب Google Drive الخاص بك",
 
@@ -2688,8 +2759,8 @@ const I18n = (() => {
       tempo_kmh: "{speed} كم/س",
       tempo_kmh_effort_rest: "{effort} كم/س جهد / {rest} كم/س راحة",
 
-      // FitUp v15.6 Lean Program
-      lean_program_title: "برنامج v15.6 Lean",
+      // FitUp v15.7 Accelerated Program
+      lean_program_title: "برنامج v15.7 Accelerated",
       myo_reps_title: "مجموعة Myo-Reps",
       tempo_loss_warning: "⚠️ قاعدة التوقف: تم الوصول إلى فقدان الإيقاع مرتين!",
       arm_block_limit_warning: "⚠️ تم الوصول إلى الحد الأقصى لحظر الذراع هذا الأسبوع (الحد الأقصى 2)",
@@ -2741,7 +2812,26 @@ const I18n = (() => {
       wakelock_not_supported: "ميزة منع إيقاف الشاشة غير مدعومة في هذا المتصفح.",
       wakelock_toast_on: "ستظل الشاشة نشطة أثناء التمرين 💡",
       wakelock_toast_off: "تم استعادة وضع سكون الشاشة 💤",
-      rule_heels_elevated_goblet_squat: "يجب أداؤه بكعب مرتفع (لوح وزن/كتاب/مكعب بسمك 2-5 سم) طوال التمرين بأكمله"
+      rule_heels_elevated_goblet_squat: "يجب أداؤه بكعب مرتفع (لوح وزن/كتاب/مكعب بسمك 2-5 سم) طوال التمرين بأكمله",
+      timer_skip_ready: "جاهز للمجموعة التالية / تخطي",
+      skip_exercise_temp: "تخطي مؤقتاً",
+      skipped_temp_badge: "تم التخطي مؤقتاً",
+      return_to_exercise: "العودة للتمرين",
+      retroactive_entry_badge: "تعديل يوم سابق",
+      future_day_preview: "معاينة يوم مستقبلي",
+      unlock_early_entry: "السماح بالتسجيل المبكر",
+      set_quick_logged: "تم تسجيل المجموعة {set}: في النطاق ✅",
+      hold_to_change: "انقر للتعديل أو الإعادة",
+      confirmation_title: "تأكيد الإجراء",
+      confirm_btn: "تأكيد",
+      cancel_btn: "إلغاء",
+      delete_btn: "حذف",
+      yes_pain: "نعم، هناك ألم في المفاصل",
+      no_pain: "لا، إجهاد عضلي فقط",
+      delete_photo_title: "حذف صورة التقدم",
+      delete_meal_title: "حذف الوجبة",
+      change_set_outcome_title: "تحديث نتيجة المجموعة",
+      change_set_outcome_desc: "تغيير التصنيف أو إعادة تعيين هذه المجموعة:"
     }
   };
 
