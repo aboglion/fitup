@@ -551,8 +551,9 @@
 }
 
 .exercise-hero-container {
-  /* Clear background for images */
-  background: #ffffff;
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--glow-color, var(--accent-primary)) 18%, transparent) 0%, rgba(255, 255, 255, 0.015) 55%, transparent 80%),
+              linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.28) 100%),
+              var(--bg-card);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   cursor: zoom-in;
   overflow: hidden;
@@ -560,45 +561,53 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /* Softer blur at the bottom for clarity */
-  -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+  min-height: 205px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.3s ease;
 }
 
-/* Delicate color-coded inner glow at the top and sides */
+/* Color-coded subtle inner edge lighting */
 .exercise-hero-container::after {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  /* Two layers: a bright, tight layer at the top, and a softer, thicker smear layer */
-  box-shadow: inset 0 12px 15px -8px var(--glow-color, rgba(0,0,0,0.2)),
-              inset 0 40px 60px -20px var(--glow-color, rgba(0,0,0,0.2));
-  opacity: 0.25; /* Even more transparent as requested */
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1),
+              inset 0 -12px 24px -10px rgba(0, 0, 0, 0.4);
   pointer-events: none;
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
 }
 
 html.light-theme .exercise-hero-container {
-  background: radial-gradient(circle at center, #ffffff 0%, #f0f0f0 100%);
+  background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.06) 0%, rgba(248, 250, 252, 0.8) 60%, #ffffff 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 html.light-theme .exercise-hero-container::after {
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.08);
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.03);
 }
 
 .exercise-hero-image {
   width: 100%;
-  height: 200px;
+  height: 205px;
   object-fit: contain;
   object-position: center;
   display: block;
-  padding: 0;
-  mix-blend-mode: multiply;
-  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+  padding: 10px 16px;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.65));
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.35s ease;
 }
 
 .exercise-card:hover .exercise-hero-image {
-  transform: scale(1.05);
+  transform: scale(1.04) translateY(-2px);
+  filter: drop-shadow(0 14px 32px rgba(0, 0, 0, 0.85)) drop-shadow(0 0 18px color-mix(in srgb, var(--glow-color, var(--accent-primary)) 28%, transparent));
+}
+
+html.light-theme .exercise-hero-image {
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.1));
+}
+
+html.light-theme .exercise-card:hover .exercise-hero-image {
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.15));
 }
 
 .exercise-card-name {
@@ -642,24 +651,30 @@ html.light-theme .exercise-hero-container::after {
 }
 
 .exercise-check {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: var(--radius-sm);
   border: 2px solid var(--border-light);
-  background: transparent;
+  background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 14px;
   color: transparent;
-  transition: all var(--transition-fast);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.exercise-check:hover {
+  border-color: var(--success);
+  transform: scale(1.08);
 }
 
 .exercise-check.checked {
-  background: var(--success);
-  border-color: var(--success);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #34d399;
   color: white;
+  box-shadow: 0 2px 12px rgba(16, 185, 129, 0.45);
 }
 
 .exercise-video-btn {
@@ -856,8 +871,8 @@ input[type="number"] {
 .set-check {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9px;
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
   background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
   display: flex;
@@ -866,21 +881,27 @@ input[type="number"] {
   font-size: 15px;
   font-weight: 800;
   color: var(--text-secondary);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   flex-shrink: 0;
 }
 
 .set-check:hover {
-  border-color: rgba(16, 185, 129, 0.5);
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--success);
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  transform: scale(1.06);
+}
+
+.set-check:active {
+  transform: scale(0.92);
 }
 
 .set-check.checked {
-  background: linear-gradient(135deg, #10b981, #059669);
-  border-color: transparent;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #34d399;
   color: white;
-  box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45), 0 0 6px rgba(52, 211, 153, 0.3);
+  transform: scale(1.02);
 }
 
 /* Zero Decisions Set Outcome Selector Buttons */
@@ -3945,13 +3966,13 @@ html[dir="rtl"] .rpg-video-btn {
   right: 12px;
   max-width: calc(100vw - 24px);
   margin: 0 auto;
-  background: rgba(17, 24, 39, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1.5px solid rgba(59, 130, 246, 0.4);
+  background: rgba(13, 17, 24, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
-  padding: 14px 16px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55), 0 0 25px rgba(59, 130, 246, 0.25);
+  padding: 12px 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), 0 0 20px rgba(59, 130, 246, 0.15);
   transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s ease;
   animation: bannerSlideUp 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }

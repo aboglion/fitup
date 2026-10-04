@@ -25,9 +25,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/main.css?v=127">
-  <link rel="stylesheet" href="css/components.css?v=127">
-  <link rel="stylesheet" href="css/animations.css?v=127">
+  <link rel="stylesheet" href="css/main.css?v=129">
+  <link rel="stylesheet" href="css/components.css?v=129">
+  <link rel="stylesheet" href="css/animations.css?v=129">
   <link rel="manifest" href="manifest.json">
   <link rel="preload" as="image" href="images/anatomy-front.webp">
   <link rel="preload" as="image" href="images/anatomy-back.webp">
@@ -35,6 +35,16 @@
   <script>
     if (localStorage.getItem('theme') === 'light') {
       document.documentElement.classList.add('light-theme');
+    }
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          regs.forEach(r => r.unregister());
+        });
+      }
+      if ('caches' in window) {
+        caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+      }
     }
   </script>
 </head>
@@ -953,7 +963,7 @@
   <script src="js/preloader.js?v=142"></script>
   <script src="js/i18n.js?v=142"></script>
   <script src="js/effects3d.js?v=142"></script>
-  <script src="js/ui.js?v=142"></script>
+  <script src="js/ui.js?v=143"></script>
   <script src="js/db.js?v=142"></script>
   <script src="js/progression.js?v=142"></script>
   <script src="js/crypto.js?v=142"></script>

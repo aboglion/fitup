@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v156';
+const CACHE_NAME = 'fitup-v159-athletic';
 const ASSETS = [
   './',
   './index.html',
@@ -72,37 +72,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-First Strategy for media assets (images, gifs, webp)
+  // Network-First with Cache Fallback for media assets (images, gifs, webp)
   if (url.includes('/images/')) {
     event.respondWith(
-      caches.match(event.request, { ignoreSearch: true })
-        .then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache).catch(() => {});
+            }).catch(() => {});
           }
-          return fetch(event.request)
-            .then((response) => {
-              // ONLY cache status 200 responses.
-              // Status 304 (Not Modified) and 206 (Partial Content) throw a TypeError if passed to cache.put().
-              if (response && response.status === 200) {
-                const responseToCache = response.clone();
-                caches.open(CACHE_NAME).then((cache) => {
-                  cache.put(event.request, responseToCache).catch((err) => {
-                    console.warn('[SW] Cache put failed for image:', event.request.url, err);
-                  });
-                }).catch(() => {});
-              }
-              return response;
-            })
-            .catch(() => {
-              return caches.match(event.request, { ignoreSearch: true }).then((fallback) => {
-                if (fallback) return fallback;
-                return new Response('', { status: 404, statusText: 'Not Found' });
-              });
-            });
+          return response;
         })
         .catch(() => {
-          return new Response('', { status: 404, statusText: 'Not Found' });
+          return caches.match(event.request, { ignoreSearch: true }).then((fallback) => {
+            if (fallback) return fallback;
+            return new Response('', { status: 404, statusText: 'Not Found' });
+          });
         })
     );
     return;

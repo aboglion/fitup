@@ -1,22 +1,25 @@
 /* ===== CSS Custom Properties / Design Tokens ===== */
 :root {
-  /* Colors - Dark Theme */
-  --bg-primary: #0a0e17;
-  --bg-secondary: #111827;
-  --bg-card: #1a2236;
-  --bg-card-hover: #1f2a42;
-  --bg-elevated: #243049;
-  --bg-input: #0d1321;
+  /* Colors - High-Energy Athletic Dark Theme */
+  --bg-primary: #080a0f;
+  --bg-secondary: #0d1118;
+  --bg-card: #121722;
+  --bg-card-hover: #171d2b;
+  --bg-elevated: #1a2233;
+  --bg-input: #0b0f17;
 
-  --text-primary: #f0f4fc;
-  --text-secondary: #8b95b0;
-  --text-muted: #5a6380;
-  --text-accent: #60a5fa;
+  --text-primary: #f1f5fc;
+  --text-secondary: #919db4;
+  --text-muted: #5e6b84;
+  --text-accent: #38bdf8;
 
-  --accent-primary: #2563eb;
-  --accent-secondary: #1d4ed8;
+  --accent-volt: #d4ff00;
+  --accent-volt-glow: 0 0 20px rgba(212, 255, 0, 0.38);
+
+  --accent-primary: #3b82f6;
+  --accent-secondary: #2563eb;
   --accent-gradient: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
-  --accent-glow: 0 4px 16px rgba(37, 99, 235, 0.35);
+  --accent-glow: 0 4px 18px rgba(59, 130, 246, 0.4);
 
   --success: #10b981;
   --success-bg: rgba(16, 185, 129, 0.12);
@@ -241,18 +244,21 @@ html[dir="ltr"] .nav-link {
   left: 0;
   right: 0;
   height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
-  background: rgba(17, 24, 39, 0.75);
-  border-top: 1px solid var(--border-color);
+  background: rgba(9, 12, 18, 0.85);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 100;
   justify-content: space-around;
   align-items: center;
   padding: 0 var(--space-sm) env(safe-area-inset-bottom, 0px);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.35);
 }
 
 html.light-theme .bottom-nav {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.85);
+  border-top-color: rgba(0, 0, 0, 0.06);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
 }
 
 .bottom-nav-link {
