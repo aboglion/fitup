@@ -1,16 +1,18 @@
 /* ===== CSS Custom Properties / Design Tokens ===== */
 :root {
-  /* Colors - High-Energy Athletic Dark Theme */
-  --bg-primary: #080a0f;
-  --bg-secondary: #0d1118;
-  --bg-card: #121722;
-  --bg-card-hover: #171d2b;
-  --bg-elevated: #1a2233;
-  --bg-input: #0b0f17;
+  /* Colors - "Night Forest" Athletic Dark Theme
+     Deep green-charcoal instead of cold blue-black: feels alive & energising,
+     harmonises with the volt/lime accent and lets figures pop. */
+  --bg-primary: #0b100d;
+  --bg-secondary: #101712;
+  --bg-card: #151e18;
+  --bg-card-hover: #1b2620;
+  --bg-elevated: #223028;
+  --bg-input: #0d1410;
 
-  --text-primary: #f1f5fc;
-  --text-secondary: #919db4;
-  --text-muted: #5e6b84;
+  --text-primary: #eef5ef;
+  --text-secondary: #9db0a2;
+  --text-muted: #63776a;
   --text-accent: #38bdf8;
 
   --accent-volt: #d4ff00;
@@ -106,6 +108,15 @@ body {
   overflow-x: hidden;
 }
 
+/* Dark: subtle energising ambient light (volt-lime top, emerald bottom) */
+html:not(.light-theme) body {
+  background:
+    radial-gradient(900px 520px at 100% -8%, rgba(163, 230, 53, 0.09), transparent 60%),
+    radial-gradient(800px 500px at -10% 108%, rgba(16, 185, 129, 0.08), transparent 60%),
+    linear-gradient(180deg, #0c120e 0%, #0a0e0b 100%);
+  background-attachment: fixed;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
@@ -142,7 +153,7 @@ body {
   top: 0;
   width: var(--nav-width);
   height: 100vh;
-  background: rgba(17, 24, 39, 0.75);
+  background: rgba(16, 24, 19, 0.78);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   display: flex;
@@ -163,7 +174,7 @@ html[dir="ltr"] .main-nav {
 }
 
 html.light-theme .main-nav {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(240, 246, 231, 0.82);
 }
 
 .nav-brand {
@@ -244,7 +255,7 @@ html[dir="ltr"] .nav-link {
   left: 0;
   right: 0;
   height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
-  background: rgba(9, 12, 18, 0.85);
+  background: rgba(11, 17, 13, 0.86);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 100;
   justify-content: space-around;
@@ -256,9 +267,9 @@ html[dir="ltr"] .nav-link {
 }
 
 html.light-theme .bottom-nav {
-  background: rgba(255, 255, 255, 0.85);
-  border-top-color: rgba(0, 0, 0, 0.06);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04);
+  background: rgba(240, 246, 231, 0.88);
+  border-top-color: rgba(95, 154, 58, 0.18);
+  box-shadow: 0 -4px 20px rgba(40, 66, 24, 0.06);
 }
 
 .bottom-nav-link {
@@ -803,26 +814,44 @@ body.deload-mode .nav-title {
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-/* ===== Light Theme ===== */
+/* ===== Light Theme — "Pistachio Fresh" =====
+   Soft pistachio-cream base instead of glaring white: calmer on the eyes,
+   green = vitality/growth, paired with the blue accent and warm orange. */
 html.light-theme {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f1f5f9;
-  --bg-elevated: #e2e8f0;
-  --bg-input: #f8fafc;
+  --bg-primary: #edf3e3;
+  --bg-secondary: #f3f7ec;
+  --bg-card: #f9fbf4;
+  --bg-card-hover: #eef4e4;
+  --bg-elevated: #dde8cc;
+  --bg-input: #f2f6ea;
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-primary: #16261b;
+  --text-secondary: #4a5d4e;
+  --text-muted: #879883;
   --text-accent: #2563eb;
 
-  --border-color: rgba(0, 0, 0, 0.1);
-  --border-light: rgba(0, 0, 0, 0.05);
+  --pistachio: #93c572;
+  --pistachio-deep: #5f9a3a;
+  --pistachio-soft: rgba(147, 197, 114, 0.18);
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --border-color: rgba(64, 98, 40, 0.13);
+  --border-light: rgba(64, 98, 40, 0.07);
+
+  --shadow-sm: 0 1px 3px rgba(40, 66, 24, 0.08);
+  --shadow-md: 0 4px 12px rgba(40, 66, 24, 0.09);
+  --shadow-lg: 0 10px 24px rgba(40, 66, 24, 0.11);
+}
+
+html.light-theme body {
+  background:
+    radial-gradient(1100px 600px at 100% -10%, rgba(147, 197, 114, 0.30), transparent 60%),
+    radial-gradient(900px 520px at -10% 110%, rgba(190, 222, 120, 0.22), transparent 60%),
+    linear-gradient(180deg, #eef4e4 0%, #e8f0dc 100%);
+  background-attachment: fixed;
+}
+
+html.light-theme ::selection {
+  background: rgba(147, 197, 114, 0.45);
 }
 
 html.light-theme .set-row {
@@ -831,8 +860,13 @@ html.light-theme .set-row {
 }
 
 html.light-theme .set-input-pill {
-  background: #ffffff;
+  background: #fbfdf7;
   border-color: rgba(0, 0, 0, 0.12);
+}
+
+html.light-theme .set-input-pill .set-input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.75;
 }
 
 html.light-theme .set-input-pill:has([data-field="weight"]) {

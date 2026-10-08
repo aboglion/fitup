@@ -551,9 +551,8 @@
 }
 
 .exercise-hero-container {
-  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--glow-color, var(--accent-primary)) 18%, transparent) 0%, rgba(255, 255, 255, 0.015) 55%, transparent 80%),
-              linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.28) 100%),
-              var(--bg-card);
+  background: radial-gradient(ellipse 70% 75% at 50% 45%, rgba(214, 240, 190, 0.10) 0%, color-mix(in srgb, var(--glow-color, #84cc16) 12%, transparent) 38%, transparent 75%),
+              linear-gradient(180deg, #1a2620 0%, #121a15 100%);
   border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   cursor: zoom-in;
   overflow: hidden;
@@ -578,8 +577,8 @@
 }
 
 html.light-theme .exercise-hero-container {
-  background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.06) 0%, rgba(248, 250, 252, 0.8) 60%, #ffffff 100%);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: radial-gradient(ellipse 70% 75% at 50% 45%, #fbfdf6 0%, #eef5e3 55%, #e1ecd0 100%);
+  border-bottom: 1px solid rgba(95, 154, 58, 0.14);
 }
 
 html.light-theme .exercise-hero-container::after {
@@ -593,7 +592,7 @@ html.light-theme .exercise-hero-container::after {
   object-position: center;
   display: block;
   padding: 10px 16px;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.65));
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
   transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.35s ease;
 }
 
@@ -1600,7 +1599,7 @@ html[dir="ltr"] .set-modal-option-btn {
   width: 140px;
   min-width: 140px;
   height: 160px;
-  background: #ffffff;
+  background: radial-gradient(ellipse 75% 75% at 50% 45%, #fbfdf6 0%, #eaf2de 70%, #dde9cc 100%);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -1610,7 +1609,7 @@ html[dir="ltr"] .set-modal-option-btn {
 }
 
 :root:not(.light-theme) .guide-card-image-container {
-  background: #ffffff;
+  background: radial-gradient(ellipse 75% 75% at 50% 45%, #24332a 0%, #18221c 70%, #121a15 100%);
 }
 
 .guide-card-image-container.diff-beginner {
@@ -2010,7 +2009,7 @@ html[dir="ltr"] .set-modal-option-btn {
 }
 
 html.light-theme .toast {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(246, 250, 239, 0.96);
 }
 
 .toast.success {
@@ -2050,7 +2049,7 @@ html.light-theme .toast {
 }
 
 html.light-theme .modal-overlay {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(232, 241, 220, 0.35);
 }
 
 .modal-overlay.hidden {
@@ -2073,7 +2072,7 @@ html.light-theme .modal-overlay {
 }
 
 html.light-theme .modal {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(246, 250, 239, 0.97);
   border-color: rgba(0, 0, 0, 0.1);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
 }
@@ -2285,7 +2284,7 @@ html[dir="rtl"] .rest-timer {
 }
 
 html.light-theme .rest-timer {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(243, 248, 235, 0.78);
   border-color: rgba(59, 130, 246, 0.35);
 }
 
@@ -3989,7 +3988,7 @@ html[dir="rtl"] .login-prompt-banner {
 }
 
 html.light-theme .login-prompt-banner {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(243, 248, 235, 0.7);
   border-color: rgba(59, 130, 246, 0.4);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15), 0 0 20px rgba(59, 130, 246, 0.15);
 }
