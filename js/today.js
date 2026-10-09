@@ -4597,10 +4597,10 @@ const TodayPage = (() => {
 
     const bodyHTML = `
       <div style="display: flex; flex-direction: column; gap: 14px; width: 100%;">
-        <div style="background: var(--bg-card, rgba(0,0,0,0.3)); border: 1px solid var(--border-color, rgba(255,255,255,0.1)); border-radius: 14px; overflow: hidden; padding: 12px; text-align: center;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; overflow: hidden; padding: 12px; text-align: center;">
           <div style="font-size: 18px; font-weight: 900; color: var(--text-primary); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
             <span>${subTitle}</span>
-            <span style="font-size: 12px; font-weight: 700; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; padding: 2px 8px; border-radius: 6px;">🎯 ${subTarget}</span>
+            <span style="font-size: 12px; font-weight: 700; background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-secondary); padding: 2px 8px; border-radius: 6px;">🎯 ${subTarget}</span>
           </div>
           <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 10px 0; line-height: 1.4;">${subDesc}</p>
           <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 220px; background: #ffffff; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);">
@@ -4775,10 +4775,10 @@ const TodayPage = (() => {
 
     const bodyHTML = `
       <div style="display: flex; flex-direction: column; gap: 14px; width: 100%;">
-        <div style="background: var(--bg-card, rgba(0,0,0,0.3)); border: 1px solid var(--border-color, rgba(255,255,255,0.1)); border-radius: 14px; overflow: hidden; padding: 12px; text-align: center;">
+        <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; overflow: hidden; padding: 12px; text-align: center;">
           <div style="font-size: 18px; font-weight: 900; color: var(--text-primary); margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
             <span>${subTitle}</span>
-            <span style="font-size: 12px; font-weight: 700; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 2px 8px; border-radius: 6px;">🎯 ${subTarget}</span>
+            <span style="font-size: 12px; font-weight: 700; background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-secondary); padding: 2px 8px; border-radius: 6px;">🎯 ${subTarget}</span>
           </div>
           <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 10px 0; line-height: 1.4;">${subDesc}</p>
           <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 220px; background: #ffffff; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);">

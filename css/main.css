@@ -7,8 +7,13 @@
   --bg-secondary: #101712;
   --bg-card: #151e18;
   --bg-card-hover: #1b2620;
+  --bg-hover: #1b2620;
   --bg-elevated: #223028;
   --bg-input: #0d1410;
+
+  --modal-overlay-bg: rgba(6, 10, 8, 0.78);
+  --modal-border: rgba(255, 255, 255, 0.09);
+  --modal-border-highlight: rgba(163, 230, 53, 0.22);
 
   --text-primary: #eef5ef;
   --text-secondary: #9db0a2;
@@ -822,8 +827,13 @@ html.light-theme {
   --bg-secondary: #f3f7ec;
   --bg-card: #f9fbf4;
   --bg-card-hover: #eef4e4;
+  --bg-hover: #eef4e4;
   --bg-elevated: #dde8cc;
   --bg-input: #f2f6ea;
+
+  --modal-overlay-bg: rgba(20, 32, 22, 0.45);
+  --modal-border: rgba(64, 98, 40, 0.16);
+  --modal-border-highlight: rgba(147, 197, 114, 0.4);
 
   --text-primary: #16261b;
   --text-secondary: #4a5d4e;

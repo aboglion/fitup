@@ -1185,8 +1185,8 @@ const ExercisesPage = (() => {
     if (ex.name.toLowerCase().includes('deep mobility')) {
       const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
       subExercisesHtml = `
-        <div style="background: rgba(16, 185, 129, 0.08); border-radius: 12px; padding: 16px; border: 1px solid rgba(16, 185, 129, 0.3); margin-top: 8px;">
-          <h3 style="color: #34d399; font-size: 16px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; text-align: center; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <div style="background: var(--bg-card); border-radius: 12px; padding: 16px; border: 1px solid var(--border-light); margin-top: 8px;">
+          <h3 style="color: var(--success, #10b981); font-size: 16px; font-weight: 800; margin-bottom: 12px; text-transform: uppercase; text-align: center; letter-spacing: 1px; display: flex; align-items: center; justify-content: center; gap: 8px;">
             <span>🧘</span> <span>${I18n.t('deep_mobility_title')}</span>
           </h3>
           <div style="display: flex; flex-direction: column; gap: 10px;">
@@ -1197,15 +1197,17 @@ const ExercisesPage = (() => {
         const gifUrl = UI.getGifUrl(sub.gif);
 
         return `
-                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 12px; cursor: pointer;"
-                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${gifUrl}', 'Deep Mobility Protocol')">
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
+                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${gifUrl}', 'Deep Mobility Protocol')"
+                     onmouseover="this.style.borderColor='var(--success)'; this.style.transform='translateY(-2px)';"
+                     onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='none';">
                   <div style="width: 52px; height: 52px; min-width: 52px; border-radius: 8px; overflow: hidden; background: #ffffff; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;">
                     <img src="${gifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
                   </div>
                   <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
                       <span style="font-weight: 800; font-size: 13px; color: var(--text-primary);">${idx + 1}. ${subTitle}</span>
-                      <span style="font-size: 11px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 6px; border-radius: 4px; font-weight: 700; flex-shrink: 0;">🎯 ${subTarget}</span>
+                      <span style="font-size: 11px; background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-secondary); padding: 1px 6px; border-radius: 4px; font-weight: 700; flex-shrink: 0;">🎯 ${subTarget}</span>
                     </div>
                     <span style="font-size: 11px; color: var(--text-muted); margin-top: 3px; line-height: 1.3;">${subDesc}</span>
                   </div>
@@ -1220,12 +1222,12 @@ const ExercisesPage = (() => {
       const subB = UI.MICRO_MOBILITY_B_SUB_EXERCISES || [];
 
       const renderGroupHTML = (title, desc, exercises, badge) => `
-        <div style="background: rgba(59, 130, 246, 0.08); border-radius: 12px; padding: 14px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 10px;">
+        <div style="background: var(--bg-card); border-radius: 12px; padding: 14px; border: 1px solid var(--border-light); margin-top: 10px;">
           <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-            <span style="color: #60a5fa; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
-              <span>⚡</span> <span>${title}</span>
+            <span style="color: var(--text-primary); font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+              <span style="color: var(--accent-volt, #d4ff00);">⚡</span> <span>${title}</span>
             </span>
-            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 2px 8px; border-radius: 6px; font-weight: 700;">${badge}</span>
+            <span style="font-size: 11px; background: var(--bg-elevated); color: var(--text-secondary); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-color); font-weight: 700;">${badge}</span>
           </div>
           <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 10px 0;">${desc}</p>
           <div style="display: flex; flex-direction: column; gap: 8px;">
@@ -1235,15 +1237,17 @@ const ExercisesPage = (() => {
         const subDesc = I18n.t(sub.descKey);
         const gifUrl = UI.getGifUrl(sub.gif);
         return `
-                <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; cursor: pointer;"
-                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${gifUrl}', '${title.replace(/'/g, "\\\'")}')">
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
+                     onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${gifUrl}', '${title.replace(/'/g, "\\\'")}')"
+                     onmouseover="this.style.borderColor='var(--accent-primary)'; this.style.transform='translateY(-2px)';"
+                     onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='none';">
                   <div style="width: 44px; height: 44px; min-width: 44px; border-radius: 8px; overflow: hidden; background: #ffffff; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;">
                     <img src="${gifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
                   </div>
                   <div style="display: flex; flex-direction: column; flex: 1; min-width: 0;">
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
                       <span style="font-weight: 800; font-size: 13px; color: var(--text-primary);">${idx + 1}. ${subTitle}</span>
-                      <span style="font-size: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 6px; border-radius: 4px; font-weight: 700; flex-shrink: 0;">🎯 ${subTarget}</span>
+                      <span style="font-size: 10px; background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-secondary); padding: 1px 6px; border-radius: 4px; font-weight: 700; flex-shrink: 0;">🎯 ${subTarget}</span>
                     </div>
                     <span style="font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.3;">${subDesc}</span>
                   </div>

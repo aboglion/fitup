@@ -784,16 +784,16 @@ const UI = (() => {
       const ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (exData.rule || '');
 
       metadataHTML = `
-        <div style="background: var(--bg-hover, rgba(255,255,255,0.05)); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light, rgba(255,255,255,0.1)); display: flex; flex-direction: column; gap: 8px;">
+        <div style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px;">
           <div style="font-size: 13px; font-weight: 800; color: var(--accent-primary, #3b82f6); display: flex; align-items: center; gap: 6px;">
             <span>📋</span> <span>${I18n.t('zero_decisions_spec', 'מפרט ופרוטוקול ביצוע ("Zero Decisions")')}</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; font-size: 12px;">
-            ${exData.tempo ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">⏱️ <b>${I18n.t('label_tempo', 'טמפו:')}</b> ${exData.tempo}</div>` : ''}
-            ${restText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">⏳ <b>${I18n.t('label_rest', 'מנוחה:')}</b> ${restText}</div>` : ''}
-            ${repText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">🎯 <b>${I18n.t('label_rep_window', 'חלון חזרות:')}</b> ${repText}</div>` : ''}
-            ${exData.structure ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px;">🏗️ <b>${I18n.t('label_structure', 'מבנה:')}</b> ${exData.structure}</div>` : ''}
-            ${weightText ? `<div style="background: rgba(0,0,0,0.25); padding: 6px 10px; border-radius: 8px; grid-column: 1/-1;">⚖️ <b>${I18n.t('label_starting_weight', 'משקל התחלתי:')}</b> ${weightText}</div>` : ''}
+            ${exData.tempo ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px;">⏱️ <b>${I18n.t('label_tempo', 'טמפו:')}</b> ${exData.tempo}</div>` : ''}
+            ${restText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px;">⏳ <b>${I18n.t('label_rest', 'מנוחה:')}</b> ${restText}</div>` : ''}
+            ${repText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px;">🎯 <b>${I18n.t('label_rep_window', 'חלון חזרות:')}</b> ${repText}</div>` : ''}
+            ${exData.structure ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px;">🏗️ <b>${I18n.t('label_structure', 'מבנה:')}</b> ${exData.structure}</div>` : ''}
+            ${weightText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px; grid-column: 1/-1;">⚖️ <b>${I18n.t('label_starting_weight', 'משקל התחלתי:')}</b> ${weightText}</div>` : ''}
           </div>
           ${ruleText ? `
             <div style="margin-top: 4px; padding: 8px 10px; background: rgba(245, 158, 11, 0.12); border-right: 3px solid #f59e0b; border-radius: 6px; font-size: 12px; color: var(--text-primary);">
@@ -821,10 +821,10 @@ const UI = (() => {
 
     const headerBoxHTML = isMobilitySub ? `
       <button type="button" class="btn-secondary" 
-              style="width: 130px; height: 130px; min-width: 130px; border-radius: 14px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; color: #93c5fd; font-weight: 800; font-size: 13px; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.25); flex-shrink: 0;"
+              style="width: 130px; height: 130px; min-width: 130px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; color: var(--text-primary); font-weight: 800; font-size: 13px; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.25); flex-shrink: 0;"
               onclick="UI.showImageModal('${parentTitle.replace(/'/g, "\\'")}')"
-              onmouseover="this.style.background='rgba(59, 130, 246, 0.25)'; this.style.transform='translateY(-2px)';"
-              onmouseout="this.style.background='rgba(59, 130, 246, 0.15)'; this.style.transform='none';"
+              onmouseover="this.style.background='var(--bg-card-hover)'; this.style.borderColor='var(--accent-primary)'; this.style.transform='translateY(-2px)';"
+              onmouseout="this.style.background='var(--bg-card)'; this.style.borderColor='var(--border-light)'; this.style.transform='none';"
               title="${I18n.t('back_to_protocol', 'חזור לפרוטוקול המלא')}">
         <span style="font-size: 24px;">↩️</span>
         <span style="font-size: 12px; font-weight: 800;">${I18n.t('back_btn', 'חזור לפרוטוקול')}</span>
@@ -865,10 +865,10 @@ const UI = (() => {
     if (lowerTitle.includes('deep mobility')) {
       const subExercises = DEEP_MOBILITY_SUB_EXERCISES || [];
       mediaHTML = `
-        <div style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
-          <div style="font-weight: 800; font-size: 14px; color: #34d399; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-            <span>🧘 ${I18n.t('deep_mobility_title')} (${subExercises.length} ${I18n.t('unit_exercises', 'תרגילים')})</span>
-            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">${I18n.t('full_protocol_badge', 'פרוטוקול מלא')}</span>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-weight: 800; font-size: 14px; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+            <span style="display: flex; align-items: center; gap: 6px;"><span style="color: var(--success, #10b981);">🧘</span> <span>${I18n.t('deep_mobility_title')} (${subExercises.length} ${I18n.t('unit_exercises', 'תרגילים')})</span></span>
+            <span style="font-size: 11px; background: var(--bg-elevated); color: var(--text-secondary); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-color);">${I18n.t('full_protocol_badge', 'פרוטוקול מלא')}</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
             ${subExercises.map((sub, idx) => {
@@ -876,16 +876,16 @@ const UI = (() => {
               const subTarget = I18n.t(sub.targetKey);
               const subGifUrl = getGifUrl(sub.gif);
               return `
-                <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
                      onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}', 'Deep Mobility Protocol')"
-                     onmouseover="this.style.borderColor='rgba(52, 211, 153, 0.6)'"
-                     onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.12)'">
+                     onmouseover="this.style.borderColor='var(--success)'; this.style.transform='translateY(-2px)';"
+                     onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='none';">
                   <div style="width: 100%; height: 95px; border-radius: 8px; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center; position: relative;">
                     <img src="${subGifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
                     <span style="position: absolute; top: 4px; right: 4px; font-size: 10px; font-weight: 800; background: rgba(0,0,0,0.75); color: #34d399; padding: 1px 5px; border-radius: 4px;">#${idx + 1}</span>
                   </div>
                   <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); line-height: 1.2; word-break: break-word;">${subTitle}</div>
-                  <span style="font-size: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 5px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
+                  <span style="font-size: 10px; background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-secondary); padding: 1px 5px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
                 </div>
               `;
             }).join('')}
@@ -900,10 +900,10 @@ const UI = (() => {
       const isVariantA = subExercises === MICRO_MOBILITY_A_SUB_EXERCISES;
       const variantTitle = isVariantA ? I18n.t('micro_mobility_a_title') : I18n.t('micro_mobility_b_title');
       mediaHTML = `
-        <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
-          <div style="font-weight: 800; font-size: 14px; color: #60a5fa; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-            <span>⚡ ${variantTitle} (${subExercises.length} ${I18n.t('unit_exercises', 'תרגילים')})</span>
-            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(59,130,246,0.3);">${I18n.t('fast_protocol_badge', 'פרוטוקול מהיר')}</span>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 12px;">
+          <div style="font-weight: 800; font-size: 14px; color: var(--text-primary); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+            <span style="display: flex; align-items: center; gap: 6px;"><span style="color: var(--accent-volt, #d4ff00);">⚡</span> <span>${variantTitle} (${subExercises.length} ${I18n.t('unit_exercises', 'תרגילים')})</span></span>
+            <span style="font-size: 11px; background: var(--bg-elevated); color: var(--text-secondary); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-color);">${I18n.t('fast_protocol_badge', 'פרוטוקול מהיר')}</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
             ${subExercises.map((sub, idx) => {
@@ -911,16 +911,16 @@ const UI = (() => {
               const subTarget = I18n.t(sub.targetKey);
               const subGifUrl = getGifUrl(sub.gif);
               return `
-                <div style="background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
+                <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
                      onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}', '${variantTitle.replace(/'/g, "\\'")}')"
-                     onmouseover="this.style.borderColor='rgba(96, 165, 250, 0.6)'"
-                     onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.12)'">
+                     onmouseover="this.style.borderColor='var(--accent-primary)'; this.style.transform='translateY(-2px)';"
+                     onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='none';">
                   <div style="width: 100%; height: 95px; border-radius: 8px; overflow: hidden; background: #ffffff; display: flex; align-items: center; justify-content: center; position: relative;">
                     <img src="${subGifUrl}" style="width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply;" alt="${subTitle}" loading="lazy">
-                    <span style="position: absolute; top: 4px; right: 4px; font-size: 10px; font-weight: 800; background: rgba(0,0,0,0.75); color: #60a5fa; padding: 1px 5px; border-radius: 4px;">#${idx + 1}</span>
+                    <span style="position: absolute; top: 4px; right: 4px; font-size: 10px; font-weight: 800; background: rgba(0,0,0,0.75); color: #fff; padding: 1px 5px; border-radius: 4px;">#${idx + 1}</span>
                   </div>
                   <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); line-height: 1.2; word-break: break-word;">${subTitle}</div>
-                  <span style="font-size: 10px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; padding: 1px 5px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
+                  <span style="font-size: 10px; background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-secondary); padding: 1px 5px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
                 </div>
               `;
             }).join('')}
