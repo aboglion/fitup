@@ -32,48 +32,9 @@
     getMediaUrls: function() {
       const urlSet = new Set(this.staticAssets);
 
-      const isCardioOrNoImage = (name, noImage) => {
-        if (noImage) return true;
-        const lower = name.toLowerCase();
-        return lower.includes('walking') || lower.includes('zone 2') || lower.includes('vo2 max') || lower.includes('cardio');
-      };
-
-      // 1. Extract from TRAINING_DATA if loaded
-      if (window.TRAINING_DATA) {
-        const addEx = (name, noImage) => {
-          if (!name || isCardioOrNoImage(name, noImage)) return;
-          const cleanName = name.trim();
-          const pngName = cleanName.replace(/\//g, '-').toUpperCase();
-          urlSet.add(`images/exercises/${pngName}.png`);
-          urlSet.add(`images/gifs/${cleanName}.gif`);
-        };
-
-        if (Array.isArray(window.TRAINING_DATA.exercises)) {
-          window.TRAINING_DATA.exercises.forEach(ex => {
-            if (ex && ex.name) addEx(ex.name, ex.noImage);
-            if (ex && Array.isArray(ex.stages)) {
-              ex.stages.forEach(st => addEx(st));
-            }
-          });
-        }
-
-        if (Array.isArray(window.TRAINING_DATA.daily)) {
-          window.TRAINING_DATA.daily.forEach(day => {
-            if (Array.isArray(day.exercises)) {
-              day.exercises.forEach(ex => ex && ex.name && addEx(ex.name, ex.noImage));
-            } else if (typeof day === 'object' && day !== null) {
-              Object.keys(day).forEach(k => {
-                if (k.endsWith('- Exercise') && typeof day[k] === 'string') {
-                  addEx(day[k]);
-                }
-              });
-            }
-          });
-        }
-      }
-
-      // 2. Comprehensive GIF list on disk to ensure all GIFs download in background
+      // 1. Comprehensive GIF list on disk to ensure all GIFs download in background
       const allGifsOnDisk = [
+        "90-90 Hip Stretch.gif",
         "Ankle Dorsiflexion Mobility.gif",
         "Arm Block - DB Curl.gif",
         "Arm Block - DB Lateral Raise.gif",
@@ -86,12 +47,15 @@
         "Band Pull-Apart.gif",
         "Banded Glute Bridge.gif",
         "Bodyweight Squat.gif",
+        "Brisk Walking.gif",
         "Bulgarian Split Squat.gif",
+        "Cat-Cow.gif",
         "Chin-Up Negative.gif",
         "Chin-Up Progression.gif",
         "Chin-Up.gif",
         "Chin-up Negative.gif",
         "Chin-up.gif",
+        "Couch Stretch.gif",
         "DB BSS (Goblet).gif",
         "DB BSS.gif",
         "DB Bulgarian Split Squat.gif",
@@ -99,6 +63,7 @@
         "DB Floor Press.gif",
         "DB Glute Bridge.gif",
         "DB Hammer Curl.gif",
+        "DB Hip Thrust.gif",
         "DB Lateral Raise.gif",
         "DB OH Triceps Ext.gif",
         "DB Overhead Triceps Extension.gif",
@@ -108,17 +73,10 @@
         "Dead Bug.gif",
         "Dead Hang.gif",
         "Deep Mobility Protocol.gif",
-        "Cat-Cow.gif",
-        "90-90 Hip Stretch.gif",
-        "Thoracic Rotations.gif",
-        "Couch Stretch.gif",
-        "Sleeper Stretch.gif",
-        "Kneeling Hip Flexor Stretch.gif",
         "Deep Squat Hold.gif",
-        "Doorway Chest Stretch.gif",
-        "Worlds Greatest Stretch.gif",
         "Deficit Push-Up.gif",
         "Diamond Push-Up.gif",
+        "Doorway Chest Stretch.gif",
         "Dumbbell Biceps Curl.gif",
         "Dumbbell Floor Press.gif",
         "Dumbbell Hammer Curl.gif",
@@ -136,15 +94,18 @@
         "Full Pistol Squat.gif",
         "Glute Bridge.gif",
         "Hammer Curl.gif",
+        "Heels-Elevated Goblet Squat.gif",
         "High Knees.gif",
         "Hollow Body Hold.gif",
         "Hollow Body Rock.gif",
         "Incline Push-Up.gif",
+        "Kneeling Hip Flexor Stretch.gif",
         "L-Sit Progression.gif",
         "L-sit Tuck (Bars).gif",
         "L-sit on Chair.gif",
         "One Leg Extended.gif",
         "One-Arm DB Row.gif",
+        "PISTOL SQUAT.gif",
         "PULL-UP NEGATIVE..gif",
         "Pallof Press (Band).gif",
         "Pallof Press Progression.gif",
@@ -163,6 +124,7 @@
         "Push-Up Volume (Day 5).gif",
         "Push-up Bars Progression.gif",
         "Push-up.gif",
+        "Relaxed Walking.gif",
         "Reverse Lunge (Goblet).gif",
         "Reverse Lunge + DB.gif",
         "Reverse Lunge.gif",
@@ -178,6 +140,7 @@
         "Single-Leg Calf Raise.gif",
         "Single-Leg Glute Bridge.gif",
         "Single-Leg RDL.gif",
+        "Sleeper Stretch.gif",
         "Standing Single-Leg Calf Raise.gif",
         "Suitcase Carry.gif",
         "TRX Face Pull (Angle 1).gif",
@@ -186,9 +149,11 @@
         "TRX Face Pull.gif",
         "TRX Row.gif",
         "TRX Y-T-W.gif",
+        "Thoracic Rotations.gif",
         "Towel Hang.gif",
         "Tuck Hold (Bars).gif",
         "Tuck Hold (Chair).gif",
+        "VO2 Max Norwegian.gif",
         "Walking Lunge (Goblet).gif",
         "Wall Handstand.gif",
         "Wall Slides.gif",
@@ -198,6 +163,7 @@
         "Weighted Deficit Push-Up.gif",
         "Weighted Diamond Push-Up.gif",
         "Weighted Pull-Up.gif",
+        "Worlds Greatest Stretch.gif",
         "Wrist Rocks.gif"
 ];
 
@@ -205,12 +171,14 @@
         urlSet.add(`images/gifs/${gifName}`);
       });
 
-      // 3. Comprehensive PNG list on disk
+      // 2. Comprehensive PNG list on disk
       const allPngsOnDisk = [
         "ARM BLOCK - DB CURL.png",
         "ARM BLOCK - DB LATERAL RAISE.png",
         "ARM BLOCK - DB OH TRICEPS EXT.png",
         "ARM BLOCK - DB OVERHEAD TRICEPS EXT.png",
+        "ARM BLOCK - SINGLE-ARM CURL.png",
+        "ARM BLOCK - SINGLE-ARM LATERAL RAISE.png",
         "ARM CIRCLES.png",
         "BAND NECK FLEXION & EXTENSION.png",
         "BAND NECK FLEXION.png",
@@ -227,6 +195,7 @@
         "DB FLOOR PRESS.png",
         "DB GLUTE BRIDGE.png",
         "DB HAMMER CURL.png",
+        "DB HIP THRUST.png",
         "DB LATERAL RAISE.png",
         "DB OH TRICEPS EXT.png",
         "DB OVERHEAD TRICEPS EXTENSION.png",
@@ -244,15 +213,21 @@
         "FULL L-SIT.png",
         "FULL PISTOL SQUAT.png",
         "GLUTE BRIDGE.png",
+        "GOBLET BULGARIAN SPLIT SQUAT.png",
+        "GOBLET REVERSE LUNGE.png",
+        "GOBLET ROMANIAN DEADLIFT.png",
         "HAMMER CURL.png",
+        "HEELS-ELEVATED GOBLET SQUAT.png",
         "HIGH KNEES.png",
         "HOLLOW BODY HOLD.png",
         "INCLINE PUSH-UP.png",
         "L-SIT PROGRESSION.png",
         "L-SIT TUCK (BARS).png",
-        "MICRO MOBILITY PROTOCOL.png",
+        "MICRO MOBILITY A (UPPER FOCUS).png",
         "MICRO MOBILITY A.png",
+        "MICRO MOBILITY B (LOWER FOCUS).png",
         "MICRO MOBILITY B.png",
+        "MICRO MOBILITY PROTOCOL.png",
         "ONE-ARM DB ROW.png",
         "ONE-LEG EXTENDED L-SIT.png",
         "PALLOF HOLD.png",
@@ -263,6 +238,7 @@
         "PIKE PUSH-UP.png",
         "PISTOL SQUAT PROGRESSION.png",
         "PISTOL SQUAT TO CHAIR.png",
+        "PISTOL SQUAT.png",
         "PULL-UP (OVERHAND).png",
         "PULL-UP NEGATIVE.png",
         "PULL-UP PROGRESSION.png",
@@ -281,6 +257,8 @@
         "SEATED SINGLE-LEG CALF RAISE.png",
         "SINGLE-ARM CURL.png",
         "SINGLE-ARM FLOOR PRESS.png",
+        "SINGLE-ARM HAMMER CURL.png",
+        "SINGLE-ARM LATERAL RAISE.png",
         "SINGLE-ARM SEATED OHP.png",
         "SINGLE-LEG CALF RAISE.png",
         "SINGLE-LEG RDL.png",
@@ -294,6 +272,7 @@
         "TRX ROW.png",
         "TRX Y-T-W.png",
         "TUCK HOLD (CHAIR).png",
+        "TUCK L-SIT.png",
         "VO2 MAX NORWEGIAN 4X4.png",
         "WALKING LUNGE (GOBLET).png",
         "WALL HANDSTAND.png",
@@ -311,6 +290,31 @@
         urlSet.add(`images/exercises/${pngName}`);
       });
 
+      // 3. Dynamic resolve for active training plan exercises via UI URL resolvers
+      if (window.TRAINING_DATA && window.UI && typeof window.UI.getImageUrl === 'function') {
+        const isCardioOrNoImage = (name, noImage) => {
+          if (noImage) return true;
+          const lower = String(name || '').toLowerCase();
+          return lower.includes('walking') || lower.includes('zone 2') || lower.includes('vo2 max') || lower.includes('cardio');
+        };
+
+        const resolveEx = (name, noImage) => {
+          if (!name || isCardioOrNoImage(name, noImage)) return;
+          const p = window.UI.getImageUrl(name);
+          if (p) urlSet.add(decodeURIComponent(p.split('?')[0]));
+          const g = window.UI.getGifUrl(name);
+          if (g) urlSet.add(decodeURIComponent(g.split('?')[0]));
+        };
+
+        if (Array.isArray(window.TRAINING_DATA.daily)) {
+          window.TRAINING_DATA.daily.forEach(day => {
+            if (Array.isArray(day.exercises)) {
+              day.exercises.forEach(ex => ex && ex.name && resolveEx(ex.name, ex.noImage));
+            }
+          });
+        }
+      }
+
       return Array.from(urlSet);
     },
 
@@ -326,19 +330,20 @@
         };
 
         const isLocalFile = window.location.protocol === 'file:';
+        const targetUrl = encodeURI(url);
 
         if (window.fetch && !isLocalFile) {
-          fetch(url, { mode: 'no-cors' })
+          fetch(targetUrl)
             .then(() => checkDone())
             .catch(() => {
               const img = new Image();
               img.onload = img.onerror = checkDone;
-              img.src = url;
+              img.src = targetUrl;
             });
         } else {
           const img = new Image();
           img.onload = img.onerror = checkDone;
-          img.src = url;
+          img.src = targetUrl;
         }
 
         // Safeguard timeout per image (max 4 seconds)
