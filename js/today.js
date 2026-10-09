@@ -624,6 +624,59 @@ const TodayPage = (() => {
   }
 
   /**
+   * Determine dynamic nutrition cycling targets based on plan day type:
+   * - Strength & VO2 Max: +35g Carbs (220g), +140 kcal (2120 kcal) for training fuel & glycogen recovery
+   * - Rest Day: -200 kcal (1780 kcal), -45g Carbs (140g) for optimal fat burning
+   * - Active Recovery / Cardio: 1980 kcal, 185g Carbs (balanced baseline)
+   */
+  function getCyclingTargetsForDay(dayObj) {
+    const dayType = (dayObj && dayObj.dayType) || '';
+    const isRest = dayType === 'Rest' || /rest/i.test(dayType);
+    const isStrengthOrVO2 = !isRest && (/strength|push|pull|legs|skill|lower|upper|vo2/i.test(dayType) || (dayObj && dayObj.exercises && dayObj.exercises.length > 2));
+
+    if (isStrengthOrVO2) {
+      return {
+        mode: 'strength_vo2',
+        nameKey: 'carb_cycling_strength_badge',
+        descKey: 'carb_cycling_strength_desc',
+        icon: '⚡',
+        badgeClass: 'cycling-strength',
+        targetCalories: 2120, // 1980 + 140
+        targetProtein: 160,
+        targetCarbs: 220,     // 185 + 35
+        carbDelta: '+35g',
+        calorieDelta: '+140 kcal'
+      };
+    } else if (isRest) {
+      return {
+        mode: 'rest',
+        nameKey: 'carb_cycling_rest_badge',
+        descKey: 'carb_cycling_rest_desc',
+        icon: '🔥',
+        badgeClass: 'cycling-rest',
+        targetCalories: 1780, // 1980 - 200
+        targetProtein: 160,
+        targetCarbs: 140,     // lower carb
+        carbDelta: '-45g',
+        calorieDelta: '-200 kcal'
+      };
+    } else {
+      return {
+        mode: 'recovery',
+        nameKey: 'carb_cycling_recovery_badge',
+        descKey: 'carb_cycling_recovery_desc',
+        icon: '🌿',
+        badgeClass: 'cycling-recovery',
+        targetCalories: 1980,
+        targetProtein: 160,
+        targetCarbs: 185,
+        carbDelta: '±0g',
+        calorieDelta: '±0 kcal'
+      };
+    }
+  }
+
+  /**
    * Render the today page
    */
   async function render() {
@@ -877,59 +930,6 @@ const TodayPage = (() => {
       }
 
       return Math.max(0, caloriesBurned);
-    }
-
-    /**
-     * Determine dynamic nutrition cycling targets based on plan day type:
-     * - Strength & VO2 Max: +35g Carbs (220g), +140 kcal (2120 kcal) for training fuel & glycogen recovery
-     * - Rest Day: -200 kcal (1780 kcal), -45g Carbs (140g) for optimal fat burning
-     * - Active Recovery / Cardio: 1980 kcal, 185g Carbs (balanced baseline)
-     */
-    function getCyclingTargetsForDay(dayObj) {
-      const dayType = (dayObj && dayObj.dayType) || '';
-      const isRest = dayType === 'Rest' || /rest/i.test(dayType);
-      const isStrengthOrVO2 = !isRest && (/strength|push|pull|legs|skill|lower|upper|vo2/i.test(dayType) || (dayObj && dayObj.exercises && dayObj.exercises.length > 2));
-
-      if (isStrengthOrVO2) {
-        return {
-          mode: 'strength_vo2',
-          nameKey: 'carb_cycling_strength_badge',
-          descKey: 'carb_cycling_strength_desc',
-          icon: '⚡',
-          badgeClass: 'cycling-strength',
-          targetCalories: 2120, // 1980 + 140
-          targetProtein: 160,
-          targetCarbs: 220,     // 185 + 35
-          carbDelta: '+35g',
-          calorieDelta: '+140 kcal'
-        };
-      } else if (isRest) {
-        return {
-          mode: 'rest',
-          nameKey: 'carb_cycling_rest_badge',
-          descKey: 'carb_cycling_rest_desc',
-          icon: '🔥',
-          badgeClass: 'cycling-rest',
-          targetCalories: 1780, // 1980 - 200
-          targetProtein: 160,
-          targetCarbs: 140,     // lower carb
-          carbDelta: '-45g',
-          calorieDelta: '-200 kcal'
-        };
-      } else {
-        return {
-          mode: 'recovery',
-          nameKey: 'carb_cycling_recovery_badge',
-          descKey: 'carb_cycling_recovery_desc',
-          icon: '🌿',
-          badgeClass: 'cycling-recovery',
-          targetCalories: 1980,
-          targetProtein: 160,
-          targetCarbs: 185,
-          carbDelta: '±0g',
-          calorieDelta: '±0 kcal'
-        };
-      }
     }
 
     /**

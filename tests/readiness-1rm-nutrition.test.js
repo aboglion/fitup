@@ -111,6 +111,22 @@ test('Feature 2 - Carb & Calorie Cycling targets and UI in today.js & index.html
   assert.equal(activeRecDay.targetCalories, 1980);
   assert.equal(activeRecDay.targetCarbs, 185);
 
+  // Verify TodayPage evaluates cleanly and exports getCyclingTargetsForDay directly
+  const mockWindow = {};
+  const mockDB = {};
+  const mockUI = {};
+  const mockI18n = { t: () => '' };
+  const mockGemini = {};
+  const mockProgression = {};
+  const evalFn = new Function('window', 'DB', 'UI', 'I18n', 'GeminiService', 'ProgressionEngine', `${todayCode}\nreturn TodayPage;`);
+  const EvaluatedTodayPage = evalFn(mockWindow, mockDB, mockUI, mockI18n, mockGemini, mockProgression);
+
+  assert.equal(typeof EvaluatedTodayPage.getCyclingTargetsForDay, 'function', 'Evaluated TodayPage exports getCyclingTargetsForDay function');
+  const exportedStrengthDay = EvaluatedTodayPage.getCyclingTargetsForDay({ dayType: 'Strength Push / Upper' });
+  assert.equal(exportedStrengthDay.mode, 'strength_vo2');
+  assert.equal(exportedStrengthDay.targetCalories, 2120);
+  assert.equal(exportedStrengthDay.targetCarbs, 220);
+
   // Check DOM hooks in index.html
   const indexHtml = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
   assert.ok(indexHtml.includes('id="nutrition-cycling-banner"'), 'index.html has nutrition-cycling-banner');
