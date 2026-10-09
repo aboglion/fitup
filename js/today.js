@@ -880,6 +880,59 @@ const TodayPage = (() => {
     }
 
     /**
+     * Determine dynamic nutrition cycling targets based on plan day type:
+     * - Strength & VO2 Max: +35g Carbs (220g), +140 kcal (2120 kcal) for training fuel & glycogen recovery
+     * - Rest Day: -200 kcal (1780 kcal), -45g Carbs (140g) for optimal fat burning
+     * - Active Recovery / Cardio: 1980 kcal, 185g Carbs (balanced baseline)
+     */
+    function getCyclingTargetsForDay(dayObj) {
+      const dayType = (dayObj && dayObj.dayType) || '';
+      const isRest = dayType === 'Rest' || /rest/i.test(dayType);
+      const isStrengthOrVO2 = !isRest && (/strength|push|pull|legs|skill|lower|upper|vo2/i.test(dayType) || (dayObj && dayObj.exercises && dayObj.exercises.length > 2));
+
+      if (isStrengthOrVO2) {
+        return {
+          mode: 'strength_vo2',
+          nameKey: 'carb_cycling_strength_badge',
+          descKey: 'carb_cycling_strength_desc',
+          icon: '⚡',
+          badgeClass: 'cycling-strength',
+          targetCalories: 2120, // 1980 + 140
+          targetProtein: 160,
+          targetCarbs: 220,     // 185 + 35
+          carbDelta: '+35g',
+          calorieDelta: '+140 kcal'
+        };
+      } else if (isRest) {
+        return {
+          mode: 'rest',
+          nameKey: 'carb_cycling_rest_badge',
+          descKey: 'carb_cycling_rest_desc',
+          icon: '🔥',
+          badgeClass: 'cycling-rest',
+          targetCalories: 1780, // 1980 - 200
+          targetProtein: 160,
+          targetCarbs: 140,     // lower carb
+          carbDelta: '-45g',
+          calorieDelta: '-200 kcal'
+        };
+      } else {
+        return {
+          mode: 'recovery',
+          nameKey: 'carb_cycling_recovery_badge',
+          descKey: 'carb_cycling_recovery_desc',
+          icon: '🌿',
+          badgeClass: 'cycling-recovery',
+          targetCalories: 1980,
+          targetProtein: 160,
+          targetCarbs: 185,
+          carbDelta: '±0g',
+          calorieDelta: '±0 kcal'
+        };
+      }
+    }
+
+    /**
      * Render Nutrition Section with Gemini AI & Photo Scanner
      */
     async function renderNutritionSection(queryDateStr) {
@@ -1011,6 +1064,30 @@ const TodayPage = (() => {
         if (todayBtn) todayBtn.onclick = () => renderNutritionSection(todayStr);
       }
 
+      // Determine matching plan day for queryDateStr to drive dynamic nutrition cycling
+      let targetPlanDay = null;
+      if (allPlanDays && allPlanDays.length > 0) {
+        if (queryDateStr === todayStr) {
+          const activeIdx = window.appCurrentPlanIndex != null ? window.appCurrentPlanIndex : currentDayIndex;
+          targetPlanDay = allPlanDays[activeIdx] || allPlanDays[0];
+        } else {
+          const diffDays = Math.round((new Date(queryDateStr + 'T12:00:00') - new Date(todayStr + 'T12:00:00')) / (1000 * 60 * 60 * 24));
+          const activeIdx = window.appCurrentPlanIndex != null ? window.appCurrentPlanIndex : currentDayIndex;
+          const mappedIdx = activeIdx + diffDays;
+          if (mappedIdx >= 0 && mappedIdx < allPlanDays.length) {
+            targetPlanDay = allPlanDays[mappedIdx];
+          } else {
+            targetPlanDay = allPlanDays[activeIdx] || allPlanDays[0];
+          }
+        }
+      }
+
+      // Calculate dynamic cycling targets
+      const cyclingTargets = getCyclingTargetsForDay(targetPlanDay);
+      const targetCals = cyclingTargets.targetCalories;
+      const targetProtein = cyclingTargets.targetProtein;
+      const targetCarbs = cyclingTargets.targetCarbs;
+
       // Load nutrition data from DB for queryDateStr
       let nutrition = await DB.getNutrition(queryDateStr);
       if (!nutrition) nutrition = { meals: [], supplements_taken: [] };
@@ -1018,15 +1095,14 @@ const TodayPage = (() => {
       // Calculate totals
       let totalCals = 0;
       let totalProtein = 0;
+      let totalCarbs = 0;
       if (nutrition.meals && nutrition.meals.length > 0) {
         nutrition.meals.forEach(m => {
           totalCals += (m.calories || 0);
           totalProtein += (m.protein || 0);
+          totalCarbs += (m.carbs || 0);
         });
       }
-
-      const targetCals = 1980; // 2200 with 10% reduction
-      const targetProtein = 160;
 
       // Calculate Workout Burn & Info
       let workoutBurn = 0;
@@ -1066,10 +1142,37 @@ const TodayPage = (() => {
       const nutBurnEl = document.getElementById('nut-workout-burned');
       const nutNetEl = document.getElementById('nut-net-calories');
       const nutNetTargetEl = document.getElementById('nut-net-target');
+      const nutCarbsEl = document.getElementById('nut-carbs-total');
+      const nutCarbsTargetEl = document.getElementById('nut-carbs-target');
+      const nutCarbsBar = document.getElementById('nut-carbs-bar');
+      const nutCarbsDeltaEl = document.getElementById('nut-carbs-delta-chip');
+      const nutCalsDeltaEl = document.getElementById('nut-calories-delta-chip');
+      const cyclingBanner = document.getElementById('nutrition-cycling-banner');
 
       if (nutCalsEl) nutCalsEl.textContent = totalCals;
       if (nutProtEl) nutProtEl.textContent = totalProtein;
       if (nutCalsTargetEl) nutCalsTargetEl.textContent = targetCals;
+      if (nutCarbsEl) nutCarbsEl.textContent = totalCarbs;
+      if (nutCarbsTargetEl) nutCarbsTargetEl.textContent = targetCarbs;
+      if (nutCarbsBar) nutCarbsBar.style.width = `${Math.min(100, (totalCarbs / targetCarbs) * 100)}%`;
+      if (nutCarbsDeltaEl) nutCarbsDeltaEl.textContent = cyclingTargets.carbDelta;
+      if (nutCalsDeltaEl) nutCalsDeltaEl.textContent = cyclingTargets.calorieDelta;
+
+      if (cyclingBanner) {
+        cyclingBanner.className = `nutrition-cycling-banner ${cyclingTargets.badgeClass}`;
+        const dayTypeLabel = targetPlanDay ? (UI.getDayTypeInfo(targetPlanDay.dayType).label || targetPlanDay.dayType) : '';
+        cyclingBanner.innerHTML = `
+          <div class="cycling-banner-header">
+            <div class="cycling-banner-title-box">
+              <span style="font-size: 16px;">${cyclingTargets.icon}</span>
+              <span>${I18n.t(cyclingTargets.nameKey)}</span>
+              ${dayTypeLabel ? `<span style="font-size: 11px; opacity: 0.8; font-weight: 600;">(${dayTypeLabel})</span>` : ''}
+            </div>
+            <span class="cycling-banner-delta-chip">${cyclingTargets.carbDelta}</span>
+          </div>
+          <p class="cycling-banner-desc">${I18n.t(cyclingTargets.descKey)}</p>
+        `;
+      }
 
       const netCals = totalCals - workoutBurn;
       if (nutBurnEl) nutBurnEl.textContent = workoutBurn;
@@ -1106,7 +1209,7 @@ const TodayPage = (() => {
       const refreshAiBtn = document.getElementById('refresh-ai-advice-btn');
 
       if (aiCard && aiContent) {
-        const currentStateFingerprint = `${queryDateStr}_cals${totalCals}_prot${totalProtein}_meals${(nutrition.meals || []).length}_burn${workoutBurn}_comp${workoutInfo.completedSets > 0 ? 1 : 0}`;
+        const currentStateFingerprint = `${queryDateStr}_cals${totalCals}_prot${totalProtein}_carbs${totalCarbs}_mode${cyclingTargets.mode}_burn${workoutBurn}_comp${workoutInfo.completedSets > 0 ? 1 : 0}`;
         const adviceCacheKey = `fitup_ai_advice_cache_${queryDateStr}`;
 
         const fetchAdvice = async (forceRefresh = false) => {
@@ -1133,8 +1236,8 @@ const TodayPage = (() => {
           aiContent.innerHTML = `<span style="color: var(--text-muted);">${I18n.t('ai_advice_loading')}</span>`;
           try {
             const adviceText = await GeminiService.getDailyAdvice(
-              { calories: totalCals, protein: totalProtein },
-              { calories: targetCals, protein: targetProtein },
+              { calories: totalCals, protein: totalProtein, carbs: totalCarbs },
+              { calories: targetCals, protein: targetProtein, carbs: targetCarbs, cyclingMode: cyclingTargets.mode },
               workoutInfo
             );
             if (adviceText) {
@@ -1655,6 +1758,9 @@ const TodayPage = (() => {
     // Dynamic enrichment with Progression Engine states
     await enrichDayWithProgression(day);
 
+    // Render daily readiness check card
+    renderReadinessCheck();
+
     // Render exercises
     renderExercises(day);
 
@@ -1789,6 +1895,392 @@ const TodayPage = (() => {
   }
 
   /**
+   * Extract chronological performance history for an exercise across recent sessions
+   * Returns array of up to `limit` entries sorted oldest to newest:
+   * [{ dayIndex, dayNum, date, value, unit }]
+   */
+  function getExerciseTrendHistory(exerciseName, beforeDayIndex, limit = 5) {
+    if (!allTrackingCache || !exerciseName || beforeDayIndex <= 0) return [];
+
+    const trackingMap = {};
+    allTrackingCache.forEach(t => { trackingMap[t.dayIndex] = t; });
+
+    const rawHistory = [];
+
+    // Search backwards from the day before current
+    for (let i = beforeDayIndex - 1; i >= 0 && rawHistory.length < limit; i--) {
+      const pastDay = allPlanDays[i];
+      if (!pastDay || !pastDay.exercises) continue;
+
+      const exIdx = pastDay.exercises.findIndex(e => e.name === exerciseName);
+      if (exIdx === -1) continue;
+
+      const tracking = trackingMap[i];
+      if (!tracking || !tracking.setData) continue;
+
+      const sData = tracking.setData[exIdx] || tracking.setData[`ex_${exIdx}`];
+      if (!sData) continue;
+
+      let maxWeight = 0;
+      let maxReps = 0;
+      let sessionPeak1RM = 0;
+      let bestSet = null;
+      let hasValidData = false;
+
+      for (let s = 0; s < 10; s++) {
+        const wVal = parseFloat(sData[`set_${s}_weight`]);
+        const rVal = parseInt(sData[`set_${s}_reps`], 10);
+        if (!isNaN(wVal) && wVal > maxWeight) maxWeight = wVal;
+        if (!isNaN(rVal) && rVal > maxReps) maxReps = rVal;
+        if (!isNaN(wVal) && wVal > 0 && !isNaN(rVal) && rVal > 0) {
+          const e1rm = rVal === 1 ? wVal : Math.round(wVal * (1 + rVal / 30) * 10) / 10;
+          if (e1rm > sessionPeak1RM) {
+            sessionPeak1RM = e1rm;
+            bestSet = { weight: wVal, reps: rVal };
+          }
+        }
+        if ((!isNaN(wVal) && wVal > 0) || (!isNaN(rVal) && rVal > 0) || sData[`set_${s}_done`]) {
+          hasValidData = true;
+        }
+      }
+
+      if (hasValidData && (maxWeight > 0 || maxReps > 0)) {
+        rawHistory.push({
+          dayIndex: i,
+          dayNum: pastDay.dayNum,
+          date: tracking.date || tracking.lastUpdated || pastDay.date,
+          maxWeight,
+          maxReps,
+          value: maxWeight > 0 ? maxWeight : maxReps,
+          unit: maxWeight > 0 ? 'kg' : 'reps',
+          sessionPeak1RM,
+          bestSet
+        });
+      }
+    }
+
+    // Return chronological order (oldest -> newest)
+    return rawHistory.reverse();
+  }
+
+  /**
+   * Find historical all-time peak estimated 1RM for an exercise across past sessions
+   * Uses Epley formula: 1RM = Weight * (1 + Reps / 30)
+   */
+  function getExercisePeak1RM(exerciseName, beforeDayIndex) {
+    if (!allTrackingCache || !exerciseName) return { peak1RM: 0, weight: 0, reps: 0, details: '' };
+    let peak1RM = 0;
+    let bestWeight = 0;
+    let bestReps = 0;
+    let bestDayNum = 0;
+
+    const trackingMap = {};
+    allTrackingCache.forEach(t => { trackingMap[t.dayIndex] = t; });
+
+    // Look across all past plan days up to beforeDayIndex
+    const maxDayIdx = (beforeDayIndex !== undefined && beforeDayIndex !== null) ? beforeDayIndex : allPlanDays.length;
+    for (let i = 0; i < maxDayIdx; i++) {
+      const pastDay = allPlanDays[i];
+      if (!pastDay || !pastDay.exercises) continue;
+      const exIdx = pastDay.exercises.findIndex(e => e.name === exerciseName);
+      if (exIdx === -1) continue;
+      const tracking = trackingMap[i];
+      if (!tracking || !tracking.setData) continue;
+      const sData = tracking.setData[exIdx] || tracking.setData[`ex_${exIdx}`];
+      if (!sData) continue;
+
+      for (let s = 0; s < 10; s++) {
+        const w = parseFloat(sData[`set_${s}_weight`]);
+        const r = parseInt(sData[`set_${s}_reps`], 10);
+        if (!isNaN(w) && w > 0 && !isNaN(r) && r > 0) {
+          const e1rm = r === 1 ? w : Math.round(w * (1 + r / 30) * 10) / 10;
+          if (e1rm > peak1RM) {
+            peak1RM = e1rm;
+            bestWeight = w;
+            bestReps = r;
+            bestDayNum = pastDay.dayNum || (i + 1);
+          }
+        }
+      }
+    }
+
+    return {
+      peak1RM,
+      weight: bestWeight,
+      reps: bestReps,
+      dayNum: bestDayNum,
+      details: peak1RM > 0 ? `${bestWeight} kg × ${bestReps} reps (#${bestDayNum})` : ''
+    };
+  }
+
+  /**
+   * Open interactive 1RM calculator modal from anywhere
+   */
+  function open1RMCalculator(exerciseName, weight = 0, reps = 0, peak1RM = 0) {
+    const hist = getExercisePeak1RM(exerciseName, currentDayIndex);
+    const initialW = parseFloat(weight) || hist.weight || 50;
+    const initialR = parseInt(reps, 10) || hist.reps || 8;
+    UI.showOneRepMaxModal(exerciseName, initialW, initialR, hist);
+  }
+
+  /**
+   * Render daily subjective recovery & readiness check (1-5 scale)
+   * With adaptive rest (+30s) and set reduction recommendations if score is low (1-2)
+   */
+  function renderReadinessCheck() {
+    const container = document.getElementById('readiness-check-container');
+    if (!container) return;
+
+    const day = allPlanDays && allPlanDays[currentDayIndex];
+    if (!day) {
+      container.innerHTML = '';
+      return;
+    }
+
+    const isRest = day.dayType === 'Rest';
+    const score = (currentTracking && currentTracking.readinessScore != null) ? currentTracking.readinessScore : null;
+    const adjustments = (currentTracking && currentTracking.readinessAdjustment) || {
+      extendRest: true,
+      dropSet: false
+    };
+
+    const isScoreLow = score !== null && score <= 2;
+    const isScoreModerate = score === 3;
+    const isScoreHigh = score !== null && score >= 4;
+
+    const scoreLabels = [
+      { score: 1, emoji: '😫', label: I18n.t('readiness_score_1') },
+      { score: 2, emoji: '🥱', label: I18n.t('readiness_score_2') },
+      { score: 3, emoji: '😐', label: I18n.t('readiness_score_3') },
+      { score: 4, emoji: '😊', label: I18n.t('readiness_score_4') },
+      { score: 5, emoji: '⚡', label: I18n.t('readiness_score_5') }
+    ];
+
+    const pillsHTML = scoreLabels.map(s => {
+      const isSelected = score === s.score;
+      return `
+        <button type="button" 
+                class="readiness-pill-btn ${isSelected ? 'active' : ''}" 
+                data-score="${s.score}"
+                title="${s.label}"
+                onclick="TodayPage.setReadinessScore(${s.score})">
+          <span class="readiness-pill-emoji">${s.emoji}</span>
+          <span class="readiness-pill-num">${s.score}</span>
+        </button>
+      `;
+    }).join('');
+
+    let adaptationBoxHTML = '';
+    if (isScoreLow && !isRest) {
+      adaptationBoxHTML = `
+        <div class="readiness-adaptation-box alert-low">
+          <div class="readiness-adaptation-title">
+            <span>🛡️</span>
+            <strong>${I18n.t('readiness_alert_low_title', '', { score })}</strong>
+          </div>
+          <p class="readiness-adaptation-desc">${I18n.t('readiness_alert_low_desc')}</p>
+          <div class="readiness-toggles-grid">
+            <label class="readiness-toggle-card ${adjustments.extendRest ? 'active' : ''}">
+              <input type="checkbox" id="readiness-toggle-rest" ${adjustments.extendRest ? 'checked' : ''} onchange="TodayPage.toggleReadinessAdjustment('extendRest', this.checked)">
+              <div class="toggle-card-body">
+                <span class="toggle-card-icon">⏱️</span>
+                <div class="toggle-card-text">
+                  <strong>${I18n.t('readiness_opt_extend_rest')}</strong>
+                </div>
+              </div>
+            </label>
+            <label class="readiness-toggle-card ${adjustments.dropSet ? 'active' : ''}">
+              <input type="checkbox" id="readiness-toggle-dropset" ${adjustments.dropSet ? 'checked' : ''} onchange="TodayPage.toggleReadinessAdjustment('dropSet', this.checked)">
+              <div class="toggle-card-body">
+                <span class="toggle-card-icon">📉</span>
+                <div class="toggle-card-text">
+                  <strong>${I18n.t('readiness_opt_drop_set')}</strong>
+                </div>
+              </div>
+            </label>
+          </div>
+          <div class="readiness-active-status">
+            <span class="status-pulse-dot"></span>
+            <span>${I18n.t('readiness_applied_badge')}</span>
+          </div>
+        </div>
+      `;
+    } else if (isScoreModerate && !isRest) {
+      adaptationBoxHTML = `
+        <div class="readiness-feedback-box feedback-moderate">
+          <span>👌</span>
+          <p style="margin: 0;">${I18n.t('readiness_status_moderate')}</p>
+        </div>
+      `;
+    } else if (isScoreHigh && !isRest) {
+      adaptationBoxHTML = `
+        <div class="readiness-feedback-box feedback-peak">
+          <span>🚀</span>
+          <p style="margin: 0;">${I18n.t('readiness_status_high')}</p>
+        </div>
+      `;
+    }
+
+    const currentScoreBadge = score !== null ? `
+      <span class="readiness-status-badge" style="color: var(--text-primary); font-weight: 800;">
+        ${score}/5 ${scoreLabels[score - 1]?.emoji || ''}
+      </span>
+    ` : `
+      <span class="readiness-status-badge">1–5</span>
+    `;
+
+    container.innerHTML = `
+      <div class="readiness-check-card">
+        <div class="readiness-card-header">
+          <div class="readiness-title-box">
+            <span style="font-size: 16px;">🛌</span>
+            <h4 class="readiness-title">${I18n.t('readiness_check_title')}</h4>
+          </div>
+          ${currentScoreBadge}
+        </div>
+        <p class="readiness-question-text">${I18n.t('readiness_question')}</p>
+        <div class="readiness-pills-row">
+          ${pillsHTML}
+        </div>
+        ${adaptationBoxHTML}
+      </div>
+    `;
+  }
+
+  async function setReadinessScore(score) {
+    if (!currentTracking) currentTracking = {};
+    currentTracking.readinessScore = score;
+    currentTracking.readinessDate = UI.getLocalDateString(new Date());
+
+    if (!currentTracking.readinessAdjustment) {
+      currentTracking.readinessAdjustment = {
+        extendRest: true,
+        dropSet: false
+      };
+    }
+
+    await DB.saveDayTracking(currentDayIndex, currentTracking);
+    renderReadinessCheck();
+
+    // Re-render exercises so set counts and badges update dynamically
+    const day = allPlanDays && allPlanDays[currentDayIndex];
+    if (day && day.exercises) {
+      renderExercises(day);
+    }
+
+    if (score <= 2) {
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('readiness_alert_low_title', '', { score }), 'warning');
+      }
+    } else if (score >= 4) {
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('readiness_status_high'), 'success');
+      }
+    }
+  }
+
+  async function toggleReadinessAdjustment(type, value) {
+    if (!currentTracking) currentTracking = {};
+    if (!currentTracking.readinessAdjustment) {
+      currentTracking.readinessAdjustment = {
+        extendRest: true,
+        dropSet: false
+      };
+    }
+    currentTracking.readinessAdjustment[type] = Boolean(value);
+
+    await DB.saveDayTracking(currentDayIndex, currentTracking);
+    renderReadinessCheck();
+
+    const day = allPlanDays && allPlanDays[currentDayIndex];
+    if (day && day.exercises) {
+      renderExercises(day);
+    }
+  }
+
+  /**
+   * Render inline SVG sparkline micro-graph for in-workout exercise cards
+   */
+  function renderSparklineHTML(trendHistory, isWeighted, cardIdx) {
+    if (!trendHistory || trendHistory.length === 0) return '';
+
+    if (trendHistory.length === 1) {
+      const first = trendHistory[0];
+      const title = `${I18n.t('sparkline_baseline')}: ${first.value} ${first.unit} (#${first.dayNum})`;
+      return `<span class="sparkline-baseline-badge" title="${title}">🌱 ${first.value} ${first.unit}</span>`;
+    }
+
+    const count = trendHistory.length;
+    const values = trendHistory.map(p => p.value);
+    const minVal = Math.min(...values);
+    const maxVal = Math.max(...values);
+    const range = (maxVal - minVal) === 0 ? 1 : (maxVal - minVal);
+
+    const firstVal = trendHistory[0].value;
+    const lastVal = trendHistory[count - 1].value;
+    const diff = Math.round((lastVal - firstVal) * 10) / 10;
+    const diffPct = firstVal > 0 ? Math.round(((lastVal - firstVal) / firstVal) * 100) : 0;
+
+    let trendClass = 'neutral';
+    let strokeColor = '#38bdf8'; // Sky blue for neutral
+    if (diff > 0) {
+      trendClass = 'positive';
+      strokeColor = '#10b981'; // Emerald for positive
+    } else if (diff < 0) {
+      trendClass = 'negative';
+      strokeColor = '#f59e0b'; // Amber for slight drop
+    }
+
+    const svgW = 66;
+    const svgH = 20;
+    const padX = 4;
+    const padY = 3;
+    const innerW = svgW - (padX * 2);
+    const innerH = svgH - (padY * 2);
+
+    const pts = trendHistory.map((p, idx) => {
+      const x = padX + (idx / (count - 1)) * innerW;
+      const y = (svgH - padY) - ((p.value - minVal) / range) * innerH;
+      return { x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10, val: p.value, unit: p.unit, dayNum: p.dayNum };
+    });
+
+    const polylinePts = pts.map(p => `${p.x},${p.y}`).join(' ');
+    const areaPts = `${pts[0].x},${svgH} ${polylinePts} ${pts[count - 1].x},${svgH}`;
+    const lastPt = pts[count - 1];
+
+    const gradId = `spark-grad-${cardIdx}-${Math.floor(Math.random() * 1000)}`;
+
+    const tooltipLines = trendHistory.map(p => `#${p.dayNum}: ${p.value} ${p.unit}`).join(' → ');
+    const tooltipText = `${I18n.t('sparkline_sessions')} (${count}): ${tooltipLines}`;
+
+    let trendLabelText = '';
+    if (diff > 0) {
+      trendLabelText = isWeighted ? `+${diff} kg` : `+${diffPct}%`;
+    } else if (diff === 0) {
+      trendLabelText = `${lastVal} ${trendHistory[0].unit}`;
+    } else {
+      trendLabelText = isWeighted ? `${diff} kg` : `${diffPct}%`;
+    }
+
+    return `
+      <div class="prev-perf-sparkline" title="${tooltipText}">
+        <svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" class="sparkline-svg">
+          <defs>
+            <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="${strokeColor}" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="${strokeColor}" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+          <polygon points="${areaPts}" fill="url(#${gradId})" />
+          <polyline points="${polylinePts}" fill="none" stroke="${strokeColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="${lastPt.x}" cy="${lastPt.y}" r="2.5" fill="${strokeColor}" />
+        </svg>
+        <span class="sparkline-trend-badge ${trendClass}">${trendLabelText}</span>
+      </div>
+    `;
+  }
+
+  /**
    * Look up video URL from exercise guide by name
    */
 
@@ -1885,7 +2377,15 @@ const TodayPage = (() => {
       return;
     }
     container.innerHTML = day.exercises.map((ex, idx) => {
-      const setsCount = UI.parseSetsCount(ex.sets);
+      const originalSetsCount = UI.parseSetsCount(ex.sets);
+      const isReadinessDropSet = Boolean(
+        currentTracking &&
+        currentTracking.readinessScore != null &&
+        currentTracking.readinessScore <= 2 &&
+        currentTracking.readinessAdjustment?.dropSet &&
+        originalSetsCount > 1
+      );
+      const setsCount = isReadinessDropSet ? Math.max(1, originalSetsCount - 1) : originalSetsCount;
       const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
 
       // Auto-evaluate exercise completion from set status:
@@ -1961,11 +2461,32 @@ const TodayPage = (() => {
             }
           }
           if (prevSets.length > 0) {
+            const trendHistory = getExerciseTrendHistory(ex.name, currentDayIndex, 5);
+            const sparklineHTML = renderSparklineHTML(trendHistory, hasWeight, idx);
+            const peak1RMInfo = getExercisePeak1RM(ex.name, currentDayIndex);
+            const firstSetSuggestedWeight = getSuggestedWeightForSet(ex, 0, setsCount, prevPerf);
+
+            let peak1RMButtonHTML = '';
+            if (hasWeight || peak1RMInfo.peak1RM > 0) {
+              const display1RMVal = peak1RMInfo.peak1RM > 0 ? `${peak1RMInfo.peak1RM} kg` : (firstSetSuggestedWeight > 0 ? `${firstSetSuggestedWeight} kg` : 'Calc');
+              peak1RMButtonHTML = `
+                <button type="button" class="sparkline-1rm-badge" title="${I18n.t('sparkline_1rm_tooltip')}" onclick="event.stopPropagation(); TodayPage.open1RMCalculator('${ex.name.replace(/'/g, "\\'")}', ${peak1RMInfo.weight || firstSetSuggestedWeight || 0}, ${peak1RMInfo.reps || 8}, ${peak1RMInfo.peak1RM || 0});">
+                  <span class="e1rm-icon">⚡</span>
+                  <span class="e1rm-title">${I18n.t('e1rm_badge')}:</span>
+                  <strong class="e1rm-val">${display1RMVal}</strong>
+                </button>
+              `;
+            }
+
             prevPerfHTML = `
               <div class="prev-performance">
                 <span class="prev-perf-label">${I18n.t('prev_performance')}</span>
                 <span class="prev-perf-values">${prevSets.map((r, i) => `<span class="prev-set">Set ${i + 1}: ${r}</span>`).join('')}</span>
                 ${maxReps > 0 ? `<span class="prev-perf-pr">${I18n.t('prev_record')} ${maxReps}</span>` : ''}
+                <div class="prev-perf-stats-row">
+                  ${sparklineHTML}
+                  ${peak1RMButtonHTML}
+                </div>
               </div>
             `;
           }
@@ -2097,6 +2618,9 @@ const TodayPage = (() => {
       if (ex.sets) {
         detailParts.push(isSetsChanged ? `<span class="alert-pulse-text" title="${I18n.t('sets_changed_title')}">${ex.sets}</span>` : ex.sets);
       }
+      if (isReadinessDropSet) {
+        detailParts.push(`<span class="readiness-drop-badge" title="${I18n.t('readiness_opt_drop_set')}">🌿 ${I18n.t('readiness_drop_applied_badge')}</span>`);
+      }
 
       const equip = UI.getEquipment(ex.name);
 
@@ -2104,6 +2628,7 @@ const TodayPage = (() => {
         const weightInfo = parseWeightDetails(ex.weight, ex.name);
         const weightHTML = buildWeightBadgeHTML(weightInfo, true);
         detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="${I18n.t('weight_changed_title')}">${weightHTML}</span>` : weightHTML);
+        detailParts.push(`<button type="button" class="sparkline-1rm-badge" style="padding: 1px 6px; font-size: 10px;" title="${I18n.t('sparkline_1rm_tooltip')}" onclick="event.stopPropagation(); TodayPage.open1RMCalculator('${ex.name.replace(/'/g, "\\'")}', 0, 8, 0);">🧮 1RM</button>`);
       }
 
       if (ex.tempo) {
@@ -2831,9 +3356,10 @@ const TodayPage = (() => {
     }
     if (ex.rest === 0) return 0;
 
+    let baseRest = 90;
     if (window.ProgressionEngine && window.ProgressionEngine.calculateAdaptiveRest && !ex.isWarmup) {
       const rpe = (currentTracking && currentTracking.actualRPE) || 7;
-      return window.ProgressionEngine.calculateAdaptiveRest(
+      baseRest = window.ProgressionEngine.calculateAdaptiveRest(
         ex.name,
         ex.rest || 90,
         UI.parseReps(ex.sets),
@@ -2841,8 +3367,19 @@ const TodayPage = (() => {
         0,
         rpe
       );
+    } else {
+      baseRest = ex.rest !== undefined ? parseInt(ex.rest) : 90;
     }
-    return ex.rest !== undefined ? parseInt(ex.rest) : 90;
+
+    // Readiness Check adaptation: if readiness score is low (<= 2) and extendRest is selected, add +30s
+    if (currentTracking && currentTracking.readinessScore && currentTracking.readinessScore <= 2) {
+      const adj = currentTracking.readinessAdjustment || { extendRest: true };
+      if (adj.extendRest && baseRest > 0) {
+        baseRest += 30;
+      }
+    }
+
+    return baseRest;
   }
 
   async function handleExerciseCompleted(idx, day) {
@@ -3786,11 +4323,11 @@ const TodayPage = (() => {
       belowTrigger: 'פשיטת יתר של הגב התחתון (Hyper-extension) או אי-הגעה לנעילה מלאה בשיא.'
     },
     'HEELS ELEVATED GOBLET SQUAT': {
-      rule: 'חזה זקוף לחלוטין, ירידה עמוקה ומבוקרת (2-3 שניות) עם עקבים מוגבהים בבטחה.',
+      rule: 'חזה זקוף לחלוטין, ירידה עמוקה (3 שניות), עצירה של 1-2 שניות בתחתית (Paused Squat) למתח ארבע-ראשי מקסימלי וללא תנופה.',
       belowTrigger: 'קריסת חזה לפנים, עילוי עקבים מההגבהה, או איבוד שיווי משקל.'
     },
     'HEELS-ELEVATED GOBLET SQUAT': {
-      rule: 'חזה זקוף לחלוטין, ירידה עמוקה ומבוקרת (2-3 שניות) עם עקבים מוגבהים בבטחה.',
+      rule: 'חזה זקוף לחלוטין, ירידה עמוקה (3 שניות), עצירה של 1-2 שניות בתחתית (Paused Squat) למתח ארבע-ראשי מקסימלי וללא תנופה.',
       belowTrigger: 'קריסת חזה לפנים, עילוי עקבים מההגבהה, או איבוד שיווי משקל.'
     },
     'PISTOL SQUAT': {
@@ -3803,6 +4340,10 @@ const TodayPage = (() => {
     },
     'DB BULGARIAN SPLIT SQUAT': {
       rule: 'חזה זקוף, ירידה מבוקרת (2-3 שניות) עם ברך קדמית יציבה ומרכז כובד על קדמת כף הרגל.',
+      belowTrigger: 'איבוד שיווי משקל חמור, קריסת ברך פנימה (Valgus), או עילוי עקב קדמי.'
+    },
+    'GOBLET BULGARIAN SPLIT SQUAT': {
+      rule: 'חזה זקוף, ירידה מבוקרת (2-3 שניות) עם עומס מלא על הרגל הקדמית; פותר את תקרת המשקל לרגליים ללא עומס גב.',
       belowTrigger: 'איבוד שיווי משקל חמור, קריסת ברך פנימה (Valgus), או עילוי עקב קדמי.'
     },
     'SINGLE-LEG RDL': {
@@ -3874,7 +4415,7 @@ const TodayPage = (() => {
       belowTrigger: 'שימוש בתנופת גב או כיפוף מרפקים.'
     },
     'PULL-UP PROGRESSION': {
-      rule: 'סנטר עובר בבירור את המוט בעלייה, ירידה מלאה לנעילה (Dead hang).',
+      rule: 'סנטר עובר את המוט/טבעות בעלייה, ירידה מלאה לנעילה (Dead hang). מומלץ שימוש בטבעות או לולאת חבל לרוטציה חופשית והגנה על המרפקים.',
       belowTrigger: 'בעיטות רגליים (Kipping), או חצי טווח תנועה בירידה/בעלייה.'
     },
     'ONE-ARM DB ROW': {
@@ -3894,7 +4435,7 @@ const TodayPage = (() => {
       belowTrigger: 'זריקת המשקולת מומנטומטית.'
     },
     'TOWEL HANG': {
-      rule: 'אחיזה חזקה במגבת, כתפיים אקטיביות (Scapular engagement) ללא צניחה.',
+      rule: 'אחיזה חזקה במגבת או לולאת חבל, כתפיים אקטיביות (Scapular engagement). מפתח כוח אחיזה מסיבי ושומר על בריאות המפרקים.',
       belowTrigger: 'שמיטת אחיזה מוקדמת או הרפיית כתפיים סבילית.'
     },
     'L-SIT PROGRESSION': {
@@ -4339,7 +4880,13 @@ const TodayPage = (() => {
     toggleSkipExerciseTemp,
     unlockEarly,
     isDayEditable,
-    checkDayEditableOrWarn
+    checkDayEditableOrWarn,
+    setReadinessScore,
+    toggleReadinessAdjustment,
+    renderReadinessCheck,
+    open1RMCalculator,
+    getCyclingTargetsForDay,
+    getExercisePeak1RM
   };
 })();
 

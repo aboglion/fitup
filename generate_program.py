@@ -66,10 +66,11 @@ EXERCISES_CATALOG = [
         "restSeconds": 75,
         "restRange": [60, 90],
         "repWindow": "8-12",
-        "tempo": "3s descent, 1s pause at bottom, 1s ascent",
+        "tempo": "3s descent, 1-2s pause at bottom, 1s ascent",
         "compound": True,
         "structure": "straight",
-        "sets": 2
+        "sets": 2,
+        "rule": "עקבים מוגבהים; עצירה של 1-2 שניות בתחתית (Paused Squat) לשמירה על מתח ארבע-ראשי רציף וללא תנופה"
     },
     {
         "id": "goblet-bulgarian-split-squat",
@@ -421,7 +422,8 @@ EXERCISES_CATALOG = [
         "tempo": "2s descent",
         "compound": True,
         "sets": 3,
-        "structure": "straight"
+        "structure": "straight",
+        "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק"
     },
     {
         "id": "chin-up",
@@ -433,7 +435,8 @@ EXERCISES_CATALOG = [
         "tempo": "2s descent",
         "compound": True,
         "sets": 3,
-        "structure": "straight"
+        "structure": "straight",
+        "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק"
     },
     {
         "id": "weighted-pull-up",
@@ -609,6 +612,7 @@ EXERCISES_CATALOG = [
         "compound": True,
         "sets": 3,
         "structure": "straight",
+        "rule": "מוט מתח או טבעות/לולאת חבל (מומלץ להגנה על המרפקים ורוטציה חופשית); ללא תנופה",
         "stages": [
             "Negative Pull-Up", "Pull-Up", "Chin-Up",
             "Pull-Up + vest 2kg", "+ vest 4kg", "+ vest 5kg"
@@ -723,6 +727,7 @@ EXERCISES_CATALOG = [
         "structure": "pair",
         "pairId": "d5-grip-lsit",
         "orderInPair": 1,
+        "rule": "תלייה על מגבת או לולאת חבל; בונה כוח אחיזה מסיבי באמות ומאפשר רוטציית מפרק חופשית",
         "stages": ["Dead Hang", "Towel Hang", "Towel Hang + vest 5kg"],
         "startingWeek": 5,
         "unlocked": False,

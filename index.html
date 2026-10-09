@@ -276,6 +276,9 @@
           </div>
         </div>
 
+        <!-- Daily Subjective Recovery & Readiness Check -->
+        <div id="readiness-check-container" class="readiness-check-container"></div>
+
         <!-- Equipment Banner -->
         <div id="day-equipment-banner" style="margin-bottom: 20px;"></div>
 
@@ -464,8 +467,11 @@
                 style="font-size: 12px; color: var(--text-muted); font-weight: 600;"></span>
             </div>
 
-            <!-- Macro Cards Grid -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+            <!-- Dynamic Nutrition (Carb & Calorie Cycling) Banner -->
+            <div id="nutrition-cycling-banner" class="nutrition-cycling-banner cycling-strength"></div>
+
+            <!-- Macro Cards Grid (Calories, Protein, Carbs) -->
+            <div class="nutrition-macros-3grid">
               <!-- Calories Card -->
               <div
                 style="background: var(--bg-elevated); padding: 14px; border-radius: 14px; display: flex; flex-direction: column; border: 1px solid var(--border-light); position: relative; overflow: hidden;">
@@ -477,13 +483,17 @@
                 <div style="display: flex; align-items: baseline; gap: 4px;">
                   <span id="nut-calories-total"
                     style="font-size: 24px; font-weight: 900; color: var(--warning);">0</span>
-                  <span style="font-size: 12px; color: var(--text-muted);">/ <span id="nut-calories-target">1980</span>
+                  <span style="font-size: 12px; color: var(--text-muted);">/ <span id="nut-calories-target">2120</span>
                     <span data-i18n="nut_kcal">kcal</span></span>
                 </div>
                 <div
                   style="height: 6px; background: var(--bg-input); border-radius: 3px; margin-top: 8px; overflow: hidden;">
                   <div id="nut-calories-bar"
                     style="height: 100%; width: 0%; background: var(--warning); transition: width 0.5s ease;"></div>
+                </div>
+                <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between; font-size: 11px;">
+                  <span style="color: var(--text-muted); font-weight: 700;" data-i18n="nut_cycling_mode">Cycling</span>
+                  <span id="nut-calories-delta-chip" style="font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: #fbbf24;">+140 kcal</span>
                 </div>
               </div>
 
@@ -507,10 +517,35 @@
                     style="height: 100%; width: 0%; background: var(--success); transition: width 0.5s ease;"></div>
                 </div>
                 <button id="quick-protein-powder-btn"
-                  style="margin-top: 10px; padding: 8px 6px; font-size: 11px; font-weight: 800; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15)); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; text-align: center; line-height: 1.2;">
+                  style="margin-top: 10px; padding: 6px 4px; font-size: 11px; font-weight: 800; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.15)); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; text-align: center; line-height: 1.2;">
                   🥛 <span data-i18n="quick_protein_consumed">Consumed</span> <span id="quick-protein-amount">0</span>g
                   <span data-i18n="quick_protein_powder">protein powder</span>
                 </button>
+              </div>
+
+              <!-- Carbs Card -->
+              <div
+                style="background: var(--bg-elevated); padding: 14px; border-radius: 14px; display: flex; flex-direction: column; border: 1px solid var(--border-light); position: relative; overflow: hidden;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <span style="font-size: 12px; color: var(--text-secondary); font-weight: 700;"
+                    data-i18n="nut_carbs_target">Carbs</span>
+                  <span style="font-size: 14px;">🍚</span>
+                </div>
+                <div style="display: flex; align-items: baseline; gap: 4px;">
+                  <span id="nut-carbs-total"
+                    style="font-size: 24px; font-weight: 900; color: #38bdf8;">0</span>
+                  <span style="font-size: 12px; color: var(--text-muted);">/ <span
+                      id="nut-carbs-target">220</span>g</span>
+                </div>
+                <div
+                  style="height: 6px; background: var(--bg-input); border-radius: 3px; margin-top: 8px; overflow: hidden;">
+                  <div id="nut-carbs-bar"
+                    style="height: 100%; width: 0%; background: #38bdf8; transition: width 0.5s ease;"></div>
+                </div>
+                <div style="margin-top: 10px; display: flex; align-items: center; justify-content: space-between; font-size: 11px;">
+                  <span style="color: var(--text-muted); font-weight: 700;" data-i18n="nut_cycling_mode">Cycling</span>
+                  <span id="nut-carbs-delta-chip" style="font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: #38bdf8;">+35g</span>
+                </div>
               </div>
             </div>
 

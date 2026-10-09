@@ -680,10 +680,10 @@ const UI = (() => {
     if (!title) return null;
     const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
     if (cleanTitle.includes('MICRO MOBILITY A')) {
-      return encodeMediaPath('images/exercises/MICRO MOBILITY A.png') + '?v=131';
+      return encodeMediaPath('images/exercises/MICRO MOBILITY A.png') + '?v=132';
     }
     if (cleanTitle.includes('MICRO MOBILITY B')) {
-      return encodeMediaPath('images/exercises/MICRO MOBILITY B.png') + '?v=131';
+      return encodeMediaPath('images/exercises/MICRO MOBILITY B.png') + '?v=132';
     }
     if (cleanTitle === 'MICRO MOBILITY PROTOCOL' || cleanTitle === 'MICRO MOBILITY') {
       let currentDayIndex = dayIndex;
@@ -699,11 +699,11 @@ const UI = (() => {
         dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
       }
       const isVariantA = (dayNum === 3 || dayNum === 5);
-      return encodeMediaPath(isVariantA ? 'images/exercises/MICRO MOBILITY A.png' : 'images/exercises/MICRO MOBILITY B.png') + '?v=131';
+      return encodeMediaPath(isVariantA ? 'images/exercises/MICRO MOBILITY A.png' : 'images/exercises/MICRO MOBILITY B.png') + '?v=132';
     }
     const aliasPng = EXERCISE_PNG_ALIASES[cleanTitle];
     const path = aliasPng ? `images/exercises/${aliasPng}` : `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
-    return encodeMediaPath(path) + '?v=131';
+    return encodeMediaPath(path) + '?v=132';
   }
 
   function getGifUrl(title) {
@@ -1582,12 +1582,239 @@ const UI = (() => {
     timerOnComplete = null;
   }
 
+  /**
+   * Calculate Estimated 1RM using Epley Formula: 1RM = Weight * (1 + Reps / 30)
+   */
+  function calculate1RM(weight, reps) {
+    const w = parseFloat(weight);
+    const r = parseInt(reps, 10);
+    if (isNaN(w) || isNaN(r) || w <= 0 || r <= 0) return 0;
+    if (r === 1) return Math.round(w * 10) / 10;
+    const val = w * (1 + r / 30);
+    return Math.round(val * 10) / 10;
+  }
+
+  /**
+   * Calculate Estimated 1RM using Brzycki Formula: 1RM = Weight * (36 / (37 - Reps))
+   */
+  function calculateBrzycki1RM(weight, reps) {
+    const w = parseFloat(weight);
+    const r = parseInt(reps, 10);
+    if (isNaN(w) || isNaN(r) || w <= 0 || r <= 0 || r >= 37) return 0;
+    const val = w * (36 / (37 - r));
+    return Math.round(val * 10) / 10;
+  }
+
+  /**
+   * Calculate intensity percentage table based on 1RM
+   */
+  function get1RMPercentages(oneRepMax) {
+    const max = parseFloat(oneRepMax) || 0;
+    if (max <= 0) return [];
+    const table = [
+      { pct: 100, reps: 1, label: '100% (1RM)' },
+      { pct: 95, reps: 2, label: '95%' },
+      { pct: 90, reps: 4, label: '90%' },
+      { pct: 85, reps: 6, label: '85%' },
+      { pct: 80, reps: 8, label: '80%' },
+      { pct: 75, reps: 10, label: '75%' },
+      { pct: 70, reps: 12, label: '70%' },
+      { pct: 65, reps: 15, label: '65%' }
+    ];
+    return table.map(item => ({
+      ...item,
+      weight: Math.round((max * (item.pct / 100)) * 10) / 10
+    }));
+  }
+
+  /**
+   * Show Interactive Estimated 1RM Calculator Modal
+   */
+  function showOneRepMaxModal(exerciseName = '', initialWeight = 0, initialReps = 0, historicalPeak = null) {
+    let w = parseFloat(initialWeight) || (historicalPeak && historicalPeak.weight) || 50;
+    let r = parseInt(initialReps, 10) || (historicalPeak && historicalPeak.reps) || 8;
+    if (w <= 0) w = 50;
+    if (r <= 0) r = 8;
+
+    const modalTitle = `🧮 ${I18n.t('e1rm_title')}${exerciseName ? ` — ${I18n.t(exerciseName) || exerciseName}` : ''}`;
+
+    const renderModalContent = (currW, currR) => {
+      const epley = calculate1RM(currW, currR);
+      const brzycki = calculateBrzycki1RM(currW, currR);
+      const pcts = get1RMPercentages(epley);
+
+      let peakHtml = '';
+      if (historicalPeak && historicalPeak.peak1RM > 0) {
+        peakHtml = `
+          <div class="e1rm-pr-banner">
+            <span class="e1rm-pr-banner-icon">🏆</span>
+            <div class="e1rm-pr-banner-text">
+              <strong>${I18n.t('e1rm_history_peak')}: ${historicalPeak.peak1RM} kg</strong>
+              <span>${historicalPeak.details || ''}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      const pctsHtml = pcts.map(p => `
+        <div class="e1rm-pct-cell">
+          <span class="e1rm-pct-header">${p.label}</span>
+          <span class="e1rm-pct-kg">${p.weight} kg</span>
+          <span class="e1rm-pct-reps">~${p.reps} reps</span>
+        </div>
+      `).join('');
+
+      return `
+        <div class="e1rm-modal-container">
+          ${peakHtml}
+
+          <div class="e1rm-hero-card">
+            <span class="e1rm-hero-badge">⚡ ${I18n.t('e1rm_estimated')}</span>
+            <div class="e1rm-hero-value" id="e1rm-modal-hero-val">${epley}<span>kg</span></div>
+            <div class="e1rm-formula-sub" id="e1rm-modal-formula-sub">
+              ${I18n.t('e1rm_epley_formula')}: ${currW}kg × (1 + ${currR}/30)
+              ${brzycki > 0 ? ` • Brzycki: ${brzycki}kg` : ''}
+            </div>
+          </div>
+
+          <div class="e1rm-inputs-grid">
+            <!-- Weight Input -->
+            <div class="e1rm-input-box">
+              <label class="e1rm-input-label">
+                <span>🏋️ ${I18n.t('e1rm_weight_input')}</span>
+              </label>
+              <div class="e1rm-stepper-wrap">
+                <button type="button" class="e1rm-step-btn" id="e1rm-w-minus">-</button>
+                <input type="number" id="e1rm-input-weight" class="e1rm-number-input" value="${currW}" min="1" max="500" step="0.5">
+                <button type="button" class="e1rm-step-btn" id="e1rm-w-plus">+</button>
+              </div>
+              <div class="e1rm-quick-pills">
+                <button type="button" class="e1rm-quick-pill" data-w-delta="-5">-5kg</button>
+                <button type="button" class="e1rm-quick-pill" data-w-delta="-2.5">-2.5</button>
+                <button type="button" class="e1rm-quick-pill" data-w-delta="2.5">+2.5</button>
+                <button type="button" class="e1rm-quick-pill" data-w-delta="5">+5kg</button>
+              </div>
+            </div>
+
+            <!-- Reps Input -->
+            <div class="e1rm-input-box">
+              <label class="e1rm-input-label">
+                <span>🔢 ${I18n.t('e1rm_reps_input')}</span>
+              </label>
+              <div class="e1rm-stepper-wrap">
+                <button type="button" class="e1rm-step-btn" id="e1rm-r-minus">-</button>
+                <input type="number" id="e1rm-input-reps" class="e1rm-number-input" value="${currR}" min="1" max="30" step="1">
+                <button type="button" class="e1rm-step-btn" id="e1rm-r-plus">+</button>
+              </div>
+              <div class="e1rm-quick-pills">
+                <button type="button" class="e1rm-quick-pill" data-r-set="3">3</button>
+                <button type="button" class="e1rm-quick-pill" data-r-set="5">5</button>
+                <button type="button" class="e1rm-quick-pill" data-r-set="8">8</button>
+                <button type="button" class="e1rm-quick-pill" data-r-set="10">10</button>
+                <button type="button" class="e1rm-quick-pill" data-r-set="12">12</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="e1rm-pct-table-card">
+            <div class="e1rm-pct-title">
+              <span>📊 ${I18n.t('e1rm_percentages_table')}</span>
+            </div>
+            <div class="e1rm-pct-grid" id="e1rm-modal-pct-grid">
+              ${pctsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+    };
+
+    showModal(modalTitle, renderModalContent(w, r));
+
+    // Bind real-time interactive events
+    setTimeout(() => {
+      const wInput = document.getElementById('e1rm-input-weight');
+      const rInput = document.getElementById('e1rm-input-reps');
+      if (!wInput || !rInput) return;
+
+      const updateAll = () => {
+        const currentW = parseFloat(wInput.value) || 0;
+        const currentR = parseInt(rInput.value, 10) || 0;
+        const newEpley = calculate1RM(currentW, currentR);
+        const newBrzycki = calculateBrzycki1RM(currentW, currentR);
+        const newPcts = get1RMPercentages(newEpley);
+
+        const heroVal = document.getElementById('e1rm-modal-hero-val');
+        if (heroVal) heroVal.innerHTML = `${newEpley}<span>kg</span>`;
+
+        const formSub = document.getElementById('e1rm-modal-formula-sub');
+        if (formSub) {
+          formSub.innerHTML = `${I18n.t('e1rm_epley_formula')}: ${currentW}kg × (1 + ${currentR}/30)${newBrzycki > 0 ? ` • Brzycki: ${newBrzycki}kg` : ''}`;
+        }
+
+        const pctGrid = document.getElementById('e1rm-modal-pct-grid');
+        if (pctGrid) {
+          pctGrid.innerHTML = newPcts.map(p => `
+            <div class="e1rm-pct-cell">
+              <span class="e1rm-pct-header">${p.label}</span>
+              <span class="e1rm-pct-kg">${p.weight} kg</span>
+              <span class="e1rm-pct-reps">~${p.reps} reps</span>
+            </div>
+          `).join('');
+        }
+      };
+
+      wInput.oninput = updateAll;
+      rInput.oninput = updateAll;
+
+      const wMin = document.getElementById('e1rm-w-minus');
+      const wPlu = document.getElementById('e1rm-w-plus');
+      const rMin = document.getElementById('e1rm-r-minus');
+      const rPlu = document.getElementById('e1rm-r-plus');
+
+      if (wMin) wMin.onclick = () => {
+        wInput.value = Math.max(1, Math.round((parseFloat(wInput.value || 0) - 1) * 2) / 2);
+        updateAll();
+      };
+      if (wPlu) wPlu.onclick = () => {
+        wInput.value = Math.max(1, Math.round((parseFloat(wInput.value || 0) + 1) * 2) / 2);
+        updateAll();
+      };
+      if (rMin) rMin.onclick = () => {
+        rInput.value = Math.max(1, parseInt(rInput.value || 1, 10) - 1);
+        updateAll();
+      };
+      if (rPlu) rPlu.onclick = () => {
+        rInput.value = Math.min(30, parseInt(rInput.value || 1, 10) + 1);
+        updateAll();
+      };
+
+      document.querySelectorAll('.e1rm-quick-pill[data-w-delta]').forEach(btn => {
+        btn.onclick = () => {
+          const delta = parseFloat(btn.dataset.wDelta);
+          wInput.value = Math.max(1, Math.round((parseFloat(wInput.value || 0) + delta) * 2) / 2);
+          updateAll();
+        };
+      });
+
+      document.querySelectorAll('.e1rm-quick-pill[data-r-set]').forEach(btn => {
+        btn.onclick = () => {
+          rInput.value = parseInt(btn.dataset.rSet, 10);
+          updateAll();
+        };
+      });
+    }, 50);
+  }
+
   return {
     toast,
     showModal,
     hideModal,
     confirm,
     showImageModal,
+    calculate1RM,
+    calculateBrzycki1RM,
+    get1RMPercentages,
+    showOneRepMaxModal,
     hasGif,
     handleImageLoaded,
     __build: 'media-fix-2026-08-26',

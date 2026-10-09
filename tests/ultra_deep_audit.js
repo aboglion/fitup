@@ -104,8 +104,8 @@ distinctExercises.forEach(exName => {
   const pngUrl = UI.getImageUrl(exName);
   const gifUrl = UI.getGifUrl(exName);
 
-  const pngRelative = decodeURIComponent(pngUrl);
-  const gifRelative = decodeURIComponent(gifUrl);
+  const pngRelative = decodeURIComponent(pngUrl ? pngUrl.split('?')[0] : '');
+  const gifRelative = decodeURIComponent(gifUrl ? gifUrl.split('?')[0] : '');
 
   const pngPath = path.join(root, pngRelative);
   const gifPath = path.join(root, gifRelative);

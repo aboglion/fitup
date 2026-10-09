@@ -477,15 +477,16 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
       he: "החזר תשובה בעברית בלבד בתור 2 משפטים קצרים, מקצועיים ומעודדים.",
       ar: "قدم الرد باللغة العربية فقط في جملتين قصيرتين ومشجعتين."
     };
-    const langPrompt = langInstructions[currentLang] || langInstructions['en'];
+    const cyclingInfo = goals.cyclingMode ? ` [Carb/Calorie Cycling Mode: ${goals.cyclingMode}]` : '';
+    const carbsText = goals.carbs ? `, ${totals.carbs || 0}/${goals.carbs}g Carbs` : '';
 
     const prompt = `You are an elite AI sports nutritionist. Analyze the user's daily metrics:
 - Activity Context (Google Fit): ${fitDataText}
 - Today's Completed Workout: ${workoutText}
-- Nutrition Consumed: ${totals.calories || 0}/${goals.calories || 1980} kcal, ${totals.protein || 0}/${goals.protein || 160}g Protein.
+- Nutrition Consumed: ${totals.calories || 0}/${goals.calories || 1980} kcal, ${totals.protein || 0}/${goals.protein || 160}g Protein${carbsText}.${cyclingInfo}
 - Net Calories (Consumed - Workout Burn): ${(totals.calories || 0) - (workoutContext.burnedCals || 0)} kcal.
 ${langPrompt}
-Give a personalized 2-sentence tactical recommendation for optimal recovery, muscle synthesis, and remaining net calorie/protein targets.`;
+Give a personalized 2-sentence tactical recommendation for optimal recovery, glycogen restoration, muscle synthesis, and remaining macro targets.`;
 
     try {
       const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;

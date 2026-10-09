@@ -27,6 +27,8 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 - **Arm Block Protocol (Myo-Reps)**: Active from Week 6 onwards (v15.7; previously Week 10). Executed using objective Myo-Reps clusters (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped automatically by 2 consecutive tempo losses or joint pain (reported via an interactive prompt when selecting `⚠️ BELOW`).
 - **Arm Block Exposure Limit**: Maximum 1 exposure per muscle area per week (Lateral Shoulder, Triceps, Biceps).
 - **Push-Up Bars**: All push-up variations must strictly use Push-Up Bars. Palms flat on the floor is strictly forbidden.
+- **Pull-Up Bar & Rings / Rope Loops (טבעות / לולאת חבל)**: Trainees may execute all Pull-Up, Chin-Up, and Hang progressions using Gymnastic Rings or Short Rope Loops hung from the pull-up bar. This grants natural rotational freedom for wrists and forearms (pronated to neutral/supinated), eliminating torsional stress on elbow tendons (medial/lateral epicondyles) and building superior functional grip strength without joint wear.
+- **Quad Overload & Paused Squats**: Heels-Elevated Goblet Squats enforce a 1–2s isometric pause at the bottom (Paused Squat) to maintain continuous quad tension without ballistic bounce. The Goblet Bulgarian Split Squat (unlocked early in Phase 0) provides the primary unilateral overload mechanism, overcoming the dumbbell weight ceiling without compressive spinal torque.
 - **TRX**: Strictly for Face Pulls, TRX Rows, and TRX Y-T-W. Fixed body angles assigned per phase.
 - **Neutral Spine**: Rigid neutral alignment across all RDL, Row, and Carry variations. Lumbar rounding = load is too heavy.
 - **Unilateral Execution**: Complete all sets for side A, swap to side B, then proceed to the next exercise.
