@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v164-harmonized-modals';
+const CACHE_NAME = 'fitup-v165-combat-mode';
 const ASSETS = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const ASSETS = [
   './js/config.js',
   './js/crypto.js',
   './js/data.js',
+  './js/combat-scheduler.js',
   './js/db.js',
   './js/progression.js',
   './js/effects3d.js',
@@ -65,10 +66,10 @@ self.addEventListener('fetch', (event) => {
   const url = event.request.url;
 
   // Bypass external APIs and Fonts to avoid CORS and caching issues
-  if (url.includes('script.google.com') || 
-      url.includes('script.googleusercontent.com') ||
-      url.includes('fonts.googleapis.com') || 
-      url.includes('fonts.gstatic.com')) {
+  if (url.includes('script.google.com') ||
+    url.includes('script.googleusercontent.com') ||
+    url.includes('fonts.googleapis.com') ||
+    url.includes('fonts.gstatic.com')) {
     return;
   }
 
@@ -80,8 +81,8 @@ self.addEventListener('fetch', (event) => {
           if (response && response.status === 200) {
             const responseToCache = response.clone();
             caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache).catch(() => {});
-            }).catch(() => {});
+              cache.put(event.request, responseToCache).catch(() => { });
+            }).catch(() => { });
           }
           return response;
         })
@@ -106,7 +107,7 @@ self.addEventListener('fetch', (event) => {
             cache.put(event.request, responseToCache).catch((err) => {
               console.warn('[SW] Cache put failed:', event.request.url, err);
             });
-          }).catch(() => {});
+          }).catch(() => { });
         }
         return response;
       })

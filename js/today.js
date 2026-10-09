@@ -11,6 +11,8 @@ const TodayPage = (() => {
   let renderNutritionSectionRef = null;
   let selectedNutritionDate = null;
   let isEqBannerCollapsed = false;
+  let combatScheduleCache = null;
+  let combatRenderToken = 0;
 
   function toggleEqBanner() {
     isEqBannerCollapsed = !isEqBannerCollapsed;
@@ -762,6 +764,54 @@ const TodayPage = (() => {
     } else {
       if (summaryCard) summaryCard.classList.remove('is-deload');
       if (deloadBanner) deloadBanner.remove();
+    }
+
+    // Combat schedule transition banner: combat mode enabled but the newest era
+    // starts in the future (mid-week activation). Shows until the boundary week.
+    let combatTransitionBanner = document.getElementById('combat-transition-banner');
+    if (window.CombatScheduler) {
+      try {
+        const combatCfg = await getCombatSchedule();
+        if (combatCfg && combatCfg.enabled && Array.isArray(combatCfg.history) && combatCfg.history.length > 0) {
+          const newestEra = combatCfg.history[combatCfg.history.length - 1];
+          if (newestEra && newestEra.enabled && typeof newestEra.from === 'number' && currentDayIndex < newestEra.from) {
+            if (!combatTransitionBanner && summaryCard) {
+              combatTransitionBanner = document.createElement('div');
+              combatTransitionBanner.id = 'combat-transition-banner';
+              summaryCard.parentNode.insertBefore(combatTransitionBanner, summaryCard);
+            }
+            if (combatTransitionBanner) {
+              const planStartStr = await DB.getSetting('planStartDate');
+              const start = planStartStr ? new Date(planStartStr + 'T12:00:00') : new Date();
+              const d = new Date(start);
+              d.setDate(d.getDate() + newestEra.from);
+              const dd = String(d.getDate()).padStart(2, '0');
+              const mm = String(d.getMonth() + 1).padStart(2, '0');
+              combatTransitionBanner.innerHTML = `
+                <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.35); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px;">
+                  <span style="font-size: 20px;">🥊</span>
+                  <div style="font-size: 13px; color: var(--text-primary); font-weight: 700;">
+                    ${I18n.t('combat_effective_banner', '', { date: `${dd}/${mm}/${d.getFullYear()}` })}
+                  </div>
+                </div>
+              `;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Combat transition banner error:', e);
+      }
+    }
+    if (!window.CombatScheduler) {
+      if (combatTransitionBanner) {
+        combatTransitionBanner.remove();
+        combatTransitionBanner = null;
+      }
+    }
+    // When combat mode is off or era already active, the banner element simply
+    // never gets re-created (guard above). Clean up stale detached nodes.
+    if (combatTransitionBanner && !combatTransitionBanner.isConnected) {
+      combatTransitionBanner = null;
     }
 
     // Update summary card
@@ -1761,6 +1811,9 @@ const TodayPage = (() => {
     // Render daily readiness check card
     renderReadinessCheck();
 
+    // Render combat training card (superimposed on cardio/recovery days per settings)
+    await renderCombatCard(day);
+
     // Render exercises
     renderExercises(day);
 
@@ -2327,6 +2380,175 @@ const TodayPage = (() => {
     }
 
     return badges.length > 0 ? `<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; margin-bottom: 4px;">${badges.join('')}</div>` : '';
+  }
+
+  // ============ Combat Training Card ============
+
+  async function getCombatSchedule() {
+    if (combatScheduleCache === null) {
+      try {
+        combatScheduleCache = await DB.getSetting('combatSchedule') || null;
+      } catch (e) {
+        combatScheduleCache = null;
+      }
+    }
+    return combatScheduleCache;
+  }
+
+  function jsDowOfDay(day) {
+    // day.date is dd/mm/yyyy (or ISO). Convert to JS getDay()
+    const raw = (day && day.date) || '';
+    let d = null;
+    if (raw.includes('/')) {
+      const parts = raw.split('/');
+      if (parts.length === 3) {
+        const [dd, mm, yyyy] = parts.map(Number);
+        d = new Date(yyyy, (mm || 1) - 1, dd || 1);
+      }
+    } else if (raw) {
+      d = new Date(raw + 'T12:00:00');
+    }
+    return d ? d.getDay() : null;
+  }
+
+  /**
+   * Render an optional combat-session card as a sibling above the exercise list.
+   * Runs serverlessly: reads combatSchedule setting + CombatScheduler helpers.
+   */
+  async function renderCombatCard(day) {
+    const existing = document.getElementById('combat-card-container');
+    if (existing) existing.remove();
+    if (!window.CombatScheduler) return;
+
+    const combatSchedule = await getCombatSchedule();
+    if (!combatSchedule || !combatSchedule.enabled) return;
+
+    const jsDow = jsDowOfDay(day);
+    if (jsDow === null) return;
+
+    const info = CombatScheduler.combatInfoForDay(combatSchedule, currentDayIndex, jsDow);
+    if (!info) return;
+
+    const sport = combatSchedule.sport || 'muay_thai';
+    const sportLabel = I18n.t(`combat_sport_${sport}`) || 'Combat Sport';
+    const kindLabel = info.kind === 'class1'
+      ? I18n.t('combat_class1_label')
+      : info.kind === 'class2'
+        ? I18n.t('combat_class2_label')
+        : I18n.t('combat_practice_label');
+
+    const done = !!(currentTracking && currentTracking.combat && currentTracking.combat.done && !currentTracking.combat.skipped);
+    const skipped = !!(currentTracking && currentTracking.combat && currentTracking.combat.skipped);
+    const rpe = (currentTracking && currentTracking.combat && currentTracking.combat.rpe) || '';
+
+    const isDeloadDay =
+      (day.week && /deload/i.test(day.week)) ||
+      (day.dayType && /deload/i.test(day.dayType)) ||
+      Boolean(day.autoDeload);
+
+    const safetyNote = isDeloadDay
+      ? `<div style="font-size: 11px; color: #fbbf24; margin-top: 8px; font-weight: 700;">🌿 ${I18n.t('combat_deload_note')}</div>`
+      : `<div style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.5;">${I18n.t('combat_safety_footer')}</div>`;
+
+    const statusBadge = done
+      ? `<span style="background: rgba(16,185,129,0.15); color: #34d399; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">✓ ${I18n.t('combat_done_badge')}</span>`
+      : skipped
+        ? `<span style="background: rgba(148,163,184,0.15); color: #94a3b8; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">${I18n.t('combat_skipped_badge')}</span>`
+        : '';
+
+    const isPractice = info.kind === 'practice';
+    const hostType = info.hostType || 'other';
+    const editable = isDayEditable();
+    const combatDisabledAttr = editable ? '' : 'disabled style="opacity: 0.45; cursor: not-allowed;"';
+
+    const card = document.createElement('div');
+    card.id = 'combat-card-container';
+    card.className = 'combat-card';
+    card.innerHTML = `
+      <div style="background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(185,28,28,0.06)); border: 1px solid rgba(239,68,68,0.35); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 24px;">🥊</span>
+            <div>
+              <div style="font-weight: 800; color: var(--text-primary); font-size: 14px;">${kindLabel} — ${sportLabel}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${I18n.t(`combat_guidance_${info.guidance === 'combat_warning_strength_host' ? 'warning_strength_host' : info.guidance.replace('combat_guidance_', '')}`) || I18n.t(info.guidance)}</div>
+            </div>
+          </div>
+          ${statusBadge}
+        </div>
+        ${safetyNote}
+        <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center;">
+          <button type="button" class="btn-primary" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer;"
+            onclick="TodayPage.markCombatDone('${info.kind}', this)" ${combatDisabledAttr}>${done ? I18n.t('combat_mark_undone') : I18n.t('combat_mark_complete')}</button>
+          ${!isPractice ? '' : `
+            <button type="button" class="btn-secondary" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer;"
+              onclick="TodayPage.skipCombatPractice(this)" ${combatDisabledAttr}>${I18n.t('combat_skip_practice')}</button>
+          `}
+          <input id="combat-rpe-input" type="number" min="1" max="10" placeholder="${I18n.t('combat_rpe_placeholder')}"
+            value="${rpe}" ${combatDisabledAttr} style="width: 70px; padding: 8px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 13px; text-align: center;" dir="ltr">
+          <button type="button" class="btn-secondary" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer;"
+            onclick="TodayPage.saveCombatRPE('${info.kind}', this)" ${combatDisabledAttr}>${I18n.t('combat_save_rpe')}</button>
+        </div>
+      </div>
+    `;
+
+    const list = document.getElementById('exercises-list');
+    if (list && list.parentNode) {
+      list.parentNode.insertBefore(card, list);
+    }
+  }
+
+  async function markCombatDone(kind, btn) {
+    if (!currentTracking) return;
+    const wasDone = !!(currentTracking.combat && currentTracking.combat.done && !currentTracking.combat.skipped);
+    const rpeVal = parseInt(document.getElementById('combat-rpe-input')?.value, 10);
+    currentTracking.combat = {
+      ...(currentTracking.combat || {}),
+      done: !wasDone,
+      skipped: false,
+      kind,
+      rpe: (!isNaN(rpeVal) && rpeVal >= 1 && rpeVal <= 10) ? rpeVal : (currentTracking.combat && currentTracking.combat.rpe) || null,
+      ts: new Date().toISOString()
+    };
+    await autoSave();
+    const day = allPlanDays[currentDayIndex];
+    if (day) await renderCombatCard(day);
+    UI.toast(wasDone ? I18n.t('combat_marked_undone') : I18n.t('combat_marked_done'), 'success');
+  }
+
+  async function skipCombatPractice(btn) {
+    if (!currentTracking) return;
+    currentTracking.combat = {
+      ...(currentTracking.combat || {}),
+      done: false,
+      skipped: true,
+      ts: new Date().toISOString()
+    };
+    await autoSave();
+    const day = allPlanDays[currentDayIndex];
+    if (day) await renderCombatCard(day);
+    UI.toast(I18n.t('combat_skipped'), 'info');
+  }
+
+  async function saveCombatRPE(kind, btn) {
+    if (!currentTracking) return;
+    const rpeVal = parseInt(document.getElementById('combat-rpe-input')?.value, 10);
+    if (isNaN(rpeVal) || rpeVal < 1 || rpeVal > 10) {
+      UI.toast(I18n.t('combat_invalid_rpe'), 'warning');
+      return;
+    }
+    currentTracking.combat = {
+      ...(currentTracking.combat || {}),
+      done: true,
+      skipped: false,
+      kind,
+      rpe: rpeVal,
+      ts: new Date().toISOString()
+    };
+    await autoSave();
+    const day = allPlanDays[currentDayIndex];
+    if (day) await renderCombatCard(day);
+    UI.toast(I18n.t('combat_rpe_saved'), 'success');
   }
 
   /**
@@ -4886,7 +5108,38 @@ const TodayPage = (() => {
     renderReadinessCheck,
     open1RMCalculator,
     getCyclingTargetsForDay,
-    getExercisePeak1RM
+    getExercisePeak1RM,
+    markCombatDone,
+    skipCombatPractice,
+    saveCombatRPE,
+    async refreshPlan() {
+      // Reload plan from DB (e.g. after combat schedule changes) and re-render
+      allPlanDays = [];
+      combatScheduleCache = null;
+      try {
+        const days = await DB.getAllPlan();
+        days.sort((a, b) => a.dayIndex - b.dayIndex);
+        allPlanDays = days;
+        currentDayIndex = UI.findTodayIndex(days);
+        allTrackingCache = await DB.getAllTracking();
+        const today = days[currentDayIndex];
+        if (today) {
+          const storedTracking = await DB.getDayTracking(currentDayIndex);
+          currentTracking = storedTracking || {
+            dayIndex: currentDayIndex,
+            date: today.date,
+            bodyWeight: window._cachedUserWeight,
+            notes: '',
+            completed: false
+          };
+        }
+        if (typeof CalendarPage !== 'undefined' && CalendarPage.render) CalendarPage.render();
+        await render();
+      } catch (e) {
+        console.error('TodayPage.refreshPlan error:', e);
+        UI.toast(I18n.t('error_prefix') + e.message, 'danger');
+      }
+    }
   };
 })();
 

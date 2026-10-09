@@ -167,4 +167,32 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 - **Cloud Synchronization & Local Data Export**: Automatic bidirectional sync with Google Drive alongside one-click local JSON data backup (`fitup_backup_[DATE].json`) and import verification.
 
 ---
+
+## Appendix C — Combat Training Integration Mode (🥊)
+
+The Combat Integration Mode lets the trainee add up to **3 combat training days per week** while the program's repeating weekly order is rearranged optimally to protect strength days and recovery.
+
+### C.1 Configuration (Settings → 🥊 Combat Training)
+- **Class Day 1 / Class Day 2** — fixed external course days (JS getDay weekday pickers, e.g. Tue + Thu).
+- **Home bag practice** — `Auto` (the system selects the optimal weekday and displays it live) or `Off`.
+- **Sport** — Muay Thai / Boxing / Kickboxing / Other (adjusts card text).
+- **Hardest class day** — `Auto / First / Second`; the chosen class day hosts the VO2 Max slot (class replaces the 4×4).
+- A **live 7-day preview grid** shows the optimized weekday→day-type mapping with warnings before saving.
+- Saving takes effect from the **next Monday boundary** (banner shown mid-week; current week finishes unchanged).
+
+### C.2 Optimization Engine (`js/combat-scheduler.js`)
+Brute-forces all valid weekly layouts (≤720 candidates) and minimizes an interference-cost model:
+class days and practice day never land on strength or rest slots; Push after a class +3, Pull after class +2 / after bag +3, strength before class +1, consecutive strength days +2, Rest placement, practice on Recovery preferred, and minimal layout displacement. Deterministic tie-break → identity layout. Golden example (classes Tue + Thu): only Thu/Sat swap → `[0,1,2,5,4,3,6]`, practice on Sat (Recovery).
+
+### C.3 Day-card behavior
+- **Zone 2 host + class**: technique-first, then the treadmill (25–45 min).
+- **VO2 Max host + class**: the class **replaces** the 4×4 (pad rounds ≈ interval stimulus); or 4×4 morning + technique-only evening, 6h apart.
+- **Recovery host + practice**: light bag 15–20 min only; keep walk + neck protocol + mobility; wraps & gloves mandatory.
+- **Safety footer**: no clinch (lumbar-disc protocol), stop on sharp pain, and deload weeks → technique only.
+- Completion / skip / RPE logging stored per-day in `tracking.combat`.
+
+### C.4 History Integrity
+Era-based history (`combatSchedule.history`, append-only) guarantees a full plan re-seed (version bump / Reload Plan) reproduces each week exactly as trained. Past weeks are never re-permuted; manual swaps and all tracking are preserved. Disabling appends an identity era from the next boundary.
+
+---
 FitUp Pro v15.7 Accelerated — Built for Precision, Zero Decisions, and Zero Regrets.

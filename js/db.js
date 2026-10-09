@@ -232,6 +232,70 @@ const DB = (() => {
   /**
    * Load training plan from window.TRAINING_DATA into IndexedDB
    */
+  /**
+   * Resolve the source day object for a given plan position, applying the
+   * active combat-era permutation within the week block (identity when off).
+   * @param {Array} daily - TRAINING_DATA.daily
+   * @param {Object|null} combatSchedule - stored combatSchedule setting
+   * @param {number} index - target chronological position (0..daily.length-1)
+   * @returns {Object} the day object whose content should sit at this position
+   */
+  function resolvePlanSource(daily, combatSchedule, index) {
+    const fallback = daily[index];
+    if (!window.CombatScheduler || !combatSchedule || !Array.isArray(combatSchedule.history)) {
+      return fallback;
+    }
+    const weekStart = Math.floor(index / 7) * 7;
+    const blockPos = index - weekStart; // 0=Mon..6=Sun in generator order
+    const era = CombatScheduler.eraForDayIndex(combatSchedule, weekStart);
+    if (era && Array.isArray(era.perm)) {
+      const srcPos = weekStart + era.perm[blockPos];
+      if (srcPos >= 0 && srcPos < daily.length) {
+        return daily[srcPos];
+      }
+    }
+    return fallback;
+  }
+
+  /**
+   * Build a full plan day object for the chronological position `index`,
+   * pulling content from `sourceDay` (already combat-era resolved) and
+   * stamping chronological date/dayIndex/dayOfWeek/sequence fields.
+   */
+  function buildPlanDay(sourceDay, index, startDate, dayNames, seqCounters) {
+    const currentDate = new Date(startDate);
+    currentDate.setDate(currentDate.getDate() + index);
+    const realDayOfWeekNum = currentDate.getDay(); // 0-6
+
+    let dayObj;
+    if (sourceDay.dayType === 'Rest') {
+      const tpl = (seqCounters.restSeq % 2 === 0) ? { dayType: 'Rest', plannedRPE: '—', exercises: [] } : { dayType: 'Rest', plannedRPE: '—', exercises: [] };
+      dayObj = {
+        ...sourceDay,
+        dayOfWeek: dayNames[realDayOfWeekNum],
+        exercises: JSON.parse(JSON.stringify(tpl.exercises))
+      };
+      dayObj.restSeq = seqCounters.restSeq++;
+    } else {
+      dayObj = {
+        ...sourceDay,
+        dayOfWeek: dayNames[realDayOfWeekNum],
+        exercises: JSON.parse(JSON.stringify(sourceDay.exercises || []))
+      };
+      dayObj.workoutSeq = seqCounters.workoutSeq++;
+    }
+
+    dayObj.dayIndex = index;
+    dayObj.dayNum = index + 1;
+    dayObj.date = UI.getLocalDateString(currentDate).split('-').reverse().join('/');
+    return dayObj;
+  }
+
+  /**
+   * Full training-plan seed (clears PLAN + EXERCISES stores).
+   * Each week block is permuted according to the active combat era at its start;
+   * weeks with no active era use identity order (past weeks reproduce exactly).
+   */
   async function loadTrainingPlan() {
     const data = window.TRAINING_DATA;
     if (!data) {
@@ -244,17 +308,6 @@ const DB = (() => {
     }
 
     const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-    const restTemplate1 = {
-      dayType: 'Rest',
-      plannedRPE: '—',
-      exercises: []
-    };
-
-    const restTemplate2 = {
-      dayType: 'Rest',
-      plannedRPE: '—',
-      exercises: []
-    };
 
     let planStartDateStr = await getSetting('planStartDate');
     let effectiveStartDateStr = planStartDateStr;
@@ -265,47 +318,15 @@ const DB = (() => {
     }
     const startDate = new Date(effectiveStartDateStr + 'T12:00:00');
 
-    let globalDayIndex = 0;
-    let globalWorkoutSeq = 0;
-    let globalRestSeq = 0;
+    const combatSchedule = await getSetting('combatSchedule');
+
+    const seqCounters = { workoutSeq: 0, restSeq: 0 };
     const newPlanData = [];
 
-    data.daily.forEach((originalDay, index) => {
-      const currentDate = new Date(startDate);
-      currentDate.setDate(currentDate.getDate() + globalDayIndex);
-      const realDayOfWeekNum = currentDate.getDay(); // 0-6
-
-      let dayObj;
-      if (originalDay.dayType === 'Rest') {
-        const tpl = (globalRestSeq % 2 === 0) ? restTemplate1 : restTemplate2;
-        dayObj = {
-          ...originalDay,
-          dayOfWeek: dayNames[realDayOfWeekNum],
-          exercises: JSON.parse(JSON.stringify(tpl.exercises))
-        };
-      } else {
-        dayObj = {
-          ...originalDay,
-          dayOfWeek: dayNames[realDayOfWeekNum],
-          exercises: JSON.parse(JSON.stringify(originalDay.exercises || []))
-        };
-      }
-
-      dayObj.dayIndex = globalDayIndex;
-      dayObj.dayNum = globalDayIndex + 1;
-
-      // Add a sequence ID for reliable migration
-      if (dayObj.dayType !== 'Rest') {
-        dayObj.workoutSeq = globalWorkoutSeq++;
-      } else {
-        dayObj.restSeq = globalRestSeq++;
-      }
-
-      dayObj.date = UI.getLocalDateString(currentDate).split('-').reverse().join('/');
-
-      newPlanData.push(dayObj);
-      globalDayIndex++;
-    });
+    for (let index = 0; index < data.daily.length; index++) {
+      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index);
+      newPlanData.push(buildPlanDay(sourceDay, index, startDate, dayNames, seqCounters));
+    }
 
     await clear(STORES.PLAN);
     await putBulk(STORES.PLAN, newPlanData);
@@ -314,7 +335,68 @@ const DB = (() => {
     await clear(STORES.EXERCISES);
     await putBulk(STORES.EXERCISES, exerciseData);
 
+    // Record the combat rev that was applied so boot-time consistency checks
+    // can detect stale plans (e.g. after a cloud restore).
+    const appliedRev = combatSchedule && typeof combatSchedule.rev === 'number' ? combatSchedule.rev : 0;
+    await setSetting('combatAppliedRev', appliedRev);
+
     return newPlanData.length;
+  }
+
+  /**
+   * Incremental combat-schedule application. Rewrites ONLY plan records with
+   * dayIndex >= the newest era's `from` boundary (no clear of past weeks),
+   * preserving history, past manual swaps, and tracking integrity.
+   * @param {Object|null} campaign - optional combatSchedule object (defaults to stored setting)
+   * @returns {number} number of records rewritten
+   */
+  async function applyCombatSchedule(campaign) {
+    const data = window.TRAINING_DATA;
+    if (!data || data.daily.length === 0) return 0;
+
+    const combatSchedule = campaign || await getSetting('combatSchedule');
+    if (!combatSchedule || !Array.isArray(combatSchedule.history) || combatSchedule.history.length === 0) {
+      return 0;
+    }
+    const newestEra = combatSchedule.history[combatSchedule.history.length - 1];
+    const from = Number.isFinite(newestEra.from) ? Math.max(0, newestEra.from) : 0;
+
+    let planStartDateStr = await getSetting('planStartDate');
+    if (!planStartDateStr) return 0; // program not started yet — full seed handles it
+    const startDate = new Date(planStartDateStr + 'T12:00:00');
+    const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+
+    // Preserve existing sequence markers so swap/seq semantics stay stable
+    const existingByIndex = {};
+    const existingAll = await getAll(STORES.PLAN);
+    for (const rec of existingAll) {
+      if (recordDayIndex(rec) >= from) existingByIndex[recordDayIndex(rec)] = rec;
+    }
+
+    const updates = [];
+    const endIndex = Math.min(data.daily.length, from + (newestEra.limit || (data.daily.length - from)));
+
+    for (let index = from; index < endIndex; index++) {
+      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index);
+      const dayObj = buildPlanDay(sourceDay, index, startDate, dayNames, { workoutSeq: 0, restSeq: 0 });
+      const existing = existingByIndex[index];
+      if (existing) {
+        if (existing.workoutSeq !== undefined) dayObj.workoutSeq = existing.workoutSeq;
+        if (existing.restSeq !== undefined) dayObj.restSeq = existing.restSeq;
+      }
+      updates.push(dayObj);
+    }
+
+    if (updates.length > 0) {
+      await putBulk(STORES.PLAN, updates);
+    }
+    const appliedRev = combatSchedule && typeof combatSchedule.rev === 'number' ? combatSchedule.rev : 0;
+    await setSetting('combatAppliedRev', appliedRev);
+    return updates.length;
+  }
+
+  function recordDayIndex(rec) {
+    return typeof rec.dayIndex === 'number' ? rec.dayIndex : (parseInt(rec.dayIndex, 10) || 0);
   }
 
   /**
@@ -929,6 +1011,7 @@ const DB = (() => {
     init,
     ensureV15LeanSchema,
     loadTrainingPlan,
+    applyCombatSchedule,
     getDayPlan,
     getDayTracking,
     saveDayTracking,

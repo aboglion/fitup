@@ -476,7 +476,7 @@ window.ExporterGuide = (() => {
         <h2>${t.full_plan_title}</h2>
         <p>${t.full_plan_desc}</p>
         
-        ${generateWeeksHtml(allPlan, t)}
+        ${await generateWeeksHtml(allPlan, t)}
       </div>
 
     </body>
@@ -492,7 +492,7 @@ window.ExporterGuide = (() => {
     return 'badge';
   }
 
-  function generateWeeksHtml(allPlan, t) {
+  async function generateWeeksHtml(allPlan, t) {
     const DAY_NAME_MAP_EN = {
       'ראשון': 'Sunday',
       'שני': 'Monday',
@@ -528,11 +528,26 @@ window.ExporterGuide = (() => {
     const stdDays = allPlan.filter(d => d.week === 'Week 1' || d.dayIndex < 7);
     const deloadDays = allPlan.filter(d => d.week === 'Week 12' || (d.dayIndex >= 77 && d.dayIndex < 84));
 
+    const combatSchedule = await DB.getSetting('combatSchedule').catch(() => null);
     const renderDayBlock = (day) => {
       const dayOfWeekEn = DAY_NAME_MAP_EN[day.dayOfWeek] || day.dayOfWeek;
       const dayTypeEn = DAY_TYPE_MAP_EN[day.dayType] || day.dayType;
+      let combatTag = '';
+      if (window.CombatScheduler && combatSchedule && combatSchedule.enabled) {
+        const raw = (day && day.date) || '';
+        let d = null;
+        if (raw.includes('/')) {
+          const parts = raw.split('/');
+          const [dd, mm, yyyy] = parts.map(Number);
+          d = new Date(yyyy, (mm || 1) - 1, dd || 1);
+        }
+        if (d) {
+          const info = CombatScheduler.combatInfoForDay(combatSchedule, day.dayIndex, d.getDay());
+          if (info) combatTag = ` <span style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:999px;font-size:0.75em;font-weight:700;">🥊 ${info.kind === 'practice' ? 'Home Bag Practice' : 'Combat Class'}</span>`;
+        }
+      }
       let html = `<div class="day-block">
-        <h4 class="day-title">${dayOfWeekEn} <span class="${getBadgeClass(day.dayType)}">${dayTypeEn}</span> <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span></h4>`;
+        <h4 class="day-title">${dayOfWeekEn} <span class="${getBadgeClass(day.dayType)}">${dayTypeEn}</span> ${combatTag} <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span></h4>`;
       if (day.exercises && day.exercises.length > 0) {
         html += `<table>
           <tr>

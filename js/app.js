@@ -346,6 +346,23 @@ const App = (() => {
         await DB.setSetting('dataVersion', currentDataVersion);
       }
 
+      // Combat-schedule consistency: if the combat rev changed (e.g. after a cloud
+      // restore or a settings rewrite) but the seeded plan still reflects the old
+      // rev, re-apply the combat eras incrementally (future weeks only, history intact).
+      if (window.CombatScheduler) {
+        try {
+          const combatCfg = await DB.getSetting('combatSchedule');
+          const appliedRev = await DB.getSetting('combatAppliedRev');
+          const currentRev = combatCfg && typeof combatCfg.rev === 'number' ? combatCfg.rev : 0;
+          if (combatCfg && currentRev !== appliedRev) {
+            console.log(`Combat schedule rev mismatch (cfg=${currentRev}, applied=${appliedRev}). Re-applying...`);
+            await DB.applyCombatSchedule(combatCfg);
+          }
+        } catch (e) {
+          console.warn('Combat schedule consistency check skipped:', e);
+        }
+      }
+
       // Non-blocking background pull from cloud & silent token refresh
       const savedUrl = await DB.getSetting('cloudSyncUrl');
       const hasOAuthToken = await CloudSync.isLoggedIn();
@@ -835,6 +852,305 @@ const App = (() => {
           window.TodayPage.render();
         }
       });
+    }
+
+    // ============ Combat Training Integration Settings ============
+    const combatToggle = document.getElementById('combat-enabled-toggle');
+    const combatBody = document.getElementById('combat-settings-body');
+    const combatSaveBtn = document.getElementById('save-combat-settings-btn');
+    const combatPreviewGrid = document.getElementById('combat-preview-grid');
+    const combatPreviewWarnings = document.getElementById('combat-preview-warnings');
+    const combatSportButtons = document.querySelectorAll('.combat-sport-chip');
+    const combatPracticeButtons = document.querySelectorAll('.combat-practice-chip');
+    const combatHardButtons = document.querySelectorAll('.combat-hard-chip');
+    const combatDowRows = document.querySelectorAll('.combat-weekday-row');
+
+    if (combatToggle && window.CombatScheduler) {
+      // ---- State ----
+      let combatState = {
+        enabled: false,
+        sport: 'muay_thai',
+        classDays: [],
+        practice: 'auto',
+        hardClass: 'auto'
+      };
+      let combatResolved = null;
+
+      const DAY_LETTERS = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
+
+      function combatRefreshChips() {
+        // Sport chips
+        combatSportButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.sport === combatState.sport);
+        });
+        // Practice chips
+        combatPracticeButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.practice === combatState.practice);
+        });
+        // Hard chips
+        combatHardButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.hard === combatState.hardClass);
+        });
+        // Day-of-week chips
+        combatDowRows.forEach(row => {
+          const picker = row.dataset.picker;
+          row.querySelectorAll('.combat-dow-chip').forEach(chip => {
+            const dow = parseInt(chip.dataset.dow, 10);
+            const isClass1 = picker === 'class1' && combatState.classDays[0] === dow;
+            const isClass2 = picker === 'class2' && combatState.classDays[1] === dow;
+            chip.classList.toggle('active', isClass1 || isClass2);
+          });
+        });
+      }
+
+      function combatComputePreview() {
+        if (!combatState.enabled || combatState.classDays.length === 0) return;
+        try {
+          const opts = {
+            classDays: combatState.classDays,
+            practice: combatState.practice,
+            hardClass: combatState.hardClass
+          };
+          combatResolved = CombatScheduler.computeWeek(opts);
+          if (combatPreviewGrid) renderCombatPreviewGrid(combatResolved);
+          else UI.toast(I18n.t('combat_opt_error'), 'danger');
+          if (combatPreviewWarnings) {
+            combatPreviewWarnings.textContent = '';
+            const warnHtml = (combatResolved.warnings || [])
+              .filter(w => w !== 'optimal' && I18n.t(`combat_warn_${w}`))
+              .map(w => `<div style="color: #fbbf24; margin-top: 3px;">⚠️ ${I18n.t(`combat_warn_${w}`)}</div>`)
+              .join('');
+            combatPreviewWarnings.innerHTML = warnHtml;
+          }
+        } catch (e) {
+          console.error('Combat preview error:', e);
+          if (combatPreviewWarnings) {
+            combatPreviewWarnings.textContent = I18n.t('combat_opt_error');
+          }
+        }
+      }
+
+      function renderCombatPreviewGrid(resolved) {
+        const days = [];
+        // Build Sun..Sat display order (JS getDay 0-6)
+        for (let dow = 0; dow < 7; dow++) {
+          const bp = CombatScheduler.blockPosOf(dow);
+          const offset = resolved.permutation[bp];
+          const isClass1 = combatState.classDays[0] === dow;
+          const isClass2 = combatState.classDays[1] === dow;
+          const isPractice = resolved.practiceDay === dow;
+          let marker = '';
+          if (isClass1) marker = '🥊';
+          else if (isClass2) marker = '🥊';
+          else if (isPractice) marker = '🥊';
+          const isRest = offset === 6;
+          const cellStyle = isRest
+            ? 'background: rgba(148,163,184,0.12); color: var(--text-muted);'
+            : isClass1 || isClass2 || isPractice
+              ? 'background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4);'
+              : 'background: var(--bg-input);';
+          const name = CombatScheduler.offsetName(offset);
+          days.push(`
+            <div style="display:flex; flex-direction:column; align-items:center; gap:4px; border-radius:8px; padding:6px 2px; ${cellStyle}">
+              <span style="font-size:12px; font-weight:700;">${DAY_LETTERS[dow]}</span>
+              <span style="font-size:10px; text-align:center; line-height:1.2;">${I18n.t(`combat_type_${offset}`) || name}</span>
+              <span style="font-size:12px;">${marker || ''}</span>
+            </div>
+          `);
+        }
+        combatPreviewGrid.innerHTML = days.join('');
+      }
+
+      // ---- Load saved state ----
+      (async () => {
+        try {
+          const saved = await DB.getSetting('combatSchedule');
+          if (saved) {
+            combatState.enabled = !!saved.enabled;
+            combatState.sport = saved.sport || 'muay_thai';
+            combatState.classDays = Array.isArray(saved.classDays) ? saved.classDays.slice() : [];
+            combatState.practice = saved.practice || 'auto';
+            combatState.hardClass = saved.hardClass || 'auto';
+          }
+        } catch (e) {
+          console.warn('Combat settings load error:', e);
+        }
+        combatToggle.checked = combatState.enabled;
+        combatBody.style.display = combatState.enabled ? 'block' : 'none';
+        combatRefreshChips();
+        if (combatState.enabled) combatComputePreview();
+      })();
+
+      // ---- Toggle ----
+      combatToggle.addEventListener('change', () => {
+        combatState.enabled = combatToggle.checked;
+        combatBody.style.display = combatState.enabled ? 'block' : 'none';
+        combatRefreshChips();
+        if (combatState.enabled) combatComputePreview();
+      });
+
+      // ---- Sport selector ----
+      combatSportButtons.forEach(btn => btn.addEventListener('click', () => {
+        combatState.sport = btn.dataset.sport;
+        combatRefreshChips();
+        if (combatState.enabled) combatComputePreview();
+      }));
+
+      // ---- Practice selector ----
+      combatPracticeButtons.forEach(btn => btn.addEventListener('click', () => {
+        combatState.practice = btn.dataset.practice;
+        combatRefreshChips();
+        if (combatState.enabled) combatComputePreview();
+      }));
+
+      // ---- Hard class selector ----
+      combatHardButtons.forEach(btn => btn.addEventListener('click', () => {
+        combatState.hardClass = btn.dataset.hard;
+        combatRefreshChips();
+        if (combatState.enabled) combatComputePreview();
+      }));
+
+      // ---- Day-of-week selectors (mutually exclusive within each row) ----
+      combatDowRows.forEach(row => {
+        const picker = row.dataset.picker;
+        const slotIdx = picker === 'class1' ? 0 : 1;
+        row.querySelectorAll('.combat-dow-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            const dow = parseInt(chip.dataset.dow, 10);
+            const cur = combatState.classDays[slotIdx];
+            if (cur === dow) {
+              combatState.classDays[slotIdx] = undefined;
+            } else {
+              combatState.classDays[slotIdx] = dow;
+            }
+            // Avoid selecting the same weekday for both class days
+            const otherIdx = slotIdx === 0 ? 1 : 0;
+            if (combatState.classDays[slotIdx] === combatState.classDays[otherIdx]) {
+              combatState.classDays[otherIdx] = undefined;
+            }
+            combatState.classDays = combatState.classDays.filter(d => d !== undefined);
+            combatRefreshChips();
+            if (combatState.enabled) combatComputePreview();
+          });
+        });
+      });
+
+      // ---- Save ----
+      if (combatSaveBtn) {
+        combatSaveBtn.addEventListener('click', async () => {
+          if (!combatState.enabled) {
+            // Disable path: append a disabled era from next Monday
+            const boundary = await computeCombatBoundary();
+            const cfg = await DB.getSetting('combatSchedule');
+            const history = (cfg && Array.isArray(cfg.history)) ? cfg.history.slice() : [];
+            history.push({ from: boundary, enabled: false });
+            const newCfg = { rev: (cfg && cfg.rev || 0) + 1, enabled: false, sport: combatState.sport, classDays: [], practice: 'off', hardClass: 'auto', history };
+            await DB.setSetting('combatSchedule', newCfg);
+            await DB.applyCombatSchedule(newCfg);
+            if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
+            UI.toast(I18n.t('combat_disabled'), 'info');
+            await refreshPlanInMemory();
+            return;
+          }
+
+          const classDays = combatState.classDays.slice().sort((a, b) => a - b);
+          if (classDays.length === 0) {
+            UI.toast(I18n.t('combat_no_days'), 'warning');
+            return;
+          }
+          try {
+            combatResolved = CombatScheduler.computeWeek({
+              classDays,
+              practice: combatState.practice,
+              hardClass: combatState.hardClass
+            });
+          } catch (e) {
+            UI.toast(I18n.t('combat_opt_error'), 'danger');
+            return;
+          }
+
+          const boundary = await computeCombatBoundary();
+          const effDateText = await formatCommitDate(boundary);
+
+          // Confirmation modal
+          const ok = window.UI && window.UI.confirm
+            ? await UI.confirm({
+              title: I18n.t('combat_confirm_title'),
+              message: I18n.t('combat_confirm_msg', '', { date: effDateText }),
+              confirmText: I18n.t('combat_confirm_apply'),
+              type: 'primary',
+              icon: '🥊'
+            })
+            : confirm(I18n.t('combat_confirm_msg', '', { date: effDateText }));
+
+          if (!ok) return;
+
+          const cfg = await DB.getSetting('combatSchedule');
+          const history = (cfg && Array.isArray(cfg.history)) ? cfg.history.slice() : [];
+          history.push({
+            from: boundary,
+            enabled: true,
+            perm: combatResolved.permutation.slice(),
+            classDays: classDays.slice(),
+            practiceDay: combatResolved.practiceDay,
+            sport: combatState.sport
+          });
+          const newCfg = {
+            rev: (cfg && cfg.rev || 0) + 1,
+            enabled: true,
+            sport: combatState.sport,
+            classDays: classDays.slice(),
+            practice: combatState.practice,
+            hardClass: combatState.hardClass,
+            resolved: combatResolved,
+            history
+          };
+          await DB.setSetting('combatSchedule', newCfg);
+          await DB.applyCombatSchedule(newCfg);
+          if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
+          UI.toast(I18n.t('combat_saved'), 'success');
+          await refreshPlanInMemory();
+        });
+      }
+
+      /**
+       * Compute the next Monday week-boundary dayIndex for the current plan position.
+       */
+      async function computeCombatBoundary() {
+        let currentIdx = (typeof window.appCurrentPlanIndex === 'number') ? window.appCurrentPlanIndex : 0;
+        const planStartStr = await DB.getSetting('planStartDate');
+        if (!planStartStr) return 0;
+        const start = new Date(planStartStr + 'T00:00:00');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const daysSince = Math.floor((today - start) / 86400000);
+        currentIdx = Math.max(currentIdx, daysSince);
+        const weekStart = Math.floor(currentIdx / 7) * 7;
+        return weekStart + 7; // next full week block
+      }
+
+      async function formatCommitDate(boundary) {
+        if (boundary <= 0) return I18n.t('combat_from_start');
+        const planStartStr = await DB.getSetting('planStartDate');
+        const planDate = planStartStr ? new Date(planStartStr + 'T00:00:00') : new Date();
+        const d = new Date(planDate);
+        d.setDate(d.getDate() + boundary);
+        const dd = String(d.getDate()).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        return `${dd}/${mm}/${d.getFullYear()}`;
+      }
+
+      async function refreshPlanInMemory() {
+        if (window.TodayPage && window.TodayPage.refreshPlan) {
+          await window.TodayPage.refreshPlan();
+        } else {
+          // Fallback: reload all plan days and re-init pages
+          const planDays = await DB.getAllPlan();
+          planDays.sort((a, b) => a.dayIndex - b.dayIndex);
+          if (window.TodayPage && window.TodayPage.init) await window.TodayPage.init(planDays);
+          if (window.CalendarPage && window.CalendarPage.init) await window.CalendarPage.init(planDays);
+        }
+      }
     }
 
     // Export data

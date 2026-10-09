@@ -4930,3 +4930,58 @@ html.light-theme .login-prompt-banner {
 
 
 
+
+/* ============ Combat Training Integration ============ */
+.combat-switch-slider::before {
+  content: "";
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+#combat-enabled-toggle:checked + .combat-switch-slider {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+}
+#combat-enabled-toggle:checked + .combat-switch-slider::before {
+  transform: translateX(24px);
+}
+
+.combat-chip {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-light, rgba(148,163,184,0.3));
+  background: var(--bg-elevated, rgba(255,255,255,0.03));
+  color: var(--text-primary);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.combat-chip:hover {
+  border-color: var(--accent-primary, #3b82f6);
+}
+.combat-chip.active {
+  background: linear-gradient(135deg, rgba(239,68,68,0.25), rgba(185,28,28,0.15));
+  border-color: rgba(239,68,68,0.6);
+  color: #fca5a5;
+}
+.combat-dow-chip {
+  min-width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border-radius: 8px;
+}
+.combat-dow-chip.active {
+  background: linear-gradient(135deg, rgba(239,68,68,0.35), rgba(185,28,28,0.2));
+  border-color: rgba(239,68,68,0.8);
+  color: #fff;
+  transform: scale(1.08);
+}

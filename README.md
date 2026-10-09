@@ -54,6 +54,12 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 - In-app progress photo logging with automated client-side WebP image compression.
 - 560-day visual consistency matrix tracking adherence across 5 day classifications (Strength, Deload, Walk, Rest, Skipped).
 
+### 🥊 Combat Training Integration Mode
+- Add up to **3 combat training days per week** (2 external class days on your course schedule + 1 auto-assigned home bag-practice day) directly from Settings.
+- The app **rearranges the repeating weekly program order optimally** so class days stack on cardio/recovery slots (Zone 2 + technique class; hard class replaces the 4×4; light bag practice on the recovery day) while strength days, rest day, and all program logic stay protected.
+- Deterministic optimizer with interference-cost scoring, era-based history so past weeks are never altered, mid-week activation with a clear next-Monday boundary banner, host-specific guidance + safety notes (no clinch / disc protocol, wraps & gloves), completion + RPE logging, and calendar badges.
+- One-off swap/skip flexibility preserved on top of the new baseline; disabling restores the original order from the next week.
+
 ### 🌐 Multi-Language & RTL Support (I18n)
 - Full internationalization supporting **English**, **Hebrew** (RTL), and **Arabic** (RTL).
 - Exportable, self-contained workout guide generator for printing or PDF exports in any supported language.

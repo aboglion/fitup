@@ -5,12 +5,44 @@ const CalendarPage = (() => {
   let allPlanDays = [];
   let currentWeekNum = 1;
   const totalWeeks = 52;
+  let combatScheduleCache = null;
+
+  async function getCombatSchedule() {
+    if (combatScheduleCache === null) {
+      try {
+        combatScheduleCache = await DB.getSetting('combatSchedule') || null;
+      } catch (e) {
+        combatScheduleCache = null;
+      }
+    }
+    return combatScheduleCache;
+  }
+
+  function combatBadgeFor(day) {
+    if (!window.CombatScheduler || !combatScheduleCache || !combatScheduleCache.enabled) return '';
+    const raw = (day && day.date) || '';
+    let d = null;
+    if (raw.includes('/')) {
+      const parts = raw.split('/');
+      const [dd, mm, yyyy] = parts.map(Number);
+      d = new Date(yyyy, (mm || 1) - 1, dd || 1);
+    } else if (raw) {
+      d = new Date(raw + 'T12:00:00');
+    }
+    if (!d) return '';
+    const info = CombatScheduler.combatInfoForDay(combatScheduleCache, day.dayIndex, d.getDay());
+    if (!info) return '';
+    const isPractice = info.kind === 'practice';
+    return `<span style="margin-left:4px;" title="${isPractice ? 'Bag practice' : 'Class day'}">🥊</span>`;
+  }
 
   /**
    * Initialize
    */
   function init(planDays) {
     allPlanDays = planDays;
+    combatScheduleCache = null;
+    DB.getSetting('combatSchedule').then(s => { combatScheduleCache = s || null; }).catch(() => { combatScheduleCache = null; });
 
     // Find current week
     const todayIdx = UI.findTodayIndex(planDays);
@@ -61,7 +93,7 @@ const CalendarPage = (() => {
     const firstDay = allPlanDays[0];
     const dayNames = [I18n.t('day_sun'), I18n.t('day_mon'), I18n.t('day_tue'), I18n.t('day_wed'), I18n.t('day_thu'), I18n.t('day_fri'), I18n.t('day_sat')];
     const startOffset = dayNames.indexOf(firstDay.dayOfWeek);
-    
+
     // Calculate which days belong to the requested currentWeekNum (1-indexed)
     // Week 1 starts with up to `startOffset` empty padding days.
     const weekDays = [];
@@ -90,17 +122,18 @@ const CalendarPage = (() => {
           </div>
         `;
       }
-      
+
       const tracking = trackingData[idx];
       const isCompleted = tracking && tracking.completed;
       const typeInfo = UI.getDayTypeInfo(day.dayType);
       const isToday = (day.dayIndex === window.appCurrentPlanIndex);
       const isDeload = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload'));
+      const combatBadge = combatBadgeFor(day);
 
       return `
         <div class="calendar-day ${isToday ? 'today' : ''} ${isCompleted ? 'completed' : ''} ${isDeload ? 'deload-day' : ''}"
              onclick="CalendarPage.selectDay(${day.dayIndex})">
-          <div class="calendar-day-name">${day.dayOfWeek}</div>
+          <div class="calendar-day-name">${day.dayOfWeek}${combatBadge}</div>
           <div class="calendar-day-date" dir="ltr">#${day.dayNum}</div>
           <span class="calendar-day-type ${typeInfo.class}">${typeInfo.label}</span>
         </div>
@@ -116,9 +149,9 @@ const CalendarPage = (() => {
   function selectDay(dayIndex) {
     if (window.TodayPage) {
       TodayPage.goToDay(dayIndex);
-      
+
       // Scroll to top of day view
-      window.scrollTo({top: 0, behavior: 'smooth'});
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
 
