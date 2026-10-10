@@ -209,17 +209,57 @@
     // 4. Biceps Microcycle Controller
     // ----------------------------
     getBicepsMicrocycleWeek(weekNumber) {
+      const phase = this.getBicepsMicrocyclePhase(weekNumber);
+      if (phase.type === 'deload') {
+        return { type: 'deload', exercises: phase.exercises, sets: phase.sets, progressionAllowed: false };
+      }
+      if (phase.type === 'light') {
+        return { type: 'light', exercises: phase.exercises, sets: phase.sets, progressionAllowed: false };
+      }
+      return { type: 'heavy', exercises: phase.exercises, sets: 'progressive', progressionAllowed: true };
+    }
+
+    /**
+     * v15.7 Accelerated — Biceps Microcycle phase resolver (3 heavy : 1 light, every 12th week = deload).
+     * Exposes a phase descriptor consumed by the UI badges (today.js, stats.js).
+     * NOTE: microcycle participation for Single-Arm Hammer Curl is still subject to the
+     * Phase 0 performance unlock — the engine only describes the cycle; rendering hides
+     * locked exercises regardless of cycle phase (Unlock Precedence Rule).
+     */
+    getBicepsMicrocyclePhase(weekNumber) {
       const bicepsCfg = this.settings.bicepsMicrocycle || { cycleLength: 4, heavyWeeks: [1, 2, 3], lightWeeks: [4], lightWeekExercises: ['hammer-curl', 'single-arm-hammer-curl'], lightWeekSets: 2 };
+
       if (weekNumber % (this.settings.deloadEveryWeeks || 12) === 0) {
-        return { type: 'deload', exercises: ['hammer-curl', 'single-arm-hammer-curl'], sets: 1, progressionAllowed: false };
+        return {
+          type: 'deload',
+          phase: 'DELOAD',
+          exercises: ['hammer-curl', 'single-arm-hammer-curl'],
+          sets: 1,
+          progressionAllowed: false,
+          label: 'Deload — Hammer Curl only, 1 set'
+        };
       }
 
       const cyclePosition = ((weekNumber - 1) % bicepsCfg.cycleLength) + 1;
       if (bicepsCfg.lightWeeks && bicepsCfg.lightWeeks.includes(cyclePosition)) {
-        return { type: 'light', exercises: bicepsCfg.lightWeekExercises || ['hammer-curl', 'single-arm-hammer-curl'], sets: bicepsCfg.lightWeekSets || 2, progressionAllowed: false };
+        return {
+          type: 'light',
+          phase: 'LIGHT_MYO',
+          exercises: bicepsCfg.lightWeekExercises || ['hammer-curl', 'single-arm-hammer-curl'],
+          sets: bicepsCfg.lightWeekSets || 2,
+          progressionAllowed: false,
+          label: 'Light Myo-Preservation (Week 4)'
+        };
       }
 
-      return { type: 'heavy', exercises: bicepsCfg.heavyWeekExercises || ['db-curl', 'single-arm-curl', 'hammer-curl', 'single-arm-hammer-curl'], sets: 'progressive', progressionAllowed: true };
+      return {
+        type: 'heavy',
+        phase: 'HEAVY_PROG',
+        exercises: bicepsCfg.heavyWeekExercises || ['db-curl', 'single-arm-curl', 'hammer-curl', 'single-arm-hammer-curl'],
+        sets: 'progressive',
+        progressionAllowed: true,
+        label: 'Heavy Progressive (Weeks 1-3)'
+      };
     }
 
     // ----------------------------
@@ -321,6 +361,21 @@
         const bicepsCfg = this.settings.bicepsMicrocycle || { cycleLength: 4, lightWeeks: [4] };
         const cyclePos = ((weekNumber - 1) % bicepsCfg.cycleLength) + 1;
         if (bicepsCfg.lightWeeks && bicepsCfg.lightWeeks.includes(cyclePos)) return false;
+      }
+
+      // Lean Pair Availability Rule (v15.7): a Lean Pair is rendered only if BOTH
+      // paired exercises are unlocked for the current week (calendar gate OR
+      // performance graduation). If either member is still locked, the pair is
+      // omitted and NO automatic substitution is created (member renders as a
+      // straight set on its own). Unlock Precedence Rule — the ProgressionEngine
+      // unlock logic is authoritative over any day-card/appendix description.
+      if (pair.dissolveIfMemberInactive !== false) {
+        const members = (pair.members || []).map(m => (typeof m === 'string' ? m : (m && m.exerciseId))).filter(Boolean);
+        for (const memberId of members) {
+          if (memberId && !this.checkUnlockCriteria(memberId, allProgressionStates, weekNumber).unlocked) {
+            return false;
+          }
+        }
       }
 
       return true;

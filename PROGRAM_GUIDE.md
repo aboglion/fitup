@@ -46,13 +46,15 @@ The v15.7 Accelerated Edition organizes exercises into optimized structures to m
   - **Day 5 (d5-pushup-curl)**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-3).
   - **Day 5 (d5-grip-lsit)**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
   - *Pair Dissolution Rule*: If any set receives a `BELOW` result, or during Deload/light microcycle weeks, the pair dissolves into straight sets with dedicated rest.
+  - *Lean Pair Availability Rule*: A Lean Pair is rendered only if both paired exercises are unlocked for the current week (Phase 0 performance graduation or calendar gate). If either exercise is still locked, the pair is omitted and the remaining member renders as a straight set — **no automatic substitution is created**.
 - **Core Circuit (Day 1 End of Workout)**: Pallof Press Progression → Dead Bug → Hollow Body Hold (30s rest between rounds).
 - **Calf Block (Day 1)**: Standing Single-Leg Calf Raise → Seated Single-Leg Calf Raise (45s rest after block).
 
 ### 2.2 Weekly Alternating Toggles
-- **Day 1 Toggle (Posterior vs Quad/Unilateral)**:
-  - **Odd Weeks**: Single-Leg RDL (Posterior chain focus).
-  - **Quad Focus**: Heels-Elevated Goblet Squat is performed continuously from Week 1.
+- **Day 1 Posterior Progression (not a week-parity toggle)**:
+  - **Weeks 1–17**: Goblet RDL is the bilateral posterior anchor.
+  - **Week 18+**: Single-Leg RDL replaces Goblet RDL as the Day 1 posterior anchor (unilateral progression, all weeks).
+  - **Quad Focus (independent, continuous)**: Heels-Elevated Goblet Squat is performed every week from Week 1.
 - **Day 3 Rear Delt Toggle**:
   - **Odd Weeks**: TRX Y-T-W (3-position posterior delt & scapular control).
   - **Even Weeks**: Band Pull-Apart (Scapular retraction & posture density).
@@ -60,6 +62,7 @@ The v15.7 Accelerated Edition organizes exercises into optimized structures to m
 ### 2.3 Biceps 4-Week Microcycle (3:1)
 To prevent elbow tendonitis while maximizing hyper-trophy:
 - **Weeks 1–3 (Heavy Progressive)**: Both Single-Arm Curl and Single-Arm Hammer Curl active. Full progression rules apply.
+  - *Unlock Note*: Single-Arm Hammer Curl joins the microcycle **only after its Phase 0 performance unlock** (Single-Arm Curl ≥ 12 clean reps). Until then, heavy weeks run Single-Arm Curl alone (see §3.0 Unlock Precedence Rule).
 - **Week 4 (Light Myo-Preservation)**: Single-Arm Hammer Curl only (2 sets, capped load), progression frozen, weight preserved.
 - **Deload Weeks**: 1 set of Single-Arm Hammer Curl only.
 
@@ -76,6 +79,7 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 - **Weeks 1–2 (Ramp-Up Foundation)**: Exercise volume is reduced to 5–6 anchor exercises per session (25–30 min target). High-peak-load and complex unilateral movements are locked (`Suitcase Carry`, `Calf Block`, `Goblet BSS`, `Hollow Body Hold`, `Pike Progression`, `Single-Arm Seated OHP`, `Single-Arm Lateral Raise`, `DB Overhead Triceps Ext`, `Single-Arm Hammer Curl`, `Towel Hang`, `Tuck L-Sit`, `Push-Up Volume Day 5`). Days 2 & 6 feature 20-min light walks (0% incline, 4.5 km/h) instead of Zone 2 / VO2 Max.
 - **Weeks 3–4 (Performance-Based Early Graduation)**: Locked movements unlock as soon as their performance criteria are met (e.g., Heels-Elevated Goblet Squat ≥ 10 kg for Goblet BSS; Push-Up Progression ≥ 10 reps for OHP / Pike / Triceps Ext; Dead Bug ≥ 16 reps for Hollow Body / Tuck L-Sit; Single-Arm Curl ≥ 12 reps for Hammer Curl). **Calendar Ceiling Rule**: nothing unlocks later than the old Week-5 gate — performance can only accelerate, never delay.
 - **Week 5 (Graduation Event)**: The system automatically unlocks the full exercise suit (`Goblet BSS`, `VO2 Max Norwegian 4x4`, `Pike/OHP`, `Lateral Raise`, `Hammer Curl`, `Towel Hang`, `L-Sit`, `Suitcase Carry`, `Calf Block`, `Hollow Body Hold`).
+- **Unlock Precedence Rule**: If any exercise-dictionary note, appendix note, or day-card description conflicts with the Phase 0 graduation gates, the Phase 0 graduation rules and `ProgressionEngine` unlock logic are authoritative. In plain terms — if a note says an exercise appears from a certain week, but the unlock engine says it is still locked, **the engine wins**.
 
 ### 3.1a Ramp-Up Microcycle Structure (Phase 0 — Weeks 1–4 ONLY)
 
@@ -163,6 +167,7 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 - **Progression Engine**: `ProgressionEngine` in `js/progression.js`.
 - **Zero-0-Kg Weight Protection Engine**: All weighted exercises strictly enforce prescribed starting weights (`startingWeight`) and a hard `minWeight` floor (3 kg minimum). Loads are guaranteed never to calculate or display as 0 kg / 0 kg each under any fallback or parsing state.
 - **Fine-Grained Load Increments (v15.7)**: Isolation exercises (Single-Arm Lateral Raise, Single-Arm Curl, Single-Arm Hammer Curl, DB Overhead Triceps Extension, Arm Blocks) progress in **0.5 kg steps**; `legalWeights` includes 0.5 kg increments to eliminate the 3→4 kg (33%) stall trap.
+- **Unlock Precedence Rule**: The Phase 0 graduation gates (Part 3.0) and `ProgressionEngine.checkUnlockCriteria()` unlock logic are authoritative over any exercise-dictionary note, appendix note, or day-card description. An exercise is never unlocked later than its calendar gate, and never earlier than its `earliestWeek` connective-tissue floor or its performance criteria. Notes are descriptive; the engine decides.
 - **Database Version**: IndexedDB Version 9 (`DBVERSION = 9`).
 - **Cloud Synchronization & Local Data Export**: Automatic bidirectional sync with Google Drive alongside one-click local JSON data backup (`fitup_backup_[DATE].json`) and import verification.
 
@@ -217,12 +222,12 @@ High Knees · Bodyweight Squat · Arm Circles · Wall Slides · Scapular Push-up
 ### D.2 Day 1 — Legs + Core + Carry
 | Exercise | Role / Notes |
 | :--- | :--- |
-| Goblet Romanian Deadlift | Posterior chain (Day 1 anchor, from Week 1) |
-| Single-Leg RDL | Posterior unlock — active on odd weeks from ~Week 13 |
+| Goblet Romanian Deadlift | Posterior chain (Day 1 anchor, Weeks 1–17) |
+| Single-Leg RDL | Unilateral posterior progression — replaces Goblet RDL from Week 18 (calendar gate) |
 | Heels-Elevated Goblet Squat | Continuous quad focus (paused squat), from Week 1 |
-| Goblet Bulgarian Split Squat | Primary unilateral overload, from Week 1 |
+| Goblet Bulgarian Split Squat | Primary unilateral overload — **not from Week 1**: Phase 0 performance unlock (Heels-Elevated Goblet Squat ≥ 10 kg; earliest Week 3, calendar gate Week 5) |
 | DB Glute Bridge | Glute anchor |
-| Glute Bridge | Ramp-up variant (Week 1–2) |
+| Glute Bridge | Warm-up activation (every week) |
 | Suitcase Carry | Loaded carry / core anti-lateral-flexion |
 | Standing Single-Leg Calf Raise | Calf Block part 1 |
 | Seated Single-Leg Calf Raise | Calf Block part 2 |
@@ -250,11 +255,12 @@ Pull-Up Progression · Pull-Up (Overhand) · Scapular Pull-up · Dead Hang · Se
 | :--- | :--- |
 | VO2 Max Norwegian 4×4 | Week 4 |
 | Deficit Push-Up | Week 10 |
+| Wall Walk (Partial) | Week 10 |
 | Wall Walk (Full) / One-Leg Extended L-Sit | Week 18 |
+| Wall Handstand | Week 26 |
 | Full L-Sit | Week 34 |
 | Elevated Pike Push-Up | Week 41 |
 | Weighted Pull-Up / Weighted Deficit Push-Up | Week 62 |
-| Wall Handstand / Wall Walk (Partial) | Mastery phase |
 
 ---
 

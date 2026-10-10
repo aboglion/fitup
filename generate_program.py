@@ -51,6 +51,12 @@ EXERCISES_CATALOG = [
         "compound": True,
         "structure": "straight",
         "sets": 2,
+        # v15.7 Accelerated: Single-Leg RDL replaces Goblet RDL as the Day 1 posterior
+        # anchor from Week 18 (unilateral posterior progression). Kept as a calendar gate
+        # in the dataset so the exercise tree / unlock engine stay authoritative even if
+        # a day-card or appendix describes an earlier appearance.
+        "startingWeek": 18,
+        "unlocked": False,
         "rule": "neutral spine; אם מאבד שיווי משקל, BELOW"
     },
     {

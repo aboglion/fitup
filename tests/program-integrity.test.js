@@ -175,3 +175,65 @@ test('Program Integrity - Progression Engine Decisions', () => {
   assert.equal(resDeload.action, 'maintain');
   assert.equal(resDeload.newWeight, 6);
 });
+
+test('Program Integrity - Phase 0 Unlock Precedence (Goblet BSS & Single-Leg RDL gates)', () => {
+  // Goblet BSS must NOT be unlocked at Week 1 — Phase 0 graduation rules are authoritative.
+  const bss = engine.checkUnlockCriteria('goblet-bulgarian-split-squat', {}, 1);
+  assert.equal(bss.unlocked, false, 'Goblet BSS must be locked at Week 1 (Phase 0 graduation)');
+
+  // Calendar ceiling: Goblet BSS is unlocked at Week 5 regardless of performance states.
+  const bssW5 = engine.checkUnlockCriteria('goblet-bulgarian-split-squat', {}, 5);
+  assert.equal(bssW5.unlocked, true, 'Goblet BSS calendar gate = Week 5');
+
+  // Performance acceleration: Goblet BSS unlocks before Week 5 when the prerequisite is met.
+  const bssPerf = engine.checkUnlockCriteria('goblet-bulgarian-split-squat', {
+    'heels-elevated-goblet-squat': { currentWeightKg: 12 }
+  }, 3);
+  assert.equal(bssPerf.unlocked, true, 'Goblet BSS performance unlock (Heels-Elevated Squat >= 10kg)');
+
+  // Single-Leg RDL: calendar gate Week 18 (replaces Goblet RDL) — locked before, unlocked from 18.
+  const slrEarly = engine.checkUnlockCriteria('single-leg-rdl', {}, 17);
+  assert.equal(slrEarly.unlocked, false, 'Single-Leg RDL locked before Week 18');
+  const slr18 = engine.checkUnlockCriteria('single-leg-rdl', {}, 18);
+  assert.equal(slr18.unlocked, true, 'Single-Leg RDL unlocked at Week 18');
+
+  // Hammer Curl: microcycle participation is only after its Phase 0 unlock.
+  const hammer = engine.checkUnlockCriteria('single-arm-hammer-curl', {}, 1);
+  assert.equal(hammer.unlocked, false, 'Single-Arm Hammer Curl locked until Single-Arm Curl >= 12 reps');
+});
+
+test('Program Integrity - Lean Pair Availability Rule (d5-pushup-curl)', () => {
+  const pair = data.progressionSettings.leanMode.pairs.find(p => p.pairId === 'd5-pushup-curl');
+  assert.ok(pair, 'd5-pushup-curl pair must exist');
+
+  // Week 4: Push-Up Volume not yet unlocked (no states, before calendar gate) -> pair omitted.
+  const w4 = engine.isPairActive(pair, 4, {});
+  assert.equal(w4, false, 'd5-pushup-curl must be omitted while Push-Up Volume is locked');
+
+  // Week 5: calendar gate unlocks Push-Up Volume -> pair active (heavy microcycle week).
+  const w5 = engine.isPairActive(pair, 5, {});
+  assert.equal(w5, true, 'd5-pushup-curl must render when both members are unlocked');
+
+  // Week 4 of the biceps cycle (light) dissolves the pair even when unlocked.
+  const lightWeek = engine.isPairActive(pair, 8, {});
+  assert.equal(lightWeek, false, 'd5-pushup-curl must dissolve in biceps light week (cycle position 4)');
+});
+
+test('Program Integrity - Biceps Microcycle Phase Resolver', () => {
+  const heavy = engine.getBicepsMicrocyclePhase(5);
+  assert.equal(heavy.type, 'heavy');
+  assert.equal(heavy.phase, 'HEAVY_PROG');
+  assert.equal(heavy.progressionAllowed, true);
+
+  const light = engine.getBicepsMicrocyclePhase(8);
+  assert.equal(light.type, 'light');
+  assert.equal(light.phase, 'LIGHT_MYO');
+  assert.equal(light.progressionAllowed, false);
+  assert.equal(light.sets, 2);
+
+  const deload = engine.getBicepsMicrocyclePhase(12);
+  assert.equal(deload.type, 'deload');
+  assert.equal(deload.phase, 'DELOAD');
+  assert.equal(deload.progressionAllowed, false);
+  assert.equal(deload.sets, 1);
+});

@@ -214,6 +214,21 @@ const TodayPage = (() => {
       }
     }
 
+    // Lean Pair Availability Rule (v15.7): after the unlock pass above, a pair whose
+    // other member was hidden (locked) or downgraded must NOT render as an orphan pair.
+    // The remaining member dissolves to a straight set — no automatic substitution.
+    const pairMemberCount = {};
+    day.exercises.forEach(ex => {
+      if (ex.pairId) pairMemberCount[ex.pairId] = (pairMemberCount[ex.pairId] || 0) + 1;
+    });
+    day.exercises.forEach(ex => {
+      if (ex.pairId && pairMemberCount[ex.pairId] < 2) {
+        ex.structure = 'straight';
+        ex.pairId = null;
+        ex.orderInPair = null;
+      }
+    });
+
     // v15.7 Accelerated: auto-regulated deload detection (2 consecutive failed sessions,
     // excessive demotions, or repeated joint-pain flags) — applies deload caps to this session.
     if (window.ProgressionEngine && window.ProgressionEngine.checkAutoDeloadTrigger && !isDeload) {
