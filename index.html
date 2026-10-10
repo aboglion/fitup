@@ -28,7 +28,7 @@
     href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/main.css?v=131">
-  <link rel="stylesheet" href="css/components.css?v=131">
+  <link rel="stylesheet" href="css/components.css?v=132">
   <link rel="stylesheet" href="css/animations.css?v=129">
   <link rel="manifest" href="manifest.json">
   <link rel="preload" as="image" href="images/anatomy-front.webp">
@@ -778,6 +778,27 @@
                 </div>
               </div>
 
+              <!-- Class times (evening default -> morning run window) -->
+              <div style="margin-bottom: 14px;">
+                <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;"
+                  data-i18n="combat_time_label">Class times</div>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                  <label style="flex: 1; min-width: 130px; font-size: 11px; color: var(--text-secondary);"
+                    data-i18n="combat_class1_time_label">Day 1 class time
+                    <input id="combat-class1-time" type="time" value="18:00"
+                      style="display: block; width: 100%; margin-top: 4px; padding: 8px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 13px;">
+                  </label>
+                  <label style="flex: 1; min-width: 130px; font-size: 11px; color: var(--text-secondary);"
+                    data-i18n="combat_class2_time_label">Day 2 class time
+                    <input id="combat-class2-time" type="time" value="18:00"
+                      style="display: block; width: 100%; margin-top: 4px; padding: 8px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 13px;">
+                  </label>
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;" data-i18n="combat_time_hint">
+                  Evening classes (18:00+) automatically prescribe the run in the morning (05:00–07:00, ≥6h before
+                  class)</div>
+              </div>
+
               <!-- Live preview -->
               <div style="margin-bottom: 14px;">
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 6px;"
@@ -1196,28 +1217,28 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="js/data.js?v=147"></script>
   <script src="js/preloader.js?v=147"></script>
-  <script src="js/i18n.js?v=147"></script>
+  <script src="js/i18n.js?v=148"></script>
   <script src="js/effects3d.js?v=147"></script>
   <script src="js/ui.js?v=147"></script>
-  <script src="js/combat-scheduler.js?v=147"></script>
-  <script src="js/db.js?v=147"></script>
+  <script src="js/combat-scheduler.js?v=148"></script>
+  <script src="js/db.js?v=148"></script>
   <script src="js/progression.js?v=147"></script>
   <script src="js/crypto.js?v=147"></script>
   <script src="js/config.js?v=147"></script>
   <script src="js/cloud-sync.js?v=147"></script>
   <script src="js/google-fit.js?v=147"></script>
-  <script src="js/notifications.js?v=147"></script>
+  <script src="js/notifications.js?v=148"></script>
   <script src="js/gemini.js?v=147"></script>
   <script src="js/set-logger.js?v=147"></script>
   <script src="js/rest-timer.js?v=147"></script>
   <script src="js/workout-summary.js?v=147"></script>
-  <script src="js/today.js?v=147"></script>
-  <script src="js/calendar.js?v=147"></script>
+  <script src="js/today.js?v=148"></script>
+  <script src="js/calendar.js?v=148"></script>
   <script src="js/exercises.js?v=147"></script>
   <script src="js/anatomy.js?v=147"></script>
   <script src="js/stats.js?v=147"></script>
   <script src="js/export-guide.js?v=147"></script>
-  <script src="js/app.js?v=147"></script>
+  <script src="js/app.js?v=148"></script>
 </body>
 
 </html>

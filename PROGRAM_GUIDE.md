@@ -194,5 +194,14 @@ class days and practice day never land on strength or rest slots; Push after a c
 ### C.4 History Integrity
 Era-based history (`combatSchedule.history`, append-only) guarantees a full plan re-seed (version bump / Reload Plan) reproduces each week exactly as trained. Past weeks are never re-permuted; manual swaps and all tracking are preserved. Disabling appends an identity era from the next boundary.
 
+### C.5 Flexibility Layer — move / cancel individual classes (v2)
+- **Move** a single class instance to any future date within the plan horizon (e.g. this Monday's class → Wednesday) or **Cancel** it — both reversible via Undo. Stored in the `combatExceptions` SETTINGS key (rides cloud sync + backup); a **pure render layer** that never re-seeds or mutates PLAN records, so history/progression integrity is fully preserved.
+- **Muscle-aware interference**: session types (technique / bag / pads / sparring / clinch / mixed) carry muscle-load profiles; the move picker ranks the next 21 days with 🟢/🟡/🔴 interference chips and a ★ best recommendation (e.g. clinch before Pull day warns on grip; sparring on a strength day warns keep-it-technique-only). Moving onto a day that already hosts a combat session is blocked.
+- **One-tap swap offer**: if a moved class lands on a strength day, the card offers to swap that strength session with a free day that week using the existing swap engine — advisory only, progression engine untouched.
+- **Session-type logging**: pick the session type when marking done (`tracking.combat.sessionType`); the next day's strength card shows a muscle-specific advisory strip (e.g. grip pre-fatigue before Pull — straps allowed, expect −5–10%).
+- **Time-of-day cardio prescription**: per-class time inputs in Settings (default 18:00). Evening classes prescribe the run in the **morning** window (05:00–07:00, hard limit ≥6h before class); morning classes flip the run to the evening. Class-time-only edits never append a new era (era-append guard).
+- **Warm-up rules** (in-card): general dynamic warm-up + light sub-max activation OK before class; no heavy strength work, no failure sets, no long static stretches before class; coach-led warm-up inside; static stretching + protein after; two-session days keep the morning run at true Zone 2.
+- **Calendar**: 4 badge states — scheduled 🥊 / moved-in 🥊➡ / moved-out ↩ / cancelled ✕.
+
 ---
 FitUp Pro v15.7 Accelerated — Built for Precision, Zero Decisions, and Zero Regrets.

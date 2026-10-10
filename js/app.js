@@ -871,6 +871,8 @@ const App = (() => {
     const combatPracticeButtons = document.querySelectorAll('.combat-practice-chip');
     const combatHardButtons = document.querySelectorAll('.combat-hard-chip');
     const combatDowRows = document.querySelectorAll('.combat-weekday-row');
+    const combatClass1Time = document.getElementById('combat-class1-time');
+    const combatClass2Time = document.getElementById('combat-class2-time');
 
     if (combatToggle && window.CombatScheduler) {
       // ---- State ----
@@ -879,7 +881,8 @@ const App = (() => {
         sport: 'muay_thai',
         classDays: [],
         practice: 'auto',
-        hardClass: 'auto'
+        hardClass: 'auto',
+        classTimes: { class1: '18:00', class2: '18:00' }
       };
       let combatResolved = null;
       let combatSavedSnapshot = null; // persisted config for dirty-tracking
@@ -919,7 +922,18 @@ const App = (() => {
           (s.sport || 'muay_thai') === combatState.sport &&
           JSON.stringify((s.classDays || []).slice().sort()) === JSON.stringify(combatState.classDays.slice().sort()) &&
           (s.practice || 'auto') === combatState.practice &&
-          (s.hardClass || 'auto') === combatState.hardClass);
+          (s.hardClass || 'auto') === combatState.hardClass &&
+          JSON.stringify(s.classTimes || {}) === JSON.stringify(combatState.classTimes));
+      }
+
+      function combatSyncTimesFromInputs() {
+        if (combatClass1Time) combatState.classTimes.class1 = combatClass1Time.value || '18:00';
+        if (combatClass2Time) combatState.classTimes.class2 = combatClass2Time.value || '18:00';
+      }
+
+      function combatSyncInputsFromState() {
+        if (combatClass1Time) combatClass1Time.value = combatState.classTimes.class1 || '18:00';
+        if (combatClass2Time) combatClass2Time.value = combatState.classTimes.class2 || '18:00';
       }
 
       function combatRefreshUnsavedNote() {
@@ -1000,6 +1014,9 @@ const App = (() => {
             combatState.classDays = Array.isArray(saved.classDays) ? saved.classDays.slice() : [];
             combatState.practice = saved.practice || 'auto';
             combatState.hardClass = saved.hardClass || 'auto';
+            combatState.classTimes = (saved.classTimes && typeof saved.classTimes === 'object')
+              ? { class1: saved.classTimes.class1 || '18:00', class2: saved.classTimes.class2 || '18:00' }
+              : { class1: '18:00', class2: '18:00' };
           }
         } catch (e) {
           console.warn('Combat settings load error:', e);
@@ -1007,13 +1024,15 @@ const App = (() => {
         combatToggle.checked = combatState.enabled;
         combatBody.style.display = combatState.enabled ? 'block' : 'none';
         combatRefreshChips();
+        combatSyncInputsFromState();
         if (combatState.enabled) combatComputePreview();
         combatSavedSnapshot = {
           enabled: combatState.enabled,
           sport: combatState.sport,
           classDays: combatState.classDays.slice(),
           practice: combatState.practice,
-          hardClass: combatState.hardClass
+          hardClass: combatState.hardClass,
+          classTimes: { ...combatState.classTimes }
         };
         combatRefreshUnsavedNote();
       })();
@@ -1077,21 +1096,33 @@ const App = (() => {
         });
       });
 
+      // ---- Class times (guidance-only: never appends an era) ----
+      [combatClass1Time, combatClass2Time].forEach(input => {
+        if (!input) return;
+        input.addEventListener('change', () => {
+          combatSyncTimesFromInputs();
+          combatRefreshUnsavedNote();
+        });
+      });
+
       // ---- Save ----
       if (combatSaveBtn) {
         combatSaveBtn.addEventListener('click', async () => {
+          combatSyncTimesFromInputs();
+
           if (!combatState.enabled) {
             // Disable path: append a disabled era from next Monday
             const boundary = await computeCombatBoundary();
             const cfg = await DB.getSetting('combatSchedule');
             const history = (cfg && Array.isArray(cfg.history)) ? cfg.history.slice() : [];
             history.push({ from: boundary, enabled: false });
-            const newCfg = { rev: (cfg && cfg.rev || 0) + 1, enabled: false, sport: combatState.sport, classDays: [], practice: 'off', hardClass: 'auto', history };
+            const classTimes = (cfg && cfg.classTimes) || { ...combatState.classTimes };
+            const newCfg = { rev: (cfg && cfg.rev || 0) + 1, enabled: false, sport: combatState.sport, classDays: [], practice: 'off', hardClass: 'auto', classTimes, history };
             await DB.setSetting('combatSchedule', newCfg);
             await DB.applyCombatSchedule(newCfg);
             if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
             UI.toast(I18n.t('combat_disabled'), 'info');
-            combatSavedSnapshot = { enabled: false, sport: combatState.sport, classDays: [], practice: 'off', hardClass: 'auto' };
+            combatSavedSnapshot = { enabled: false, sport: combatState.sport, classDays: [], practice: 'off', hardClass: 'auto', classTimes: { ...classTimes } };
             combatRefreshUnsavedNote();
             await refreshPlanInMemory();
             return;
@@ -1113,44 +1144,58 @@ const App = (() => {
             return;
           }
 
-          const boundary = await computeCombatBoundary();
-          const effDateText = await formatCommitDate(boundary);
-
-          // Confirmation modal
-          const ok = window.UI && window.UI.confirm
-            ? await UI.confirm({
-              title: I18n.t('combat_confirm_title'),
-              message: I18n.t('combat_confirm_msg', '', { date: effDateText }),
-              confirmText: I18n.t('combat_confirm_apply'),
-              type: 'primary',
-              icon: '🥊'
-            })
-            : confirm(I18n.t('combat_confirm_msg', '', { date: effDateText }));
-
-          if (!ok) return;
-
           const cfg = await DB.getSetting('combatSchedule');
-          const history = (cfg && Array.isArray(cfg.history)) ? cfg.history.slice() : [];
-          history.push({
-            from: boundary,
-            enabled: true,
-            perm: combatResolved.permutation.slice(),
-            classDays: classDays.slice(),
-            practiceDay: combatResolved.practiceDay,
-            sport: combatState.sport
-          });
-          const newCfg = {
-            rev: (cfg && cfg.rev || 0) + 1,
+          const base = {
             enabled: true,
             sport: combatState.sport,
             classDays: classDays.slice(),
             practice: combatState.practice,
-            hardClass: combatState.hardClass,
+            hardClass: combatState.hardClass
+          };
+          const classTimes = {
+            class1: combatState.classTimes.class1 || '18:00',
+            class2: combatState.classTimes.class2 || '18:00'
+          };
+          // Era-append guard: only permutation-relevant edits append a new era.
+          // Class-time-only changes save the guidance metadata WITHOUT churning the
+          // weekly permutation or re-seeding the plan.
+          const eraChanged = CombatScheduler.combatEraChanged(cfg, base);
+          const history = (cfg && Array.isArray(cfg.history)) ? cfg.history.slice() : [];
+
+          if (eraChanged) {
+            const boundary = await computeCombatBoundary();
+            const effDateText = await formatCommitDate(boundary);
+
+            const ok = window.UI && window.UI.confirm
+              ? await UI.confirm({
+                title: I18n.t('combat_confirm_title'),
+                message: I18n.t('combat_confirm_msg', '', { date: effDateText }),
+                confirmText: I18n.t('combat_confirm_apply'),
+                type: 'primary',
+                icon: '🥊'
+              })
+              : confirm(I18n.t('combat_confirm_msg', '', { date: effDateText }));
+            if (!ok) return;
+
+            history.push({
+              from: boundary,
+              enabled: true,
+              perm: combatResolved.permutation.slice(),
+              classDays: classDays.slice(),
+              practiceDay: combatResolved.practiceDay,
+              sport: combatState.sport
+            });
+          }
+
+          const newCfg = {
+            rev: (cfg && cfg.rev || 0) + 1,
+            ...base,
+            classTimes,
             resolved: combatResolved,
             history
           };
           await DB.setSetting('combatSchedule', newCfg);
-          await DB.applyCombatSchedule(newCfg);
+          if (eraChanged) await DB.applyCombatSchedule(newCfg);
           if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
           UI.toast(I18n.t('combat_saved'), 'success');
           combatSavedSnapshot = {
@@ -1158,7 +1203,8 @@ const App = (() => {
             sport: combatState.sport,
             classDays: classDays.slice(),
             practice: combatState.practice,
-            hardClass: combatState.hardClass
+            hardClass: combatState.hardClass,
+            classTimes: { ...classTimes }
           };
           combatRefreshUnsavedNote();
           await refreshPlanInMemory();

@@ -416,6 +416,68 @@ const DB = (() => {
     return updates.length;
   }
 
+  // ============ Combat Flexibility v2 — per-instance exceptions ============
+
+  /**
+   * Load the combat-exceptions setting. Pure render layer — NEVER re-seeds PLAN,
+   * so history/progression integrity is unaffected by moves/cancels.
+   * @returns {Promise<{rev:number, items:Array}>}
+   */
+  async function getCombatExceptions() {
+    const rec = await getSetting('combatExceptions');
+    if (rec && Array.isArray(rec.items)) return rec;
+    return { rev: 0, items: [] };
+  }
+
+  /**
+   * Persist combat exceptions after enforcing structural invariants + pruning:
+   * - structural: ISO date formats, action enum, kind whitelist
+   * - uniqueness: at most one item per (kind, origDate) — last one wins
+   * - prune: drop items whose effective date is older than `pruneDays` (default 30)
+   *   (tracking.combat already holds the historical truth)
+   * @param {Array} items - raw exception items to persist
+   * @param {Object} [opts] - { pruneDays }
+   * @returns {Promise<{rev:number, items:Array}>}
+   */
+  async function saveCombatExceptions(items, opts) {
+    const pruneDays = (opts && opts.pruneDays) || 30;
+    const raw = Array.isArray(items) ? items : [];
+    const now = new Date();
+    const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - pruneDays);
+    const cutoffIso = cutoff.getFullYear() + '-' +
+      String(cutoff.getMonth() + 1).padStart(2, '0') + '-' +
+      String(cutoff.getDate()).padStart(2, '0');
+
+    const byKey = new Map(); // (kind|origDate) -> item  (last wins)
+    for (const item of raw) {
+      if (!item || typeof item !== 'object') continue;
+      const kind = item.kind === 'class2' ? 'class2' : (item.kind === 'practice' ? 'practice' : 'class1');
+      const action = item.action === 'cancel' ? 'cancel' : 'move';
+      const origDate = String(item.origDate || '');
+      const newDate = action === 'move' ? String(item.newDate || '') : '';
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(origDate)) continue;
+      if (action === 'move' && !/^\d{4}-\d{2}-\d{2}$/.test(newDate)) continue;
+      const eff = action === 'move' ? newDate : origDate;
+      if (eff < cutoffIso) continue; // prune old items
+      byKey.set(kind + '|' + origDate, {
+        id: item.id || ('x-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8)),
+        kind,
+        origDate,
+        action,
+        newDate: action === 'move' ? newDate : null,
+        sessionType: item.sessionType || null,
+        time: item.time || null,
+        note: item.note || '',
+        ts: item.ts || new Date().toISOString()
+      });
+    }
+
+    const prev = await getCombatExceptions();
+    const next = { rev: (prev.rev || 0) + 1, items: Array.from(byKey.values()) };
+    await setSetting('combatExceptions', next);
+    return next;
+  }
+
   function recordDayIndex(rec) {
     return typeof rec.dayIndex === 'number' ? rec.dayIndex : (parseInt(rec.dayIndex, 10) || 0);
   }
@@ -1033,6 +1095,8 @@ const DB = (() => {
     ensureV15LeanSchema,
     loadTrainingPlan,
     applyCombatSchedule,
+    getCombatExceptions,
+    saveCombatExceptions,
     getDayPlan,
     getDayTracking,
     saveDayTracking,

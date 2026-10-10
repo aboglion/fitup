@@ -12,6 +12,7 @@ const TodayPage = (() => {
   let selectedNutritionDate = null;
   let isEqBannerCollapsed = false;
   let combatScheduleCache = null;
+  let combatExceptionsCache = null;
   let combatRenderToken = 0;
 
   function toggleEqBanner() {
@@ -1836,6 +1837,8 @@ const TodayPage = (() => {
 
     // Render combat training card (superimposed on cardio/recovery days per settings)
     await renderCombatCard(day);
+    // Advisory strip on strength days pre-fatigued by yesterday's combat session
+    await renderCombatPrevDayAdvisory(day);
 
     // Render exercises
     renderExercises(day);
@@ -2418,6 +2421,37 @@ const TodayPage = (() => {
     return combatScheduleCache;
   }
 
+  async function getCombatExceptions() {
+    if (combatExceptionsCache === null) {
+      try {
+        combatExceptionsCache = await DB.getCombatExceptions() || { rev: 0, items: [] };
+      } catch (e) {
+        combatExceptionsCache = { rev: 0, items: [] };
+      }
+    }
+    return combatExceptionsCache;
+  }
+
+  function combatDateISO(day) {
+    return (window.CombatScheduler && CombatScheduler.isoFromPlanDate(day && day.date)) || '';
+  }
+
+  function combatFmtIsoToDisplay(iso) {
+    if (!iso || !window.CombatScheduler) return '';
+    const plan = CombatScheduler.planDateFromIso(iso);
+    const parts = String(plan || '').split('/');
+    if (parts.length !== 3) return iso;
+    const [dd, mm, yyyy] = parts.map(Number);
+    const d = new Date(yyyy, (mm || 1) - 1, dd || 1);
+    const dowKey = `dow_${d.getDay()}`;
+    return `${I18n.t(dowKey)} ${dd}/${mm}/${yyyy}`;
+  }
+
+  function combatClassTime(combatSchedule, info, exception) {
+    const t = (exception && exception.time) || (combatSchedule.classTimes && combatSchedule.classTimes[info.kind]);
+    return t || '18:00';
+  }
+
   function jsDowOfDay(day) {
     // day.date is dd/mm/yyyy (or ISO). Convert to JS getDay()
     const raw = (day && day.date) || '';
@@ -2434,9 +2468,65 @@ const TodayPage = (() => {
     return d ? d.getDay() : null;
   }
 
+  function isStrengthHostDay(day) {
+    return /legs|push|pull/i.test((day && day.dayType) || '');
+  }
+
+  function combatInterferenceHTML(interference) {
+    if (!interference || !interference.reasons || interference.reasons.length === 0) return '';
+    const color = interference.level === 'high' ? '#f87171' : '#fbbf24';
+    const rows = interference.reasons
+      .map(r => `<div style="font-size:11px; color:${color}; margin-top:2px;">⚠️ ${I18n.t(`combat_reason_${r}`) || r}</div>`)
+      .join('');
+    return `<div style="margin-top:8px;">${rows}</div>`;
+  }
+
+  function combatCardioLine(info, combatSchedule, exception) {
+    if (info.kind === 'practice') return '';
+    const ht = info.hostType;
+    if (ht !== 'zone2' && ht !== 'vo2') return '';
+    const classTime = combatClassTime(combatSchedule, info, exception);
+    const win = CombatScheduler.cardioWindowFor(classTime, ht);
+    if (win.placement === 'morning') {
+      return `<div style="font-size:11px; color:#38bdf8; margin-top:8px;">🏃 ${I18n.t('combat_cardio_morning', '', { time: classTime, start: win.windowStart, end: win.windowEnd })}</div>`;
+    }
+    if (win.placement === 'evening') {
+      return `<div style="font-size:11px; color:#38bdf8; margin-top:8px;">🏃 ${I18n.t('combat_cardio_evening', '', { time: classTime, start: win.windowStart, end: win.windowEnd })}</div>`;
+    }
+    return '';
+  }
+
+  const COMBAT_SESSION_TYPES = ['technique', 'pads', 'bag', 'sparring', 'clinch', 'mixed'];
+
+  function combatSessionTypeHTML(currentType, disabledAttr) {
+    const chips = COMBAT_SESSION_TYPES.map(t => {
+      const active = currentType === t
+        ? 'background:rgba(239,68,68,0.25); border:1px solid rgba(239,68,68,0.7);'
+        : '';
+      return `<button type="button" data-stype="${t}" ${disabledAttr} style="padding:5px 11px; border-radius:999px; font-size:11px; font-weight:700; cursor:pointer; border:1px solid var(--border-light); background:var(--bg-elevated); color:var(--text-primary); ${active}" onclick="TodayPage.saveCombatSessionType('${t}', this)">${I18n.t(`combat_type_${t}`)}</button>`;
+    }).join('');
+    return `<div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-top:10px;"><span style="font-size:11px; color:var(--text-muted); font-weight:700;">${I18n.t('combat_session_type_label')}</span>${chips}</div>`;
+  }
+
+  function combatWarmupHTML(isJudo) {
+    const key = (base) => I18n.t(isJudo ? `${base}_judo` : base);
+    return `
+      <details style="margin-top:10px;">
+        <summary style="font-size:12px; font-weight:700; color:var(--text-secondary); cursor:pointer;">🔥 ${key('combat_warmup_rules_title')}</summary>
+        <div style="font-size:11px; color:var(--text-muted); line-height:1.7; margin-top:6px;">
+          <div>✅ ${key('combat_warmup_ok')}</div>
+          <div>❌ ${key('combat_warmup_no')}</div>
+          <div>🥋 ${key('combat_warmup_inside')}</div>
+          <div>✅ ${key('combat_warmup_after')}</div>
+          <div>⏱ ${key('combat_warmup_two_session')}</div>
+        </div>
+      </details>`;
+  }
+
   /**
    * Render an optional combat-session card as a sibling above the exercise list.
-   * Runs serverlessly: reads combatSchedule setting + CombatScheduler helpers.
+   * Runs serverlessly: reads combatSchedule + combatExceptions settings and
+   * CombatScheduler helpers. Handles scheduled / moved-in / moved-out / cancelled.
    */
   async function renderCombatCard(day) {
     const existing = document.getElementById('combat-card-container');
@@ -2449,10 +2539,25 @@ const TodayPage = (() => {
     const jsDow = jsDowOfDay(day);
     if (jsDow === null) return;
 
+    const dateISO = combatDateISO(day);
+    const exceptions = await getCombatExceptions();
     // Pass the actual displayed dayType so pre-boundary (pending) days guide by
     // the identity content actually visible in the current week.
-    const info = CombatScheduler.combatInfoForDay(combatSchedule, currentDayIndex, jsDow, day.dayType);
+    const info = CombatScheduler.combatInfoForDay(combatSchedule, currentDayIndex, jsDow, day.dayType, exceptions.items, dateISO);
     if (!info) return;
+
+    const status = info.status || 'scheduled';
+    const sport = combatSchedule.sport || 'muay_thai';
+    const isJudo = sport === 'judo';
+    const sportLabel = I18n.t(`combat_sport_${sport}`) || 'Combat Sport';
+    const isPractice = info.kind === 'practice';
+    const isClass = !isPractice;
+
+    const realTodayIdx = UI.findTodayIndex(allPlanDays);
+    const canModify = currentDayIndex >= realTodayIdx; // today + future (exception layer only)
+    const editable = isDayEditable();
+    const combatDisabledAttr = editable ? '' : 'disabled style="opacity: 0.45; cursor: not-allowed;"';
+    const modifyAttr = canModify ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"';
 
     let pendingBadge = '';
     if (info.pending) {
@@ -2472,17 +2577,56 @@ const TodayPage = (() => {
       pendingBadge = `<div style="display:inline-flex; align-items:center; gap:4px; background:rgba(239,68,68,0.16); border:1px solid rgba(239,68,68,0.45); color:#fca5a5; padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; margin-top:8px;">📅 ${I18n.t('combat_pending_badge', '', { date: boundaryDate })}</div>`;
     }
 
-    const sport = combatSchedule.sport || 'muay_thai';
-    const isJudo = sport === 'judo';
-    const sportLabel = I18n.t(`combat_sport_${sport}`) || 'Combat Sport';
+    const list = document.getElementById('exercises-list');
+    const insertCard = (html) => {
+      const card = document.createElement('div');
+      card.id = 'combat-card-container';
+      card.className = 'combat-card';
+      card.innerHTML = html;
+      if (list && list.parentNode) list.parentNode.insertBefore(card, list);
+    };
+
+    // ---- Cancelled: muted note + Undo ----
+    if (status === 'cancelled') {
+      insertCard(`
+        <div style="background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.25); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:22px;">❌</span>
+              <div style="font-size:13px; font-weight:700; color:var(--text-muted);">${I18n.t('combat_cancelled_note')}</div>
+            </div>
+            <button type="button" class="btn-secondary" style="padding:6px 12px; font-size:12px; font-weight:700; border-radius:8px; cursor:pointer;" ${modifyAttr} onclick="TodayPage.undoCombatException('${info.kind}', this)">↩ ${I18n.t('combat_undo_btn')}</button>
+          </div>
+        </div>`);
+      return;
+    }
+
+    // ---- Moved-out: note with target + Undo ----
+    if (status === 'moved-out') {
+      insertCard(`
+        <div style="background: rgba(250,204,21,0.08); border: 1px solid rgba(250,204,21,0.3); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:22px;">📅</span>
+              <div style="font-size:13px; font-weight:700; color:var(--text-secondary);">${I18n.t('combat_moved_to', '', { date: combatFmtIsoToDisplay(info.movedToDate) })}</div>
+            </div>
+            <button type="button" class="btn-secondary" style="padding:6px 12px; font-size:12px; font-weight:700; border-radius:8px; cursor:pointer;" ${modifyAttr} onclick="TodayPage.undoCombatException('${info.kind}', this)">↩ ${I18n.t('combat_undo_btn')}</button>
+          </div>
+        </div>`);
+      return;
+    }
+
+    // ---- Scheduled / moved-in: full card ----
     const kindLabel = info.kind === 'class1'
       ? I18n.t('combat_class1_label')
       : info.kind === 'class2'
         ? I18n.t('combat_class2_label')
         : I18n.t('combat_practice_label');
 
-    // Sport-specific guidance: strike arts vs final sports like Judo differ in
-    // class-drill nomenclature (Judo: uchikomi/randori/ukemi instead of pads/bag)
+    const title = status === 'moved-in'
+      ? `${I18n.t('combat_moved_card_title')} — ${kindLabel}`
+      : `${kindLabel} — ${sportLabel}`;
+
     const guidanceBase = info.kind === 'practice' ? 'combat_guidance_practice' : `combat_guidance_${info.hostType === 'vo2' ? 'vo2' : info.hostType === 'zone2' ? 'zone2' : 'class_recovery'}`;
     const guidanceKey = isJudo ? `${guidanceBase}_judo` : guidanceBase;
     const guidanceText = I18n.t(guidanceKey);
@@ -2490,6 +2634,7 @@ const TodayPage = (() => {
     const done = !!(currentTracking && currentTracking.combat && currentTracking.combat.done && !currentTracking.combat.skipped);
     const skipped = !!(currentTracking && currentTracking.combat && currentTracking.combat.skipped);
     const rpe = (currentTracking && currentTracking.combat && currentTracking.combat.rpe) || '';
+    const sessionType = (currentTracking && currentTracking.combat && currentTracking.combat.sessionType) || '';
 
     const isDeloadDay =
       (day.week && /deload/i.test(day.week)) ||
@@ -2507,47 +2652,58 @@ const TodayPage = (() => {
         ? `<span style="background: rgba(148,163,184,0.15); color: #94a3b8; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">${I18n.t('combat_skipped_badge')}</span>`
         : '';
 
-    const isPractice = info.kind === 'practice';
-    const hostType = info.hostType || 'other';
-    const editable = isDayEditable();
-    const combatDisabledAttr = editable ? '' : 'disabled style="opacity: 0.45; cursor: not-allowed;"';
+    const exception = info.exception || null;
+    const cardioLine = combatCardioLine(info, combatSchedule, exception);
+    const interHTML = status === 'moved-in' ? combatInterferenceHTML(info.interference) : '';
+    const sessionTypeHTML = (isClass && editable) ? combatSessionTypeHTML(sessionType, combatDisabledAttr) : '';
 
-    const card = document.createElement('div');
-    card.id = 'combat-card-container';
-    card.className = 'combat-card';
-    card.innerHTML = `
+    let swapOfferHTML = '';
+    if (status === 'moved-in' && editable && isStrengthHostDay(day)) {
+      swapOfferHTML = `
+        <div style="margin-top:10px; padding:10px; border:1px dashed rgba(245,158,11,0.5); border-radius:10px; background:rgba(245,158,11,0.06);">
+          <div style="font-size:11px; color:var(--text-secondary); line-height:1.5;">${I18n.t('combat_swap_offer')}</div>
+          <button type="button" class="btn-secondary" style="padding:7px 12px; font-size:12px; font-weight:700; border-radius:8px; cursor:pointer; margin-top:8px;" onclick="TodayPage.swapMovedInClass(this)">⇄ ${I18n.t('combat_swap_btn')}</button>
+        </div>`;
+    }
+
+    const moveCancelButtons = (isClass && canModify)
+      ? `
+        <button type="button" class="btn-secondary" style="padding: 8px 12px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer;" onclick="TodayPage.openCombatMoveModal('${info.kind}', this)">📅 ${I18n.t('combat_move_btn')}</button>
+        <button type="button" class="btn-secondary" style="padding: 8px 12px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer;" onclick="TodayPage.cancelCombatClass('${info.kind}', this)">❌ ${I18n.t('combat_cancel_btn')}</button>`
+      : '';
+
+    insertCard(`
       <div style="background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(185,28,28,0.06)); border: 1px solid rgba(239,68,68,0.35); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 10px;">
             <span style="font-size: 24px;">${isJudo ? '🤼' : '🥊'}</span>
             <div>
-              <div style="font-weight: 800; color: var(--text-primary); font-size: 14px;">${kindLabel} — ${sportLabel}</div>
+              <div style="font-weight: 800; color: var(--text-primary); font-size: 14px;">${title}</div>
               <div style="font-size: 11px; color: var(--text-muted);">${guidanceText || I18n.t(info.guidance)}</div>
             </div>
           </div>
           ${statusBadge}
         </div>
         ${pendingBadge}
+        ${cardioLine}
+        ${interHTML}
         ${safetyNote}
         <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center;">
           <button type="button" class="btn-primary" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer;"
             onclick="TodayPage.markCombatDone('${info.kind}', this)" ${combatDisabledAttr}>${done ? I18n.t('combat_mark_undone') : I18n.t('combat_mark_complete')}</button>
-          ${!isPractice ? '' : `
+          ${isPractice ? `
             <button type="button" class="btn-secondary" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer;"
-              onclick="TodayPage.skipCombatPractice(this)" ${combatDisabledAttr}>${I18n.t('combat_skip_practice')}</button>
-          `}
+              onclick="TodayPage.skipCombatPractice(this)" ${combatDisabledAttr}>${I18n.t('combat_skip_practice')}</button>` : ''}
           <input id="combat-rpe-input" type="number" min="1" max="10" placeholder="${I18n.t('combat_rpe_placeholder')}"
             value="${rpe}" ${combatDisabledAttr} style="width: 70px; padding: 8px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 13px; text-align: center;" dir="ltr">
           <button type="button" class="btn-secondary" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer;"
             onclick="TodayPage.saveCombatRPE('${info.kind}', this)" ${combatDisabledAttr}>${I18n.t('combat_save_rpe')}</button>
+          ${moveCancelButtons}
         </div>
-      </div>
-    `;
-
-    const list = document.getElementById('exercises-list');
-    if (list && list.parentNode) {
-      list.parentNode.insertBefore(card, list);
-    }
+        ${sessionTypeHTML}
+        ${swapOfferHTML}
+        ${combatWarmupHTML(isJudo)}
+      </div>`);
   }
 
   async function markCombatDone(kind, btn) {
@@ -2601,6 +2757,226 @@ const TodayPage = (() => {
     const day = allPlanDays[currentDayIndex];
     if (day) await renderCombatCard(day);
     UI.toast(I18n.t('combat_rpe_saved'), 'success');
+  }
+
+  async function saveCombatSessionType(type, btn) {
+    if (!currentTracking) return;
+    currentTracking.combat = {
+      ...(currentTracking.combat || {}),
+      sessionType: type,
+      ts: new Date().toISOString()
+    };
+    await autoSave();
+    const day = allPlanDays[currentDayIndex];
+    if (day) await renderCombatCard(day);
+    UI.toast(I18n.t('combat_type_saved'), 'success');
+  }
+
+  // ---- Move / Cancel / Undo (per-instance exception layer) ----
+
+  function combatLevelMeta(c) {
+    const color = c.level === 'high' ? '#f87171' : c.level === 'caution' ? '#fbbf24' : '#34d399';
+    const label = c.level === 'high'
+      ? I18n.t('combat_level_high')
+      : c.level === 'caution'
+        ? I18n.t('combat_level_caution')
+        : I18n.t('combat_level_ok');
+    return { color, label };
+  }
+
+  async function openCombatMoveModal(kind, btn) {
+    const combatSchedule = await getCombatSchedule();
+    if (!combatSchedule || !combatSchedule.enabled) return;
+    const day = allPlanDays[currentDayIndex];
+    if (!day) return;
+    const origDate = combatDateISO(day);
+    const exceptions = await getCombatExceptions();
+    const sessionType = (currentTracking && currentTracking.combat && currentTracking.combat.sessionType) || 'mixed';
+    let candidates = [];
+    try {
+      candidates = CombatScheduler.suggestMoveTargets(combatSchedule, exceptions.items, allPlanDays, {
+        origDate, sessionType, horizonDays: 21, fromDate: CombatScheduler.todayIso()
+      });
+    } catch (e) {
+      console.warn('Combat move suggestion error:', e);
+    }
+
+    const rows = candidates.length === 0
+      ? `<div style="color:var(--text-muted); font-size:12px; padding:8px 0;">${I18n.t('combat_move_no_targets')}</div>`
+      : candidates.map(c => {
+        const meta = combatLevelMeta(c);
+        const reasons = (c.reasons || []).map(r => I18n.t(`combat_reason_${r}`) || r).join(' · ');
+        const best = c.best
+          ? `<span style="background:rgba(16,185,129,0.15); color:#34d399; font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; margin-left:6px;">★ ${I18n.t('combat_move_best')}</span>`
+          : '';
+        return `
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid var(--border-light); border-radius:10px; margin-top:6px; background:var(--bg-elevated);">
+          <div style="display:flex; flex-direction:column; min-width:0;">
+            <div style="font-size:12px; font-weight:700; color:var(--text-primary);">${combatFmtIsoToDisplay(c.date)}${best}</div>
+            <div style="font-size:11px; color:var(--text-muted);">${c.dayType}</div>
+            ${reasons ? `<div style="font-size:10px; color:${meta.color};">⚠️ ${reasons}</div>` : ''}
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+            <span style="width:14px; height:14px; border-radius:50%; background:${meta.color};" title="${meta.label}"></span>
+            <button type="button" class="btn-primary" style="padding:6px 12px; font-size:11px; font-weight:700; border-radius:8px; cursor:pointer;" onclick="TodayPage.applyCombatMove('${kind}', '${origDate}', '${c.date}', this)">${I18n.t('combat_move_here')}</button>
+          </div>
+        </div>`;
+      }).join('');
+
+    const classTime = combatClassTime(combatSchedule, { kind }, null);
+    UI.showModal(I18n.t('combat_move_modal_title'), `
+      <div style="padding: 12px;">
+        <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px; line-height:1.5;">${I18n.t('combat_move_modal_hint')}</div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+          <label style="font-size:11px; color:var(--text-secondary);">${I18n.t('combat_session_type_label')}
+            <select id="combat-move-type" style="display:block; margin-top:4px; padding:6px; border-radius:8px; background:var(--bg-input); border:1px solid var(--border-light); color:var(--text-primary); font-size:12px;">
+              ${COMBAT_SESSION_TYPES.map(t => `<option value="${t}" ${t === sessionType ? 'selected' : ''}>${I18n.t(`combat_type_${t}`)}</option>`).join('')}
+            </select>
+          </label>
+          <label style="font-size:11px; color:var(--text-secondary);">${I18n.t('combat_time_label')}
+            <input id="combat-move-time" type="time" value="${classTime}" style="display:block; margin-top:4px; padding:6px; border-radius:8px; background:var(--bg-input); border:1px solid var(--border-light); color:var(--text-primary); font-size:12px;">
+          </label>
+        </div>
+        <div>${rows}</div>
+      </div>`);
+  }
+
+  async function applyCombatMove(kind, origDate, newDate, btn) {
+    const typeSel = document.getElementById('combat-move-type');
+    const timeSel = document.getElementById('combat-move-time');
+    const sessionType = typeSel ? typeSel.value : 'mixed';
+    const time = timeSel ? timeSel.value : '';
+    UI.closeModal();
+    const prev = await getCombatExceptions();
+    const items = (prev.items || []).filter(it => !(it.kind === kind && it.origDate === origDate));
+    items.push({
+      id: 'x-' + Date.now(),
+      kind,
+      origDate,
+      action: 'move',
+      newDate,
+      sessionType: sessionType || null,
+      time: time || null,
+      note: '',
+      ts: new Date().toISOString()
+    });
+    combatExceptionsCache = await DB.saveCombatExceptions(items);
+    if (typeof CalendarPage !== 'undefined' && CalendarPage.render) CalendarPage.render();
+    const day = allPlanDays[currentDayIndex];
+    if (day) await renderCombatCard(day);
+    UI.toast(I18n.t('combat_moved_done', '', { date: combatFmtIsoToDisplay(newDate) }), 'success');
+  }
+
+  async function cancelCombatClass(kind, btn) {
+    const day = allPlanDays[currentDayIndex];
+    if (!day) return;
+    const origDate = combatDateISO(day);
+    const done = !!(currentTracking && currentTracking.combat && currentTracking.combat.done && !currentTracking.combat.skipped);
+    const baseMsg = I18n.t('combat_cancel_confirm_msg') + (done ? `\n\n⚠️ ${I18n.t('combat_cancel_done_warn')}` : '');
+    const ok = window.UI && window.UI.confirm
+      ? await UI.confirm({
+        title: I18n.t('combat_cancel_confirm_title'),
+        message: baseMsg,
+        confirmText: I18n.t('combat_cancel_confirm_ok'),
+        type: 'danger'
+      })
+      : confirm(baseMsg);
+    if (!ok) return;
+    const prev = await getCombatExceptions();
+    const items = (prev.items || []).filter(it => !(it.kind === kind && it.origDate === origDate));
+    items.push({
+      id: 'x-' + Date.now(),
+      kind,
+      origDate,
+      action: 'cancel',
+      newDate: null,
+      sessionType: null,
+      time: null,
+      note: '',
+      ts: new Date().toISOString()
+    });
+    combatExceptionsCache = await DB.saveCombatExceptions(items);
+    if (typeof CalendarPage !== 'undefined' && CalendarPage.render) CalendarPage.render();
+    const d = allPlanDays[currentDayIndex];
+    if (d) await renderCombatCard(d);
+    UI.toast(I18n.t('combat_cancelled_done'), 'info');
+  }
+
+  async function undoCombatException(kind, btn) {
+    const day = allPlanDays[currentDayIndex];
+    if (!day) return;
+    const origDate = combatDateISO(day);
+    const prev = await getCombatExceptions();
+    const items = (prev.items || []).filter(it => !(it.kind === kind && it.origDate === origDate));
+    combatExceptionsCache = await DB.saveCombatExceptions(items);
+    if (typeof CalendarPage !== 'undefined' && CalendarPage.render) CalendarPage.render();
+    const d = allPlanDays[currentDayIndex];
+    if (d) await renderCombatCard(d);
+    UI.toast(I18n.t('combat_undo_done'), 'info');
+  }
+
+  // One-tap swap: relocate today's strength content to the best free day in the
+  // current week when a moved-in class lands on a strength host. Advisory per
+  // user decision — reuses the existing swap engine (PLAN + TRACKING swap).
+  async function swapMovedInClass(btn) {
+    const combatSchedule = await getCombatSchedule();
+    const exceptions = await getCombatExceptions();
+    const weekStart = Math.floor(currentDayIndex / 7) * 7;
+    const weekEnd = Math.min(weekStart + 7, allPlanDays.length);
+    let target = -1;
+    for (let i = weekStart; i < weekEnd; i++) {
+      if (i === currentDayIndex) continue;
+      const d = allPlanDays[i];
+      if (!d) continue;
+      const iso = combatDateISO(d);
+      const jsDow = jsDowOfDay(d);
+      if (jsDow === null) continue;
+      const occ = CombatScheduler.isDateOccupied(combatSchedule, exceptions.items, allPlanDays, iso);
+      if (occ) continue;
+      target = i;
+      break;
+    }
+    if (target === -1) {
+      UI.toast(I18n.t('combat_swap_no_target'), 'warning');
+      return;
+    }
+    await DB.swapWorkouts(currentDayIndex, target);
+    allPlanDays = await DB.getAllPlan();
+    allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
+    if (typeof CalendarPage !== 'undefined' && CalendarPage.render) CalendarPage.render();
+    const day = allPlanDays[currentDayIndex];
+    if (day) await renderCombatCard(day);
+    UI.toast(I18n.t('combat_swap_done'), 'success');
+  }
+
+  // Advisory strip on strength days when yesterday's combat session pre-fatigued
+  // the muscles used today. Advisory only — progression engine untouched.
+  async function renderCombatPrevDayAdvisory(day) {
+    const existing = document.getElementById('combat-prevday-advisory');
+    if (existing) existing.remove();
+    if (!window.CombatScheduler) return;
+    const combatSchedule = await getCombatSchedule();
+    if (!combatSchedule || !combatSchedule.enabled) return;
+    const prevIdx = currentDayIndex - 1;
+    if (prevIdx < 0 || !allPlanDays[prevIdx]) return;
+    if (!/legs|push|pull/i.test(day.dayType || '')) return; // strength days only
+    const prevTracking = await DB.getDayTracking(prevIdx).catch(() => null);
+    const c = prevTracking && prevTracking.combat;
+    if (!c || !c.done || c.skipped || !c.sessionType) return;
+    const inter = CombatScheduler.sessionInterference(c.sessionType, null, day.dayType);
+    if (inter.level === 'ok') return;
+    const color = inter.level === 'high' ? '#f87171' : '#fbbf24';
+    const reasons = (inter.reasons || []).map(r => I18n.t(`combat_reason_${r}`) || r).join(' · ');
+    const typeName = I18n.t(`combat_type_${c.sessionType}`) || c.sessionType;
+    const strip = document.createElement('div');
+    strip.id = 'combat-prevday-advisory';
+    strip.innerHTML = `
+      <div style="margin-bottom:16px; padding:10px 14px; border:1px solid ${color}66; border-radius:12px; background:${color}14;">
+        <div style="font-size:12px; font-weight:700; color:${color};">${I18n.t('combat_prevday_title', '', { type: typeName })}</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:3px; line-height:1.5;">${reasons} — ${I18n.t('combat_prevday_note')}</div>
+      </div>`;
+    const list = document.getElementById('exercises-list');
+    if (list && list.parentNode) list.parentNode.insertBefore(strip, list);
   }
 
   /**
@@ -5164,10 +5540,17 @@ const TodayPage = (() => {
     markCombatDone,
     skipCombatPractice,
     saveCombatRPE,
+    saveCombatSessionType,
+    openCombatMoveModal,
+    applyCombatMove,
+    cancelCombatClass,
+    undoCombatException,
+    swapMovedInClass,
     async refreshPlan() {
       // Reload plan from DB (e.g. after combat schedule changes) and re-render
       allPlanDays = [];
       combatScheduleCache = null;
+      combatExceptionsCache = null;
       try {
         const days = await DB.getAllPlan();
         days.sort((a, b) => a.dayIndex - b.dayIndex);

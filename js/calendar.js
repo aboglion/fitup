@@ -6,6 +6,7 @@ const CalendarPage = (() => {
   let currentWeekNum = 1;
   const totalWeeks = 52;
   let combatScheduleCache = null;
+  let combatExceptionsCache = null;
 
   async function getCombatSchedule() {
     if (combatScheduleCache === null) {
@@ -16,6 +17,17 @@ const CalendarPage = (() => {
       }
     }
     return combatScheduleCache;
+  }
+
+  async function getCombatExceptions() {
+    if (combatExceptionsCache === null) {
+      try {
+        combatExceptionsCache = await DB.getCombatExceptions() || { rev: 0, items: [] };
+      } catch (e) {
+        combatExceptionsCache = { rev: 0, items: [] };
+      }
+    }
+    return combatExceptionsCache;
   }
 
   function combatBadgeFor(day) {
@@ -30,10 +42,23 @@ const CalendarPage = (() => {
       d = new Date(raw + 'T12:00:00');
     }
     if (!d) return '';
-    const info = CombatScheduler.combatInfoForDay(combatScheduleCache, day.dayIndex, d.getDay(), day.dayType);
+    const dateISO = CombatScheduler.isoFromPlanDate(raw) || '';
+    const exceptions = (combatExceptionsCache && Array.isArray(combatExceptionsCache.items)) ? combatExceptionsCache.items : [];
+    const info = CombatScheduler.combatInfoForDay(combatScheduleCache, day.dayIndex, d.getDay(), day.dayType, exceptions, dateISO);
     if (!info) return '';
     const isPractice = info.kind === 'practice';
-    return `<span style="margin-left:4px;" title="${isPractice ? 'Bag practice' : 'Class day'}${info.pending ? ' (starts next week)' : ''}">🥊</span>`;
+    const kindWord = isPractice ? 'Bag practice' : 'Class day';
+    const status = info.status || 'scheduled';
+    if (status === 'cancelled') {
+      return `<span style="margin-left:4px; filter: grayscale(1); opacity:0.6;" title="${kindWord} cancelled">✕</span>`;
+    }
+    if (status === 'moved-out') {
+      return `<span style="margin-left:4px; filter: grayscale(1); opacity:0.75;" title="${kindWord} moved to ${info.movedToDate || ''}">↩</span>`;
+    }
+    if (status === 'moved-in') {
+      return `<span style="margin-left:4px; color:#fbbf24;" title="Moved ${isPractice ? 'practice' : 'class'} (rescheduled)">🥊➡</span>`;
+    }
+    return `<span style="margin-left:4px;" title="${kindWord}${info.pending ? ' (starts next week)' : ''}">🥊</span>`;
   }
 
   /**
@@ -42,7 +67,9 @@ const CalendarPage = (() => {
   function init(planDays) {
     allPlanDays = planDays;
     combatScheduleCache = null;
+    combatExceptionsCache = null;
     DB.getSetting('combatSchedule').then(s => { combatScheduleCache = s || null; }).catch(() => { combatScheduleCache = null; });
+    DB.getCombatExceptions().then(ex => { combatExceptionsCache = ex || { rev: 0, items: [] }; }).catch(() => { combatExceptionsCache = { rev: 0, items: [] }; });
 
     // Find current week
     const todayIdx = UI.findTodayIndex(planDays);

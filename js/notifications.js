@@ -24,7 +24,7 @@ const NotificationService = (() => {
    */
   async function requestPermission() {
     if (!isSupported()) return false;
-    
+
     try {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
@@ -94,8 +94,31 @@ const NotificationService = (() => {
           const lastNotifDate = await DB.getSetting('lastNotifWorkoutReminder');
           const todayStr = UI.getLocalDateString();
           if (lastNotifDate !== todayStr) {
+            let combatSuffix = '';
+            try {
+              if (window.CombatScheduler) {
+                const cfg = await DB.getSetting('combatSchedule');
+                if (cfg && cfg.enabled) {
+                  let jsDow = null;
+                  const raw = (todayPlan.date || '').split('/').map(Number);
+                  if (raw.length === 3) jsDow = new Date(raw[2], (raw[1] || 1) - 1, raw[0] || 1).getDay();
+                  const iso = CombatScheduler.isoFromPlanDate(todayPlan.date) || '';
+                  const ex = await DB.getCombatExceptions();
+                  const items = (ex && Array.isArray(ex.items)) ? ex.items : [];
+                  const info = CombatScheduler.combatInfoForDay(cfg, todayIdx, jsDow, todayPlan.dayType, items, iso);
+                  const status = info ? (info.status || 'scheduled') : 'none';
+                  if (info && info.kind !== 'practice' && status !== 'cancelled' && status !== 'moved-out') {
+                    const classTime = (info.exception && info.exception.time) || (cfg.classTimes && cfg.classTimes[info.kind]) || '18:00';
+                    const win = CombatScheduler.cardioWindowFor(classTime, info.hostType);
+                    combatSuffix = win.placement === 'morning'
+                      ? ` 🥊 שיעור ${classTime} — ריצה מוקדמת עד ${win.windowEnd} (אם עוד לא רצת)`
+                      : ` 🥊 שיעור ${classTime} היום`;
+                  }
+                }
+              }
+            } catch (e) { /* combat suffix is optional */ }
             await showNotification(`💪 זמן לאימון ${todayPlan.dayType}!`, {
-              body: `האימון של היום ממתין לך: ${todayPlan.title || 'לחץ לפתיחה ולסימון הישגים'}`,
+              body: `האימון של היום ממתין לך: ${todayPlan.title || 'לחץ לפתיחה ולסימון הישגים'}${combatSuffix}`,
               tag: 'workout-reminder'
             });
             await DB.setSetting('lastNotifWorkoutReminder', todayStr);
