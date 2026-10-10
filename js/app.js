@@ -860,6 +860,7 @@ const App = (() => {
     const combatSaveBtn = document.getElementById('save-combat-settings-btn');
     const combatPreviewGrid = document.getElementById('combat-preview-grid');
     const combatPreviewWarnings = document.getElementById('combat-preview-warnings');
+    const combatUnsavedNote = document.getElementById('combat-unsaved-note');
     const combatSportButtons = document.querySelectorAll('.combat-sport-chip');
     const combatPracticeButtons = document.querySelectorAll('.combat-practice-chip');
     const combatHardButtons = document.querySelectorAll('.combat-hard-chip');
@@ -875,6 +876,7 @@ const App = (() => {
         hardClass: 'auto'
       };
       let combatResolved = null;
+      let combatSavedSnapshot = null; // persisted config for dirty-tracking
 
       const DAY_LETTERS = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
 
@@ -901,6 +903,26 @@ const App = (() => {
             chip.classList.toggle('active', isClass1 || isClass2);
           });
         });
+      }
+
+      function combatIsDirty() {
+        if (!combatSavedSnapshot) return combatState.enabled; // nothing saved yet but enabled
+        const s = combatSavedSnapshot;
+        return !(s.enabled === combatState.enabled &&
+          (s.sport || 'muay_thai') === combatState.sport &&
+          JSON.stringify((s.classDays || []).slice().sort()) === JSON.stringify(combatState.classDays.slice().sort()) &&
+          (s.practice || 'auto') === combatState.practice &&
+          (s.hardClass || 'auto') === combatState.hardClass);
+      }
+
+      function combatRefreshUnsavedNote() {
+        if (!combatUnsavedNote) return;
+        const dirty = combatIsDirty();
+        combatUnsavedNote.style.display = dirty ? 'block' : 'none';
+        if (combatSaveBtn) {
+          combatSaveBtn.style.boxShadow = dirty ? '0 0 0 2px rgba(245,158,11,0.7)' : '';
+          combatSaveBtn.style.animation = dirty ? 'combatPulse 1.2s ease-in-out infinite' : '';
+        }
       }
 
       function combatComputePreview() {
@@ -979,6 +1001,14 @@ const App = (() => {
         combatBody.style.display = combatState.enabled ? 'block' : 'none';
         combatRefreshChips();
         if (combatState.enabled) combatComputePreview();
+        combatSavedSnapshot = {
+          enabled: combatState.enabled,
+          sport: combatState.sport,
+          classDays: combatState.classDays.slice(),
+          practice: combatState.practice,
+          hardClass: combatState.hardClass
+        };
+        combatRefreshUnsavedNote();
       })();
 
       // ---- Toggle ----
@@ -987,6 +1017,7 @@ const App = (() => {
         combatBody.style.display = combatState.enabled ? 'block' : 'none';
         combatRefreshChips();
         if (combatState.enabled) combatComputePreview();
+        combatRefreshUnsavedNote();
       });
 
       // ---- Sport selector ----
@@ -994,6 +1025,7 @@ const App = (() => {
         combatState.sport = btn.dataset.sport;
         combatRefreshChips();
         if (combatState.enabled) combatComputePreview();
+        combatRefreshUnsavedNote();
       }));
 
       // ---- Practice selector ----
@@ -1001,6 +1033,7 @@ const App = (() => {
         combatState.practice = btn.dataset.practice;
         combatRefreshChips();
         if (combatState.enabled) combatComputePreview();
+        combatRefreshUnsavedNote();
       }));
 
       // ---- Hard class selector ----
@@ -1008,6 +1041,7 @@ const App = (() => {
         combatState.hardClass = btn.dataset.hard;
         combatRefreshChips();
         if (combatState.enabled) combatComputePreview();
+        combatRefreshUnsavedNote();
       }));
 
       // ---- Day-of-week selectors (mutually exclusive within each row) ----
@@ -1031,6 +1065,7 @@ const App = (() => {
             combatState.classDays = combatState.classDays.filter(d => d !== undefined);
             combatRefreshChips();
             if (combatState.enabled) combatComputePreview();
+            combatRefreshUnsavedNote();
           });
         });
       });
@@ -1049,6 +1084,8 @@ const App = (() => {
             await DB.applyCombatSchedule(newCfg);
             if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
             UI.toast(I18n.t('combat_disabled'), 'info');
+            combatSavedSnapshot = { enabled: false, sport: combatState.sport, classDays: [], practice: 'off', hardClass: 'auto' };
+            combatRefreshUnsavedNote();
             await refreshPlanInMemory();
             return;
           }
@@ -1109,6 +1146,14 @@ const App = (() => {
           await DB.applyCombatSchedule(newCfg);
           if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) CloudSync.scheduleSync();
           UI.toast(I18n.t('combat_saved'), 'success');
+          combatSavedSnapshot = {
+            enabled: true,
+            sport: combatState.sport,
+            classDays: classDays.slice(),
+            practice: combatState.practice,
+            hardClass: combatState.hardClass
+          };
+          combatRefreshUnsavedNote();
           await refreshPlanInMemory();
         });
       }

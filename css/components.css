@@ -4985,3 +4985,8 @@ html.light-theme .login-prompt-banner {
   color: #fff;
   transform: scale(1.08);
 }
+
+@keyframes combatPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}

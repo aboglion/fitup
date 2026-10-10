@@ -30,10 +30,10 @@ const CalendarPage = (() => {
       d = new Date(raw + 'T12:00:00');
     }
     if (!d) return '';
-    const info = CombatScheduler.combatInfoForDay(combatScheduleCache, day.dayIndex, d.getDay());
+    const info = CombatScheduler.combatInfoForDay(combatScheduleCache, day.dayIndex, d.getDay(), day.dayType);
     if (!info) return '';
     const isPractice = info.kind === 'practice';
-    return `<span style="margin-left:4px;" title="${isPractice ? 'Bag practice' : 'Class day'}">🥊</span>`;
+    return `<span style="margin-left:4px;" title="${isPractice ? 'Bag practice' : 'Class day'}${info.pending ? ' (starts next week)' : ''}">🥊</span>`;
   }
 
   /**

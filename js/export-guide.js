@@ -542,7 +542,7 @@ window.ExporterGuide = (() => {
           d = new Date(yyyy, (mm || 1) - 1, dd || 1);
         }
         if (d) {
-          const info = CombatScheduler.combatInfoForDay(combatSchedule, day.dayIndex, d.getDay());
+          const info = CombatScheduler.combatInfoForDay(combatSchedule, day.dayIndex, d.getDay(), day.dayType);
           if (info) combatTag = ` <span style="background:#ef4444;color:#fff;padding:2px 8px;border-radius:999px;font-size:0.75em;font-weight:700;">🥊 ${info.kind === 'practice' ? 'Home Bag Practice' : 'Combat Class'}</span>`;
         }
       }

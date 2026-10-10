@@ -2426,16 +2426,43 @@ const TodayPage = (() => {
     const jsDow = jsDowOfDay(day);
     if (jsDow === null) return;
 
-    const info = CombatScheduler.combatInfoForDay(combatSchedule, currentDayIndex, jsDow);
+    // Pass the actual displayed dayType so pre-boundary (pending) days guide by
+    // the identity content actually visible in the current week.
+    const info = CombatScheduler.combatInfoForDay(combatSchedule, currentDayIndex, jsDow, day.dayType);
     if (!info) return;
 
+    let pendingBadge = '';
+    if (info.pending) {
+      let boundaryDate = '';
+      try {
+        const planStartStr = await DB.getSetting('planStartDate');
+        const start = planStartStr ? new Date(planStartStr + 'T12:00:00') : new Date();
+        const newestEra = combatSchedule.history[combatSchedule.history.length - 1];
+        if (newestEra && typeof newestEra.from === 'number') {
+          const d = new Date(start);
+          d.setDate(d.getDate() + newestEra.from);
+          const dd = String(d.getDate()).padStart(2, '0');
+          const mm = String(d.getMonth() + 1).padStart(2, '0');
+          boundaryDate = `${dd}/${mm}/${d.getFullYear()}`;
+        }
+      } catch (e) { /* keep empty */ }
+      pendingBadge = `<div style="display:inline-flex; align-items:center; gap:4px; background:rgba(239,68,68,0.16); border:1px solid rgba(239,68,68,0.45); color:#fca5a5; padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; margin-top:8px;">📅 ${I18n.t('combat_pending_badge', '', { date: boundaryDate })}</div>`;
+    }
+
     const sport = combatSchedule.sport || 'muay_thai';
+    const isJudo = sport === 'judo';
     const sportLabel = I18n.t(`combat_sport_${sport}`) || 'Combat Sport';
     const kindLabel = info.kind === 'class1'
       ? I18n.t('combat_class1_label')
       : info.kind === 'class2'
         ? I18n.t('combat_class2_label')
         : I18n.t('combat_practice_label');
+
+    // Sport-specific guidance: strike arts vs final sports like Judo differ in
+    // class-drill nomenclature (Judo: uchikomi/randori/ukemi instead of pads/bag)
+    const guidanceBase = info.kind === 'practice' ? 'combat_guidance_practice' : `combat_guidance_${info.hostType === 'vo2' ? 'vo2' : info.hostType === 'zone2' ? 'zone2' : 'class_recovery'}`;
+    const guidanceKey = isJudo ? `${guidanceBase}_judo` : guidanceBase;
+    const guidanceText = I18n.t(guidanceKey);
 
     const done = !!(currentTracking && currentTracking.combat && currentTracking.combat.done && !currentTracking.combat.skipped);
     const skipped = !!(currentTracking && currentTracking.combat && currentTracking.combat.skipped);
@@ -2446,9 +2473,10 @@ const TodayPage = (() => {
       (day.dayType && /deload/i.test(day.dayType)) ||
       Boolean(day.autoDeload);
 
+    const safetyKey = isJudo ? 'combat_safety_footer_judo' : 'combat_safety_footer';
     const safetyNote = isDeloadDay
       ? `<div style="font-size: 11px; color: #fbbf24; margin-top: 8px; font-weight: 700;">🌿 ${I18n.t('combat_deload_note')}</div>`
-      : `<div style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.5;">${I18n.t('combat_safety_footer')}</div>`;
+      : `<div style="font-size: 11px; color: var(--text-muted); margin-top: 8px; line-height: 1.5;">${I18n.t(safetyKey)}</div>`;
 
     const statusBadge = done
       ? `<span style="background: rgba(16,185,129,0.15); color: #34d399; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">✓ ${I18n.t('combat_done_badge')}</span>`
@@ -2468,14 +2496,15 @@ const TodayPage = (() => {
       <div style="background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(185,28,28,0.06)); border: 1px solid rgba(239,68,68,0.35); border-radius: 14px; padding: 14px 16px; margin-bottom: 16px;">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <span style="font-size: 24px;">🥊</span>
+            <span style="font-size: 24px;">${isJudo ? '🤼' : '🥊'}</span>
             <div>
               <div style="font-weight: 800; color: var(--text-primary); font-size: 14px;">${kindLabel} — ${sportLabel}</div>
-              <div style="font-size: 11px; color: var(--text-muted);">${I18n.t(`combat_guidance_${info.guidance === 'combat_warning_strength_host' ? 'warning_strength_host' : info.guidance.replace('combat_guidance_', '')}`) || I18n.t(info.guidance)}</div>
+              <div style="font-size: 11px; color: var(--text-muted);">${guidanceText || I18n.t(info.guidance)}</div>
             </div>
           </div>
           ${statusBadge}
         </div>
+        ${pendingBadge}
         ${safetyNote}
         <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; align-items: center;">
           <button type="button" class="btn-primary" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer;"

@@ -175,7 +175,7 @@ The Combat Integration Mode lets the trainee add up to **3 combat training days 
 ### C.1 Configuration (Settings → 🥊 Combat Training)
 - **Class Day 1 / Class Day 2** — fixed external course days (JS getDay weekday pickers, e.g. Tue + Thu).
 - **Home bag practice** — `Auto` (the system selects the optimal weekday and displays it live) or `Off`.
-- **Sport** — Muay Thai / Boxing / Kickboxing / Other (adjusts card text).
+- **Sport** — Muay Thai / Boxing / Kickboxing / Judo / Other (adjusts card guidance + safety notes; Judo uses uchikomi/randori/ukemi terminology and adds ukemi-before-throws + no-stacking safety rules).
 - **Hardest class day** — `Auto / First / Second`; the chosen class day hosts the VO2 Max slot (class replaces the 4×4).
 - A **live 7-day preview grid** shows the optimized weekday→day-type mapping with warnings before saving.
 - Saving takes effect from the **next Monday boundary** (banner shown mid-week; current week finishes unchanged).

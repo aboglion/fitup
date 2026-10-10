@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v165-combat-mode';
+const CACHE_NAME = 'fitup-v170-flawless-exercise-cutouts';
 const ASSETS = [
   './',
   './index.html',

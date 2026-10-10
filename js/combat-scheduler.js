@@ -288,14 +288,61 @@
     function offsetName(offset) { return NAMES[offset] || `Type ${offset}`; }
 
     /**
-     * Map a JS day-of-week to its role in the active combat config.
-     * @returns {Object|null} { kind, hostType, hostOffset, guidance } or null if not a combat day
+     * Map a day-type to its host offset for guidance purposes.
      */
-    function combatInfoForDay(settings, dayIndex, jsDow) {
-        const era = eraForDayIndex(settings, dayIndex);
+    function mapDayTypeToOffset(dayType) {
+        const t = String(dayType || '').toLowerCase();
+        if (t.includes('zone 2') || t.includes('walk')) return BASE.ZONE2;
+        if (t.includes('vo2')) return BASE.VO2;
+        if (t.includes('recovery')) return BASE.RECOVERY;
+        if (t.includes('legs')) return BASE.LEGS;
+        if (t.includes('push')) return BASE.PUSH;
+        if (t.includes('pull')) return BASE.PULL;
+        if (t.includes('rest')) return BASE.REST;
+        return null;
+    }
+
+    /**
+     * Map a JS day-of-week to its role in the combat config.
+     *
+     * Beyond the active era, this also reports combat days whose era boundary is in
+     * the future (pending) — so the card/badge appears on the selected weekdays
+     * immediately, using the pre-boundary (identity) content for guidance.
+     *
+     * @param {Object|null} settings - stored combatSchedule setting (or null)
+     * @param {number} dayIndex
+     * @param {number} jsDow - JS getDay() of the displayed date
+     * @param {string} [actualDayType] - the day's actual content day-type (pre-boundary guidance)
+     * @returns {Object|null} { kind, hostType, hostOffset, guidance, pending }
+     */
+    function combatInfoForDay(settings, dayIndex, jsDow, actualDayType) {
+        let era = eraForDayIndex(settings, dayIndex);
+        let pending = false;
+
+        if (!era && settings && settings.enabled && Array.isArray(settings.history)) {
+            // No active era for this dayIndex yet — find the newest enabled era
+            // (its boundary may lie in the future => pending preview).
+            let newestEnabled = null;
+            for (const h of settings.history) {
+                if (h && h.enabled) newestEnabled = h;
+            }
+            if (newestEnabled && typeof newestEnabled.from === 'number' && dayIndex < newestEnabled.from) {
+                era = newestEnabled;
+                pending = true;
+            }
+        }
         if (!era) return null;
+
         const bp = blockPosOf(jsDow);
-        const hostOffset = era.perm ? era.perm[bp] : bp;
+        let hostOffset;
+        if (pending) {
+            // Pre-boundary week: content is still the identity layout, so guide by
+            // the day's actual content (correct for the current week).
+            hostOffset = mapDayTypeToOffset(actualDayType);
+            if (hostOffset === null || hostOffset === undefined) hostOffset = bp;
+        } else {
+            hostOffset = era.perm ? era.perm[bp] : bp;
+        }
         const hostType = HOST_TYPE_BY_OFFSET[hostOffset] || 'other';
 
         let kind = null;
@@ -318,7 +365,7 @@
         } else {
             guidance = 'combat_warning_strength_host';
         }
-        return { kind, hostType, hostOffset, guidance };
+        return { kind, hostType, hostOffset, guidance, pending };
     }
 
     return {
