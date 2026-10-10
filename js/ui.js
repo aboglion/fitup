@@ -985,44 +985,59 @@ const UI = (() => {
 
     const isDeload = type.toLowerCase().includes('deload');
 
-    const types = {
-      'Legs + Core': { label: 'Legs + Core 🦵', class: 'strength', icon: '🦵' },
-      'Push + Skill': { label: 'Push + Skill 💥', class: 'strength', icon: '💥' },
-      'Pull + Grip': { label: 'Pull + Grip 🧲', class: 'strength', icon: '🧲' },
-      'Zone 2 Cardio': { label: 'Zone 2 Cardio 🫀', class: 'walk', icon: '🫀' },
-      'Active Recovery': { label: 'Active Recovery 🌿', class: 'recovery', icon: '🌿' },
-      'VO2 Max': { label: 'VO2 Max 4x4 🔴', class: 'vo2', icon: '🔴' },
-      'Rest': { label: 'Rest 😴', class: 'rest', icon: '😴' },
-      'Legs + Push (Strength A)': { label: 'Strength A 🦵💥', class: 'strength', icon: '🦵' },
-      'Pull + Skill (Strength B)': { label: 'Strength B 🧲', class: 'strength', icon: '🧲' },
-      'Lower Strength': { label: 'Lower Strength 🦵', class: 'strength', icon: '🦵' },
-      'Upper Push': { label: 'Upper Push 💥', class: 'strength', icon: '💥' },
-      'Upper Pull + Skill': { label: 'Upper Pull 🧲', class: 'strength', icon: '🧲' },
-
-      // Deload specific mappings
-      'Legs + Core (Deload)': { label: 'Legs + Core 🌿 (Deload)', class: 'strength deload', icon: '🦵' },
-      'Push + Skill (Deload)': { label: 'Push + Skill 🌿 (Deload)', class: 'strength deload', icon: '💥' },
-      'Pull + Grip (Deload)': { label: 'Pull + Grip 🌿 (Deload)', class: 'strength deload', icon: '🧲' },
-      'Zone 2 Cardio (Deload)': { label: 'Zone 2 Cardio 🌿 (Deload)', class: 'walk deload', icon: '🫀' },
-      'Active Recovery (Deload)': { label: 'Active Recovery 🌿 (Deload)', class: 'recovery deload', icon: '🌿' }
+    const keyMap = {
+      'Legs + Core': 'day_type_legs_core',
+      'Push + Skill': 'day_type_push_skill',
+      'Pull + Grip': 'day_type_pull_grip',
+      'Zone 2 Cardio': 'day_type_zone2',
+      'Active Recovery': 'day_type_active_recovery',
+      'VO2 Max': 'day_type_vo2_max',
+      'Rest': 'day_type_rest',
+      'Legs + Push (Strength A)': 'day_type_strength_a',
+      'Pull + Skill (Strength B)': 'day_type_strength_b',
+      'Lower Strength': 'day_type_lower_strength',
+      'Upper Push': 'day_type_upper_push',
+      'Upper Pull + Skill': 'day_type_upper_pull'
     };
 
-    if (types[type]) {
-      return { ...types[type], isDeload };
-    }
+    const classMap = {
+      'Legs + Core': { class: 'strength', icon: '🦵' },
+      'Push + Skill': { class: 'strength', icon: '💥' },
+      'Pull + Grip': { class: 'strength', icon: '🧲' },
+      'Zone 2 Cardio': { class: 'walk', icon: '🫀' },
+      'Active Recovery': { class: 'recovery', icon: '🌿' },
+      'VO2 Max': { class: 'vo2', icon: '🔴' },
+      'Rest': { class: 'rest', icon: '😴' },
+      'Legs + Push (Strength A)': { class: 'strength', icon: '🦵' },
+      'Pull + Skill (Strength B)': { class: 'strength', icon: '🧲' },
+      'Lower Strength': { class: 'strength', icon: '🦵' },
+      'Upper Push': { class: 'strength', icon: '💥' },
+      'Upper Pull + Skill': { class: 'strength', icon: '🧲' }
+    };
+
+    const cleanType = type.replace(/\s*\([^)]*deload[^)]*\)/gi, '').trim();
+    const meta = classMap[cleanType] || { class: 'strength', icon: '📋' };
+    const i18nKey = keyMap[cleanType];
+    let label = (i18nKey && typeof I18n !== 'undefined' && I18n.t)
+      ? I18n.t(i18nKey)
+      : (cleanType || type);
 
     if (isDeload) {
-      const cleanType = type.replace(/\s*\([^)]*deload[^)]*\)/gi, '').trim();
-      const baseInfo = types[cleanType] || { label: type, class: 'strength', icon: '🌿' };
+      const deloadPrefix = (typeof I18n !== 'undefined' && I18n.t) ? I18n.t('deload_prefix') : '🌿 ';
       return {
-        label: `${cleanType || type} 🌿 (Deload)`,
-        class: `${baseInfo.class} deload`.trim(),
-        icon: baseInfo.icon || '🌿',
+        label: `${label} (Deload)`,
+        class: `${meta.class} deload`.trim(),
+        icon: meta.icon || '🌿',
         isDeload: true
       };
     }
 
-    return { label: type, class: '', icon: '📋', isDeload: false };
+    return {
+      label: label || type,
+      class: meta.class,
+      icon: meta.icon,
+      isDeload: false
+    };
   }
 
   /**
@@ -1110,6 +1125,11 @@ const UI = (() => {
   }
 
   function findTodayIndex(planDays) {
+    if (Array.isArray(planDays) && planDays.length > 0) {
+      const todayStr = getLocalDateString().split('-').reverse().join('/');
+      const match = planDays.findIndex(d => d && d.date === todayStr);
+      if (match !== -1) return match;
+    }
     return window.appCurrentPlanIndex || 0;
   }
 

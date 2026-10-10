@@ -412,14 +412,18 @@ const App = (() => {
         }
       }
 
-      // If we haven't started yet and index points to a Rest day, skip to the first workout day
       let planStartDateStr = await DB.getSetting('planStartDate');
-      if (!planStartDateStr && allPlanDays[planIndex]?.dayType === 'Rest') {
+      if (planStartDateStr) {
+        const todayIdx = UI.findTodayIndex(allPlanDays);
+        if (typeof todayIdx === 'number' && todayIdx >= 0) {
+          planIndex = todayIdx;
+        }
+      } else if (allPlanDays[planIndex]?.dayType === 'Rest') {
         planIndex++;
       }
 
-      // Update dynamic dates and day names in-memory
-      updatePlanDaysDates(allPlanDays, planIndex);
+      // Update dates and day names in-memory anchored to planStartDate
+      updatePlanDaysDates(allPlanDays, planIndex, planStartDateStr);
 
       await DB.setSetting('lastActiveDate', todayStr);
       await DB.setSetting('currentPlanIndex', planIndex);
@@ -641,21 +645,34 @@ const App = (() => {
   }
 
   /**
-   * Dynamically update the dates and day names of the plan days relative to the active index.
+   * Dynamically update the dates and day names of the plan days.
+   * Anchored to planStartDateStr when present so calendar days remain fixed.
    */
-  function updatePlanDaysDates(planDays, activeIndex) {
-    const today = new Date();
+  function updatePlanDaysDates(planDays, activeIndex, planStartDateStr) {
     const dayNames = [I18n.t('sun'), I18n.t('mon'), I18n.t('tue'), I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')];
-    planDays.forEach(day => {
-      const d = new Date(today);
-      d.setDate(today.getDate() + (day.dayIndex - activeIndex));
-      day.dayOfWeek = dayNames[d.getDay()];
-      day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
-    });
+    if (planStartDateStr) {
+      const startDate = new Date(planStartDateStr + 'T12:00:00');
+      planDays.forEach(day => {
+        const d = new Date(startDate);
+        d.setDate(startDate.getDate() + day.dayIndex);
+        day.dayOfWeek = dayNames[d.getDay()];
+        day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
+      });
+    } else {
+      const today = new Date();
+      planDays.forEach(day => {
+        const d = new Date(today);
+        d.setDate(today.getDate() + (day.dayIndex - activeIndex));
+        day.dayOfWeek = dayNames[d.getDay()];
+        day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
+      });
+    }
   }
 
   function updatePlanDates(activeIndex) {
-    updatePlanDaysDates(allPlanDays, activeIndex);
+    DB.getSetting('planStartDate').then(str => {
+      updatePlanDaysDates(allPlanDays, activeIndex, str);
+    });
   }
 
   /**
@@ -692,21 +709,10 @@ const App = (() => {
     let planStartDateStr = await DB.getSetting('planStartDate');
     window.appNotStarted = !planStartDateStr;
 
-    // Auto-skip Rest days if the user has started and is behind schedule
     if (planStartDateStr) {
-      const startDateObj = new Date(planStartDateStr + 'T00:00:00');
-      const todayObj = new Date(UI.getLocalDateString() + 'T00:00:00');
-      const diffTime = Math.abs(todayObj - startDateObj);
-      const daysSinceStart = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-      while (planIndex < daysSinceStart && planIndex < allPlanDays.length && allPlanDays[planIndex].dayType === 'Rest') {
-        // Auto complete this rest day
-        const track = allTracking.find(t => t.dayIndex === planIndex) || { dayIndex: planIndex };
-        track.completed = true;
-        track.lastUpdated = new Date().toISOString();
-        track.date = UI.getLocalDateString(); // Use today's date for completion
-        await DB.saveDayTracking(planIndex, track);
-        planIndex++;
+      const todayIdx = UI.findTodayIndex(allPlanDays);
+      if (typeof todayIdx === 'number' && todayIdx >= 0) {
+        planIndex = todayIdx;
       }
     }
 
@@ -898,6 +904,7 @@ const App = (() => {
           const picker = row.dataset.picker;
           row.querySelectorAll('.combat-dow-chip').forEach(chip => {
             const dow = parseInt(chip.dataset.dow, 10);
+            chip.textContent = I18n.t(`dow_${dow}`) || chip.textContent;
             const isClass1 = picker === 'class1' && combatState.classDays[0] === dow;
             const isClass2 = picker === 'class2' && combatState.classDays[1] === dow;
             chip.classList.toggle('active', isClass1 || isClass2);
@@ -971,10 +978,10 @@ const App = (() => {
             : isClass1 || isClass2 || isPractice
               ? 'background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4);'
               : 'background: var(--bg-input);';
-          const name = CombatScheduler.offsetName(offset);
+          const dayLetter = I18n.t(`dow_${dow}`) || dow;
           days.push(`
             <div style="display:flex; flex-direction:column; align-items:center; gap:4px; border-radius:8px; padding:6px 2px; ${cellStyle}">
-              <span style="font-size:12px; font-weight:700;">${DAY_LETTERS[dow]}</span>
+              <span style="font-size:12px; font-weight:700;">${dayLetter}</span>
               <span style="font-size:10px; text-align:center; line-height:1.2;">${I18n.t(`combat_type_${offset}`) || name}</span>
               <span style="font-size:12px;">${marker || ''}</span>
             </div>
@@ -1171,6 +1178,7 @@ const App = (() => {
         const daysSince = Math.floor((today - start) / 86400000);
         currentIdx = Math.max(currentIdx, daysSince);
         const weekStart = Math.floor(currentIdx / 7) * 7;
+        if (weekStart === 0) return 0; // If within week 1, apply immediately from program start
         return weekStart + 7; // next full week block
       }
 

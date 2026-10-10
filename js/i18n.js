@@ -1164,7 +1164,7 @@ const I18n = (() => {
       readiness_today_score_label: "Today's Readiness",
 
       // ===== Combat Training Integration =====
-      combat_settings_title: "🥊 Combat Training / אימוני לחימה",
+      combat_settings_title: "🥊 Combat Training",
       combat_settings_desc: "Add up to 3 combat training days per week: 2 external class days (your course schedule) + 1 auto-assigned home bag-practice day. The weekly program order is rearranged optimally to place combat on cardio/recovery slots and protect strength days.",
       combat_enable_label: "Enable Combat Training",
       combat_enable_desc: "Re-arranges the repeating weekly order optimally",
@@ -1232,7 +1232,29 @@ const I18n = (() => {
       combat_type_3: "Recovery",
       combat_type_4: "Pull",
       combat_type_5: "VO2 Max",
-      combat_type_6: "Rest"
+      combat_type_6: "Rest",
+      dow_0: "Sun",
+      dow_1: "Mon",
+      dow_2: "Tue",
+      dow_3: "Wed",
+      dow_4: "Thu",
+      dow_5: "Fri",
+      dow_6: "Sat",
+      day_type_legs_core: "Legs + Core 🦵",
+      day_type_push_skill: "Push + Skill 💥",
+      day_type_pull_grip: "Pull + Grip 🧲",
+      day_type_zone2: "Zone 2 Cardio 🫀",
+      day_type_active_recovery: "Active Recovery & Neck 🌿",
+      day_type_vo2_max: "VO2 Max 4x4 Intervals 🔴",
+      day_type_rest: "Rest & Recovery 😴",
+      day_type_strength_a: "Strength A 🦵💥",
+      day_type_strength_b: "Strength B 🧲",
+      day_type_lower_strength: "Lower Strength 🦵",
+      day_type_upper_push: "Upper Push 💥",
+      day_type_upper_pull: "Upper Pull 🧲",
+      combat_class_short_title: "Combat Class",
+      combat_practice_short_title: "Home Bag Practice",
+      deload_prefix: "🌿 Deload: "
     },
     he: {
 
@@ -2217,7 +2239,7 @@ const I18n = (() => {
       readiness_today_score_label: "מוכנות היום",
 
       // ===== שילוב אימוני לחימה =====
-      combat_settings_title: "🥊 אימוני לחימה / Combat Training",
+      combat_settings_title: "🥊 אימוני לחימה",
       combat_settings_desc: "הוספה של עד 3 ימי לחימה בשבוע: 2 ימי שיעור חיצוני (לפי סדר הקורס) + יום תרגול ביתי נבחר אוטומטית. סדר האימונים השבועי מסודר מחדש בצורה אופטימלית כך שאימוני הלחימה נופלים על ימי אירובי/התאוששות וימי הכוח נשמרים.",
       combat_enable_label: "הפעלת אימוני לחימה",
       combat_enable_desc: "מסדר מחדש את סדר האימונים החוזר בצורה אופטימלית",
@@ -2285,7 +2307,29 @@ const I18n = (() => {
       combat_type_3: "התאוששות",
       combat_type_4: "Pull",
       combat_type_5: "VO2 Max",
-      combat_type_6: "מנוחה"
+      combat_type_6: "מנוחה",
+      dow_0: "א",
+      dow_1: "ב",
+      dow_2: "ג",
+      dow_3: "ד",
+      dow_4: "ה",
+      dow_5: "ו",
+      dow_6: "ש",
+      day_type_legs_core: "אימון רגליים וליבה 🦵",
+      day_type_push_skill: "אימון דחיפה (Push) 💥",
+      day_type_pull_grip: "אימון משיכה (Pull) 🧲",
+      day_type_zone2: "אירובי Zone 2 🫀",
+      day_type_active_recovery: "התאוששות פעילה וצוואר 🌿",
+      day_type_vo2_max: "אינטרוולים VO2 Max 4×4 🔴",
+      day_type_rest: "יום מנוחה והתאוששות 😴",
+      day_type_strength_a: "אימון כוח A 🦵💥",
+      day_type_strength_b: "אימון כוח B 🧲",
+      day_type_lower_strength: "כוח פלג גוף תחתון 🦵",
+      day_type_upper_push: "דחיפה פלג גוף עליון 💥",
+      day_type_upper_pull: "משיכה פלג גוף עליון 🧲",
+      combat_class_short_title: "שיעור לחימה",
+      combat_practice_short_title: "תרגול שק ביתי",
+      deload_prefix: "🌿 דילואד: "
     },
     ar: {
 
@@ -3006,7 +3050,7 @@ const I18n = (() => {
       tempo_loss_warning: "⚠️ قاعدة التوقف: تم الوصول إلى فقدان الإيقاع مرتين!",
       arm_block_limit_warning: "⚠️ تم الوصول إلى الحد الأقصى لحظر الذراع هذا الأسبوع (الحد الأقصى 2)",
       biceps_heavy_phase: "مرحلة البايسبس الثقيلة (8-10 تكرارات)",
-      biceps_light_phase: "مرحلة البايسبس الخفيفة / מיו-רפס (12-15 تكرار)",
+      biceps_light_phase: "مرحلة البايسبس الخفيفة / مايو-ريبس (12-15 تكرار)",
       adaptive_rest_label: "راحة ديناميكية مجهزة",
       lean_pair_tag: "زوج متضاد Lean",
       lean_circuit_tag: "دائرة Core Citadel",
@@ -3120,7 +3164,7 @@ const I18n = (() => {
       readiness_today_score_label: "جاهزية اليوم",
 
       // ===== دمج تدريبات القتال =====
-      combat_settings_title: "🥊 تدريبات القتال / אימוני לחימה",
+      combat_settings_title: "🥊 تدريبات الفنون القتالية",
       combat_settings_desc: "إضافة حتى 3 أيام قتال أسبوعيًا: يومي تدريب خارجي (حسب جدول الدورة) + يوم تدريب منزلي يُختار تلقائيًا. يُعاد ترتيب البرنامج الأسبوعي على النحو الأمثل بحيث تقع أيام القتال على فتحات الكارديو/التعافي وتُحمى أيام القوة.",
       combat_enable_label: "تفعيل تدريبات القتال",
       combat_enable_desc: "يعيد ترتيب النظام الأسبوعي المتكرر على النحو الأمثل",
@@ -3188,7 +3232,29 @@ const I18n = (() => {
       combat_type_3: "تعافٍ",
       combat_type_4: "سحب",
       combat_type_5: "VO2 Max",
-      combat_type_6: "راحة"
+      combat_type_6: "راحة",
+      dow_0: "أحد",
+      dow_1: "إثنين",
+      dow_2: "ثلاثاء",
+      dow_3: "أربعاء",
+      dow_4: "خميس",
+      dow_5: "جمعة",
+      dow_6: "سبت",
+      day_type_legs_core: "الأرجل والجذع 🦵",
+      day_type_push_skill: "الدفع والمهارة 💥",
+      day_type_pull_grip: "السحب وقوة القبضة 🧲",
+      day_type_zone2: "كارديو المنطقة 2 🫀",
+      day_type_active_recovery: "استشفاء نشط وعنق 🌿",
+      day_type_vo2_max: "فواصل VO2 Max 4x4 🔴",
+      day_type_rest: "يوم راحة واستشفاء 😴",
+      day_type_strength_a: "قوة أ 🦵💥",
+      day_type_strength_b: "قوة ب 🧲",
+      day_type_lower_strength: "قوة الجزء السفلي 🦵",
+      day_type_upper_push: "دفع الجزء العلوي 💥",
+      day_type_upper_pull: "سحب الجزء العلوي 🧲",
+      combat_class_short_title: "حصة قتال",
+      combat_practice_short_title: "تمرين كيس الملاكمة",
+      deload_prefix: "🌿 ديلود: "
     }
   };
 

@@ -240,16 +240,26 @@ const DB = (() => {
    * @param {number} index - target chronological position (0..daily.length-1)
    * @returns {Object} the day object whose content should sit at this position
    */
-  function resolvePlanSource(daily, combatSchedule, index) {
+  function resolvePlanSource(daily, combatSchedule, index, jsDow) {
     const fallback = daily[index];
-    if (!window.CombatScheduler || !combatSchedule || !Array.isArray(combatSchedule.history)) {
+    if (!window.CombatScheduler) {
       return fallback;
     }
     const weekStart = Math.floor(index / 7) * 7;
-    const blockPos = index - weekStart; // 0=Mon..6=Sun in generator order
-    const era = CombatScheduler.eraForDayIndex(combatSchedule, weekStart);
+    const blockPos = (typeof jsDow === 'number' && typeof CombatScheduler.blockPosOf === 'function')
+      ? CombatScheduler.blockPosOf(jsDow)
+      : (index - weekStart);
+    const era = (combatSchedule && Array.isArray(combatSchedule.history))
+      ? CombatScheduler.eraForDayIndex(combatSchedule, weekStart)
+      : null;
     if (era && Array.isArray(era.perm)) {
       const srcPos = weekStart + era.perm[blockPos];
+      if (srcPos >= 0 && srcPos < daily.length) {
+        return daily[srcPos];
+      }
+    }
+    if (typeof jsDow === 'number' && typeof CombatScheduler.blockPosOf === 'function') {
+      const srcPos = weekStart + blockPos;
       if (srcPos >= 0 && srcPos < daily.length) {
         return daily[srcPos];
       }
@@ -307,14 +317,17 @@ const DB = (() => {
       restDays = [5, 6]; // Default: Friday(5) and Saturday(6)
     }
 
-    const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    const dayNames = (typeof I18n !== 'undefined' && I18n.t)
+      ? [I18n.t('sun'), I18n.t('mon'), I18n.t('tue'), I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')]
+      : ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 
     let planStartDateStr = await getSetting('planStartDate');
     let effectiveStartDateStr = planStartDateStr;
     if (!effectiveStartDateStr) {
-      const yesterday = new Date();
-      yesterday.setDate(yesterday.getDate() - 1);
-      effectiveStartDateStr = UI.getLocalDateString(yesterday);
+      const now = new Date();
+      const sun = new Date(now);
+      sun.setDate(now.getDate() - now.getDay()); // Sunday of this week
+      effectiveStartDateStr = UI.getLocalDateString(sun);
     }
     const startDate = new Date(effectiveStartDateStr + 'T12:00:00');
 
@@ -324,7 +337,10 @@ const DB = (() => {
     const newPlanData = [];
 
     for (let index = 0; index < data.daily.length; index++) {
-      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index);
+      const currentDate = new Date(startDate);
+      currentDate.setDate(currentDate.getDate() + index);
+      const jsDow = currentDate.getDay();
+      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index, jsDow);
       newPlanData.push(buildPlanDay(sourceDay, index, startDate, dayNames, seqCounters));
     }
 
@@ -364,7 +380,9 @@ const DB = (() => {
     let planStartDateStr = await getSetting('planStartDate');
     if (!planStartDateStr) return 0; // program not started yet — full seed handles it
     const startDate = new Date(planStartDateStr + 'T12:00:00');
-    const dayNames = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    const dayNames = (typeof I18n !== 'undefined' && I18n.t)
+      ? [I18n.t('sun'), I18n.t('mon'), I18n.t('tue'), I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')]
+      : ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
 
     // Preserve existing sequence markers so swap/seq semantics stay stable
     const existingByIndex = {};
@@ -377,7 +395,10 @@ const DB = (() => {
     const endIndex = Math.min(data.daily.length, from + (newestEra.limit || (data.daily.length - from)));
 
     for (let index = from; index < endIndex; index++) {
-      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index);
+      const currentDate = new Date(startDate);
+      currentDate.setDate(currentDate.getDate() + index);
+      const jsDow = currentDate.getDay();
+      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index, jsDow);
       const dayObj = buildPlanDay(sourceDay, index, startDate, dayNames, { workoutSeq: 0, restSeq: 0 });
       const existing = existingByIndex[index];
       if (existing) {

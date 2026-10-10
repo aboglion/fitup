@@ -906,8 +906,31 @@ const TodayPage = (() => {
 
 
     const typeBadge = document.getElementById('day-type');
-    typeBadge.textContent = typeInfo.label;
-    typeBadge.className = `type-badge ${typeInfo.class}`;
+    let combatTitleSuffix = '';
+    if (window.CombatScheduler) {
+      try {
+        const combatCfg = await getCombatSchedule();
+        const jsDow = jsDowOfDay(day);
+        if (combatCfg && combatCfg.enabled && jsDow !== null) {
+          const cInfo = CombatScheduler.combatInfoForDay(combatCfg, currentDayIndex, jsDow, day.dayType);
+          if (cInfo) {
+            const sport = combatCfg.sport || 'muay_thai';
+            const sportLabel = I18n.t(`combat_sport_${sport}`) || '';
+            const cleanSport = sportLabel.replace(/^[^\s]+\s*/, '');
+            const kindLabel = cInfo.kind === 'practice'
+              ? I18n.t('combat_practice_short_title')
+              : I18n.t('combat_class_short_title');
+            combatTitleSuffix = cInfo.kind === 'practice'
+              ? ` + ${kindLabel} 🥊`
+              : ` + ${kindLabel} (${cleanSport}) 🥊`;
+          }
+        }
+      } catch (e) {
+        console.warn('Combat title error:', e);
+      }
+    }
+    typeBadge.textContent = typeInfo.label + combatTitleSuffix;
+    typeBadge.className = `type-badge ${typeInfo.class}${combatTitleSuffix ? ' combat-host' : ''}`;
 
     const swapWorkoutBtn = document.getElementById('swap-workout-btn');
     if (swapWorkoutBtn) {
