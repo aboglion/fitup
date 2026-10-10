@@ -129,7 +129,7 @@ Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase inclin
 
 ---
 
-## Part 5 — Deload Architecture (Every 8 Weeks)
+## Part 5 — Deload Architecture (Every 12 Weeks)
 
 Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks; v15.7 — previously every 8 weeks), plus an **auto-regulated early deload** triggered when performance drops over consecutive sessions (2 consecutive strength sessions with ≥2 main compounds all-`BELOW`, or ≥3 load demotions within 7 days, or repeated joint-pain flags). The auto-regulated deload applies to the next session only (max 2 sets, reduced load, no progression) and is announced with an explanatory banner.
 - **Volume Ceiling**: Maximum 2 sets per strength exercise.
@@ -204,4 +204,80 @@ Era-based history (`combatSchedule.history`, append-only) guarantees a full plan
 - **Calendar**: 4 badge states — scheduled 🥊 / moved-in 🥊➡ / moved-out ↩ / cancelled ✕.
 
 ---
+
+## Appendix D — Complete Program Exercise Dictionary (exact program names)
+
+This is the authoritative list of the **58 unique exercises** referenced by `window.TRAINING_DATA` (`js/data.js`, v15.7 Accelerated). The in-app name is authoritative; the exported guide and this MD use these exact names.
+
+> **Naming notes (aligns the docs with the program):** "Goblet RDL" = **Goblet Romanian Deadlift** · "Push-Up Bars" = **Push-up Bars Progression** · "Micro Mobility A/B" = the single **Micro Mobility Protocol** exercise (upper-focus variant on Days 3/5, lower-focus on Days 1/2) · "L-Sit" = **Tuck L-Sit** (early) / **Full L-Sit** / **One-Leg Extended L-Sit** (later unlocks) · "VO2 Max 4×4" = **VO2 Max Norwegian 4×4** · "Calf Block" = **Standing Single-Leg Calf Raise → Seated Single-Leg Calf Raise** · "Core Circuit" = **Pallof Press Progression → Dead Bug → Hollow Body Hold**.
+
+### D.1 Warm-up & Activation (strength days)
+High Knees · Bodyweight Squat · Arm Circles · Wall Slides · Scapular Push-up (Day 3) · Scapular Pull-up (Day 5)
+
+### D.2 Day 1 — Legs + Core + Carry
+| Exercise | Role / Notes |
+| :--- | :--- |
+| Goblet Romanian Deadlift | Posterior chain (Day 1 anchor, from Week 1) |
+| Single-Leg RDL | Posterior unlock — active on odd weeks from ~Week 13 |
+| Heels-Elevated Goblet Squat | Continuous quad focus (paused squat), from Week 1 |
+| Goblet Bulgarian Split Squat | Primary unilateral overload, from Week 1 |
+| DB Glute Bridge | Glute anchor |
+| Glute Bridge | Ramp-up variant (Week 1–2) |
+| Suitcase Carry | Loaded carry / core anti-lateral-flexion |
+| Standing Single-Leg Calf Raise | Calf Block part 1 |
+| Seated Single-Leg Calf Raise | Calf Block part 2 |
+| Dead Bug | Core Circuit part 2 |
+| Hollow Body Hold | Core Circuit part 3 |
+| Pallof Press Progression | Core Circuit part 1 |
+
+### D.3 Day 3 — Push + Shoulders + Triceps + Back Volume
+Pike Progression · Single-Arm Floor Press · Push-up Bars Progression · Single-Arm Seated OHP · DB Overhead Triceps Extension · Diamond Push-Up · TRX Row · Single-Arm Lateral Raise · TRX Y-T-W · Band Pull-Apart (even-week toggle) · Arm Block - Single-Arm Lateral Raise · Arm Block - DB Overhead Triceps Ext · *(later unlocks)* Elevated Pike Push-Up · Feet-Elevated Push-Up · Deficit Push-Up · Weighted Deficit Push-Up
+
+### D.4 Day 5 — Pull + Grip + Biceps + Chest Volume
+Pull-Up Progression · Pull-Up (Overhand) · Scapular Pull-up · Dead Hang · Seated Band Row · One-Arm DB Row · TRX Face Pull · Push-Up Volume (Day 5) · Single-Arm Curl · Single-Arm Hammer Curl · Arm Block - Single-Arm Curl · Towel Hang · Tuck L-Sit · *(later unlocks)* Full L-Sit · One-Leg Extended L-Sit · Weighted Pull-Up
+
+### D.5 Cardio
+- **Day 2 — Zone 2**: Brisk Walking (standard) · Relaxed Walking (ramp-up / deload / recovery)
+- **Day 6 — VO2 Max**: VO2 Max Norwegian 4×4 *(present in program data from Week 4; rendered per graduation)*
+
+### D.6 Mobility & Cervical Protocols
+- **Micro Mobility Protocol** (post-workout, 90s; upper-focus Days 3/5, lower-focus Days 1/2)
+- **Deep Mobility Protocol** (Day 4, 10 min)
+- **Band Neck Flexion & Extension** (Day 4 cervical protocol, 2×15–20)
+
+### D.7 Advanced / progression unlocks (from the 80-week dataset)
+| Exercise | First appears |
+| :--- | :--- |
+| VO2 Max Norwegian 4×4 | Week 4 |
+| Deficit Push-Up | Week 10 |
+| Wall Walk (Full) / One-Leg Extended L-Sit | Week 18 |
+| Full L-Sit | Week 34 |
+| Elevated Pike Push-Up | Week 41 |
+| Weighted Pull-Up / Weighted Deficit Push-Up | Week 62 |
+| Wall Handstand / Wall Walk (Partial) | Mastery phase |
+
+---
+
+## Appendix E — Program Options & Available Features
+
+The training program is the prescriptive core; these are the controls the app exposes around it (all configured under Settings):
+
+- **🥊 Combat Training Integration** — up to 3 combat days/week (2 external class days + 1 auto home practice) with an optimal weekly re-order; sport presets (Muay Thai / Boxing / Kickboxing / Judo / Other); hardest-class selection (Auto/First/Second); live 7-day preview; era-based history.
+- **→ Combat Flexibility (v2)** — move/cancel any single class (Undo), muscle-aware interference per session type, ★ best-target move picker, one-tap strength-day swap, per-class time inputs → morning run prescription on evening-class days (≥6h), in-card warm-up rules, 4-state calendar badges.
+- **💤 Subjective Readiness Check & Auto-Regulation** — daily 1–5 score; low scores auto-extend rest (+30s) or drop a set.
+- **🥗 Carb & Calorie Cycling** — daily macro targets adapt to the day type (strength/VO2, active recovery, rest).
+- **🧮 1RM Calculator** — Epley-based estimated 1RM + percentage/load table.
+- **⏱ Adaptive Rest** — rest timers auto-extend +30s after a BELOW / mechanical-stop outcome.
+- **🚀 3-Button Progression** — ABOVE / IN_WINDOW / BELOW drive weight progression (0.5 kg fine increments for isolation), softened progression, and Time Decay protection.
+- **💪 Arm Block (Myo-Reps)** — 1 activation set + 3×5 mini-sets from Week 6; objective stop on 2 consecutive tempo losses; 1 exposure/week/muscle-area.
+- **🌿 Auto-Regulated Deload** — every 12 weeks (12, 24, 36, 48, 60, 72): 2-set ceiling, −2 kg, pairs dissolve; early auto-deload on consecutive drops.
+- **📅 Calendar & Swap / Unlock Early** — navigate weeks, swap day content, unlock future days early.
+- **📸 Progress Photos & Anatomy Progress Map** — visual tracking on the muscle map.
+- **🧠 Gemini AI Nutrition & Fitness Coach** — photo macro analysis + recovery advice.
+- **🏃 Google Fit integration** — activity/health data connectivity.
+- **🗣 Multi-Language** — English / Hebrew (RTL) / Arabic (RTL).
+- **☁️ Backup & Cloud Sync** — one-click local JSON export/import + automatic bidirectional Google Drive sync.
+
+---
+
 FitUp Pro v15.7 Accelerated — Built for Precision, Zero Decisions, and Zero Regrets.
