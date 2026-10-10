@@ -72,7 +72,7 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ## 📸 Application Interface & Feature Walkthrough
 
-FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a high-tech Sci-Fi aesthetic. Below is a detailed visual walkthrough of the primary modules and features:
+FitUp Pro v15.7 Accelerated combines advanced athletic periodization with a high-tech Sci-Fi aesthetic. Below is a detailed visual walkthrough of the primary modules and features:
 
 ### 1. Progress & Stats Dashboard & Interactive Muscle Map
 <img src="PICS/Pasted%20image.png" alt="Progress Dashboard, Google Fit Sync & Interactive Muscle Map" width="380" />
@@ -144,7 +144,7 @@ FitUp Pro Ultimate v15.6 Lean combines advanced athletic periodization with a hi
 
 ## 📋 Training Program Deep Dive
 
-The **FitUp Pro Ultimate v15.6 Lean** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 80 weeks (560 days).
+The **FitUp Pro v15.7 Accelerated** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 80 weeks (560 days).
 
 ### 🗓️ Weekly Microcycle Architecture (7 Days)
 Each week follows a strictly optimized 7-day routine designed to balance muscular stimulus, joint recovery, and metabolic conditioning:
@@ -153,26 +153,26 @@ Each week follows a strictly optimized 7-day routine designed to balance muscula
 | :--- | :--- | :--- | :--- |
 | **Day 1 (Mon)** | **Legs + Core + Carry** | Goblet RDL, Day 1 Toggle (Single-Leg RDL / Heels-Elevated Goblet Squat / Pistol Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, Calf Block, Core Circuit | 45 min |
 | **Day 2 (Tue)** | **Zone 2 Cardio** | Treadmill Walking (4% incline, 5.5 km/h, conversational test), Daily Micro-Mobility | 45 min |
-| **Day 3 (Wed)** | **Push + Shoulders + Triceps + Back Vol** | Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ Single-Arm Lateral Raise pair, Rear Delt Toggle, Arm Block (W10+) | 45 min |
+| **Day 3 (Wed)** | **Push + Shoulders + Triceps + Back Vol** | Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ Single-Arm Lateral Raise pair, Rear Delt Toggle, Arm Block (W6+) | 45 min |
 | **Day 4 (Thu)** | **Active Recovery & Joint Health** | Band Neck Flexion & Extension protocol (A1), Light Treadmill Recovery Walk (A2), 10-min Deep Mobility sequence (A3) | 30 min |
-| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression, One-Arm DB Row, TRX Face Pull, Biceps Microcycle (Single-Arm Curl & Single-Arm Hammer Curl), Push-Up Volume ↔ Single-Arm Curl pair, Towel Hang ↔ L-Sit pair, Arm Block (W10+) | 45 min |
+| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression, One-Arm DB Row, TRX Face Pull, Biceps Microcycle (Single-Arm Curl & Single-Arm Hammer Curl), Push-Up Volume ↔ Single-Arm Curl pair, Towel Hang ↔ L-Sit pair, Arm Block (W6+) | 45 min |
 | **Day 6 (Sat)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 6.5 km/h at phase incline, ≤6% treadmill incline) | 35 min |
 | **Day 7 (Sun)** | **Complete Rest** | System Regeneration, Hydration & Passive Recovery | — |
 
 ---
 
-### ⏱️ v15.6 Lean Architecture & Structural Optimization
+### ⏱️ v15.7 Accelerated Architecture & Structural Optimization
 The program organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts (target session duration: **40–45 minutes**):
 1. **Protected Compound Lifts**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet BSS, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
 2. **Lean Pairs (Antagonistic & Non-Competing)**:
    - **Day 3**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
-   - **Day 5**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
+   - **Day 5**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-3).
    - **Day 5**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
 3. **Weekly Alternating Toggles**:
    - **Quad Focus**: Heels-Elevated Goblet Squat is performed continuously from Week 1.
    - **Day 3 Rear Delt Toggle**: Odd weeks = TRX Y-T-W; Even weeks = Band Pull-Apart.
-4. **Arm Block Myo-Reps Clusters (W10+)**: 1 activation set + 3 mini-sets of 5 reps with 15s rest. Terminated by 2 consecutive tempo losses (`two_consecutive_tempo_losses`). Maximum 1 exposure per muscle area per week.
-5. **Scheduled Deload Microcycles (Every 8 Weeks)**: Occur on Weeks 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104. Sets capped at 2 per exercise, loads reduced by 2 kg (rounded to legal range [3..32] kg). All pairs/circuits/blocks dissolve into straight sets.
+4. **Arm Block Myo-Reps Clusters (W6+)**: 1 activation set + 3 mini-sets of 5 reps with 15s rest. Terminated by 2 consecutive tempo losses (`two_consecutive_tempo_losses`). Maximum 1 exposure per muscle area per week.
+5. **Scheduled Deload Microcycles (Every 12 Weeks)**: Occur on Weeks 12, 24, 36, 48, 60, 72. Sets capped at 2 per exercise, loads reduced by 2 kg (rounded to legal range [3..32] kg). All pairs/circuits/blocks dissolve into straight sets, supplemented by runtime auto-regulated deload triggers.
 
 ---
 

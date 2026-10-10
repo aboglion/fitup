@@ -50,7 +50,7 @@ window.ExporterGuide = (() => {
       ],
       weekly_structure_title: "⚙️ Weekly Microcycle Architecture",
       rampup_microcycle_title: "🌱 Ramp-Up Microcycle — Active ONLY on Weeks 1–4 (Phase 0: Anatomical Foundation)",
-      standard_microcycle_title: "⚡ Standard Weekly Microcycle — Active on Weeks 5–7, 9–15, 17–23... (Phase 1: Post-Graduation)",
+      standard_microcycle_title: "⚡ Standard Weekly Microcycle — Active on Weeks 5–11, 13–23, 25–35... (Phase 1: Post-Graduation)",
       col_day: "Day",
       col_type: "Workout Type",
       col_intensity: "Intensity / Focus",
@@ -120,7 +120,7 @@ window.ExporterGuide = (() => {
       ],
       weekly_structure_title: "⚙️ מבנה מיקרו-מחזורים שבועיים",
       rampup_microcycle_title: "🌱 Ramp-Up Microcycle — פעיל בשבועות 1–4 בלבד (Phase 0: הבסיס האנטומי)",
-      standard_microcycle_title: "⚡ Standard Weekly Microcycle — פעיל בשבועות 5–7, 9–15, 17–23... (Phase 1: התוכנית המלאה)",
+      standard_microcycle_title: "⚡ Standard Weekly Microcycle — פעיל בשבועות 5–11, 13–23, 25–35... (Phase 1: התוכנית המלאה)",
       col_day: "יום",
       col_type: "סוג אימון",
       col_intensity: "עצימות / דגשים",
@@ -130,7 +130,7 @@ window.ExporterGuide = (() => {
         { day: "יום 3", type: "💥 דחיפה + גב (בסיס)", focus: "30 דק' — RPE 7–8 — חימום + Single-Arm Floor Press + Push-Up Bars + Diamond Push-Up + TRX Row + TRX Y-T-W + מיקרו-מוביליות A (5 תרגילים בלבד)" },
         { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר", focus: "25 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 20 דק' הליכה קלה + מיקרו-מוביליות B" },
         { day: "יום 5", type: "🧲 משיכה + ביספס (בסיס)", focus: "30 דק' — RPE 7–8 — חימום + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + מיקרו-מוביליות A (5 תרגילים בלבד)" },
-        { day: "יום 6", type: "🚶 התאוששות פעילה (אירובי נעול)", focus: "20 דק' — הליכה קלה 20 דקות (0% שיפוע, 4.5 קמ\"ש) — VO2 Max נפתח רק בשבוע 5" },
+        { day: "יום 6", type: "🚶 התאוששות פעילה (אירובי נעול)", focus: "20 דק' — הליכה קלה 20 דקות (0% שיפוע, 4.5 קמ\"ש) — VO2 Max מופיע בנתוני התוכנית משבוע 4" },
         { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה ותזונה" }
       ],
       standard_days_table: [
@@ -167,14 +167,14 @@ window.ExporterGuide = (() => {
       zero_decisions_desc: "התוכנית נבנתה במכוון סביב הרעיון של <strong>אפס החלטות מצד המתאמן</strong> באמצעות דיווח 3 תוצאות אובייקטיביות בלבד:",
       mental_load: "<strong>אפס החלטות ודירוג 3 כפתורים:</strong> כל תרגיל, משקל, סטים, חזרות, קצב (Tempo) וזמני מנוחה קבועים מראש. בסיום סט בוחרים: 🚀 <strong>מעל היעד</strong>, ✅ <strong>בתחום היעד</strong>, או ⚠️ <strong>כשל / עצירה מכנית</strong> (מפעיל אוטומטית +30 שנ' מנוחה אדפטיבית). התקדמות משקלים מרוככת מבוטלת אוטומטית לאחר פער של 10 ימי חוסר אימון (Time Decay) כדי למנוע פציעות.",
       strength_cardio: "<strong>מבנה שבועי קבוע (7 ימים):</strong> יום 1 (רגליים+ליבה+אחיזה), יום 2 (Zone 2+מוביליות), יום 3 (דחיפה+כתפיים+טריספס+נפח גב), יום 4 (התאוששות פעילה+פרוטוקול צוואר), יום 5 (משיכה+גב+ביספס+נפח חזה), יום 6 (VO2 Max 4x4), יום 7 (מנוחה מלאה).",
-      deload_cycles: "<strong>התאוששות מדעית (Deload Cycles):</strong> שבועות דילואד מוגדרים מראש (כל 8 שבועות: 12, 24, 36, 48, 60, 72...) שבהם הנפח יורד ל-2 סטים (~60% משקל) להורדת עומס מעצבים ומפרקים.",
+      deload_cycles: "<strong>התאוששות מדעית (Deload Cycles):</strong> שבועות דילואד מוגדרים מראש (כל 12 שבועות: 12, 24, 36, 48, 60, 72...) שבהם הנפח יורד ל-2 סטים (~60% משקל) להורדת עומס מעצבים ומפרקים.",
       time_efficiency_title: "⏱️ מבנה Lean וייעול זמנים (אימון ב-40–45 דקות)",
       time_efficiency_list: [
         "<strong>הגנה על תרגילי בסיס:</strong> תרגילי כוח מורכבים כבדים מבוצעים תמיד כסטים ישרים עם מנוחה אדפטיבית מלאה להגנה על ביצועים.",
         "<strong>זיווגי Lean (אנטגוניסטיים ולא-מתחרים):</strong> זיווג תרגילים לא מתחרים (יום 3: TRX Row ↔ Single-Arm Lateral Raise; יום 5: Push-Up Volume ↔ Single-Arm Curl; יום 5: Towel Hang ↔ L-Sit). מבוצע א' ← ב' ← מנוחה 45-75 שנ'.",
         "<strong>פרוטוקול Arm Block ב-Myo-Reps:</strong> פעיל משבוע 6. צביר Myo-Reps (סט אקטיבציה + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה). עצירה אובייקטיבית ב-2 אובדני טמפו רצופים, מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.",
         "<strong>עצי התקדמות ורוטציות שבועיות:</strong> יום 1 כולל פוקוס קוואדס רציף (Heels-Elevated Goblet Squat) ופתיחת שלבים ליניארית בשרשרת האחורית (Single-Leg RDL). יום 3 מחליף TRX Y-T-W (אי-זוגי) עם Band Pull-Apart (זוגי).",
-        "<strong>מיקרו-מחזור בייספס (3 שבועות):</strong> שבועות 1-2 עומס כבד וקידום, שבוע 3 קל (Single-Arm Hammer Curl בלבד, 2 סטים, ללא קידום).",
+        "<strong>מיקרו-מחזור בייספס 4 שבועות (3:1):</strong> שבועות 1–3 עומס כבד וקידום, שבוע 4 שימור קל (Single-Arm Hammer Curl בלבד, 2 סטים, ללא קידום).",
         "<strong>גיבוי נתונים וסנכרון ענן:</strong> ייצוא/ייבוא קובץ JSON מקומי בלחיצה אחת לצד סנכרון ענן דו-כיווני ל-Google Drive."
       ],
       equipment_title: "🔧 ציוד נדרש ושימוש קבוע",
@@ -207,7 +207,7 @@ window.ExporterGuide = (() => {
       ],
       weekly_structure_title: "⚙️ מבנה מיקרו-מחזורים שבועיים",
       rampup_microcycle_title: "🌱 Ramp-Up Microcycle — פעיל בשבועות 1–4 בלבד (Phase 0: הבסיס האנטומי)",
-      standard_microcycle_title: "⚡ Standard Weekly Microcycle — פעיל בשבועות 5–7, 9–15, 17–23... (Phase 1: התוכנית המלאה)",
+      standard_microcycle_title: "⚡ Standard Weekly Microcycle — פעיל בשבועות 5–11, 13–23, 25–35... (Phase 1: התוכנית המלאה)",
       col_day: "יום",
       col_type: "סוג אימון",
       col_intensity: "עצימות / דגשים",
@@ -261,7 +261,7 @@ window.ExporterGuide = (() => {
         "<strong>ثنائيات Lean (المزدوجة):</strong> دمج تمارين غير متنافسة (اليوم 3: TRX Row ↔ Single-Arm Lateral Raise; اليوم 5: Push-Up Volume ↔ Single-Arm Curl).",
         "<strong>بروتوكول بلوك الذراعين Myo-Reps:</strong> مفعل من الأسبوع 6. مجموعة تنشيط + 3 مجموعات مصغرة (5 تكرارات مع 15 ثانية راحة). توقف عند فقدان الإيقاع مرتين متتاليتين.",
         "<strong>التناوب الأسبوعي (Toggles):</strong> اليوم 3 يتناول TRX Y-T-W و Band Pull-Apart. اليوم 1 يتبع مسار التقدم الخطي (Heels-Elevated Goblet Squat & Single-Leg RDL).",
-        "<strong>دورة البايسبس (3 أسابيع):</strong> أسبوعان حمولة زائدة وأسبوع خفيف."
+        "<strong>دورة البايسبس 4 أسابيع (3:1):</strong> 3 أسابيع حمولة زائدة تدريجية وأسبوع خفيف للتعافي الحركي."
       ],
       equipment_title: "🔧 المعدات المطلوبة",
       equipment_list: [
@@ -293,7 +293,7 @@ window.ExporterGuide = (() => {
       ],
       weekly_structure_title: "⚙️ هيكلية الدورات الأسبوعية",
       rampup_microcycle_title: "🌱 Ramp-Up Microcycle — مفعل في الأسابيع 1–4 فقط (Phase 0: الأساس التشريحي)",
-      standard_microcycle_title: "⚡ Standard Weekly Microcycle — مفعل في الأسابيع 5–7, 9–15, 17–23... (Phase 1: البرنامج الكامل)",
+      standard_microcycle_title: "⚡ Standard Weekly Microcycle — مفعل في الأسابيع 5–11, 13–23, 25–35... (Phase 1: البرنامج الكامل)",
       col_day: "اليوم",
       col_type: "نوع التمرين",
       col_intensity: "الشدة / التركيز",

@@ -232,7 +232,7 @@
         return { active: false, reason: 'arm_block_not_started_yet' };
       }
 
-      if (weekNumber % (this.settings.deloadEveryWeeks || 8) === 0) {
+      if (weekNumber % (this.settings.deloadEveryWeeks || 12) === 0) {
         return { active: true, sets: 1, reason: 'deload_single_set' };
       }
 
@@ -277,7 +277,7 @@
     // ----------------------------
     getActiveLeanStructure(dayIndex, weekNumber, allProgressionStates = {}) {
       const lean = this.settings.leanMode || { enabled: true, pairs: [], circuits: [], blocks: [], toggles: [] };
-      const isDeload = weekNumber % (this.settings.deloadEveryWeeks || 8) === 0;
+      const isDeload = weekNumber % (this.settings.deloadEveryWeeks || 12) === 0;
 
       const result = {
         pairs: [],

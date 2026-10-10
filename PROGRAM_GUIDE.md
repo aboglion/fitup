@@ -43,7 +43,7 @@ The v15.7 Accelerated Edition organizes exercises into optimized structures to m
 - **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
 - **Lean Pairs (Antagonistic & Non-Competing)**:
   - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
-  - **Day 5 (d5-pushup-curl)**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-2).
+  - **Day 5 (d5-pushup-curl)**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-3).
   - **Day 5 (d5-grip-lsit)**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
   - *Pair Dissolution Rule*: If any set receives a `BELOW` result, or during Deload/light microcycle weeks, the pair dissolves into straight sets with dedicated rest.
 - **Core Circuit (Day 1 End of Workout)**: Pallof Press Progression → Dead Bug → Hollow Body Hold (30s rest between rounds).
