@@ -95,9 +95,9 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **Legs + Core + Carry** | Lower body unilateral strength (Goblet BSS), Single-Leg RDL, Heels-Elevated Squat, Suitcase Carry, Calf Block & Core Circuit | 45 min |
 | **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building, treadmill brisk walking (4% incline, 5.5 km/h) & daily micro-mobility | 45 min |
-| **Day 3** | **Push + Shoulders + Triceps** | Pike Progression, Floor Press, Push-Up Bars, Single-Arm OHP, DB Triceps Ext, Rear Delt Toggle, Lean Pair & Arm Block (W10+) | 45 min |
+| **Day 3** | **Push + Shoulders + Triceps** | Pike Progression, Floor Press, Push-Up Bars, Single-Arm OHP, DB Triceps Ext, Rear Delt Toggle, Lean Pair & Arm Block (W6+) | 45 min |
 | **Day 4** | **Active Recovery + Joint Health** | Band Neck Flexion/Extension protocol (A1), light treadmill recovery walk (A2) & 10-min deep mobility sequence (A3) | 30 min |
-| **Day 5** | **Pull + Back + Biceps + Grip** | Pull-Up progressions, One-Arm DB Row, TRX Face Pull, Biceps Microcycle, Towel Hang ↔ L-Sit Lean Pair & Arm Block (W10+) | 45 min |
+| **Day 5** | **Pull + Back + Biceps + Grip** | Pull-Up progressions, One-Arm DB Row, TRX Face Pull, Biceps Microcycle, Towel Hang ↔ L-Sit Lean Pair & Arm Block (W6+) | 45 min |
 | **Day 6** | **Cardio VO2 Max 4x4** | Norwegian 4x4 interval treadmill protocol (or Zone 2 during Deload weeks) | 35 min |
 | **Day 7** | **Complete Rest** | Passive recovery, hydration & CNS regeneration | — |
 
@@ -141,7 +141,7 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 
 ---
 
-## Appendix A — Arm Block v15.6 Protocol (Myo-Reps Cluster)
+## Appendix A — Arm Block v15.7 Protocol (Myo-Reps Cluster)
 
 **Activation Conditions**: Active from Week 6 onwards (v15.7; previously Week 10). Executed at the end of Day 3 (Lateral Raise + Overhead Triceps Extension) and Day 5 (Single-Arm Curl / Single-Arm Hammer Curl).
 
