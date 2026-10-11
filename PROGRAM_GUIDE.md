@@ -24,9 +24,9 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
   - **🚀 ABOVE**: Exceeded target rep window at prescribed tempo.
   - **✅ IN_WINDOW**: Achieved target rep window at prescribed tempo.
   - **⚠️ BELOW / Mechanical Stop**: Failed to reach minimum window or suffered tempo loss (triggers automatic +30s adaptive rest extension).
-- **Softened Progression Policy (v15.7)**: Weight increases when all sets are `🚀 ABOVE`, OR under single-session Softened criteria (all sets `✅ IN_WINDOW` at $\ge \text{max}-1$ reps with no mechanical stops). The previous-session all-max requirement was removed in v15.7 to accelerate progression for consistent trainees. **Note: Softened progression is automatically disabled if there is a gap of more than 10 days since the previous session (Time Decay) to prevent injury from detraining.**
+- **Softened Progression Policy (v15.7)**: Weight increases when all sets are `🚀 ABOVE`, OR under single-session Softened criteria (all sets `✅ IN_WINDOW` at →\ge \text{max}-1→ reps with no mechanical stops). The previous-session all-max requirement was removed in v15.7 to accelerate progression for consistent trainees. **Note: Softened progression is automatically disabled if there is a gap of more than 10 days since the previous session (Time Decay) to prevent injury from detraining.**
 - **Adaptive Intra-Workout Rest**: Rest timers adapt automatically (+30s extension following a BELOW / Mechanical Stop outcome) to guarantee full recovery before subsequent sets.
-- **Arm Block Protocol (Myo-Reps)**: Active from Week 6 onwards (v15.7; previously Week 10). Executed using objective Myo-Reps clusters (1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped automatically by 2 consecutive tempo losses or joint pain (reported via an interactive prompt when selecting `⚠️ BELOW`).
+- **Arm Block Protocol (Gradual Myo-Reps Ramp)**: Introduced progressively from **Week 3 onwards** (Micro-Dose 1 in W3: 1 activation set + 1 mini-set of 4 reps; Micro-Dose 2 in W4–5: 1 activation set + 2 mini-sets of 4 reps; Full Cluster in W6+: 1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped automatically by 2 consecutive tempo losses or joint pain (reported via an interactive prompt when selecting `⚠️ BELOW`).
 - **Arm Block Exposure Limit**: Maximum 1 exposure per muscle area per week (Lateral Shoulder, Triceps, Biceps).
 - **Push-Up Bars**: All push-up variations must strictly use Push-Up Bars. Palms flat on the floor is strictly forbidden.
 - **Pull-Up Bar & Rings / Rope Loops (טבעות / לולאת חבל)**: Trainees may execute all Pull-Up, Chin-Up, and Hang progressions using Gymnastic Rings or Short Rope Loops hung from the pull-up bar. This grants natural rotational freedom for wrists and forearms (pronated to neutral/supinated), eliminating torsional stress on elbow tendons (medial/lateral epicondyles) and building superior functional grip strength without joint wear.
@@ -103,9 +103,9 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **Legs + Core + Carry** | Warmup (High Knees, BW Squat, Dead Bug, Glute Bridge) → Goblet Romanian Deadlift (W1–17) / Single-Leg RDL (W18+) → Nordic Curl Progression (from W10) → Heels-Elevated Goblet Squat → Goblet Bulgarian Split Squat → DB Glute Bridge → Suitcase Carry → Calf Block (Standing & Seated) → Core Circuit (Pallof from W6, Dead Bug, Hollow Body) → Micro Mobility B | 45 min |
 | **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building: treadmill brisk walking 45 min (4% incline, 5.5 km/h) & daily Micro Mobility B (hip flexor + deep squat) | 45 min |
-| **Day 3** | **Push + Shoulders + Triceps** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) → Single-Arm Seated OHP (first, fresh) → Pike / Overhead Skill Tree → Single-Arm Floor Press → Push-Up Tree → DB Overhead Triceps Ext → Diamond Push-Up → Lean Pair (TRX Row ↔ Single-Arm Lateral Raise) → Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart) → Arm Block (W6+) → Micro Mobility A | 45 min |
+| **Day 3** | **Push + Shoulders + Triceps** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) → Single-Arm Seated OHP (first, fresh) → Pike / Overhead Skill Tree → Single-Arm Floor Press → Push-Up Tree → DB Overhead Triceps Ext → Diamond Push-Up → Lean Pair (TRX Row ↔ Single-Arm Lateral Raise) → Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart) → Arm Block (W3+ Gradual Ramp) → Micro Mobility A | 45 min |
 | **Day 4** | **Active Recovery + Joint Health** | Band Neck Flexion & Extension protocol (A1, 2×15–20), light treadmill recovery walk (A2, 25 min @ 0% 4.5 km/h) & 10-min Deep Mobility sequence (A3) | 30 min |
-| **Day 5** | **Pull + Back + Biceps + Grip** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) → Pull-Up Tree → One-Arm DB Row → Lean Pair (TRX Face Pull ↔ Single-Arm Lateral Raise) → Lean Pair (Push-Up Volume ↔ Single-Arm Curl) → Single-Arm Hammer Curl → Lean Pair (Towel Hang ↔ L-Sit Tree) → Arm Block (W6+) → Micro Mobility A | 45 min |
+| **Day 5** | **Pull + Back + Biceps + Grip** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) → Pull-Up Tree → One-Arm DB Row → Lean Pair (TRX Face Pull ↔ Single-Arm Lateral Raise) → Lean Pair (Push-Up Volume ↔ Single-Arm Curl) → Single-Arm Hammer Curl → Lean Pair (Towel Hang ↔ L-Sit Tree) → Arm Block (W3+ Gradual Ramp) → Micro Mobility A | 45 min |
 | **Day 6** | **Cardio VO2 Max 4x4** | Norwegian 4x4 interval treadmill protocol: 10m warmup @ 4.5 km/h, 4×(4m effort @ 6.5 km/h phase incline, 3m recovery @ 4.5 km/h), 5m cooldown (replaced with 30 min Zone 2 walk during Deload) | 35 min |
 | **Day 7** | **Complete Rest** | Complete passive recovery, protein repair, hydration & CNS regeneration | — |
 
@@ -159,8 +159,8 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 | שלב וטווח שבועות | מה השינוי הביולוגי והתאי בגוף? | איך תיראה ויזואלית? (אסתטיקה וקומפוזיציה) | איך זה ישפיע עליך תפקודית וביומיום? | דגש תזונתי וסינרגיית חלבון |
 | :--- | :--- | :--- | :--- | :--- |
 | **שבועות 1–2** <br>*(Phase 0: בסיס אנטומי ראשוני)* | **הסתגלות עצבית (Neural Adaptation):** שיפור דרמטי בגיוס יחידות מוטוריות (Motor Unit Recruitment) וסנכרון קצב הירי (Rate Coding). התחלת צבירת גליקוגן ומים תוך-תאיים בשרירים (Cell Swelling). גידים מתחילים לייצר קולגן ראשוני ללא דלקת הודות לעומס מתון מבוקר (5 תרגילי עוגן בלבד). | שרירים מוצקים ומלאים יותר (טונוס מוגבר). שיפור מיידי ביציבה: חזה פתוח יותר הודות ל-Wall Slides ותרגילי מוביליות, אגן מאוזן. אין עדיין שינוי בהיקפים. | ירידה חדה בנוקשות בוקר בגב התחתון (L4-S1 מוגן לחלוטין). תחושת שחרור ורעננות. כאבי שרירים קלים (DOMS) ב-48 שעות ראשונות שנעלמים מהר (Repeated Bout Effect). | 1.6 גרם חלבון/ק"ג (חלוקה ל-3-4 ארוחות) להאצת שיקום ראשוני והתאוששות רקמות חיבור. |
-| **שבועות 3–4** <br>*(Phase 0: פתיחה מוקדמת וביוגנזה מיטוכונדריאלית)* | **היפרטרופיה מיופיברילרית ראשונית:** תחילת סינתזת חלבוני אקטין ומיוזין. כניסת שיפוע 4% ב-Zone 2 ופרוטוקול VO2 Max 4x4 (משבוע 4) מעוררת הפרשת **PGC-1α**, המאיצה ייצור מיטוכונדריות בתאי השריר והלב ומגדילה את נפח הפעימה (Stroke Volume). | הידוק מותניים ראשוני (Transverse Abdominis מתכווץ בזכות Dead Bug ו-Suitcase Carry). קווי מתאר ראשונים בכתפיים ובחזה עליון. | כושר העבודה (Work Capacity) מזנק: פחות התנשמות במאמצים יומיומיים. דופק המנוחה (RHR) יורד ב-2-4 פעימות לדקה. יכולת התאוששות מהירה יותר בין סטים. | העלאה ל-1.8 גרם חלבון/ק"ג. תזמון 25-30 גרם חלבון בתוך שעתיים מסיום אימון כוח. |
-| **שבועות 5–8** <br>*(Phase 1: סיום שלב הבסיס, BSS, V-Taper והאצת זרועות)* | **קפיצת עומס מכני חד-צדדית והיפרטרופיה מהירה:** פתיחת Bulgarian Split Squat מייצרת עומס עילאי על הארבע-ראשי והגלוטס ללא דחיסה שדרתית. כניסת **Arm Blocks (Myo-Reps משבוע 6)** מגייסת סיבי שריר מהירים מסוג II. תדירות צדית כפולה בכתפיים (Lateral Raise ביום 3 וביום 5) מגדילה שטח חתך רוחבי (CSA). | **ניצני V-Taper מובהקים:** הגב מתרחב (Lats) מהמתח וה-TRX Row, הכתפיים מקבלות רוחב צדי בולט, והיקף הזרועות (ביספס + טריספס) גדל בעין בלתי מזוינת. ישבן אסוף ומוצק. | קלות פנומנלית בעלייה במדרגות ונשיאת חפצים. שרירי הליבה מרגישים כמו "מחוך פלדה". אפס כאבים בגב התחתון בזכות חיזוק שרשרת אחורית וייצוב אגן. | 1.8–2.0 גרם חלבון/ק"ג. צריכת חלבון עשיר בלאוצין (Leucine $\ge$ 3g לארוחה) להפעלת מתג ה-mTORC1. |
+| **שבועות 3–4** <br>*(Phase 0: פתיחה מוקדמת, מיקרו-דוזינג זרועות וביוגנזה)* | **היפרטרופיה מיופיברילרית ראשונית והאצת זרועות הדרגתית:** תחילת סינתזת חלבוני אקטין ומיוזין. כניסת שיפוע 4% ב-Zone 2 ופרוטוקול VO2 Max 4x4 (משבוע 4) מעוררת **PGC-1α**. **האצת זרועות הדרגתית (Arm Block Micro-Dosing משבוע 3):** שבוע 3 מתחיל במינון מיקרו 1 (סט אקטיבציה + מיני-סט 1 של 4 חזרות) ושבוע 4 מתקדם למינון מיקרו 2 (אקטיבציה + 2 מיני-סטים) – גיוס סיבים מהירים מוקדם תוך הגנה מוחלטת על גידי המרפק והכתף. | הידוק מותניים ראשוני (Transverse Abdominis מתכווץ בזכות Dead Bug ו-Suitcase Carry). קווי מתאר ראשונים בכתפיים ובחזה עליון, ותחילת התעבות נראית לעין של היקף הזרוע (Biceps Peak ו-Triceps Sweep). | כושר העבודה (Work Capacity) מזנק: פחות התנשמות במאמצים יומיומיים. דופק המנוחה (RHR) יורד ב-2-4 פעימות לדקה. יכולת התאוששות מהירה יותר בין סטים. | העלאה ל-1.8 גרם חלבון/ק"ג. תזמון 25-30 גרם חלבון בתוך שעתיים מסיום אימון כוח. |
+| **שבועות 5–8** <br>*(Phase 1: סיום שלב הבסיס, BSS, V-Taper והאצת זרועות מלאה)* | **קפיצת עומס מכני חד-צדדית והיפרטרופיה מהירה:** פתיחת Bulgarian Split Squat מייצרת עומס עילאי על הארבע-ראשי והגלוטס ללא דחיסה שדרתית. **Arm Blocks:** ביסוס בשבוע 5 (אקטיבציה + 2 מיני-סטים) ומעבר לצביר מלא משבוע 6+ (אקטיבציה + 3 מיני-סטים של 5 חזרות). תדירות צדית כפולה בכתפיים (Lateral Raise ביום 3 וביום 5) מגדילה שטח חתך רוחבי (CSA). | **ניצני V-Taper מובהקים:** הגב מתרחב (Lats) מהמתח וה-TRX Row, הכתפיים מקבלות רוחב צדי בולט, והיקף הזרועות (ביספס + טריספס) גדל בעין בלתי מזוינת. ישבן אסוף ומוצק. | קלות פנומנלית בעלייה במדרגות ונשיאת חפצים. שרירי הליבה מרגישים כמו "מחוך פלדה". אפס כאבים בגב התחתון בזכות חיזוק שרשרת אחורית וייצוב אגן. | 1.8–2.0 גרם חלבון/ק"ג. צריכת חלבון עשיר בלאוצין (Leucine →\ge→ 3g לארוחה) להפעלת מתג ה-mTORC1. |
 | **שבועות 9–12** <br>*(הארכת המסטרינגס בנורדיק קרל, פריצת מתח ודילואד שבוע 12)* | **סרקומרוגנזה בטור (Sarcomerogenesis in series):** כניסת ה-Nordic Curl Progression (משבוע 10) מאריכה את סיבי ההמסטרינגס בעומס אקסצנטרי טהור, ומחסנת את הברכיים והאגן מפציעות. **שבוע 12 (דילואד):** Supercompensation – שיקום מערכת העצבים, ירידה ברמות קורטיזול, חידוש קולגן בגידים ומילוי מאגרי אנרגיה. | גב עליון חטוב, שרירי זרוע מוגדרים וחתוכים (טריספס סוס-ברזל מאחור). בשבוע הדילואד נעלמת אגירת נוזלים דלקתית והשרירים נראים "יבשים" ומפוסלים יותר. | עלייה חדה בכוח משיכה: מסוגל לבצע 5-8 עליות מתח נקיות (לעומת 2 בתחילת התוכנית). VO2 Max עולה ב-8-12%. תחושת רעננות וקלילות מפרקית כללית. | שמירה על 2.0 גרם חלבון/ק"ג גם בשבוע הדילואד! שבוע דילואד הוא חלון הזמן שבו השריר והגידים נבנים ומתחדשים. |
 | **שבועות 13–24** <br>*(Phase 2: מעבר ל-Single-Leg RDL, צפיפות גידים ודילואד שבוע 24)* | **שליטה חד-צדדית מוחלטת וקשיחות גידים (Tendon Stiffness):** שבוע 18 מחליף את הגובלט RDL ב-Single-Leg RDL – הפעלת Gluteus Medius ושרשרת אחורית מייצבת שמבטלת לחלוטין אסימטריות תנועתיות. צפיפות קולגן גבוהה בגיד האכילס, בפיקה ובמרפקים מונעת דלקות כרוניות. | **גוף אתלטי מובהק:** כתפיים תלת-ממדיות עגולות ("3D Delts"), גב V רחב ומוגדר, מותניים צרות (ירידה באחוז שומן הודות ל-Zone 2 קבוע), זרועות מפותחות שלא דורשות חולצה צמודה כדי לבלוט. | אנרגיה יומיומית גבוהה ויציבה ללא נפילות עייפות. יכולת עמידה, הליכה ומאמץ ממושך ללא שום מאמץ נשימתי. שינה עמוקה ואיכותית יותר (עלייה בשלבי REM ו-Deep Sleep). | 2.0 גרם חלבון/ק"ג. שילוב Carb Cycling: תוספת פחמימות מורכבות בימי כוח ו-VO2, והורדת פחמימות בימי התאוששות ומנוחה (האצת שריפת שומן). |
 | **שבועות 25–48** <br>*(Phase 3 & 4: שליטה גופנית עילאית, L-Sit מלא, עמידות ידיים ו-Peak Mastery)* | **כוח ליבה גימנסטי וקפילריזציה גבוהה:** פתיחת Wall Handstand (שבוע 26) ו-Full L-Sit (שבוע 34) מביאה לרמת גיוס סיבים תוך-בטנית שאינה קיימת אצל מתאמנים רגילים. עלייה בצפיפות כלי הדם המזינים את השריר (Capillarization), רגישות לאינסולין בשיא (Insulin Sensitivity), צפיפות מינרלים בעצם עולה (Bone Density). | קוביות בטן עמוקות ומעוצבות (Core Citadel), רגליים אתלטיות חטובות ללא שומן עודף, שרירי שכמות וטרפז תחתון מפוסלים, זרועות חזקות ועור מתוח. | כוח תפקודי מוחלט: מסוגל לבצע מעל 10 עליות מתח ו-25+ שכיבות סמיכה רצופות בקלות. עמידות מלאה בפציעות, תחושת גוף קל, גמיש וקפיצי. | 2.0–2.2 גרם חלבון/ק"ג. דגש על שומנים בריאים (אומגה 3) להגנה על ממברנות התא ומפרקים. |
@@ -168,19 +168,27 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 
 ---
 
-## Appendix A — Arm Block v15.7 Protocol (Myo-Reps Cluster)
+## Appendix A — Arm Block Gradual Ramp Protocol (Myo-Reps Micro-Dosing)
 
-**Activation Conditions**: Active from Week 6 onwards (v15.7; previously Week 10). Executed at the end of Day 3 (Lateral Raise + Overhead Triceps Extension) and Day 5 (Single-Arm Curl / Single-Arm Hammer Curl).
+**Activation & Ramp Conditions**: Active from **Week 3 onwards** via an intelligent gradual micro-dosing protocol. Executed at the end of Day 3 (Lateral Raise + Overhead Triceps Extension) and Day 5 (Single-Arm Curl).
+
+### Graduated Ramp Schedule
+| Stage | Weeks | Structure | Activation Set | Mini-Sets | Rest | Goal |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Micro-Dose 1** | Week 3 | `1+1 Myo-Mini` | 1×12 clean reps | **1 mini-set** × 4 clean reps | 15s | Tendon priming & neuromuscular intro |
+| **Micro-Dose 2** | Week 4 | `1+2 Myo-Mini` | 1×12 clean reps | **2 mini-sets** × 4 clean reps | 15s | Volume elevation & metabolic conditioning |
+| **Consolidation** | Week 5 | `1+2 Myo-Mini` | 1×12 clean reps | **2 mini-sets** × 4 clean reps | 15s | Adaptation consolidation prior to full cluster |
+| **Full Cluster** | Week 6+ | `Myo-Reps Cluster` | 1×12–15 clean reps | **3 mini-sets** × 5 clean reps | 15s | Maximum effective reps & high-threshold MUs |
 
 ### Myo-Reps Cluster Mechanics
-1. **Activation Set**: Executed to stage target reps (e.g. 12 reps) at assigned load. Rest 15 seconds.
-2. **Mini-Sets**: 3 mini-sets of 5 clean reps each, with 15 seconds rest between mini-sets.
+1. **Activation Set**: Executed to target reps (12 reps; 15 reps on lateral raise full cluster) at assigned load. Rest 15 seconds.
+2. **Mini-Sets**: Prescribed mini-sets (1 mini-set in W3, 2 mini-sets in W4–5, 3 mini-sets in W6+) with 15 seconds rest between mini-sets.
 3. **Objective Stop Rule (`two_consecutive_tempo_losses`)**: If 2 consecutive reps suffer loss of eccentric control (under 2 seconds) or momentum/swinging, the cluster terminates immediately.
 4. **Clean Rep Requirement**: Only clean, tempo-compliant reps count toward completion.
 5. **Progression Rule**:
-   - **Full Cluster Clean** (Activation + 3 Mini-Sets clean) $ightarrow$ Advance load/stage next workout.
-   - **Partial Cluster / Any Tempo Loss** $ightarrow$ Maintain current stage next workout.
-   - **Joint Pain Reported** $ightarrow$ Arm Block cancelled immediately for that session.
+   - **Full Cluster Clean** (Activation + all prescribed Mini-Sets clean) → Advance load/stage next workout according to Group B cadence (every 4th session).
+   - **Partial Cluster / Any Tempo Loss** → Maintain current stage next workout.
+   - **Joint Pain Reported** → Arm Block cancelled immediately for that session.
 6. **Weekly Exposure Limit**: Maximum 1 Arm Block exposure per muscle area per week (Lateral Shoulder, Triceps, Biceps). If exposure limit is reached, Arm Block is omitted.
 
 ---
@@ -273,16 +281,16 @@ This is the authoritative specification of all **59 unique exercises** appearing
 | **Single-Leg RDL** | `single-leg-rdl` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 2 | 8-10 | 3s descent | 75s | Calendar Gate Week 18+ |
 | **Nordic Curl Progression** | `nordic-curl-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 6-10 | 3-1-1 (lengthened pause) | 90s | Calendar Gate Week 10+ (Deload 1 set) |
 | **Heels-Elevated Goblet Squat** | `heels-elevated-goblet-squat` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 2 | 8-12 | 3s descent, 1-2s pause, 1s up | 75s | Week 1 Continuous Quad Anchor |
-| **Goblet Bulgarian Split Squat** | `goblet-bulgarian-split-squat` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 3 | 6-12 | 2s descent | 82s | W5 (early W3 if Squat $\ge$ 10kg) |
+| **Goblet Bulgarian Split Squat** | `goblet-bulgarian-split-squat` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 3 | 6-12 | 2s descent | 82s | W5 (early W3 if Squat →\ge→ 10kg) |
 | **DB Glute Bridge** | `db-glute-bridge` | weighted | Group A (3rd) | 8 kg | 8 kg | 32 kg | 2 kg | total | 3 | 10-15 | 1s pause at top squeeze | 75s | Week 1 Anchor (75s post W5, 60s W1-4) |
-| **Suitcase Carry** | `suitcase-carry` | weighted | Group A (3rd) | 12 kg | 8 kg | 32 kg | 2 kg | total | 3 | 25-40m | controlled walk | 60s | W5 (early W4 if RDL $\ge$ 10kg) |
+| **Suitcase Carry** | `suitcase-carry` | weighted | Group A (3rd) | 12 kg | 8 kg | 32 kg | 2 kg | total | 3 | 25-40m | controlled walk | 60s | W5 (early W4 if RDL →\ge→ 10kg) |
 | **Standing Single-Leg Calf Raise** | `standing-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | single_hand | 3 | 12-20 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #1 |
 | **Seated Single-Leg Calf Raise** | `seated-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | on_knee | 2 | 15-25 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #2 |
 | **Pallof Press Progression** | `pallof-press-progression` | variation | BW / Stage | Band | — | — | — | — | 2 | 10-12 | 1s pause at extension | 30s | W6+ (unlock: Dead Bug stage 2); Core Circuit #1 |
 | **Dead Bug** | `dead-bug` | variation | BW / Stage | BW | — | — | — | — | 3 | 12-20 | slow controlled | 30s | Core Circuit #2 |
-| **Hollow Body Hold** | `hollow-body-hold` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-30s | static hollow hold | 30s | W5 (early W3 if Dead Bug $\ge$ 16 reps); Core Circuit #3 |
-| **Single-Arm Seated OHP** | `single-arm-seated-ohp` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up $\ge$ 10); Day 3 First Main |
-| **Pike Progression** | `pike-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 15-30s or 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up $\ge$ 10); Pike Tree W1-9 |
+| **Hollow Body Hold** | `hollow-body-hold` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-30s | static hollow hold | 30s | W5 (early W3 if Dead Bug →\ge→ 16 reps); Core Circuit #3 |
+| **Single-Arm Seated OHP** | `single-arm-seated-ohp` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up →\ge→ 10); Day 3 First Main |
+| **Pike Progression** | `pike-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 15-30s or 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up →\ge→ 10); Pike Tree W1-9 |
 | **Wall Walk (Partial)** | `wall-walk-partial` | variation | BW / Stage | BW | — | — | — | — | 2 | 3-6 | controlled | 75s | Calendar Gate Week 10–17 |
 | **Wall Walk (Full)** | `wall-walk-full` | variation | BW / Stage | BW | — | — | — | — | 2 | 3-6 | controlled | 90s | Calendar Gate Week 18–25 |
 | **Wall Handstand** | `wall-handstand` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-45s | static hold | 90s | Calendar Gate Week 26–40 |
@@ -292,7 +300,7 @@ This is the authoritative specification of all **59 unique exercises** appearing
 | **Deficit Push-Up** | `deficit-push-up` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-15 | 2s descent | 75s | Push Tree W10–17 |
 | **Feet-Elevated Push-Up** | `feet-elevated-push-up` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-12 | 2s descent | 75s | Push Tree W18–61 |
 | **Weighted Deficit Push-Up** | `weighted-deficit-push-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 6-12 | 2s descent | 90s | Push Tree W62+ (weighted vest) |
-| **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | total | 4 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up $\ge$ 10); 2kg increments |
+| **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | total | 4 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up →\ge→ 10); 2kg increments |
 | **Diamond Push-Up** | `diamond-push-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 45s | Day 3 Triceps / Chest Anchor |
 | **TRX Row** | `trx-row` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | Lean Pair #1 with Lateral Raise |
 | **Single-Arm Lateral Raise** | `single-arm-lateral-raise` | weighted | Group B (4th) | 8 kg | 3 kg | 12 kg | 2 kg | each | 2 | 12-20 | 2-1-2 (lengthened pause) | 75s | W5 (early W3); 2kg increments; Max 12kg |
@@ -305,14 +313,14 @@ This is the authoritative specification of all **59 unique exercises** appearing
 | **TRX Face Pull** | `trx-face-pull` | variation | BW / Stage | BW | — | — | — | — | 2 | 12-20 | 2s descent | 75s / 45s | Lean Pair with Day 5 Lateral Raise (W5+) |
 | **Push-Up Volume (Day 5)** | `push-up-volume` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | W5 (early W3); Lean Pair with Curl |
 | **Single-Arm Curl** | `single-arm-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-15 | 2-1-2 (lengthened pause) | 45s | Biceps Microcycle Heavy W1–3; 2kg increments |
-| **Single-Arm Hammer Curl** | `single-arm-hammer-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-12 | 2s descent | 45s | W5 (early W3 if Curl $\ge$ 12); Light W4 = 2 sets |
+| **Single-Arm Hammer Curl** | `single-arm-hammer-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-12 | 2s descent | 45s | W5 (early W3 if Curl →\ge→ 12); Light W4 = 2 sets |
 | **Towel Hang** | `towel-hang` | timebased | BW / Stage | BW | — | — | — | — | 2 | 15-45s | static grip hold | 45s | W5 (early W3); Lean Pair with L-Sit |
-| **Tuck L-Sit** | `tuck-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | W5 (early W3 if Dead Bug $\ge$ 16); L-Sit W1–17 |
+| **Tuck L-Sit** | `tuck-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | W5 (early W3 if Dead Bug →\ge→ 16); L-Sit W1–17 |
 | **One-Leg Extended L-Sit** | `one-leg-extended-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 18–33 |
 | **Full L-Sit** | `full-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 34+ |
-| **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | Group B (4th) | 8 kg | 3 kg | 12 kg | 2 kg | each | 1+3 | 15 + 3×5 | 2s descent | 15s | Week 6+ Day 3 End (Stop: 2 tempo losses) |
-| **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | total | 1+3 | 12 + 3×5 | 2s descent | 15s | Week 6+ Day 3 End (Stop: 2 tempo losses) |
-| **Arm Block - Single-Arm Curl** | `arm-block-biceps-curl` | myo-reps | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 1+3 | 12 + 3×5 | 2s descent | 15s | Week 6+ Day 5 End (Stop: 2 tempo losses) |
+| **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | Group B (4th) | 8 kg | 3 kg | 12 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12/15 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
+| **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | total | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
+| **Arm Block - Single-Arm Curl** | `arm-block-biceps-curl` | myo-reps | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 5 End (Stop: 2 tempo losses) |
 | **Band Neck Flexion & Extension** | `band-neck-flexion` | variation | Band | — | — | — | — | 2 | 15-20 | 3-1-3 slow | 45s | Day 4 Cervical Protocol (Chin-tuck focus) |
 | **Brisk Walking** | `brisk-walking` | timebased | BW | — | — | — | — | 1 | 30-45m | 4% @ 5.5 km/h (Deload 2% @ 5.0) | 0s | Day 2 Zone 2 Cardio (Weeks 3+) |
 | **Relaxed Walking** | `relaxed-walking` | timebased | BW | — | — | — | — | 1 | 20-30m | 0% @ 4.5 km/h | 0s | Ramp-up W1–2 / Day 4 Active Recovery |
@@ -351,7 +359,7 @@ The training program is the prescriptive core; these are the controls the app ex
 - **🧮 1RM Calculator** — Epley-based estimated 1RM + percentage/load table.
 - **⏱ Adaptive Rest** — rest timers auto-extend +30s after a BELOW / mechanical-stop outcome.
 - **🚀 3-Button Progression** — ABOVE / IN_WINDOW / BELOW drive weight progression (0.5 kg fine increments for isolation), softened progression, and Time Decay protection.
-- **💪 Arm Block (Myo-Reps)** — 1 activation set + 3×5 mini-sets from Week 6; objective stop on 2 consecutive tempo losses; 1 exposure/week/muscle-area.
+- **💪 Arm Block (Myo-Reps)** — Gradual micro-dose protocol starting Week 3 (W3: 1+1×4, W4–5: 1+2×4, W6+: 1+3×5); objective stop on 2 consecutive tempo losses; 1 exposure/week/muscle-area.
 - **🌿 Auto-Regulated Deload** — every 12 weeks (12, 24, 36, 48, 60, 72): 2-set ceiling, −2 kg, pairs dissolve; early auto-deload on consecutive drops.
 - **📅 Calendar & Swap / Unlock Early** — navigate weeks, swap day content, unlock future days early.
 - **📸 Progress Photos & Anatomy Progress Map** — visual tracking on the muscle map.

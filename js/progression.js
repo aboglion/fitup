@@ -12,7 +12,7 @@
       this.settings = settings || window.TRAINING_DATA?.progressionSettings || {
         deloadEveryWeeks: 12,
         armBlock: {
-          enabledFromWeek: 6,
+          enabledFromWeek: 3,
           maxArmBlockExposurePerMusclePerWeek: 1,
           muscleAreaMap: {
             3: { "db-lateral-raise": "lateral-shoulder", "arm-block-lateral-raise": "lateral-shoulder", "db-oh-triceps-extension": "triceps", "arm-block-triceps-ext": "triceps" },
@@ -315,8 +315,21 @@
     // ----------------------------
     // 5. Arm Block & Frequency Guard
     // ----------------------------
+    getArmBlockRampPhase(weekNumber) {
+      if (weekNumber < 3) {
+        return { active: false, phase: 'LOCKED', stage: 'Locked (Weeks 1-2)', miniSets: 0, miniReps: 0, rest: 0, label: 'נעול' };
+      }
+      if (weekNumber === 3) {
+        return { active: true, phase: 'MICRO_DOSE_1', stage: 'Micro-Dose 1 (Week 3)', sets: '1+1 Myo-Mini', repWindow: '12 + 1×4', miniSets: 1, miniReps: 4, rest: 15, label: 'מינון מיקרו 1' };
+      }
+      if (weekNumber === 4 || weekNumber === 5) {
+        return { active: true, phase: 'MICRO_DOSE_2', stage: `Micro-Dose ${weekNumber === 4 ? '2' : 'Consolidation'} (Weeks 4-5)`, sets: '1+2 Myo-Mini', repWindow: '12 + 2×4', miniSets: 2, miniReps: 4, rest: 15, label: weekNumber === 4 ? 'מינון מיקרו 2' : 'ביסוס מיקרו' };
+      }
+      return { active: true, phase: 'FULL_CLUSTER', stage: 'Full Arm Block Cluster (Week 6+)', sets: 'Myo-Reps Cluster', repWindow: 'Myo-Reps Cluster', miniSets: 3, miniReps: 5, rest: 15, label: 'צביר Myo מלא' };
+    }
+
     isArmBlockAllowed(dayTrackingData, weekNumber, existingExposures = []) {
-      const armBlockCfg = this.settings.armBlock || { enabledFromWeek: 6, maxArmBlockExposurePerMusclePerWeek: 1 };
+      const armBlockCfg = this.settings.armBlock || { enabledFromWeek: 3, maxArmBlockExposurePerMusclePerWeek: 1 };
 
       if (weekNumber < armBlockCfg.enabledFromWeek) {
         return { active: false, reason: 'arm_block_not_started_yet' };

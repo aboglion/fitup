@@ -2454,7 +2454,13 @@ const TodayPage = (() => {
 
     // Myo-Reps Indicator
     if (name.includes('arm block') || name.includes('myo')) {
-      badges.push(`<span class="lean-myo-badge" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🔥 ${I18n.t('myo_reps_title')}</span>`);
+      let myoTag = I18n.t('myo_reps_title');
+      if (weekNum === 3) {
+        myoTag += ' (1+1 Micro)';
+      } else if (weekNum === 4 || weekNum === 5) {
+        myoTag += ' (1+2 Micro)';
+      }
+      badges.push(`<span class="lean-myo-badge" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">🔥 ${myoTag}</span>`);
     }
 
     return badges.length > 0 ? `<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; margin-bottom: 4px;">${badges.join('')}</div>` : '';
@@ -5225,15 +5231,15 @@ const TodayPage = (() => {
       belowTrigger: 'הנפת גב (Cheating) או השענת המשקולת על הירך בתחתית.'
     },
     'ARM BLOCK - SINGLE-ARM CURL': {
-      rule: 'צביר Myo-Reps: סט אקטיבציה נקי ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ׳ מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.',
+      rule: 'צביר Myo-Reps הדרגתי: סט אקטיבציה נקי ליעד + מיני-סטים לפי שבוע (שבוע 3: 1×4; שבועות 4-5: 2×4; שבוע 6+: 3×5) עם 15 שנ׳ מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.',
       belowTrigger: 'אובדן טמפו אקסצנטרי או כאב מפרקי.'
     },
     'ARM BLOCK - DB OVERHEAD TRICEPS EXT': {
-      rule: 'צביר Myo-Reps: סט אקטיבציה נקי ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ׳ מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.',
+      rule: 'צביר Myo-Reps הדרגתי: סט אקטיבציה נקי ליעד + מיני-סטים לפי שבוע (שבוע 3: 1×4; שבועות 4-5: 2×4; שבוע 6+: 3×5) עם 15 שנ׳ מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.',
       belowTrigger: 'אובדן טמפו אקסצנטרי או כאב מפרקי.'
     },
     'ARM BLOCK - SINGLE-ARM LATERAL RAISE': {
-      rule: 'צביר Myo-Reps: סט אקטיבציה נקי ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ׳ מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.',
+      rule: 'צביר Myo-Reps הדרגתי: סט אקטיבציה נקי ליעד + מיני-סטים לפי שבוע (שבוע 3: 1×4; שבועות 4-5: 2×4; שבוע 6+: 3×5) עם 15 שנ׳ מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.',
       belowTrigger: 'אובדן טמפו אקסצנטרי או כאב מפרקי.'
     },
     'TOWEL HANG': {

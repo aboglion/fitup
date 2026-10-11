@@ -41,8 +41,8 @@ const ExercisesPage = (() => {
     'Single-Arm Seated OHP': [{ weight: '8 kg', fromWeek: 3 }, { weight: '10 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 7 }, { weight: '14 kg', fromWeek: 9 }, { weight: '16 kg', fromWeek: 11 }, { weight: '18 kg', fromWeek: 13 }, { weight: '20 kg', fromWeek: 15 }, { weight: '22 kg', fromWeek: 17 }, { weight: '24 kg', fromWeek: 19 }, { weight: '26 kg', fromWeek: 21 }, { weight: '28 kg', fromWeek: 23 }, { weight: '30 kg', fromWeek: 25 }, { weight: '32 kg', fromWeek: 27 }],
     'Single-Arm Lateral Raise': [{ weight: '8 kg', fromWeek: 3 }, { weight: '10 kg', fromWeek: 7 }, { weight: '12 kg', fromWeek: 11 }],
     'DB Overhead Triceps Extension': [{ weight: '8 kg total', fromWeek: 3 }, { weight: '10 kg', fromWeek: 7 }, { weight: '12 kg', fromWeek: 11 }, { weight: '14 kg', fromWeek: 15 }, { weight: '16 kg', fromWeek: 19 }, { weight: '18 kg', fromWeek: 23 }, { weight: '20 kg', fromWeek: 27 }, { weight: '22 kg', fromWeek: 31 }, { weight: '24 kg', fromWeek: 35 }, { weight: '26 kg', fromWeek: 39 }, { weight: '28 kg', fromWeek: 43 }, { weight: '30 kg', fromWeek: 47 }, { weight: '32 kg', fromWeek: 51 }],
-    'Arm Block - Single-Arm Lateral Raise': [{ weight: '8-10 kg', fromWeek: 6 }, { weight: '10 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 14 }],
-    'Arm Block - DB Overhead Triceps Ext': [{ weight: '8-16 kg', fromWeek: 6 }, { weight: '18 kg', fromWeek: 10 }, { weight: '20 kg', fromWeek: 14 }, { weight: '22 kg', fromWeek: 18 }, { weight: '24 kg', fromWeek: 22 }, { weight: '26 kg', fromWeek: 26 }, { weight: '28 kg', fromWeek: 30 }, { weight: '30 kg', fromWeek: 34 }, { weight: '32 kg', fromWeek: 38 }],
+    'Arm Block - Single-Arm Lateral Raise': [{ weight: '8 kg', fromWeek: 3 }, { weight: '10 kg', fromWeek: 7 }, { weight: '12 kg', fromWeek: 11 }],
+    'Arm Block - DB Overhead Triceps Ext': [{ weight: '8 kg', fromWeek: 3 }, { weight: '10 kg', fromWeek: 7 }, { weight: '12 kg', fromWeek: 11 }, { weight: '14 kg', fromWeek: 15 }, { weight: '16 kg', fromWeek: 19 }, { weight: '18 kg', fromWeek: 23 }, { weight: '20 kg', fromWeek: 27 }, { weight: '22 kg', fromWeek: 31 }, { weight: '24 kg', fromWeek: 35 }, { weight: '26 kg', fromWeek: 39 }, { weight: '28 kg', fromWeek: 43 }, { weight: '30 kg', fromWeek: 47 }, { weight: '32 kg', fromWeek: 51 }],
     'One-Arm DB Row': [{ weight: '8 kg', fromWeek: 1 }, { weight: '10 kg', fromWeek: 3 }, { weight: '12 kg', fromWeek: 5 }, { weight: '14 kg', fromWeek: 7 }, { weight: '16 kg', fromWeek: 9 }, { weight: '18 kg', fromWeek: 11 }, { weight: '20 kg', fromWeek: 13 }, { weight: '22 kg', fromWeek: 15 }, { weight: '24 kg', fromWeek: 17 }, { weight: '26 kg', fromWeek: 19 }, { weight: '28 kg', fromWeek: 21 }, { weight: '30 kg', fromWeek: 23 }, { weight: '32 kg', fromWeek: 25 }],
     'TRX Row': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Diamond Push-Up': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '+5 kg', fromWeek: 62 }],
@@ -50,7 +50,7 @@ const ExercisesPage = (() => {
     'Push-Up Volume (Day 5)': [{ weight: 'Bodyweight', fromWeek: 3 }],
     'Single-Arm Curl': [{ weight: '8 kg', fromWeek: 1 }, { weight: '10 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 9 }, { weight: '14 kg', fromWeek: 13 }, { weight: '16 kg', fromWeek: 17 }, { weight: '18 kg', fromWeek: 21 }, { weight: '20 kg', fromWeek: 25 }],
     'Single-Arm Hammer Curl': [{ weight: '8 kg', fromWeek: 3 }, { weight: '10 kg', fromWeek: 7 }, { weight: '12 kg', fromWeek: 11 }, { weight: '14 kg', fromWeek: 15 }, { weight: '16 kg', fromWeek: 19 }, { weight: '18 kg', fromWeek: 23 }, { weight: '20 kg', fromWeek: 27 }],
-    'Arm Block - Single-Arm Curl': [{ weight: '8-12 kg', fromWeek: 6 }, { weight: '14 kg', fromWeek: 10 }, { weight: '16 kg', fromWeek: 14 }, { weight: '18 kg', fromWeek: 18 }, { weight: '20 kg', fromWeek: 22 }],
+    'Arm Block - Single-Arm Curl': [{ weight: '8 kg', fromWeek: 3 }, { weight: '10 kg', fromWeek: 7 }, { weight: '12 kg', fromWeek: 11 }, { weight: '14 kg', fromWeek: 15 }, { weight: '16 kg', fromWeek: 19 }, { weight: '18 kg', fromWeek: 23 }, { weight: '20 kg', fromWeek: 27 }],
 
     // Bodyweight, Mobility, Warmup & Skill Progressions
     'Dead Bug': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '1 kg', fromWeek: 10 }, { weight: '2 kg', fromWeek: 26 }, { weight: '3 kg', fromWeek: 42 }],
@@ -231,8 +231,8 @@ const ExercisesPage = (() => {
           { name: 'DB Overhead Triceps Extension', unlockWeek: 3, id: 'tri-1', unlockCond: 'cond_10_push' },
           { name: 'TRX Y-T-W', unlockWeek: 1, id: 'rear-delt-1' },
           { name: 'Band Pull-Apart', unlockWeek: 2, parentId: 'rear-delt-1', id: 'rear-delt-2', relType: 'accessory', unlockCond: 'cond_weekly_rotation' },
-          { name: 'Arm Block - Single-Arm Lateral Raise', unlockWeek: 6, parentId: 'lat-1', id: 'lat-2', relType: 'accessory', unlockCond: 'cond_12_lat' },
-          { name: 'Arm Block - DB Overhead Triceps Ext', unlockWeek: 6, parentId: 'tri-1', id: 'tri-2', relType: 'accessory', unlockCond: 'cond_12_tri' }
+          { name: 'Arm Block - Single-Arm Lateral Raise', unlockWeek: 3, parentId: 'lat-1', id: 'lat-2', relType: 'accessory', unlockCond: 'cond_12_lat' },
+          { name: 'Arm Block - DB Overhead Triceps Ext', unlockWeek: 3, parentId: 'tri-1', id: 'tri-2', relType: 'accessory', unlockCond: 'cond_12_tri' }
         ]
       }
     ],
@@ -266,7 +266,7 @@ const ExercisesPage = (() => {
         title: 'biceps_grip', icon: '✊', exercises: [
           { name: 'Single-Arm Curl', unlockWeek: 1, id: 'curl-1' },
           { name: 'Single-Arm Hammer Curl', unlockWeek: 3, parentId: 'curl-1', id: 'curl-2', relType: 'accessory', unlockCond: 'cond_12_curl' },
-          { name: 'Arm Block - Single-Arm Curl', unlockWeek: 6, parentId: 'curl-1', id: 'curl-2b', relType: 'accessory', unlockCond: 'cond_12_curl' },
+          { name: 'Arm Block - Single-Arm Curl', unlockWeek: 3, parentId: 'curl-1', id: 'curl-2b', relType: 'accessory', unlockCond: 'cond_12_curl' },
           { name: 'Towel Hang', unlockWeek: 3, id: 'towel-1' }
         ]
       },

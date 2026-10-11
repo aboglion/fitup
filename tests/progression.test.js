@@ -144,3 +144,45 @@ test('ProgressionEngine - Group B cadence promotes on 4th in-window workout', ()
   assert.equal(resMixed.reason, 'mixed_results_maintain');
 });
 
+test('ProgressionEngine - Arm Block Gradual Ramp Phase resolver', () => {
+  // Weeks 1-2: Locked
+  const w1 = ProgressionEngine.getArmBlockRampPhase(1);
+  assert.equal(w1.active, false);
+  assert.equal(w1.phase, 'LOCKED');
+
+  const w2 = ProgressionEngine.getArmBlockRampPhase(2);
+  assert.equal(w2.active, false);
+
+  // Week 3: Micro-Dose 1 (1 activation set + 1 mini-set of 4 reps)
+  const w3 = ProgressionEngine.getArmBlockRampPhase(3);
+  assert.equal(w3.active, true);
+  assert.equal(w3.phase, 'MICRO_DOSE_1');
+  assert.equal(w3.miniSets, 1);
+  assert.equal(w3.miniReps, 4);
+
+  // Week 4 & 5: Micro-Dose 2 & Consolidation (1 activation set + 2 mini-sets of 4 reps)
+  const w4 = ProgressionEngine.getArmBlockRampPhase(4);
+  assert.equal(w4.active, true);
+  assert.equal(w4.phase, 'MICRO_DOSE_2');
+  assert.equal(w4.miniSets, 2);
+  assert.equal(w4.miniReps, 4);
+
+  const w5 = ProgressionEngine.getArmBlockRampPhase(5);
+  assert.equal(w5.active, true);
+  assert.equal(w5.phase, 'MICRO_DOSE_2');
+  assert.equal(w5.miniSets, 2);
+  assert.equal(w5.miniReps, 4);
+
+  // Week 6+: Full Cluster (1 activation set + 3 mini-sets of 5 reps)
+  const w6 = ProgressionEngine.getArmBlockRampPhase(6);
+  assert.equal(w6.active, true);
+  assert.equal(w6.phase, 'FULL_CLUSTER');
+  assert.equal(w6.miniSets, 3);
+  assert.equal(w6.miniReps, 5);
+
+  // Allowance check
+  assert.equal(ProgressionEngine.isArmBlockAllowed(null, 2).active, false);
+  assert.equal(ProgressionEngine.isArmBlockAllowed(null, 3).active, true);
+  assert.equal(ProgressionEngine.isArmBlockAllowed(null, 6).active, true);
+});
+

@@ -137,8 +137,12 @@ test('v15.7.1 - Day 3 first main exercise is Single-Arm Seated OHP (all weeks)',
 // ---------------------------------------------------------------------------
 test('v15.7.1 - Arm Block exposure settings unchanged', () => {
     const ab = data.progressionSettings.armBlock;
-    assert.equal(ab.enabledFromWeek, 6);
+    assert.equal(ab.enabledFromWeek, 3);
     assert.equal(ab.maxArmBlockExposurePerMusclePerWeek, 1);
+    assert.ok(ab.rampProtocol, 'Arm Block rampProtocol should be defined');
+    assert.equal(ab.rampProtocol.week3.miniSets, 1);
+    assert.equal(ab.rampProtocol.week4.miniSets, 2);
+    assert.equal(ab.rampProtocol.week6Plus.miniSets, 3);
     assert.deepEqual(ab.muscleAreaMap, {
         "3": { "single-arm-lateral-raise": "lateral-shoulder", "db-overhead-triceps-extension": "triceps" },
         "5": { "single-arm-curl": "biceps", "single-arm-hammer-curl": "biceps" }

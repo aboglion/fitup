@@ -375,12 +375,16 @@ const AnatomyMap = (() => {
                   ? `<span style="font-size: 10px; font-weight: 700; color: #c084fc; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.35); padding: 2px 6px; border-radius: 4px;">🎯 ${I18n.t('cadence_group_b_short')}</span>`
                   : `<span style="font-size: 10px; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); padding: 2px 6px; border-radius: 4px;">⚡ ${I18n.t('cadence_group_a_short')}</span>`)
               : '';
+            const isArmBlock = nameLower.includes('arm block');
+            const armBlockBadge = isArmBlock
+              ? `<span style="font-size: 10px; font-weight: 700; color: #f87171; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); padding: 2px 6px; border-radius: 4px;">🔥 Myo (W3+ Ramp)</span>`
+              : '';
 
             return `
             <li style="background: rgba(0, 255, 102, 0.04); border: 1px solid rgba(0, 255, 102, 0.2); padding: 10px 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
               <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
                 <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                  <span>🏋️‍♂️</span> <span>${ex.name}</span> ${cadenceBadge}
+                  <span>🏋️‍♂️</span> <span>${ex.name}</span> ${cadenceBadge} ${armBlockBadge}
                 </span>
                 <span style="font-size: 12px; font-weight: 900; color: #00ff66; text-shadow: 0 0 8px rgba(0, 255, 102, 0.6); flex-shrink: 0;">
                   ${ex.formatted}

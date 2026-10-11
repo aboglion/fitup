@@ -879,9 +879,9 @@ EXERCISES_CATALOG = [
             "miniReps": 5,
             "stopRule": "two_consecutive_tempo_losses"
         },
-        "startingWeek": 6,
+        "startingWeek": 3,
         "unlocked": False,
-        "earliestWeek": 6,
+        "earliestWeek": 3,
         "unlockCriteria": { "exercise": "single-arm-lateral-raise", "targetReps": 12 },
         "fallbackId": None
     },
@@ -904,9 +904,9 @@ EXERCISES_CATALOG = [
             "miniReps": 5,
             "stopRule": "two_consecutive_tempo_losses"
         },
-        "startingWeek": 6,
+        "startingWeek": 3,
         "unlocked": False,
-        "earliestWeek": 6,
+        "earliestWeek": 3,
         "unlockCriteria": { "exercise": "db-overhead-triceps-extension", "targetReps": 12 },
         "fallbackId": None
     },
@@ -929,9 +929,9 @@ EXERCISES_CATALOG = [
             "miniReps": 5,
             "stopRule": "two_consecutive_tempo_losses"
         },
-        "startingWeek": 6,
+        "startingWeek": 3,
         "unlocked": False,
-        "earliestWeek": 6,
+        "earliestWeek": 3,
         "unlockCriteria": { "exercise": "single-arm-curl", "targetReps": 12 },
         "fallbackId": None
     }
@@ -940,7 +940,7 @@ EXERCISES_CATALOG = [
 
 def make_ex_obj(slot, ex_id, name, sets_str, rep_window=None, weight=None, tempo=None, rest=90, is_warmup=False,
                 structure="straight", pair_id=None, circuit_id=None, block_id=None, block_order=None,
-                circuit_order=None, toggle_group=None, toggle_active_on=None, microcycle=None, active_weeks=None, arm_block=False, order_in_pair=None):
+                circuit_order=None, toggle_group=None, toggle_active_on=None, microcycle=None, active_weeks=None, arm_block=False, order_in_pair=None, myo_config=None):
     obj = {
         "slot": slot,
         "id": ex_id,
@@ -973,6 +973,10 @@ def make_ex_obj(slot, ex_id, name, sets_str, rep_window=None, weight=None, tempo
         for k in ("earliestWeek", "unlockCriteria", "fallbackId", "startingWeek"):
             if k in cat:
                 obj[k] = cat[k]
+        if "myoConfig" in cat:
+            obj["myoConfig"] = myo_config if myo_config is not None else cat["myoConfig"]
+    elif myo_config is not None:
+        obj["myoConfig"] = myo_config
     return obj
 
 def get_leg_warmup():
@@ -1142,9 +1146,19 @@ def generate_day_exercises(dow, week):
         else:
             exs.append(make_ex_obj("A9", "band-pull-apart", "Band Pull-Apart", "2×15" if is_deload else "3×15-20", rep_window="15-20", weight="Band 30kg", tempo="1s squeeze", rest=45, structure="straight", toggle_group="rear-delt", toggle_active_on="even"))
 
-        if week >= 6 and not is_deload:
-            exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
-            exs.append(make_ex_obj("A11", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps"))
+        if week >= 3 and not is_deload:
+            if week == 3:
+                # Week 3: Micro-Dose 1 (1 Activation Set + 1 Mini-Set of 4 reps)
+                exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "1+1 Myo-Mini", rep_window="12 + 1×4", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 1, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
+                exs.append(make_ex_obj("A11", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "1+1 Myo-Mini", rep_window="12 + 1×4", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 1, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
+            elif week in (4, 5):
+                # Weeks 4-5: Micro-Dose 2 & Consolidation (1 Activation Set + 2 Mini-Sets of 4 reps)
+                exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "1+2 Myo-Mini", rep_window="12 + 2×4", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 2, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
+                exs.append(make_ex_obj("A11", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "1+2 Myo-Mini", rep_window="12 + 2×4", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 2, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
+            else:
+                # Week 6+: Full Arm Block Cluster (1 Activation Set + 3 Mini-Sets of 5 reps)
+                exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 15, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
+                exs.append(make_ex_obj("A11", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
 
         exs.append(make_ex_obj("A12", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
         return day_title, rpe, exs
@@ -1197,8 +1211,16 @@ def generate_day_exercises(dow, week):
         else:
             exs.append(make_ex_obj("A9", "full-l-sit", "Full L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
 
-        if week >= 6 and not is_deload:
-            exs.append(make_ex_obj("A10", "arm-block-biceps-curl", "Arm Block - Single-Arm Curl", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps"))
+        if week >= 3 and not is_deload:
+            if week == 3:
+                # Week 3: Micro-Dose 1 (1 Activation Set + 1 Mini-Set of 4 reps)
+                exs.append(make_ex_obj("A10", "arm-block-biceps-curl", "Arm Block - Single-Arm Curl", "1+1 Myo-Mini", rep_window="12 + 1×4", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 1, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
+            elif week in (4, 5):
+                # Weeks 4-5: Micro-Dose 2 & Consolidation (1 Activation Set + 2 Mini-Sets of 4 reps)
+                exs.append(make_ex_obj("A10", "arm-block-biceps-curl", "Arm Block - Single-Arm Curl", "1+2 Myo-Mini", rep_window="12 + 2×4", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 2, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
+            else:
+                # Week 6+: Full Arm Block Cluster (1 Activation Set + 3 Mini-Sets of 5 reps)
+                exs.append(make_ex_obj("A10", "arm-block-biceps-curl", "Arm Block - Single-Arm Curl", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
 
         exs.append(make_ex_obj("A11", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
         return day_title, rpe, exs
@@ -1390,8 +1412,14 @@ def generate_program():
         "adaptiveRest": True,
         "armBlockConditional": True,
         "armBlock": {
-            "enabledFromWeek": 6,
+            "enabledFromWeek": 3,
             "maxArmBlockExposurePerMusclePerWeek": 1,
+            "rampProtocol": {
+                "week3": { "stage": "Micro-Dose 1", "sets": "1+1 Myo-Mini", "miniSets": 1, "miniReps": 4, "rest": 15 },
+                "week4": { "stage": "Micro-Dose 2", "sets": "1+2 Myo-Mini", "miniSets": 2, "miniReps": 4, "rest": 15 },
+                "week5": { "stage": "Consolidation", "sets": "1+2 Myo-Mini", "miniSets": 2, "miniReps": 4, "rest": 15 },
+                "week6Plus": { "stage": "Full Cluster", "sets": "Myo-Reps Cluster", "miniSets": 3, "miniReps": 5, "rest": 15 }
+            },
             "muscleAreaMap": {
                 "3": { "single-arm-lateral-raise": "lateral-shoulder", "db-overhead-triceps-extension": "triceps" },
                 "5": { "single-arm-curl": "biceps", "single-arm-hammer-curl": "biceps" }
