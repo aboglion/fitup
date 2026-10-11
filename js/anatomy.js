@@ -105,19 +105,20 @@ const AnatomyMap = (() => {
         .anatomy-pane {
           display: flex;
           justify-content: center;
-          background: radial-gradient(ellipse at 50% 40%, #051a10 0%, #020b06 100%);
+          background: transparent !important;
+          border: none !important;
           border-radius: var(--radius-xl, 16px);
-          border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
-          box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 0 40px rgba(0, 255, 102, 0.06);
-          overflow: hidden;
-          padding: 0;
-          transition: border-color var(--transition-fast, 0.2s), box-shadow var(--transition-fast, 0.2s);
+          box-shadow: none !important;
+          overflow: visible;
+          padding: 4px 0;
+          position: relative;
         }
         .anatomy-inner {
           position: relative;
           width: 100%;
           max-width: 380px;
           aspect-ratio: 1 / 1;
+          background: transparent;
         }
         .pane-title {
           position: absolute; top: 12px; left: 12px;
@@ -130,9 +131,13 @@ const AnatomyMap = (() => {
         .anatomy-image-bg {
           position: absolute; inset: 0;
           background-size: cover; background-position: center; background-repeat: no-repeat;
-          opacity: 0.92;
-          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 4%, black 94%, transparent 100%);
-          mask-image: linear-gradient(to bottom, transparent 0%, black 4%, black 94%, transparent 100%);
+          opacity: 0.98;
+          -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+                              linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+          -webkit-mask-composite: source-in;
+          mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%),
+                      linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%);
+          mask-composite: intersect;
         }
         .anatomy-svg-overlay { position: absolute; inset: 0; z-index: 15; pointer-events: none; }
         .anatomy-node {

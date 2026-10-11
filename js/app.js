@@ -363,18 +363,26 @@ const App = (() => {
         }
       }
 
-      // Non-blocking background pull from cloud & silent token refresh
+      // Non-blocking background pull from cloud & token status verification
       const savedUrl = await DB.getSetting('cloudSyncUrl');
       const hasOAuthToken = await CloudSync.isLoggedIn();
       if (savedUrl || hasOAuthToken) {
-        console.log("Pulling latest data from cloud (background)...");
-        if (CloudSync.hasValidToken && CloudSync.trySilentRefresh) {
+        if (CloudSync.hasValidToken) {
           const hasValid = await CloudSync.hasValidToken();
-          if (!hasValid) {
-            await CloudSync.trySilentRefresh();
+          if (!hasValid && !savedUrl) {
+            // OAuth token is expired or missing. On page startup/reload, there is no user gesture,
+            // so requesting a token would trigger browser popup blocking.
+            // Mark reauth_needed so UI banner / cloud indicator shows the 1-click reconnect prompt.
+            console.log("CloudSync: OAuth token expired or unavailable on startup. Setting reauth_needed.");
+            if (CloudSync.setStatus) CloudSync.setStatus('reauth_needed');
+          } else {
+            console.log("Pulling latest data from cloud (background)...");
+            CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
           }
+        } else if (savedUrl) {
+          console.log("Pulling latest data from cloud (background)...");
+          CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
         }
-        CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
       }
 
       // Load all plan data
@@ -1511,6 +1519,23 @@ const App = (() => {
 
     if (syncBtn) {
       syncBtn.addEventListener('click', async () => {
+        const status = CloudSync.getStatus ? CloudSync.getStatus() : 'idle';
+        const hasValid = CloudSync.hasValidToken ? await CloudSync.hasValidToken() : true;
+        const loggedIn = CloudSync.isLoggedIn ? await CloudSync.isLoggedIn() : false;
+
+        // If user is logged into Google but token expired, use this button click (user gesture) to re-authenticate seamlessly
+        if (loggedIn && (status === 'reauth_needed' || !hasValid)) {
+          CloudSync.loginWithGoogle(
+            async (profile) => {
+              UI.toast(`${I18n.t('connected_as')} ${profile.name || I18n.t('google_user')}!`, 'success');
+              await updateGoogleUI();
+              CloudSync.syncData(true);
+            },
+            (err) => UI.toast(I18n.t('error_prefix') + err, 'error')
+          );
+          return;
+        }
+
         syncBtn.disabled = true;
         syncBtn.textContent = I18n.t('syncing_drive');
 
@@ -1776,17 +1801,18 @@ document.addEventListener('visibilitychange', async () => {
       window.TodayPage.render();
     }
 
-    // 3. Silent token refresh if profile exists and token expired
-    if (window.CloudSync && window.CloudSync.hasValidToken && window.CloudSync.trySilentRefresh) {
+    // 3. Check token validity on app foreground
+    if (window.CloudSync && window.CloudSync.hasValidToken) {
       const hasValid = await window.CloudSync.hasValidToken();
-      if (!hasValid) {
-        await window.CloudSync.trySilentRefresh();
+      if (!hasValid && window.CloudSync.setStatus) {
+        window.CloudSync.setStatus('reauth_needed');
       }
     }
 
     const savedUrl = await DB.getSetting('cloudSyncUrl');
     const hasOAuthToken = await CloudSync.isLoggedIn();
-    if (savedUrl || hasOAuthToken) {
+    const hasValidToken = window.CloudSync && window.CloudSync.hasValidToken ? await window.CloudSync.hasValidToken() : true;
+    if (savedUrl || (hasOAuthToken && hasValidToken)) {
       console.log("App foregrounded, pulling latest data...");
       const result = await CloudSync.pullData();
       if (result && result.success) {

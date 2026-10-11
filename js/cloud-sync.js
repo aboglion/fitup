@@ -106,14 +106,23 @@ const CloudSync = (() => {
 
     const profile = await getUserProfile();
     if (profile && (profile.email || profile.name)) {
-      console.log('Token expired or near expiry. Executing silent token refresh...');
-      const refreshed = await trySilentRefresh();
-      if (refreshed) {
-        return await getAccessToken();
+      // In Google Identity Services (GIS), requesting a token ALWAYS opens a popup window.
+      // Browsers block popups unless initiated by an active user gesture (click/tap).
+      const hasUserActivation = typeof navigator !== 'undefined' && navigator.userActivation ? navigator.userActivation.isActive : false;
+      if (hasUserActivation) {
+        console.log('[CloudSync] Token expired with active user gesture. Attempting token refresh...');
+        const refreshed = await trySilentRefresh();
+        if (refreshed) {
+          return await getAccessToken();
+        }
+      } else {
+        console.log('[CloudSync] Token expired without active user gesture. Prompting re-auth instead of popup.');
+        setStatus('reauth_needed');
+        return null;
       }
     }
 
-    return await getAccessToken();
+    return null;
   }
 
   /**
@@ -127,15 +136,41 @@ const CloudSync = (() => {
   }
 
   /**
-   * Attempt silent token renewal via GIS OAuth token client if profile exists
+   * Attempt token renewal via GIS OAuth token client if profile exists and user gesture is present
    */
   async function trySilentRefresh() {
     const profile = await getUserProfile();
     if (!profile || !profile.email) return false;
 
+    // Check user activation. In modern browsers, opening a popup requires a direct user gesture (click/tap).
+    // In Google Identity Services (GIS), requestAccessToken() ALWAYS opens a popup window.
+    // If called without user activation (e.g. on page load, reload, or background sync),
+    // browsers automatically block the popup and log [GSI_LOGGER] popup blocked.
+    const hasUserActivation = typeof navigator !== 'undefined' && navigator.userActivation ? navigator.userActivation.isActive : false;
+    if (typeof navigator !== 'undefined' && navigator.userActivation && !hasUserActivation) {
+      console.log('[CloudSync] Skipping GIS popup request without user gesture. Setting reauth_needed.');
+      setStatus('reauth_needed');
+      return false;
+    }
+
     const clientId = await getClientId();
     if (window.google && window.google.accounts && window.google.accounts.oauth2) {
       return new Promise((resolve) => {
+        let settled = false;
+        const done = (val) => {
+          if (!settled) {
+            settled = true;
+            resolve(val);
+          }
+        };
+
+        // Safety timeout so Promise never hangs
+        const timeout = setTimeout(() => {
+          console.warn('[CloudSync] Token refresh timed out');
+          setStatus('reauth_needed');
+          done(false);
+        }, 8000);
+
         try {
           const client = window.google.accounts.oauth2.initTokenClient({
             client_id: clientId,
@@ -143,24 +178,33 @@ const CloudSync = (() => {
             hint: profile.email,
             prompt: '',
             callback: async (response) => {
+              clearTimeout(timeout);
               if (response.access_token) {
                 const expiresIn = response.expires_in || 3600;
                 await setAccessToken(response.access_token, profile, expiresIn);
                 await DB.setSetting('googleTokenExpired', false);
                 setStatus('synced');
-                console.log('Silent token refresh succeeded for:', profile.email);
-                resolve(true);
+                console.log('[CloudSync] Token refresh succeeded for:', profile.email);
+                done(true);
               } else {
-                console.log('Silent token refresh required user interaction.');
+                console.log('[CloudSync] Token refresh required user interaction.');
                 setStatus('reauth_needed');
-                resolve(false);
+                done(false);
               }
+            },
+            error_callback: (err) => {
+              clearTimeout(timeout);
+              console.warn('[CloudSync] GIS Token refresh error / popup blocked:', err);
+              setStatus('reauth_needed');
+              done(false);
             }
           });
           client.requestAccessToken({ prompt: '' });
         } catch (e) {
-          console.warn('Silent refresh error:', e);
-          resolve(false);
+          clearTimeout(timeout);
+          console.warn('[CloudSync] Silent refresh error:', e);
+          setStatus('reauth_needed');
+          done(false);
         }
       });
     }
@@ -226,11 +270,20 @@ const CloudSync = (() => {
     const legacyUrl = await DB.getSetting('cloudSyncUrl');
 
     if (!token && !legacyUrl) {
-      setStatus('idle');
-      if (manual && typeof UI !== 'undefined' && UI.toast) {
-        UI.toast('לא התחברת לחשבון גוגל (Google Drive).', 'error');
+      const profile = await getUserProfile();
+      if (profile && (profile.email || profile.name)) {
+        setStatus('reauth_needed');
+      } else {
+        setStatus('idle');
       }
-      return { success: false, error: 'Not logged in' };
+      if (manual && typeof UI !== 'undefined' && UI.toast) {
+        if (profile && (profile.email || profile.name)) {
+          UI.toast('פג תוקף אסימון גוגל ⚠️ לחץ להתחברות מחדש', 'warning');
+        } else {
+          UI.toast('לא התחברת לחשבון גוגל (Google Drive).', 'error');
+        }
+      }
+      return { success: false, error: 'Not logged in or reauth needed' };
     }
 
     try {
@@ -349,8 +402,13 @@ const CloudSync = (() => {
     const legacyUrl = await DB.getSetting('cloudSyncUrl');
 
     if (!token && !legacyUrl) {
-      setStatus('idle');
-      return { success: false, error: 'Not logged in' };
+      const profile = await getUserProfile();
+      if (profile && (profile.email || profile.name)) {
+        setStatus('reauth_needed');
+      } else {
+        setStatus('idle');
+      }
+      return { success: false, error: 'Not logged in or reauth needed' };
     }
 
     try {
@@ -485,8 +543,10 @@ const CloudSync = (() => {
     if (token) {
       console.log('Google OAuth callback token detected in URL!');
       try {
+        const params = new URLSearchParams(hash.includes('access_token=') ? hash.substring(1) : search.substring(1));
+        const expiresIn = parseInt(params.get('expires_in'), 10) || 3600;
         const fetchedProfile = await fetchGoogleProfile(token);
-        await setAccessToken(token, fetchedProfile);
+        await setAccessToken(token, fetchedProfile, expiresIn);
         setStatus('synced');
         
         // Clean URL hash without reloading page
@@ -531,7 +591,8 @@ const CloudSync = (() => {
             if (response.access_token) {
               const fetchedProfile = await fetchGoogleProfile(response.access_token);
               const finalProfile = (fetchedProfile && fetchedProfile.email) ? fetchedProfile : profile;
-              await setAccessToken(response.access_token, finalProfile);
+              const expiresIn = response.expires_in || 3600;
+              await setAccessToken(response.access_token, finalProfile, expiresIn);
               setStatus('synced');
               if (onSuccess) onSuccess(finalProfile);
             } else if (response.error) {
@@ -542,6 +603,17 @@ const CloudSync = (() => {
                 console.log('Falling back to external browser OAuth...');
                 openExternalGoogleOAuth(clientId);
               }
+            }
+          },
+          error_callback: (error) => {
+            console.warn('Google OAuth error_callback:', error);
+            if (error.type === 'popup_closed') {
+              if (onError) onError('התחברות גוגל בוטלה');
+            } else if (error.type === 'popup_failed_to_open') {
+              console.log('Popup failed to open, falling back to external OAuth window...');
+              openExternalGoogleOAuth(clientId);
+            } else {
+              if (onError) onError(error.type || 'Google OAuth error');
             }
           }
         };
@@ -689,6 +761,7 @@ const CloudSync = (() => {
     logout,
     loginWithGoogle,
     getStatus,
+    setStatus,
     onSyncStatusChange,
     showConflictModal,
     checkAndResolveConflict,
