@@ -537,12 +537,25 @@ const DB = (() => {
     return result;
   }
 
+  const LOCAL_AUTH_SETTINGS_KEYS = [
+    'googleAccessToken',
+    'googleUserProfile',
+    'googleTokenExpired',
+    'googleTokenExpiry',
+    'googleDriveFileId',
+    'cloudSyncUrl',
+    'lastSyncDate',
+    'lastKnownCloudModifiedTime',
+    'pendingSyncQueue'
+  ];
+
   /**
    * Export all data as JSON (including tracking, settings, progress photos, nutrition, and progression engine stores)
    */
   async function exportData() {
     const tracking = await getAll(STORES.TRACKING);
-    const settings = await getAll(STORES.SETTINGS);
+    const rawSettings = await getAll(STORES.SETTINGS);
+    const settings = (rawSettings || []).filter(s => !LOCAL_AUTH_SETTINGS_KEYS.includes(s.key));
     const photos = await getAll(STORES.PHOTOS);
     const rawProgState = await getAll(STORES.PROGRESSION_STATE);
     const progressionHistory = await getAll(STORES.PROGRESSION_HISTORY);
@@ -626,7 +639,7 @@ const DB = (() => {
     }
 
     if (data.settings) {
-      const LOCAL_ONLY_KEYS = ['googleAccessToken', 'googleUserProfile', 'cloudSyncUrl'];
+      const LOCAL_ONLY_KEYS = LOCAL_AUTH_SETTINGS_KEYS;
       const preservedSettings = {};
       for (const key of LOCAL_ONLY_KEYS) {
         const record = await get(STORES.SETTINGS, key);
@@ -634,7 +647,9 @@ const DB = (() => {
       }
 
       if (!merge) await clear(STORES.SETTINGS);
-      await putBulk(STORES.SETTINGS, data.settings);
+      // Filter out incoming auth/local keys so existing cloud backups cannot corrupt local session
+      const safeCloudSettings = data.settings.filter(s => !LOCAL_ONLY_KEYS.includes(s.key));
+      await putBulk(STORES.SETTINGS, safeCloudSettings);
 
       for (const key of LOCAL_ONLY_KEYS) {
         if (preservedSettings[key]) {

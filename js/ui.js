@@ -246,7 +246,19 @@ const UI = (() => {
     'ANGLE 1 (GENTLE)': 'TRX Face Pull (Angle 1).gif',
     'ANGLE 2 (MODERATE)': 'TRX Face Pull (Angle 2).gif',
     'ANGLE 3 (STEEP)': 'TRX Face Pull (Angle 3).gif',
+    'TRX ROW': 'TRX Row.gif',
+    'TRX ROW ANGLE 1': 'TRX Row.gif',
+    'TRX ROW ANGLE 2': 'TRX Row.gif',
+    'TRX ROW ANGLE 2 45': 'TRX Row.gif',
+    'TRX ROW ANGLE 3': 'TRX Row.gif',
+    'TRX ROW FEET ELEVATED': 'TRX Row.gif',
     'TRX Y T W': 'TRX Y-T-W.gif',
+    'TRX Y T W ANGLE 1': 'TRX Y-T-W.gif',
+    'TRX Y T W ANGLE 2': 'TRX Y-T-W.gif',
+    'TRX Y T W ANGLE 3': 'TRX Y-T-W.gif',
+    'TRX FACE PULL ANGLE 1': 'TRX Face Pull (Angle 1).gif',
+    'TRX FACE PULL ANGLE 2': 'TRX Face Pull (Angle 2).gif',
+    'TRX FACE PULL ANGLE 3': 'TRX Face Pull (Angle 3).gif',
     'L SIT PROGRESSION': 'Tuck Hold (Bars).gif',
     'L SIT TUCK (BARS)': 'Tuck Hold (Bars).gif',
     'TUCK HOLD (CHAIR)': 'Tuck Hold (Chair).gif',
@@ -288,10 +300,6 @@ const UI = (() => {
     '1KG': 'Dead Bug.gif',
     '2KG': 'Dead Bug.gif',
     '3KG': 'Dead Bug.gif',
-    'ANGLE 1': 'TRX Face Pull (Angle 1).gif',
-    'ANGLE 2': 'TRX Face Pull (Angle 2).gif',
-    'ANGLE 2 45': 'TRX Face Pull (Angle 2).gif',
-    'ANGLE 3': 'TRX Face Pull (Angle 3).gif',
     'FEET ELEVATED': 'TRX Row.gif',
     'HOLLOW HOLD': 'Hollow Body Hold.gif',
     'INCLINE DIAMOND': 'Diamond Push-Up.gif',
@@ -454,6 +462,19 @@ const UI = (() => {
     'ANGLE 1 (GENTLE)': 'TRX FACE PULL (ANGLE 1).png',
     'ANGLE 2 (MODERATE)': 'TRX FACE PULL (ANGLE 2).png',
     'ANGLE 3 (STEEP)': 'TRX FACE PULL (ANGLE 3).png',
+    'TRX ROW': 'TRX ROW.png',
+    'TRX ROW ANGLE 1': 'TRX ROW.png',
+    'TRX ROW ANGLE 2': 'TRX ROW.png',
+    'TRX ROW ANGLE 2 45': 'TRX ROW.png',
+    'TRX ROW ANGLE 3': 'TRX ROW.png',
+    'TRX ROW FEET ELEVATED': 'TRX ROW.png',
+    'TRX Y T W': 'TRX Y-T-W.png',
+    'TRX Y T W ANGLE 1': 'TRX Y-T-W.png',
+    'TRX Y T W ANGLE 2': 'TRX Y-T-W.png',
+    'TRX Y T W ANGLE 3': 'TRX Y-T-W.png',
+    'TRX FACE PULL ANGLE 1': 'TRX FACE PULL (ANGLE 1).png',
+    'TRX FACE PULL ANGLE 2': 'TRX FACE PULL (ANGLE 2).png',
+    'TRX FACE PULL ANGLE 3': 'TRX FACE PULL (ANGLE 3).png',
     'FEET ELEVATED': 'TRX ROW.png',
     'FEET ELEVATED PIKE HOLD': 'FEET-ELEVATED PIKE HOLD.png',
     'TUCK HOLD (CHAIR)': 'TUCK HOLD (CHAIR).png',
@@ -490,10 +511,6 @@ const UI = (() => {
     '1KG': 'DEAD BUG.png',
     '2KG': 'DEAD BUG.png',
     '3KG': 'DEAD BUG.png',
-    'ANGLE 1': 'TRX FACE PULL (ANGLE 1).png',
-    'ANGLE 2': 'TRX FACE PULL (ANGLE 2).png',
-    'ANGLE 2 45': 'TRX FACE PULL (ANGLE 2).png',
-    'ANGLE 3': 'TRX FACE PULL (ANGLE 3).png',
     'HOLLOW HOLD': 'HOLLOW BODY HOLD.png',
     'INCLINE DIAMOND': 'DIAMOND PUSH-UP.png',
     'L SIT': 'FULL L-SIT.png',
@@ -681,10 +698,10 @@ const UI = (() => {
     if (!title) return null;
     const cleanTitle = title.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
     if (cleanTitle.includes('MICRO MOBILITY A')) {
-      return encodeMediaPath('images/exercises/MICRO MOBILITY A.png') + '?v=135';
+      return encodeMediaPath('images/exercises/MICRO MOBILITY A.png') + '?v=136';
     }
     if (cleanTitle.includes('MICRO MOBILITY B')) {
-      return encodeMediaPath('images/exercises/MICRO MOBILITY B.png') + '?v=135';
+      return encodeMediaPath('images/exercises/MICRO MOBILITY B.png') + '?v=136';
     }
     if (cleanTitle === 'MICRO MOBILITY PROTOCOL' || cleanTitle === 'MICRO MOBILITY') {
       let currentDayIndex = dayIndex;
@@ -700,11 +717,11 @@ const UI = (() => {
         dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
       }
       const isVariantA = (dayNum === 3 || dayNum === 5);
-      return encodeMediaPath(isVariantA ? 'images/exercises/MICRO MOBILITY A.png' : 'images/exercises/MICRO MOBILITY B.png') + '?v=135';
+      return encodeMediaPath(isVariantA ? 'images/exercises/MICRO MOBILITY A.png' : 'images/exercises/MICRO MOBILITY B.png') + '?v=136';
     }
     const aliasPng = EXERCISE_PNG_ALIASES[cleanTitle];
     const path = aliasPng ? `images/exercises/${aliasPng}` : `images/exercises/${title.replace(/\//g, '-').toUpperCase()}.png`;
-    return encodeMediaPath(path) + '?v=135';
+    return encodeMediaPath(path) + '?v=136';
   }
 
   function getGifUrl(title) {
@@ -723,21 +740,43 @@ const UI = (() => {
   }
 
   function showImageModal(title, src, fallbackTitle) {
-    const pngPath = getImageUrl(title);
+    let effectiveTitle = title || '';
+    if (fallbackTitle) {
+      const fbClean = fallbackTitle.trim();
+      const tClean = effectiveTitle.trim();
+      // If title is just a generic stage/angle name, resolve using the base fallback exercise
+      if (/^(angle\s*\d+|feet-elevated|bodyweight|\d+\s*kg|band\s*\d+kg)/i.test(tClean)) {
+        if (fbClean.toLowerCase().includes('face pull')) {
+          effectiveTitle = `TRX Face Pull (${tClean})`;
+        } else {
+          effectiveTitle = fbClean;
+        }
+      }
+    }
+
+    const pngPath = getImageUrl(effectiveTitle);
     const fallbackAttr = fallbackTitle ? `data-fallback-exname="${fallbackTitle.replace(/"/g, '&quot;')}"` : '';
 
     let gifPath;
     if (src && src.includes('.gif')) {
-      gifPath = src;
+      const effLower = effectiveTitle.toLowerCase();
+      const srcLower = decodeURIComponent(src).toLowerCase();
+      // If src doesn't match the exercise (e.g. TRX Face Pull passed for TRX Row or TRX Y-T-W), recalculate
+      if ((effLower.includes('trx row') && !srcLower.includes('trx row')) ||
+          (effLower.includes('trx y-t-w') && !srcLower.includes('trx y-t-w'))) {
+        gifPath = getGifUrl(effectiveTitle);
+      } else {
+        gifPath = src;
+      }
     } else {
-      gifPath = getGifUrl(title);
+      gifPath = getGifUrl(effectiveTitle);
     }
-    const cleanTitle = (title || '').toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
-    const gifExists = hasGif(title) || (src && src.includes('.gif')) || !!EXERCISE_GIF_ALIASES[cleanTitle];
-    const equip = getEquipment(title);
+    const cleanTitle = (effectiveTitle || '').toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+    const gifExists = hasGif(effectiveTitle) || (gifPath && gifPath.includes('.gif')) || !!EXERCISE_GIF_ALIASES[cleanTitle];
+    const equip = getEquipment(effectiveTitle);
 
     let extraNote = '';
-    const lowerTitle = title.toLowerCase();
+    const lowerTitle = effectiveTitle.toLowerCase();
     if (lowerTitle.includes('chin-up') || lowerTitle.includes('pull-up')) {
       extraNote = `
         <div style="background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 10px; border: 1px solid rgba(59, 130, 246, 0.3); margin-top: 4px;">
@@ -760,12 +799,15 @@ const UI = (() => {
       `;
     }
 
-    const searchTitle = (title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const searchTitle = (effectiveTitle || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const fallbackSearch = (fallbackTitle || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     const exData = (window.TRAINING_DATA?.exercises || []).find(e => {
       const eClean = (e.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
       const idClean = (e.id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-      const hasStageMatch = (e.stages || []).some(s => s.toLowerCase().replace(/[^a-z0-9]/g, '') === searchTitle || searchTitle.includes(s.toLowerCase().replace(/[^a-z0-9]/g, '')));
-      return eClean === searchTitle || idClean === searchTitle || hasStageMatch || eClean.includes(searchTitle) || searchTitle.includes(eClean);
+      if (eClean === searchTitle || idClean === searchTitle) return true;
+      if (fallbackSearch && (eClean === fallbackSearch || idClean === fallbackSearch)) return true;
+      const hasStageMatch = (e.stages || []).some(s => s.toLowerCase().replace(/[^a-z0-9]/g, '') === searchTitle);
+      return hasStageMatch;
     });
 
     let metadataHTML = '';
@@ -839,7 +881,7 @@ const UI = (() => {
              class="modal-title-img skeleton-img"
              ${fallbackAttr}
              style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px; mix-blend-mode: multiply;" 
-             alt="${title}" 
+             alt="${effectiveTitle}" 
              loading="eager" 
              decoding="async" 
              onload="UI.handleImageLoaded(this)"
@@ -851,9 +893,9 @@ const UI = (() => {
       <div style="display: flex; align-items: center; gap: 16px; width: 100%;">
         ${headerBoxHTML}
         <div style="display: flex; flex-direction: column; gap: 6px; justify-content: center;">
-          <span style="font-size: 19px; font-weight: 900; color: var(--text-primary); line-height: 1.25;">${title}</span>
+          <span style="font-size: 19px; font-weight: 900; color: var(--text-primary); line-height: 1.25;">${effectiveTitle}</span>
           ${(() => {
-        const equips = getEquipments(title);
+        const equips = getEquipments(effectiveTitle);
         if (!equips || equips.length === 0) return '';
         return `<div style="display: flex; gap: 6px; flex-wrap: wrap;">` + equips.map(eq => `<span style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; background: var(--bg-elevated); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-light); width: max-content;">${eq.icon} ${eq.label}</span>`).join('') + `</div>`;
       })()}
@@ -942,7 +984,7 @@ const UI = (() => {
                class="skeleton-img"
                ${fallbackAttr}
                style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
-               alt="${title} GIF" 
+               alt="${effectiveTitle} GIF" 
                loading="eager" 
                decoding="async" 
                onload="UI.handleImageLoaded(this)"
@@ -959,7 +1001,7 @@ const UI = (() => {
                class="skeleton-img"
                ${fallbackAttr}
                style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
-               alt="${title}" 
+               alt="${effectiveTitle}" 
                loading="eager" 
                decoding="async" 
                onload="UI.handleImageLoaded(this)"
@@ -1328,29 +1370,39 @@ const UI = (() => {
     document.querySelectorAll('.timer-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const seconds = parseInt(e.currentTarget.dataset.time, 10) || 0;
-        let remaining = 0;
-        if (timerEndTime && timerEndTime > Date.now()) {
-          remaining = Math.round((timerEndTime - Date.now()) / 1000);
-        }
-        const newSeconds = remaining > 0 ? remaining + seconds : seconds;
-        if (newSeconds <= 0) {
-          // Immediately complete if time reduced to zero
-          stopTimer();
-          playTimerSound(true);
-          UI.toast(window.I18n ? I18n.t('rest_complete_toast') : 'Rest complete!', 'success');
-          if (typeof timerOnComplete === 'function') {
-            timerOnComplete();
-          }
-          timerOnComplete = null;
-          return;
-        }
-        // Update timer
-        timerTotalSeconds = Math.max(timerTotalSeconds, newSeconds);
-        startTimer(newSeconds, timerOnComplete);
+        addTimerSeconds(seconds);
       });
     });
 
     updateTimerButtonLabels();
+  }
+
+  function getTimerRemaining() {
+    if (timerEndTime && timerEndTime > Date.now()) {
+      return Math.max(0, Math.round((timerEndTime - Date.now()) / 1000));
+    }
+    return 0;
+  }
+
+  function isTimerActive() {
+    return !!(timerInterval && timerEndTime && timerEndTime > Date.now());
+  }
+
+  function addTimerSeconds(seconds) {
+    const remaining = getTimerRemaining();
+    const newSeconds = remaining > 0 ? remaining + seconds : seconds;
+    if (newSeconds <= 0) {
+      stopTimer();
+      playTimerSound(true);
+      UI.toast(window.I18n ? I18n.t('rest_complete_toast') : 'Rest complete!', 'success');
+      if (typeof timerOnComplete === 'function') {
+        timerOnComplete();
+      }
+      timerOnComplete = null;
+      return;
+    }
+    timerTotalSeconds = Math.max(timerTotalSeconds, newSeconds);
+    startTimer(newSeconds, timerOnComplete);
   }
 
   function startTimer(seconds, onComplete = null) {
@@ -1396,14 +1448,20 @@ const UI = (() => {
   function updateTimerDisplay(seconds) {
     const mins = Math.floor(Math.max(0, seconds) / 60);
     const secs = Math.max(0, seconds) % 60;
+    const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     const display = document.getElementById('rest-timer-display');
     if (display) {
-      display.textContent = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      display.textContent = timeStr;
     }
     const progressBar = document.getElementById('rest-timer-progress-bar');
     if (progressBar) {
       const pct = timerTotalSeconds > 0 ? Math.max(0, Math.min(100, (seconds / timerTotalSeconds) * 100)) : 0;
       progressBar.style.width = `${pct}%`;
+    }
+    // Update live in-modal rest timer display if modal is currently open
+    const modalTimerDisplay = document.getElementById('modal-rest-timer-val');
+    if (modalTimerDisplay) {
+      modalTimerDisplay.textContent = timeStr;
     }
   }
 
@@ -1862,11 +1920,14 @@ const UI = (() => {
     formatTempo,
     initTimer,
     startTimer,
+    stopTimer,
+    getTimerRemaining,
+    isTimerActive,
+    addTimerSeconds,
     hasGif,
     getImageUrl,
     getGifUrl,
     showImageModal,
-    stopTimer,
     speakVoiceCue,
     compressImage,
     EXERCISE_GIF_ALIASES,

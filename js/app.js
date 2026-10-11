@@ -270,7 +270,14 @@ const App = (() => {
 
       if ('serviceWorker' in navigator && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
         navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
-        if ('caches' in window) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+        if ('caches' in window) caches.keys().then(keys => keys.filter(k => k !== 'fitup-media-cache-v1').forEach(k => caches.delete(k)));
+      }
+      if ('caches' in window) {
+        caches.open('fitup-media-cache-v1').then(cache => {
+          ['images/exercises/DB GLUTE BRIDGE.png', 'images/exercises/DB%20GLUTE%20BRIDGE.png', 'images/exercises/DB HIP THRUST.png', 'images/exercises/DB%20HIP%20THRUST.png', 'images/exercises/WRIST ROCKS.png', 'images/exercises/WRIST%20ROCKS.png'].forEach(p => {
+            cache.delete(p, { ignoreSearch: true }).catch(() => {});
+          });
+        }).catch(() => {});
       } else if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
         navigator.serviceWorker.register('./sw.js')
           .then(reg => {
@@ -363,26 +370,12 @@ const App = (() => {
         }
       }
 
-      // Non-blocking background pull from cloud & token status verification
+      // Non-blocking background pull from cloud
       const savedUrl = await DB.getSetting('cloudSyncUrl');
       const hasOAuthToken = await CloudSync.isLoggedIn();
       if (savedUrl || hasOAuthToken) {
-        if (CloudSync.hasValidToken) {
-          const hasValid = await CloudSync.hasValidToken();
-          if (!hasValid && !savedUrl) {
-            // OAuth token is expired or missing. On page startup/reload, there is no user gesture,
-            // so requesting a token would trigger browser popup blocking.
-            // Mark reauth_needed so UI banner / cloud indicator shows the 1-click reconnect prompt.
-            console.log("CloudSync: OAuth token expired or unavailable on startup. Setting reauth_needed.");
-            if (CloudSync.setStatus) CloudSync.setStatus('reauth_needed');
-          } else {
-            console.log("Pulling latest data from cloud (background)...");
-            CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
-          }
-        } else if (savedUrl) {
-          console.log("Pulling latest data from cloud (background)...");
-          CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
-        }
+        console.log("Pulling latest data from cloud (background)...");
+        CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
       }
 
       // Load all plan data
@@ -438,6 +431,11 @@ const App = (() => {
       window.appCurrentPlanIndex = planIndex;
       // ----------------------------------
 
+      // Preload Today's workout media immediately with top priority
+      if (window.Preloader && typeof window.Preloader.preloadToday === 'function' && allPlanDays[planIndex]) {
+        window.Preloader.preloadToday(allPlanDays[planIndex].exercises);
+      }
+
       // Initialize page modules defensively
       if (window.TodayPage && window.TodayPage.init) {
         await window.TodayPage.init(allPlanDays);
@@ -459,6 +457,34 @@ const App = (() => {
 
       // Setup navigation
       setupNavigation();
+
+      // Start background smart cloud auto-sync (checks every 2 minutes for updates)
+      if (window.CloudSync && window.CloudSync.startAutoSync) {
+        window.CloudSync.startAutoSync(120000);
+      }
+
+      // Handle data update events (from cloud pull or other open tabs/windows)
+      if (window.CloudSync && window.CloudSync.onDataUpdate) {
+        window.CloudSync.onDataUpdate(async (source) => {
+          console.log('[App] Live data updated event received from:', source);
+          const activePage = document.querySelector('.page.active');
+          const activeId = activePage ? activePage.id : '';
+
+          if (activeId === 'page-stats') {
+            if (window.StatsPage && window.StatsPage.render) {
+              await window.StatsPage.render();
+            }
+          } else if (activeId === 'page-today' || activeId === 'page-nutrition') {
+            if (window.TodayPage && window.TodayPage.render) {
+              await window.TodayPage.render();
+            }
+          } else if (activeId === 'page-exercises') {
+            if (window.ExercisesPage && window.ExercisesPage.render) {
+              await window.ExercisesPage.render();
+            }
+          }
+        });
+      }
 
       // Setup settings
       setupSettings();
@@ -777,6 +803,8 @@ const App = (() => {
         break;
       case 'stats':
         if (window.StatsPage && window.StatsPage.render) window.StatsPage.render();
+        // Request wake lock so that leaving the dashboard open keeps screen on
+        requestWakeLock();
         break;
     }
   }
@@ -1801,26 +1829,62 @@ document.addEventListener('visibilitychange', async () => {
       window.TodayPage.render();
     }
 
-    // 3. Check token validity on app foreground
-    if (window.CloudSync && window.CloudSync.hasValidToken) {
-      const hasValid = await window.CloudSync.hasValidToken();
-      if (!hasValid && window.CloudSync.setStatus) {
-        window.CloudSync.setStatus('reauth_needed');
-      }
+    // 3. Proactive token check and sync on app foreground
+    if (window.CloudSync && window.CloudSync.proactiveRefreshIfExpiring) {
+      window.CloudSync.proactiveRefreshIfExpiring();
     }
 
     const savedUrl = await DB.getSetting('cloudSyncUrl');
     const hasOAuthToken = await CloudSync.isLoggedIn();
-    const hasValidToken = window.CloudSync && window.CloudSync.hasValidToken ? await window.CloudSync.hasValidToken() : true;
-    if (savedUrl || (hasOAuthToken && hasValidToken)) {
-      console.log("App foregrounded, pulling latest data...");
-      const result = await CloudSync.pullData();
-      if (result && result.success) {
-        // Always re-render TodayPage because it updates the global bottom navbar and the nutrition page
-        if (window.TodayPage && window.TodayPage.render) {
-          window.TodayPage.render();
-        }
+    if (savedUrl || hasOAuthToken) {
+      console.log("App foregrounded, checking latest data...");
+      if (window.CloudSync && window.CloudSync.checkAndPullIfUpdated) {
+        await window.CloudSync.checkAndPullIfUpdated();
+      } else {
+        await CloudSync.pullData();
+      }
+      const activeSection = document.querySelector('.page.active');
+      const activeId = activeSection ? activeSection.id : '';
+      if (activeId === 'page-stats' && window.StatsPage && window.StatsPage.render) {
+        window.StatsPage.render();
+      } else if (window.TodayPage && window.TodayPage.render) {
+        window.TodayPage.render();
       }
     }
   }
 });
+
+window.addEventListener('focus', async () => {
+  if (navigator.onLine && window.CloudSync && window.CloudSync.checkAndPullIfUpdated) {
+    await window.CloudSync.checkAndPullIfUpdated();
+  }
+});
+
+/**
+ * Manual trigger for Live Dashboard instant refresh
+ */
+window.refreshDashboardData = async function() {
+  const badgeText = document.getElementById('stats-live-status-text');
+  if (badgeText) badgeText.innerText = (window.I18n && window.I18n.t('syncing')) || 'מרענן...';
+  
+  try {
+    if (window.CloudSync && window.CloudSync.checkAndPullIfUpdated) {
+      await window.CloudSync.checkAndPullIfUpdated();
+    } else if (window.CloudSync && window.CloudSync.pullData) {
+      await window.CloudSync.pullData();
+    }
+    
+    if (window.StatsPage && window.StatsPage.render) {
+      await window.StatsPage.render();
+    }
+    
+    if (window.UI && window.UI.toast) {
+      UI.toast((window.I18n && window.I18n.t('dashboard_updated_toast')) || 'הדשבורד עודכן עם נתוני האימון האחרונים! ⚡', 'success');
+    }
+  } catch (e) {
+    console.error('Refresh dashboard error:', e);
+  } finally {
+    if (badgeText) badgeText.innerText = (window.I18n && window.I18n.t('dashboard_live_active')) || 'דשבורד חי';
+  }
+};
+

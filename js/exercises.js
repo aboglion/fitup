@@ -31,7 +31,7 @@ const ExercisesPage = (() => {
     'Goblet Romanian Deadlift': [{ weight: '6 kg', fromWeek: 1 }, { weight: '18 kg', fromWeek: 5 }, { weight: '24 kg', fromWeek: 10 }, { weight: '28 kg', fromWeek: 18 }, { weight: '32 kg', fromWeek: 34 }],
     'Single-Leg RDL': [{ weight: '6 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 42 }, { weight: '28 kg', fromWeek: 58 }, { weight: '32 kg', fromWeek: 74 }],
     'Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
-    'DB Glute Bridge': [{ weight: '9 kg', fromWeek: 1 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }, { weight: '28 kg', fromWeek: 66 }, { weight: '32 kg', fromWeek: 78 }],
+    'DB Glute Bridge': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 50 }, { weight: '28 kg', fromWeek: 66 }, { weight: '32 kg', fromWeek: 78 }],
     'Standing Single-Leg Calf Raise': [{ weight: '6 kg in hand', fromWeek: 3 }, { weight: '9 kg in hand', fromWeek: 10 }, { weight: '12 kg in hand', fromWeek: 18 }, { weight: '15 kg in hand', fromWeek: 34 }, { weight: '18 kg in hand', fromWeek: 42 }, { weight: '21 kg in hand', fromWeek: 50 }, { weight: '24 kg in hand', fromWeek: 58 }, { weight: '28 kg in hand', fromWeek: 66 }, { weight: '32 kg in hand', fromWeek: 78 }],
     'Seated Single-Leg Calf Raise': [{ weight: '6 kg on knee', fromWeek: 3 }, { weight: '9 kg on knee', fromWeek: 10 }, { weight: '12 kg on knee', fromWeek: 18 }, { weight: '15 kg on knee', fromWeek: 34 }, { weight: '18 kg on knee', fromWeek: 42 }, { weight: '21 kg on knee', fromWeek: 50 }, { weight: '24 kg on knee', fromWeek: 58 }, { weight: '28 kg on knee', fromWeek: 66 }, { weight: '32 kg on knee', fromWeek: 78 }],
     'Suitcase Carry': [{ weight: '12 kg', fromWeek: 4 }, { weight: '15 kg', fromWeek: 10 }, { weight: '18 kg', fromWeek: 18 }, { weight: '21 kg', fromWeek: 26 }, { weight: '24 kg', fromWeek: 53 }, { weight: '28 kg', fromWeek: 66 }, { weight: '32 kg', fromWeek: 78 }],
@@ -39,18 +39,18 @@ const ExercisesPage = (() => {
     // Dumbbell Upper Body - Push
     'Single-Arm Floor Press': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 18 }, { weight: '18 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 34 }, { weight: '24 kg', fromWeek: 42 }, { weight: '28 kg', fromWeek: 58 }, { weight: '32 kg', fromWeek: 74 }],
     'Single-Arm Seated OHP': [{ weight: '6 kg', fromWeek: 3 }, { weight: '9 kg', fromWeek: 18 }, { weight: '12 kg', fromWeek: 42 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 62 }, { weight: '28 kg', fromWeek: 70 }, { weight: '32 kg', fromWeek: 78 }],
-    'Single-Arm Lateral Raise': [{ weight: '3 kg', fromWeek: 3 }, { weight: '6 kg', fromWeek: 42 }, { weight: '9 kg', fromWeek: 53 }],
+    'Single-Arm Lateral Raise': [{ weight: '6 kg', fromWeek: 3 }, { weight: '9 kg', fromWeek: 42 }, { weight: '12 kg', fromWeek: 53 }],
     'DB Overhead Triceps Extension': [{ weight: '6 kg total', fromWeek: 3 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 34 }, { weight: '15 kg', fromWeek: 50 }, { weight: '18 kg', fromWeek: 53 }, { weight: '21 kg', fromWeek: 58 }, { weight: '24 kg', fromWeek: 66 }, { weight: '28 kg', fromWeek: 74 }, { weight: '32 kg', fromWeek: 80 }],
-    'Arm Block - Single-Arm Lateral Raise': [{ weight: '3-9 kg', fromWeek: 6 }, { weight: '9 kg', fromWeek: 74 }],
+    'Arm Block - Single-Arm Lateral Raise': [{ weight: '6-9 kg', fromWeek: 6 }, { weight: '9 kg', fromWeek: 74 }],
     'Arm Block - DB Overhead Triceps Ext': [{ weight: '6-15 kg', fromWeek: 6 }, { weight: '24 kg', fromWeek: 74 }, { weight: '32 kg', fromWeek: 80 }],
     'One-Arm DB Row': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 5 }, { weight: '12 kg', fromWeek: 10 }, { weight: '15 kg', fromWeek: 26 }, { weight: '21 kg', fromWeek: 42 }, { weight: '24 kg', fromWeek: 53 }, { weight: '28 kg', fromWeek: 66 }, { weight: '32 kg', fromWeek: 78 }],
     'TRX Row': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Diamond Push-Up': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '+5 kg', fromWeek: 62 }],
     'Push-Up Volume': [{ weight: 'Bodyweight', fromWeek: 3 }],
     'Push-Up Volume (Day 5)': [{ weight: 'Bodyweight', fromWeek: 3 }],
-    'Single-Arm Curl': [{ weight: '3 kg', fromWeek: 1 }, { weight: '6 kg', fromWeek: 10 }, { weight: '9 kg', fromWeek: 34 }, { weight: '12 kg', fromWeek: 58 }, { weight: '15 kg', fromWeek: 62 }, { weight: '18 kg', fromWeek: 66 }, { weight: '20 kg', fromWeek: 74 }],
-    'Single-Arm Hammer Curl': [{ weight: '3 kg', fromWeek: 3 }, { weight: '6 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 53 }, { weight: '18 kg', fromWeek: 66 }, { weight: '20 kg', fromWeek: 74 }],
-    'Arm Block - Single-Arm Curl': [{ weight: '3-12 kg', fromWeek: 6 }, { weight: '18 kg', fromWeek: 74 }, { weight: '20 kg', fromWeek: 80 }],
+    'Single-Arm Curl': [{ weight: '6 kg', fromWeek: 1 }, { weight: '9 kg', fromWeek: 34 }, { weight: '12 kg', fromWeek: 58 }, { weight: '15 kg', fromWeek: 62 }, { weight: '18 kg', fromWeek: 66 }, { weight: '20 kg', fromWeek: 74 }],
+    'Single-Arm Hammer Curl': [{ weight: '6 kg', fromWeek: 3 }, { weight: '9 kg', fromWeek: 10 }, { weight: '12 kg', fromWeek: 53 }, { weight: '18 kg', fromWeek: 66 }, { weight: '20 kg', fromWeek: 74 }],
+    'Arm Block - Single-Arm Curl': [{ weight: '6-12 kg', fromWeek: 6 }, { weight: '18 kg', fromWeek: 74 }, { weight: '20 kg', fromWeek: 80 }],
 
     // Bodyweight, Mobility, Warmup & Skill Progressions
     'Dead Bug': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '1 kg', fromWeek: 10 }, { weight: '2 kg', fromWeek: 26 }, { weight: '3 kg', fromWeek: 42 }],
@@ -180,7 +180,8 @@ const ExercisesPage = (() => {
       },
       {
         title: 'glutes_calves', icon: '🍑', exercises: [
-          { name: 'DB Glute Bridge', unlockWeek: 1, id: 'glute-1' },
+          { name: 'Glute Bridge', unlockWeek: 1, id: 'glute-0' },
+          { name: 'DB Glute Bridge', unlockWeek: 1, parentId: 'glute-0', id: 'glute-1', relType: 'replace' },
           { name: 'Standing Single-Leg Calf Raise', unlockWeek: 3, id: 'calf-1' },
           { name: 'Seated Single-Leg Calf Raise', unlockWeek: 3, parentId: 'calf-1', id: 'calf-2', relType: 'accessory' }
         ]
@@ -1087,13 +1088,16 @@ const ExercisesPage = (() => {
 
     let filtered = allExercises;
 
-    // Apply search
+    // Apply search (supports both English name/category and localized translations)
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(ex =>
-        ex.name.toLowerCase().includes(term) ||
-        (ex.category && ex.category.toLowerCase().includes(term))
-      );
+      filtered = filtered.filter(ex => {
+        const enMatch = ex.name.toLowerCase().includes(term);
+        const catMatch = ex.category && ex.category.toLowerCase().includes(term);
+        const localizedName = (typeof I18n !== 'undefined' && I18n.t) ? (I18n.t(ex.name) || '') : '';
+        const locMatch = localizedName.toLowerCase().includes(term);
+        return enMatch || catMatch || locMatch;
+      });
     }
 
     // Apply category filter
@@ -1116,6 +1120,19 @@ const ExercisesPage = (() => {
     container.innerHTML = filtered.map(ex => {
       return generateGuideCardHTML(ex);
     }).join('');
+
+    // Immediate check for images already cached in browser/SW to clear skeleton spinners without delay
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(() => {
+        container.querySelectorAll('.skeleton-img').forEach(img => {
+          if (img.complete && img.naturalWidth > 0) {
+            if (typeof UI !== 'undefined' && UI.handleImageLoaded) {
+              UI.handleImageLoaded(img);
+            }
+          }
+        });
+      });
+    }
   }
 
   /**
@@ -1274,14 +1291,40 @@ const ExercisesPage = (() => {
           <div style="display: flex; flex-direction: column; gap: 12px; position: relative;">
             <div style="position: absolute; left: 16px; top: 16px; bottom: 16px; width: 2px; background: rgba(255, 170, 0, 0.3); border-radius: 2px;"></div>
             ${ex.stages.map((stage, i) => {
-        const sImg = UI.getImageUrl(stage);
+        let stageImgKey = stage;
+        let stageGifKey = stage;
+        let stageTitle = stage;
+        const exLower = (ex.name || '').toLowerCase();
+        if (exLower.includes('trx row')) {
+          stageImgKey = 'TRX Row';
+          stageGifKey = 'TRX Row';
+          stageTitle = `TRX Row (${stage})`;
+        } else if (exLower.includes('trx y-t-w')) {
+          stageImgKey = 'TRX Y-T-W';
+          stageGifKey = 'TRX Y-T-W';
+          stageTitle = `TRX Y-T-W (${stage})`;
+        } else if (exLower.includes('trx face pull')) {
+          stageImgKey = `TRX Face Pull (${stage})`;
+          stageGifKey = `TRX Face Pull (${stage})`;
+          stageTitle = `TRX Face Pull (${stage})`;
+        } else if (exLower.includes('dead bug')) {
+          stageImgKey = 'Dead Bug';
+          stageGifKey = 'Dead Bug';
+          stageTitle = `Dead Bug (${stage})`;
+        } else if (exLower.includes('band pull-apart')) {
+          stageImgKey = 'Band Pull-Apart';
+          stageGifKey = 'Band Pull-Apart';
+          stageTitle = `Band Pull-Apart (${stage})`;
+        }
+        const sImg = UI.getImageUrl(stageImgKey);
+        const sGif = UI.getGifUrl(stageGifKey);
         return `
               <div style="display: flex; gap: 16px; align-items: center; position: relative; z-index: 1;">
                 <div style="width: 32px; height: 32px; border-radius: 50%; background: #111; border: 2px solid #ffaa00; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #ffaa00; flex-shrink: 0; box-shadow: 0 0 10px rgba(255, 170, 0, 0.4);">
                   ${i + 1}
                 </div>
                 <div style="flex: 1; background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; align-items: center; min-height: 56px; cursor: pointer;"
-                     onclick="UI.showImageModal('${stage.replace(/'/g, "\\'")}')">
+                     onclick="UI.showImageModal('${stageTitle.replace(/'/g, "\\'")}', '${sGif || ''}', '${(ex.name || '').replace(/'/g, "\\'")}')">
                   <span style="font-size: 14px; font-weight: 700; color: #fff;">${stage}</span>
                   <img src="${sImg}" style="width: 48px; height: 48px; border-radius: 6px; object-fit: contain; background: rgba(0,0,0,0.5);" onerror="this.style.display='none'">
                 </div>

@@ -7,7 +7,52 @@ const CloudSync = (() => {
   let syncTimeout = null;
   let currentStatus = 'idle'; // 'idle' | 'syncing' | 'synced' | 'reauth_needed' | 'offline' | 'error'
   const statusListeners = [];
+  const dataUpdateListeners = [];
+  let cachedDriveFileId = null;
+  let lastKnownCloudModified = null;
+  let autoSyncIntervalId = null;
   const FILE_NAME = 'fitup-data.json';
+
+  function onDataUpdate(callback) {
+    if (typeof callback === 'function') {
+      dataUpdateListeners.push(callback);
+    }
+  }
+
+  function notifyDataUpdated(source = 'unknown') {
+    dataUpdateListeners.forEach(cb => {
+      try { cb(source); } catch (e) { console.error('Data update listener error:', e); }
+    });
+    if (source !== 'broadcast') {
+      broadcastDataUpdate(source);
+    }
+  }
+
+  // Cross-tab / cross-window synchronization bus
+  let syncBroadcastChannel = null;
+  try {
+    if (typeof BroadcastChannel !== 'undefined') {
+      syncBroadcastChannel = new BroadcastChannel('fitup_sync_bus');
+      syncBroadcastChannel.onmessage = (event) => {
+        if (event.data && event.data.type === 'DATA_UPDATED') {
+          console.log('[CloudSync] Received cross-tab DATA_UPDATED message:', event.data.source);
+          notifyDataUpdated('broadcast');
+        }
+      };
+    }
+  } catch (e) {
+    console.warn('BroadcastChannel not supported:', e);
+  }
+
+  function broadcastDataUpdate(source = 'local') {
+    if (syncBroadcastChannel) {
+      try {
+        syncBroadcastChannel.postMessage({ type: 'DATA_UPDATED', source, ts: Date.now() });
+      } catch (e) {
+        console.warn('Broadcast error:', e);
+      }
+    }
+  }
 
   // Default Client ID for standard Google Identity Services (or configurable in DB)
   const DEFAULT_CLIENT_ID = '189174154188-blcjekhejsmenu6vg9ptt2e5pqnnfbv8.apps.googleusercontent.com'; 
@@ -39,10 +84,39 @@ const CloudSync = (() => {
   }
 
   /**
+   * Opportunistically refresh token during user gestures (click/tap) if expiring within 15 minutes
+   */
+  async function proactiveRefreshIfExpiring() {
+    try {
+      const hasUserActivation = typeof navigator !== 'undefined' && navigator.userActivation ? navigator.userActivation.isActive : false;
+      if (!hasUserActivation) return;
+
+      const token = await getAccessToken();
+      const profile = await getUserProfile();
+      if (!token || !profile || !profile.email) return;
+
+      const expiryTimestamp = await DB.getSetting('googleTokenExpiry');
+      // If token expires in less than 15 minutes (900 seconds) or is already expired
+      const shouldRefresh = !expiryTimestamp || (expiryTimestamp - Date.now() < 900000);
+      if (shouldRefresh) {
+        console.log('[CloudSync] Token nearing expiry during user interaction. Proactively refreshing in background...');
+        await trySilentRefresh();
+      }
+    } catch (e) {
+      console.debug('[CloudSync] Proactive refresh check skipped:', e);
+    }
+  }
+
+  /**
    * Schedule background sync (debounced 3s)
    */
   function scheduleSync() {
     if (syncTimeout) clearTimeout(syncTimeout);
+    broadcastDataUpdate('local');
+
+    // Opportunistically refresh token while user activation gesture is active
+    proactiveRefreshIfExpiring();
+
     syncTimeout = setTimeout(() => {
       syncData(false);
     }, 3000);
@@ -63,7 +137,8 @@ const CloudSync = (() => {
     await DB.setSetting('googleTokenExpired', false);
 
     const ttlSeconds = typeof expiresIn === 'number' && expiresIn > 0 ? expiresIn : parseInt(expiresIn, 10) || 3600;
-    const expiryTimestamp = Date.now() + (ttlSeconds - 120) * 1000;
+    // Keep 60s safety buffer before absolute expiry
+    const expiryTimestamp = Date.now() + Math.max(600, (ttlSeconds - 60)) * 1000;
     await DB.setSetting('googleTokenExpiry', expiryTimestamp);
 
     if (userProfile) {
@@ -104,22 +179,30 @@ const CloudSync = (() => {
       return await getAccessToken();
     }
 
+    const token = await getAccessToken();
     const profile = await getUserProfile();
-    if (profile && (profile.email || profile.name)) {
-      // In Google Identity Services (GIS), requesting a token ALWAYS opens a popup window.
-      // Browsers block popups unless initiated by an active user gesture (click/tap).
-      const hasUserActivation = typeof navigator !== 'undefined' && navigator.userActivation ? navigator.userActivation.isActive : false;
-      if (hasUserActivation) {
-        console.log('[CloudSync] Token expired with active user gesture. Attempting token refresh...');
-        const refreshed = await trySilentRefresh();
-        if (refreshed) {
-          return await getAccessToken();
-        }
-      } else {
-        console.log('[CloudSync] Token expired without active user gesture. Prompting re-auth instead of popup.');
-        setStatus('reauth_needed');
-        return null;
+    const isExplicitlyExpired = await DB.getSetting('googleTokenExpired');
+
+    // If active user gesture is present, proactively attempt silent GIS token renewal
+    const hasUserActivation = typeof navigator !== 'undefined' && navigator.userActivation ? navigator.userActivation.isActive : false;
+    if (hasUserActivation && profile && profile.email) {
+      console.log('[CloudSync] Token expired/near expiry with active user gesture. Attempting token refresh...');
+      const refreshed = await trySilentRefresh();
+      if (refreshed) {
+        return await getAccessToken();
       }
+    }
+
+    // If token exists and was not explicitly rejected with 401, allow using it for API call
+    // rather than preemptively failing and disconnecting!
+    if (token && token.length > 10 && !isExplicitlyExpired) {
+      console.log('[CloudSync] Token TTL near limit, attempting API call before disconnecting...');
+      return token;
+    }
+
+    if (profile && (profile.email || profile.name)) {
+      console.log('[CloudSync] Token missing or expired without active user gesture. Setting reauth_needed.');
+      setStatus('reauth_needed');
     }
 
     return null;
@@ -131,6 +214,7 @@ const CloudSync = (() => {
   async function handleTokenExpired() {
     await DB.setSetting('googleAccessToken', null);
     await DB.setSetting('googleTokenExpired', true);
+    await DB.setSetting('googleTokenExpiry', 0);
     setStatus('reauth_needed');
     promptReauth();
   }
@@ -148,8 +232,8 @@ const CloudSync = (() => {
     // browsers automatically block the popup and log [GSI_LOGGER] popup blocked.
     const hasUserActivation = typeof navigator !== 'undefined' && navigator.userActivation ? navigator.userActivation.isActive : false;
     if (typeof navigator !== 'undefined' && navigator.userActivation && !hasUserActivation) {
-      console.log('[CloudSync] Skipping GIS popup request without user gesture. Setting reauth_needed.');
-      setStatus('reauth_needed');
+      console.log('[CloudSync] Skipping GIS popup request without user gesture.');
+      // Do not prematurely set reauth_needed here; current token may still be usable
       return false;
     }
 
@@ -234,9 +318,10 @@ const CloudSync = (() => {
    * Find existing fitup-data.json file ID in Google Drive
    */
   async function findDriveFileId(token) {
+    if (cachedDriveFileId) return cachedDriveFileId;
     try {
       const q = encodeURIComponent(`name = '${FILE_NAME}' and trashed = false`);
-      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`, {
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,modifiedTime)`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.status === 401) {
@@ -244,7 +329,14 @@ const CloudSync = (() => {
       }
       if (!res.ok) return null;
       const data = await res.json();
-      return data.files && data.files.length > 0 ? data.files[0].id : null;
+      if (data.files && data.files.length > 0) {
+        cachedDriveFileId = data.files[0].id;
+        if (data.files[0].modifiedTime && !lastKnownCloudModified) {
+          lastKnownCloudModified = data.files[0].modifiedTime;
+        }
+        return data.files[0].id;
+      }
+      return null;
     } catch (e) {
       console.error('Find Drive file error:', e);
       return null;
@@ -374,7 +466,16 @@ const CloudSync = (() => {
       const timestamp = new Date().toISOString();
       await DB.setSetting('lastSyncDate', timestamp);
       await DB.setSetting('pendingSyncQueue', false);
+      const resJson = await res.json().catch(() => null);
+      if (resJson && resJson.id) {
+        cachedDriveFileId = resJson.id;
+      }
+      if (resJson && resJson.modifiedTime) {
+        lastKnownCloudModified = resJson.modifiedTime;
+        await DB.setSetting('lastKnownCloudModifiedTime', resJson.modifiedTime);
+      }
       setStatus('synced');
+      broadcastDataUpdate('local');
 
       if (manual && typeof UI !== 'undefined' && UI.toast) UI.toast('הנתונים נשמרו בהצלחה ב-Google Drive! ☁️', 'success');
       return { success: true, timestamp };
@@ -422,6 +523,7 @@ const CloudSync = (() => {
           await DB.importData(data, true);
           if (window.I18n && window.I18n.init) await window.I18n.init();
           setStatus('synced');
+          notifyDataUpdated('cloud');
           return { success: true };
         }
       }
@@ -455,6 +557,7 @@ const CloudSync = (() => {
         await DB.importData(data, true);
         if (window.I18n && window.I18n.init) await window.I18n.init();
         setStatus('synced');
+        notifyDataUpdated('cloud');
         return { success: true };
       }
       setStatus('error', 'Invalid data');
@@ -746,6 +849,99 @@ const CloudSync = (() => {
     return 'local';
   }
 
+  /**
+   * Smart lightweight polling: checks file metadata on Google Drive first
+   */
+  async function checkAndPullIfUpdated() {
+    if (!navigator.onLine) return false;
+    if (isSyncing) return false;
+
+    const token = await ensureValidToken();
+    const legacyUrl = await DB.getSetting('cloudSyncUrl');
+
+    if (!token && !legacyUrl) return false;
+
+    try {
+      if (token) {
+        const fileIdResult = await findDriveFileId(token);
+        if (fileIdResult && fileIdResult.error === 401) {
+          await handleTokenExpired();
+          return false;
+        }
+
+        const fileId = typeof fileIdResult === 'string' ? fileIdResult : (fileIdResult && fileIdResult.id ? fileIdResult.id : null);
+        if (!fileId) return false;
+
+        const metaRes = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,modifiedTime,version`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        if (metaRes.status === 401) {
+          await handleTokenExpired();
+          return false;
+        }
+
+        if (metaRes.status === 404) {
+          cachedDriveFileId = null;
+          return false;
+        }
+
+        if (!metaRes.ok) return false;
+
+        const meta = await metaRes.json();
+        const driveModified = meta.modifiedTime;
+
+        if (!lastKnownCloudModified) {
+          lastKnownCloudModified = await DB.getSetting('lastKnownCloudModifiedTime') || await DB.getSetting('lastSyncDate');
+        }
+
+        if (driveModified && driveModified !== lastKnownCloudModified) {
+          console.log('[CloudSync] Newer data found on Google Drive:', driveModified, 'Local was:', lastKnownCloudModified);
+          const pullResult = await pullData();
+          if (pullResult && pullResult.success) {
+            lastKnownCloudModified = driveModified;
+            await DB.setSetting('lastKnownCloudModifiedTime', driveModified);
+            return true;
+          }
+        }
+      } else if (legacyUrl) {
+        const pullResult = await pullData();
+        return Boolean(pullResult && pullResult.success);
+      }
+    } catch (e) {
+      console.warn('[CloudSync] Check update error:', e);
+    }
+    return false;
+  }
+
+  /**
+   * Start periodic auto-sync polling
+   */
+  function startAutoSync(intervalMs = 120000) {
+    if (autoSyncIntervalId) clearInterval(autoSyncIntervalId);
+
+    // Initial check after short delay
+    setTimeout(() => {
+      checkAndPullIfUpdated();
+    }, 10000);
+
+    autoSyncIntervalId = setInterval(() => {
+      if (document.visibilityState === 'visible' && navigator.onLine) {
+        checkAndPullIfUpdated();
+      }
+    }, intervalMs);
+  }
+
+  /**
+   * Stop periodic auto-sync polling
+   */
+  function stopAutoSync() {
+    if (autoSyncIntervalId) {
+      clearInterval(autoSyncIntervalId);
+      autoSyncIntervalId = null;
+    }
+  }
+
   return {
     syncData,
     pullData,
@@ -757,6 +953,7 @@ const CloudSync = (() => {
     hasValidToken,
     ensureValidToken,
     trySilentRefresh,
+    proactiveRefreshIfExpiring,
     getUserProfile,
     logout,
     loginWithGoogle,
@@ -766,7 +963,13 @@ const CloudSync = (() => {
     showConflictModal,
     checkAndResolveConflict,
     handleOAuthRedirect,
-    isStandalone
+    isStandalone,
+    checkAndPullIfUpdated,
+    startAutoSync,
+    stopAutoSync,
+    onDataUpdate,
+    notifyDataUpdated,
+    broadcastDataUpdate
   };
 })();
 

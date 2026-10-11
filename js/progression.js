@@ -645,25 +645,21 @@
     // ----------------------------
     createInitialState(exerciseId, allProgressionStates = {}) {
       const exercise = this.getExercise(exerciseId);
-      let startWeight = exercise ? (exercise.startingWeight || 3) : 3;
+      const isWeightedEx = exercise && (exercise.type === 'weighted' || exercise.startingWeight != null);
+      let startWeight = isWeightedEx ? (exercise.startingWeight || 6) : 0;
 
-      // Parent weight inheritance mapping for direct replacements
+      // Parent weight inheritance mapping for direct replacements (strictly weighted-to-weighted)
       const parentIdMap = {
-        'db-glute-bridge': ['glute-bridge', 'glute-1'],
         'single-leg-rdl': ['goblet-rdl', 'rdl-1'],
-        'pistol-squat': ['heels-elevated-goblet-squat', 'goblet-bulgarian-split-squat', 'lunge-1'],
-        'heels-elevated-goblet-squat': ['bodyweight-squat', 'squat-1'],
-        'goblet-bulgarian-split-squat': ['bodyweight-squat', 'squat-1'],
-        'weighted-deficit-push-up': ['deficit-push-up', 'push-up-progression', 'push-1'],
-        'weighted-pull-up': ['pull-up-overhand', 'pull-up-progression', 'pull-1'],
-        'weighted-chin-up': ['chin-up', 'chin-up-progression', 'pull-1b']
+        'pistol-squat': ['heels-elevated-goblet-squat', 'goblet-bulgarian-split-squat', 'lunge-1']
       };
 
       const candidateParents = parentIdMap[exerciseId];
-      if (candidateParents && allProgressionStates) {
+      if (candidateParents && allProgressionStates && isWeightedEx) {
         for (let pId of candidateParents) {
           const parentState = allProgressionStates[pId];
-          if (parentState && parentState.currentWeightKg > 0) {
+          const parentDef = this.getExercise(pId);
+          if (parentDef && (parentDef.type === 'weighted' || parentDef.startingWeight != null) && parentState && parentState.currentWeightKg > 0) {
             startWeight = parentState.currentWeightKg;
             break;
           }

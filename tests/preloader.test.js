@@ -43,4 +43,25 @@ test('Preloader - All media URLs returned by Preloader exist on disk (zero 404s)
   });
 
   assert.deepEqual(missingUrls, [], `All preloaded URLs must exist on disk. Found missing 404 URLs: ${missingUrls.join(', ')}`);
+
+  // Verify priority ordering: PNGs come before heavy GIFs
+  const firstGifIndex = urls.findIndex(u => u.endsWith('.gif'));
+  const firstPngIndex = urls.findIndex(u => u.endsWith('.png'));
+  assert.ok(firstPngIndex < firstGifIndex, 'PNGs must be prioritized ahead of GIFs in the queue');
+
+  const walkingGifIndex = urls.findIndex(u => u.includes('Relaxed Walking.gif'));
+  assert.ok(walkingGifIndex > urls.length - 20, 'Heavy 17MB GIF should be positioned towards the end of the queue');
+
+  // Verify preloadToday API
+  assert.equal(typeof window.Preloader.preloadToday, 'function', 'preloadToday is a function');
+  assert.equal(typeof window.Preloader.getProgress, 'function', 'getProgress is a function');
+  const progress = window.Preloader.getProgress();
+  assert.ok('completed' in progress && 'total' in progress && 'isDone' in progress, 'getProgress returns valid progress schema');
+});
+
+test('Service Worker - Uses dedicated MEDIA_CACHE and Cache-First strategy for images', () => {
+  const swCode = fs.readFileSync(path.join(__dirname, '../sw.js'), 'utf8');
+  assert.ok(swCode.includes("MEDIA_CACHE = 'fitup-media-cache-v1'"), 'SW defines MEDIA_CACHE');
+  assert.ok(swCode.includes("caches.match(event.request, { ignoreSearch: true })"), 'SW checks cache first for images');
+  assert.ok(swCode.includes("cacheName !== MEDIA_CACHE"), 'SW preserves MEDIA_CACHE on activate');
 });

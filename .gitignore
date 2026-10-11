@@ -1,1 +1,4 @@
 apps_script_code.js
+__pycache__/
+*.pyc
+*.pyo

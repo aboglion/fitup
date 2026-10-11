@@ -3,8 +3,61 @@
  * Handles English (Default), Hebrew, and Arabic translations, directions, and DOM updates.
  */
 const I18n = (() => {
-  // English is DEFAULT
-  let currentLang = 'en';
+  /**
+   * Detect language from phone/browser:
+   * Hebrew ('he', 'iw') -> 'he'
+   * Arabic ('ar') -> 'ar'
+   * Otherwise -> 'en'
+   */
+  function detectDeviceLanguage() {
+    try {
+      if (typeof navigator !== 'undefined') {
+        const candidates = [];
+        if (Array.isArray(navigator.languages) && navigator.languages.length > 0) {
+          for (let i = 0; i < navigator.languages.length; i++) {
+            candidates.push(navigator.languages[i]);
+          }
+        }
+        if (navigator.language) candidates.push(navigator.language);
+        if (navigator.userLanguage) candidates.push(navigator.userLanguage);
+        if (navigator.browserLanguage) candidates.push(navigator.browserLanguage);
+
+        for (let i = 0; i < candidates.length; i++) {
+          const raw = candidates[i];
+          if (!raw || typeof raw !== 'string') continue;
+          const code = raw.toLowerCase().trim();
+          if (!code) continue;
+
+          if (code.startsWith('he') || code.startsWith('iw')) {
+            return 'he';
+          }
+          if (code.startsWith('ar')) {
+            return 'ar';
+          }
+          // Primary language candidate is neither Hebrew nor Arabic -> default to English
+          return 'en';
+        }
+      }
+    } catch (e) {
+      // fallback on error
+    }
+    return 'en';
+  }
+
+  function getInitialLanguage() {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const saved = localStorage.getItem('fitup_language');
+        if (saved && (saved === 'en' || saved === 'he' || saved === 'ar')) {
+          return saved;
+        }
+      }
+    } catch (e) {}
+    return detectDeviceLanguage();
+  }
+
+  // Active language initialized from saved choice or device/browser language
+  let currentLang = getInitialLanguage();
 
   const CONFIG = {
     en: {
@@ -290,6 +343,9 @@ const I18n = (() => {
       anatomy_open_guide: "Open Exercise Guide",
       anatomy_muscle_map: "Muscle Map",
       progress_title: "Progress & Stats",
+      dashboard_live_active: "Live Dashboard",
+      dashboard_live_tooltip: "Live Dashboard — automatically updates after each workout via cloud or between open tabs",
+      dashboard_updated_toast: "Dashboard updated with latest workout data! ⚡",
       muscle_map_title: "Muscle Progression Map",
       workout_consistency: "Workout Consistency",
       total_workouts: "Total Workouts",
@@ -1493,6 +1549,9 @@ const I18n = (() => {
       anatomy_open_guide: "פתח את מדריך התרגילים",
       anatomy_muscle_map: "מפת שרירים",
       progress_title: "התקדמות",
+      dashboard_live_active: "דשבורד חי",
+      dashboard_live_tooltip: "דשבורד חי — מתעדכן אוטומטית בענן לאחר כל אימון, ומיידית בין חלונות פתוחים",
+      dashboard_updated_toast: "הדשבורד עודכן עם נתוני האימון האחרונים! ⚡",
       muscle_map_title: "מפת התקדמות שרירים",
       workout_consistency: "עקביות אימונים",
       total_workouts: "סך הכל אימונים",
@@ -2831,6 +2890,9 @@ const I18n = (() => {
       anatomy_open_guide: "افتح دليل التمارين",
       anatomy_muscle_map: "خريطة العضلات",
       progress_title: "التقدم والإحصائيات",
+      dashboard_live_active: "لوحة تحكم حية",
+      dashboard_live_tooltip: "لوحة تحكم حية — يتم تحديثها تلقائيًا بعد كل تمرين عبر السحابة أو بين النوافذ المفتوحة",
+      dashboard_updated_toast: "تم تحديث لوحة التحكم بأحدث بيانات التمرين! ⚡",
       muscle_map_title: "خريطة تطور العضلات",
       workout_consistency: "الاستمرارية في التمارين",
       total_workouts: "إجمالي التمارين",
@@ -3442,7 +3504,7 @@ const I18n = (() => {
   };
 
   /**
-   * Initialize language from database or default to 'en'
+   * Initialize language from database or default to phone/browser language
    */
   async function init() {
     let saved = null;
@@ -3450,20 +3512,44 @@ const I18n = (() => {
       try {
         saved = await DB.getSetting('language');
       } catch (e) {
-        console.warn('I18n: Failed to fetch language from DB, defaulting to en', e);
+        console.warn('I18n: Failed to fetch language from DB', e);
       }
     }
 
-    currentLang = (saved && CONFIG[saved]) ? saved : 'en';
+    if (!saved) {
+      try {
+        if (typeof localStorage !== 'undefined') {
+          saved = localStorage.getItem('fitup_language');
+        }
+      } catch (e) {}
+    }
+
+    if (saved && CONFIG[saved]) {
+      currentLang = saved;
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('fitup_language', saved);
+        }
+      } catch (e) {}
+    } else {
+      currentLang = detectDeviceLanguage();
+    }
     applyToDOM();
   }
 
   /**
-   * Set active language and save choice
+   * Set active language and save choice in user settings
    */
   async function setLanguage(lang) {
     if (!CONFIG[lang]) return;
     currentLang = lang;
+
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('fitup_language', lang);
+      }
+    } catch (e) {}
+
     if (window.DB && window.DB.setSetting) {
       await DB.setSetting('language', lang);
     }
@@ -3561,6 +3647,7 @@ const I18n = (() => {
   return {
     init,
     setLanguage,
+    detectDeviceLanguage,
     t,
     getLang: () => currentLang,
     getDir: () => (CONFIG[currentLang] ? CONFIG[currentLang].dir : 'ltr'),

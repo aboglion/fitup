@@ -1,4 +1,5 @@
-const CACHE_NAME = 'fitup-v174-v15.7-accelerated';
+const CACHE_NAME = 'fitup-v177-v15.7-accelerated';
+const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
   './index.html',
@@ -43,17 +44,54 @@ self.addEventListener('install', (event) => {
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            return caches.delete(cacheName);
+    (async () => {
+      const mediaCache = await caches.open(MEDIA_CACHE);
+      // Evict previously cached versions with white backgrounds
+      try {
+        const staleUrls = [
+          'images/exercises/DB GLUTE BRIDGE.png',
+          'images/exercises/DB%20GLUTE%20BRIDGE.png',
+          'images/exercises/DB HIP THRUST.png',
+          'images/exercises/DB%20HIP%20THRUST.png',
+          'images/exercises/WRIST ROCKS.png',
+          'images/exercises/WRIST%20ROCKS.png'
+        ];
+        const mediaRequests = await mediaCache.keys();
+        for (const req of mediaRequests) {
+          if (staleUrls.some(u => req.url && req.url.includes(u))) {
+            await mediaCache.delete(req);
           }
-        })
-      );
-    })
+        }
+      } catch (_) {}
+
+      const cacheNames = await caches.keys();
+      for (const cacheName of cacheNames) {
+        if (cacheName !== CACHE_NAME && cacheName !== MEDIA_CACHE) {
+          // Migrate any existing media assets to persistent MEDIA_CACHE before deleting old app-shell cache
+          try {
+            const oldCache = await caches.open(cacheName);
+            const requests = await oldCache.keys();
+            for (const req of requests) {
+              if (req.url && (req.url.includes('/images/') || req.url.includes('.gif') || req.url.includes('.png') || req.url.includes('.webp'))) {
+                // Do not migrate stale white-background assets
+                if (req.url.includes('GLUTE') || req.url.includes('ROCKS') || req.url.includes('THRUST')) {
+                  continue;
+                }
+                const res = await oldCache.match(req);
+                if (res) {
+                  await mediaCache.put(req, res);
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('[SW] Migration from old cache failed:', cacheName, e);
+          }
+          await caches.delete(cacheName);
+        }
+      }
+      await self.clients.claim();
+    })()
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
@@ -73,25 +111,27 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-First with Cache Fallback for media assets (images, gifs, webp)
+  // Cache-First with Network Fallback for media assets (images, gifs, webp)
   if (url.includes('/images/')) {
     event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseToCache).catch(() => { });
-            }).catch(() => { });
-          }
-          return response;
-        })
-        .catch(() => {
-          return caches.match(event.request, { ignoreSearch: true }).then((fallback) => {
-            if (fallback) return fallback;
+      caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const responseToCache = networkResponse.clone();
+              caches.open(MEDIA_CACHE).then((cache) => {
+                cache.put(event.request, responseToCache).catch(() => { });
+              }).catch(() => { });
+            }
+            return networkResponse;
+          })
+          .catch(() => {
             return new Response('', { status: 404, statusText: 'Not Found' });
           });
-        })
+      })
     );
     return;
   }

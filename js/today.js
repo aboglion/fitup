@@ -310,12 +310,10 @@ const TodayPage = (() => {
         }
       }
 
-      // Parent State Inheritance: If state is missing for direct replacement exercises (e.g. Glute Bridge -> DB Glute Bridge)
+      // Parent State Inheritance: Only for true weighted-to-weighted replacements
       if (!state) {
         const parentIdMap = {
-          'weighted-deficit-push-up': ['deficit-push-up', 'push-up-progression', 'push-1'],
-          'weighted-pull-up': ['pull-up-overhand', 'pull-up-progression', 'pull-1'],
-          'weighted-chin-up': ['chin-up', 'chin-up-progression', 'pull-1b']
+          'single-leg-rdl': ['goblet-rdl', 'rdl-1']
         };
         const candidateParents = parentIdMap[exId];
         if (candidateParents) {
@@ -345,6 +343,15 @@ const TodayPage = (() => {
         const startW = exDef?.startingWeight || extractNumericWeight(ex.weight) || minW || 6;
         let currentW = (state && state.currentWeightKg != null && state.currentWeightKg > 0) ? state.currentWeightKg : startW;
         currentW = Math.max(minW, currentW);
+
+        // Auto-heal stale states in IndexedDB that are below minWeight or below startingWeight
+        if (state && state.currentWeightKg != null && state.currentWeightKg < minW) {
+          state.currentWeightKg = currentW;
+          if (window.DB && window.DB.saveProgressionState) {
+            DB.saveProgressionState(state).catch(e => console.warn('[Today] Failed to auto-heal progression state:', e));
+          }
+        }
+
         const deloadRed = window.TRAINING_DATA?.progressionSettings?.deloadWeightReductionKg || 2;
         const targetW = (isDeload || day.autoDeload) ? Math.max(minW, currentW - deloadRed) : currentW;
 
@@ -365,6 +372,36 @@ const TodayPage = (() => {
         ex.currentStageName = stageName;
       }
     }
+  }
+
+  /**
+   * Resolve active visual asset name and modal title for an exercise.
+   * Exercises like TRX Row, TRX Y-T-W, Dead Bug, Band Pull-Apart use their base movement GIF & image,
+   * while TRX Face Pull uses angle-specific assets, and progression tree exercises use their current stage.
+   */
+  function getActiveExerciseName(ex) {
+    if (!ex) return '';
+    const exName = ex.name || '';
+    const stageName = ex.currentStageName;
+    if (!stageName) return exName;
+
+    const lower = exName.toLowerCase();
+    if (lower.includes('trx row') || lower.includes('trx y-t-w') || lower.includes('dead bug') || lower.includes('band pull-apart')) {
+      return exName;
+    }
+
+    if (lower.includes('trx face pull')) {
+      if (stageName.toLowerCase().startsWith('angle')) {
+        return `TRX Face Pull (${stageName})`;
+      }
+      return 'TRX Face Pull';
+    }
+
+    if (/^(angle\s*\d+|feet-elevated|bodyweight|\d+\s*kg|band\s*\d+kg)/i.test(stageName.trim())) {
+      return exName;
+    }
+
+    return stageName;
   }
 
   /**
@@ -3255,7 +3292,7 @@ const TodayPage = (() => {
         setsHTML += '</div>';
       }
 
-      const activeName = ex.currentStageName || ex.name;
+      const activeName = getActiveExerciseName(ex);
       const gifPath = UI.getGifUrl(activeName);
       let videoBtn = '';
       if (!ex.name.toLowerCase().includes('walking')) {
@@ -3555,6 +3592,19 @@ const TodayPage = (() => {
         </div>
       `;
     }).join('');
+
+    // Immediate check for images already cached in browser/SW to clear skeleton spinners without delay
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(() => {
+        container.querySelectorAll('.skeleton-img').forEach(img => {
+          if (img.complete && img.naturalWidth > 0) {
+            if (typeof UI !== 'undefined' && UI.handleImageLoaded) {
+              UI.handleImageLoaded(img);
+            }
+          }
+        });
+      });
+    }
   }
 
   /**
@@ -4198,8 +4248,29 @@ const TodayPage = (() => {
     }
 
     const wasAlreadyDone = !!exData[`set_${setIdx}_done`];
+    const prevOutcome = exData[`set_${setIdx}_result`];
     exData[`set_${setIdx}_result`] = outcome;
     exData[`set_${setIdx}_done`] = true;
+
+    // Handle adaptive rest adjustments when switching outcome
+    if (wasAlreadyDone) {
+      if (outcome === 'below' && prevOutcome !== 'below' && !currentTracking.completed) {
+        if (window.UI && window.UI.addTimerSeconds) {
+          window.UI.addTimerSeconds(30);
+        } else if (window.RestTimerController && window.RestTimerController.addTime) {
+          window.RestTimerController.addTime(30);
+        }
+        if (window.UI && window.UI.toast) {
+          UI.toast(`${I18n.t('adaptive_rest_label')}: +30s`, 'warning');
+        }
+      } else if (prevOutcome === 'below' && outcome !== 'below' && !currentTracking.completed) {
+        if (window.UI && window.UI.addTimerSeconds) {
+          window.UI.addTimerSeconds(-30);
+        } else if (window.RestTimerController && window.RestTimerController.addTime) {
+          window.RestTimerController.addTime(-30);
+        }
+      }
+    }
 
     // Trigger 3D Visual Particle & Synthesizer Audio Effect for Set Completion
     if (window.Effects3D) {
@@ -4236,11 +4307,11 @@ const TodayPage = (() => {
 
     if (allSetsDone) {
       // Trigger 3D Stage & Fanfare Effect for Exercise Completion
-      if (window.Effects3D) {
+      if (window.Effects3D && !wasAlreadyDone) {
         window.Effects3D.triggerExerciseEffect(ex.name);
       }
       handleExerciseCompleted(exIdx, day);
-      if (currentTracking.completed) {
+      if (currentTracking.completed && (wasAlreadyDone || isNoModalExercise(ex))) {
         showWorkoutCelebration(day);
       }
     } else if (exData[`set_${setIdx}_done`] && !wasAlreadyDone) {
@@ -4259,18 +4330,24 @@ const TodayPage = (() => {
   }
 
   /**
-   * 1-Tap Set Completion handler:
-   * If not completed: instantly completes set as 'in_window' with feedback.
-   * If already completed: opens modal to allow switching outcome (above/in_window/below) or resetting.
+   * Set Completion handler:
+   * First click: completes set, starts rest timer, AND opens effort rating modal simultaneously (if exercise has rating).
+   * Subsequent click on completed set: opens modal to allow switching outcome (above/in_window/below) or resetting.
    */
   async function handleSetClick(exIdx, setIdx, triggerEl) {
     if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
 
+    const day = allPlanDays[currentDayIndex];
+    const ex = day ? day.exercises[exIdx] : null;
     const setData = (currentTracking.setData && currentTracking.setData[exIdx]) || {};
     const isAlreadyDone = setData[`set_${setIdx}_done`];
 
     if (!isAlreadyDone) {
+      const hasRating = !isNoModalExercise(ex);
       await selectSetOutcome(exIdx, setIdx, 'in_window', triggerEl);
+      if (hasRating) {
+        openSetOutcomeModal(exIdx, setIdx, true);
+      }
     } else {
       openSetOutcomeModal(exIdx, setIdx);
     }
@@ -4279,7 +4356,7 @@ const TodayPage = (() => {
   /**
    * Open Set Outcome Modal ("How was Set #X?")
    */
-  function openSetOutcomeModal(exIdx, setIdx) {
+  function openSetOutcomeModal(exIdx, setIdx, isInitial = false) {
     if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
 
     const day = allPlanDays[currentDayIndex];
@@ -4300,11 +4377,11 @@ const TodayPage = (() => {
     const currentResult = setData[`set_${setIdx}_result`];
     const isAlreadyDone = setData[`set_${setIdx}_done`];
 
-    const title = (isAlreadyDone || currentResult)
+    const title = (isAlreadyDone && !isInitial)
       ? `⚡ ${I18n.t('change_set_outcome_title')} (${I18n.t('set_label', 'סט')} ${setIdx + 1})`
       : `⚡ ${I18n.t('set_outcome_modal_title', '', { set: setIdx + 1 })}`;
 
-    const descText = (isAlreadyDone || currentResult)
+    const descText = (isAlreadyDone && !isInitial)
       ? I18n.t('change_set_outcome_desc')
       : I18n.t('set_outcome_prompt');
 
@@ -4316,12 +4393,28 @@ const TodayPage = (() => {
       </button>
     ` : '';
 
+    // Live rest timer indicator inside modal
+    let timerBadgeHTML = '';
+    const remSeconds = (window.UI && window.UI.getTimerRemaining) ? window.UI.getTimerRemaining() : 0;
+    if (remSeconds > 0) {
+      const mins = Math.floor(remSeconds / 60);
+      const secs = remSeconds % 60;
+      const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      timerBadgeHTML = `
+        <div class="modal-timer-pill" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: rgba(16, 185, 129, 0.12); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 9999px; padding: 5px 16px; margin: 0 auto 14px auto; color: var(--accent-primary, #10b981); font-weight: 700; font-size: 13px;">
+          <span>⏱️ ${I18n.t('rest_timer', 'טיימר מנוחה')}:</span>
+          <span id="modal-rest-timer-val" style="font-family: monospace; font-size: 15px; font-weight: 800;" dir="ltr">${timeStr}</span>
+        </div>
+      `;
+    }
+
     const modalHTML = `
       <div style="text-align: center; padding: 4px 0;">
         <div style="font-size: 15px; font-weight: 800; color: var(--accent-primary); margin-bottom: 4px;">
           ${ex.name}
         </div>
         ${buildModalTargetBannerHTML(ex, exIdx)}
+        ${timerBadgeHTML}
         <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 18px;">
           ${descText}
         </p>
@@ -4368,6 +4461,10 @@ const TodayPage = (() => {
   async function selectSetOutcomeFromModal(exIdx, setIdx, outcome) {
     UI.hideModal();
     await selectSetOutcome(exIdx, setIdx, outcome);
+    const day = allPlanDays[currentDayIndex];
+    if (currentTracking.completed && day) {
+      showWorkoutCelebration(day);
+    }
   }
 
   async function clearSetOutcomeFromModal(exIdx, setIdx, reopenModal = false) {
