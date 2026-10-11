@@ -31,7 +31,8 @@ test('Program Integrity - Progression Settings & Deload Parameters', () => {
 
 test('Program Integrity - Exercise Rest Periods & Ranges', () => {
   const expectedRestRanges = {
-    "goblet-rdl": { base: 105, range: [90, 135] },
+    // v15.7.1: rest micro-optimization 105s -> 90s (adaptive +30s BELOW extension unchanged)
+    "goblet-rdl": { base: 90, range: [75, 120] },
     "single-leg-rdl": { base: 75, range: [60, 90] },
     "single-arm-floor-press": { base: 90, range: [75, 105] },
     "pull-up-progression": { base: 90, range: [75, 105] },
@@ -91,7 +92,13 @@ test('Program Integrity - Lean Mode Mechanics & Protected Compounds', () => {
     assert.ok(lean.protectedExercises.includes(pEx), `Protected exercise ${pEx} missing`);
   });
 
-  assert.equal(lean.pairs.length, 3);
+  // v15.7.1: d5-facepull-lateral (TRX Face Pull ↔ Single-Arm Lateral Raise) added
+  assert.equal(lean.pairs.length, 4);
+  const facepullPair = lean.pairs.find(p => p.pairId === 'd5-facepull-lateral');
+  assert.ok(facepullPair, 'd5-facepull-lateral pair must exist');
+  assert.equal(facepullPair.restAfterPair, 75);
+  assert.equal(facepullPair.dissolveOnDeload, true);
+  assert.equal(facepullPair.dissolveIfMemberInactive, true);
   assert.equal(lean.circuits.length, 1);
   assert.equal(lean.circuits[0].circuitId, 'd1-core-circuit');
   assert.deepEqual(lean.circuits[0].members, ["pallof-press-progression", "dead-bug", "hollow-body-hold"]);

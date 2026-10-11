@@ -235,7 +235,7 @@ const AnatomyMap = (() => {
       lats: ['Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row', 'Scapular Pull-up'],
       traps: ['TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'Scapular Pull-up', 'One-Arm DB Row', 'Seated Band Row'],
       quads: ['Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Bodyweight Squat', 'High Knees', 'Brisk Walking', 'VO2 Max Norwegian 4x4'],
-      hamstrings: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'Glute Bridge', 'DB Glute Bridge'],
+      hamstrings: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'Nordic Curl Progression', 'Glute Bridge', 'DB Glute Bridge'],
       glutes: ['DB Glute Bridge', 'Glute Bridge', 'Goblet Bulgarian Split Squat', 'Heels-Elevated Goblet Squat', 'Single-Leg RDL'],
       calves: ['Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4', 'Relaxed Walking'],
       core: ['Dead Bug', 'Hollow Body Hold', 'Tuck L-Sit', 'One-Leg Extended L-Sit', 'Full L-Sit', 'Suitcase Carry', 'Pallof Press Progression', 'High Knees'],

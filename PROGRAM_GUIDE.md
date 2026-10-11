@@ -3,6 +3,8 @@
 **Starting Level**: Beginner (0 years formal training) | Clean Pull-Ups: 2 | Clean Push-Ups: 7  
 **Core Philosophy**: **Zero Decisions. Everything is prescriptive. You only execute.**
 
+**v15.7.1 Patch (Safe Hypertrophy Dosing & Timing)**: This patch increases hamstring and lateral-delt dosing, improves Day 3 pressing order, and adds lengthened-position tempo cues without compressing Phase 0 or increasing injury risk.
+
 ---
 
 ## Part 1 — Safety Declaration & Iron Rules
@@ -44,6 +46,7 @@ The v15.7 Accelerated Edition organizes exercises into optimized structures to m
 - **Lean Pairs (Antagonistic & Non-Competing)**:
   - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
   - **Day 5 (d5-pushup-curl)**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-3).
+  - **Day 5 (d5-facepull-lateral)**: TRX Face Pull ↔ Single-Arm Lateral Raise (75s rest after completing both, active only when Single-Arm Lateral Raise is unlocked).
   - **Day 5 (d5-grip-lsit)**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
   - *Pair Dissolution Rule*: If any set receives a `BELOW` result, or during Deload/light microcycle weeks, the pair dissolves into straight sets with dedicated rest.
   - *Lean Pair Availability Rule*: A Lean Pair is rendered only if both paired exercises are unlocked for the current week (Phase 0 performance graduation or calendar gate). If either exercise is still locked, the pair is omitted and the remaining member renders as a straight set — **no automatic substitution is created**.
@@ -69,6 +72,7 @@ To prevent elbow tendonitis while maximizing hyper-trophy:
 ### 2.4 Weekly Frequency Additions
 - **Day 3 Second Back Frequency**: TRX Row (2 sets) adds volume for back frequency 2/2 (10 total weekly back sets: 3+3+2+2).
 - **Day 5 Second Chest Frequency**: Push-Up Volume (2 sets) adds volume for chest frequency 2/2 (8 total weekly chest sets: 3+3+2).
+- **Day 5 Second Lateral Frequency**: Single-Arm Lateral Raise (2 sets) adds direct side-delt frequency 2×/week when unlocked.
 
 ---
 
@@ -97,11 +101,11 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 
 | Day | Workout Type | Target Focus & Modules | Target Duration |
 | :--- | :--- | :--- | :--- |
-| **Day 1** | **Legs + Core + Carry** | Lower body unilateral strength (Goblet BSS), Single-Leg RDL, Heels-Elevated Squat, Suitcase Carry, Calf Block & Core Circuit | 45 min |
+| **Day 1** | **Legs + Core + Carry** | Lower body unilateral strength (Goblet BSS), Single-Leg RDL, Nordic Curl Progression (from Week 10), Heels-Elevated Squat, Suitcase Carry, Calf Block & Core Circuit | 45 min |
 | **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building, treadmill brisk walking (4% incline, 5.5 km/h) & daily micro-mobility | 45 min |
-| **Day 3** | **Push + Shoulders + Triceps** | Pike Progression, Floor Press, Push-Up Bars, Single-Arm OHP, DB Triceps Ext, Rear Delt Toggle, Lean Pair & Arm Block (W6+) | 45 min |
+| **Day 3** | **Push + Shoulders + Triceps** | Single-Arm OHP (first, fresh), Pike Progression, Floor Press, Push-Up Bars, DB Triceps Ext, Diamond Push-Up, Lean Pair, Rear Delt Toggle & Arm Block (W6+) | 45 min |
 | **Day 4** | **Active Recovery + Joint Health** | Band Neck Flexion/Extension protocol (A1), light treadmill recovery walk (A2) & 10-min deep mobility sequence (A3) | 30 min |
-| **Day 5** | **Pull + Back + Biceps + Grip** | Pull-Up progressions, One-Arm DB Row, TRX Face Pull, Biceps Microcycle, Towel Hang ↔ L-Sit Lean Pair & Arm Block (W6+) | 45 min |
+| **Day 5** | **Pull + Back + Biceps + Grip** | Pull-Up progressions, One-Arm DB Row, TRX Face Pull ↔ Single-Arm Lateral Raise Lean Pair, Push-Up Volume, Biceps Microcycle, Towel Hang ↔ L-Sit Lean Pair & Arm Block (W6+) | 45 min |
 | **Day 6** | **Cardio VO2 Max 4x4** | Norwegian 4x4 interval treadmill protocol (or Zone 2 during Deload weeks) | 35 min |
 | **Day 7** | **Complete Rest** | Passive recovery, hydration & CNS regeneration | — |
 
@@ -212,7 +216,7 @@ Era-based history (`combatSchedule.history`, append-only) guarantees a full plan
 
 ## Appendix D — Complete Program Exercise Dictionary (exact program names)
 
-This is the authoritative list of the **58 unique exercises** referenced by `window.TRAINING_DATA` (`js/data.js`, v15.7 Accelerated). The in-app name is authoritative; the exported guide and this MD use these exact names.
+This is the authoritative list of the **59 unique exercises** referenced by `window.TRAINING_DATA` (`js/data.js`, v15.7.1 Accelerated). The in-app name is authoritative; the exported guide and this MD use these exact names.
 
 > **Naming notes (aligns the docs with the program):** "Goblet RDL" = **Goblet Romanian Deadlift** · "Push-Up Bars" = **Push-up Bars Progression** · "Micro Mobility A/B" = the single **Micro Mobility Protocol** exercise (upper-focus variant on Days 3/5, lower-focus on Days 1/2) · "L-Sit" = **Tuck L-Sit** (early) / **Full L-Sit** / **One-Leg Extended L-Sit** (later unlocks) · "VO2 Max 4×4" = **VO2 Max Norwegian 4×4** · "Calf Block" = **Standing Single-Leg Calf Raise → Seated Single-Leg Calf Raise** · "Core Circuit" = **Pallof Press Progression → Dead Bug → Hollow Body Hold**.
 
@@ -224,6 +228,7 @@ High Knees · Bodyweight Squat · Arm Circles · Wall Slides · Scapular Push-up
 | :--- | :--- |
 | Goblet Romanian Deadlift | Posterior chain (Day 1 anchor, Weeks 1–17) |
 | Single-Leg RDL | Unilateral posterior progression — replaces Goblet RDL from Week 18 (calendar gate) |
+| Nordic Curl Progression | Hamstring eccentric resilience, bodyweight only, from Week 10 |
 | Heels-Elevated Goblet Squat | Continuous quad focus (paused squat), from Week 1 |
 | Goblet Bulgarian Split Squat | Primary unilateral overload — **not from Week 1**: Phase 0 performance unlock (Heels-Elevated Goblet Squat ≥ 10 kg; earliest Week 3, calendar gate Week 5) |
 | DB Glute Bridge | Glute anchor |
@@ -236,10 +241,10 @@ High Knees · Bodyweight Squat · Arm Circles · Wall Slides · Scapular Push-up
 | Pallof Press Progression | Core Circuit part 1 |
 
 ### D.3 Day 3 — Push + Shoulders + Triceps + Back Volume
-Pike Progression · Single-Arm Floor Press · Push-up Bars Progression · Single-Arm Seated OHP · DB Overhead Triceps Extension · Diamond Push-Up · TRX Row · Single-Arm Lateral Raise · TRX Y-T-W · Band Pull-Apart (even-week toggle) · Arm Block - Single-Arm Lateral Raise · Arm Block - DB Overhead Triceps Ext · *(later unlocks)* Elevated Pike Push-Up · Feet-Elevated Push-Up · Deficit Push-Up · Weighted Deficit Push-Up
+Single-Arm Seated OHP · Pike Progression · Single-Arm Floor Press · Push-up Bars Progression · DB Overhead Triceps Extension · Diamond Push-Up · TRX Row · Single-Arm Lateral Raise · TRX Y-T-W · Band Pull-Apart (even-week toggle) · Arm Block - Single-Arm Lateral Raise · Arm Block - DB Overhead Triceps Ext · *(later unlocks)* Elevated Pike Push-Up · Feet-Elevated Push-Up · Deficit Push-Up · Weighted Deficit Push-Up
 
 ### D.4 Day 5 — Pull + Grip + Biceps + Chest Volume
-Pull-Up Progression · Pull-Up (Overhand) · Scapular Pull-up · Dead Hang · Seated Band Row · One-Arm DB Row · TRX Face Pull · Push-Up Volume (Day 5) · Single-Arm Curl · Single-Arm Hammer Curl · Arm Block - Single-Arm Curl · Towel Hang · Tuck L-Sit · *(later unlocks)* Full L-Sit · One-Leg Extended L-Sit · Weighted Pull-Up
+Pull-Up Progression · Pull-Up (Overhand) · Scapular Pull-up · Dead Hang · Seated Band Row · One-Arm DB Row · TRX Face Pull · Single-Arm Lateral Raise (Day 5 Lean Pair with TRX Face Pull, only when lateral raise is unlocked) · Push-Up Volume (Day 5) · Single-Arm Curl · Single-Arm Hammer Curl · Arm Block - Single-Arm Curl · Towel Hang · Tuck L-Sit · *(later unlocks)* Full L-Sit · One-Leg Extended L-Sit · Weighted Pull-Up
 
 ### D.5 Cardio
 - **Day 2 — Zone 2**: Brisk Walking (standard) · Relaxed Walking (ramp-up / deload / recovery)

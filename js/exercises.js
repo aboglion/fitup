@@ -79,6 +79,7 @@ const ExercisesPage = (() => {
     'Micro Mobility Protocol': [{ weight: 'Bodyweight', fromWeek: 1 }],
     'Deep Mobility Protocol': [{ weight: 'Bodyweight', fromWeek: 3 }],
     'Deficit Push-Up': [{ weight: 'Bodyweight', fromWeek: 10 }],
+    'Nordic Curl Progression': [{ weight: 'Bodyweight', fromWeek: 10 }],
     'Feet-Elevated Push-Up': [{ weight: 'Bodyweight', fromWeek: 18 }],
     'Wall Walk (Partial)': [{ weight: 'Bodyweight', fromWeek: 10 }],
     'Wall Walk (Full)': [{ weight: 'Bodyweight', fromWeek: 18 }],
@@ -173,7 +174,8 @@ const ExercisesPage = (() => {
       {
         title: 'hamstring_chain', icon: '🦵', exercises: [
           { name: 'Goblet Romanian Deadlift', unlockWeek: 1, id: 'rdl-1' },
-          { name: 'Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2', relType: 'replace', weightTransfer: 'stepdown' }
+          { name: 'Single-Leg RDL', unlockWeek: 18, parentId: 'rdl-1', id: 'rdl-2', relType: 'replace', weightTransfer: 'stepdown' },
+          { name: 'Nordic Curl Progression', unlockWeek: 10, id: 'nordic-1' }
         ]
       },
       {

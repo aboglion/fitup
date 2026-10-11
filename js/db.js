@@ -1040,8 +1040,11 @@ const DB = (() => {
     // Check if training plan is missing or empty
     // v15.7 Accelerated: version bump triggers plan re-seed (deload cadence, arm block week,
     // biceps microcycle, performance-unlock metadata) while preserving tracking/progression state.
+    // v15.7.1: Safe Hypertrophy Dosing & Timing Patch - re-seed delivers Nordic Curl Progression,
+    // the Day 5 lateral-raise Lean Pair, the Day 3 pressing reorder, and the new tempos/rests.
+    // IndexedDB version (DB_VERSION) is NOT changed - this is a plan-content marker only.
     const planCount = await count(STORES.PLAN).catch(() => 0);
-    if (planCount === 0 || currentSchemaVer !== '15.7.0') {
+    if (planCount === 0 || currentSchemaVer !== '15.7.1') {
       needsPlanReload = true;
     }
 
@@ -1082,12 +1085,12 @@ const DB = (() => {
 
     if (needsPlanReload && window.TRAINING_DATA) {
       await loadTrainingPlan();
-      await setSetting('v15LeanSchemaVersion', '15.7.0');
-      return { migrated: true, version: '15.7.0' };
+      await setSetting('v15LeanSchemaVersion', '15.7.1');
+      return { migrated: true, version: '15.7.1' };
     }
 
-    await setSetting('v15LeanSchemaVersion', '15.7.0');
-    return { migrated: false, version: '15.7.0' };
+    await setSetting('v15LeanSchemaVersion', '15.7.1');
+    return { migrated: false, version: '15.7.1' };
   }
 
   return {

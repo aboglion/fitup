@@ -135,7 +135,7 @@ const I18n = (() => {
   const TRANSLATIONS = {
     en: {
 
-      // Exercise Names Translations (58 Exercises)
+      // Exercise Names Translations (59 Exercises)
       'Arm Block - DB Overhead Triceps Ext': 'Arm Block - DB Overhead Triceps Ext',
       'Arm Block - Single-Arm Curl': 'Arm Block - Single-Arm Curl',
       'Arm Block - Single-Arm Lateral Raise': 'Arm Block - Single-Arm Lateral Raise',
@@ -161,6 +161,7 @@ const I18n = (() => {
       'High Knees': 'High Knees',
       'Hollow Body Hold': 'Hollow Body Hold',
       'Micro Mobility Protocol': 'Micro Mobility Protocol',
+      'Nordic Curl Progression': 'Nordic Curl Progression',
       'One-Arm DB Row': 'One-Arm DB Row',
       'One-Leg Extended L-Sit': 'One-Leg Extended L-Sit',
       'Pallof Press Progression': 'Pallof Press Progression',
@@ -1318,7 +1319,7 @@ const I18n = (() => {
     },
     he: {
 
-      // Exercise Names Translations (58 Exercises)
+      // Exercise Names Translations (59 Exercises)
       'Arm Block - DB Overhead Triceps Ext': 'בלוק זרועות - פשיטת מרפקים משקולת מעל הראש',
       'Arm Block - Single-Arm Curl': 'בלוק זרועות - כפילת מרפקים יד-יד',
       'Arm Block - Single-Arm Lateral Raise': 'בלוק זרועות - הרחקה לצדדים יד-יד',
@@ -1344,6 +1345,7 @@ const I18n = (() => {
       'High Knees': 'הרמת ברכיים גבוהות',
       'Hollow Body Hold': 'החזקת Hollow Body',
       'Micro Mobility Protocol': 'פרוטוקול מיקרו-מוביליות',
+      'Nordic Curl Progression': 'נורדיק קרל פרוגרשן (המסטרינג)',
       'One-Arm DB Row': 'חתירה עם משקולת יד-יד',
       'One-Leg Extended L-Sit': 'L-Sit רגל אחת מתוחה',
       'Pallof Press Progression': 'לחיצת פאלוף עם גומייה (Pallof Press)',
@@ -2674,7 +2676,7 @@ const I18n = (() => {
       keep_cloud_data: "الاحتفاظ ببيانات السحابة (Drive)",
 
 
-      // Exercise Names Translations (58 Exercises)
+      // Exercise Names Translations (59 Exercises)
       'Arm Block - DB Overhead Triceps Ext': 'كتلة الذراع - تمديد الترايسبس بالدمبل فوق الرأس',
       'Arm Block - Single-Arm Curl': 'كتلة الذراع - ثني البايسبس ذراع واحدة',
       'Arm Block - Single-Arm Lateral Raise': 'كتلة الذراع - رفع جانبي ذراع واحدة',
@@ -2700,6 +2702,7 @@ const I18n = (() => {
       'High Knees': 'رفع الركبتين عاليًا',
       'Hollow Body Hold': 'ثبات الجسم المجوف (Hollow Body)',
       'Micro Mobility Protocol': 'بروتوكول المرونة المصغرة',
+      'Nordic Curl Progression': 'انحناء نوردي تدريجي (أوتار الركبة)',
       'One-Arm DB Row': 'سحب دمبل ذراع واحدة',
       'One-Leg Extended L-Sit': 'جلوس L برجل واحدة ممدودة',
       'Pallof Press Progression': 'ضغط بالوف بالمقاومة',

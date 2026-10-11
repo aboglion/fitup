@@ -156,7 +156,7 @@ const UI = (() => {
   const imageTrials = {};
 
   const EXERCISE_GIF_ALIASES = {
-        'ARM BLOCK - SINGLE-ARM LATERAL RAISE': 'Dumbbell Lateral Raise.gif',
+    'ARM BLOCK - SINGLE-ARM LATERAL RAISE': 'Dumbbell Lateral Raise.gif',
     'ARM BLOCK - DB OVERHEAD TRICEPS EXT': 'DB OH Triceps Ext.gif',
     'ARM BLOCK - SINGLE-ARM CURL': 'Single-Arm Curl.gif',
     'ONE-ARM DB ROW': 'One-Arm DB Row.gif',
@@ -433,6 +433,7 @@ const UI = (() => {
     'GOBLET BULGARIAN SPLIT SQUAT': 'DB BSS (GOBLET).png',
     'PISTOL SQUAT': 'PISTOL SQUAT.png',
     'PISTOL SQUAT PROGRESSION': 'PISTOL SQUAT.png',
+    'NORDIC CURL PROGRESSION': 'NORDIC CURL PROGRESSION.png',
     'FULL PISTOL SQUAT': 'FULL PISTOL SQUAT.png',
     'REVERSE LUNGE PISTOL SQUAT': 'REVERSE LUNGE + DB.png',
     'DB HIP THRUST': 'DB GLUTE BRIDGE.png',
@@ -872,10 +873,10 @@ const UI = (() => {
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
             ${subExercises.map((sub, idx) => {
-              const subTitle = I18n.t(sub.nameKey);
-              const subTarget = I18n.t(sub.targetKey);
-              const subGifUrl = getGifUrl(sub.gif);
-              return `
+        const subTitle = I18n.t(sub.nameKey);
+        const subTarget = I18n.t(sub.targetKey);
+        const subGifUrl = getGifUrl(sub.gif);
+        return `
                 <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
                      onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}', 'Deep Mobility Protocol')"
                      onmouseover="this.style.borderColor='var(--success)'; this.style.transform='translateY(-2px)';"
@@ -888,7 +889,7 @@ const UI = (() => {
                   <span style="font-size: 10px; background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-secondary); padding: 1px 5px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
                 </div>
               `;
-            }).join('')}
+      }).join('')}
           </div>
           <button type="button" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: 800; background: linear-gradient(135deg, #10b981, #059669); margin-top: 4px;" onclick="UI.hideModal(); if (window.TodayPage && TodayPage.openDeepMobilityModal) TodayPage.openDeepMobilityModal(0);">
             ${I18n.t('deep_mobility_open_runner', '🧘 הפעל מדריך מוביליות אינטראקטיבי')}
@@ -907,10 +908,10 @@ const UI = (() => {
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap: 10px;">
             ${subExercises.map((sub, idx) => {
-              const subTitle = I18n.t(sub.nameKey);
-              const subTarget = I18n.t(sub.targetKey);
-              const subGifUrl = getGifUrl(sub.gif);
-              return `
+        const subTitle = I18n.t(sub.nameKey);
+        const subTarget = I18n.t(sub.targetKey);
+        const subGifUrl = getGifUrl(sub.gif);
+        return `
                 <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 10px; overflow: hidden; padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease;"
                      onclick="UI.showImageModal('${subTitle.replace(/'/g, "\\'")}', '${subGifUrl}', '${variantTitle.replace(/'/g, "\\'")}')"
                      onmouseover="this.style.borderColor='var(--accent-primary)'; this.style.transform='translateY(-2px)';"
@@ -923,7 +924,7 @@ const UI = (() => {
                   <span style="font-size: 10px; background: var(--bg-elevated); border: 1px solid var(--border-light); color: var(--text-secondary); padding: 1px 5px; border-radius: 4px; font-weight: 600;">🎯 ${subTarget}</span>
                 </div>
               `;
-            }).join('')}
+      }).join('')}
           </div>
           <button type="button" class="btn-primary" style="padding: 10px; font-size: 13px; font-weight: 800; background: linear-gradient(135deg, #3b82f6, #1d4ed8); margin-top: 4px;" onclick="UI.hideModal(); if (window.TodayPage && TodayPage.openMicroMobilityModal) TodayPage.openMicroMobilityModal(0);">
             ${I18n.t('micro_mobility_open_runner')}
@@ -1182,6 +1183,12 @@ const UI = (() => {
       treadmill: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18h16l-3-12H7L4 18z"/><circle cx="12" cy="18" r="2"/></svg>`,
       bodyweight: `<svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>`
     };
+
+    // v15.7.1: Nordic Curl Progression is bodyweight-only (feet anchored, no external load).
+    // The name contains "curl", which would otherwise match the dumbbell heuristic below.
+    if (n.includes('nordic')) {
+      return [{ label: I18n.t('equip_bodyweight'), icon: icons.bodyweight, key: 'bodyweight' }];
+    }
 
     const results = [];
 
