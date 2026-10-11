@@ -194,6 +194,34 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 - **Database Version**: IndexedDB Version 9 (`DBVERSION = 9`).
 - **Cloud Synchronization & Local Data Export**: Automatic bidirectional sync with Google Drive alongside one-click local JSON data backup (`fitup_backup_[DATE].json`) and import verification.
 
+### B.1 Dual-Cadence Auto-Regulated Progression Architecture (v15.7.2)
+
+To maximize hypertrophy velocity while preventing connective-tissue overuse in smaller joint levers, FitUp v15.7.2 implements a **dual-cadence auto-regulated overload model**:
+
+1. **Group A — Compounds & Large Muscle Groups (Cadence: Every 3rd Workout)**:
+   - **Target Muscle Groups**: Quadriceps, Hamstrings, Glutes, Chest, Latissimus/Back, Compound Deltoids (Overhead Press).
+   - **Covered Exercises**: `heels-elevated-goblet-squat`, `goblet-bulgarian-split-squat`, `goblet-rdl`, `single-leg-rdl`, `db-glute-bridge`, `suitcase-carry`, `single-arm-floor-press`, `one-arm-db-row`, `single-arm-seated-ohp`.
+   - **Standard Progression Cadence**: Promotes by **+2 kg** on the **3rd consecutive workout** at the same load when sets are performed in-window (i.e., after accumulating 2 clean sessions at current load, the 3rd triggers promotion).
+   - **Auto-Regulation Rules**:
+     - 🚀 **Above Ceiling (`all_above`)**: If all prescribed sets exceed the rep window ceiling, early promotion is triggered immediately (skips accumulation).
+     - 🛡️ **Below Target / Mixed (`below` / `mixed`)**: Weight is held at the current load (`mixed_results_maintain`), requiring additional clean in-window sessions before advancing.
+
+2. **Group B — Isolations & Small Muscle Groups (Cadence: Every 4th Workout)**:
+   - **Target Muscle Groups**: Side Deltoids (Lateral Raise), Biceps (Curls), Triceps (Overhead Extension), Calves (Standing/Seated Calf Raises).
+   - **Covered Exercises**: `single-arm-lateral-raise`, `arm-block-lateral-raise`, `single-arm-curl`, `single-arm-hammer-curl`, `arm-block-biceps-curl`, `db-overhead-triceps-extension`, `arm-block-triceps-ext`, `standing-single-leg-calf-raise`, `seated-single-leg-calf-raise`.
+   - **Standard Progression Cadence**: Promotes by **+2 kg** on the **4th consecutive workout** at the same load when sets are performed in-window (requires 3 clean accumulation sessions; 4th session promotes).
+   - **Auto-Regulation Rules**:
+     - 🚀 **Above Ceiling (`all_above`)**: Promotes earlier if exceptional clean volume is achieved without momentum.
+     - 🛡️ **Below Target / Mixed (`below` / `mixed`)**: Load is strictly maintained until 12–15 strict reps are mastered, protecting elbow and shoulder tendons from premature load jumps.
+
+3. **Modular Dumbbells Physical Execution**:
+   - Empty handle = 6 kg.
+   - Even load ladder in strictly 2 kg steps: `8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32 kg`.
+   - 8 kg = 6 kg handle + 2 × 1 kg plates.
+   - 10 kg = 6 kg handle + 2 × 2 kg plates (swap out 1 kg plates).
+   - 12 kg = 10 kg + 2 × 1 kg plates.
+   - 14 kg = 6 kg handle + 4 × 2 kg plates (swap out 1 kg plates), and so forth.
+
 ---
 
 ## Appendix C — Combat Training Integration Mode (🥊)
@@ -239,52 +267,52 @@ This is the authoritative specification of all **59 unique exercises** appearing
 
 ### D.1 Master Exercise Parameters & Catalog (Exact Weights, Reps, Tempos & Rest)
 
-| Exercise Name | Catalog ID | Type | Start Wt | Min Wt | Max Wt | Step | Load Type | Sets | Rep Window | Prescribed Tempo | Base Rest | Calendar / Phase 0 Gate |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Goblet Romanian Deadlift** | `goblet-rdl` | weighted | 6 kg | 3 kg | 32 kg | 1 kg | total | 3 | 6-12 | 3s descent (neutral spine) | 90s | Week 1 Anchor (Weeks 1–17) |
-| **Single-Leg RDL** | `single-leg-rdl` | weighted | 6 kg | 3 kg | 32 kg | 1 kg | total | 2 | 8-10 | 3s descent | 75s | Calendar Gate Week 18+ |
-| **Nordic Curl Progression** | `nordic-curl-progression` | variation | BW | — | — | — | — | 2 | 6-10 | 3-1-1 (lengthened pause) | 90s | Calendar Gate Week 10+ (Deload 1 set) |
-| **Heels-Elevated Goblet Squat** | `heels-elevated-goblet-squat` | weighted | 6 kg | 3 kg | 32 kg | 1 kg | total | 2 | 8-12 | 3s descent, 1-2s pause, 1s up | 75s | Week 1 Continuous Quad Anchor |
-| **Goblet Bulgarian Split Squat** | `goblet-bulgarian-split-squat` | weighted | 6 kg | 3 kg | 32 kg | 1 kg | total | 3 | 6-12 | 2s descent | 82s | W5 (early W3 if Squat $\ge$ 10kg) |
-| **DB Glute Bridge** | `db-glute-bridge` | weighted | 6 kg | 6 kg | 32 kg | 1 kg | total | 3 | 10-15 | 1s pause at top squeeze | 75s | Week 1 Anchor (75s post W5, 60s W1-4) |
-| **Suitcase Carry** | `suitcase-carry` | weighted | 12 kg | 6 kg | 32 kg | 1 kg | total | 3 | 25-40m | controlled walk | 60s | W5 (early W4 if RDL $\ge$ 10kg) |
-| **Standing Single-Leg Calf Raise** | `standing-single-leg-calf-raise` | weighted | 6 kg | 3 kg | 32 kg | 1 kg | single_hand | 3 | 12-20 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #1 |
-| **Seated Single-Leg Calf Raise** | `seated-single-leg-calf-raise` | weighted | 6 kg | 3 kg | 32 kg | 1 kg | on_knee | 2 | 15-25 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #2 |
-| **Pallof Press Progression** | `pallof-press-progression` | variation | Band | — | — | — | — | 2 | 10-12 | 1s pause at extension | 30s | W6+ (unlock: Dead Bug stage 2); Core Circuit #1 |
-| **Dead Bug** | `dead-bug` | variation | BW | — | — | — | — | 3 | 12-20 | slow controlled | 30s | Core Circuit #2 |
-| **Hollow Body Hold** | `hollow-body-hold` | timebased | BW | — | — | — | — | 2 | 20-30s | static hollow hold | 30s | W5 (early W3 if Dead Bug $\ge$ 16 reps); Core Circuit #3 |
-| **Single-Arm Seated OHP** | `single-arm-seated-ohp` | weighted | 6 kg | 3 kg | 32 kg | 1 kg | each | 3 | 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up $\ge$ 10); Day 3 First Main |
-| **Pike Progression** | `pike-progression` | variation | BW | — | — | — | — | 2 | 15-30s or 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up $\ge$ 10); Pike Tree W1-9 |
-| **Wall Walk (Partial)** | `wall-walk-partial` | variation | BW | — | — | — | — | 2 | 3-6 | controlled | 75s | Calendar Gate Week 10–17 |
-| **Wall Walk (Full)** | `wall-walk-full` | variation | BW | — | — | — | — | 2 | 3-6 | controlled | 90s | Calendar Gate Week 18–25 |
-| **Wall Handstand** | `wall-handstand` | timebased | BW | — | — | — | — | 2 | 20-45s | static hold | 90s | Calendar Gate Week 26–40 |
-| **Elevated Pike Push-Up** | `elevated-pike-push-up` | variation | BW | — | — | — | — | 2 | 6-10 | 2s descent | 90s | Calendar Gate Week 41+ |
-| **Single-Arm Floor Press** | `single-arm-floor-press` | weighted | 6 kg | 3 kg | 32 kg | 1 kg | each | 3 | 6-12 | 2s descent | 90s | Day 3 Compound Anchor (all weeks) |
-| **Push-up Bars Progression** | `push-up-progression` | variation | BW | — | — | — | — | 3 | 8-15 | 2s descent | 75s | Push Tree W1–9 |
-| **Deficit Push-Up** | `deficit-push-up` | variation | BW | — | — | — | — | 3 | 8-15 | 2s descent | 75s | Push Tree W10–17 |
-| **Feet-Elevated Push-Up** | `feet-elevated-push-up` | variation | BW | — | — | — | — | 3 | 8-12 | 2s descent | 75s | Push Tree W18–61 |
-| **Weighted Deficit Push-Up** | `weighted-deficit-push-up` | weighted | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 6-12 | 2s descent | 90s | Push Tree W62+ (weighted vest) |
-| **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | 6 kg | 3 kg | 32 kg | 0.5 kg | total | 4 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up $\ge$ 10); 0.5kg increments |
-| **Diamond Push-Up** | `diamond-push-up` | variation | BW | — | — | — | — | 2 | 10-15 | 2s descent | 45s | Day 3 Triceps / Chest Anchor |
-| **TRX Row** | `trx-row` | variation | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | Lean Pair #1 with Lateral Raise |
-| **Single-Arm Lateral Raise** | `single-arm-lateral-raise` | weighted | 6 kg | 3 kg | 12 kg | 0.5 kg | each | 2 | 12-20 | 2-1-2 (lengthened pause) | 75s | W5 (early W3); 0.5kg increments; Max 12kg |
-| **TRX Y-T-W** | `trx-ytw` | variation | BW | — | — | — | — | 2 | 8-12 | 1s pause at peak | 45s | Rear Delt Toggle (Odd Weeks) |
-| **Band Pull-Apart** | `band-pull-apart` | variation | Band | — | — | — | — | 3 | 15-20 | 1s squeeze | 45s | Rear Delt Toggle (Even Weeks) |
-| **Pull-Up Progression** | `pull-up-progression` | variation | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W1–9 |
-| **Pull-Up (Overhand)** | `pull-up-overhand` | variation | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W10–61 |
-| **Weighted Pull-Up** | `weighted-pull-up` | weighted | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 4-8 | 2s descent | 105–120s | Pull Tree W62+ (weighted vest) |
-| **One-Arm DB Row** | `one-arm-db-row` | weighted | 6 kg | 3 kg | 32 kg | 1 kg | each | 3 | 6-12 | 2s descent | 75s | Day 5 Primary Horizontal Pull Anchor |
-| **TRX Face Pull** | `trx-face-pull` | variation | BW | — | — | — | — | 2 | 12-20 | 2s descent | 75s / 45s | Lean Pair with Day 5 Lateral Raise (W5+) |
-| **Push-Up Volume (Day 5)** | `push-up-volume` | variation | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | W5 (early W3); Lean Pair with Curl |
-| **Single-Arm Curl** | `single-arm-curl` | weighted | 6 kg | 6 kg | 20 kg | 0.5 kg | each | 2-3 | 10-15 | 2-1-2 (lengthened pause) | 45s | Biceps Microcycle Heavy W1–3; 0.5kg increments |
-| **Single-Arm Hammer Curl** | `single-arm-hammer-curl` | weighted | 6 kg | 6 kg | 20 kg | 0.5 kg | each | 2-3 | 10-12 | 2s descent | 45s | W5 (early W3 if Curl $\ge$ 12); Light W4 = 2 sets |
-| **Towel Hang** | `towel-hang` | timebased | BW | — | — | — | — | 2 | 15-45s | static grip hold | 45s | W5 (early W3); Lean Pair with L-Sit |
-| **Tuck L-Sit** | `tuck-l-sit` | timebased | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | W5 (early W3 if Dead Bug $\ge$ 16); L-Sit W1–17 |
-| **One-Leg Extended L-Sit** | `one-leg-extended-l-sit` | timebased | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 18–33 |
-| **Full L-Sit** | `full-l-sit` | timebased | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 34+ |
-| **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | 6 kg | 3 kg | 12 kg | 0.5 kg | each | 1+3 | 15 + 3×5 | 2s descent | 15s | Week 6+ Day 3 End (Stop: 2 tempo losses) |
-| **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | 6 kg | 3 kg | 32 kg | 0.5 kg | total | 1+3 | 12 + 3×5 | 2s descent | 15s | Week 6+ Day 3 End (Stop: 2 tempo losses) |
-| **Arm Block - Single-Arm Curl** | `arm-block-biceps-curl` | myo-reps | 6 kg | 3 kg | 20 kg | 0.5 kg | each | 1+3 | 12 + 3×5 | 2s descent | 15s | Week 6+ Day 5 End (Stop: 2 tempo losses) |
+| Exercise Name | Catalog ID | Type | Cadence Group | Start Wt | Min Wt | Max Wt | Step | Load Type | Sets | Rep Window | Prescribed Tempo | Base Rest | Calendar / Phase 0 Gate |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Goblet Romanian Deadlift** | `goblet-rdl` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 3 | 6-12 | 3s descent (neutral spine) | 90s | Week 1 Anchor (Weeks 1–17) |
+| **Single-Leg RDL** | `single-leg-rdl` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 2 | 8-10 | 3s descent | 75s | Calendar Gate Week 18+ |
+| **Nordic Curl Progression** | `nordic-curl-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 6-10 | 3-1-1 (lengthened pause) | 90s | Calendar Gate Week 10+ (Deload 1 set) |
+| **Heels-Elevated Goblet Squat** | `heels-elevated-goblet-squat` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 2 | 8-12 | 3s descent, 1-2s pause, 1s up | 75s | Week 1 Continuous Quad Anchor |
+| **Goblet Bulgarian Split Squat** | `goblet-bulgarian-split-squat` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 3 | 6-12 | 2s descent | 82s | W5 (early W3 if Squat $\ge$ 10kg) |
+| **DB Glute Bridge** | `db-glute-bridge` | weighted | Group A (3rd) | 8 kg | 8 kg | 32 kg | 2 kg | total | 3 | 10-15 | 1s pause at top squeeze | 75s | Week 1 Anchor (75s post W5, 60s W1-4) |
+| **Suitcase Carry** | `suitcase-carry` | weighted | Group A (3rd) | 12 kg | 8 kg | 32 kg | 2 kg | total | 3 | 25-40m | controlled walk | 60s | W5 (early W4 if RDL $\ge$ 10kg) |
+| **Standing Single-Leg Calf Raise** | `standing-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | single_hand | 3 | 12-20 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #1 |
+| **Seated Single-Leg Calf Raise** | `seated-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | on_knee | 2 | 15-25 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #2 |
+| **Pallof Press Progression** | `pallof-press-progression` | variation | BW / Stage | Band | — | — | — | — | 2 | 10-12 | 1s pause at extension | 30s | W6+ (unlock: Dead Bug stage 2); Core Circuit #1 |
+| **Dead Bug** | `dead-bug` | variation | BW / Stage | BW | — | — | — | — | 3 | 12-20 | slow controlled | 30s | Core Circuit #2 |
+| **Hollow Body Hold** | `hollow-body-hold` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-30s | static hollow hold | 30s | W5 (early W3 if Dead Bug $\ge$ 16 reps); Core Circuit #3 |
+| **Single-Arm Seated OHP** | `single-arm-seated-ohp` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up $\ge$ 10); Day 3 First Main |
+| **Pike Progression** | `pike-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 15-30s or 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up $\ge$ 10); Pike Tree W1-9 |
+| **Wall Walk (Partial)** | `wall-walk-partial` | variation | BW / Stage | BW | — | — | — | — | 2 | 3-6 | controlled | 75s | Calendar Gate Week 10–17 |
+| **Wall Walk (Full)** | `wall-walk-full` | variation | BW / Stage | BW | — | — | — | — | 2 | 3-6 | controlled | 90s | Calendar Gate Week 18–25 |
+| **Wall Handstand** | `wall-handstand` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-45s | static hold | 90s | Calendar Gate Week 26–40 |
+| **Elevated Pike Push-Up** | `elevated-pike-push-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 6-10 | 2s descent | 90s | Calendar Gate Week 41+ |
+| **Single-Arm Floor Press** | `single-arm-floor-press` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 90s | Day 3 Compound Anchor (all weeks) |
+| **Push-up Bars Progression** | `push-up-progression` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-15 | 2s descent | 75s | Push Tree W1–9 |
+| **Deficit Push-Up** | `deficit-push-up` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-15 | 2s descent | 75s | Push Tree W10–17 |
+| **Feet-Elevated Push-Up** | `feet-elevated-push-up` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-12 | 2s descent | 75s | Push Tree W18–61 |
+| **Weighted Deficit Push-Up** | `weighted-deficit-push-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 6-12 | 2s descent | 90s | Push Tree W62+ (weighted vest) |
+| **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | total | 4 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up $\ge$ 10); 2kg increments |
+| **Diamond Push-Up** | `diamond-push-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 45s | Day 3 Triceps / Chest Anchor |
+| **TRX Row** | `trx-row` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | Lean Pair #1 with Lateral Raise |
+| **Single-Arm Lateral Raise** | `single-arm-lateral-raise` | weighted | Group B (4th) | 8 kg | 3 kg | 12 kg | 2 kg | each | 2 | 12-20 | 2-1-2 (lengthened pause) | 75s | W5 (early W3); 2kg increments; Max 12kg |
+| **TRX Y-T-W** | `trx-ytw` | variation | BW / Stage | BW | — | — | — | — | 2 | 8-12 | 1s pause at peak | 45s | Rear Delt Toggle (Odd Weeks) |
+| **Band Pull-Apart** | `band-pull-apart` | variation | BW / Stage | Band | — | — | — | — | 3 | 15-20 | 1s squeeze | 45s | Rear Delt Toggle (Even Weeks) |
+| **Pull-Up Progression** | `pull-up-progression` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W1–9 |
+| **Pull-Up (Overhand)** | `pull-up-overhand` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W10–61 |
+| **Weighted Pull-Up** | `weighted-pull-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 4-8 | 2s descent | 105–120s | Pull Tree W62+ (weighted vest) |
+| **One-Arm DB Row** | `one-arm-db-row` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | Day 5 Primary Horizontal Pull Anchor |
+| **TRX Face Pull** | `trx-face-pull` | variation | BW / Stage | BW | — | — | — | — | 2 | 12-20 | 2s descent | 75s / 45s | Lean Pair with Day 5 Lateral Raise (W5+) |
+| **Push-Up Volume (Day 5)** | `push-up-volume` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | W5 (early W3); Lean Pair with Curl |
+| **Single-Arm Curl** | `single-arm-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-15 | 2-1-2 (lengthened pause) | 45s | Biceps Microcycle Heavy W1–3; 2kg increments |
+| **Single-Arm Hammer Curl** | `single-arm-hammer-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-12 | 2s descent | 45s | W5 (early W3 if Curl $\ge$ 12); Light W4 = 2 sets |
+| **Towel Hang** | `towel-hang` | timebased | BW / Stage | BW | — | — | — | — | 2 | 15-45s | static grip hold | 45s | W5 (early W3); Lean Pair with L-Sit |
+| **Tuck L-Sit** | `tuck-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | W5 (early W3 if Dead Bug $\ge$ 16); L-Sit W1–17 |
+| **One-Leg Extended L-Sit** | `one-leg-extended-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 18–33 |
+| **Full L-Sit** | `full-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 34+ |
+| **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | Group B (4th) | 8 kg | 3 kg | 12 kg | 2 kg | each | 1+3 | 15 + 3×5 | 2s descent | 15s | Week 6+ Day 3 End (Stop: 2 tempo losses) |
+| **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | total | 1+3 | 12 + 3×5 | 2s descent | 15s | Week 6+ Day 3 End (Stop: 2 tempo losses) |
+| **Arm Block - Single-Arm Curl** | `arm-block-biceps-curl` | myo-reps | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 1+3 | 12 + 3×5 | 2s descent | 15s | Week 6+ Day 5 End (Stop: 2 tempo losses) |
 | **Band Neck Flexion & Extension** | `band-neck-flexion` | variation | Band | — | — | — | — | 2 | 15-20 | 3-1-3 slow | 45s | Day 4 Cervical Protocol (Chin-tuck focus) |
 | **Brisk Walking** | `brisk-walking` | timebased | BW | — | — | — | — | 1 | 30-45m | 4% @ 5.5 km/h (Deload 2% @ 5.0) | 0s | Day 2 Zone 2 Cardio (Weeks 3+) |
 | **Relaxed Walking** | `relaxed-walking` | timebased | BW | — | — | — | — | 1 | 20-30m | 0% @ 4.5 km/h | 0s | Ramp-up W1–2 / Day 4 Active Recovery |

@@ -22,7 +22,7 @@ window.ExporterGuide = (() => {
       ],
       equipment_title: "🔧 Required Equipment & Specifications",
       equipment_list: [
-        "Modular Dumbbells: 8 plates × 3kg (32kg max weight capacity) + 2 handles (3–32kg legal range per dumbbell)",
+        "Modular Dumbbells: 6kg handle + 2 × 1kg plates + 2kg plates (6–32kg even weight range per dumbbell in 2kg increments)",
         "Pull-up Bar (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "Push-up Bars / Parallettes (All push exercises: Push-Up, Deficit, Pike, L-sit — no palms flat on floor)",
         "TRX Suspension Trainer (Face Pull, TRX Row, TRX Y-T-W at fixed angles)",

@@ -85,3 +85,62 @@ test('ProgressionEngine - evaluateMyoReps cancels block on joint pain', () => {
   assert.equal(evalResult.action, 'cancel_block');
   assert.equal(evalResult.reason, 'joint_pain');
 });
+
+test('ProgressionEngine - Group A cadence promotes on 3rd in-window workout', () => {
+  const exGroupA = { id: 'goblet-rdl', category: 'Legs', compound: true, startingWeight: 8, increment: 2, minWeight: 3, maxWeight: 32 };
+  const inWindowResults = [{ result: 'in_window', reps: 10 }, { result: 'in_window', reps: 10 }, { result: 'in_window', reps: 10 }];
+
+  // Session 1: 0 prior sessions -> maintain (1 of 3)
+  const res1 = ProgressionEngine.calculateWeightedDecision(exGroupA, { currentWeightKg: 8, sessionsAtWeight: 0 }, inWindowResults, 1, null);
+  assert.equal(res1.action, 'maintain');
+  assert.equal(res1.newWeight, 8);
+  assert.equal(res1.reason, 'cadence_group_a_accumulating_1_of_3');
+
+  // Session 2: 1 prior session -> maintain (2 of 3)
+  const res2 = ProgressionEngine.calculateWeightedDecision(exGroupA, { currentWeightKg: 8, sessionsAtWeight: 1 }, inWindowResults, 2, null);
+  assert.equal(res2.action, 'maintain');
+  assert.equal(res2.newWeight, 8);
+  assert.equal(res2.reason, 'cadence_group_a_accumulating_2_of_3');
+
+  // Session 3: 2 prior sessions -> increase (+2kg)!
+  const res3 = ProgressionEngine.calculateWeightedDecision(exGroupA, { currentWeightKg: 8, sessionsAtWeight: 2 }, inWindowResults, 3, null);
+  assert.equal(res3.action, 'increase');
+  assert.equal(res3.newWeight, 10);
+  assert.equal(res3.reason, 'cadence_group_a_3rd_session');
+
+  // Performance above target: promotes earlier even on session 1!
+  const resEarly = ProgressionEngine.calculateWeightedDecision(exGroupA, { currentWeightKg: 8, sessionsAtWeight: 0 }, [{ result: 'above' }, { result: 'above' }], 1, null);
+  assert.equal(resEarly.action, 'increase');
+  assert.equal(resEarly.newWeight, 10);
+  assert.equal(resEarly.reason, 'all_above_max');
+});
+
+test('ProgressionEngine - Group B cadence promotes on 4th in-window workout', () => {
+  const exGroupB = { id: 'single-arm-lateral-raise', category: 'Shoulders', compound: false, startingWeight: 8, increment: 2, minWeight: 3, maxWeight: 12 };
+  const inWindowResults = [{ result: 'in_window', reps: 12 }, { result: 'in_window', reps: 12 }];
+
+  // Sessions 1, 2, 3: accumulate
+  const res1 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 0 }, inWindowResults, 1, null);
+  assert.equal(res1.action, 'maintain');
+  assert.equal(res1.reason, 'cadence_group_b_accumulating_1_of_4');
+
+  const res2 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 1 }, inWindowResults, 2, null);
+  assert.equal(res2.action, 'maintain');
+  assert.equal(res2.reason, 'cadence_group_b_accumulating_2_of_4');
+
+  const res3 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 2 }, inWindowResults, 3, null);
+  assert.equal(res3.action, 'maintain');
+  assert.equal(res3.reason, 'cadence_group_b_accumulating_3_of_4');
+
+  // Session 4: 3 prior sessions -> increase (+2kg)!
+  const res4 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 3 }, inWindowResults, 4, null);
+  assert.equal(res4.action, 'increase');
+  assert.equal(res4.newWeight, 10);
+  assert.equal(res4.reason, 'cadence_group_b_4th_session');
+
+  // Mixed results: hold longer (maintain)
+  const resMixed = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 2 }, [{ result: 'in_window' }, { result: 'below' }], 3, null);
+  assert.equal(resMixed.action, 'maintain');
+  assert.equal(resMixed.reason, 'mixed_results_maintain');
+});
+

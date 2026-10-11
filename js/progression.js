@@ -85,9 +85,30 @@
     // ----------------------------
     // 2. Progression Decision Calculators
     // ----------------------------
+    isGroupA(exercise) {
+      if (!exercise) return true;
+      const id = (exercise.id || '').toLowerCase();
+      const cat = (exercise.category || '').toLowerCase();
+
+      // Group B (Small / Isolation): Shoulders lateral raise, Biceps, Triceps, Calves
+      if (id.includes('lateral-raise') || id.includes('single-arm-curl') || id.includes('hammer-curl') || id.includes('biceps-curl') || id.includes('triceps') || id.includes('calf')) {
+        return false;
+      }
+      if (cat === 'arms') return false;
+
+      // Group A (Large / Compound): Legs, Chest, Back, Shoulders compound (OHP), Glutes, Core
+      return true;
+    }
+
+    getCadenceTarget(exercise) {
+      // Group A: every 3rd workout (needs 2 prior sessions at current weight)
+      // Group B: every 4th workout (needs 3 prior sessions at current weight)
+      return this.isGroupA(exercise) ? 3 : 4;
+    }
+
     calculateWeightedDecision(exercise, state, setResults, weekNumber, previousSessionData) {
       const isDeload = weekNumber % this.settings.deloadEveryWeeks === 0;
-      const currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || 6);
+      const currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || 8);
 
       if (isDeload) {
         return {
@@ -99,25 +120,54 @@
 
       const evaluation = this.evaluateSetResults(exercise, setResults);
       const softened = this.checkSoftenedProgression(exercise, state, setResults, previousSessionData);
+      const increment = exercise.increment || 2;
+      const maxWeight = exercise.maxWeight || 32;
+      const minWeight = exercise.minWeight || 3;
 
-      if (evaluation === 'all_above' || softened) {
-        const increment = exercise.increment || 1;
-        const newWeight = Math.min(exercise.maxWeight || 32, currentWeight + increment);
+      // 1. Performance Above Target: Auto-regulated Early Promotion (ביצועים מעל מעלים מוקדם יותר)
+      if (evaluation === 'all_above') {
+        const newWeight = Math.min(maxWeight, currentWeight + increment);
         return {
           action: 'increase',
           newWeight,
-          reason: evaluation === 'all_above' ? 'all_above_max' : 'softened_progression_achieved'
+          reason: 'all_above_max'
         };
       }
 
+      // 2. Performance Below Target: Auto-regulated Reduction / Hold (פחות מושכים יותר / הורדה)
       if (evaluation === 'all_below') {
-        const decrement = exercise.increment || 1;
-        const newWeight = Math.max(exercise.minWeight || 3, currentWeight - decrement);
+        const decrement = exercise.increment || 2;
+        const newWeight = Math.max(minWeight, currentWeight - decrement);
         return {
           action: 'decrease',
           newWeight,
           reason: 'all_below_window'
         };
+      }
+
+      // 3. Performance In Window: Cadence-Based Progression
+      // Group A: Promotes on 3rd workout (after 2 sessions accumulated at current weight)
+      // Group B: Promotes on 4th workout (after 3 sessions accumulated at current weight)
+      const isGrpA = this.isGroupA(exercise);
+      const targetCadence = isGrpA ? 3 : 4;
+      const requiredPriorSessions = targetCadence - 1; // 2 for Group A, 3 for Group B
+      const currentSessions = state ? (state.sessionsAtWeight || 0) : 0;
+
+      if (evaluation === 'all_in_window' || softened) {
+        if (currentSessions >= requiredPriorSessions) {
+          const newWeight = Math.min(maxWeight, currentWeight + increment);
+          return {
+            action: 'increase',
+            newWeight,
+            reason: isGrpA ? 'cadence_group_a_3rd_session' : 'cadence_group_b_4th_session'
+          };
+        } else {
+          return {
+            action: 'maintain',
+            newWeight: currentWeight,
+            reason: isGrpA ? `cadence_group_a_accumulating_${currentSessions + 1}_of_3` : `cadence_group_b_accumulating_${currentSessions + 1}_of_4`
+          };
+        }
       }
 
       return {
@@ -646,7 +696,7 @@
     createInitialState(exerciseId, allProgressionStates = {}) {
       const exercise = this.getExercise(exerciseId);
       const isWeightedEx = exercise && (exercise.type === 'weighted' || exercise.startingWeight != null);
-      let startWeight = isWeightedEx ? (exercise.startingWeight || 6) : 0;
+      let startWeight = isWeightedEx ? (exercise.startingWeight || 8) : 0;
 
       // Parent weight inheritance mapping for direct replacements (strictly weighted-to-weighted)
       const parentIdMap = {
@@ -671,6 +721,7 @@
         sessionKey: exerciseId,
         currentWeightKg: startWeight,
         currentStageIndex: 0,
+        sessionsAtWeight: 0,
         unlocked: exercise ? (exercise.unlocked ?? true) : true,
         lastUpdated: new Date().toISOString()
       };
@@ -791,6 +842,11 @@
       if (exercise.type === 'weighted' || exercise.startingWeight != null) {
         decision = this.calculateWeightedDecision(exercise, state, setResults, weekNumber, previousSessionData);
         state.currentWeightKg = decision.newWeight;
+        if (decision.action === 'increase' || decision.action === 'decrease') {
+          state.sessionsAtWeight = 0;
+        } else if (decision.action === 'maintain' && decision.reason && decision.reason.includes('accumulating')) {
+          state.sessionsAtWeight = (state.sessionsAtWeight || 0) + 1;
+        }
       } else {
         decision = this.calculateStageDecision(exercise, state, setResults, weekNumber, previousSessionData);
         state.currentStageIndex = decision.newStageIndex;

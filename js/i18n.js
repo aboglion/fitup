@@ -1384,7 +1384,14 @@ const I18n = (() => {
       day_type_upper_pull: "Upper Pull 🧲",
       combat_class_short_title: "Combat Class",
       combat_practice_short_title: "Home Bag Practice",
-      deload_prefix: "🌿 Deload: "
+      deload_prefix: "🌿 Deload: ",
+      cadence_group_a_short: "Group A (3rd session)",
+      cadence_group_b_short: "Group B (4th session)",
+      cadence_group_a_badge: "⚡ Group A: Promotes every 3rd workout",
+      cadence_group_b_badge: "🎯 Group B: Promotes every 4th workout",
+      cadence_group_a_desc: "Compound & large muscle: +2kg every 3rd in-window workout (early promotion on all-above, holds if below/mixed)",
+      cadence_group_b_desc: "Isolation & small muscle: +2kg every 4th in-window workout (early promotion on all-above, holds if below/mixed)",
+      cadence_model_banner: "⚡ Auto-Regulated Progression: Group A promotes every 3rd workout, Group B every 4th workout (above promotes earlier, below holds longer)."
     },
     he: {
 
@@ -2536,7 +2543,14 @@ const I18n = (() => {
       day_type_upper_pull: "משיכה פלג גוף עליון 🧲",
       combat_class_short_title: "שיעור לחימה",
       combat_practice_short_title: "תרגול שק ביתי",
-      deload_prefix: "🌿 דילואד: "
+      deload_prefix: "🌿 דילואד: ",
+      cadence_group_a_short: "קבוצה א׳ (אימון 3)",
+      cadence_group_b_short: "קבוצה ב׳ (אימון 4)",
+      cadence_group_a_badge: "⚡ קבוצה א׳: קפיצה כל אימון 3",
+      cadence_group_b_badge: "🎯 קבוצה ב׳: קפיצה כל אימון 4",
+      cadence_group_a_desc: "שריר גדול ומורכב: קפיצה של 2 ק״ג כל אימון 3 בטווח החזרות (ביצועים מעל מעלים מוקדם יותר, פחות מושכים יותר)",
+      cadence_group_b_desc: "שריר קטן ומבודד: קפיצה של 2 ק״ג כל אימון 4 בטווח החזרות (ביצועים מעל מעלים מוקדם יותר, פחות מושכים יותר)",
+      cadence_model_banner: "⚡ מודל התקדמות מותאם אישית: שרירים גדולים (קבוצה א׳) קופצים כל אימון 3, מבודדים (קבוצה ב׳) כל אימון 4 (ביצועים מעל מעלים לפני, פחות מושכים יותר)."
     },
     ar: {
 
@@ -3538,7 +3552,14 @@ const I18n = (() => {
       day_type_upper_pull: "سحب الجزء العلوي 🧲",
       combat_class_short_title: "حصة قتال",
       combat_practice_short_title: "تمرين كيس الملاكمة",
-      deload_prefix: "🌿 ديلود: "
+      deload_prefix: "🌿 ديلود: ",
+      cadence_group_a_short: "المجموعة أ (التمرين 3)",
+      cadence_group_b_short: "المجموعة ب (التمرين 4)",
+      cadence_group_a_badge: "⚡ المجموعة أ: قفزة كل 3 تمارين",
+      cadence_group_b_badge: "🎯 المجموعة ب: قفزة كل 4 تمارين",
+      cadence_group_a_desc: "عضلة كبيرة ومركبة: +2 كغم كل 3 تمارين ضمن النطاق (ترقية مبكرة إذا كان الأداء أعلى، ثبات إذا كان أقل)",
+      cadence_group_b_desc: "عضلة صغيرة وعزل: +2 كغم كل 4 تمارين ضمن النطاق (ترقية مبكرة إذا كان الأداء أعلى، ثبات إذا كان أقل)",
+      cadence_model_banner: "⚡ نظام تقدم ذاتي التنظيم: عضلات كبيرة (أ) كل 3 تمارين، عزل (ب) كل 4 تمارين (الأداء الأعلى يسرع، والأقل يثبت)."
     }
   };
 

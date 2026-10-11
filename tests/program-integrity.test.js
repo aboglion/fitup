@@ -163,8 +163,9 @@ test('Program Integrity - Progression Engine Decisions', () => {
     { result: 'above', reps: 13 },
     { result: 'above', reps: 13 }
   ], 1);
+  const inc = testEx.increment || 2;
   assert.equal(resAbove.action, 'increase');
-  assert.equal(resAbove.newWeight, 7);
+  assert.equal(resAbove.newWeight, 6 + inc);
 
   const resBelow = engine.calculateWeightedDecision(testEx, { currentWeightKg: 6 }, [
     { result: 'below', reps: 5 },
@@ -172,7 +173,7 @@ test('Program Integrity - Progression Engine Decisions', () => {
     { result: 'below', reps: 5 }
   ], 1);
   assert.equal(resBelow.action, 'decrease');
-  assert.equal(resBelow.newWeight, 5);
+  assert.equal(resBelow.newWeight, 6 - inc);
 
   // v15.7 Accelerated: deloads occur every 12 weeks (week 12 is a deload week)
   const resDeload = engine.calculateWeightedDecision(testEx, { currentWeightKg: 6 }, [

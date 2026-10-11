@@ -360,16 +360,29 @@ const AnatomyMap = (() => {
           <div style="height: 100%; width: ${Math.min(100, pct)}%; background: #00ff66; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 255, 102, 0.6);"></div>
         </div>
 
-        <h4 style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 10px;">${I18n.t('anatomy_program_exercises')}</h4>
+        <h4 style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">${I18n.t('anatomy_program_exercises')}</h4>
+        <div style="background: rgba(0, 255, 102, 0.06); border: 1px solid rgba(0, 255, 102, 0.2); border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: 11px; color: var(--text-secondary); line-height: 1.4;">
+          ${I18n.t('cadence_model_banner')}
+        </div>
 
         <ul style="list-style: none; padding: 0; margin: 0 0 18px 0; display: flex; flex-direction: column; gap: 8px;">
-          ${exercises.map(ex => `
+          ${exercises.map(ex => {
+            const nameLower = (ex.name || '').toLowerCase();
+            const isWeighted = !nameLower.includes('bodyweight') && !nameLower.includes('band') && !nameLower.includes('walking') && !nameLower.includes('mobility') && !nameLower.includes('dead bug') && !nameLower.includes('hollow') && !nameLower.includes('pull-up') && !nameLower.includes('push-up');
+            const isGrpB = nameLower.includes('lateral raise') || (nameLower.includes('curl') && !nameLower.includes('nordic')) || nameLower.includes('triceps') || nameLower.includes('calf');
+            const cadenceBadge = isWeighted
+              ? (isGrpB
+                  ? `<span style="font-size: 10px; font-weight: 700; color: #c084fc; background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.35); padding: 2px 6px; border-radius: 4px;">🎯 ${I18n.t('cadence_group_b_short')}</span>`
+                  : `<span style="font-size: 10px; font-weight: 700; color: #60a5fa; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); padding: 2px 6px; border-radius: 4px;">⚡ ${I18n.t('cadence_group_a_short')}</span>`)
+              : '';
+
+            return `
             <li style="background: rgba(0, 255, 102, 0.04); border: 1px solid rgba(0, 255, 102, 0.2); padding: 10px 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
-                  <span>🏋️‍♂️</span> <span>${ex.name}</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <span>🏋️‍♂️</span> <span>${ex.name}</span> ${cadenceBadge}
                 </span>
-                <span style="font-size: 12px; font-weight: 900; color: #00ff66; text-shadow: 0 0 8px rgba(0, 255, 102, 0.6);">
+                <span style="font-size: 12px; font-weight: 900; color: #00ff66; text-shadow: 0 0 8px rgba(0, 255, 102, 0.6); flex-shrink: 0;">
                   ${ex.formatted}
                 </span>
               </div>
@@ -377,7 +390,7 @@ const AnatomyMap = (() => {
                 <div style="height: 100%; width: ${Math.min(100, ex.pct)}%; background: #00ff66; border-radius: 3px; transition: width 0.6s ease; box-shadow: 0 0 8px #00ff66;"></div>
               </div>
             </li>
-          `).join('')}
+          `;}).join('')}
         </ul>
 
         <button id="view-ex-dir-btn" class="anatomy-modal-btn">

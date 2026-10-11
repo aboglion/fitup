@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v179-v15.7-accelerated';
+const CACHE_NAME = 'fitup-v182-v15.7.2-cadence';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
