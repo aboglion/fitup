@@ -636,13 +636,16 @@ const StatsPage = (() => {
     return null;
   }
 
-  function getCompletedSetsForExercise(track, exIdx, setMultiplier) {
+  function getCompletedSetsForExercise(track, exIdx, setMultiplier, ex) {
     if (!track) return 0;
     if (track.completed) return setMultiplier;
 
     // Check exerciseStatus
     if (track.exerciseStatus) {
       if (track.exerciseStatus[exIdx] === true || track.exerciseStatus[String(exIdx)] === true) {
+        return setMultiplier;
+      }
+      if (ex && ex.id && track.exerciseStatus[ex.id] === true) {
         return setMultiplier;
       }
     }
@@ -678,57 +681,56 @@ const StatsPage = (() => {
 
   /**
    * Calculate per-muscle progression percentages across the full 78-week program timeline.
-   * Compares unlocked weight and stages against maximum weight/stages to reflect strength gains.
-   * Formula: muscleProgress = Σ(exerciseProgress_i × weight_i) / Σ(weight_i)
-   * where exerciseProgress = (currentWeight - minWeight) / (maxWeight - minWeight) * 100
+   * Compares exact completed sets/volume for each muscle group against total planned sets/volume.
+   * Formula: muscleProgress = (completedVolume_m / totalPlannedVolume_m) * 100
    */
   function calculateMuscleProgressions(trackingMap, allProgressionStates, exerciseGuide) {
     const muscles = ['chest', 'shoulders', 'triceps', 'lats', 'traps', 'biceps', 'forearms',
       'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack', 'neck'];
 
-    if (!allProgressionStates || !exerciseGuide) {
-      const result = {};
-      muscles.forEach(m => { result[m] = 0; });
-      return result;
+    let plan = (allPlanDays && allPlanDays.length > 0) ? allPlanDays : [];
+    if (plan.length === 0 && typeof window !== 'undefined' && window.TRAINING_DATA && window.TRAINING_DATA.daily) {
+      plan = window.TRAINING_DATA.daily;
     }
 
-    const muscleScores = {};
-    const muscleWeights = {};
-    muscles.forEach(m => { muscleScores[m] = 0; muscleWeights[m] = 0; });
+    const plannedVolume = {};
+    const completedVolume = {};
+    muscles.forEach(m => { plannedVolume[m] = 0; completedVolume[m] = 0; });
 
-    allProgressionStates.forEach(state => {
-      const exDef = exerciseGuide.find(e => e.id === state.exerciseId);
-      if (!exDef) return;
+    (plan || []).forEach((day, index) => {
+      const dIdx = day.dayIndex != null ? day.dayIndex : index;
+      const track = trackingMap ? trackingMap[dIdx] : null;
 
-      let score = 0;
-      if (exDef.type === 'weighted') {
-        const minW = exDef.minWeight || 0;
-        const maxW = exDef.maxWeight || 24;
-        const curW = state.currentWeightKg || minW;
-        if (maxW > minW) {
-          score = Math.max(0, Math.min(100, ((curW - minW) / (maxW - minW)) * 100));
+      (day.exercises || []).forEach((ex, exIdx) => {
+        let setMultiplier = 3;
+        if (typeof ex.sets === 'number') {
+          setMultiplier = ex.sets;
+        } else if (typeof ex.sets === 'string') {
+          if (ex.sets.includes('sec') || ex.sets.includes('min') || ex.sets.includes('hold')) {
+            setMultiplier = 1;
+          } else {
+            const parsed = parseInt(ex.sets, 10);
+            setMultiplier = isNaN(parsed) ? 3 : parsed;
+          }
         }
-      } else {
-        const stages = exDef.stages || [];
-        const maxStage = Math.max(1, stages.length - 1);
-        const curStage = state.currentStageIndex || 0;
-        score = Math.max(0, Math.min(100, (curStage / maxStage) * 100));
-      }
 
-      const contribs = getExerciseContributions(exDef);
-      contribs.forEach(c => {
-        if (muscleScores[c.m] !== undefined) {
-          muscleScores[c.m] += score * c.w;
-          muscleWeights[c.m] += c.w;
-        }
+        const completedSets = getCompletedSetsForExercise(track, exIdx, setMultiplier, ex);
+
+        const contribs = getExerciseContributions(ex);
+        contribs.forEach(c => {
+          if (plannedVolume[c.m] !== undefined) {
+            plannedVolume[c.m] += setMultiplier * c.w;
+            completedVolume[c.m] += completedSets * c.w;
+          }
+        });
       });
     });
 
     const result = {};
     muscles.forEach(m => {
-      if (muscleWeights[m] > 0) {
-        const avg = muscleScores[m] / muscleWeights[m];
-        result[m] = Math.max(0, Math.min(100, Number(avg.toFixed(1))));
+      if (plannedVolume[m] > 0) {
+        const ratio = (completedVolume[m] / plannedVolume[m]) * 100;
+        result[m] = Math.max(0, Math.min(100, Number(ratio.toFixed(1))));
       } else {
         result[m] = 0;
       }

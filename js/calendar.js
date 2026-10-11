@@ -118,7 +118,7 @@ const CalendarPage = (() => {
     // Build standard Sunday-Saturday calendar weeks
     // First, we need to know the dayOfWeek of the very first day (dayIndex 0)
     const firstDay = allPlanDays[0];
-    const dayNames = [I18n.t('day_sun'), I18n.t('day_mon'), I18n.t('day_tue'), I18n.t('day_wed'), I18n.t('day_thu'), I18n.t('day_fri'), I18n.t('day_sat')];
+    const dayNames = [I18n.t('sun'), I18n.t('mon'), I18n.t('tue'), I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')];
     const startOffset = dayNames.indexOf(firstDay.dayOfWeek);
 
     // Calculate which days belong to the requested currentWeekNum (1-indexed)

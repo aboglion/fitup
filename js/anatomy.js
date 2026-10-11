@@ -264,6 +264,9 @@ const AnatomyMap = (() => {
     } catch (e) {
       console.warn('Could not load exercise stats:', e);
     }
+    if ((!allPlanDays || allPlanDays.length === 0) && typeof window !== 'undefined' && window.TRAINING_DATA && window.TRAINING_DATA.daily) {
+      allPlanDays = window.TRAINING_DATA.daily;
+    }
 
     const cleanStr = str => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
@@ -282,15 +285,27 @@ const AnatomyMap = (() => {
             });
             if (hasEx) {
               totalAppeared++;
-              if (trackingMap[day.dayIndex] && trackingMap[day.dayIndex].completed) {
-                completedCount++;
+              const trk = trackingMap[day.dayIndex];
+              if (trk) {
+                if (trk.completed) {
+                  completedCount++;
+                } else if (trk.exerciseStatus) {
+                  const exIdxInDay = day.exercises.findIndex(e => {
+                    const nameClean = cleanStr(e.name);
+                    const idClean = cleanStr(e.id);
+                    return nameClean.includes(targetClean) || targetClean.includes(nameClean) || (idClean && idClean === targetClean);
+                  });
+                  if (exIdxInDay >= 0 && (trk.exerciseStatus[exIdxInDay] || trk.exerciseStatus[String(exIdxInDay)])) {
+                    completedCount++;
+                  }
+                }
               }
             }
           }
         });
       }
 
-      let exPct = pct;
+      let exPct = 0;
       if (totalAppeared > 0) {
         exPct = Math.min(100, (completedCount / totalAppeared) * 100);
       }

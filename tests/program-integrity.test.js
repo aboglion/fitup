@@ -244,3 +244,45 @@ test('Program Integrity - Biceps Microcycle Phase Resolver', () => {
   assert.equal(deload.progressionAllowed, false);
   assert.equal(deload.sets, 1);
 });
+
+test('Program Integrity - calculateMuscleProgressions single-workout accuracy', () => {
+  const statsPath = new URL('../js/stats.js', import.meta.url);
+  const statsCode = fs.readFileSync(statsPath, 'utf8');
+  const statsWindow = {
+    appCurrentPlanIndex: 0,
+    TRAINING_DATA: data
+  };
+  const evalFunc = new Function('window', 'I18n', 'DB', 'UI', statsCode);
+  evalFunc(statsWindow, { t: k => k }, {}, { getLocalDateString: () => '2026-10-11' });
+
+  const StatsPage = statsWindow.StatsPage;
+  assert.ok(StatsPage, 'StatsPage must be exported');
+
+  // Case 0: Empty tracking (0 workouts) -> all 15 muscles must be 0%
+  const zeroPcts = StatsPage.calculateMuscleProgressions({});
+  assert.equal(zeroPcts.obliques, 0);
+  assert.equal(zeroPcts.core, 0);
+  assert.equal(zeroPcts.chest, 0);
+  assert.equal(zeroPcts.lowerBack, 0);
+
+  // Case 1: Only Day 1 completed (1 workout out of 560 days)
+  const day1Tracking = {
+    0: { dayIndex: 0, completed: true }
+  };
+  const day1Pcts = StatsPage.calculateMuscleProgressions(day1Tracking);
+
+  // Trained muscles on Day 1 (Legs + Core) should be around 0.5% - 2.0%
+  assert.ok(day1Pcts.obliques > 0 && day1Pcts.obliques <= 2.5, `Obliques after 1 workout should be around 1%, got ${day1Pcts.obliques}%`);
+  assert.ok(day1Pcts.core > 0 && day1Pcts.core <= 2.5, `Core after 1 workout should be around 1%, got ${day1Pcts.core}%`);
+  assert.ok(day1Pcts.hamstrings > 0 && day1Pcts.hamstrings <= 2.5, `Hamstrings after 1 workout should be around 1%, got ${day1Pcts.hamstrings}%`);
+  assert.ok(day1Pcts.lowerBack > 0 && day1Pcts.lowerBack <= 2.5, `Lower Back after 1 workout should be around 1.5%, got ${day1Pcts.lowerBack}%`);
+
+  // Untrained muscles on Day 1 (Chest, Shoulders, Biceps, Triceps, Lats, Traps, Neck) must be strictly 0%
+  assert.equal(day1Pcts.chest, 0, 'Chest must be 0% on Day 1');
+  assert.equal(day1Pcts.shoulders, 0, 'Shoulders must be 0% on Day 1');
+  assert.equal(day1Pcts.biceps, 0, 'Biceps must be 0% on Day 1');
+  assert.equal(day1Pcts.triceps, 0, 'Triceps must be 0% on Day 1');
+  assert.equal(day1Pcts.lats, 0, 'Lats must be 0% on Day 1');
+  assert.equal(day1Pcts.traps, 0, 'Traps must be 0% on Day 1');
+  assert.equal(day1Pcts.neck, 0, 'Neck must be 0% on Day 1');
+});
