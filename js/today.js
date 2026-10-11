@@ -3535,6 +3535,17 @@ const TodayPage = (() => {
         `;
       }
 
+      const exRuleKey = 'rule_' + (ex.name || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+      const exCleanName = (ex.name || '').trim().toUpperCase();
+      const exRuleObj = EXERCISE_FORM_RULES[exCleanName] || EXERCISE_FORM_RULES[ex.name];
+      const exRuleText = (I18n.t(exRuleKey) !== exRuleKey) ? I18n.t(exRuleKey) : (exRuleObj ? (typeof exRuleObj === 'string' ? exRuleObj : exRuleObj.rule) : null);
+      const goldCueHTML = exRuleText && !ex.isWarmup && !lowerExName.includes('mobility') ? `
+        <div class="exercise-gold-cue" style="background: rgba(59, 130, 246, 0.08); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 12px; line-height: 1.45; display: flex; align-items: flex-start; gap: 8px; border: 1px solid rgba(59, 130, 246, 0.25);">
+          <span style="color: var(--accent-primary); font-weight: 800; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">🎯 ${I18n.t('cue_gold_standard')}:</span>
+          <span style="color: var(--text-primary); font-size: 12px;">${exRuleText}</span>
+        </div>
+      ` : '';
+
       return `
         <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isSkippedTemp ? 'skipped-temp' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
           <div class="exercise-hero-container skeleton-loading" style="position: relative;">
@@ -3583,6 +3594,7 @@ const TodayPage = (() => {
           </div>
           <div class="exercise-card-body">
             ${protocolBannerHTML}
+            ${goldCueHTML}
             ${setsHTML}
             <div class="exercise-note">
               <textarea placeholder="${I18n.t('exercise_notes_placeholder')}" rows="2" ${checkDisabledAttr}
@@ -5189,12 +5201,40 @@ const TodayPage = (() => {
       belowTrigger: 'משיכה לבטן/חזה במקום למצח, או שמיטת מרפקים.'
     },
     'DB CURL': {
-      rule: 'מרפקים מצמודים לצדי הגוף, כיווץ מלא בשיא ללא תנועת כתף/גב.',
-      belowTrigger: 'תנופה של הגב (Body swing) או הזזת מרפקים קדימה.'
+      rule: 'סופינציה מלאה (זרת מסתובבת גבוה יותר מהאגודל בשיא הכיווץ), יישור מרפק מלא בתחתית למתיחה מקסימלית, קצב 2-1-2 קפדני ללא שום תנופת כתף או גב.',
+      belowTrigger: 'תנופה של הגב (Body swing), הזזת מרפקים קדימה, או חוסר סופינציה.'
+    },
+    'SINGLE-ARM CURL': {
+      rule: 'סופינציה מלאה (זרת מסתובבת גבוה יותר מהאגודל בשיא הכיווץ), יישור מרפק מלא בתחתית למתיחה מקסימלית, קצב 2-1-2 קפדני ללא שום תנופת כתף או גב.',
+      belowTrigger: 'תנופה של הגב (Body swing), הזזת מרפקים קדימה, או חוסר סופינציה.'
     },
     'HAMMER CURL': {
-      rule: 'אחיזה ניטרלית (אגודלים למעלה), עבודה אקסצנטרית איטית ומבוקרת בהורדה.',
-      belowTrigger: 'זריקת המשקולת מומנטומטית.'
+      rule: 'אחיזה ניטרלית (אגודלים למעלה), מיקוד ב-Brachialis שדוחף את הבייספס מעלה ומעבה את הזרוע, הורדה איטית מבוקרת של 2 שניות ויישור מלא.',
+      belowTrigger: 'זריקת המשקולת או שימוש במומנטום.'
+    },
+    'SINGLE-ARM HAMMER CURL': {
+      rule: 'אחיזה ניטרלית (אגודלים למעלה), מיקוד ב-Brachialis שדוחף את הבייספס מעלה ומעבה את הזרוע, הורדה איטית מבוקרת של 2 שניות ויישור מלא.',
+      belowTrigger: 'זריקת המשקולת או שימוש במומנטום.'
+    },
+    'DB OVERHEAD TRICEPS EXTENSION': {
+      rule: 'מתיחה עמוקה של הראש הארוך (65% מנפח הזרוע), מרפקים נעולים ומצביעים קדימה (ללא פתיחה לצדדים), עצירה של 1 שניה במתיחה העמוקה מאחורי הראש (קצב 2-1-2).',
+      belowTrigger: 'פתיחת מרפקים לצדדים או הקשתת גב תחתון.'
+    },
+    'SINGLE-ARM LATERAL RAISE': {
+      rule: 'הטיה קלה של 15° לפנים במישור השכמה, הרמה עד גובה כתף, עצירה 5 ס״מ לפני הירך לשמירה על מתח תמידי בדלתואיד הצדי, קצב 2-1-2 לבניית V-Taper מרשים.',
+      belowTrigger: 'הנפת גב (Cheating) או השענת המשקולת על הירך בתחתית.'
+    },
+    'ARM BLOCK - SINGLE-ARM CURL': {
+      rule: 'צביר Myo-Reps: סט אקטיבציה נקי ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ׳ מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.',
+      belowTrigger: 'אובדן טמפו אקסצנטרי או כאב מפרקי.'
+    },
+    'ARM BLOCK - DB OVERHEAD TRICEPS EXT': {
+      rule: 'צביר Myo-Reps: סט אקטיבציה נקי ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ׳ מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.',
+      belowTrigger: 'אובדן טמפו אקסצנטרי או כאב מפרקי.'
+    },
+    'ARM BLOCK - SINGLE-ARM LATERAL RAISE': {
+      rule: 'צביר Myo-Reps: סט אקטיבציה נקי ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ׳ מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.',
+      belowTrigger: 'אובדן טמפו אקסצנטרי או כאב מפרקי.'
     },
     'TOWEL HANG': {
       rule: 'אחיזה חזקה במגבת או לולאת חבל, כתפיים אקטיביות (Scapular engagement). מפתח כוח אחיזה מסיבי ושומר על בריאות המפרקים.',

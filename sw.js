@@ -32,7 +32,8 @@ const ASSETS = [
   './js/cloud-sync.js',
   './js/google-fit.js',
   './js/notifications.js',
-  './js/app.js'
+  './js/app.js',
+  './PROGRAM_GUIDE.md'
 ];
 
 self.addEventListener('install', (event) => {

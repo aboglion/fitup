@@ -22,7 +22,7 @@ const AnatomyMap = (() => {
 
     // Safe fallback for all muscle keys
     const keys = ['chest', 'shoulders', 'triceps', 'lats', 'traps', 'biceps', 'forearms',
-      'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack', 'neck'];
+      'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack', 'neck', 'heart', 'lungs'];
     const m = {};
     keys.forEach(k => {
       const rawPct = muscleData[k] != null ? Math.max(0, Math.min(100, Number(muscleData[k]))) : 0;
@@ -33,11 +33,13 @@ const AnatomyMap = (() => {
     const frontCallouts = [
       // Left labels (User's left, Character's right)
       { id: 'neck', label: I18n.t('muscle_neck'), pct: m.neck.pct, formatted: m.neck.formatted, color: m.neck.color, nodeX: 47.5, nodeY: 18, labelY: 7, side: 'left' },
-      { id: 'chest-l', label: I18n.t('muscle_chest'), pct: m.chest.pct, formatted: m.chest.formatted, color: m.chest.color, nodeX: 45, nodeY: 24, labelY: 18, side: 'left' },
+      { id: 'chest-l', label: I18n.t('muscle_chest'), pct: m.chest.pct, formatted: m.chest.formatted, color: m.chest.color, nodeX: 45, nodeY: 24, labelY: 17, side: 'left' },
+      { id: 'lungs', label: I18n.t('muscle_lungs'), pct: m.lungs.pct, formatted: m.lungs.formatted, color: m.lungs.color, nodeX: 47.5, nodeY: 24, labelY: 27, side: 'left' },
       { id: 'core', label: I18n.t('muscle_core'), pct: m.core.pct, formatted: m.core.formatted, color: m.core.color, nodeX: 50, nodeY: 34, labelY: 38, side: 'left' },
       { id: 'obliques-l', label: I18n.t('muscle_obliques'), pct: m.obliques.pct, formatted: m.obliques.formatted, color: m.obliques.color, nodeX: 45, nodeY: 39, labelY: 58, side: 'left' },
       // Right labels (User's right, Character's left)
       { id: 'shoulders-r', label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, formatted: m.shoulders.formatted, color: m.shoulders.color, nodeX: 60, nodeY: 19, labelY: 12, side: 'right' },
+      { id: 'heart', label: I18n.t('muscle_heart'), pct: m.heart.pct, formatted: m.heart.formatted, color: m.heart.color, nodeX: 53, nodeY: 25.5, labelY: 21.5, side: 'right' },
       { id: 'biceps-r', label: I18n.t('muscle_biceps'), pct: m.biceps.pct, formatted: m.biceps.formatted, color: m.biceps.color, nodeX: 62, nodeY: 30, labelY: 31, side: 'right' },
       { id: 'forearm-r', label: I18n.t('muscle_forearms'), pct: m.forearms.pct, formatted: m.forearms.formatted, color: m.forearms.color, nodeX: 65, nodeY: 40, labelY: 50, side: 'right' },
       { id: 'quads-r', label: I18n.t('muscle_quads'), pct: m.quads.pct, formatted: m.quads.formatted, color: m.quads.color, nodeX: 55, nodeY: 55, labelY: 69, side: 'right' },
@@ -233,20 +235,22 @@ const AnatomyMap = (() => {
   async function showMuscleDetails(muscleKey, muscleName, pct) {
     const muscleExerciseMap = {
       chest: ['Single-Arm Floor Press', 'Push-up Bars Progression', 'Push-Up Volume (Day 5)', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Weighted Deficit Push-Up', 'Diamond Push-Up', 'Scapular Push-up'],
-      shoulders: ['Single-Arm Seated OHP', 'Pike Progression', 'Elevated Pike Push-Up', 'Wall Walk (Partial)', 'Wall Walk (Full)', 'Wall Handstand', 'Single-Arm Lateral Raise', 'Arm Block - Single-Arm Lateral Raise', 'TRX Y-T-W', 'TRX Face Pull', 'Scapular Push-up', 'Arm Circles', 'Wall Slides'],
-      triceps: ['DB Overhead Triceps Extension', 'Arm Block - DB Overhead Triceps Ext', 'Single-Arm Floor Press', 'Push-up Bars Progression', 'Diamond Push-Up', 'Single-Arm Seated OHP'],
-      biceps: ['Single-Arm Curl', 'Single-Arm Hammer Curl', 'Arm Block - Single-Arm Curl', 'Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'One-Arm DB Row', 'TRX Row'],
-      forearms: ['Dead Hang', 'Towel Hang', 'Suitcase Carry', 'One-Arm DB Row', 'TRX Row'],
+      shoulders: ['Single-Arm Seated OHP', 'Pike Progression', 'Elevated Pike Push-Up', 'Wall Walk (Partial)', 'Wall Walk (Full)', 'Wall Handstand', 'Single-Arm Lateral Raise', 'Arm Block - Single-Arm Lateral Raise', 'TRX Y-T-W', 'TRX Face Pull', 'Scapular Push-up', 'Arm Circles', 'Wall Slides', 'Band Pull-Apart', 'Feet-Elevated Push-Up', 'Band Neck Flexion & Extension'],
+      triceps: ['DB Overhead Triceps Extension', 'Arm Block - DB Overhead Triceps Ext', 'Single-Arm Floor Press', 'Push-up Bars Progression', 'Diamond Push-Up', 'Single-Arm Seated OHP', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Weighted Deficit Push-Up', 'Elevated Pike Push-Up', 'Pike Progression', 'Push-Up Volume (Day 5)'],
+      biceps: ['Single-Arm Curl', 'Single-Arm Hammer Curl', 'Arm Block - Single-Arm Curl', 'Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'One-Arm DB Row', 'TRX Row', 'Seated Band Row'],
+      forearms: ['Dead Hang', 'Towel Hang', 'Suitcase Carry', 'One-Arm DB Row', 'TRX Row', 'Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'Single-Arm Hammer Curl', 'Seated Band Row'],
       lats: ['Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row', 'Scapular Pull-up'],
-      traps: ['TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'Scapular Pull-up', 'One-Arm DB Row', 'Seated Band Row'],
-      quads: ['Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Bodyweight Squat', 'High Knees', 'Brisk Walking', 'VO2 Max Norwegian 4x4'],
+      traps: ['TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'Scapular Pull-up', 'One-Arm DB Row', 'Seated Band Row', 'Wall Slides', 'Deep Mobility Protocol', 'Band Neck Flexion & Extension'],
+      quads: ['Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Bodyweight Squat', 'High Knees', 'Brisk Walking', 'VO2 Max Norwegian 4x4', 'Relaxed Walking'],
       hamstrings: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'Nordic Curl Progression', 'Glute Bridge', 'DB Glute Bridge'],
-      glutes: ['DB Glute Bridge', 'Glute Bridge', 'Goblet Bulgarian Split Squat', 'Heels-Elevated Goblet Squat', 'Single-Leg RDL'],
+      glutes: ['DB Glute Bridge', 'Glute Bridge', 'Goblet Bulgarian Split Squat', 'Heels-Elevated Goblet Squat', 'Single-Leg RDL', 'Bodyweight Squat', 'Goblet Romanian Deadlift', 'Nordic Curl Progression'],
       calves: ['Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4', 'Relaxed Walking'],
-      core: ['Dead Bug', 'Hollow Body Hold', 'Tuck L-Sit', 'One-Leg Extended L-Sit', 'Full L-Sit', 'Suitcase Carry', 'Pallof Press Progression', 'High Knees'],
-      obliques: ['Suitcase Carry', 'Pallof Press Progression', 'Dead Bug', 'Single-Arm Floor Press', 'Single-Arm Seated OHP'],
+      core: ['Dead Bug', 'Hollow Body Hold', 'Tuck L-Sit', 'One-Leg Extended L-Sit', 'Full L-Sit', 'Suitcase Carry', 'Pallof Press Progression', 'High Knees', 'Deficit Push-Up', 'Heels-Elevated Goblet Squat', 'Micro Mobility Protocol', 'Push-Up Volume (Day 5)', 'Push-up Bars Progression', 'Scapular Push-up', 'Wall Handstand', 'Wall Walk (Full)', 'Wall Walk (Partial)', 'Weighted Deficit Push-Up'],
+      obliques: ['Suitcase Carry', 'Pallof Press Progression', 'Dead Bug', 'Single-Arm Floor Press', 'Single-Arm Seated OHP', 'Tuck L-Sit', 'One-Leg Extended L-Sit', 'Full L-Sit', 'Hollow Body Hold'],
       lowerBack: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'DB Glute Bridge', 'Suitcase Carry'],
-      neck: ['Band Neck Flexion & Extension', 'Deep Mobility Protocol', 'Micro Mobility Protocol', 'TRX Face Pull', 'Wall Slides', 'Band Pull-Apart']
+      neck: ['Band Neck Flexion & Extension', 'Deep Mobility Protocol', 'Micro Mobility Protocol', 'TRX Face Pull', 'Wall Slides', 'Band Pull-Apart'],
+      heart: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression'],
+      lungs: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression']
     };
 
     const exerciseNames = muscleExerciseMap[muscleKey] || [I18n.t('anatomy_only_exercises')];

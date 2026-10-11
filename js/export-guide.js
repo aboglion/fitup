@@ -703,13 +703,28 @@ window.ExporterGuide = (() => {
         btn.disabled = true;
       }
 
-      const html = await generateProgramGuide();
-      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
+      let blob;
+      let filename = 'PROGRAM_GUIDE.md';
+      try {
+        const resp = await fetch('PROGRAM_GUIDE.md');
+        if (resp.ok) {
+          const mdText = await resp.text();
+          blob = new Blob([mdText], { type: 'text/markdown;charset=utf-8' });
+        }
+      } catch (fetchErr) {
+        console.warn('Fetch PROGRAM_GUIDE.md fallback:', fetchErr);
+      }
 
+      if (!blob) {
+        const html = await generateProgramGuide();
+        blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        filename = 'PROGRAM_GUIDE.html';
+      }
+
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `FitUp-Pro-Guide-Master.html`;
+      a.download = filename;
       a.click();
 
       setTimeout(() => {

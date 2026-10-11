@@ -425,8 +425,8 @@ const StatsPage = (() => {
     'db-single-arm-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
     'push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'push-up-bars-progression': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
-    'push-up-volume-day5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
-    'push-up-volume-day-5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'push-up-volume-day5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }, { m: 'heart', w: 0.2 }, { m: 'lungs', w: 0.2 }],
+    'push-up-volume-day-5': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }, { m: 'heart', w: 0.2 }, { m: 'lungs', w: 0.2 }],
     'deficit-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
     'incline-push-up': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.4 }],
     'feet-elevated-push-up': [{ m: 'chest', w: 1.0 }, { m: 'shoulders', w: 0.5 }, { m: 'triceps', w: 0.5 }],
@@ -473,11 +473,11 @@ const StatsPage = (() => {
     'db-bulgarian-split-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
     'db-bss': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
     'db-bss-goblet': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
-    'goblet-bulgarian-split-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }],
+    'goblet-bulgarian-split-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'heart', w: 0.3 }, { m: 'lungs', w: 0.2 }],
     'goblet-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }, { m: 'core', w: 0.3 }],
     'bodyweight-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.4 }],
     'reverse-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
-    'heels-elevated-goblet-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'heels-elevated-goblet-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }, { m: 'core', w: 0.3 }, { m: 'heart', w: 0.3 }, { m: 'lungs', w: 0.2 }],
     'reverse-lunge-pistol-squat': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'walking-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'pistol-squat-to-chair': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'core', w: 0.4 }],
@@ -515,14 +515,14 @@ const StatsPage = (() => {
     'arm-block-lateral-raise': [{ m: 'shoulders', w: 1.0 }],
     'arm-block-triceps-ext': [{ m: 'triceps', w: 1.0 }],
     'chin-up-progression': [{ m: 'lats', w: 0.8 }, { m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.4 }],
-    'push-up-volume': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }],
+    'push-up-volume': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }, { m: 'core', w: 0.3 }, { m: 'heart', w: 0.2 }, { m: 'lungs', w: 0.2 }],
     'arm-block-biceps-curl': [{ m: 'biceps', w: 1.0 }],
-    'high-knees': [{ m: 'quads', w: 0.5 }, { m: 'core', w: 0.5 }],
+    'high-knees': [{ m: 'quads', w: 0.5 }, { m: 'core', w: 0.5 }, { m: 'heart', w: 0.5 }, { m: 'lungs', w: 0.4 }],
     'arm-circles': [{ m: 'shoulders', w: 0.5 }],
     'wall-slides': [{ m: 'traps', w: 0.5 }, { m: 'shoulders', w: 0.5 }],
-    'brisk-walking': [{ m: 'calves', w: 0.3 }, { m: 'quads', w: 0.3 }],
-    'relaxed-walking': [{ m: 'calves', w: 0.2 }, { m: 'quads', w: 0.2 }],
-    'vo2-max-norwegian-4x4': [{ m: 'calves', w: 0.5 }, { m: 'quads', w: 0.5 }],
+    'brisk-walking': [{ m: 'heart', w: 0.8 }, { m: 'lungs', w: 0.7 }, { m: 'calves', w: 0.3 }, { m: 'quads', w: 0.3 }],
+    'relaxed-walking': [{ m: 'heart', w: 0.5 }, { m: 'lungs', w: 0.4 }, { m: 'calves', w: 0.2 }, { m: 'quads', w: 0.2 }],
+    'vo2-max-norwegian-4x4': [{ m: 'heart', w: 1.0 }, { m: 'lungs', w: 1.0 }, { m: 'calves', w: 0.5 }, { m: 'quads', w: 0.5 }],
     'micro-mobility-protocol': [{ m: 'neck', w: 0.1 }, { m: 'core', w: 0.1 }],
     'deep-mobility-protocol': [{ m: 'neck', w: 0.5 }, { m: 'traps', w: 0.3 }],
     'single-arm-floor-press': [{ m: 'chest', w: 1.0 }, { m: 'triceps', w: 0.5 }],
@@ -555,6 +555,12 @@ const StatsPage = (() => {
     }
 
     const name = (ex.name || '').toLowerCase();
+    if (name.includes('vo2') || name.includes('norwegian')) {
+      return [{ m: 'heart', w: 1.0 }, { m: 'lungs', w: 1.0 }, { m: 'calves', w: 0.5 }, { m: 'quads', w: 0.5 }];
+    }
+    if (name.includes('walking') || name.includes('walk') || name.includes('cardio') || name.includes('treadmill')) {
+      return [{ m: 'heart', w: 0.8 }, { m: 'lungs', w: 0.7 }, { m: 'calves', w: 0.3 }, { m: 'quads', w: 0.3 }];
+    }
     if (name.includes('pallof') || name.includes('oblique') || name.includes('carry')) {
       return [{ m: 'obliques', w: 1.0 }, { m: 'core', w: 0.8 }, { m: 'forearms', w: 0.5 }];
     }
@@ -686,7 +692,7 @@ const StatsPage = (() => {
    */
   function calculateMuscleProgressions(trackingMap, allProgressionStates, exerciseGuide) {
     const muscles = ['chest', 'shoulders', 'triceps', 'lats', 'traps', 'biceps', 'forearms',
-      'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack', 'neck'];
+      'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack', 'neck', 'heart', 'lungs'];
 
     let plan = (allPlanDays && allPlanDays.length > 0) ? allPlanDays : [];
     if (plan.length === 0 && typeof window !== 'undefined' && window.TRAINING_DATA && window.TRAINING_DATA.daily) {

@@ -711,7 +711,9 @@ const I18n = (() => {
 
       // Exercises page
       warmup_mobility: "Warm-up & Mobility",
+      squat_tree: "Leg Strength & Squats (Squat Tree)",
       squat_lunge_tree: "Leg Strength & Squats (Squat & Lunge Tree)",
+      quad_focus: "Quadriceps Focus",
       hamstring_chain: "Hamstrings & Posterior Chain (Hinge & Chain)",
       glutes_calves: "Glutes & Calves",
       core_citadel: "Core Citadel",
@@ -791,6 +793,8 @@ const I18n = (() => {
       muscle_glutes: "Glutes",
       muscle_calves: "Calves",
       muscle_neck: "Neck",
+      muscle_heart: "Heart (Cardiovascular)",
+      muscle_lungs: "Lungs (Respiratory)",
       anatomy_front: "Front View",
       anatomy_back: "Back View",
 
@@ -815,6 +819,15 @@ const I18n = (() => {
       max_label: "Max",
       mechanical_stop_rule: "Technique Rule / Mechanical Stop:",
       rule_band_neck_flexion: "Set 1 (Flexion): Facing AWAY from anchor (Band around forehead) | Set 2 (Extension): Facing TOWARDS anchor (Band around back of head). Horizontal anchor at head height!",
+      cue_gold_standard: "Gold Standard Technique",
+      rule_single_arm_curl: "Full supination (pinky higher than thumb at peak contraction), full elbow extension at bottom stretch, strict 2-1-2 tempo with no torso or shoulder swing.",
+      rule_single_arm_hammer_curl: "Neutral grip (thumbs up), target the Brachialis to push the biceps upward for arm thickness, slow 2s descent with full extension.",
+      rule_db_overhead_triceps_extension: "Deep stretch of the triceps long head (65% of arm volume), elbows pinned forward (no flaring), 1s pause in deep stretch behind head (2-1-2 tempo).",
+      rule_single_arm_lateral_raise: "Slight 15° forward torso lean in the scapular plane, raise to shoulder height, stop 5cm before thigh for continuous lateral-delt tension, 2-1-2 tempo.",
+      rule_diamond_push_up: "Thumbs and index fingers close under mid-chest, elbows tucked 45° to body, 2s controlled descent with chest touching hands.",
+      rule_arm_block___single_arm_curl: "Myo-reps cluster: 1 clean activation set to target + 3 mini-sets of 5 reps with 15s rest. Strict stop on 2 consecutive tempo losses.",
+      rule_arm_block___db_overhead_triceps_ext: "Myo-reps cluster: 1 clean activation set to target + 3 mini-sets of 5 reps with 15s rest. Strict stop on 2 consecutive tempo losses.",
+      rule_arm_block___single_arm_lateral_raise: "Myo-reps cluster: 1 clean activation set to target + 3 mini-sets of 5 reps with 15s rest. Strict stop on 2 consecutive tempo losses.",
       rest_complete_toast: "💪 Rest is over!",
       timer_rest_title: "⏱️ Rest Timer",
 
@@ -1887,7 +1900,9 @@ const I18n = (() => {
       celebration_backup_msg_old: "ימים מאז הגיבוי האחרון. כדאי לגבות כעת!",
 
       warmup_mobility: "חימום וניידות",
+      squat_tree: "כוח רגליים וסקווט (Squat Tree)",
       squat_lunge_tree: "כוח רגליים וסקווט (Squat & Lunge Tree)",
+      quad_focus: "מיקוד ארבע-ראשי (Quad Focus)",
       hamstring_chain: "המסטרינג ושרשרת אחורית (Hinge & Chain)",
       glutes_calves: "ישבן ותאומים (Glutes & Calves)",
       core_citadel: "מבצר הליבה (Core Citadel)",
@@ -1965,6 +1980,8 @@ const I18n = (() => {
       muscle_glutes: "ישבן",
       muscle_calves: "תאומים",
       muscle_neck: "צוואר",
+      muscle_heart: "לב (מערכת לב-ריאה)",
+      muscle_lungs: "ריאות (אוורור ונפח חמצן)",
       anatomy_front: "מבט קדמי (Front)",
       anatomy_back: "מבט אחורי (Back)",
 
@@ -1988,6 +2005,15 @@ const I18n = (() => {
       max_label: "מקס׳",
       mechanical_stop_rule: "כלל טכניקה / Mechanical Stop:",
       rule_band_neck_flexion: "סט 1 (כפיפה): פנים הרחק מהעגינה (גומייה על מצח) | סט 2 (פשיטה): פנים לכיוון העגינה (גומייה על עורף). עגינה אופקית בגובה הראש!",
+      cue_gold_standard: "תקן ביצוע זהב",
+      rule_single_arm_curl: "סופינציה מלאה (זרת מסתובבת גבוה יותר מהאגודל בשיא הכיווץ), יישור מרפק מלא בתחתית למתיחה מקסימלית, קצב 2-1-2 קפדני ללא שום תנופת כתף או גב.",
+      rule_single_arm_hammer_curl: "אחיזה ניטרלית (אגודלים למעלה), מיקוד ב-Brachialis שדוחף את הבייספס מעלה ומעבה את הזרוע, הורדה איטית מבוקרת של 2 שניות ויישור מלא.",
+      rule_db_overhead_triceps_extension: "מתיחה עמוקה של הראש הארוך (65% מנפח הזרוע), מרפקים נעולים ומצביעים קדימה (ללא פתיחה לצדדים), עצירה של 1 שניה במתיחה העמוקה מאחורי הראש (קצב 2-1-2).",
+      rule_single_arm_lateral_raise: "הטיה קלה של 15° לפנים במישור השכמה, הרמה עד גובה כתף, עצירה 5 ס״מ לפני הירך לשמירה על מתח תמידי בדלתואיד הצדי, קצב 2-1-2 לבניית V-Taper מרשים.",
+      rule_diamond_push_up: "אגודלים ואצבעות קרובים במרכז החזה, מרפקים צמודים לגוף ב-45°, ירידה מבוקרת של 2 שניות עד נגיעה קלה בידיים.",
+      rule_arm_block___single_arm_curl: "צביר Myo-Reps: סט אקטיבציה נקי ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.",
+      rule_arm_block___db_overhead_triceps_ext: "צביר Myo-Reps: סט אקטיבציה נקי ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.",
+      rule_arm_block___single_arm_lateral_raise: "צביר Myo-Reps: סט אקטיבציה נקי ליעד + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.",
       rest_complete_toast: "💪 המנוחה הסתיימה!",
       timer_rest_title: "⏱️ טיימר מנוחה",
 
@@ -3159,7 +3185,9 @@ const I18n = (() => {
       exercise_locked: "مغلق",
 
       warmup_mobility: "إحماء وحركة",
+      squat_tree: "شجرة القرفصاء وقوة الساقين",
       squat_lunge_tree: "قوة الساقين والقرفصاء",
+      quad_focus: "التركيز على العضلة رباعية الرؤوس",
       core_citadel: "قلعة العضلات الأساسية",
       all_exercises_btn: "جميع التمارين",
       progress_tree_btn: "شجرة التقدم",
@@ -3197,6 +3225,8 @@ const I18n = (() => {
       muscle_lower_back: "أسفل الظهر",
       muscle_obliques: "عضلات مائلة",
       muscle_neck: "الرقبة",
+      muscle_heart: "القلب (القلب والأوعية الدموية)",
+      muscle_lungs: "الرئتان (الجهاز التنفسي)",
       anatomy_front: "عرض أمامي (Front)",
       anatomy_back: "عرض خلفي (Back)",
 
@@ -3217,6 +3247,15 @@ const I18n = (() => {
       max_label: "أقصى",
       mechanical_stop_rule: "قاعدة التقنية / التوقف الميكانيكي:",
       rule_band_neck_flexion: "المجموعة 1 (الانثناء): الوجه بعيداً عن التثبيت (الشريط على الجبهة) | المجموعة 2 (التمديد): الوجه نحو التثبيت (الشريط على مؤخرة الرأس). تثبيت أفقي بمستوى الرأس!",
+      cue_gold_standard: "المعيار الذهبي للأداء",
+      rule_single_arm_curl: "تدوير كامل للساعد (الخنصر أعلى من الإبهام عند قمة الانقباض)، فرد كامل للكوع في الأسفل لأقصى تمدد، إيقاع 2-1-2 صارم بدون أي تأرجح للكتف أو الظهر.",
+      rule_single_arm_hammer_curl: "قبضة محايدة (الإبهام للأعلى)، التركيز على العضلة العضدية لرفع البايسبس للأعلى وزيادة سمك الذراع، نزول بطيء ومحكوم ثانيتين مع فرد كامل.",
+      rule_db_overhead_triceps_extension: "تمديد عميق للرأس الطويل للترايسبس (65% من حجم الذراع)، الكوعان مثبتان للأمام (بدون فتح للخارج)، توقف ثانية عند أقصى تمدد خلف الرأس (إيقاع 2-1-2).",
+      rule_single_arm_lateral_raise: "ميل خفيف 15° للأمام في مستوى لوح الكتف، رفع لمستوى الكتف، توقف قبل الفخذ بـ 5 سم لتوتر مستمر في الكتف الجانبي، إيقاع 2-1-2.",
+      rule_diamond_push_up: "الإبهامان والسبابتان متقاربان تحت منتصف الصدر، الكوعان بزاوية 45° للجسم، نزول محكوم ثانيتين حتى ملامسة اليدين.",
+      rule_arm_block___single_arm_curl: "مجموعة Myo-Reps: مجموعة تفعيل نظيفة للهدف + 3 مجموعات مصغرة من 5 تكرارات مع 15 ثانية راحة. توقف فوري عند فقدانين متتاليين للإيقاع.",
+      rule_arm_block___db_overhead_triceps_ext: "مجموعة Myo-Reps: مجموعة تفعيل نظيفة للهدف + 3 مجموعات مصغرة من 5 تكرارات مع 15 ثانية راحة. توقف فوري عند فقدانين متتاليين للإيقاع.",
+      rule_arm_block___single_arm_lateral_raise: "مجموعة Myo-Reps: مجموعة تفعيل نظيفة للهدف + 3 مجموعات مصغرة من 5 تكرارات مع 15 ثانية راحة. توقف فوري عند فقدانين متتاليين للإيقاع.",
       rest_complete_toast: "💪 انتهت الراحة!",
       tempo_execution: "إيقاع التنفيذ",
       tempo_static: "ثابت",
@@ -3580,7 +3619,7 @@ const I18n = (() => {
    * e.g. t('consumed_protein_powder', 'Consumed protein', { amount: 30 })
    */
   function t(key, fallback = '', params = null) {
-    let text = TRANSLATIONS[currentLang]?.[key] || TRANSLATIONS['en']?.[key] || fallback || key;
+    let text = TRANSLATIONS[currentLang]?.[key] || CONFIG[currentLang]?.[key] || TRANSLATIONS['en']?.[key] || CONFIG['en']?.[key] || fallback || key;
     if (params && typeof params === 'object') {
       Object.keys(params).forEach(pKey => {
         text = text.replace(new RegExp(`\\{${pKey}\\}`, 'g'), params[pKey]);
