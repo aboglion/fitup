@@ -59,4 +59,60 @@ test('CloudSync - Token Retention and Proactive Refresh Architecture', () => {
     cloudSyncCode.includes('Token TTL near limit, attempting API call before disconnecting'),
     'ensureValidToken must attempt API call with existing token before giving up'
   );
+
+  // Verify waitForGis helper exists and is exported
+  assert.ok(
+    cloudSyncCode.includes('async function waitForGis('),
+    'waitForGis helper must exist in cloud-sync.js'
+  );
+  assert.ok(
+    cloudSyncCode.includes('waitForGis,'),
+    'waitForGis must be exported from CloudSync'
+  );
+
+  // Verify loginWithGoogle supports isAuto parameter
+  assert.ok(
+    cloudSyncCode.includes('async function loginWithGoogle(onSuccess, onError, isAuto = false)'),
+    'loginWithGoogle must accept isAuto parameter'
+  );
 });
+
+test('App & CloudSync - Simulated Automatic Click on Re-Auth Disconnect', () => {
+  const appCode = fs.readFileSync(path.join(__dirname, '../js/app.js'), 'utf8');
+
+  // Verify simulateAutoLoginClick exists in setupAuthPromptBanner
+  assert.ok(
+    appCode.includes('simulateAutoLoginClick'),
+    'simulateAutoLoginClick helper must be defined in app.js'
+  );
+
+  // Verify banner remains visible while auto-triggering click
+  assert.ok(
+    appCode.includes('banner.classList.remove(\'hidden\');') &&
+    appCode.includes('simulateAutoLoginClick();'),
+    'Banner must be shown on screen and simulateAutoLoginClick called when re-auth is needed'
+  );
+
+  // Verify bannerBtn click is simulated
+  assert.ok(
+    appCode.includes('bannerBtn.click();'),
+    'bannerBtn.click() must be executed to simulate automatic click on the login button'
+  );
+
+  // Verify auto-click loop guard
+  assert.ok(
+    appCode.includes('hasAutoTriggeredReauth'),
+    'hasAutoTriggeredReauth guard must prevent continuous auto-click looping'
+  );
+  assert.ok(
+    appCode.includes('isSimulatingClick'),
+    'isSimulatingClick must tag programmatic clicks to differentiate from user gestures'
+  );
+
+  // Verify reset on synced status or success
+  assert.ok(
+    appCode.includes("newStatus === 'synced'") || appCode.includes("hasAutoTriggeredReauth = false"),
+    'hasAutoTriggeredReauth must reset when re-authenticated'
+  );
+});
+

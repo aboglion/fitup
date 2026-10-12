@@ -261,6 +261,8 @@ const I18n = (() => {
 
       // Today Page
       back_to_today: "Back to Today's Workout",
+      back_to_exercise: "Back to Exercise",
+      back_btn: "Back",
       day_label: "Day",
       notes: "Notes",
       dates: "Dates",
@@ -1576,6 +1578,8 @@ const I18n = (() => {
 
       // Today Page
       back_to_today: "חזור לאימון של היום",
+      back_to_exercise: "חזור לתרגיל",
+      back_btn: "חזור",
       day_label: "יום",
       notes: "הערות",
       dates: "תאריכים",
@@ -3064,6 +3068,8 @@ const I18n = (() => {
 
       // Today Page
       back_to_today: "العودة إلى تمرين اليوم",
+      back_to_exercise: "العودة إلى التمرين",
+      back_btn: "رجوع",
       day_label: "اليوم",
       notes: "ملاحظات",
       dates: "التواريخ",

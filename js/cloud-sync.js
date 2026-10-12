@@ -604,9 +604,27 @@ const CloudSync = (() => {
   }
 
   /**
+   * Wait for Google Identity Services (GIS) library to load
+   */
+  async function waitForGis(timeoutMs = 2000) {
+    if (typeof window !== 'undefined' && window.google && window.google.accounts && window.google.accounts.oauth2) {
+      return true;
+    }
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      if (typeof window !== 'undefined' && window.google && window.google.accounts && window.google.accounts.oauth2) {
+        return true;
+      }
+      await new Promise(r => setTimeout(r, 100));
+    }
+    return Boolean(typeof window !== 'undefined' && window.google && window.google.accounts && window.google.accounts.oauth2);
+  }
+
+  /**
    * Open Google OAuth login flow in an external system browser window / Chrome Custom Tab
    */
-  function openExternalGoogleOAuth(clientId) {
+  function openExternalGoogleOAuth(clientId, isAuto = false) {
+    if (typeof window === 'undefined') return;
     const redirectUri = window.location.origin + window.location.pathname;
     const scope = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/fitness.activity.read https://www.googleapis.com/auth/fitness.body.read https://www.googleapis.com/auth/fitness.heart_rate.read';
     
@@ -622,7 +640,7 @@ const CloudSync = (() => {
 
     // In PWA standalone mode, target="_blank" opens in Chrome Custom Tab / System Browser window
     const newWin = window.open(authUrl, '_blank');
-    if (!newWin || newWin.closed || typeof newWin.closed === 'undefined') {
+    if ((!newWin || newWin.closed || typeof newWin.closed === 'undefined') && !isAuto) {
       window.location.href = authUrl;
     }
   }
@@ -674,18 +692,22 @@ const CloudSync = (() => {
   /**
    * Sign-in with Google OAuth Token Client (GIS API) or External Browser Window Fallback
    */
-  async function loginWithGoogle(onSuccess, onError) {
+  async function loginWithGoogle(onSuccess, onError, isAuto = false) {
     const clientId = await getClientId();
     const profile = await getUserProfile();
 
     // If running in PWA standalone display mode on Android/iOS, launch external system browser (Chrome Custom Tab)
     if (isStandalone()) {
       console.log('Running in PWA Standalone mode. Opening Google OAuth in external system browser...');
-      openExternalGoogleOAuth(clientId);
+      openExternalGoogleOAuth(clientId, isAuto);
       return;
     }
 
-    if (window.google && window.google.accounts && window.google.accounts.oauth2) {
+    if (typeof window !== 'undefined' && (!window.google || !window.google.accounts || !window.google.accounts.oauth2)) {
+      await waitForGis(2000);
+    }
+
+    if (typeof window !== 'undefined' && window.google && window.google.accounts && window.google.accounts.oauth2) {
       try {
         const clientOptions = {
           client_id: clientId,
@@ -704,7 +726,7 @@ const CloudSync = (() => {
                 if (onError) onError('התחברות גוגל בוטלה');
               } else {
                 console.log('Falling back to external browser OAuth...');
-                openExternalGoogleOAuth(clientId);
+                openExternalGoogleOAuth(clientId, isAuto);
               }
             }
           },
@@ -714,7 +736,11 @@ const CloudSync = (() => {
               if (onError) onError('התחברות גוגל בוטלה');
             } else if (error.type === 'popup_failed_to_open') {
               console.log('Popup failed to open, falling back to external OAuth window...');
-              openExternalGoogleOAuth(clientId);
+              if (isAuto) {
+                if (onError) onError('חלון ההתחברות נחסם, לחץ על הכפתור כדי להתחבר');
+              } else {
+                openExternalGoogleOAuth(clientId, false);
+              }
             } else {
               if (onError) onError(error.type || 'Google OAuth error');
             }
@@ -730,13 +756,21 @@ const CloudSync = (() => {
         return;
       } catch (e) {
         console.warn('GIS Token client init failed, opening external OAuth window:', e);
-        openExternalGoogleOAuth(clientId);
+        if (!isAuto) {
+          openExternalGoogleOAuth(clientId, false);
+        } else if (onError) {
+          onError(e.message || 'שגיאת התחברות');
+        }
         return;
       }
     }
 
     // Fallback if GIS window.google is not available or blocked by PWA/browser
-    openExternalGoogleOAuth(clientId);
+    if (!isAuto) {
+      openExternalGoogleOAuth(clientId, false);
+    } else if (onError) {
+      onError('שירות Google Identity Services אינו זמין כעת');
+    }
   }
 
   async function fetchGoogleProfile(token) {
@@ -956,6 +990,7 @@ const CloudSync = (() => {
     getUserProfile,
     logout,
     loginWithGoogle,
+    waitForGis,
     getStatus,
     setStatus,
     onSyncStatusChange,

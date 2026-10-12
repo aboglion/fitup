@@ -1124,10 +1124,33 @@ const UI = (() => {
   function showAnatomyPreview(pngPath, title) {
     if (!pngPath) return;
     const muscleMapText = (typeof I18n !== 'undefined' && I18n.t) ? I18n.t('anatomy_muscle_map') : 'מפת שרירים';
-    const modalTitle = `<span style="display: flex; align-items: center; gap: 8px;"><span>🎯</span> <span style="font-size: 16px; font-weight: 800;">${title}</span> <span style="font-size: 12px; font-weight: 700; color: var(--accent-primary, #3b82f6);">(${muscleMapText})</span></span>`;
+    const backBtnText = (typeof I18n !== 'undefined' && I18n.t) ? (I18n.t('back_to_exercise') || 'חזור לתרגיל') : 'חזור לתרגיל';
+    const modalTitle = `
+      <div style="display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0;">
+        <button type="button" class="btn-secondary" onclick="UI.hideModal()" 
+                style="background: var(--bg-elevated); border: 1px solid var(--border-light); border-radius: 8px; padding: 4px 10px; font-size: 12px; font-weight: 800; color: var(--text-primary); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0; transition: all 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.2);"
+                onmouseover="this.style.borderColor='var(--accent-primary)'; this.style.transform='translateY(-1px)';"
+                onmouseout="this.style.borderColor='var(--border-light)'; this.style.transform='none';"
+                title="${backBtnText}">
+          <span style="font-size: 14px;">↩️</span>
+          <span>${backBtnText}</span>
+        </button>
+        <span style="font-size: 15px; font-weight: 800; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</span>
+        <span style="font-size: 11.5px; font-weight: 700; color: var(--accent-primary, #3b82f6); white-space: nowrap;">(${muscleMapText})</span>
+      </div>
+    `;
     const modalBody = `
-      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px; background: #ffffff; border-radius: 14px; border: 1px solid var(--border-color); box-shadow: 0 4px 16px rgba(0,0,0,0.25);">
-        <img src="${pngPath}" style="width: 100%; max-height: 55vh; object-fit: contain; mix-blend-mode: multiply; border-radius: 8px;" alt="${title} Anatomy" loading="eager">
+      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px; background: #ffffff; border-radius: 14px; border: 1px solid var(--border-color); box-shadow: 0 4px 16px rgba(0,0,0,0.25);">
+          <img src="${pngPath}" style="width: 100%; max-height: 55vh; object-fit: contain; mix-blend-mode: multiply; border-radius: 8px;" alt="${title} Anatomy" loading="eager">
+        </div>
+        <button type="button" class="btn-primary" onclick="UI.hideModal()" 
+                style="width: 100%; padding: 11px 16px; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; border-radius: 10px; cursor: pointer; color: #ffffff; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); transition: transform 0.15s ease;"
+                onmouseover="this.style.transform='translateY(-1px)';"
+                onmouseout="this.style.transform='none';">
+          <span style="font-size: 16px;">↩️</span>
+          <span>${backBtnText}</span>
+        </button>
       </div>
     `;
     showModal(modalTitle, modalBody);

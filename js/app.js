@@ -523,6 +523,9 @@ const App = (() => {
 
       // Handle browser back/forward buttons
       window.addEventListener('popstate', (e) => {
+        if (e.state && e.state.isModal) {
+          return; // Modal state transition is handled by UI.js modalStack
+        }
         if (e.state && e.state.page) {
           navigateTo(e.state.page, false);
         } else {
@@ -1750,6 +1753,29 @@ const App = (() => {
     if (!banner) return;
 
     let isDismissed = sessionStorage.getItem('authBannerDismissed') === 'true';
+    let hasAutoTriggeredReauth = false;
+    let isSimulatingClick = false;
+
+    // Simulate automatic click on the login button when disconnect / reauth is detected
+    const simulateAutoLoginClick = async () => {
+      if (hasAutoTriggeredReauth) return;
+      if (!bannerBtn || bannerBtn.disabled) return;
+
+      hasAutoTriggeredReauth = true;
+      isSimulatingClick = true;
+      console.log('[AuthPrompt] Google disconnect/reauth detected. Simulating automatic login button click...');
+
+      if (window.CloudSync && window.CloudSync.waitForGis) {
+        await window.CloudSync.waitForGis(1500);
+      } else {
+        await new Promise(r => setTimeout(r, 250));
+      }
+
+      if (bannerBtn && !bannerBtn.disabled) {
+        bannerBtn.click();
+      }
+      setTimeout(() => { isSimulatingClick = false; }, 500);
+    };
 
     const updateBannerVisibility = async () => {
       // Don't display floating banner if full-screen login or splash screen is active
@@ -1763,18 +1789,24 @@ const App = (() => {
 
       const loggedIn = await CloudSync.isLoggedIn();
       const status = CloudSync.getStatus();
+      const validToken = CloudSync.hasValidToken ? await CloudSync.hasValidToken() : true;
+      const isReauthNeeded = status === 'reauth_needed' || (loggedIn && !validToken);
 
-      // If logged in and synced, hide banner immediately
-      if (loggedIn && status !== 'reauth_needed') {
+      // If logged in and synced with valid token, hide banner immediately
+      if (loggedIn && !isReauthNeeded) {
         banner.classList.add('hidden');
+        hasAutoTriggeredReauth = false;
         return;
       }
 
-      // If re-auth is needed (session expired or token invalid)
-      if (status === 'reauth_needed') {
+      // If re-auth is needed (session expired or token invalid / disconnected)
+      if (isReauthNeeded) {
         if (bannerTitle) bannerTitle.textContent = I18n.t('auth_prompt_reauth_title');
         if (bannerSub) bannerSub.textContent = I18n.t('auth_prompt_reauth_sub');
         banner.classList.remove('hidden');
+
+        // Simulate automatic click as if user clicked the button, while keeping banner visible
+        simulateAutoLoginClick();
         return;
       }
 
@@ -1799,11 +1831,13 @@ const App = (() => {
 
     // 1-Click Sign-In button handler
     if (bannerBtn) {
-      bannerBtn.onclick = () => {
+      bannerBtn.onclick = (e) => {
+        const isAuto = isSimulatingClick || (e && !e.isTrusted);
         bannerBtn.disabled = true;
         CloudSync.loginWithGoogle(
           async (profile) => {
             bannerBtn.disabled = false;
+            hasAutoTriggeredReauth = false;
             UI.toast(`${I18n.t('connected_as')} ${profile.name || I18n.t('google_user')}! 👋`, 'success');
             banner.classList.add('hidden');
             await CloudSync.pullData();
@@ -1811,8 +1845,11 @@ const App = (() => {
           },
           (err) => {
             bannerBtn.disabled = false;
-            UI.toast(I18n.t('error_prefix') + (err.message || err), 'error');
-          }
+            if (!isAuto) {
+              UI.toast(I18n.t('error_prefix') + (err.message || err), 'error');
+            }
+          },
+          isAuto
         );
       };
     }
@@ -1824,7 +1861,10 @@ const App = (() => {
 
     // Listen to sync status changes
     if (CloudSync.onSyncStatusChange) {
-      CloudSync.onSyncStatusChange(() => {
+      CloudSync.onSyncStatusChange((newStatus) => {
+        if (newStatus === 'synced') {
+          hasAutoTriggeredReauth = false;
+        }
         updateBannerVisibility();
       });
     }
