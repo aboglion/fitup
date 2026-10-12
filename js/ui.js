@@ -815,17 +815,46 @@ const UI = (() => {
 
     const searchTitle = (effectiveTitle || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     const fallbackSearch = (fallbackTitle || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const exData = (window.TRAINING_DATA?.exercises || []).find(e => {
+
+    function matchExerciseRecord(e) {
+      if (!e) return false;
       const eClean = (e.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
       const idClean = (e.id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
       if (eClean === searchTitle || idClean === searchTitle) return true;
       if (fallbackSearch && (eClean === fallbackSearch || idClean === fallbackSearch)) return true;
-      const hasStageMatch = (e.stages || []).some(s => s.toLowerCase().replace(/[^a-z0-9]/g, '') === searchTitle);
-      return hasStageMatch;
-    });
+      if (e.stages && e.stages.some(s => s.toLowerCase().replace(/[^a-z0-9]/g, '') === searchTitle)) return true;
+      return false;
+    }
+
+    const exData = (window.TRAINING_DATA?.exercises || []).find(matchExerciseRecord);
+
+    // Look for matching plan exercise in current day or anywhere in active plan days
+    let planEx = null;
+    if (window.TodayPage && typeof window.TodayPage.getCurrentDayIndex === 'function') {
+      const curIdx = window.TodayPage.getCurrentDayIndex();
+      const curDay = window.allPlanDays?.[curIdx] || window.TRAINING_DATA?.daily?.[curIdx];
+      if (curDay?.exercises) {
+        planEx = curDay.exercises.find(matchExerciseRecord);
+      }
+    }
+    if (!planEx) {
+      const allDays = window.allPlanDays || window.TRAINING_DATA?.daily || [];
+      for (const d of allDays) {
+        const found = (d.exercises || []).find(matchExerciseRecord);
+        if (found) {
+          planEx = found;
+          break;
+        }
+      }
+    }
+
+    const isWarmup = !!(planEx?.isWarmup || exData?.category === 'Warmup' || lowerTitle.includes('warmup') || lowerTitle.includes('חימום') || ['arm-circles', 'wall-slides', 'scapular-push-up', 'scapular-pull-up', 'dead-hang', 'high-knees', 'bodyweight-squat', 'glute-bridge', 'dead-bug', 'seated-band-row'].includes(exData?.id || ''));
+    const isCardio = !!(exData?.category === 'Cardio' || lowerTitle.includes('walking') || lowerTitle.includes('cardio') || lowerTitle.includes('vo2 max'));
+    const isMobility = !!(lowerTitle.includes('mobility') || lowerTitle.includes('מוביליות'));
+    const isBodyweight = !exData?.startingWeight && !planEx?.weight;
 
     let metadataHTML = '';
-    if (exData) {
+    if (exData || planEx || isWarmup || isMobility || isCardio) {
       const secLabel = I18n.t('unit_seconds', 'שניות');
       const repsLabel = I18n.t('unit_reps', 'חזרות');
       const kgLabel = I18n.t('unit_kg', 'ק״ג');
@@ -833,32 +862,153 @@ const UI = (() => {
       const minLbl = I18n.t('min_label', 'מינ׳');
       const maxLbl = I18n.t('max_label', 'מקס׳');
 
-      const restText = exData.restRange ? `${exData.restRange[0]}-${exData.restRange[1]} ${secLabel}` : (exData.restSeconds ? `${exData.restSeconds} ${secLabel}` : null);
-      const repText = (exData.windowMin && exData.windowMax) ? `${exData.windowMin}-${exData.windowMax} ${repsLabel}` : null;
-      const weightText = exData.startingWeight != null ? `${exData.startingWeight} ${kgLabel} (${exData.loadType || perSideLabel}) [${minLbl} ${exData.minWeight || 3}${kgLabel} | ${maxLbl} ${exData.maxWeight || 32}${kgLabel}]` : null;
+      // 1. Rest formatting
+      let restText = null;
+      const rRange = planEx?.restRange || exData?.restRange;
+      const rSec = planEx?.rest !== undefined ? planEx.rest : exData?.restSeconds;
+      if (rRange && rRange[0] !== rRange[1]) {
+        restText = `${rRange[0]}-${rRange[1]} ${secLabel}`;
+      } else if (rSec !== undefined && rSec !== null) {
+        if (rSec === 0) {
+          restText = I18n.t('continuous_flow', 'מעבר רציף (ללא מנוחה)');
+        } else {
+          restText = `${rSec} ${secLabel}`;
+        }
+      }
 
-      const ruleKey = 'rule_' + (exData.id || '').replace(/[-_]+/g, '_');
-      const ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (exData.rule || '');
+      // 2. Reps / Target formatting
+      let repText = null;
+      if (exData?.windowMin && exData?.windowMax) {
+        repText = `${exData.windowMin}-${exData.windowMax} ${repsLabel}`;
+      } else {
+        const rawTarget = planEx?.sets || planEx?.repWindow || exData?.repWindow;
+        if (rawTarget) {
+          let str = String(rawTarget);
+          if (str.includes('forward') && str.includes('backward')) {
+            str = str.replace(/forward/i, I18n.t('direction_forward', 'לפנים'))
+                     .replace(/backward/i, I18n.t('direction_backward', 'לאחור'));
+          }
+          if (str.includes('each side')) {
+            str = str.replace(/each side/i, I18n.t('each_side_suffix', 'לכל צד'));
+          }
+          if (str.includes('Slow')) {
+            str = str.replace(/\(Slow\)/i, `(${I18n.t('slow_controlled_tag', 'איטי ומבוקר')})`);
+          }
+          if (str.includes('secs')) {
+            str = str.replace(/secs/i, secLabel);
+          }
+          if (str.includes('mins')) {
+            str = str.replace(/mins/i, I18n.t('unit_minutes', 'דקות'));
+          }
+          if (/^\d+$/.test(str.trim())) {
+            str = `${str.trim()} ${repsLabel}`;
+          }
+          repText = str;
+        }
+      }
 
-      metadataHTML = `
-        <div style="background: var(--bg-card); padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 6px;">
-          <div style="font-size: 13px; font-weight: 800; color: var(--accent-primary, #3b82f6); display: flex; align-items: center; gap: 6px;">
-            <span>📋</span> <span>${I18n.t('zero_decisions_spec', 'מפרט ופרוטוקול ביצוע ("Zero Decisions")')}</span>
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; font-size: 12px;">
-            ${exData.tempo ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px;">⏱️ <b>${I18n.t('label_tempo', 'טמפו:')}</b> ${exData.tempo}</div>` : ''}
-            ${restText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px;">⏳ <b>${I18n.t('label_rest', 'מנוחה:')}</b> ${restText}</div>` : ''}
-            ${repText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px;">🎯 <b>${I18n.t('label_rep_window', 'חלון חזרות:')}</b> ${repText}</div>` : ''}
-            ${exData.structure ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px;">🏗️ <b>${I18n.t('label_structure', 'מבנה:')}</b> ${exData.structure}</div>` : ''}
-            ${weightText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; grid-column: 1/-1;">⚖️ <b>${I18n.t('label_starting_weight', 'משקל התחלתי:')}</b> ${weightText}</div>` : ''}
-          </div>
-          ${ruleText ? `
-            <div style="margin-top: 2px; padding: 6px 8px; background: rgba(245, 158, 11, 0.12); border-right: 3px solid #f59e0b; border-radius: 6px; font-size: 11.5px; color: var(--text-primary);">
-              <b>⚠️ ${I18n.t('mechanical_stop_rule', 'כלל טכניקה / Mechanical Stop:')}</b> ${ruleText}
+      // 3. Weight / Resistance formatting
+      let weightText = null;
+      if (exData?.startingWeight != null) {
+        weightText = `${exData.startingWeight} ${kgLabel} (${exData.loadType || perSideLabel}) [${minLbl} ${exData.minWeight || 3}${kgLabel} | ${maxLbl} ${exData.maxWeight || 32}${kgLabel}]`;
+      } else if (planEx?.weight) {
+        let w = String(planEx.weight);
+        if (/^bodyweight$/i.test(w.trim())) {
+          weightText = I18n.t('bodyweight_load', 'משקל גוף (Bodyweight)');
+        } else if (w.startsWith('Band')) {
+          weightText = w.replace(/Band/i, I18n.t('band_label', 'גומייה'));
+        } else if (w.startsWith('Incline')) {
+          weightText = w.replace(/Incline/i, I18n.t('incline_label', 'שיפוע'));
+        } else {
+          weightText = w;
+        }
+      } else if (isWarmup || isBodyweight) {
+        weightText = I18n.t('bodyweight_load', 'משקל גוף (Bodyweight)');
+      }
+
+      // 4. Tempo formatting
+      let tempoText = exData?.tempo || planEx?.tempo;
+      if (!tempoText) {
+        if (isWarmup) {
+          tempoText = I18n.t('tempo_warmup_flow', 'תנועה רציפה וזורמת');
+        } else if (isMobility) {
+          tempoText = I18n.t('tempo_slow_hold', 'איטי ומבוקר (החזקה בסוף טווח)');
+        } else if (isCardio) {
+          tempoText = I18n.t('tempo_steady_cardio', 'קצב יציב ומדוד (זון 2)');
+        } else if (exData || planEx) {
+          tempoText = I18n.t('tempo_controlled', '2-1-2 מבוקר');
+        }
+      }
+
+      // 5. Structure formatting
+      let structureText = null;
+      const rawStruct = planEx?.structure || exData?.structure;
+      if (rawStruct === 'pair') {
+        structureText = I18n.t('structure_pair', 'סופר-סט / זוג (Pair)');
+      } else if (rawStruct === 'circuit') {
+        structureText = I18n.t('structure_circuit', 'מעגל (Circuit)');
+      } else if (isWarmup) {
+        structureText = I18n.t('structure_warmup_dynamic', 'חימום דינמי והכנת מפרקים');
+      } else if (isCardio) {
+        structureText = I18n.t('structure_cardio_protocol', 'פרוטוקול אירובי וסיבולת');
+      } else if (isMobility) {
+        structureText = I18n.t('structure_mobility_protocol', 'מוביליות וטווחי תנועה');
+      } else if (rawStruct === 'straight') {
+        structureText = I18n.t('structure_straight', 'סטים רגילים (Straight Sets)');
+      } else if (exData?.category) {
+        structureText = exData.category;
+      }
+
+      // 6. Muscle focus
+      let muscleFocusText = null;
+      const exId = (exData?.id || planEx?.id || searchTitle).toLowerCase();
+      if (typeof StatsPage !== 'undefined' && typeof StatsPage.getMuscleForExercise === 'function') {
+        const mKey = StatsPage.getMuscleForExercise({ id: exId, name: effectiveTitle });
+        if (mKey) {
+          muscleFocusText = I18n.t('muscle_' + mKey) || mKey;
+        }
+      } else if (typeof AnatomyMap !== 'undefined' && typeof AnatomyMap.getMusclesForExercise === 'function') {
+        const muscles = AnatomyMap.getMusclesForExercise(effectiveTitle);
+        if (muscles && muscles.length > 0) {
+          muscleFocusText = muscles.map(m => I18n.t('muscle_' + m) || m).join(', ');
+        }
+      }
+
+      // 7. Rule resolution
+      const ruleKey = 'rule_' + (exId || searchTitle).replace(/[-_]+/g, '_');
+      let ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (exData?.rule || '');
+
+      const chips = [];
+      if (repText) chips.push({ icon: '🎯', label: I18n.t('label_rep_window', 'יעד חזרות:'), val: repText });
+      if (restText) chips.push({ icon: '⏳', label: I18n.t('label_rest', 'מנוחה:'), val: restText });
+      if (tempoText) chips.push({ icon: '⏱️', label: I18n.t('label_tempo', 'טמפו:'), val: tempoText });
+      if (structureText) chips.push({ icon: '🏗️', label: I18n.t('label_structure', 'מבנה:'), val: structureText });
+      if (muscleFocusText) chips.push({ icon: '💪', label: I18n.t('label_target_muscle', 'מיקוד שרירי:'), val: muscleFocusText });
+      if (weightText) chips.push({ icon: '⚖️', label: I18n.t('label_starting_weight', 'משקל / התנגדות:'), val: weightText, fullWidth: true });
+
+      if (chips.length > 0 || ruleText) {
+        metadataHTML = `
+          <div style="background: var(--bg-card); padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 13px; font-weight: 800; color: var(--accent-primary, #3b82f6); display: flex; align-items: center; gap: 6px;">
+              <span>📋</span> <span>${I18n.t('zero_decisions_spec', 'מפרט ופרוטוקול ביצוע ("Zero Decisions")')}</span>
             </div>
-          ` : ''}
-        </div>
-      `;
+            ${chips.length > 0 ? `
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; font-size: 12px;">
+                ${chips.map(chip => `
+                  <div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; ${chip.fullWidth ? 'grid-column: 1/-1;' : ''}">
+                    ${chip.icon} <b>${chip.label}</b> ${chip.val}
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            ${ruleText ? `
+              <div style="margin-top: 2px; padding: 6px 8px; background: rgba(245, 158, 11, 0.12); border-right: 3px solid #f59e0b; border-radius: 6px; font-size: 11.5px; color: var(--text-primary); line-height: 1.4;">
+                <b>⚠️ ${I18n.t('mechanical_stop_rule', 'כלל טכניקה / Mechanical Stop:')}</b> ${ruleText}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
     }
 
     const isDeepMobilitySub = (DEEP_MOBILITY_SUB_EXERCISES || []).some(s => {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v195-auto-reauth-click';
+const CACHE_NAME = 'fitup-v196-exercise-spec';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
