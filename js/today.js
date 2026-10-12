@@ -610,7 +610,14 @@ const TodayPage = (() => {
         if (content.style.display === 'none') {
           content.style.display = 'block';
           document.getElementById('notes-accordion-content').style.display = 'none'; // Close notes if open
-          if (typeof CalendarPage !== 'undefined') CalendarPage.render(); // Make sure calendar is rendered
+          if (typeof CalendarPage !== 'undefined') {
+            const currentDay = allPlanDays[currentDayIndex];
+            if (currentDay && currentDay.week) {
+              const match = currentDay.week.match(/\d+/);
+              if (match && CalendarPage.setWeek) CalendarPage.setWeek(parseInt(match[0]));
+            }
+            CalendarPage.render(); // Make sure calendar is rendered
+          }
         } else {
           content.style.display = 'none';
         }
@@ -869,7 +876,7 @@ const TodayPage = (() => {
 
     // Update summary card
     document.getElementById('day-number').textContent = '#' + day.dayNum;
-    document.getElementById('today-date-badge').textContent = day.dayOfWeek;
+    document.getElementById('today-date-badge').textContent = (window.UI && window.UI.getDayOfWeekName) ? window.UI.getDayOfWeekName(day) : day.dayOfWeek;
     document.getElementById('day-week').textContent = day.week ? day.week.replace('Week', I18n.t('week_label_full')) : '';
 
     const realTodayIndex = UI.findTodayIndex(allPlanDays);
@@ -4781,14 +4788,10 @@ const TodayPage = (() => {
           }
         }
       }
-      if (earliestDate) {
-        startDate = earliestDate;
-      } else {
-        const d = new Date();
-        // Anchor to Sunday of the current week (Sunday = Day 1 in Israel)
-        d.setDate(d.getDate() - d.getDay());
-        startDate = UI.getLocalDateString(d);
-      }
+      const baseDate = earliestDate ? new Date(earliestDate + 'T12:00:00') : new Date();
+      // Anchor to Sunday of the week (Sunday = Day 1 in all languages)
+      baseDate.setDate(baseDate.getDate() - baseDate.getDay());
+      startDate = UI.getLocalDateString(baseDate);
       await DB.setSetting('planStartDate', startDate);
       await DB.loadTrainingPlan();
       UI.toast(I18n.t('program_started'), 'success');

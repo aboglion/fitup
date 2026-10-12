@@ -115,19 +115,20 @@ const CalendarPage = (() => {
     const weekLabel = `${I18n.t('week_label_full')} ${currentWeekNum}`;
     document.getElementById('cal-week-label').textContent = weekLabel;
 
-    // Build standard Sunday-Saturday calendar weeks
-    // First, we need to know the dayOfWeek of the very first day (dayIndex 0)
-    const firstDay = allPlanDays[0];
-    const dayNames = [I18n.t('sun'), I18n.t('mon'), I18n.t('tue'), I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')];
-    const startOffset = dayNames.indexOf(firstDay.dayOfWeek);
+    // Day names array always in Sunday-to-Saturday order:
+    // Sunday (0), Monday (1), Tuesday (2), Wednesday (3), Thursday (4), Friday (5), Saturday (6)
+    const dayNames = [
+      I18n.t('sun'), I18n.t('mon'), I18n.t('tue'),
+      I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')
+    ];
 
-    // Calculate which days belong to the requested currentWeekNum (1-indexed)
-    // Week 1 starts with up to `startOffset` empty padding days.
+    // Every week in the plan is 7 days, ALWAYS starting on Sunday (index 0) and ending on Saturday (index 6)
     const weekDays = [];
+    const weekStartIdx = (currentWeekNum - 1) * 7;
     for (let i = 0; i < 7; i++) {
-      const globalIdx = ((currentWeekNum - 1) * 7) + i - startOffset;
+      const globalIdx = weekStartIdx + i;
       if (globalIdx < 0 || globalIdx >= allPlanDays.length) {
-        weekDays.push(null); // Empty pad
+        weekDays.push(null);
       } else {
         weekDays.push(allPlanDays[globalIdx]);
       }
@@ -139,36 +140,48 @@ const CalendarPage = (() => {
 
     // Render calendar grid
     const grid = document.getElementById('calendar-grid');
-    grid.innerHTML = weekDays.map((day, idx) => {
-      if (!day) {
-        // Empty placeholder for padding
+    if (grid) {
+      grid.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
+      grid.style.direction = isRTL ? 'rtl' : 'ltr';
+      grid.innerHTML = weekDays.map((day, idx) => {
+        const localizedDayName = dayNames[idx];
+        if (!day) {
+          // Empty placeholder for padding
+          return `
+            <div class="calendar-day empty" style="opacity: 0.3; cursor: default; background: transparent; border: 1px dashed var(--border-color);">
+              <div class="calendar-day-name">${localizedDayName}</div>
+              <div class="calendar-day-date">-</div>
+            </div>
+          `;
+        }
+
+        const tracking = trackingData[idx];
+        const isCompleted = tracking && tracking.completed;
+        const typeInfo = UI.getDayTypeInfo(day.dayType);
+        const isToday = (day.dayIndex === window.appCurrentPlanIndex);
+        const isDeload = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload'));
+        const combatBadge = combatBadgeFor(day);
+
         return `
-          <div class="calendar-day empty" style="opacity: 0.3; cursor: default; background: transparent; border: 1px dashed var(--border-color);">
-            <div class="calendar-day-name">${dayNames[idx]}</div>
-            <div class="calendar-day-date">-</div>
+          <div class="calendar-day ${isToday ? 'today' : ''} ${isCompleted ? 'completed' : ''} ${isDeload ? 'deload-day' : ''}"
+               onclick="CalendarPage.selectDay(${day.dayIndex})">
+            <div class="calendar-day-name">${localizedDayName}${combatBadge}</div>
+            <div class="calendar-day-date" dir="ltr">#${day.dayNum}</div>
+            <span class="calendar-day-type ${typeInfo.class}">${typeInfo.label}</span>
           </div>
         `;
-      }
-
-      const tracking = trackingData[idx];
-      const isCompleted = tracking && tracking.completed;
-      const typeInfo = UI.getDayTypeInfo(day.dayType);
-      const isToday = (day.dayIndex === window.appCurrentPlanIndex);
-      const isDeload = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload'));
-      const combatBadge = combatBadgeFor(day);
-
-      return `
-        <div class="calendar-day ${isToday ? 'today' : ''} ${isCompleted ? 'completed' : ''} ${isDeload ? 'deload-day' : ''}"
-             onclick="CalendarPage.selectDay(${day.dayIndex})">
-          <div class="calendar-day-name">${day.dayOfWeek}${combatBadge}</div>
-          <div class="calendar-day-date" dir="ltr">#${day.dayNum}</div>
-          <span class="calendar-day-type ${typeInfo.class}">${typeInfo.label}</span>
-        </div>
-      `;
-    }).join('');
+      }).join('');
+    }
   }
 
-
+  /**
+   * Set active week number
+   */
+  function setWeek(weekNum) {
+    if (typeof weekNum === 'number' && weekNum >= 1 && weekNum <= totalWeeks) {
+      currentWeekNum = weekNum;
+    }
+  }
 
   /**
    * Select a day from calendar
@@ -185,7 +198,8 @@ const CalendarPage = (() => {
   return {
     init,
     render,
-    selectDay
+    selectDay,
+    setWeek
   };
 })();
 

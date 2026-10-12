@@ -1265,6 +1265,42 @@ const UI = (() => {
   }
 
   /**
+   * Get localized Day of Week name for a plan day (Sunday = Day 1 in all languages)
+   */
+  function getDayOfWeekName(day) {
+    if (!day) return '';
+    const dayNames = (typeof I18n !== 'undefined' && I18n.t)
+      ? [I18n.t('sun'), I18n.t('mon'), I18n.t('tue'), I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')]
+      : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+    if (day.date && typeof day.date === 'string' && day.date.includes('/')) {
+      const parts = day.date.split('/');
+      const [dd, mm, yyyy] = parts.map(Number);
+      if (yyyy && mm && dd) {
+        const d = new Date(yyyy, mm - 1, dd);
+        if (!isNaN(d.getTime())) {
+          return dayNames[d.getDay()];
+        }
+      }
+    }
+    if (typeof day.dayIndex === 'number') {
+      const dow = ((day.dayIndex % 7) + 7) % 7;
+      return dayNames[dow];
+    }
+    const enDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const heDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    const arDays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    if (typeof day.dayOfWeek === 'string') {
+      const lower = day.dayOfWeek.toLowerCase().trim();
+      let idx = enDays.indexOf(lower);
+      if (idx === -1) idx = heDays.indexOf(day.dayOfWeek.trim());
+      if (idx === -1) idx = arDays.indexOf(day.dayOfWeek.trim());
+      if (idx !== -1) return dayNames[idx];
+    }
+    return day.dayOfWeek || '';
+  }
+
+  /**
    * Parse sets string to get number of sets
    */
   function parseSetsCount(setsStr) {
@@ -2005,6 +2041,7 @@ const UI = (() => {
     formatShortDate,
     getLocalDateString,
     findTodayIndex,
+    getDayOfWeekName,
     parseSetsCount,
     parseReps,
     getDifficultyClass,

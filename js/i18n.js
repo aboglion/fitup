@@ -3944,6 +3944,13 @@ const I18n = (() => {
 
     applyToDOM();
 
+    if (window.updatePlanDaysDates && Array.isArray(window.allPlanDays)) {
+      try {
+        const planStart = (window.DB && window.DB.getSetting) ? await window.DB.getSetting('planStartDate') : null;
+        window.updatePlanDaysDates(window.allPlanDays, window.appCurrentPlanIndex || 0, planStart);
+      } catch (e) {}
+    }
+
     if (window.UI && window.UI.toast) {
       UI.toast(t('language_changed'), 'success');
     }
@@ -3952,6 +3959,12 @@ const I18n = (() => {
     if (window.App && window.App.navigateTo) {
       const hashPage = window.location.hash.replace('#', '') || 'today';
       window.App.navigateTo(hashPage, false);
+    }
+
+    if (window.CalendarPage && window.CalendarPage.render) {
+      try {
+        window.CalendarPage.render();
+      } catch (e) {}
     }
 
     if (typeof window.updateAuthPromptUI === 'function') {

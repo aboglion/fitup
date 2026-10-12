@@ -1536,6 +1536,14 @@ html[dir="ltr"] .set-modal-option-btn {
   box-sizing: border-box;
 }
 
+html[dir="rtl"] .calendar-grid {
+  direction: rtl;
+}
+
+html[dir="ltr"] .calendar-grid {
+  direction: ltr;
+}
+
 .calendar-day {
   background: var(--bg-card);
   border: 1px solid var(--border-color);

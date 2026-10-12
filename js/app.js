@@ -343,12 +343,22 @@ const App = (() => {
       const savedDataVersion = await DB.getSetting('dataVersion');
 
       let planStartDate = await DB.getSetting('planStartDate');
+      let needReseed = false;
+      if (planStartDate) {
+        const s = new Date(planStartDate + 'T12:00:00');
+        if (s.getDay() !== 0) {
+          s.setDate(s.getDate() - s.getDay());
+          planStartDate = UI.getLocalDateString(s);
+          await DB.setSetting('planStartDate', planStartDate);
+          needReseed = true;
+        }
+      }
 
       const planCount = await DB.count(DB.STORES.PLAN);
       const exCount = await DB.count(DB.STORES.EXERCISES);
 
-      if (planCount === 0 || exCount === 0 || savedDataVersion !== currentDataVersion || !planStartDate) {
-        console.log("Reloading training plan due to data version update, empty DB, or missing start date.");
+      if (planCount === 0 || exCount === 0 || savedDataVersion !== currentDataVersion || !planStartDate || needReseed) {
+        console.log("Reloading training plan due to data version update, empty DB, missing start date, or Sunday normalization.");
         const trackCount = await DB.count(DB.STORES.TRACKING).catch(() => 0);
         if (trackCount === 0) {
           await DB.clearTracking();
@@ -438,6 +448,8 @@ const App = (() => {
       await DB.setSetting('lastActiveDate', todayStr);
       await DB.setSetting('currentPlanIndex', planIndex);
       window.appCurrentPlanIndex = planIndex;
+      window.allPlanDays = allPlanDays;
+      window.updatePlanDaysDates = updatePlanDaysDates;
       // ----------------------------------
 
       // Preload Today's workout media immediately with top priority
@@ -695,27 +707,36 @@ const App = (() => {
 
   /**
    * Dynamically update the dates and day names of the plan days.
-   * Anchored to planStartDateStr when present so calendar days remain fixed.
+   * In all languages, weeks ALWAYS start on Sunday (Day 1 of the week).
+   * Anchored to planStartDateStr (normalized to Sunday) when present.
+   * In preview mode (before start), anchored to Sunday of the current week.
    */
   function updatePlanDaysDates(planDays, activeIndex, planStartDateStr) {
-    const dayNames = [I18n.t('sun'), I18n.t('mon'), I18n.t('tue'), I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')];
+    if (!Array.isArray(planDays) || planDays.length === 0) return;
+    const dayNames = [
+      I18n.t('sun'), I18n.t('mon'), I18n.t('tue'),
+      I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')
+    ];
+    let startDate;
     if (planStartDateStr) {
-      const startDate = new Date(planStartDateStr + 'T12:00:00');
-      planDays.forEach(day => {
-        const d = new Date(startDate);
-        d.setDate(startDate.getDate() + day.dayIndex);
-        day.dayOfWeek = dayNames[d.getDay()];
-        day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
-      });
+      const s = new Date(planStartDateStr + 'T12:00:00');
+      if (s.getDay() !== 0) {
+        s.setDate(s.getDate() - s.getDay());
+      }
+      startDate = s;
     } else {
-      const today = new Date();
-      planDays.forEach(day => {
-        const d = new Date(today);
-        d.setDate(today.getDate() + (day.dayIndex - activeIndex));
-        day.dayOfWeek = dayNames[d.getDay()];
-        day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
-      });
+      const now = new Date();
+      const sun = new Date(now);
+      sun.setDate(now.getDate() - now.getDay()); // Always Sunday of current week
+      startDate = new Date(UI.getLocalDateString(sun) + 'T12:00:00');
     }
+
+    planDays.forEach(day => {
+      const d = new Date(startDate);
+      d.setDate(startDate.getDate() + day.dayIndex);
+      day.dayOfWeek = dayNames[d.getDay()];
+      day.date = UI.getLocalDateString(d).split('-').reverse().join('/');
+    });
   }
 
   function updatePlanDates(activeIndex) {
@@ -1025,6 +1046,10 @@ const App = (() => {
       }
 
       function renderCombatPreviewGrid(resolved) {
+        if (!combatPreviewGrid) return;
+        const isRTL = (window.I18n && window.I18n.getDir() === 'rtl') || document.documentElement.dir === 'rtl';
+        combatPreviewGrid.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
+        combatPreviewGrid.style.direction = isRTL ? 'rtl' : 'ltr';
         const days = [];
         // Build Sun..Sat display order (JS getDay 0-6)
         for (let dow = 0; dow < 7; dow++) {
