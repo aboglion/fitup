@@ -3964,13 +3964,14 @@ const I18n = (() => {
    * e.g. t('consumed_protein_powder', 'Consumed protein', { amount: 30 })
    */
   function t(key, fallback = '', params = null) {
+    if (!key) return fallback || '';
     let text = TRANSLATIONS[currentLang]?.[key] || CONFIG[currentLang]?.[key] || TRANSLATIONS['en']?.[key] || CONFIG['en']?.[key] || fallback || key;
-    if (params && typeof params === 'object') {
+    if (params && typeof params === 'object' && typeof text === 'string') {
       Object.keys(params).forEach(pKey => {
         text = text.replace(new RegExp(`\\{${pKey}\\}`, 'g'), params[pKey]);
       });
     }
-    return text;
+    return text != null ? text : (fallback || '');
   }
 
   /**

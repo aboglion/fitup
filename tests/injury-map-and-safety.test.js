@@ -244,3 +244,33 @@ test('PROGRAM_GUIDE.md - Includes Section 1.3 Biomechanical Joint & Injury Engin
   assert.ok(guideContent.includes('24-Hour Pain Rule'), 'Must document 24-Hour Pain Rule');
   assert.ok(guideContent.includes('1-Tap Biomechanical Joint & Injury Engine'), 'Must include Appendix E entry');
 });
+
+test('InjuryEngine & UI Modal - All exercise adaptations have valid cueKey translations and never yield undefined', () => {
+  assert.strictEqual(I18n.t(undefined), '');
+  assert.strictEqual(I18n.t(null), '');
+
+  const adaptations = InjuryEngine.EXERCISE_ADAPTATIONS;
+  assert.ok(Object.keys(adaptations).length > 0);
+
+  ['he', 'en', 'ar'].forEach(lang => {
+    I18n.setLanguage(lang);
+    for (const [exName, rule] of Object.entries(adaptations)) {
+      assert.ok(rule.sensitive && rule.sensitive.cueKey, `${exName} must have sensitive.cueKey`);
+      assert.ok(rule.injured && rule.injured.cueKey, `${exName} must have injured.cueKey`);
+
+      const sensitiveText = I18n.t(rule.sensitive.cueKey);
+      const injuredText = I18n.t(rule.injured.cueKey);
+
+      assert.notStrictEqual(sensitiveText, undefined);
+      assert.notStrictEqual(sensitiveText, 'undefined');
+      assert.ok(sensitiveText.length > 0, `${exName} sensitive text in ${lang} must not be empty`);
+
+      assert.notStrictEqual(injuredText, undefined);
+      assert.notStrictEqual(injuredText, 'undefined');
+      assert.ok(injuredText.length > 0, `${exName} injured text in ${lang} must not be empty`);
+    }
+  });
+
+  I18n.setLanguage('he');
+});
+

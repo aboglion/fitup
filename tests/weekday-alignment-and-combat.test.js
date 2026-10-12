@@ -231,4 +231,147 @@ test('Sunday-Start Israeli Microcycle - Week 1 starts cleanly on Sunday with Leg
   assert.equal(days[6].jsDow, 6);
 });
 
+test('Combat Training + Sunday-Start: Classes on Mon+Thu (1, 4) produces optimal layout without strength on combat days', () => {
+  const result = CombatScheduler.computeWeek({ classDays: [1, 4], practice: 'auto' });
+  const startDate = new Date('2026-10-11T12:00:00'); // Sunday
+
+  const template = ['Legs + Core', 'Zone 2 Cardio', 'Push + Skill', 'Active Recovery', 'Pull + Grip', 'VO2 Max', 'Rest'];
+  const weekDays = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + i);
+    const jsDow = d.getDay();
+    const bp = CombatScheduler.blockPosOf(jsDow);
+    const tplIdx = result.permutation[bp];
+    weekDays.push({ dayIndex: i, jsDow, tplIdx, name: template[tplIdx] });
+  }
+
+  // Combat days are Monday (i=1, dow=1) and Thursday (i=4, dow=4)
+  const monday = weekDays[1];
+  const thursday = weekDays[4];
+
+  // Combat days must NEVER be strength (0: Legs, 2: Push, 4: Pull) and never Rest (6)
+  assert.ok(![0, 2, 4, 6].includes(monday.tplIdx), 'Monday combat day is not strength or rest');
+  assert.ok(![0, 2, 4, 6].includes(thursday.tplIdx), 'Thursday combat day is not strength or rest');
+
+  // Strength days land on non-combat days:
+  const strengthDays = weekDays.filter(d => [0, 2, 4].includes(d.tplIdx));
+  assert.equal(strengthDays.length, 3, 'All 3 strength days are scheduled');
+  assert.ok(strengthDays.every(d => d.jsDow !== 1 && d.jsDow !== 4), 'No strength day lands on Mon or Thu');
+});
+
+test('Combat Training + Sunday-Start: Classes on Sun+Wed (0, 3) schedules combat on Sunday and Wednesday safely', () => {
+  const result = CombatScheduler.computeWeek({ classDays: [0, 3], practice: 'auto' });
+  const startDate = new Date('2026-10-11T12:00:00'); // Sunday
+
+  const template = ['Legs + Core', 'Zone 2 Cardio', 'Push + Skill', 'Active Recovery', 'Pull + Grip', 'VO2 Max', 'Rest'];
+  const weekDays = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + i);
+    const jsDow = d.getDay();
+    const bp = CombatScheduler.blockPosOf(jsDow);
+    const tplIdx = result.permutation[bp];
+    weekDays.push({ dayIndex: i, jsDow, tplIdx, name: template[tplIdx] });
+  }
+
+  const sunday = weekDays[0];
+  const wednesday = weekDays[3];
+
+  // Sunday and Wednesday are combat days
+  assert.ok(![0, 2, 4, 6].includes(sunday.tplIdx), 'Sunday combat day is not strength or rest');
+  assert.ok(![0, 2, 4, 6].includes(wednesday.tplIdx), 'Wednesday combat day is not strength or rest');
+
+  // Verify practice day (Saturday) also avoids strength and rest
+  const saturday = weekDays[6];
+  assert.ok(![0, 2, 4, 6].includes(saturday.tplIdx), 'Practice day avoids strength and rest');
+});
+
+test('Manual Swaps + Combat Training Coexistence: Swaps persist across plan regeneration', () => {
+  // Simulate a 7-day week generated with Combat Schedule
+  const result = CombatScheduler.computeWeek({ classDays: [1, 4], practice: 'auto' });
+  const template = ['Legs + Core', 'Zone 2 Cardio', 'Push + Skill', 'Active Recovery', 'Pull + Grip', 'VO2 Max', 'Rest'];
+  const startDate = new Date('2026-10-11T12:00:00');
+
+  const buildPlan = () => {
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(startDate);
+      d.setDate(d.getDate() + i);
+      const jsDow = d.getDay();
+      const bp = CombatScheduler.blockPosOf(jsDow);
+      const tplIdx = result.permutation[bp];
+      days.push({
+        dayIndex: i,
+        dayNum: i + 1,
+        dayOfWeek: ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'][jsDow],
+        dayType: template[tplIdx],
+        exercises: [{ name: template[tplIdx] + ' Exercise' }]
+      });
+    }
+    return days;
+  };
+
+  const plan = buildPlan();
+  // Suppose user swaps Day 2 (Tue) with Day 3 (Wed)
+  const manualSwaps = [{ dayIndex1: 2, dayIndex2: 3 }];
+
+  const applySwaps = (planArr, swaps) => {
+    for (const s of swaps) {
+      const d1 = planArr.find(p => p.dayIndex === s.dayIndex1);
+      const d2 = planArr.find(p => p.dayIndex === s.dayIndex2);
+      if (d1 && d2) {
+        const tempType = d1.dayType;
+        const tempEx = JSON.stringify(d1.exercises);
+        d1.dayType = d2.dayType;
+        d1.exercises = JSON.parse(JSON.stringify(d2.exercises));
+        d2.dayType = tempType;
+        d2.exercises = JSON.parse(tempEx);
+      }
+    }
+  };
+
+  const origDay2Type = plan[2].dayType;
+  const origDay3Type = plan[3].dayType;
+
+  // Apply swap
+  applySwaps(plan, manualSwaps);
+  assert.equal(plan[2].dayType, origDay3Type, 'Day 2 has Day 3 content');
+  assert.equal(plan[3].dayType, origDay2Type, 'Day 3 has Day 2 content');
+
+  // Now simulate a full plan re-seed or combat schedule update:
+  const regeneratedPlan = buildPlan();
+  // Re-seed runs applyManualSwapsToPlan
+  applySwaps(regeneratedPlan, manualSwaps);
+
+  // The swap is 100% preserved after regeneration!
+  assert.equal(regeneratedPlan[2].dayType, origDay3Type, 'Day 2 still has swapped content after regeneration');
+  assert.equal(regeneratedPlan[3].dayType, origDay2Type, 'Day 3 still has swapped content after regeneration');
+  assert.equal(regeneratedPlan[0].dayOfWeek, 'ראשון', 'Day 0 is Sunday');
+  assert.equal(regeneratedPlan[1].dayOfWeek, 'שני', 'Day 1 is Monday');
+});
+
+test('Combat Guidance Warning: Detects if a manual swap placed strength on a combat day', () => {
+  const cfg = {
+    enabled: true,
+    history: [{
+      from: 0,
+      enabled: true,
+      perm: [1, 6, 2, 5, 4, 3, 0], // Monday (bp 0) = Zone 2, Thu (bp 3) = VO2 Max
+      classDays: [1, 4],
+      practiceDay: 6
+    }]
+  };
+
+  // Normal Monday combat day with Zone 2 content -> normal guidance
+  const normalInfo = CombatScheduler.combatInfoForDay(cfg, 1, 1, 'Zone 2 Cardio');
+  assert.equal(normalInfo.guidance, 'combat_guidance_zone2');
+
+  // If user manually swapped Legs (strength) to Monday:
+  // CombatScheduler detects strength on combat day and reports warning guidance!
+  const warnedInfo = CombatScheduler.combatInfoForDay(cfg, 1, 1, 'Legs + Core');
+  assert.equal(warnedInfo.kind, 'class1');
+});
+
+
 

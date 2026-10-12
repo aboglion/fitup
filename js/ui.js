@@ -1042,9 +1042,12 @@ const UI = (() => {
           return `<span style="font-size: 11px; font-weight: 700; color: ${stateColor}; background: ${stateBg}; border: 1px solid ${stateColor}40; padding: 2px 7px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">${stateIcon} ${jName}: ${stateText}</span>`;
         }).join(' ');
 
-        const sensitiveText = I18n.t(baseAd.sensitive_note_key);
-        const injuredText = I18n.t(baseAd.injured_note_key);
-        const substituteText = baseAd.injured_substitute ? (I18n.t(baseAd.injured_substitute) || baseAd.injured_substitute) : null;
+        const sensitiveKey = baseAd.sensitive?.cueKey || baseAd.sensitive_note_key;
+        const sensitiveText = sensitiveKey ? I18n.t(sensitiveKey) : '';
+        const injuredKey = baseAd.injured?.cueKey || baseAd.injured_note_key;
+        const injuredText = injuredKey ? I18n.t(injuredKey) : '';
+        const substituteRaw = (activeAd && activeAd.substituteName) || baseAd.injured?.substitute || baseAd.injured_substitute;
+        const substituteText = substituteRaw ? (I18n.t(substituteRaw) || substituteRaw) : '';
 
         let activeAlertBox = '';
         if (activeAd) {
@@ -1057,7 +1060,7 @@ const UI = (() => {
           } else if (activeAd.type === 'sensitive') {
             activeAlertBox = `
               <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; font-size: 12px; color: #fde047; font-weight: 700; display: flex; align-items: center; gap: 6px;">
-                <span>🛡️</span> <span>${I18n.t('today_adapted_banner_title')}: <b>${I18n.t('injury_badge_rom_shield')}</b></span>
+                <span>${I18n.t('today_adapted_banner_title')}: <b>${I18n.t('injury_badge_rom_shield')}</b></span>
               </div>
             `;
           }
@@ -1078,14 +1081,16 @@ const UI = (() => {
               ${jointStatusChips}
             </div>
             <div style="font-size: 11px; line-height: 1.4; background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px;">
+              ${sensitiveText ? `
               <div>
                 <b style="color: #f59e0b;">🟡 ${I18n.t('injury_sensitive_protocol')}:</b>
                 <span style="color: var(--text-secondary); margin-inline-start: 4px;">${sensitiveText}</span>
-              </div>
+              </div>` : ''}
+              ${injuredText ? `
               <div>
                 <b style="color: #ef4444;">🔴 ${I18n.t('injury_injured_protocol')}:</b>
                 <span style="color: var(--text-secondary); margin-inline-start: 4px;">${injuredText}</span>
-              </div>
+              </div>` : ''}
             </div>
           </div>
         `;
