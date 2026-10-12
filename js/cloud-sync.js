@@ -856,12 +856,11 @@ const CloudSync = (() => {
     if (!navigator.onLine) return false;
     if (isSyncing) return false;
 
-    const token = await ensureValidToken();
-    const legacyUrl = await DB.getSetting('cloudSyncUrl');
-
-    if (!token && !legacyUrl) return false;
-
     try {
+      const token = await ensureValidToken();
+      const legacyUrl = await DB.getSetting('cloudSyncUrl');
+
+      if (!token && !legacyUrl) return false;
       if (token) {
         const fileIdResult = await findDriveFileId(token);
         if (fileIdResult && fileIdResult.error === 401) {

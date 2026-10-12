@@ -6,6 +6,7 @@ const DB = (() => {
   const DB_NAME = 'FitUpDB';
   const DB_VERSION = 9;
   let db = null;
+  let initPromise = null;
 
   // Store names
   const STORES = {
@@ -28,10 +29,20 @@ const DB = (() => {
    * Initialize the database
    */
   function init() {
-    return new Promise((resolve, reject) => {
+    if (db) return Promise.resolve(db);
+    if (initPromise) return initPromise;
+
+    initPromise = new Promise((resolve, reject) => {
       const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-      request.onerror = () => reject(request.error);
+      request.onerror = () => {
+        initPromise = null;
+        reject(request.error);
+      };
+
+      request.onblocked = (event) => {
+        console.warn('IndexedDB database open blocked:', event);
+      };
 
       request.onupgradeneeded = (event) => {
         const database = event.target.result;
@@ -111,15 +122,33 @@ const DB = (() => {
 
       request.onsuccess = (event) => {
         db = event.target.result;
+        db.onversionchange = () => {
+          try { db.close(); } catch (_) {}
+          db = null;
+          initPromise = null;
+        };
         resolve(db);
       };
     });
+
+    return initPromise;
+  }
+
+  /**
+   * Helper to ensure database is initialized before any store operation
+   */
+  async function getDb() {
+    if (db) return db;
+    return init();
   }
 
   /**
    * Generic transaction helper
    */
   function transaction(storeName, mode = 'readonly') {
+    if (!db) {
+      throw new Error(`Database not initialized: attempted transaction on "${storeName}" when db is null`);
+    }
     const tx = db.transaction(storeName, mode);
     return tx.objectStore(storeName);
   }
@@ -127,7 +156,8 @@ const DB = (() => {
   /**
    * Put a single record
    */
-  function put(storeName, data) {
+  async function put(storeName, data) {
+    await getDb();
     return new Promise((resolve, reject) => {
       const store = transaction(storeName, 'readwrite');
       const request = store.put(data);
@@ -139,7 +169,8 @@ const DB = (() => {
   /**
    * Get a single record by key
    */
-  function get(storeName, key) {
+  async function get(storeName, key) {
+    await getDb();
     return new Promise((resolve, reject) => {
       const store = transaction(storeName, 'readonly');
       const request = store.get(key);
@@ -151,7 +182,8 @@ const DB = (() => {
   /**
    * Get all records from a store
    */
-  function getAll(storeName) {
+  async function getAll(storeName) {
+    await getDb();
     return new Promise((resolve, reject) => {
       const store = transaction(storeName, 'readonly');
       const request = store.getAll();
@@ -163,7 +195,8 @@ const DB = (() => {
   /**
    * Get records by index
    */
-  function getByIndex(storeName, indexName, value) {
+  async function getByIndex(storeName, indexName, value) {
+    await getDb();
     return new Promise((resolve, reject) => {
       const store = transaction(storeName, 'readonly');
       const index = store.index(indexName);
@@ -176,7 +209,8 @@ const DB = (() => {
   /**
    * Put multiple records in a single transaction
    */
-  function putBulk(storeName, records) {
+  async function putBulk(storeName, records) {
+    await getDb();
     return new Promise((resolve, reject) => {
       const tx = db.transaction(storeName, 'readwrite');
       const store = tx.objectStore(storeName);
@@ -191,7 +225,8 @@ const DB = (() => {
   /**
    * Clear all records from a store
    */
-  function clear(storeName) {
+  async function clear(storeName) {
+    await getDb();
     return new Promise((resolve, reject) => {
       const store = transaction(storeName, 'readwrite');
       const request = store.clear();
@@ -205,10 +240,13 @@ const DB = (() => {
    */
   function deleteDatabase() {
     return new Promise((resolve, reject) => {
-      if (db) db.close();
+      if (db) {
+        try { db.close(); } catch (_) {}
+      }
+      db = null;
+      initPromise = null;
       const request = indexedDB.deleteDatabase(DB_NAME);
       request.onsuccess = () => {
-        db = null;
         resolve();
       };
       request.onerror = () => reject(request.error);
@@ -218,7 +256,8 @@ const DB = (() => {
   /**
    * Count records in a store
    */
-  function count(storeName) {
+  async function count(storeName) {
+    await getDb();
     return new Promise((resolve, reject) => {
       const store = transaction(storeName, 'readonly');
       const request = store.count();
@@ -823,6 +862,7 @@ const DB = (() => {
   }
 
   async function deletePhoto(id) {
+    await getDb();
     return new Promise((resolve, reject) => {
       const store = transaction(STORES.PHOTOS, 'readwrite');
       const request = store.delete(id);
@@ -1115,9 +1155,7 @@ const DB = (() => {
    * Self-healing database migration function to ensure v15.7 Accelerated schema and stores exist.
    */
   async function ensureV15LeanSchema() {
-    if (!db) {
-      await init();
-    }
+    await getDb();
 
     const requiredStores = Object.values(STORES);
     const existingStores = Array.from(db.objectStoreNames);
@@ -1139,11 +1177,16 @@ const DB = (() => {
 
     if (missingStores.length > 0) {
       console.log(`[DB] Missing stores detected: ${missingStores.join(', ')}. Triggering auto-upgrade...`);
-      db.close();
       const nextVer = db.version + 1;
+      try { db.close(); } catch (_) {}
+      db = null;
+      initPromise = null;
       await new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, nextVer);
-        req.onerror = () => reject(req.error);
+        req.onerror = () => {
+          initPromise = null;
+          reject(req.error);
+        };
         req.onupgradeneeded = (e) => {
           const database = e.target.result;
           requiredStores.forEach(s => {
@@ -1167,6 +1210,12 @@ const DB = (() => {
         };
         req.onsuccess = (e) => {
           db = e.target.result;
+          db.onversionchange = () => {
+            try { db.close(); } catch (_) {}
+            db = null;
+            initPromise = null;
+          };
+          initPromise = Promise.resolve(db);
           resolve();
         };
       });

@@ -7,6 +7,7 @@ const App = (() => {
   let wakeLock = null;
   let isWakeLockUserEnabled = true;
   let deferredInstallPrompt = null;
+  let isAppInitialized = false;
 
   /**
    * Request Wake Lock to prevent screen from turning off
@@ -531,6 +532,7 @@ const App = (() => {
       document.getElementById('app').classList.remove('hidden');
       checkPhotoReminder();
       setupAuthPromptBanner();
+      isAppInitialized = true;
 
     } catch (error) {
       console.error('Core init error:', error);
@@ -1808,7 +1810,8 @@ const App = (() => {
     shareBackup,
     requestWakeLock,
     releaseWakeLock,
-    toggleWakeLock
+    toggleWakeLock,
+    isReady: () => isAppInitialized
   };
 })();
 
@@ -1824,52 +1827,62 @@ if (document.readyState === 'loading') {
 // Pull latest data when the app comes back to the foreground
 document.addEventListener('visibilitychange', async () => {
   if (document.visibilityState === 'visible') {
-    // 0. Re-request Wake Lock if user enabled it to prevent screen sleep during workouts
-    if (window.App && window.App.requestWakeLock) {
-      await window.App.requestWakeLock();
-    }
-
-    // 1. Update dates and active index since the day might have changed
-    if (window.App && window.App.recalculatePlanIndex) {
-      await window.App.recalculatePlanIndex();
-    }
-
-    // 2. Reset nutrition date to today and render UI immediately to reflect new day if it changed
-    if (window.TodayPage && window.TodayPage.resetNutritionDateToToday) {
-      window.TodayPage.resetNutritionDateToToday();
-    }
-    if (window.TodayPage && window.TodayPage.render) {
-      window.TodayPage.render();
-    }
-
-    // 3. Proactive token check and sync on app foreground
-    if (window.CloudSync && window.CloudSync.proactiveRefreshIfExpiring) {
-      window.CloudSync.proactiveRefreshIfExpiring();
-    }
-
-    const savedUrl = await DB.getSetting('cloudSyncUrl');
-    const hasOAuthToken = await CloudSync.isLoggedIn();
-    if (savedUrl || hasOAuthToken) {
-      console.log("App foregrounded, checking latest data...");
-      if (window.CloudSync && window.CloudSync.checkAndPullIfUpdated) {
-        await window.CloudSync.checkAndPullIfUpdated();
-      } else {
-        await CloudSync.pullData();
+    if (window.App && window.App.isReady && !window.App.isReady()) return;
+    try {
+      // 0. Re-request Wake Lock if user enabled it to prevent screen sleep during workouts
+      if (window.App && window.App.requestWakeLock) {
+        await window.App.requestWakeLock();
       }
-      const activeSection = document.querySelector('.page.active');
-      const activeId = activeSection ? activeSection.id : '';
-      if (activeId === 'page-stats' && window.StatsPage && window.StatsPage.render) {
-        window.StatsPage.render();
-      } else if (window.TodayPage && window.TodayPage.render) {
+
+      // 1. Update dates and active index since the day might have changed
+      if (window.App && window.App.recalculatePlanIndex) {
+        await window.App.recalculatePlanIndex();
+      }
+
+      // 2. Reset nutrition date to today and render UI immediately to reflect new day if it changed
+      if (window.TodayPage && window.TodayPage.resetNutritionDateToToday) {
+        window.TodayPage.resetNutritionDateToToday();
+      }
+      if (window.TodayPage && window.TodayPage.render) {
         window.TodayPage.render();
       }
+
+      // 3. Proactive token check and sync on app foreground
+      if (window.CloudSync && window.CloudSync.proactiveRefreshIfExpiring) {
+        window.CloudSync.proactiveRefreshIfExpiring();
+      }
+
+      const savedUrl = await DB.getSetting('cloudSyncUrl');
+      const hasOAuthToken = await CloudSync.isLoggedIn();
+      if (savedUrl || hasOAuthToken) {
+        console.log("App foregrounded, checking latest data...");
+        if (window.CloudSync && window.CloudSync.checkAndPullIfUpdated) {
+          await window.CloudSync.checkAndPullIfUpdated();
+        } else {
+          await CloudSync.pullData();
+        }
+        const activeSection = document.querySelector('.page.active');
+        const activeId = activeSection ? activeSection.id : '';
+        if (activeId === 'page-stats' && window.StatsPage && window.StatsPage.render) {
+          window.StatsPage.render();
+        } else if (window.TodayPage && window.TodayPage.render) {
+          window.TodayPage.render();
+        }
+      }
+    } catch (err) {
+      console.warn('Visibility change handler error:', err);
     }
   }
 });
 
 window.addEventListener('focus', async () => {
+  if (window.App && window.App.isReady && !window.App.isReady()) return;
   if (navigator.onLine && window.CloudSync && window.CloudSync.checkAndPullIfUpdated) {
-    await window.CloudSync.checkAndPullIfUpdated();
+    try {
+      await window.CloudSync.checkAndPullIfUpdated();
+    } catch (err) {
+      console.warn('Focus handler sync error:', err);
+    }
   }
 });
 

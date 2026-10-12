@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v191-injury-protocol-fix';
+const CACHE_NAME = 'fitup-v192-db-lazy-init-fix';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
