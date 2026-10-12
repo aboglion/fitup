@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v192-db-lazy-init-fix';
+const CACHE_NAME = 'fitup-v193-modal-header-compact';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

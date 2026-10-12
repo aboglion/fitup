@@ -49,9 +49,20 @@ const UI = (() => {
   function renderCurrentModal() {
     if (modalStack.length === 0) {
       document.getElementById('modal-overlay').classList.add('hidden');
+      const modalEl = document.getElementById('modal');
+      if (modalEl) modalEl.classList.remove('modal-exercise');
       return;
     }
     const current = modalStack[modalStack.length - 1];
+    const modalEl = document.getElementById('modal');
+    const isExercise = current.isExercise || (typeof current.title === 'string' && current.title.includes('exercise-header-row'));
+    if (modalEl) {
+      if (isExercise) {
+        modalEl.classList.add('modal-exercise');
+      } else {
+        modalEl.classList.remove('modal-exercise');
+      }
+    }
     document.getElementById('modal-title').innerHTML = current.title;
     document.getElementById('modal-body').innerHTML = current.bodyHTML;
     document.getElementById('modal-overlay').classList.remove('hidden');
@@ -77,6 +88,8 @@ const UI = (() => {
       }
     } else {
       document.getElementById('modal-overlay').classList.add('hidden');
+      const modalEl = document.getElementById('modal');
+      if (modalEl) modalEl.classList.remove('modal-exercise');
     }
   }
 
@@ -828,19 +841,19 @@ const UI = (() => {
       const ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (exData.rule || '');
 
       metadataHTML = `
-        <div style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px;">
+        <div style="background: var(--bg-card); padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 6px;">
           <div style="font-size: 13px; font-weight: 800; color: var(--accent-primary, #3b82f6); display: flex; align-items: center; gap: 6px;">
             <span>📋</span> <span>${I18n.t('zero_decisions_spec', 'מפרט ופרוטוקול ביצוע ("Zero Decisions")')}</span>
           </div>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; font-size: 12px;">
-            ${exData.tempo ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px;">⏱️ <b>${I18n.t('label_tempo', 'טמפו:')}</b> ${exData.tempo}</div>` : ''}
-            ${restText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px;">⏳ <b>${I18n.t('label_rest', 'מנוחה:')}</b> ${restText}</div>` : ''}
-            ${repText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px;">🎯 <b>${I18n.t('label_rep_window', 'חלון חזרות:')}</b> ${repText}</div>` : ''}
-            ${exData.structure ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px;">🏗️ <b>${I18n.t('label_structure', 'מבנה:')}</b> ${exData.structure}</div>` : ''}
-            ${weightText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 6px 10px; border-radius: 8px; grid-column: 1/-1;">⚖️ <b>${I18n.t('label_starting_weight', 'משקל התחלתי:')}</b> ${weightText}</div>` : ''}
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; font-size: 12px;">
+            ${exData.tempo ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px;">⏱️ <b>${I18n.t('label_tempo', 'טמפו:')}</b> ${exData.tempo}</div>` : ''}
+            ${restText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px;">⏳ <b>${I18n.t('label_rest', 'מנוחה:')}</b> ${restText}</div>` : ''}
+            ${repText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px;">🎯 <b>${I18n.t('label_rep_window', 'חלון חזרות:')}</b> ${repText}</div>` : ''}
+            ${exData.structure ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px;">🏗️ <b>${I18n.t('label_structure', 'מבנה:')}</b> ${exData.structure}</div>` : ''}
+            ${weightText ? `<div style="background: var(--bg-elevated); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 6px; grid-column: 1/-1;">⚖️ <b>${I18n.t('label_starting_weight', 'משקל התחלתי:')}</b> ${weightText}</div>` : ''}
           </div>
           ${ruleText ? `
-            <div style="margin-top: 4px; padding: 8px 10px; background: rgba(245, 158, 11, 0.12); border-right: 3px solid #f59e0b; border-radius: 6px; font-size: 12px; color: var(--text-primary);">
+            <div style="margin-top: 2px; padding: 6px 8px; background: rgba(245, 158, 11, 0.12); border-right: 3px solid #f59e0b; border-radius: 6px; font-size: 11.5px; color: var(--text-primary);">
               <b>⚠️ ${I18n.t('mechanical_stop_rule', 'כלל טכניקה / Mechanical Stop:')}</b> ${ruleText}
             </div>
           ` : ''}
@@ -865,23 +878,21 @@ const UI = (() => {
 
     const headerBoxHTML = isMobilitySub ? `
       <button type="button" class="btn-secondary" 
-              style="width: 130px; height: 130px; min-width: 130px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; cursor: pointer; color: var(--text-primary); font-weight: 800; font-size: 13px; transition: all 0.2s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.25); flex-shrink: 0;"
+              style="width: 40px; height: 40px; min-width: 40px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary); transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.2); flex-shrink: 0;"
               onclick="UI.showImageModal('${parentTitle.replace(/'/g, "\\'")}')"
-              onmouseover="this.style.background='var(--bg-card-hover)'; this.style.borderColor='var(--accent-primary)'; this.style.transform='translateY(-2px)';"
-              onmouseout="this.style.background='var(--bg-card)'; this.style.borderColor='var(--border-light)'; this.style.transform='none';"
               title="${I18n.t('back_to_protocol', 'חזור לפרוטוקול המלא')}">
-        <span style="font-size: 24px;">↩️</span>
-        <span style="font-size: 12px; font-weight: 800;">${I18n.t('back_btn', 'חזור לפרוטוקול')}</span>
+        <span style="font-size: 18px;">↩️</span>
       </button>
     ` : `
-      <div class="skeleton-loading" style="width: 140px; height: 140px; min-width: 140px; border-radius: 14px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25); flex-shrink: 0; position: relative;">
-        <div class="skeleton-placeholder" style="gap: 4px;">
-          <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
+      <div class="skeleton-loading exercise-header-thumb-box" 
+           title="${I18n.t('anatomy_muscle_map', 'מפת שרירים')}"
+           onclick="event.stopPropagation(); UI.showAnatomyPreview('${pngPath}', '${effectiveTitle.replace(/'/g, "\\'")}')">
+        <div class="skeleton-placeholder" style="gap: 2px;">
+          <div class="skeleton-spinner" style="width: 16px; height: 16px; border-width: 2px;"></div>
         </div>
         <img src="${pngPath}" 
-             class="modal-title-img skeleton-img"
+             class="modal-title-img skeleton-img exercise-header-thumb-img"
              ${fallbackAttr}
-             style="width: 100%; height: 100%; object-fit: contain; border-radius: 10px; mix-blend-mode: multiply;" 
              alt="${effectiveTitle}" 
              loading="eager" 
              decoding="async" 
@@ -890,16 +901,19 @@ const UI = (() => {
       </div>
     `;
 
+    const equips = getEquipments(effectiveTitle);
+    const equipsHTML = (equips && equips.length > 0)
+      ? `<div class="exercise-header-equipments">` +
+          equips.map(eq => `<span class="exercise-header-equip-tag">${eq.icon} ${eq.label}</span>`).join('') +
+        `</div>`
+      : '';
+
     const modalTitleHTML = `
-      <div style="display: flex; align-items: center; gap: 16px; width: 100%;">
+      <div class="exercise-header-row">
         ${headerBoxHTML}
-        <div style="display: flex; flex-direction: column; gap: 6px; justify-content: center;">
-          <span style="font-size: 19px; font-weight: 900; color: var(--text-primary); line-height: 1.25;">${effectiveTitle}</span>
-          ${(() => {
-        const equips = getEquipments(effectiveTitle);
-        if (!equips || equips.length === 0) return '';
-        return `<div style="display: flex; gap: 6px; flex-wrap: wrap;">` + equips.map(eq => `<span style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px; background: var(--bg-elevated); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border-light); width: max-content;">${eq.icon} ${eq.label}</span>`).join('') + `</div>`;
-      })()}
+        <div class="exercise-header-details">
+          <span class="exercise-header-title" title="${effectiveTitle}">${effectiveTitle}</span>
+          ${equipsHTML}
         </div>
       </div>
     `;
@@ -976,7 +990,7 @@ const UI = (() => {
       `;
     } else if (gifExists) {
       mediaHTML = `
-        <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 240px; background: rgba(0, 0, 0, 0.25); border-radius: 14px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); padding: 6px; box-shadow: inset 0 0 20px rgba(0,0,0,0.15);">
+        <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 180px; max-height: clamp(190px, 28vh, 230px); background: rgba(0, 0, 0, 0.25); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); padding: 4px; box-shadow: inset 0 0 16px rgba(0,0,0,0.15);">
           <div class="skeleton-placeholder">
             <div class="skeleton-spinner"></div>
             <span class="skeleton-text">🎬 ${I18n.t('loading_gif')}</span>
@@ -984,7 +998,7 @@ const UI = (() => {
           <img src="${gifPath}" 
                class="skeleton-img"
                ${fallbackAttr}
-               style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
+               style="width: 100%; height: 100%; border-radius: 8px; object-fit: contain; max-height: clamp(180px, 28vh, 220px); display: block; margin: 0 auto;" 
                alt="${effectiveTitle} GIF" 
                loading="eager" 
                decoding="async" 
@@ -994,14 +1008,14 @@ const UI = (() => {
       `;
     } else {
       mediaHTML = `
-        <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 240px; border-radius: 14px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); padding: 6px; display: flex; align-items: center; justify-content: center;">
+        <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 180px; max-height: clamp(190px, 28vh, 230px); border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); padding: 4px; display: flex; align-items: center; justify-content: center;">
           <div class="skeleton-placeholder">
             <div class="skeleton-spinner"></div>
           </div>
           <img src="${pngPath}" 
                class="skeleton-img"
                ${fallbackAttr}
-               style="width: 100%; border-radius: 10px; object-fit: contain; max-height: 50vh; display: block; margin: 0 auto;" 
+               style="width: 100%; height: 100%; border-radius: 8px; object-fit: contain; max-height: clamp(180px, 28vh, 220px); display: block; margin: 0 auto;" 
                alt="${effectiveTitle}" 
                loading="eager" 
                decoding="async" 
@@ -1098,13 +1112,25 @@ const UI = (() => {
     }
 
     showModal(modalTitleHTML, `
-      <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+      <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
         ${mediaHTML}
         ${metadataHTML}
         ${biomechanicalHTML}
         ${extraNote}
       </div>
     `);
+  }
+
+  function showAnatomyPreview(pngPath, title) {
+    if (!pngPath) return;
+    const muscleMapText = (typeof I18n !== 'undefined' && I18n.t) ? I18n.t('anatomy_muscle_map') : 'מפת שרירים';
+    const modalTitle = `<span style="display: flex; align-items: center; gap: 8px;"><span>🎯</span> <span style="font-size: 16px; font-weight: 800;">${title}</span> <span style="font-size: 12px; font-weight: 700; color: var(--accent-primary, #3b82f6);">(${muscleMapText})</span></span>`;
+    const modalBody = `
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px; background: #ffffff; border-radius: 14px; border: 1px solid var(--border-color); box-shadow: 0 4px 16px rgba(0,0,0,0.25);">
+        <img src="${pngPath}" style="width: 100%; max-height: 55vh; object-fit: contain; mix-blend-mode: multiply; border-radius: 8px;" alt="${title} Anatomy" loading="eager">
+      </div>
+    `;
+    showModal(modalTitle, modalBody);
   }
 
 
@@ -2025,6 +2051,7 @@ const UI = (() => {
     hideModal,
     confirm,
     showImageModal,
+    showAnatomyPreview,
     calculate1RM,
     calculateBrzycki1RM,
     get1RMPercentages,

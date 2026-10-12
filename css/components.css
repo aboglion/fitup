@@ -2347,6 +2347,167 @@ html.light-theme .modal-close:hover {
   padding: var(--space-lg);
 }
 
+/* Exercise Modal Optimizations - Sleek Single-Row Header & Space Efficiency */
+.modal.modal-exercise {
+  max-height: 90vh;
+}
+
+.modal-exercise .modal-header {
+  padding: 8px 14px;
+  min-height: 52px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+}
+
+.modal-exercise .modal-header h2 {
+  font-size: 15px;
+  font-weight: 800;
+  width: 100%;
+  padding-inline-end: 42px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.modal-exercise .modal-close {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.modal-exercise .modal-close:hover {
+  transform: translateY(-50%) scale(1.08);
+}
+
+.modal-exercise .modal-body {
+  padding: 10px 14px 14px 14px;
+}
+
+/* Header single-row layout inside exercise modal */
+.exercise-header-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+.exercise-header-thumb-box {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  max-width: 42px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+
+.exercise-header-thumb-box:hover {
+  transform: scale(1.06);
+  border-color: var(--accent-primary, #3b82f6);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.exercise-header-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  border-radius: 8px;
+}
+
+.exercise-header-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.exercise-header-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.exercise-header-equipments {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.exercise-header-equip-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-light);
+  padding: 3px 8px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* GIF container optimization: balanced height so specs below are visible */
+.modal-exercise .gif-container {
+  min-height: 180px;
+  max-height: clamp(190px, 28vh, 230px);
+}
+
+.modal-exercise .gif-container img {
+  max-height: clamp(180px, 28vh, 220px);
+}
+
+@media (max-width: 420px) {
+  .exercise-header-row {
+    gap: 8px;
+  }
+  .exercise-header-thumb-box {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    max-width: 38px;
+  }
+  .exercise-header-title {
+    font-size: 14px;
+  }
+  .exercise-header-equip-tag {
+    font-size: 10.5px;
+    padding: 2px 6px;
+  }
+  .modal-exercise .modal-header h2 {
+    padding-inline-end: 38px;
+  }
+  .modal-exercise .modal-close {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+}
+
 /* ===== Sticky Header (Exercises) ===== */
 .sticky-header {
   position: sticky;
