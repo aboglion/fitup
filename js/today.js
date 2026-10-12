@@ -1892,6 +1892,9 @@ const TodayPage = (() => {
     // Advisory strip on strength days pre-fatigued by yesterday's combat session
     await renderCombatPrevDayAdvisory(day);
 
+    // Active injury & vulnerability strip
+    renderInjuryStrip(day);
+
     // Render exercises
     renderExercises(day);
 
@@ -3038,6 +3041,67 @@ const TodayPage = (() => {
   }
 
   /**
+   * Render Today Active Injury & Vulnerability Strip
+   */
+  function renderInjuryStrip(day) {
+    const stripEl = document.getElementById('today-injury-strip');
+    if (!stripEl) return;
+
+    if (typeof InjuryEngine === 'undefined') {
+      stripEl.innerHTML = '';
+      return;
+    }
+
+    const activeInjuries = InjuryEngine.getActiveInjuries();
+    const activeCount = Object.keys(activeInjuries).length;
+
+    // Check if any exercise today has an active adaptation
+    let adaptedCount = 0;
+    if (day && day.exercises) {
+      day.exercises.forEach(ex => {
+        if (InjuryEngine.getExerciseAdaptation(ex.name)) adaptedCount++;
+      });
+    }
+
+    if (activeCount === 0) {
+      stripEl.innerHTML = `
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+          <button type="button" class="btn-secondary" 
+                  style="font-size: 11.5px; font-weight: 700; padding: 6px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.35); color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;"
+                  onclick="AnatomyMap.openJointsModal()">
+            <span>🛡️</span>
+            <span>${I18n.t('today_injury_banner_btn')}</span>
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    stripEl.innerHTML = `
+      <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(239, 68, 68, 0.08) 100%); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 22px;">🛡️</span>
+          <div>
+            <div style="font-size: 13.5px; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 8px;">
+              <span>${I18n.t('today_active_injuries_label')}</span>
+              <span style="background: #ef4444; color: white; font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 900;">${activeCount}</span>
+            </div>
+            <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 2px;">
+              ${adaptedCount > 0 ? `${adaptedCount} תרגילים הותאמו בבטחה לשמירה על 100% היפרטרופיה!` : 'המערכת מנטרת את עומסי המפרקים לאימון זה.'}
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn-primary" 
+                style="padding: 6px 14px; font-size: 11.5px; font-weight: 700; border-radius: 8px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"
+                onclick="AnatomyMap.openJointsModal()">
+          <span>🛡️</span>
+          <span>${I18n.t('injury_map_title')}</span>
+        </button>
+      </div>
+    `;
+  }
+
+  /**
    * Render exercise cards
    */
   function renderExercises(day) {
@@ -3298,11 +3362,16 @@ const TodayPage = (() => {
         setsHTML += '</div>';
       }
 
-      const activeName = getActiveExerciseName(ex);
+      // Check for biomechanical injury adaptation
+      const injuryAdaptation = (typeof InjuryEngine !== 'undefined') ? InjuryEngine.getExerciseAdaptation(ex.name) : null;
+      const isInjuredSwap = !!(injuryAdaptation && injuryAdaptation.type === 'injured' && injuryAdaptation.substituteName);
+      const isSensitiveROM = !!(injuryAdaptation && injuryAdaptation.type === 'sensitive');
+
+      const activeName = isInjuredSwap ? injuryAdaptation.substituteName : getActiveExerciseName(ex);
       const gifPath = UI.getGifUrl(activeName);
       let videoBtn = '';
-      if (!ex.name.toLowerCase().includes('walking')) {
-        videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${activeName.replace(/'/g, "\\'")}', '${gifPath}', '${ex.name.replace(/'/g, "\\'")}'); event.stopPropagation();">▶</button>`;
+      if (!activeName.toLowerCase().includes('walking')) {
+        videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${activeName.replace(/'/g, "\\'")}', '${gifPath}', '${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/'/g, "\\'")}'); event.stopPropagation();">▶</button>`;
       }
 
       // Find previous occurrence
@@ -3323,6 +3392,11 @@ const TodayPage = (() => {
 
       // Detail line - only show weight if it exists
       const detailParts = [UI.getCategoryLabel(ex.slot)];
+      if (isInjuredSwap) {
+        detailParts.push(`<span class="injury-detail-badge" style="color: #ef4444; font-weight: 700; background: rgba(239, 68, 68, 0.12); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.3); cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>`);
+      } else if (isSensitiveROM) {
+        detailParts.push(`<span class="injury-detail-badge" style="color: #f59e0b; font-weight: 700; background: rgba(245, 158, 11, 0.12); padding: 2px 8px; border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.3); cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>`);
+      }
       if (ex.sets) {
         detailParts.push(isSetsChanged ? `<span class="alert-pulse-text" title="${I18n.t('sets_changed_title')}">${ex.sets}</span>` : ex.sets);
       }
@@ -3552,6 +3626,45 @@ const TodayPage = (() => {
         </div>
       ` : '';
 
+      let injuryBannerHTML = '';
+      if (isInjuredSwap) {
+        injuryBannerHTML = `
+          <div class="injury-card-banner banner-injured" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; line-height: 1.5;">
+            <div style="font-weight: 800; color: #f87171; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+              <span>${I18n.t(injuryAdaptation.badgeKey)}</span>
+              <span style="font-size: 11px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 2px 8px; border-radius: 6px; font-weight: 700;">100% שריר • 0 עומס מפרקי</span>
+            </div>
+            <div style="color: var(--text-primary); margin-bottom: 8px;">
+              ${I18n.t(injuryAdaptation.cueKey)}
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(239, 68, 68, 0.25); padding-top: 8px; margin-top: 4px; font-size: 12px; color: var(--text-secondary);">
+              <span><b>${I18n.t('cond_replace_orig', 'הוחלף מ')}:</b> ${I18n.t(ex.name) || ex.name}</span>
+              <button type="button" class="btn-secondary" style="font-size: 11px; padding: 3px 10px; border-radius: 6px; border-color: rgba(239, 68, 68, 0.4); color: #f87171;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">
+                🛡️ ${I18n.t('injury_map_title')}
+              </button>
+            </div>
+          </div>
+        `;
+      } else if (isSensitiveROM) {
+        injuryBannerHTML = `
+          <div class="injury-card-banner banner-sensitive" style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; line-height: 1.5;">
+            <div style="font-weight: 800; color: #fbbf24; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+              <span>${I18n.t(injuryAdaptation.badgeKey)}</span>
+              <span style="font-size: 11px; background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.4); color: #fde68a; padding: 2px 8px; border-radius: 6px; font-weight: 700;">טכניקה וטווח מוגן</span>
+            </div>
+            <div style="color: var(--text-primary); margin-bottom: 8px;">
+              ${I18n.t(injuryAdaptation.cueKey)}
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(245, 158, 11, 0.25); padding-top: 8px; margin-top: 4px; font-size: 12px; color: var(--text-secondary);">
+              ${injuryAdaptation.tempo ? `<span>⏱️ <b>קצב מומלץ:</b> ${injuryAdaptation.tempo}</span>` : '<span>🛡️ ביצוע מבוקר בטווח בטוח</span>'}
+              <button type="button" class="btn-secondary" style="font-size: 11px; padding: 3px 10px; border-radius: 6px; border-color: rgba(245, 158, 11, 0.4); color: #fbbf24;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">
+                🛡️ ${I18n.t('injury_map_title')}
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
       return `
         <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isSkippedTemp ? 'skipped-temp' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
           <div class="exercise-hero-container skeleton-loading" style="position: relative;">
@@ -3563,12 +3676,12 @@ const TodayPage = (() => {
             </div>
             <img src="${UI.getImageUrl(activeName, currentDayIndex)}" 
                  class="exercise-hero-image skeleton-img"
-                 data-fallback-exname="${ex.name.replace(/"/g, '&quot;')}"
+                 data-fallback-exname="${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/"/g, '&quot;')}"
                  loading="eager" decoding="async"
                  alt="${activeName}" 
                  onload="UI.handleImageLoaded(this)"
                  onerror="UI.handleImageFallback(this, 'png')"
-                 onclick="TodayPage.handleImageClick(event, ${idx}, '${activeName.replace(/'/g, "\\'")}', '${ex.name.replace(/'/g, "\\'")}')">
+                 onclick="TodayPage.handleImageClick(event, ${idx}, '${activeName.replace(/'/g, "\\'")}', '${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/'/g, "\\'")}')">
             ${newBadgeHTML}
           </div>
           <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
@@ -3576,7 +3689,9 @@ const TodayPage = (() => {
               <div class="exercise-category-dot" style="background: ${color}"></div>
               <div>
                 <div class="exercise-card-name" style="display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
-                  ${ex.name}
+                  ${isInjuredSwap ? injuryAdaptation.substituteName : ex.name}
+                  ${isInjuredSwap ? `<span class="injury-name-badge" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>` : ''}
+                  ${isSensitiveROM ? `<span class="injury-name-badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>` : ''}
                   ${ex.currentStageName ? `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">🎯 ${ex.currentStageName}</span>` : ''}
                   <button type="button" class="form-rule-info-btn" onclick="event.stopPropagation(); TodayPage.showFormRuleModal('${ex.name.replace(/'/g, "\\'")}')" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-primary); border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 2px;" title="${I18n.t('form_rules_title') || 'חוקי טכניקה'}">ℹ️</button>
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
@@ -3599,6 +3714,7 @@ const TodayPage = (() => {
             </div>
           </div>
           <div class="exercise-card-body">
+            ${injuryBannerHTML}
             ${protocolBannerHTML}
             ${goldCueHTML}
             ${setsHTML}
@@ -5704,6 +5820,11 @@ const TodayPage = (() => {
     cancelCombatClass,
     undoCombatException,
     swapMovedInClass,
+    refreshCurrentDayView() {
+      if (currentDayIndex >= 0 && allPlanDays && allPlanDays[currentDayIndex]) {
+        renderDay(allPlanDays[currentDayIndex]);
+      }
+    },
     async refreshPlan() {
       // Reload plan from DB (e.g. after combat schedule changes) and re-render
       allPlanDays = [];
@@ -5738,4 +5859,14 @@ const TodayPage = (() => {
 
 // Expose to window for inline event handlers
 window.TodayPage = TodayPage;
+
+// Listen for injury state modifications to immediately update workout view
+if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+  window.addEventListener('fitup_injury_changed', () => {
+    if (typeof TodayPage !== 'undefined' && typeof TodayPage.refreshCurrentDayView === 'function') {
+      TodayPage.refreshCurrentDayView();
+    }
+  });
+}
+
 

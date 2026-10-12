@@ -1,11 +1,78 @@
 /**
- * Anatomy Map Module — v4 Professional
- * 14 muscle groups with weighted multi-exercise contribution model.
- * Positions calibrated with max-width constraint for consistent rendering.
+ * Anatomy Map Module — v5 Professional with Biomechanical Joint & Injury Engine
+ * Dual-Mode:
+ * 1. Muscle Progression & Load Map (14 muscle groups + Cardiorespiratory)
+ * 2. Joint & Vulnerability Anatomy Map (Interactive 1-Tap Injury & ROM protection)
  */
 const AnatomyMap = (() => {
+  let currentView = 'muscles'; // 'muscles' | 'joints'
+  let lastContainer = null;
+  let lastMuscleData = {};
+
+  function setView(view) {
+    currentView = view === 'joints' ? 'joints' : 'muscles';
+    if (lastContainer) {
+      render(lastContainer, lastMuscleData);
+    }
+  }
+
+  function cycleJoint(jointId) {
+    if (typeof InjuryEngine !== 'undefined') {
+      const nextState = InjuryEngine.cycleJointState(jointId);
+      const jointDef = InjuryEngine.JOINTS[jointId] || { labelKey: jointId };
+      const jointName = I18n.t(jointDef.labelKey) || jointId;
+      
+      let stateName = I18n.t('injury_state_normal');
+      if (nextState === 1) stateName = I18n.t('injury_state_sensitive');
+      if (nextState === 2) stateName = I18n.t('injury_state_injured');
+
+      if (typeof UI !== 'undefined' && UI.showToast) {
+        UI.showToast(`${jointName}: ${stateName}`);
+      }
+
+      if (lastContainer) {
+        render(lastContainer, lastMuscleData);
+      }
+
+      // If TodayPage is available and on screen, refresh exercise view to apply adaptations immediately
+      if (typeof TodayPage !== 'undefined' && typeof TodayPage.refreshCurrentDayView === 'function') {
+        TodayPage.refreshCurrentDayView();
+      }
+    }
+  }
+
+  function resetInjuries() {
+    if (typeof InjuryEngine !== 'undefined') {
+      InjuryEngine.resetAllJoints();
+      if (typeof UI !== 'undefined' && UI.showToast) {
+        UI.showToast(I18n.t('injury_btn_reset_all'));
+      }
+      if (lastContainer) {
+        render(lastContainer, lastMuscleData);
+      }
+      if (typeof TodayPage !== 'undefined' && typeof TodayPage.refreshCurrentDayView === 'function') {
+        TodayPage.refreshCurrentDayView();
+      }
+    }
+  }
+
+  function openJointsModal() {
+    setView('joints');
+    const modalDiv = document.createElement('div');
+    modalDiv.id = 'anatomy-modal-container';
+    modalDiv.style.minHeight = '360px';
+    modalDiv.style.padding = '4px 0';
+    if (typeof UI !== 'undefined' && UI.showModal) {
+      UI.showModal(`🛡️ ${I18n.t('injury_map_title')}`, modalDiv);
+      render(modalDiv, lastMuscleData);
+    }
+  }
 
   function render(container, muscleData) {
+    if (!container) return;
+    lastContainer = container;
+    lastMuscleData = muscleData || {};
+
     const getColor = (pct) => {
       if (pct === 0) return 'rgba(0, 255, 102, 0.45)';
       if (pct < 30) return '#00d656';
@@ -25,19 +92,25 @@ const AnatomyMap = (() => {
       'quads', 'hamstrings', 'glutes', 'calves', 'core', 'obliques', 'lowerBack', 'neck', 'heart', 'lungs'];
     const m = {};
     keys.forEach(k => {
-      const rawPct = muscleData[k] != null ? Math.max(0, Math.min(100, Number(muscleData[k]))) : 0;
+      const rawPct = lastMuscleData[k] != null ? Math.max(0, Math.min(100, Number(lastMuscleData[k]))) : 0;
       m[k] = { pct: rawPct, formatted: formatPct(rawPct), color: getColor(rawPct) };
     });
 
-    // Body centered 50%.
-    const frontCallouts = [
-      // Left labels (User's left, Character's right)
+    // Count active injuries if InjuryEngine exists
+    let activeInjuriesCount = 0;
+    if (typeof InjuryEngine !== 'undefined') {
+      activeInjuriesCount = Object.keys(InjuryEngine.getActiveInjuries()).length;
+    }
+
+    // ──────────────────────────────────────────
+    // MUSCLE VIEW CALLOUTS
+    // ──────────────────────────────────────────
+    const frontMuscleCallouts = [
       { id: 'neck', label: I18n.t('muscle_neck'), pct: m.neck.pct, formatted: m.neck.formatted, color: m.neck.color, nodeX: 47.5, nodeY: 18, labelY: 7, side: 'left' },
       { id: 'chest-l', label: I18n.t('muscle_chest'), pct: m.chest.pct, formatted: m.chest.formatted, color: m.chest.color, nodeX: 45, nodeY: 24, labelY: 17, side: 'left' },
       { id: 'lungs', label: I18n.t('muscle_lungs'), pct: m.lungs.pct, formatted: m.lungs.formatted, color: m.lungs.color, nodeX: 47.5, nodeY: 24, labelY: 27, side: 'left' },
       { id: 'core', label: I18n.t('muscle_core'), pct: m.core.pct, formatted: m.core.formatted, color: m.core.color, nodeX: 50, nodeY: 34, labelY: 38, side: 'left' },
       { id: 'obliques-l', label: I18n.t('muscle_obliques'), pct: m.obliques.pct, formatted: m.obliques.formatted, color: m.obliques.color, nodeX: 45, nodeY: 39, labelY: 58, side: 'left' },
-      // Right labels (User's right, Character's left)
       { id: 'shoulders-r', label: I18n.t('muscle_shoulders'), pct: m.shoulders.pct, formatted: m.shoulders.formatted, color: m.shoulders.color, nodeX: 60, nodeY: 19, labelY: 12, side: 'right' },
       { id: 'heart', label: I18n.t('muscle_heart'), pct: m.heart.pct, formatted: m.heart.formatted, color: m.heart.color, nodeX: 53, nodeY: 25.5, labelY: 21.5, side: 'right' },
       { id: 'biceps-r', label: I18n.t('muscle_biceps'), pct: m.biceps.pct, formatted: m.biceps.formatted, color: m.biceps.color, nodeX: 62, nodeY: 30, labelY: 31, side: 'right' },
@@ -45,58 +118,235 @@ const AnatomyMap = (() => {
       { id: 'quads-r', label: I18n.t('muscle_quads'), pct: m.quads.pct, formatted: m.quads.formatted, color: m.quads.color, nodeX: 55, nodeY: 55, labelY: 69, side: 'right' },
     ];
 
-    // ── BACK VIEW ──
-    const backCallouts = [
-      // Left labels (4)
+    const backMuscleCallouts = [
       { id: 'traps-l', label: I18n.t('muscle_traps'), pct: m.traps.pct, formatted: m.traps.formatted, color: m.traps.color, nodeX: 46, nodeY: 18, labelY: 14, side: 'left' },
       { id: 'triceps-l', label: I18n.t('muscle_triceps'), pct: m.triceps.pct, formatted: m.triceps.formatted, color: m.triceps.color, nodeX: 39, nodeY: 30, labelY: 33, side: 'left' },
       { id: 'lowerBack', label: I18n.t('muscle_lower_back'), pct: m.lowerBack.pct, formatted: m.lowerBack.formatted, color: m.lowerBack.color, nodeX: 50, nodeY: 42, labelY: 52, side: 'left' },
       { id: 'hamstrings-l', label: I18n.t('muscle_hamstrings'), pct: m.hamstrings.pct, formatted: m.hamstrings.formatted, color: m.hamstrings.color, nodeX: 46, nodeY: 63, labelY: 71, side: 'left' },
-      // Right labels (3)
       { id: 'lats-r', label: I18n.t('muscle_lats'), pct: m.lats.pct, formatted: m.lats.formatted, color: m.lats.color, nodeX: 56, nodeY: 33, labelY: 28, side: 'right' },
       { id: 'glutes-r', label: I18n.t('muscle_glutes'), pct: m.glutes.pct, formatted: m.glutes.formatted, color: m.glutes.color, nodeX: 54, nodeY: 51, labelY: 49, side: 'right' },
       { id: 'calves-r', label: I18n.t('muscle_calves'), pct: m.calves.pct, formatted: m.calves.formatted, color: m.calves.color, nodeX: 54, nodeY: 77, labelY: 70, side: 'right' },
     ];
 
+    // ──────────────────────────────────────────
+    // JOINT & INJURY VIEW CALLOUTS
+    // ──────────────────────────────────────────
+    const getJointVisuals = (jId) => {
+      let state = 0;
+      if (typeof InjuryEngine !== 'undefined') {
+        state = InjuryEngine.getJointState(jId);
+      }
+      if (state === 2) {
+        return {
+          state,
+          color: '#ef4444',
+          badgeText: '🔴 ' + I18n.t('injury_state_injured'),
+          shortVal: 'פציעה'
+        };
+      }
+      if (state === 1) {
+        return {
+          state,
+          color: '#f59e0b',
+          badgeText: '🟡 ' + I18n.t('injury_state_sensitive'),
+          shortVal: 'רגישות'
+        };
+      }
+      return {
+        state,
+        color: '#00ff66',
+        badgeText: '🟢 ' + I18n.t('injury_state_normal'),
+        shortVal: 'תקין'
+      };
+    };
+
+    const frontJointCallouts = [
+      { id: 'neck', jointId: 'neck', label: I18n.t('joint_neck'), side: 'left', nodeX: 47.5, nodeY: 18, labelY: 8 },
+      { id: 'shoulder_r', jointId: 'shoulder_r', label: I18n.t('joint_shoulder_r'), side: 'left', nodeX: 41, nodeY: 22, labelY: 19 },
+      { id: 'elbow_r', jointId: 'elbow_r', label: I18n.t('joint_elbow_r'), side: 'left', nodeX: 35, nodeY: 34, labelY: 31 },
+      { id: 'wrist_r', jointId: 'wrist_r', label: I18n.t('joint_wrist_r'), side: 'left', nodeX: 30, nodeY: 46, labelY: 45 },
+      { id: 'knee_r', jointId: 'knee_r', label: I18n.t('joint_knee_r'), side: 'left', nodeX: 44, nodeY: 62, labelY: 67 },
+
+      { id: 'shoulder_l', jointId: 'shoulder_l', label: I18n.t('joint_shoulder_l'), side: 'right', nodeX: 59, nodeY: 22, labelY: 19 },
+      { id: 'elbow_l', jointId: 'elbow_l', label: I18n.t('joint_elbow_l'), side: 'right', nodeX: 65, nodeY: 34, labelY: 31 },
+      { id: 'wrist_l', jointId: 'wrist_l', label: I18n.t('joint_wrist_l'), side: 'right', nodeX: 70, nodeY: 46, labelY: 45 },
+      { id: 'knee_l', jointId: 'knee_l', label: I18n.t('joint_knee_l'), side: 'right', nodeX: 56, nodeY: 62, labelY: 67 }
+    ].map(item => {
+      const v = getJointVisuals(item.jointId);
+      return {
+        ...item,
+        color: v.color,
+        formatted: v.shortVal,
+        badgeText: v.badgeText,
+        state: v.state,
+        isJoint: true
+      };
+    });
+
+    const backJointCallouts = [
+      { id: 'lower_back', jointId: 'lower_back', label: I18n.t('joint_lower_back'), side: 'left', nodeX: 50, nodeY: 42, labelY: 40 },
+      { id: 'achilles_l', jointId: 'achilles_l', label: I18n.t('joint_achilles_l'), side: 'left', nodeX: 46, nodeY: 82, labelY: 76 },
+      { id: 'achilles_r', jointId: 'achilles_r', label: I18n.t('joint_achilles_r'), side: 'right', nodeX: 54, nodeY: 82, labelY: 76 }
+    ].map(item => {
+      const v = getJointVisuals(item.jointId);
+      return {
+        ...item,
+        color: v.color,
+        formatted: v.shortVal,
+        badgeText: v.badgeText,
+        state: v.state,
+        isJoint: true
+      };
+    });
+
+    const activeFrontCallouts = currentView === 'joints' ? frontJointCallouts : frontMuscleCallouts;
+    const activeBackCallouts = currentView === 'joints' ? backJointCallouts : backMuscleCallouts;
+
     const generatePaneHTML = (callouts, title, imagePath) => {
-      const visible = callouts;
       return `
         <div class="anatomy-pane">
           <div class="anatomy-inner">
             <div class="anatomy-image-bg" style="background-image: url('${imagePath}');"></div>
             <svg class="anatomy-svg-overlay" viewBox="0 0 100 100" preserveAspectRatio="none" width="100%" height="100%">
-              ${visible.map(c => {
-        const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
-        const targetX = c.side === 'left' ? 22 : 78;
-        const midX = c.side === 'left' ? Math.min(c.nodeX - 5, 34) : Math.max(c.nodeX + 5, 66);
-        return `
+              ${callouts.map(c => {
+                const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
+                const targetX = c.side === 'left' ? 22 : 78;
+                const midX = c.side === 'left' ? Math.min(c.nodeX - 5, 34) : Math.max(c.nodeX + 5, 66);
+                return `
                   <path d="M ${c.nodeX} ${c.nodeY} L ${midX} ${labelY} L ${targetX} ${labelY}" 
                         stroke="${c.color}" stroke-width="0.85" fill="none" opacity="0.9" 
                         stroke-dasharray="1.5 1" style="filter: drop-shadow(0 0 3px ${c.color});" />
                   <circle cx="${c.nodeX}" cy="${c.nodeY}" r="1.1" fill="${c.color}" />
                   <circle cx="${targetX}" cy="${labelY}" r="0.9" fill="${c.color}" />
                 `;
-      }).join('')}
+              }).join('')}
             </svg>
-            ${visible.map(c => {
-        const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
-        return `
-                <div class="callout-label side-${c.side}" style="top: ${labelY}%; --color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${c.label.replace(/'/g, "\\'")}', ${c.pct})">
+            ${callouts.map(c => {
+              const labelY = c.labelY !== undefined ? c.labelY : c.nodeY;
+              const clickAction = c.isJoint 
+                ? `AnatomyMap.cycleJoint('${c.jointId}')`
+                : `AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${c.label.replace(/'/g, "\\'")}', ${c.pct || 0})`;
+              return `
+                <div class="callout-label side-${c.side} ${c.isJoint ? 'joint-callout' : ''}" 
+                     style="top: ${labelY}%; --color: ${c.color}; cursor: pointer; pointer-events: auto;" 
+                     onclick="${clickAction}"
+                     title="${c.isJoint ? I18n.t('injury_map_subtitle') : ''}">
                   <div class="callout-title">${c.label}</div>
-                  <div class="callout-value">${c.formatted}</div>
-                  <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${Math.min(100, c.pct)}%; background: ${c.pct > 0 ? '#00ff66' : 'rgba(255,255,255,0.2)'};"></div></div>
+                  <div class="callout-value" style="color: ${c.color}; text-shadow: 0 0 8px ${c.color};">
+                    ${c.isJoint ? c.badgeText : c.formatted}
+                  </div>
+                  ${!c.isJoint ? `
+                    <div class="progress-glow-bar"><div class="progress-glow-fill" style="width: ${Math.min(100, c.pct)}%; background: ${c.pct > 0 ? '#00ff66' : 'rgba(255,255,255,0.2)'};"></div></div>
+                  ` : `
+                    <div class="joint-state-pill" style="font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.85; margin-top: 1px;">
+                      ${c.state === 0 ? '🟢 ' + I18n.t('injury_state_normal') : (c.state === 1 ? '🟡 ' + I18n.t('injury_state_sensitive') : '🔴 ' + I18n.t('injury_state_injured'))}
+                    </div>
+                  `}
                 </div>
               `;
-      }).join('')}
-            ${visible.map(c => `
-              <div class="anatomy-node" style="left: ${c.nodeX}%; top: ${c.nodeY}%; background-color: ${c.color}; color: ${c.color}; cursor: pointer; pointer-events: auto;" onclick="AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${(c.label || c.id).replace(/'/g, "\\'")}', ${c.pct || 0})"></div>
-            `).join('')}
+            }).join('')}
+            ${callouts.map(c => {
+              const clickAction = c.isJoint 
+                ? `AnatomyMap.cycleJoint('${c.jointId}')`
+                : `AnatomyMap.showMuscleDetails('${c.id.split('-')[0]}', '${(c.label || c.id).replace(/'/g, "\\'")}', ${c.pct || 0})`;
+              return `
+                <div class="anatomy-node ${c.isJoint ? 'joint-node' : ''}" 
+                     style="left: ${c.nodeX}%; top: ${c.nodeY}%; background-color: ${c.color}; color: ${c.color}; cursor: pointer; pointer-events: auto;" 
+                     onclick="${clickAction}"></div>
+              `;
+            }).join('')}
           </div>
         </div>`;
     };
 
     container.innerHTML = `
       <style>
+        .anatomy-view-switcher-bar {
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          margin-bottom: 12px;
+          padding: 4px;
+          background: rgba(0, 0, 0, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 12px;
+        }
+        .anatomy-tab-btn {
+          flex: 1;
+          max-width: 200px;
+          padding: 8px 14px;
+          font-size: 13px;
+          font-weight: 800;
+          border-radius: 8px;
+          border: 1px solid transparent;
+          background: transparent;
+          color: var(--text-secondary);
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+        .anatomy-tab-btn:hover {
+          color: var(--text-primary);
+          background: rgba(255, 255, 255, 0.05);
+        }
+        .anatomy-tab-btn.active {
+          background: rgba(0, 255, 102, 0.12);
+          border-color: rgba(0, 255, 102, 0.5);
+          color: #00ff66;
+          box-shadow: 0 0 12px rgba(0, 255, 102, 0.2);
+        }
+        .anatomy-tab-btn.active.joint-tab {
+          background: rgba(245, 158, 11, 0.12);
+          border-color: rgba(245, 158, 11, 0.5);
+          color: #f59e0b;
+          box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+        }
+        .active-injury-pill {
+          background: #ef4444;
+          color: white;
+          font-size: 10px;
+          font-weight: 900;
+          padding: 1px 6px;
+          border-radius: 10px;
+          animation: pulseRed 1.5s infinite;
+        }
+        @keyframes pulseRed {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.15); opacity: 0.85; }
+        }
+        .joints-info-card {
+          background: rgba(0, 0, 0, 0.35);
+          border: 1px solid rgba(245, 158, 11, 0.3);
+          border-radius: 10px;
+          padding: 10px 14px;
+          margin-bottom: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 8px;
+          font-size: 12px;
+          color: var(--text-primary);
+        }
+        .btn-reset-injuries {
+          background: rgba(239, 68, 68, 0.15);
+          border: 1px solid rgba(239, 68, 68, 0.4);
+          color: #f87171;
+          padding: 4px 10px;
+          border-radius: 6px;
+          font-size: 11px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        .btn-reset-injuries:hover {
+          background: rgba(239, 68, 68, 0.3);
+          border-color: #ef4444;
+          color: #ffffff;
+        }
         .anatomy-dual-container {
           display: grid;
           grid-template-columns: 1fr;
@@ -121,14 +371,6 @@ const AnatomyMap = (() => {
           max-width: 380px;
           aspect-ratio: 1 / 1;
           background: transparent;
-        }
-        .pane-title {
-          position: absolute; top: 12px; left: 12px;
-          background: rgba(4, 20, 12, 0.88); padding: 4px 12px; border-radius: 8px;
-          font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-weight: 800; color: #00ff66; z-index: 30; font-size: 12px;
-          letter-spacing: 0.5px; text-transform: uppercase;
-          border: 1px solid rgba(0, 255, 102, 0.3); backdrop-filter: blur(8px);
-          box-shadow: 0 0 12px rgba(0, 255, 102, 0.25);
         }
         .anatomy-image-bg {
           position: absolute; inset: 0;
@@ -174,36 +416,24 @@ const AnatomyMap = (() => {
           }
         }
         @keyframes heartbeat-pulse {
-          0% {
-            transform: scale(0.8);
-            opacity: 0.85;
-          }
-          15% {
-            transform: scale(1.4);
-            opacity: 0.7;
-          }
-          45% {
-            transform: scale(2.0);
-            opacity: 0;
-          }
-          100% {
-            transform: scale(0.8);
-            opacity: 0;
-          }
+          0% { transform: scale(0.8); opacity: 0.85; }
+          15% { transform: scale(1.4); opacity: 0.7; }
+          45% { transform: scale(2.0); opacity: 0; }
+          100% { transform: scale(0.8); opacity: 0; }
         }
         .callout-label {
           position: absolute; display: flex; flex-direction: column; gap: 1px;
           align-items: center; text-align: center; justify-content: center;
-          background: rgba(0, 255, 102, 0.04); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-          border: 1px solid rgba(0, 255, 102, 0.3);
+          background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+          border: 1px solid var(--color);
           padding: 3px 6px; border-radius: 6px; transform: translateY(-50%);
-          z-index: 20; box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 0 10px rgba(0, 255, 102, 0.05);
+          z-index: 20; box-shadow: 0 4px 16px rgba(0,0,0,0.6), inset 0 0 10px rgba(0, 255, 102, 0.05);
           width: max-content; min-width: 52px; white-space: nowrap; transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
         }
         .callout-label:hover {
           transform: translateY(-50%) scale(1.06);
-          background: rgba(0, 255, 102, 0.12);
-          border-color: #00ff66;
+          background: rgba(0, 0, 0, 0.85);
+          border-color: var(--color);
         }
         .callout-label.side-left {
           right: 72%; border-right: 3px solid var(--color);
@@ -214,7 +444,7 @@ const AnatomyMap = (() => {
           text-align: center; align-items: center;
         }
         .callout-title { font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-size: 9.5px; color: #ffaa00; font-weight: 800; letter-spacing: 0.2px; text-transform: uppercase; line-height: 1.1; }
-        .callout-value { font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-size: 14px; font-weight: 900; color: #00ff66; letter-spacing: 0.2px; text-shadow: 0 0 8px rgba(0, 255, 102, 0.8); line-height: 1.1; }
+        .callout-value { font-family: 'Inter', 'Heebo', system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 900; letter-spacing: 0.2px; line-height: 1.1; }
         .progress-glow-bar {
           width: 100%; min-width: 40px; height: 3px; background: rgba(255,255,255,0.1);
           border-radius: 2px; margin-top: 2px; overflow: hidden;
@@ -223,9 +453,33 @@ const AnatomyMap = (() => {
           height: 100%; border-radius: 2px; box-shadow: 0 0 8px #00ff66; transition: width 1s ease-out;
         }
       </style>
+
+      <div class="anatomy-view-switcher-bar">
+        <button type="button" class="anatomy-tab-btn ${currentView === 'muscles' ? 'active' : ''}" onclick="AnatomyMap.setView('muscles')">
+          ${I18n.t('injury_map_tab_muscles')}
+        </button>
+        <button type="button" class="anatomy-tab-btn joint-tab ${currentView === 'joints' ? 'active' : ''}" onclick="AnatomyMap.setView('joints')">
+          ${I18n.t('injury_map_tab_joints')} ${activeInjuriesCount > 0 ? `<span class="active-injury-pill">${activeInjuriesCount}</span>` : ''}
+        </button>
+      </div>
+
+      ${currentView === 'joints' ? `
+        <div class="joints-info-card">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>🛡️</span>
+            <span>${I18n.t('injury_map_subtitle')}</span>
+          </div>
+          ${activeInjuriesCount > 0 ? `
+            <button type="button" class="btn-reset-injuries" onclick="AnatomyMap.resetInjuries()">
+              ↩️ ${I18n.t('injury_btn_reset_all')}
+            </button>
+          ` : ''}
+        </div>
+      ` : ''}
+
       <div class="anatomy-dual-container">
-        ${generatePaneHTML(frontCallouts, I18n.t('anatomy_front'), 'images/anatomy-front.webp')}
-        ${generatePaneHTML(backCallouts, I18n.t('anatomy_back'), 'images/anatomy-back.webp')}
+        ${generatePaneHTML(activeFrontCallouts, I18n.t('anatomy_front'), 'images/anatomy-front.webp')}
+        ${generatePaneHTML(activeBackCallouts, I18n.t('anatomy_back'), 'images/anatomy-back.webp')}
       </div>`;
   }
 
@@ -415,7 +669,19 @@ const AnatomyMap = (() => {
     }
   }
 
-  return { render, showMuscleDetails };
+  return {
+    render,
+    showMuscleDetails,
+    setView,
+    cycleJoint,
+    resetInjuries,
+    openJointsModal
+  };
 })();
 
-window.AnatomyMap = AnatomyMap;
+if (typeof window !== 'undefined') {
+  window.AnatomyMap = AnatomyMap;
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = AnatomyMap;
+}
