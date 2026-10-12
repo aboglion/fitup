@@ -10,7 +10,7 @@ const TodayPage = (() => {
 
   let renderNutritionSectionRef = null;
   let selectedNutritionDate = null;
-  let isEqBannerCollapsed = false;
+  let isEqBannerCollapsed = true;
   let combatScheduleCache = null;
   let combatExceptionsCache = null;
   let combatRenderToken = 0;
@@ -2159,7 +2159,8 @@ const TodayPage = (() => {
 
   /**
    * Render daily subjective recovery & readiness check (1-5 scale)
-   * With adaptive rest (+30s) and set reduction recommendations if score is low (1-2)
+   * Unified seamlessly with active joint & safety adaptations.
+   * If readiness score is not explicitly selected, optimal state (5) is assumed.
    */
   function renderReadinessCheck() {
     const container = document.getElementById('readiness-check-container');
@@ -2172,15 +2173,18 @@ const TodayPage = (() => {
     }
 
     const isRest = day.dayType === 'Rest';
-    const score = (currentTracking && currentTracking.readinessScore != null) ? currentTracking.readinessScore : null;
+    const rawScore = (currentTracking && currentTracking.readinessScore != null) ? currentTracking.readinessScore : null;
+    const isExplicit = rawScore !== null;
+    // If not selected, assume best condition (5)
+    const score = isExplicit ? rawScore : 5;
     const adjustments = (currentTracking && currentTracking.readinessAdjustment) || {
       extendRest: true,
       dropSet: false
     };
 
-    const isScoreLow = score !== null && score <= 2;
-    const isScoreModerate = score === 3;
-    const isScoreHigh = score !== null && score >= 4;
+    const isScoreLow = isExplicit && score <= 2;
+    const isScoreModerate = isExplicit && score === 3;
+    const isScoreHigh = !isExplicit || score >= 4;
 
     const scoreLabels = [
       { score: 1, emoji: '😫', label: I18n.t('readiness_score_1') },
@@ -2191,12 +2195,13 @@ const TodayPage = (() => {
     ];
 
     const pillsHTML = scoreLabels.map(s => {
-      const isSelected = score === s.score;
+      const isSelected = isExplicit ? (rawScore === s.score) : (s.score === 5);
+      const isDefaultAssumed = !isExplicit && s.score === 5;
       return `
         <button type="button" 
-                class="readiness-pill-btn ${isSelected ? 'active' : ''}" 
+                class="readiness-pill-btn ${isSelected ? 'active' : ''} ${isDefaultAssumed ? 'default-active' : ''}" 
                 data-score="${s.score}"
-                title="${s.label}"
+                title="${s.label}${isDefaultAssumed ? ` (${I18n.t('readiness_default_optimal')})` : ''}"
                 onclick="TodayPage.setReadinessScore(${s.score})">
           <span class="readiness-pill-emoji">${s.emoji}</span>
           <span class="readiness-pill-num">${s.score}</span>
@@ -2239,52 +2244,110 @@ const TodayPage = (() => {
           </div>
         </div>
       `;
-    } else if (isScoreModerate && !isRest) {
-      adaptationBoxHTML = `
-        <div class="readiness-feedback-box feedback-moderate">
-          <span>👌</span>
-          <p style="margin: 0;">${I18n.t('readiness_status_moderate')}</p>
+    }
+
+    // Integrated Safety Adaptations & Anatomy Map Row
+    const activeInjuries = (typeof InjuryEngine !== 'undefined') ? InjuryEngine.getActiveInjuries() : {};
+    const activeCount = Object.keys(activeInjuries).length;
+
+    let adaptedCount = 0;
+    if (day && day.exercises && typeof InjuryEngine !== 'undefined') {
+      day.exercises.forEach(ex => {
+        if (InjuryEngine.getExerciseAdaptation(ex.name)) adaptedCount++;
+      });
+    }
+
+    let safetyRowHTML = '';
+    if (activeCount > 0) {
+      safetyRowHTML = `
+        <div class="readiness-safety-subrow alert-active" onclick="AnatomyMap.openJointsModal()" style="cursor: pointer;" title="${I18n.t('injury_map_title')}">
+          <div class="safety-subrow-info">
+            <span class="safety-subrow-shield">🛡️</span>
+            <div class="safety-subrow-text">
+              <span class="safety-subrow-title">
+                ${adaptedCount > 0 ? `${adaptedCount} תרגילים הותאמו בבטחה לשמירה על 100% היפרטרופיה!` : `${activeCount} התאמות עומס מפרקי פעילות באימון`}
+              </span>
+              <span class="safety-subrow-sub">${I18n.t('safety_subrow_note')}</span>
+            </div>
+          </div>
+          <button type="button" class="safety-subrow-action-btn" onclick="event.stopPropagation(); AnatomyMap.openJointsModal()">
+            <span>${I18n.t('injury_map_title')}</span>
+            <span class="safety-arrow-icon">↗</span>
+          </button>
         </div>
       `;
-    } else if (isScoreHigh && !isRest) {
-      adaptationBoxHTML = `
-        <div class="readiness-feedback-box feedback-peak">
-          <span>🚀</span>
-          <p style="margin: 0;">${I18n.t('readiness_status_high')}</p>
+    } else {
+      safetyRowHTML = `
+        <div class="readiness-safety-subrow normal-clean">
+          <div class="safety-subrow-info">
+            <span class="safety-subrow-shield clean">🛡️</span>
+            <span class="safety-subrow-clean-text">
+              ${I18n.t('all_joints_healthy')}
+            </span>
+          </div>
+          <button type="button" class="safety-subrow-action-btn clean" onclick="AnatomyMap.openJointsModal()">
+            <span>${I18n.t('injury_map_title')}</span>
+            <span class="safety-arrow-icon">↗</span>
+          </button>
         </div>
       `;
     }
 
-    const currentScoreBadge = score !== null ? `
-      <span class="readiness-status-badge" style="color: var(--text-primary); font-weight: 800;">
-        ${score}/5 ${scoreLabels[score - 1]?.emoji || ''}
-      </span>
-    ` : `
-      <span class="readiness-status-badge">1–5</span>
-    `;
+    let currentScoreBadge = '';
+    if (!isExplicit) {
+      currentScoreBadge = `
+        <span class="readiness-status-badge badge-peak" title="${I18n.t('readiness_assumed_best')}">
+          ⚡ 5/5 • ${I18n.t('readiness_default_optimal')}
+        </span>
+      `;
+    } else if (score <= 2) {
+      currentScoreBadge = `
+        <span class="readiness-status-badge badge-low">
+          ⚠️ ${score}/5 • ${score === 1 ? I18n.t('readiness_badge_exhausted') : I18n.t('readiness_badge_fatigued')}
+        </span>
+      `;
+    } else if (score === 3) {
+      currentScoreBadge = `
+        <span class="readiness-status-badge badge-moderate">
+          😐 3/5 • ${I18n.t('readiness_badge_moderate')}
+        </span>
+      `;
+    } else {
+      currentScoreBadge = `
+        <span class="readiness-status-badge badge-peak">
+          ⚡ ${score}/5 • ${score === 5 ? I18n.t('readiness_badge_peak') : I18n.t('readiness_badge_good')}
+        </span>
+      `;
+    }
 
     container.innerHTML = `
-      <div class="readiness-check-card">
+      <div class="readiness-check-card unified-readiness-safety">
         <div class="readiness-card-header">
           <div class="readiness-title-box">
-            <span style="font-size: 16px;">🛌</span>
+            <span style="font-size: 15px;">⚡🛡️</span>
             <h4 class="readiness-title">${I18n.t('readiness_check_title')}</h4>
           </div>
           ${currentScoreBadge}
         </div>
-        <p class="readiness-question-text">${I18n.t('readiness_question')}</p>
         <div class="readiness-pills-row">
           ${pillsHTML}
         </div>
         ${adaptationBoxHTML}
+        ${safetyRowHTML}
       </div>
     `;
   }
 
   async function setReadinessScore(score) {
     if (!currentTracking) currentTracking = {};
-    currentTracking.readinessScore = score;
-    currentTracking.readinessDate = UI.getLocalDateString(new Date());
+    if (currentTracking.readinessScore === score) {
+      // Toggling the same explicit score resets to null (which assumes default optimal 5)
+      currentTracking.readinessScore = null;
+      delete currentTracking.readinessDate;
+    } else {
+      currentTracking.readinessScore = score;
+      currentTracking.readinessDate = UI.getLocalDateString(new Date());
+    }
 
     if (!currentTracking.readinessAdjustment) {
       currentTracking.readinessAdjustment = {
@@ -2302,11 +2365,11 @@ const TodayPage = (() => {
       renderExercises(day);
     }
 
-    if (score <= 2) {
+    if (currentTracking.readinessScore != null && score <= 2) {
       if (window.UI && window.UI.toast) {
         UI.toast(I18n.t('readiness_alert_low_title', '', { score }), 'warning');
       }
-    } else if (score >= 4) {
+    } else if (currentTracking.readinessScore != null && score >= 4) {
       if (window.UI && window.UI.toast) {
         UI.toast(I18n.t('readiness_status_high'), 'success');
       }
@@ -3042,63 +3105,14 @@ const TodayPage = (() => {
 
   /**
    * Render Today Active Injury & Vulnerability Strip
+   * Unified inside renderReadinessCheck; cleans any legacy standalone container
    */
   function renderInjuryStrip(day) {
     const stripEl = document.getElementById('today-injury-strip');
-    if (!stripEl) return;
-
-    if (typeof InjuryEngine === 'undefined') {
+    if (stripEl) {
       stripEl.innerHTML = '';
-      return;
+      stripEl.style.display = 'none';
     }
-
-    const activeInjuries = InjuryEngine.getActiveInjuries();
-    const activeCount = Object.keys(activeInjuries).length;
-
-    // Check if any exercise today has an active adaptation
-    let adaptedCount = 0;
-    if (day && day.exercises) {
-      day.exercises.forEach(ex => {
-        if (InjuryEngine.getExerciseAdaptation(ex.name)) adaptedCount++;
-      });
-    }
-
-    if (activeCount === 0) {
-      stripEl.innerHTML = `
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
-          <button type="button" class="btn-secondary" 
-                  style="font-size: 11.5px; font-weight: 700; padding: 6px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.35); color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;"
-                  onclick="AnatomyMap.openJointsModal()">
-            <span>🛡️</span>
-            <span>${I18n.t('today_injury_banner_btn')}</span>
-          </button>
-        </div>
-      `;
-      return;
-    }
-
-    stripEl.innerHTML = `
-      <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(239, 68, 68, 0.08) 100%); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 22px;">🛡️</span>
-          <div>
-            <div style="font-size: 13.5px; font-weight: 800; color: #fbbf24; display: flex; align-items: center; gap: 8px;">
-              <span>${I18n.t('today_active_injuries_label')}</span>
-              <span style="background: #ef4444; color: white; font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 900;">${activeCount}</span>
-            </div>
-            <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 2px;">
-              ${adaptedCount > 0 ? `${adaptedCount} תרגילים הותאמו בבטחה לשמירה על 100% היפרטרופיה!` : 'המערכת מנטרת את עומסי המפרקים לאימון זה.'}
-            </div>
-          </div>
-        </div>
-        <button type="button" class="btn-primary" 
-                style="padding: 6px 14px; font-size: 11.5px; font-weight: 700; border-radius: 8px; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;"
-                onclick="AnatomyMap.openJointsModal()">
-          <span>🛡️</span>
-          <span>${I18n.t('injury_map_title')}</span>
-        </button>
-      </div>
-    `;
   }
 
   /**
@@ -5822,7 +5836,7 @@ const TodayPage = (() => {
     swapMovedInClass,
     refreshCurrentDayView() {
       if (currentDayIndex >= 0 && allPlanDays && allPlanDays[currentDayIndex]) {
-        renderDay(allPlanDays[currentDayIndex]);
+        render();
       }
     },
     async refreshPlan() {

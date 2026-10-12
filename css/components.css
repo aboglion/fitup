@@ -4857,22 +4857,28 @@ html.light-theme .login-prompt-banner {
 }
 
 /* ===== Daily Readiness Check Card ===== */
+/* ===== Daily Readiness & Safety Check Card ===== */
 .readiness-check-card {
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   transition: all 0.3s ease;
+}
+
+.readiness-check-card.unified-readiness-safety {
+  position: relative;
+  overflow: hidden;
 }
 
 .readiness-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--border-light);
 }
 
@@ -4883,34 +4889,62 @@ html.light-theme .login-prompt-banner {
 }
 
 .readiness-title {
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 800;
   color: var(--text-primary);
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .readiness-status-badge {
   font-size: 11px;
   font-weight: 800;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-light);
   color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.readiness-status-badge.badge-peak {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.4);
+  color: #c084fc;
+}
+
+.readiness-status-badge.badge-good {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+.readiness-status-badge.badge-moderate {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #60a5fa;
+}
+
+.readiness-status-badge.badge-low {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
 }
 
 .readiness-question-text {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
-  margin: 0 0 12px 0;
-  line-height: 1.4;
+  margin: 0 0 10px 0;
+  line-height: 1.35;
 }
 
 .readiness-pills-row {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 @media (max-width: 480px) {
@@ -4921,15 +4955,16 @@ html.light-theme .login-prompt-banner {
 }
 
 .readiness-pill-btn {
-  background: var(--bg-elevated);
+  background: var(--bg-elevated, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 8px 4px;
+  border-radius: 10px;
+  padding: 6px 4px;
+  height: 38px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 5px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
@@ -4938,56 +4973,170 @@ html.light-theme .login-prompt-banner {
 .readiness-pill-btn:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .readiness-pill-emoji {
-  font-size: 20px;
+  font-size: 16px;
+  line-height: 1;
 }
 
 .readiness-pill-num {
   font-size: 12px;
   font-weight: 800;
   color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
 }
 
 /* Selected Pill Colors */
 .readiness-pill-btn.active[data-score="1"] {
-  background: rgba(239, 68, 68, 0.25);
+  background: rgba(239, 68, 68, 0.22);
   border-color: #ef4444;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }
 
 .readiness-pill-btn.active[data-score="2"] {
-  background: rgba(245, 158, 11, 0.25);
+  background: rgba(245, 158, 11, 0.22);
   border-color: #f59e0b;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
 }
 
 .readiness-pill-btn.active[data-score="3"] {
-  background: rgba(59, 130, 246, 0.25);
+  background: rgba(59, 130, 246, 0.22);
   border-color: #3b82f6;
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
 }
 
 .readiness-pill-btn.active[data-score="4"] {
-  background: rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.22);
   border-color: #10b981;
-  box-shadow: 0 0 12px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
 }
 
 .readiness-pill-btn.active[data-score="5"] {
-  background: rgba(168, 85, 247, 0.28);
+  background: rgba(168, 85, 247, 0.22);
   border-color: #a855f7;
-  box-shadow: 0 0 14px rgba(168, 85, 247, 0.4);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.35);
+}
+
+.readiness-pill-btn.default-active {
+  border-style: dashed;
+}
+
+/* Subrow for integrated joint and safety protections */
+.readiness-safety-subrow {
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.readiness-safety-subrow.alert-active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(239, 68, 68, 0.08) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.readiness-safety-subrow.alert-active:hover {
+  border-color: rgba(245, 158, 11, 0.55);
+}
+
+.readiness-safety-subrow.normal-clean {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-light);
+}
+
+.safety-subrow-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.safety-subrow-shield {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.safety-subrow-shield.clean {
+  opacity: 0.65;
+}
+
+.safety-subrow-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.safety-subrow-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fbbf24;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.safety-subrow-sub {
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.safety-subrow-clean-text {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.safety-subrow-action-btn {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf24;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.safety-subrow-action-btn:hover {
+  filter: brightness(1.2);
+  transform: translateY(-1px);
+}
+
+.safety-subrow-action-btn.clean {
+  border-color: var(--border-light);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+}
+
+.safety-subrow-action-btn.clean:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.safety-arrow-icon {
+  font-size: 10px;
+  opacity: 0.8;
 }
 
 /* Adaptive Deload & Rest Suggestion Box */
 .readiness-adaptation-box {
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.12));
   border: 1px solid rgba(245, 158, 11, 0.4);
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
   animation: fadeIn 0.3s ease;
 }
 
@@ -4995,36 +5144,37 @@ html.light-theme .login-prompt-banner {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 800;
   color: #fbbf24;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .readiness-adaptation-desc {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-secondary);
-  line-height: 1.45;
-  margin: 0 0 12px 0;
+  line-height: 1.4;
+  margin: 0 0 8px 0;
 }
 
 .readiness-toggles-grid {
   display: flex;
-  flex-direction: column;
   gap: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
 }
 
 .readiness-toggle-card {
   background: rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  padding: 10px 12px;
+  border-radius: 8px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 12px;
 }
 
 .readiness-toggle-card.active {
@@ -5033,8 +5183,8 @@ html.light-theme .login-prompt-banner {
 }
 
 .readiness-toggle-card input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   accent-color: #f59e0b;
   cursor: pointer;
 }

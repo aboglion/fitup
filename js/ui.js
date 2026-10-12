@@ -1011,10 +1011,92 @@ const UI = (() => {
       `;
     }
 
+    let biomechanicalHTML = '';
+    if (typeof InjuryEngine !== 'undefined') {
+      const baseAd = InjuryEngine.EXERCISE_ADAPTATIONS[effectiveTitle] || 
+        (fallbackTitle ? InjuryEngine.EXERCISE_ADAPTATIONS[fallbackTitle] : null) ||
+        Object.entries(InjuryEngine.EXERCISE_ADAPTATIONS).find(([k]) => effectiveTitle.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(effectiveTitle.toLowerCase()))?.[1];
+
+      if (baseAd) {
+        const activeAd = InjuryEngine.getExerciseAdaptation(effectiveTitle) || (fallbackTitle ? InjuryEngine.getExerciseAdaptation(fallbackTitle) : null);
+        const jDefs = baseAd.joints || [];
+        const jointStatusChips = jDefs.map(jId => {
+          const jDef = InjuryEngine.JOINTS[jId] || { labelKey: jId };
+          const jName = I18n.t(jDef.labelKey) || jId;
+          const state = InjuryEngine.getJointState(jId);
+          let stateColor = '#10b981';
+          let stateBg = 'rgba(16, 185, 129, 0.15)';
+          let stateIcon = '🟢';
+          let stateText = I18n.t('injury_state_normal');
+          if (state === 1) {
+            stateColor = '#f59e0b';
+            stateBg = 'rgba(245, 158, 11, 0.15)';
+            stateIcon = '🟡';
+            stateText = I18n.t('injury_state_sensitive');
+          } else if (state === 2) {
+            stateColor = '#ef4444';
+            stateBg = 'rgba(239, 68, 68, 0.15)';
+            stateIcon = '🔴';
+            stateText = I18n.t('injury_state_injured');
+          }
+          return `<span style="font-size: 11px; font-weight: 700; color: ${stateColor}; background: ${stateBg}; border: 1px solid ${stateColor}40; padding: 2px 7px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">${stateIcon} ${jName}: ${stateText}</span>`;
+        }).join(' ');
+
+        const sensitiveText = I18n.t(baseAd.sensitive_note_key);
+        const injuredText = I18n.t(baseAd.injured_note_key);
+        const substituteText = baseAd.injured_substitute ? (I18n.t(baseAd.injured_substitute) || baseAd.injured_substitute) : null;
+
+        let activeAlertBox = '';
+        if (activeAd) {
+          if (activeAd.type === 'injured') {
+            activeAlertBox = `
+              <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; font-size: 12px; color: #fca5a5; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                <span>🚨</span> <span>${I18n.t('today_adapted_banner_title')}: <b>${I18n.t('injury_badge_swapped')} ⟵ ${substituteText}</b></span>
+              </div>
+            `;
+          } else if (activeAd.type === 'sensitive') {
+            activeAlertBox = `
+              <div style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 8px; padding: 8px 10px; margin-bottom: 6px; font-size: 12px; color: #fde047; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                <span>🛡️</span> <span>${I18n.t('today_adapted_banner_title')}: <b>${I18n.t('injury_badge_rom_shield')}</b></span>
+              </div>
+            `;
+          }
+        }
+
+        biomechanicalHTML = `
+          <div style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <div style="font-size: 13px; font-weight: 800; color: #10b981; display: flex; align-items: center; gap: 6px;">
+                <span>🛡️</span> <span>${I18n.t('injury_section_title')}</span>
+              </div>
+              <button type="button" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="if(typeof AnatomyMap !== 'undefined') AnatomyMap.openJointsModal();">
+                🛡️ ${I18n.t('today_injury_banner_btn')}
+              </button>
+            </div>
+            ${activeAlertBox}
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0;">
+              ${jointStatusChips}
+            </div>
+            <div style="font-size: 11px; line-height: 1.4; background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px;">
+              <div>
+                <b style="color: #f59e0b;">🟡 ${I18n.t('injury_sensitive_protocol')}:</b>
+                <span style="color: var(--text-secondary); margin-inline-start: 4px;">${sensitiveText}</span>
+              </div>
+              <div>
+                <b style="color: #ef4444;">🔴 ${I18n.t('injury_injured_protocol')}:</b>
+                <span style="color: var(--text-secondary); margin-inline-start: 4px;">${injuredText}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
     showModal(modalTitleHTML, `
       <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
         ${mediaHTML}
         ${metadataHTML}
+        ${biomechanicalHTML}
         ${extraNote}
       </div>
     `);

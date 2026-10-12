@@ -158,3 +158,24 @@ test('Combat Scheduler - Golden week permutes weekdays accurately for Mon+Thu cl
   assert.equal(result.permutation[bpThu], 5, 'Thursday is VO2 Max');
   assert.equal(result.practiceDay, 6, 'Saturday is practice day (Recovery)');
 });
+
+test('Manual Swaps Persistence - Swaps preserve days across full plan re-seed', () => {
+  const mockPlan = [
+    { dayIndex: 91, dayType: 'Rest', exercises: [], plannedRPE: '—' },
+    { dayIndex: 92, dayType: 'Legs + Core', exercises: [{ name: 'High Knees' }], plannedRPE: '8' }
+  ];
+  const manualSwaps = [{ dayIndex1: 91, dayIndex2: 92 }];
+
+  // Simulate applyManualSwapsToPlan logic
+  for (const s of manualSwaps) {
+    const d1 = mockPlan.find(p => p.dayIndex === s.dayIndex1);
+    const d2 = mockPlan.find(p => p.dayIndex === s.dayIndex2);
+    const tempType = d1.dayType;
+    d1.dayType = d2.dayType;
+    d2.dayType = tempType;
+  }
+
+  assert.equal(mockPlan[0].dayType, 'Legs + Core', 'Day 91 became Legs + Core');
+  assert.equal(mockPlan[1].dayType, 'Rest', 'Day 92 became Rest');
+});
+

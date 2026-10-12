@@ -836,6 +836,28 @@ const ExercisesPage = (() => {
                   ? `<span class="rpg-equip-badge" style="background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.4); padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;">🎯 ${I18n.t('cadence_group_b_short')}</span>`
                   : `<span class="rpg-equip-badge" style="background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.4); padding: 4px 8px; border-radius: 6px; font-weight: 700; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;">⚡ ${I18n.t('cadence_group_a_short')}</span>`;
               }
+              if (typeof InjuryEngine !== 'undefined') {
+                const ad = InjuryEngine.getExerciseAdaptation(node.name);
+                if (ad) {
+                  if (ad.type === 'injured') {
+                    badges += `<span class="rpg-equip-badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.5); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);">🚨 ${I18n.t('injury_badge_swapped')}: ${I18n.t(ad.substituteName) || ad.substituteName}</span>`;
+                  } else if (ad.type === 'sensitive') {
+                    badges += `<span class="rpg-equip-badge" style="background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);">🛡️ ${I18n.t('injury_badge_rom_shield')}</span>`;
+                  }
+                }
+                const baseAd = InjuryEngine.EXERCISE_ADAPTATIONS[node.name];
+                if (baseAd && baseAd.joints && baseAd.joints.length > 0) {
+                  const jIconMap = {
+                    knee: '🦵', shoulder: '🛡️', elbow: '💪', wrist: '✋', lower_back: '🥋', achilles: '🦶', neck: '🧣'
+                  };
+                  const uniqueJointTypes = [...new Set(baseAd.joints.map(j => j.replace(/_[rl]$/, '')))];
+                  uniqueJointTypes.forEach(jt => {
+                    const icon = jIconMap[jt] || '🛡️';
+                    const label = I18n.t('joint_' + jt) || jt;
+                    badges += `<span class="rpg-equip-badge" style="background: rgba(59, 130, 246, 0.12); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.25); padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 10px; display: inline-flex; align-items: center; gap: 3px;">${icon} ${label}</span>`;
+                  });
+                }
+              }
               return badges;
             })()}
                 </div>
@@ -1182,9 +1204,22 @@ const ExercisesPage = (() => {
         return equips.filter(eq => eq && eq.label !== I18n.t('equip_bodyweight')).map(eq => `<span class="guide-equipment" style="flex-shrink: 0; unicode-bidi: isolate;">${eq.icon} ${eq.label}</span>`).join('');
       })()}
           </div>
-          <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0;">
+          <div style="display: flex; align-items: center; gap: 8px; margin: 4px 0; flex-wrap: wrap;">
             <span class="guide-card-category">${ex.category || ''}</span>
             ${weekBadgeHTML}
+            ${(() => {
+              if (typeof InjuryEngine === 'undefined') return '';
+              const ad = InjuryEngine.getExerciseAdaptation(ex.name);
+              if (ad) {
+                if (ad.type === 'injured') {
+                  return `<span style="background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); padding: 2px 7px; border-radius: 6px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;">🚨 ${I18n.t('injury_badge_swapped')}: ${I18n.t(ad.substituteName) || ad.substituteName}</span>`;
+                }
+                if (ad.type === 'sensitive') {
+                  return `<span style="background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); padding: 2px 7px; border-radius: 6px; font-weight: 800; font-size: 11px; display: inline-flex; align-items: center; gap: 4px;">🛡️ ${I18n.t('injury_badge_rom_shield')}</span>`;
+                }
+              }
+              return '';
+            })()}
           </div>
           ${parentLineHTML}
           <div class="guide-card-sets">${ex.setsProgression || ''}</div>
@@ -1343,6 +1378,62 @@ const ExercisesPage = (() => {
       `;
     }
 
+    let injurySafetyHtml = '';
+    if (typeof InjuryEngine !== 'undefined') {
+      const baseAd = InjuryEngine.EXERCISE_ADAPTATIONS[ex.name] ||
+        Object.entries(InjuryEngine.EXERCISE_ADAPTATIONS).find(([k]) => ex.name.toLowerCase().includes(k.toLowerCase()) || k.toLowerCase().includes(ex.name.toLowerCase()))?.[1];
+      if (baseAd) {
+        const jDefs = baseAd.joints || [];
+        const jointChips = jDefs.map(jId => {
+          const jDef = InjuryEngine.JOINTS[jId] || { labelKey: jId };
+          const jName = I18n.t(jDef.labelKey) || jId;
+          const state = InjuryEngine.getJointState(jId);
+          let stateColor = '#10b981';
+          let stateBg = 'rgba(16, 185, 129, 0.15)';
+          let stateIcon = '🟢';
+          let stateText = I18n.t('injury_state_normal');
+          if (state === 1) {
+            stateColor = '#f59e0b';
+            stateBg = 'rgba(245, 158, 11, 0.15)';
+            stateIcon = '🟡';
+            stateText = I18n.t('injury_state_sensitive');
+          } else if (state === 2) {
+            stateColor = '#ef4444';
+            stateBg = 'rgba(239, 68, 68, 0.15)';
+            stateIcon = '🔴';
+            stateText = I18n.t('injury_state_injured');
+          }
+          return `<span style="font-size: 11px; font-weight: 700; color: ${stateColor}; background: ${stateBg}; border: 1px solid ${stateColor}40; padding: 2px 7px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">${stateIcon} ${jName}: ${stateText}</span>`;
+        }).join(' ');
+
+        injurySafetyHtml = `
+          <div style="background: var(--bg-card); border-radius: 12px; padding: 14px; border: 1px solid var(--border-light); margin-top: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+              <h3 style="color: #10b981; font-size: 15px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 6px;">
+                <span>🛡️</span> <span>${I18n.t('injury_section_title')}</span>
+              </h3>
+              <button type="button" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="if(typeof AnatomyMap !== 'undefined') AnatomyMap.openJointsModal();">
+                🛡️ ${I18n.t('today_injury_banner_btn')}
+              </button>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
+              ${jointChips}
+            </div>
+            <div style="font-size: 12px; line-height: 1.45; background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px;">
+              <div>
+                <b style="color: #f59e0b;">🟡 ${I18n.t('injury_sensitive_protocol')}:</b>
+                <span style="color: var(--text-secondary); margin-inline-start: 4px;">${I18n.t(baseAd.sensitive_note_key)}</span>
+              </div>
+              <div>
+                <b style="color: #ef4444;">🔴 ${I18n.t('injury_injured_protocol')}:</b>
+                <span style="color: var(--text-secondary); margin-inline-start: 4px;">${I18n.t(baseAd.injured_note_key)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
     const gifPath = UI.getGifUrl(ex.name);
     const showSingleGif = !ex.name.toLowerCase().includes('deep mobility') && gifPath;
     const fullHtml = `
@@ -1350,6 +1441,7 @@ const ExercisesPage = (() => {
         ${html}
         ${subExercisesHtml}
         ${progressionHubHtml}
+        ${injurySafetyHtml}
         ${showSingleGif ? `
         <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 200px; border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;">
           <div class="skeleton-placeholder">

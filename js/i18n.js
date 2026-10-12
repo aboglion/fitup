@@ -1215,8 +1215,17 @@ const I18n = (() => {
       nut_carbs_unit: "g",
 
       // Feature 3: Subjective Recovery Quality Index (Readiness Check)
-      readiness_check_title: "Daily Readiness & Sleep Check",
-      readiness_question: "How did you sleep last night & what is your energy level today?",
+      readiness_check_title: "Readiness & Safety Adaptations",
+      readiness_question: "Sleep & Recovery Quality",
+      readiness_default_optimal: "Optimal (Default)",
+      readiness_badge_peak: "Peak",
+      readiness_badge_good: "Good",
+      readiness_badge_moderate: "Moderate",
+      readiness_badge_fatigued: "Fatigued",
+      readiness_badge_exhausted: "Exhausted",
+      readiness_assumed_best: "Assumed optimal condition by default",
+      all_joints_healthy: "Joint Safety: All joints optimal (Full Load)",
+      safety_subrow_note: "Active Joint Protection • Guarded ROM",
       readiness_score_1: "1 - Exhausted / Poor Sleep (<5h)",
       readiness_score_2: "2 - Fatigued / Restless Sleep",
       readiness_score_3: "3 - Moderate / Normal Routine",
@@ -1480,7 +1489,14 @@ const I18n = (() => {
       injury_toast_state_changed: "Joint status updated",
       today_injury_banner_btn: "🛡️ Joints & Injury Map",
       today_active_injuries_label: "Active Safety Adaptations in Today's Workout",
-      today_adapted_banner_title: "🛡️ Biomechanical Safety Adaptation Active"
+      today_adapted_banner_title: "🛡️ Biomechanical Safety Adaptation Active",
+      injury_section_title: "Biomechanical Joint & Injury Safety",
+      injury_vulnerable_joints: "Stressed / Supporting Joints",
+      injury_sensitive_protocol: "Sensitive State (ROM Shield Protocol)",
+      injury_injured_protocol: "Injured State (Zero-Compromise Swap)",
+      injury_badge_rom_shield: "ROM Shield Active",
+      injury_badge_swapped: "Safely Swapped",
+      injury_muscle_alert: "Active Joint Sensitivity: Movements for this muscle are safely adapted!"
     },
     he: {
 
@@ -2463,8 +2479,17 @@ const I18n = (() => {
       nut_carbs_unit: "גרם",
 
       // Feature 3: Subjective Recovery Quality Index (Readiness Check)
-      readiness_check_title: "מדד איכות התאוששות ומוכנות",
-      readiness_question: "איך ישנת הלילה ומה רמת האנרגיה שלך הבוקר?",
+      readiness_check_title: "מוכנות והתאמת בטיחות באימון היום",
+      readiness_question: "איכות שינה והתאוששות",
+      readiness_default_optimal: "מצב שיא (ברירת מחדל)",
+      readiness_badge_peak: "שיא",
+      readiness_badge_good: "רענן",
+      readiness_badge_moderate: "סביר",
+      readiness_badge_fatigued: "עייף",
+      readiness_badge_exhausted: "מותש",
+      readiness_assumed_best: "הונח מצב מיטבי בהיעדר בחירה",
+      all_joints_healthy: "בטיחות מפרקים: כל המפרקים תקינים (עומס מלא)",
+      safety_subrow_note: "הגנת מפרקים פעילה • החלפות וטווחים מבוקרים",
       readiness_score_1: "1 - מותש / שינה גרועה (פחות מ-5 שעות)",
       readiness_score_2: "2 - עייף / שינה מקוטעת",
       readiness_score_3: "3 - סביר / שגרה רגילה",
@@ -2728,7 +2753,14 @@ const I18n = (() => {
       injury_toast_state_changed: "עודכן סטטוס מפרק",
       today_injury_banner_btn: "🛡️ מפת מפרקים ופציעות",
       today_active_injuries_label: "התאמות בטיחות פעילות באימון היום",
-      today_adapted_banner_title: "🛡️ התאמת בטיחות ביומכנית פעילה"
+      today_adapted_banner_title: "🛡️ התאמת בטיחות ביומכנית פעילה",
+      injury_section_title: "בטיחות מפרקית והגנה מפציעות",
+      injury_vulnerable_joints: "מפרקים בעומס / תומכים",
+      injury_sensitive_protocol: "מצב רגיש (פרוטוקול הגנת טווח תנועה)",
+      injury_injured_protocol: "מצב פציעה (החלפה אפס-פשרה)",
+      injury_badge_rom_shield: "הגנת ROM פעילה",
+      injury_badge_swapped: "מוחלף בטיחותית",
+      injury_muscle_alert: "שים לב: זוהתה רגישות מפרקית פעילה! תרגילי שריר זה מוגנים בהגבלת ROM או החלפה בטוחה."
     },
     ar: {
 
@@ -3561,8 +3593,17 @@ const I18n = (() => {
       nut_carbs_unit: "غرام",
 
       // Feature 3: Subjective Recovery Quality Index (Readiness Check)
-      readiness_check_title: "مؤشر جودة التعافي والنوم",
-      readiness_question: "كيف نمت الليلة الماضية وما هو مستوى طاقتك اليوم؟",
+      readiness_check_title: "الجاهزية وتعديلات الأمان للتدريب",
+      readiness_question: "جودة النوم والتعافي",
+      readiness_default_optimal: "الذروة (افتراضي)",
+      readiness_badge_peak: "ذروة",
+      readiness_badge_good: "نشيط",
+      readiness_badge_moderate: "معتدل",
+      readiness_badge_fatigued: "متعب",
+      readiness_badge_exhausted: "مجهد",
+      readiness_assumed_best: "تم افتراض الحالة المثالية افتراضيًا",
+      all_joints_healthy: "أمان المفاصل: جميع المفاصل بحالة ممتازة (حمل كامل)",
+      safety_subrow_note: "حماية مفاصل نشطة • تمارين وتكنيك موجه",
       readiness_score_1: "1 - مجهد / نوم سيء (<5 ساعات)",
       readiness_score_2: "2 - متعب / نوم متقطع",
       readiness_score_3: "3 - معتدل / روتين طبيعي",
@@ -3826,7 +3867,14 @@ const I18n = (() => {
       injury_toast_state_changed: "تم تحديث حالة المفصل",
       today_injury_banner_btn: "🛡️ خريطة المفاصل والإصابات",
       today_active_injuries_label: "تعديلات أمان نشطة في تدريب اليوم",
-      today_adapted_banner_title: "🛡️ تعديل أمان بيوميكانيكي نشط"
+      today_adapted_banner_title: "🛡️ تعديل أمان بيوميكانيكي نشط",
+      injury_section_title: "السلامة الميكانيكية الحيوية وحماية المفاصل",
+      injury_vulnerable_joints: "المفاصل المعرضة للضغط / الداعمة",
+      injury_sensitive_protocol: "حالة حساسة (بروتوكول حماية نطاق الحركة)",
+      injury_injured_protocol: "حالة الإصابة (بديل بدون مساومة)",
+      injury_badge_rom_shield: "درع نطاق الحركة نشط",
+      injury_badge_swapped: "مستبدل بأمان",
+      injury_muscle_alert: "تنبيه: تم رصد حساسية نشطة في المفاصل! تمارين هذه العضلة محمية بتعديل نطاق الحركة أو البديل الآمن."
     }
   };
 

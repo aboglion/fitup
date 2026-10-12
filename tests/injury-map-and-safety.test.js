@@ -216,3 +216,31 @@ test('AnatomyMap - Dual mode rendering: Muscles mode & Joints mode', () => {
   InjuryEngine.resetAllJoints();
   AnatomyMap.setView('muscles');
 });
+
+test('AnatomyMap - showMuscleDetails renders joint protection alert when joint is sensitive', async () => {
+  InjuryEngine.resetAllJoints();
+  InjuryEngine.setJointState('knee_r', 1);
+
+  let capturedTitle = '';
+  let capturedContent = '';
+  anatomyWindow.UI.showModal = (title, content) => {
+    capturedTitle = title;
+    capturedContent = content;
+  };
+
+  await AnatomyMap.showMuscleDetails('quads', 'ארבע-ראשי', 75);
+  assert.ok(capturedTitle.includes('ארבע-ראשי') || capturedTitle.includes('quads'));
+  assert.ok(capturedContent.includes('רגישות מפרקית') || capturedContent.includes('Active Joint Sensitivity') || capturedContent.includes('knee_r'));
+  assert.ok(capturedContent.includes('openJointsModal'));
+
+  InjuryEngine.resetAllJoints();
+});
+
+test('PROGRAM_GUIDE.md - Includes Section 1.3 Biomechanical Joint & Injury Engine', () => {
+  const guideContent = fs.readFileSync(path.join(root, 'PROGRAM_GUIDE.md'), 'utf8');
+  assert.ok(guideContent.includes('### 1.3 Biomechanical Joint & Injury Engine'), 'Must include Section 1.3 header');
+  assert.ok(guideContent.includes('Master Biomechanical Substitution Matrix'), 'Must include Master Substitution Matrix');
+  assert.ok(guideContent.includes('DB Glute Bridge'), 'Must mention DB Glute Bridge substitute');
+  assert.ok(guideContent.includes('24-Hour Pain Rule'), 'Must document 24-Hour Pain Rule');
+  assert.ok(guideContent.includes('1-Tap Biomechanical Joint & Injury Engine'), 'Must include Appendix E entry');
+});

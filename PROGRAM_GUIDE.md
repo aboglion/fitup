@@ -36,6 +36,78 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 - **Unilateral Execution**: Complete all sets for side A, swap to side B, then proceed to the next exercise.
 - **Handle Weight**: Small dumbbell handle weight is constant and ignored. Only plate weight is counted.
 
+### 1.3 Biomechanical Joint & Injury Engine (Zero-Compromise Safety & 1-Tap Vulnerability Map)
+
+#### 1.3.1 Core Philosophy: Zero-Friction Protection Without Sacrificing Hypertrophy
+Traditional fitness applications fail trainees encountering joint twinges or tendon strain in two distinct ways:
+1. **The Friction Trap**: Forcing the trainee through exhaustive questionnaires, checkboxes, and subjective self-assessments before every workout kills consistency, flow, and momentum.
+2. **The Progression Trap**: Aggressively cancelling workouts or dropping total volume causes muscle detraining and destroys progressive overload gains.
+
+The FitUp **Biomechanical Joint & Injury Engine** eliminates both pitfalls under a prescriptive, zero-friction model:
+- **Zero Pre-Workout Friction**: Managed 100% via single-tap nodes on the interactive **Anatomy Map** (`🛡️ מפת מפרקים ופציעות`). No questions, no forms, no confirmations.
+- **Biomechanical Zero-Compromise Principle**: Every movement adaptation is designed by biomechanical principles to either **constrain harmful joint angles** (e.g. knee shear past 90°, lumbar rounding, shoulder impingement) or **substitute an equivalent motor pattern** that produces identical primary mover tension and hypertrophy stimulus with **zero joint compression or spinal shear**.
+
+#### 1.3.2 The 3-State Lifecycle Model
+Every one of the 12 critical joints cycles seamlessly through 3 discrete operational states via single tap:
+
+1. 🟢 **Normal (0 — תקין)**:
+   - Full anatomical range of motion (ROM) and unrestricted progressive overload.
+   - Standard cadence promotion ladders (Group A every 3rd workout, Group B every 4th workout) remain fully active.
+
+2. 🟡 **Sensitive (1 — רגיש / עקיצות / עומס גידי)**:
+   - **ROM Constraint & Tendon Shield Protocol**: Applied immediately to all exercises loading the sensitive joint.
+   - Preserves 100% of target muscle activation while eliminating end-range articular shear and passive tendon strain:
+     - **Knee Sensitivity (e.g. Right Knee Twitches / Post-Squat Electric Zaps)**: Squats and Bulgarian Split Squats strictly capped at 90° parallel knee angle; eccentric tempo locked at controlled 3-1-1; bottom ballistic bouncing is strictly prohibited.
+     - **Shoulder Sensitivity**: Single-Arm Seated OHP executes strictly with neutral grip (palm inward) and stops at ear height (preventing acromial impingement); Lateral Raises execute strictly within the scapular plane (scaption — 30° forward).
+     - **Lower Back (L4–S1 Bulge History)**: Romanian Deadlifts stop at knee/mid-shin height before lumbar flexion occurs; strict neutral spine and lat engagement enforced.
+     - **Elbow / Wrist Sensitivity**: Overhead extensions capped at 90° elbow flexion; Push-ups strictly utilize Push-Up Bars (180° wrist alignment); Curls halt 5° before extreme extension.
+
+3. 🔴 **Injured (2 — פצוע / כאב אקוטי)**:
+   - **Biomechanical Zero-Compromise Substitution**: High-joint-stress compound lifts are automatically substituted in real time with biomechanically equivalent lifts targeting the EXACT same primary movers with zero joint compression.
+   - **Preserved Progression**: Hypertrophy stimulus is preserved; sets and volume match the day's targets.
+   - When the pain subsides, 1 tap cycles the joint back to 🟢 Normal, instantly restoring the original exercise without data loss.
+
+#### 1.3.3 The 12 Calibrated Critical Joint Nodes
+The engine monitors and adapts 12 primary structural articulation nodes:
+- **🦵 Right Knee (`knee_r`) & Left Knee (`knee_l`)**: Monitors patellar tendon, quadriceps tendon, and meniscus shear.
+- **🛡️ Right Shoulder (`shoulder_r`) & Left Shoulder (`shoulder_l`)**: Monitors subacromial space, supraspinatus, and anterior capsule.
+- **💪 Right Elbow (`elbow_r`) & Left Elbow (`elbow_l`)**: Monitors medial/lateral epicondyle tendons (golfer's/tennis elbow) and distal biceps/triceps insertions.
+- **✋ Right Wrist (`wrist_r`) & Left Wrist (`wrist_l`)**: Monitors carpal tunnel, TFCC, and hyperextension stress.
+- **🥋 Lower Back / Lumbar Spine (`lower_back`)**: Protects L4–L5/S1 discs and erector spinae from compressive axial shear.
+- **🦶 Right Achilles (`achilles_r`) & Left Achilles (`achilles_l`)**: Protects the Achilles tendon and calcaneal insertion.
+- **🧣 Cervical Neck (`neck`)**: Protects C3–C7 cervical spine and upper traps during loading.
+
+#### 1.3.4 Master Biomechanical Substitution Matrix
+When a joint is marked **Injured 🔴**, the engine executes the following zero-compromise swaps:
+
+| Joint / Articulation | Stressed Program Exercise | 🟡 Sensitive State (ROM Constraint Cue) | 🔴 Injured State (Zero-Compromise Substitute) | Hypertrophic Rationale & Safety Mechanism |
+| :--- | :--- | :--- | :--- | :--- |
+| **Knee (Right/Left)** | `Heels-Elevated Goblet Squat` | Stop at 90° parallel knee angle; 3-1-1 tempo, no bottom bounce | **DB Glute Bridge** | Peak glute & quad/hip extension tension with **0 kg patellofemoral shear**. |
+| **Knee (Right/Left)** | `Goblet Bulgarian Split Squat` | 90° knee angle; upright torso, no forward knee slide | **DB Glute Bridge** | Unilateral knee stress eliminated while preserving hip-drive progressive load. |
+| **Knee (Right/Left)** | `Nordic Curl Progression` | Hand-assisted partial range (30°–45° descent only) | **Goblet Romanian Deadlift** | Posterior chain hamstring tension maintained via pure hip hinge with 0 knee flexion shear. |
+| **Knee (Right/Left)** | `Bodyweight Squat` (Warmup) | Chair-height Box Squat (stop at 90°) | **Glute Bridge** (Bodyweight) | Glute activation without knee joint loading. |
+| **Knee (Right/Left)** | `High Knees` (Warmup) | Low knee lift (hip level only), soft foot strike | **Brisk Walking** (0% incline) | Cardiovascular elevation without joint impact. |
+| **Shoulder (Right/Left)** | `Single-Arm Seated OHP` | Neutral grip (palm facing in), stop at ear level | **Single-Arm Floor Press** | Floor creates an uncompromised 90° elbow stop, eliminating anterior capsule stress. |
+| **Shoulder (Right/Left)** | `Pike Progression` / Handstand | Moderate pike angle hold, avoid deep pressing | **Push-up Bars Progression** | Shifts force vector to horizontal plane, sparing the subacromial space. |
+| **Shoulder (Right/Left)** | `Single-Arm Lateral Raise` | Scaption plane (30° anterior to torso), shoulder height only | **TRX Face Pull** | Shifts recruitment to rear delts and rotator cuff with zero impingement risk. |
+| **Shoulder (Right/Left)** | `TRX Y-T-W` | Execute T and W angles only (omit high Y reach) | **Band Pull-Apart** | High-density scapular retraction without end-range overhead glenohumeral shear. |
+| **Lower Back (L4–S1)** | `Goblet Romanian Deadlift` | Stop at knee/upper shin; rigid neutral spine | **DB Glute Bridge** | Overloads glutes and hamstrings with **zero axial compressive torque on lumbar discs**. |
+| **Lower Back (L4–S1)** | `Single-Leg RDL` | Hand support on wall, shallow hinge | **DB Glute Bridge** | Pure posterior chain overload with absolute spinal safety. |
+| **Lower Back (L4–S1)** | `Suitcase Carry` | Short controlled strides, 20% weight reduction | **Dead Bug** | Deep core and transverse abdominis anti-rotation without axial vertical carry torque. |
+| **Lower Back (L4–S1)** | `One-Arm DB Row` | Full bench support (knee + hand flat), parallel spine | **Seated Band Row** | Horizontal back retraction with zero unsupported lumbar shear. |
+| **Elbow (Right/Left)** | `DB Overhead Triceps Ext` | Stop at 90° elbow flexion, avoid deep stretch behind neck | **Single-Arm Floor Press** | Overloads triceps via lockout mechanics while floor halts elbow before strain occurs. |
+| **Elbow (Right/Left)** | `Diamond Push-Up` | Widen hands to standard shoulder-width bar position | **Push-up Bars Progression** | Eliminates high torsional elbow torque and cubital tunnel compression. |
+| **Elbow (Right/Left)** | `Single-Arm Curl` | Strict controlled descent; stop 5° before full extension | **Single-Arm Hammer Curl** | Neutral grip recruits brachialis and brachioradialis while drastically sparing distal biceps tendon. |
+| **Elbow / Wrist** | `Pull-Up Progression` | Execute strictly on gymnastic rings or rope loops | **TRX Row** (Neutral Grip) | Rotational freedom relieves medial epicondyle stress while preserving lat/upper back volume. |
+| **Wrist (Right/Left)** | `Push-up Bars Progression` | Strictly use Push-Up Bars (180° wrist alignment) | **Single-Arm Floor Press** | Neutral dumbbell handle grip eliminates 90° wrist extension compression entirely. |
+| **Achilles Tendon** | `Standing Single-Leg Calf Raise` | Flat ground only (0° plane), no negative heel drop | **Seated Single-Leg Calf Raise** | Weight on bent knee transfers tension to soleus muscle, sparing gastrocnemius & Achilles tendon. |
+| **Achilles Tendon** | `VO2 Max Norwegian 4x4` | Capped at 4% incline; treadmill speed max 6.5 km/h | **Brisk Walking** (Zone 2) | Eliminates high-impact Achilles recoil while preserving aerobic conditioning. |
+| **Neck / Cervical** | `Band Neck Flexion & Extension` | Light resistance, 3-1-3 tempo, chin-tuck cueing | **Relaxed Walking** | Active recovery walking with zero cervical spine tension. |
+
+#### 1.3.5 The 24-Hour Pain Rule & Return to Full Load
+- **The 24-Hour Pain Rule**: If an active twinge or ache (e.g. right knee electric sensation) resolves within 24–48 hours, the joint is safely maintained in **Sensitive 🟡** mode for 1 additional session to consolidate tendon recovery.
+- **Return to Full Load (🟢 Normal)**: As soon as the trainee confirms zero discomfort throughout daily activities and warmup, a single tap toggles the joint back to **Normal 🟢**. The app instantly re-engages the primary compound movement at the previously mastered progressive load — **no restart, no regression, zero lost time**.
+
 ---
 
 ## Part 2 — Lean Architecture & Frequency Optimization
@@ -366,6 +438,7 @@ The training program is the prescriptive core; these are the controls the app ex
 - **🧠 Gemini AI Nutrition & Fitness Coach** — photo macro analysis + recovery advice.
 - **🏃 Google Fit integration** — activity/health data connectivity.
 - **🗣 Multi-Language** — English / Hebrew (RTL) / Arabic (RTL).
+- **🛡️ 1-Tap Biomechanical Joint & Injury Engine** — Dual-mode Anatomy visualizer (Muscles ⟷ Joints & Vulnerabilities) covering 12 calibrated joint nodes. Interactive 1-tap cycling (Normal 🟢 / Sensitive 🟡 / Injured 🔴) that automatically adapts Today's workout in real-time, displays protective badges across Skill Tree nodes and Exercise Guide cards, enforces ROM constraints, or executes zero-compromise biomechanical substitutions without sacrificing hypertrophy.
 - **☁️ Backup & Cloud Sync** — one-click local JSON export/import + automatic bidirectional Google Drive sync.
 
 ---

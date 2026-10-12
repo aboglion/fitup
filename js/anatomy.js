@@ -589,6 +589,57 @@ const AnatomyMap = (() => {
       return val.toFixed(1) + '%';
     };
 
+    const muscleJointMap = {
+      quads: ['knee_r', 'knee_l'],
+      hamstrings: ['knee_r', 'knee_l', 'lower_back'],
+      glutes: ['knee_r', 'knee_l', 'lower_back'],
+      chest: ['shoulder_r', 'shoulder_l', 'elbow_r', 'elbow_l', 'wrist_r', 'wrist_l'],
+      shoulders: ['shoulder_r', 'shoulder_l', 'neck'],
+      triceps: ['elbow_r', 'elbow_l', 'shoulder_r', 'shoulder_l'],
+      biceps: ['elbow_r', 'elbow_l', 'wrist_r', 'wrist_l'],
+      forearms: ['wrist_r', 'wrist_l', 'elbow_r', 'elbow_l'],
+      lats: ['shoulder_r', 'shoulder_l', 'elbow_r', 'elbow_l'],
+      traps: ['neck', 'shoulder_r', 'shoulder_l'],
+      calves: ['achilles_r', 'achilles_l'],
+      lowerBack: ['lower_back'],
+      core: ['lower_back'],
+      obliques: ['lower_back'],
+      neck: ['neck']
+    };
+
+    let activeJointAlertHTML = '';
+    if (typeof InjuryEngine !== 'undefined') {
+      const relJoints = muscleJointMap[muscleKey] || [];
+      const affected = relJoints.filter(jId => InjuryEngine.getJointState(jId) > 0);
+      if (affected.length > 0) {
+        const chips = affected.map(jId => {
+          const jDef = InjuryEngine.JOINTS[jId] || { labelKey: jId };
+          const jName = I18n.t(jDef.labelKey) || jId;
+          const state = InjuryEngine.getJointState(jId);
+          const icon = state === 2 ? '🔴' : '🟡';
+          const txt = state === 2 ? I18n.t('injury_state_injured') : I18n.t('injury_state_sensitive');
+          const col = state === 2 ? '#ef4444' : '#f59e0b';
+          return `<span style="font-size: 11px; font-weight: 700; color: ${col}; background: ${col}20; border: 1px solid ${col}50; padding: 2px 7px; border-radius: 6px;">${icon} ${jName}: ${txt}</span>`;
+        }).join(' ');
+
+        activeJointAlertHTML = `
+          <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <span style="font-weight: 800; font-size: 12px; color: #fbbf24; display: flex; align-items: center; gap: 6px;">
+                <span>🛡️</span> <span>${I18n.t('injury_muscle_alert')}</span>
+              </span>
+              <button type="button" style="background: rgba(245, 158, 11, 0.2); border: 1px solid rgba(245, 158, 11, 0.5); color: #fbbf24; border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="AnatomyMap.openJointsModal();">
+                ${I18n.t('today_injury_banner_btn')}
+              </button>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+              ${chips}
+            </div>
+          </div>
+        `;
+      }
+    }
+
     const modalContent = `
       <style>
         .anatomy-modal-btn {
@@ -614,6 +665,8 @@ const AnatomyMap = (() => {
           <div style="height: 100%; width: ${Math.min(100, pct)}%; background: #00ff66; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 255, 102, 0.6);"></div>
         </div>
 
+        ${activeJointAlertHTML}
+
         <h4 style="font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px;">${I18n.t('anatomy_program_exercises')}</h4>
         <div style="background: rgba(0, 255, 102, 0.06); border: 1px solid rgba(0, 255, 102, 0.2); border-radius: 8px; padding: 8px 10px; margin-bottom: 12px; font-size: 11px; color: var(--text-secondary); line-height: 1.4;">
           ${I18n.t('cadence_model_banner')}
@@ -634,11 +687,23 @@ const AnatomyMap = (() => {
               ? `<span style="font-size: 10px; font-weight: 700; color: #f87171; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); padding: 2px 6px; border-radius: 4px;">🔥 Myo (W3+ Ramp)</span>`
               : '';
 
+            let injuryBadge = '';
+            if (typeof InjuryEngine !== 'undefined') {
+              const ad = InjuryEngine.getExerciseAdaptation(ex.name);
+              if (ad) {
+                if (ad.type === 'injured') {
+                  injuryBadge = `<span style="font-size: 10px; font-weight: 800; color: #f87171; background: rgba(239, 68, 68, 0.18); border: 1px solid rgba(239, 68, 68, 0.45); padding: 2px 6px; border-radius: 4px;">🚨 ${I18n.t('injury_badge_swapped')}: ${I18n.t(ad.substituteName) || ad.substituteName}</span>`;
+                } else if (ad.type === 'sensitive') {
+                  injuryBadge = `<span style="font-size: 10px; font-weight: 800; color: #fbbf24; background: rgba(245, 158, 11, 0.18); border: 1px solid rgba(245, 158, 11, 0.45); padding: 2px 6px; border-radius: 4px;">🛡️ ${I18n.t('injury_badge_rom_shield')}</span>`;
+                }
+              }
+            }
+
             return `
             <li style="background: rgba(0, 255, 102, 0.04); border: 1px solid rgba(0, 255, 102, 0.2); padding: 10px 12px; border-radius: 10px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">
               <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px;">
                 <span style="font-size: 13px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                  <span>🏋️‍♂️</span> <span>${ex.name}</span> ${cadenceBadge} ${armBlockBadge}
+                  <span>🏋️‍♂️</span> <span>${ex.name}</span> ${cadenceBadge} ${armBlockBadge} ${injuryBadge}
                 </span>
                 <span style="font-size: 12px; font-weight: 900; color: #00ff66; text-shadow: 0 0 8px rgba(0, 255, 102, 0.6); flex-shrink: 0;">
                   ${ex.formatted}
@@ -651,21 +716,28 @@ const AnatomyMap = (() => {
           `;}).join('')}
         </ul>
 
-        <button id="view-ex-dir-btn" class="anatomy-modal-btn">
-          📖 ${I18n.t('anatomy_open_guide')}
-        </button>
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
+          <button id="view-ex-dir-btn" class="anatomy-modal-btn" style="flex: 1;">
+            📖 ${I18n.t('anatomy_open_guide')}
+          </button>
+          <button type="button" class="anatomy-modal-btn" style="flex: 1; background: rgba(16, 185, 129, 0.12); color: #10b981; border-color: rgba(16, 185, 129, 0.4);" onclick="AnatomyMap.openJointsModal();">
+            🛡️ ${I18n.t('injury_map_tab_joints')}
+          </button>
+        </div>
       </div>
     `;
 
     UI.showModal(`${I18n.t('anatomy_muscle_map')} - ${muscleName}`, modalContent);
 
-    const btn = document.getElementById('view-ex-dir-btn');
-    if (btn) {
-      btn.onclick = () => {
-        const overlay = document.getElementById('modal-overlay');
-        if (overlay) overlay.classList.add('hidden');
-        if (typeof App !== 'undefined') App.navigateTo('exercises');
-      };
+    if (typeof document !== 'undefined') {
+      const btn = document.getElementById('view-ex-dir-btn');
+      if (btn) {
+        btn.onclick = () => {
+          const overlay = document.getElementById('modal-overlay');
+          if (overlay) overlay.classList.add('hidden');
+          if (typeof App !== 'undefined') App.navigateTo('exercises');
+        };
+      }
     }
   }
 

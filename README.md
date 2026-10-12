@@ -31,8 +31,10 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
   - **Norwegian 4x4 VO2 Max**: High-intensity interval treadmill running capped at ≤6% incline for joint protection.
   - **Zone 2 Cardio & Micro-Mobility**: Dedicated active recovery days and dead hangs/thoracic extensions integrated into rest periods.
 
-### 🧬 Dynamic 14-Muscle Anatomy Visualizer
-- Real-time front and back character map rendering **14 distinct muscle groups** (Chest, Shoulders, Triceps, Biceps, Forearms, Lats, Traps, Quads, Hamstrings, Glutes, Calves, Core, Obliques, Lower Back).
+### 🧬 Dual-Mode Anatomy Visualizer & Biomechanical Joint Engine
+- Dual-mode switch: **🦾 Muscles & Load (14 Muscle Groups)** ⟷ **🛡️ Joints & Vulnerabilities (12 Critical Joint Nodes)**.
+- **1-Tap Vulnerability Map**: Single-tap cycling through Normal 🟢 (100% Load), Sensitive 🟡 (Protected ROM Shield), and Injured 🔴 (Zero-Compromise Biomechanical Substitution).
+- **Zero Pre-Workout Friction**: No tedious questionnaires or check-in forms. Adaptations apply immediately across Today's workout session, including dynamic exercise swaps, GIF/image updates, ROM constraint cues, and Skill Tree badges.
 - Weighted multi-exercise contribution model calculating live muscle activation percentages based on logged completions and exercise progression milestones.
 
 ### ⌚ Google Fit Health & Activity Synchronization

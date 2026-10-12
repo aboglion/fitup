@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v183-v15.7.2-arm-ramp';
+const CACHE_NAME = 'fitup-v185-v15.7.3-unified-readiness-safety';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

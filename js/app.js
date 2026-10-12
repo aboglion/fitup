@@ -378,6 +378,11 @@ const App = (() => {
         CloudSync.pullData().catch(err => console.warn('Background pull error:', err));
       }
 
+      // Initialize Injury & Joint Safety states from DB/Cloud
+      if (window.InjuryEngine && window.InjuryEngine.loadFromDB) {
+        await window.InjuryEngine.loadFromDB();
+      }
+
       // Load all plan data
       allPlanDays = await DB.getAllPlan();
       allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
@@ -482,6 +487,8 @@ const App = (() => {
             if (window.ExercisesPage && window.ExercisesPage.render) {
               await window.ExercisesPage.render();
             }
+          if (window.InjuryEngine && window.InjuryEngine.loadFromDB) {
+            await window.InjuryEngine.loadFromDB();
           }
         });
       }

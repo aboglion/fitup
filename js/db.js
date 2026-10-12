@@ -302,6 +302,38 @@ const DB = (() => {
   }
 
   /**
+   * Re-apply persistent manual swaps to a plan array.
+   */
+  function applyManualSwapsToPlan(planArray, manualSwaps) {
+    if (!Array.isArray(planArray) || !Array.isArray(manualSwaps)) return;
+    for (const s of manualSwaps) {
+      if (s && typeof s.dayIndex1 === 'number' && typeof s.dayIndex2 === 'number') {
+        const d1 = planArray.find(p => p && p.dayIndex === s.dayIndex1);
+        const d2 = planArray.find(p => p && p.dayIndex === s.dayIndex2);
+        if (d1 && d2) {
+          const tempDayType = d1.dayType;
+          const tempRPE = d1.plannedRPE;
+          const tempEx = JSON.stringify(d1.exercises);
+          const tempWorkoutSeq = d1.workoutSeq;
+          const tempRestSeq = d1.restSeq;
+
+          d1.dayType = d2.dayType;
+          d1.plannedRPE = d2.plannedRPE;
+          d1.exercises = JSON.parse(JSON.stringify(d2.exercises));
+          d1.workoutSeq = d2.workoutSeq;
+          d1.restSeq = d2.restSeq;
+
+          d2.dayType = tempDayType;
+          d2.plannedRPE = tempRPE;
+          d2.exercises = JSON.parse(tempEx);
+          d2.workoutSeq = tempWorkoutSeq;
+          d2.restSeq = tempRestSeq;
+        }
+      }
+    }
+  }
+
+  /**
    * Full training-plan seed (clears PLAN + EXERCISES stores).
    * Each week block is permuted according to the active combat era at its start;
    * weeks with no active era use identity order (past weeks reproduce exactly).
@@ -342,6 +374,12 @@ const DB = (() => {
       const jsDow = currentDate.getDay();
       const sourceDay = resolvePlanSource(data.daily, combatSchedule, index, jsDow);
       newPlanData.push(buildPlanDay(sourceDay, index, startDate, dayNames, seqCounters));
+    }
+
+    // Preserve manual swaps on full seed
+    const manualSwaps = await getSetting('manualSwaps');
+    if (Array.isArray(manualSwaps) && manualSwaps.length > 0) {
+      applyManualSwapsToPlan(newPlanData, manualSwaps);
     }
 
     await clear(STORES.PLAN);
@@ -406,6 +444,11 @@ const DB = (() => {
         if (existing.restSeq !== undefined) dayObj.restSeq = existing.restSeq;
       }
       updates.push(dayObj);
+    }
+
+    const manualSwaps = await getSetting('manualSwaps');
+    if (Array.isArray(manualSwaps) && manualSwaps.length > 0) {
+      applyManualSwapsToPlan(updates, manualSwaps);
     }
 
     if (updates.length > 0) {
@@ -839,6 +882,25 @@ const DB = (() => {
     if (track2) {
       track2.dayIndex = dayIndex1;
       await saveDayTracking(dayIndex1, track2);
+    }
+
+    // Persist manual swap in SETTINGS so future plan re-seeds and cloud sync keep it
+    try {
+      const rawSwaps = await getSetting('manualSwaps');
+      const manualSwaps = Array.isArray(rawSwaps) ? rawSwaps : [];
+      // Clean up previous inverse if present, else push
+      const existingIdx = manualSwaps.findIndex(s =>
+        (s.dayIndex1 === dayIndex1 && s.dayIndex2 === dayIndex2) ||
+        (s.dayIndex1 === dayIndex2 && s.dayIndex2 === dayIndex1)
+      );
+      if (existingIdx !== -1) {
+        manualSwaps.splice(existingIdx, 1);
+      } else {
+        manualSwaps.push({ dayIndex1, dayIndex2, date: new Date().toISOString() });
+      }
+      await setSetting('manualSwaps', manualSwaps);
+    } catch (e) {
+      console.warn('Could not persist manual swap in settings:', e);
     }
 
     return true;

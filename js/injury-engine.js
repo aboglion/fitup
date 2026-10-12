@@ -492,6 +492,32 @@ const InjuryEngine = (() => {
     return jointStates;
   }
 
+  async function loadFromDB() {
+    try {
+      if (typeof DB !== 'undefined' && DB.getSetting) {
+        const dbStates = await DB.getSetting(STORAGE_KEY);
+        if (dbStates && typeof dbStates === 'object') {
+          jointStates = { ...dbStates };
+          Object.keys(JOINTS).forEach(k => {
+            if (jointStates[k] === undefined || ![0, 1, 2].includes(Number(jointStates[k]))) {
+              jointStates[k] = STATE_NORMAL;
+            } else {
+              jointStates[k] = Number(jointStates[k]);
+            }
+          });
+          if (typeof localStorage !== 'undefined') {
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(jointStates)); } catch (_) {}
+          }
+          notifyListeners();
+          return jointStates;
+        }
+      }
+    } catch (e) {
+      console.warn('[InjuryEngine] Failed to load from DB:', e);
+    }
+    return loadStates();
+  }
+
   function saveStates() {
     try {
       if (typeof localStorage !== 'undefined' && jointStates) {
@@ -499,6 +525,14 @@ const InjuryEngine = (() => {
       }
     } catch (e) {
       console.warn('[InjuryEngine] Failed to save to localStorage:', e);
+    }
+    if (typeof DB !== 'undefined' && DB.setSetting && jointStates) {
+      DB.setSetting(STORAGE_KEY, jointStates).catch(e => {
+        console.warn('[InjuryEngine] Failed to save to DB:', e);
+      });
+    }
+    if (typeof window !== 'undefined' && window.CloudSync && window.CloudSync.scheduleSync) {
+      window.CloudSync.scheduleSync();
     }
     notifyListeners();
   }
@@ -637,7 +671,8 @@ const InjuryEngine = (() => {
     resetAllJoints,
     getActiveInjuries,
     hasActiveInjuries,
-    getExerciseAdaptation
+    getExerciseAdaptation,
+    loadFromDB
   };
 })();
 
