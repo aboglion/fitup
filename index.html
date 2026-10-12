@@ -207,14 +207,6 @@
           <span>🔙</span> <span data-i18n="back_to_today">Back to Today's Workout</span>
         </button>
 
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
-          <button id="open-daily-briefing-btn"
-            onclick="if(window.TodayPage && window.TodayPage.openDailyBriefing){window.TodayPage.openDailyBriefing(true);}else if(window.checkAndShowDailyBriefing){window.checkAndShowDailyBriefing(true, true);}"
-            style="padding: 6px 12px; font-size: 12px; font-weight: 800; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(16, 185, 129, 0.15)); color: var(--accent-primary); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-            <span data-i18n="daily_briefing_btn">🤖 Daily AI Briefing</span>
-          </button>
-        </div>
-
         <!-- Day Summary Card -->
         <div id="day-summary" class="day-summary-card">
           <!-- decorative background element -->
@@ -253,14 +245,19 @@
 
             <!-- Row 3: Full-Width Action Buttons Bar -->
             <div class="day-summary-actions-row">
-              <button id="toggle-notes-btn" class="day-summary-action-btn">
+              <button id="toggle-notes-btn" class="day-summary-action-btn" title="Notes">
                 <span>📝</span> <span data-i18n="notes">Notes</span>
               </button>
-              <button id="toggle-calendar-btn" class="day-summary-action-btn">
+              <button id="toggle-calendar-btn" class="day-summary-action-btn" title="Dates">
                 <span>📆</span> <span data-i18n="dates">Dates</span>
               </button>
-              <button id="swap-workout-btn" class="day-summary-action-btn" style="display: none;">
+              <button id="swap-workout-btn" class="day-summary-action-btn" style="display: none;" title="Swap">
                 <span>🔄</span> <span data-i18n="swap_workout">Swap</span>
+              </button>
+              <button id="open-daily-briefing-btn" class="day-summary-action-btn briefing-action-btn"
+                onclick="if(window.TodayPage && window.TodayPage.openDailyBriefing){window.TodayPage.openDailyBriefing(true);}else if(window.checkAndShowDailyBriefing){window.checkAndShowDailyBriefing(true, true);}"
+                title="AI Briefing">
+                <span data-i18n="daily_briefing_btn">🤖 Briefing</span>
               </button>
             </div>
 

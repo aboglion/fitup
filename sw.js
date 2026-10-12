@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v186-v15.7.3-fix-app-syntax';
+const CACHE_NAME = 'fitup-v188-compact-header-readiness-final';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

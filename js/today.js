@@ -879,7 +879,8 @@ const TodayPage = (() => {
     const isUnlockedEarly = Boolean(currentTracking && currentTracking.unlockedEarly);
     const todayBtn = document.getElementById('today-btn');
     if (todayBtn) {
-      todayBtn.style.display = isToday ? 'none' : 'flex';
+      // Keep hidden; non-today banner already provides contextual 'Back to Today'
+      todayBtn.style.display = 'none';
     }
 
     let nonTodayBanner = document.getElementById('non-today-mode-banner');
@@ -2320,22 +2321,45 @@ const TodayPage = (() => {
       `;
     }
 
+    // Collapsed state persisted in localStorage (default: collapsed for maximum compactness)
+    const storedCollapsed = localStorage.getItem('fitup_readiness_collapsed');
+    const isCollapsed = storedCollapsed !== null ? (storedCollapsed === 'true') : true;
+
     container.innerHTML = `
-      <div class="readiness-check-card unified-readiness-safety">
-        <div class="readiness-card-header">
+      <div class="readiness-check-card unified-readiness-safety ${isCollapsed ? 'is-collapsed' : ''}">
+        <div class="readiness-card-header" onclick="TodayPage.toggleReadinessCollapse()" style="cursor: pointer;" title="${isCollapsed ? I18n.t('readiness_toggle_expand') : I18n.t('readiness_toggle_collapse')}">
           <div class="readiness-title-box">
-            <span style="font-size: 15px;">⚡🛡️</span>
+            <span class="readiness-title-icon">⚡🛡️</span>
             <h4 class="readiness-title">${I18n.t('readiness_check_title')}</h4>
           </div>
-          ${currentScoreBadge}
+          <div class="readiness-header-right">
+            ${currentScoreBadge}
+            ${activeCount > 0 ? `
+              <span class="safety-subrow-mini-badge" onclick="event.stopPropagation(); AnatomyMap.openJointsModal()" title="${I18n.t('injury_map_title')}">
+                🛡️ ${adaptedCount > 0 ? adaptedCount : activeCount}
+              </span>
+            ` : ''}
+            <button type="button" class="readiness-collapse-toggle-btn" aria-label="Toggle">
+              ${isCollapsed ? '▼' : '▲'}
+            </button>
+          </div>
         </div>
-        <div class="readiness-pills-row">
-          ${pillsHTML}
+        <div class="readiness-collapsible-body" style="${isCollapsed ? 'display: none;' : ''}">
+          <div class="readiness-pills-row">
+            ${pillsHTML}
+          </div>
+          ${adaptationBoxHTML}
+          ${safetyRowHTML}
         </div>
-        ${adaptationBoxHTML}
-        ${safetyRowHTML}
       </div>
     `;
+  }
+
+  function toggleReadinessCollapse() {
+    const stored = localStorage.getItem('fitup_readiness_collapsed');
+    const isCurrentCollapsed = stored !== null ? (stored === 'true') : true;
+    localStorage.setItem('fitup_readiness_collapsed', (!isCurrentCollapsed).toString());
+    renderReadinessCheck();
   }
 
   async function setReadinessScore(score) {
@@ -2354,6 +2378,11 @@ const TodayPage = (() => {
         extendRest: true,
         dropSet: false
       };
+    }
+
+    // Auto-expand if selecting a low recovery score to review options
+    if (currentTracking.readinessScore !== null && score <= 2) {
+      localStorage.setItem('fitup_readiness_collapsed', 'false');
     }
 
     await DB.saveDayTracking(currentDayIndex, currentTracking);
@@ -5822,6 +5851,7 @@ const TodayPage = (() => {
     setReadinessScore,
     toggleReadinessAdjustment,
     renderReadinessCheck,
+    toggleReadinessCollapse,
     open1RMCalculator,
     getCyclingTargetsForDay,
     getExercisePeak1RM,

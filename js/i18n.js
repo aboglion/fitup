@@ -1241,6 +1241,9 @@ const I18n = (() => {
       readiness_rest_applied_toast: "Adaptive Rest: +30s added (low readiness score)",
       readiness_drop_applied_badge: "Recovery deload: -1 set",
       readiness_today_score_label: "Today's Readiness",
+      readiness_toggle_expand: "Expand Readiness & Safety",
+      readiness_toggle_collapse: "Collapse Readiness & Safety",
+      readiness_edit_btn: "Edit",
 
       // ===== Combat Training Integration =====
       combat_settings_title: "🥊 Combat Training",
@@ -2505,6 +2508,9 @@ const I18n = (() => {
       readiness_rest_applied_toast: "מנוחה אדפטיבית: +30 שניות נוספו (התאוששות נמוכה)",
       readiness_drop_applied_badge: "מותאם להתאוששות: 1 סט פחות",
       readiness_today_score_label: "מוכנות היום",
+      readiness_toggle_expand: "הרחב מוכנות ובטיחות",
+      readiness_toggle_collapse: "כווץ מוכנות ובטיחות",
+      readiness_edit_btn: "ערוך",
 
       // ===== שילוב אימוני לחימה =====
       combat_settings_title: "🥊 אימוני לחימה",
@@ -3619,6 +3625,9 @@ const I18n = (() => {
       readiness_rest_applied_toast: "راحة تكيفية: تم إضافة 30 ثانية (تعافٍ منخفض)",
       readiness_drop_applied_badge: "معدل للتعافي: -1 مجموعة",
       readiness_today_score_label: "جاهزية اليوم",
+      readiness_toggle_expand: "توسيع الجاهزية والأمان",
+      readiness_toggle_collapse: "طي الجاهزية والأمان",
+      readiness_edit_btn: "تعديل",
 
       // ===== دمج تدريبات القتال =====
       combat_settings_title: "🥊 تدريبات الفنون القتالية",
