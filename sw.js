@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v188-compact-header-readiness-final';
+const CACHE_NAME = 'fitup-v190-sunday-israel-schedule-fix';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

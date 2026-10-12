@@ -348,7 +348,10 @@ const App = (() => {
 
       if (planCount === 0 || exCount === 0 || savedDataVersion !== currentDataVersion || !planStartDate) {
         console.log("Reloading training plan due to data version update, empty DB, or missing start date.");
-        await DB.clearTracking();
+        const trackCount = await DB.count(DB.STORES.TRACKING).catch(() => 0);
+        if (trackCount === 0) {
+          await DB.clearTracking();
+        }
         await DB.loadTrainingPlan();
         await DB.setSetting('dataVersion', currentDataVersion);
       }

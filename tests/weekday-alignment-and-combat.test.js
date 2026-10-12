@@ -179,3 +179,56 @@ test('Manual Swaps Persistence - Swaps preserve days across full plan re-seed', 
   assert.equal(mockPlan[1].dayType, 'Rest', 'Day 92 became Rest');
 });
 
+test('Sunday-Start Israeli Microcycle - Week 1 starts cleanly on Sunday with Legs+Core and Monday Rest', () => {
+  const sundayPerm = [0, 6, 1, 2, 3, 4, 5];
+  const template = [
+    'Legs + Core',      // 0
+    'Zone 2 Cardio',    // 1
+    'Push + Skill',     // 2
+    'Active Recovery',  // 3
+    'Pull + Grip',      // 4
+    'Zone 2 Cardio',    // 5
+    'Rest'              // 6
+  ];
+  const startDate = new Date('2026-10-11T12:00:00'); // Sunday
+  assert.equal(startDate.getDay(), 0, 'startDate is Sunday');
+
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(startDate);
+    d.setDate(d.getDate() + i);
+    const jsDow = d.getDay();
+    const workout = template[sundayPerm[jsDow]];
+    days.push({ dayIndex: i, jsDow, workout });
+  }
+
+  // Sunday = Day 0: Legs + Core
+  assert.equal(days[0].workout, 'Legs + Core');
+  assert.equal(days[0].jsDow, 0);
+
+  // Monday = Day 1: Rest
+  assert.equal(days[1].workout, 'Rest');
+  assert.equal(days[1].jsDow, 1);
+
+  // Tuesday = Day 2: Zone 2
+  assert.equal(days[2].workout, 'Zone 2 Cardio');
+  assert.equal(days[2].jsDow, 2);
+
+  // Wednesday = Day 3: Push
+  assert.equal(days[3].workout, 'Push + Skill');
+  assert.equal(days[3].jsDow, 3);
+
+  // Thursday = Day 4: Recovery
+  assert.equal(days[4].workout, 'Active Recovery');
+  assert.equal(days[4].jsDow, 4);
+
+  // Friday = Day 5: Pull
+  assert.equal(days[5].workout, 'Pull + Grip');
+  assert.equal(days[5].jsDow, 5);
+
+  // Saturday = Day 6: Zone 2
+  assert.equal(days[6].workout, 'Zone 2 Cardio');
+  assert.equal(days[6].jsDow, 6);
+});
+
+

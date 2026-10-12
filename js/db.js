@@ -240,25 +240,37 @@ const DB = (() => {
    * @param {number} index - target chronological position (0..daily.length-1)
    * @returns {Object} the day object whose content should sit at this position
    */
-  function resolvePlanSource(daily, combatSchedule, index, jsDow) {
+  function resolvePlanSource(daily, combatSchedule, index, jsDow, startDate) {
     const fallback = daily[index];
     if (!window.CombatScheduler) {
       return fallback;
     }
     const weekStart = Math.floor(index / 7) * 7;
-    const blockPos = (typeof jsDow === 'number' && typeof CombatScheduler.blockPosOf === 'function')
-      ? CombatScheduler.blockPosOf(jsDow)
-      : (index - weekStart);
+    const isSundayStart = startDate ? (startDate.getDay() === 0) : true;
     const era = (combatSchedule && Array.isArray(combatSchedule.history))
       ? CombatScheduler.eraForDayIndex(combatSchedule, weekStart)
       : null;
     if (era && Array.isArray(era.perm)) {
+      const blockPos = (typeof jsDow === 'number' && typeof CombatScheduler.blockPosOf === 'function')
+        ? CombatScheduler.blockPosOf(jsDow)
+        : (index - weekStart);
       const srcPos = weekStart + era.perm[blockPos];
       if (srcPos >= 0 && srcPos < daily.length) {
         return daily[srcPos];
       }
     }
+
+    if (isSundayStart && typeof jsDow === 'number') {
+      // Israeli microcycle: Sunday = Day 1 (Legs + Core), Monday = Rest, Tue..Sat = remaining days
+      const sundayPerm = [0, 6, 1, 2, 3, 4, 5];
+      const srcPos = weekStart + sundayPerm[jsDow];
+      if (srcPos >= 0 && srcPos < daily.length) {
+        return daily[srcPos];
+      }
+    }
+
     if (typeof jsDow === 'number' && typeof CombatScheduler.blockPosOf === 'function') {
+      const blockPos = CombatScheduler.blockPosOf(jsDow);
       const srcPos = weekStart + blockPos;
       if (srcPos >= 0 && srcPos < daily.length) {
         return daily[srcPos];
@@ -372,7 +384,7 @@ const DB = (() => {
       const currentDate = new Date(startDate);
       currentDate.setDate(currentDate.getDate() + index);
       const jsDow = currentDate.getDay();
-      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index, jsDow);
+      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index, jsDow, startDate);
       newPlanData.push(buildPlanDay(sourceDay, index, startDate, dayNames, seqCounters));
     }
 
@@ -436,7 +448,7 @@ const DB = (() => {
       const currentDate = new Date(startDate);
       currentDate.setDate(currentDate.getDate() + index);
       const jsDow = currentDate.getDay();
-      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index, jsDow);
+      const sourceDay = resolvePlanSource(data.daily, combatSchedule, index, jsDow, startDate);
       const dayObj = buildPlanDay(sourceDay, index, startDate, dayNames, { workoutSeq: 0, restSeq: 0 });
       const existing = existingByIndex[index];
       if (existing) {

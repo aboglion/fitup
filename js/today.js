@@ -647,21 +647,21 @@ const TodayPage = (() => {
   /**
    * Navigate to a specific day
    */
-  function navigate(offset) {
+  async function navigate(offset) {
     const newIndex = currentDayIndex + offset;
     if (newIndex >= 0 && newIndex < allPlanDays.length) {
       currentDayIndex = newIndex;
-      render();
+      await render();
     }
   }
 
   /**
    * Go to today
    */
-  function goToToday() {
+  async function goToToday() {
     currentDayIndex = UI.findTodayIndex(allPlanDays);
     selectedNutritionDate = UI.getLocalDateString();
-    render();
+    await render();
   }
 
   function resetNutritionDateToToday() {
@@ -671,10 +671,10 @@ const TodayPage = (() => {
   /**
    * Go to a specific day index
    */
-  function goToDay(dayIndex) {
+  async function goToDay(dayIndex) {
     if (dayIndex >= 0 && dayIndex < allPlanDays.length) {
       currentDayIndex = dayIndex;
-      render();
+      await render();
     }
   }
 
@@ -4772,9 +4772,23 @@ const TodayPage = (() => {
   async function checkAndLockStartDate() {
     let startDate = await DB.getSetting('planStartDate');
     if (!startDate) {
-      const d = new Date();
-      d.setDate(d.getDate() - currentDayIndex);
-      startDate = UI.getLocalDateString(d);
+      const allTracking = await DB.getAllTracking();
+      let earliestDate = null;
+      if (Array.isArray(allTracking) && allTracking.length > 0) {
+        for (const t of allTracking) {
+          if (t && t.date) {
+            if (!earliestDate || t.date < earliestDate) earliestDate = t.date;
+          }
+        }
+      }
+      if (earliestDate) {
+        startDate = earliestDate;
+      } else {
+        const d = new Date();
+        // Anchor to Sunday of the current week (Sunday = Day 1 in Israel)
+        d.setDate(d.getDate() - d.getDay());
+        startDate = UI.getLocalDateString(d);
+      }
       await DB.setSetting('planStartDate', startDate);
       await DB.loadTrainingPlan();
       UI.toast(I18n.t('program_started'), 'success');
@@ -5840,6 +5854,9 @@ const TodayPage = (() => {
     navMicroMobilityModal,
     completeMicroSubStepAndNext,
     getCurrentDayIndex: () => currentDayIndex,
+    goToDay,
+    navigate,
+    goToToday,
     parseWeightDetails,
     buildWeightBadgeHTML,
     toggleEqBanner,
