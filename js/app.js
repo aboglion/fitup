@@ -472,6 +472,11 @@ const App = (() => {
       if (window.CloudSync && window.CloudSync.onDataUpdate) {
         window.CloudSync.onDataUpdate(async (source) => {
           console.log('[App] Live data updated event received from:', source);
+
+          if (window.InjuryEngine && window.InjuryEngine.loadFromDB) {
+            await window.InjuryEngine.loadFromDB();
+          }
+
           const activePage = document.querySelector('.page.active');
           const activeId = activePage ? activePage.id : '';
 
@@ -487,8 +492,6 @@ const App = (() => {
             if (window.ExercisesPage && window.ExercisesPage.render) {
               await window.ExercisesPage.render();
             }
-          if (window.InjuryEngine && window.InjuryEngine.loadFromDB) {
-            await window.InjuryEngine.loadFromDB();
           }
         });
       }

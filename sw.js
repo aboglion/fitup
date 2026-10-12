@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v185-v15.7.3-unified-readiness-safety';
+const CACHE_NAME = 'fitup-v186-v15.7.3-fix-app-syntax';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
@@ -20,6 +20,7 @@ const ASSETS = [
   './js/rest-timer.js',
   './js/workout-summary.js',
   './js/preloader.js',
+  './js/injury-engine.js',
   './js/i18n.js',
   './js/ui.js',
   './js/gemini.js',
