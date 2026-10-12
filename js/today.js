@@ -1926,6 +1926,19 @@ const TodayPage = (() => {
       nextBtn.title = I18n.t('next_day_title');
     }
 
+    // Keep Calendar week and selected day indication synchronized
+    if (typeof CalendarPage !== 'undefined') {
+      const currentDay = allPlanDays[currentDayIndex];
+      if (currentDay && currentDay.week) {
+        const match = currentDay.week.match(/\d+/);
+        if (match && CalendarPage.setWeek) CalendarPage.setWeek(parseInt(match[0]));
+      }
+      const calAccordion = document.getElementById('calendar-accordion-content');
+      if (calAccordion && calAccordion.style.display !== 'none' && CalendarPage.render) {
+        CalendarPage.render();
+      }
+    }
+
     setTimeout(() => {
       checkAndShowDailyBriefing(false);
     }, 400);

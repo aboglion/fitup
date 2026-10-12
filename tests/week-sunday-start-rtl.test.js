@@ -211,3 +211,68 @@ test('CalendarPage DOM grid direction is rtl in Hebrew and Arabic, and ltr in En
   assert.ok(gridInnerHTML.includes('Sunday'), 'English calendar must include Sunday');
   assert.ok(gridInnerHTML.includes('Saturday'), 'English calendar must include Saturday');
 });
+
+test('CalendarPage highlights currently viewed day with .selected and real today with .today and badge', async () => {
+  let gridInnerHTML = '';
+  const mockGrid = {
+    setAttribute: () => {},
+    style: {},
+    set innerHTML(val) { gridInnerHTML = val; },
+    get innerHTML() { return gridInnerHTML; }
+  };
+  const mockPlanDays = [];
+  for (let i = 0; i < 7; i++) {
+    mockPlanDays.push({
+      dayIndex: i,
+      dayNum: i + 1,
+      week: 'Week 1',
+      dayType: i === 1 ? 'Rest' : 'Legs + Core',
+      date: `1${1 + i}/10/2026`
+    });
+  }
+
+  const calSandbox = {
+    window: {
+      I18n,
+      UI,
+      TodayPage: {
+        getCurrentDayIndex: () => 1 // Currently viewing Day #2 (Monday, index 1)
+      },
+      appCurrentPlanIndex: 1
+    },
+    I18n,
+    UI: {
+      ...UI,
+      findTodayIndex: () => 1 // Real today is Monday (index 1)
+    },
+    document: {
+      documentElement: { dir: 'rtl', style: {} },
+      getElementById: (id) => {
+        if (id === 'calendar-grid') return mockGrid;
+        if (id === 'cal-prev-week' || id === 'cal-next-week') return { disabled: false, addEventListener: () => {} };
+        if (id === 'cal-week-label') return { textContent: '' };
+        return null;
+      }
+    },
+    DB: {
+      getSetting: async () => null,
+      getCombatExceptions: async () => ({ rev: 0, items: [] }),
+      getDayTracking: async () => null
+    },
+    console
+  };
+
+  const calendarCode = fs.readFileSync(path.join(root, 'js/calendar.js'), 'utf8');
+  vm.createContext(calSandbox);
+  vm.runInContext(calendarCode, calSandbox);
+  const CalendarPage = calSandbox.window.CalendarPage;
+
+  I18n.setLanguage('he');
+  CalendarPage.init(mockPlanDays);
+  await CalendarPage.render();
+
+  // Monday (Day #2, index 1) must have both 'selected' and 'today' and the 'היום' badge
+  assert.ok(gridInnerHTML.includes('calendar-day selected today'), 'Monday card must have selected and today classes');
+  assert.ok(gridInnerHTML.includes('calendar-today-badge'), 'Monday card must have the today badge');
+  assert.ok(gridInnerHTML.includes('היום'), 'Today badge text must be present');
+});

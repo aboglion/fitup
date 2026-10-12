@@ -138,6 +138,15 @@ const CalendarPage = (() => {
     const trackingPromises = weekDays.map(d => d ? DB.getDayTracking(d.dayIndex) : Promise.resolve(null));
     const trackingData = await Promise.all(trackingPromises);
 
+    // Determine real calendar today index and currently viewed day in TodayPage
+    const realTodayIndex = (typeof UI !== 'undefined' && UI.findTodayIndex)
+      ? UI.findTodayIndex(allPlanDays)
+      : (typeof window.appCurrentPlanIndex === 'number' ? window.appCurrentPlanIndex : 0);
+
+    const currentViewedIndex = (window.TodayPage && typeof window.TodayPage.getCurrentDayIndex === 'function')
+      ? window.TodayPage.getCurrentDayIndex()
+      : (typeof realTodayIndex === 'number' ? realTodayIndex : (window.appCurrentPlanIndex || 0));
+
     // Render calendar grid
     const grid = document.getElementById('calendar-grid');
     if (grid) {
@@ -158,14 +167,17 @@ const CalendarPage = (() => {
         const tracking = trackingData[idx];
         const isCompleted = tracking && tracking.completed;
         const typeInfo = UI.getDayTypeInfo(day.dayType);
-        const isToday = (day.dayIndex === window.appCurrentPlanIndex);
+        const isToday = (day.dayIndex === realTodayIndex);
+        const isSelected = (day.dayIndex === currentViewedIndex);
         const isDeload = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload'));
         const combatBadge = combatBadgeFor(day);
 
         return `
-          <div class="calendar-day ${isToday ? 'today' : ''} ${isCompleted ? 'completed' : ''} ${isDeload ? 'deload-day' : ''}"
-               onclick="CalendarPage.selectDay(${day.dayIndex})">
+          <div class="calendar-day ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''} ${isCompleted ? 'completed' : ''} ${isDeload ? 'deload-day' : ''}"
+               onclick="CalendarPage.selectDay(${day.dayIndex})"
+               title="${localizedDayName} - #${day.dayNum}">
             <div class="calendar-day-name">${localizedDayName}${combatBadge}</div>
+            ${isToday ? `<span class="calendar-today-badge">${I18n.t('nav_today')}</span>` : ''}
             <div class="calendar-day-date" dir="ltr">#${day.dayNum}</div>
             <span class="calendar-day-type ${typeInfo.class}">${typeInfo.label}</span>
           </div>

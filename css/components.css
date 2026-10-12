@@ -1564,9 +1564,30 @@ html[dir="ltr"] .calendar-grid {
   box-shadow: var(--shadow-md);
 }
 
-.calendar-day.today {
-  border-color: var(--accent-primary);
-  box-shadow: var(--shadow-glow);
+.calendar-day.selected {
+  border-color: var(--accent-primary, #3b82f6) !important;
+  box-shadow: 0 0 0 2px var(--accent-primary, #3b82f6), 0 0 16px rgba(59, 130, 246, 0.45) !important;
+  background: rgba(59, 130, 246, 0.16) !important;
+}
+
+.calendar-day.today:not(.selected) {
+  border-color: rgba(59, 130, 246, 0.7);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.25);
+}
+
+.calendar-today-badge {
+  display: inline-block;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.22);
+  border: 1px solid rgba(59, 130, 246, 0.45);
+  padding: 1px 4px;
+  border-radius: 4px;
+  margin: 2px auto;
+  text-align: center;
+  letter-spacing: 0.2px;
 }
 
 .calendar-day.completed {

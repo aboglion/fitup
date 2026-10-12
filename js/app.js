@@ -433,6 +433,9 @@ const App = (() => {
       }
 
       let planStartDateStr = await DB.getSetting('planStartDate');
+      // Update dates first so UI.findTodayIndex can match day.date accurately
+      updatePlanDaysDates(allPlanDays, planIndex, planStartDateStr);
+
       if (planStartDateStr) {
         const todayIdx = UI.findTodayIndex(allPlanDays);
         if (typeof todayIdx === 'number' && todayIdx >= 0) {
@@ -442,7 +445,7 @@ const App = (() => {
         planIndex++;
       }
 
-      // Update dates and day names in-memory anchored to planStartDate
+      // Re-anchor dates and day names in-memory anchored to planStartDate and final planIndex
       updatePlanDaysDates(allPlanDays, planIndex, planStartDateStr);
 
       await DB.setSetting('lastActiveDate', todayStr);
@@ -778,6 +781,9 @@ const App = (() => {
 
     let planStartDateStr = await DB.getSetting('planStartDate');
     window.appNotStarted = !planStartDateStr;
+
+    // Update dates first so UI.findTodayIndex can match day.date accurately
+    updatePlanDaysDates(allPlanDays, planIndex, planStartDateStr);
 
     if (planStartDateStr) {
       const todayIdx = UI.findTodayIndex(allPlanDays);
