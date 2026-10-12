@@ -179,8 +179,8 @@ test('Manual Swaps Persistence - Swaps preserve days across full plan re-seed', 
   assert.equal(mockPlan[1].dayType, 'Rest', 'Day 92 became Rest');
 });
 
-test('Sunday-Start Israeli Microcycle - Week 1 starts cleanly on Sunday with Legs+Core and Monday Rest', () => {
-  const sundayPerm = [0, 6, 1, 2, 3, 4, 5];
+test('Sunday-Start Israeli Microcycle - Week 1 starts cleanly on Sunday with Legs+Core and Saturday Rest', () => {
+  const sundayPerm = [0, 1, 2, 3, 4, 5, 6];
   const template = [
     'Legs + Core',      // 0
     'Zone 2 Cardio',    // 1
@@ -206,28 +206,28 @@ test('Sunday-Start Israeli Microcycle - Week 1 starts cleanly on Sunday with Leg
   assert.equal(days[0].workout, 'Legs + Core');
   assert.equal(days[0].jsDow, 0);
 
-  // Monday = Day 1: Rest
-  assert.equal(days[1].workout, 'Rest');
+  // Monday = Day 1: Zone 2
+  assert.equal(days[1].workout, 'Zone 2 Cardio');
   assert.equal(days[1].jsDow, 1);
 
-  // Tuesday = Day 2: Zone 2
-  assert.equal(days[2].workout, 'Zone 2 Cardio');
+  // Tuesday = Day 2: Push
+  assert.equal(days[2].workout, 'Push + Skill');
   assert.equal(days[2].jsDow, 2);
 
-  // Wednesday = Day 3: Push
-  assert.equal(days[3].workout, 'Push + Skill');
+  // Wednesday = Day 3: Active Recovery
+  assert.equal(days[3].workout, 'Active Recovery');
   assert.equal(days[3].jsDow, 3);
 
-  // Thursday = Day 4: Recovery
-  assert.equal(days[4].workout, 'Active Recovery');
+  // Thursday = Day 4: Pull
+  assert.equal(days[4].workout, 'Pull + Grip');
   assert.equal(days[4].jsDow, 4);
 
-  // Friday = Day 5: Pull
-  assert.equal(days[5].workout, 'Pull + Grip');
+  // Friday = Day 5: Zone 2
+  assert.equal(days[5].workout, 'Zone 2 Cardio');
   assert.equal(days[5].jsDow, 5);
 
-  // Saturday = Day 6: Zone 2
-  assert.equal(days[6].workout, 'Zone 2 Cardio');
+  // Saturday = Day 6: Rest
+  assert.equal(days[6].workout, 'Rest');
   assert.equal(days[6].jsDow, 6);
 });
 

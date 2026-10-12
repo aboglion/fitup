@@ -300,8 +300,8 @@ const DB = (() => {
     }
 
     if (isSundayStart && typeof jsDow === 'number') {
-      // Israeli microcycle: Sunday = Day 1 (Legs + Core), Monday = Rest, Tue..Sat = remaining days
-      const sundayPerm = [0, 6, 1, 2, 3, 4, 5];
+      // Israeli microcycle: Sunday = Day 1 (Legs + Core), Monday = Zone 2, Tue = Push, Wed = Recovery, Thu = Pull, Fri = Zone 2, Sat = Rest
+      const sundayPerm = [0, 1, 2, 3, 4, 5, 6];
       const srcPos = weekStart + sundayPerm[jsDow];
       if (srcPos >= 0 && srcPos < daily.length) {
         return daily[srcPos];
