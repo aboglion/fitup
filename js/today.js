@@ -3368,6 +3368,19 @@ const TodayPage = (() => {
             </div>
           ` : '';
 
+          let setStagePill = '';
+          if (!hasWeight && ex.currentStageName) {
+            const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+            const stageLabel = (typeof I18n !== 'undefined' && I18n.t(ex.currentStageName) !== ex.currentStageName) ? I18n.t(ex.currentStageName) : ex.currentStageName;
+            const icon = isAngle ? '📐' : '🎯';
+            setStagePill = `
+              <div class="set-input-pill set-stage-pill" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--text-primary); font-weight: 800; font-size: 11px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; height: 38px; border-radius: 8px; white-space: nowrap; gap: 4px;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
+                <span style="color: var(--accent-primary); font-weight: 900;">${icon}</span>
+                <span>${stageLabel}</span>
+              </div>
+            `;
+          }
+
           const setResult = setData[`set_${s}_result`];
           let outcomeBadgeHTML = '';
 
@@ -3410,6 +3423,7 @@ const TodayPage = (() => {
               <span class="set-label">${s + 1}</span>
               <div class="set-inputs-group">
                 ${weightInput}
+                ${setStagePill}
                 <div class="set-input-pill">
                   <input type="text" inputmode="numeric" pattern="[0-9]*" class="set-input" placeholder="${placeholderText}" 
                          value="${setReps}" ${setDisabledAttr} dir="ltr"
@@ -3474,6 +3488,19 @@ const TodayPage = (() => {
         const weightHTML = buildWeightBadgeHTML(weightInfo, true);
         detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="${I18n.t('weight_changed_title')}">${weightHTML}</span>` : weightHTML);
         detailParts.push(`<button type="button" class="sparkline-1rm-badge" style="padding: 1px 6px; font-size: 10px;" title="${I18n.t('sparkline_1rm_tooltip')}" onclick="event.stopPropagation(); TodayPage.open1RMCalculator('${ex.name.replace(/'/g, "\\'")}', 0, 8, 0);">🧮 1RM</button>`);
+      } else if (ex.currentStageName) {
+        const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+        const stageLabel = (typeof I18n !== 'undefined' && I18n.t(ex.currentStageName) !== ex.currentStageName) ? I18n.t(ex.currentStageName) : ex.currentStageName;
+        const icon = isAngle ? '📐' : '🎯';
+        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (I18n.t('progression_stage_title') || 'שלב');
+        detailParts.push(`
+          <span class="weight-badge angle-stage-badge" style="background: rgba(59, 130, 246, 0.14); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--text-primary); padding: 2px 7px; border-radius: 8px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
+            <bdi dir="ltr">${stageLabel}</bdi>
+            <span style="background: #3b82f6; color: #ffffff; padding: 2px 6px; border-radius: 5px; font-size: 10px; font-weight: 900; letter-spacing: 0.2px; display: inline-flex; align-items: center; gap: 3px;">
+              ${icon} ${tagText}
+            </span>
+          </span>
+        `);
       }
 
       if (ex.tempo) {
@@ -3755,7 +3782,12 @@ const TodayPage = (() => {
                   ${isInjuredSwap ? injuryAdaptation.substituteName : ex.name}
                   ${isInjuredSwap ? `<span class="injury-name-badge" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>` : ''}
                   ${isSensitiveROM ? `<span class="injury-name-badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>` : ''}
-                  ${ex.currentStageName ? `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">🎯 ${ex.currentStageName}</span>` : ''}
+                  ${ex.currentStageName ? (() => {
+                    const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+                    const stageLabel = (typeof I18n !== 'undefined' && I18n.t(ex.currentStageName) !== ex.currentStageName) ? I18n.t(ex.currentStageName) : ex.currentStageName;
+                    const icon = isAngle ? '📐' : '🎯';
+                    return `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">${icon} ${stageLabel}</span>`;
+                  })() : ''}
                   <button type="button" class="form-rule-info-btn" onclick="event.stopPropagation(); TodayPage.showFormRuleModal('${ex.name.replace(/'/g, "\\'")}')" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-primary); border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 2px;" title="${I18n.t('form_rules_title') || 'חוקי טכניקה'}">ℹ️</button>
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
                   ${!isExUnlocked ? `<span class="locked-badge">🔒 ${I18n.t('exercise_locked')}</span>` : ''}

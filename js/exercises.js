@@ -44,7 +44,7 @@ const ExercisesPage = (() => {
     'Arm Block - Single-Arm Lateral Raise': [{ weight: '8 kg', fromWeek: 3 }, { weight: '10 kg', fromWeek: 7 }, { weight: '12 kg', fromWeek: 11 }],
     'Arm Block - DB Overhead Triceps Ext': [{ weight: '8 kg', fromWeek: 3 }, { weight: '10 kg', fromWeek: 7 }, { weight: '12 kg', fromWeek: 11 }, { weight: '14 kg', fromWeek: 15 }, { weight: '16 kg', fromWeek: 19 }, { weight: '18 kg', fromWeek: 23 }, { weight: '20 kg', fromWeek: 27 }, { weight: '22 kg', fromWeek: 31 }, { weight: '24 kg', fromWeek: 35 }, { weight: '26 kg', fromWeek: 39 }, { weight: '28 kg', fromWeek: 43 }, { weight: '30 kg', fromWeek: 47 }, { weight: '32 kg', fromWeek: 51 }],
     'One-Arm DB Row': [{ weight: '8 kg', fromWeek: 1 }, { weight: '10 kg', fromWeek: 3 }, { weight: '12 kg', fromWeek: 5 }, { weight: '14 kg', fromWeek: 7 }, { weight: '16 kg', fromWeek: 9 }, { weight: '18 kg', fromWeek: 11 }, { weight: '20 kg', fromWeek: 13 }, { weight: '22 kg', fromWeek: 15 }, { weight: '24 kg', fromWeek: 17 }, { weight: '26 kg', fromWeek: 19 }, { weight: '28 kg', fromWeek: 21 }, { weight: '30 kg', fromWeek: 23 }, { weight: '32 kg', fromWeek: 25 }],
-    'TRX Row': [{ weight: 'Bodyweight', fromWeek: 1 }],
+    'TRX Row': [{ weight: 'Angle 1', fromWeek: 1 }, { weight: 'Angle 2 (45°)', fromWeek: 18 }, { weight: 'Angle 3', fromWeek: 42 }, { weight: 'Feet-Elevated', fromWeek: 60 }],
     'Diamond Push-Up': [{ weight: 'Bodyweight', fromWeek: 1 }, { weight: '+5 kg', fromWeek: 62 }],
     'Push-Up Volume': [{ weight: 'Bodyweight', fromWeek: 3 }],
     'Push-Up Volume (Day 5)': [{ weight: 'Bodyweight', fromWeek: 3 }],
@@ -1177,6 +1177,9 @@ const ExercisesPage = (() => {
     let weightDisplay = ex.weight || '';
     if (weightDisplay && equip && equip.label === I18n.t('equip_band') && weightDisplay !== '—') {
       weightDisplay = `${I18n.t('equip_band')}: ${weightDisplay}`;
+    } else if (weightDisplay && weightDisplay.toLowerCase().startsWith('angle')) {
+      const stageLabel = (typeof I18n !== 'undefined' && I18n.t(weightDisplay) !== weightDisplay) ? I18n.t(weightDisplay) : weightDisplay;
+      weightDisplay = `📐 ${stageLabel}`;
     }
 
     const unlockWeek = ex.unlockWeek || 1;
