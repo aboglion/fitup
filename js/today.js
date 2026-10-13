@@ -6041,6 +6041,7 @@ const TodayPage = (() => {
     completeMicroSubStepAndNext,
     getCurrentDayIndex: () => currentDayIndex,
     resolveExerciseStage,
+    getActiveExerciseName,
     goToDay,
     navigate,
     goToToday,
