@@ -453,7 +453,7 @@ const TodayPage = (() => {
     if (!stageName) return exName;
 
     const lower = exName.toLowerCase();
-    if (lower.includes('trx row') || lower.includes('trx y-t-w') || lower.includes('dead bug') || lower.includes('band pull-apart')) {
+    if (lower.includes('trx row') || lower.includes('trx y-t-w') || lower.includes('dead bug') || lower.includes('band pull-apart') || lower.includes('walking') || lower.includes('cardio') || lower.includes('vo2 max')) {
       return exName;
     }
 
@@ -464,7 +464,7 @@ const TodayPage = (() => {
       return 'TRX Face Pull';
     }
 
-    if (/^(angle\s*\d+|feet-elevated|bodyweight|\d+\s*kg|band\s*\d+kg)/i.test(stageName.trim())) {
+    if (/^(angle\s*\d+|feet-elevated|bodyweight|\+?\s*\d+\s*kg|band\s*\d+\s*kg|incline\s*\d+%?)/i.test(stageName.trim())) {
       return exName;
     }
 

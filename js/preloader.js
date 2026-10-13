@@ -65,6 +65,7 @@
     "HEELS-ELEVATED GOBLET SQUAT.png",
     "HIGH KNEES.png",
     "HOLLOW BODY HOLD.png",
+    "INCLINE DIAMOND PUSH-UP.png",
     "INCLINE PUSH-UP.png",
     "L-SIT PROGRESSION.png",
     "L-SIT TUCK (BARS).png",
@@ -190,6 +191,7 @@
     "Heels-Elevated Goblet Squat.gif",
     "High Knees.gif",
     "Hollow Body Rock.gif",
+    "Incline Diamond Push-Up.gif",
     "Incline Push-Up.gif",
     "Kneeling Hip Flexor Stretch.gif",
     "L-Sit Progression.gif",
@@ -305,13 +307,14 @@
         if (!ex || !ex.name) return;
         const name = ex.name;
         if (typeof window !== 'undefined' && window.UI) {
+          const decodeSafe = (u) => (window.UI && typeof window.UI.safeDecodeURIComponent === 'function' ? window.UI.safeDecodeURIComponent(u) : decodeURIComponent(u));
           if (typeof window.UI.getImageUrl === 'function') {
             const p = window.UI.getImageUrl(name);
-            if (p) priorityUrls.add(decodeURIComponent(p.split('?')[0]));
+            if (p) priorityUrls.add(decodeSafe(p.split('?')[0]));
           }
           if (typeof window.UI.getGifUrl === 'function') {
             const g = window.UI.getGifUrl(name);
-            if (g) priorityUrls.add(decodeURIComponent(g.split('?')[0]));
+            if (g) priorityUrls.add(decodeSafe(g.split('?')[0]));
           }
         }
       });
@@ -336,10 +339,11 @@
           return lower.includes('walking') || lower.includes('zone 2') || lower.includes('vo2 max') || lower.includes('cardio');
         };
 
+        const decodeSafe = (u) => (window.UI && typeof window.UI.safeDecodeURIComponent === 'function' ? window.UI.safeDecodeURIComponent(u) : decodeURIComponent(u));
         const resolveEx = (name, noImage) => {
           if (!name || isCardioOrNoImage(name, noImage)) return;
           const p = window.UI.getImageUrl(name);
-          if (p) urlSet.add(decodeURIComponent(p.split('?')[0]));
+          if (p) urlSet.add(decodeSafe(p.split('?')[0]));
         };
 
         if (Array.isArray(window.TRAINING_DATA.daily)) {

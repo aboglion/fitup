@@ -315,7 +315,8 @@ const UI = (() => {
     '3KG': 'Dead Bug.gif',
     'FEET ELEVATED': 'TRX Row.gif',
     'HOLLOW HOLD': 'Hollow Body Hold.gif',
-    'INCLINE DIAMOND': 'Diamond Push-Up.gif',
+    'INCLINE DIAMOND': 'Incline Diamond Push-Up.gif',
+    'INCLINE DIAMOND PUSH UP': 'Incline Diamond Push-Up.gif',
     'L SIT': 'Full L-Sit.gif',
     'NEGATIVE PULL UP': 'Pull-Up Negative.gif',
     'PULL UP': 'Pull-up (Overhand).gif',
@@ -526,7 +527,8 @@ const UI = (() => {
     '2KG': 'DEAD BUG.png',
     '3KG': 'DEAD BUG.png',
     'HOLLOW HOLD': 'HOLLOW BODY HOLD.png',
-    'INCLINE DIAMOND': 'DIAMOND PUSH-UP.png',
+    'INCLINE DIAMOND': 'INCLINE DIAMOND PUSH-UP.png',
+    'INCLINE DIAMOND PUSH UP': 'INCLINE DIAMOND PUSH-UP.png',
     'L SIT': 'FULL L-SIT.png',
     'NEGATIVE PULL UP': 'PULL-UP NEGATIVE.png',
     'PULL UP': 'PULL-UP (OVERHAND).png',
@@ -538,15 +540,37 @@ const UI = (() => {
     'TUCK L SIT': 'L-SIT TUCK (BARS).png',
     'WEIGHTED DEFICIT VEST 5KG': 'WEIGHTED DEFICIT PUSH-UP.png',
     'WEIGHTED DIAMOND VEST 5KG': 'WEIGHTED DIAMOND PUSH-UP.png',
-    'BAND NECK FLEXION EXTENSION': 'BAND NECK FLEXION & EXTENSION.png'
+    'BAND NECK FLEXION EXTENSION': 'BAND NECK FLEXION & EXTENSION.png',
+    'TOWEL HANG 5KG': 'TOWEL HANG.png',
+    'TOWEL HANG + 5KG': 'TOWEL HANG.png'
   };
 
+  function safeDecodeURIComponent(uri) {
+    if (!uri) return '';
+    try {
+      return decodeURIComponent(uri);
+    } catch (_) {
+      try {
+        return decodeURIComponent(uri.replace(/%(?![0-9a-fA-F]{2})/g, '%25'));
+      } catch (_) {
+        return uri.replace(/%([0-9a-fA-F]{2})/g, (match, hex) => {
+          const code = parseInt(hex, 16);
+          if (code >= 0x20 && code <= 0x7E) {
+            return String.fromCharCode(code);
+          }
+          return match;
+        });
+      }
+    }
+  }
+
   function handleImageFallback(imgEl, type) {
-    const currentSrc = imgEl.src;
-    const urlDecoded = decodeURIComponent(currentSrc);
+    if (!imgEl) return;
+    const currentSrc = imgEl.src || '';
+    const urlDecoded = safeDecodeURIComponent(currentSrc);
 
     if (type === 'gif') {
-      const match = urlDecoded.match(/images\/gifs\/([^/]+)$/);
+      const match = urlDecoded.match(/images\/gifs\/([^/?#]+)/);
       if (match) {
         const rawFilename = match[1];
         if (!imgEl.dataset.origFilename) {
@@ -604,7 +628,7 @@ const UI = (() => {
         const trialIndex = imageTrials[origKey];
         if (trialIndex < uniqueVariations.length) {
           imageTrials[origKey]++;
-          imgEl.src = `images/gifs/${uniqueVariations[trialIndex]}`;
+          imgEl.src = encodeMediaPath(`images/gifs/${uniqueVariations[trialIndex]}`);
           return;
         }
 
@@ -625,7 +649,7 @@ const UI = (() => {
       if (containerG) containerG.classList.remove('skeleton-loading');
       imgEl.style.display = 'none';
     } else if (type === 'png') {
-      const match = urlDecoded.match(/images\/exercises\/([^/]+)$/);
+      const match = urlDecoded.match(/images\/exercises\/([^/?#]+)/);
       if (match) {
         const rawFilename = match[1];
         if (!imgEl.dataset.origFilename) {
@@ -672,7 +696,7 @@ const UI = (() => {
         const trialIndex = imageTrials[origKey];
         if (trialIndex < uniqueVariations.length) {
           imageTrials[origKey]++;
-          imgEl.src = `images/exercises/${uniqueVariations[trialIndex]}`;
+          imgEl.src = encodeMediaPath(`images/exercises/${uniqueVariations[trialIndex]}`) + '?v=136';
           return;
         }
 
@@ -758,8 +782,8 @@ const UI = (() => {
     if (fallbackTitle) {
       const fbClean = fallbackTitle.trim();
       const tClean = effectiveTitle.trim();
-      // If title is just a generic stage/angle name, resolve using the base fallback exercise
-      if (/^(angle\s*\d+|feet-elevated|bodyweight|\d+\s*kg|band\s*\d+kg)/i.test(tClean)) {
+      // If title is just a generic stage/angle/tier name, resolve using the base fallback exercise
+      if (/^(angle\s*\d+|feet-elevated|bodyweight|\+?\s*\d+\s*kg|band\s*\d+\s*kg|incline\s*\d+%?)/i.test(tClean)) {
         if (fbClean.toLowerCase().includes('face pull')) {
           effectiveTitle = `TRX Face Pull (${tClean})`;
         } else {
@@ -774,7 +798,7 @@ const UI = (() => {
     let gifPath;
     if (src && src.includes('.gif')) {
       const effLower = effectiveTitle.toLowerCase();
-      const srcLower = decodeURIComponent(src).toLowerCase();
+      const srcLower = safeDecodeURIComponent(src).toLowerCase();
       // If src doesn't match the exercise (e.g. TRX Face Pull passed for TRX Row or TRX Y-T-W), recalculate
       if ((effLower.includes('trx row') && !srcLower.includes('trx row')) ||
           (effLower.includes('trx y-t-w') && !srcLower.includes('trx y-t-w'))) {
@@ -2306,6 +2330,7 @@ const UI = (() => {
     getImageUrl,
     getGifUrl,
     showImageModal,
+    safeDecodeURIComponent,
     speakVoiceCue,
     compressImage,
     EXERCISE_GIF_ALIASES,

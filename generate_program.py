@@ -1542,9 +1542,9 @@ if __name__ == "__main__":
     img_dir = "images/exercises"
     if os.path.exists(img_dir):
         fallback = os.path.join(img_dir, "BODYWEIGHT SQUAT.png")
-        # v15.7.1: Nordic Curl Progression ships dedicated asset (NORDIC CURL PROGRESSION.png)
+        # v15.7.1: Nordic Curl Progression & Incline Diamond ship dedicated assets
         # — do not generate a placeholder PNG from the bodyweight-squat fallback.
-        skip_placeholder = {"Nordic Curl Progression"}
+        skip_placeholder = {"Nordic Curl Progression", "Incline Diamond", "Incline Diamond Push-Up"}
         for name in required:
             if name in skip_placeholder:
                 continue
