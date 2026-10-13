@@ -7,6 +7,7 @@ const TodayPage = (() => {
   let currentTracking = null;
   let allExercises = [];
   let allTrackingCache = null;
+  let statesMapCache = {};
 
   let renderNutritionSectionRef = null;
   let selectedNutritionDate = null;
@@ -156,6 +157,7 @@ const TodayPage = (() => {
         if (s.sessionKey) statesMap[s.sessionKey] = s;
       });
     }
+    statesMapCache = statesMap;
 
     // Ensure allTrackingCache is available for history backfill
     if (!allTrackingCache && window.DB && window.DB.getAllTracking) {
@@ -399,12 +401,13 @@ const TodayPage = (() => {
    * Helper to resolve current or scheduled stage/angle name for an exercise on a given day.
    * Checks explicit currentStageName, DB state, and week-based EXERCISE_WEIGHT_PROGRESSION tiers.
    */
-  function resolveExerciseStage(exercise, dayData, statesMap) {
+  function resolveExerciseStage(exercise, dayData, statesMap = statesMapCache) {
     if (!exercise) return null;
     if (exercise.currentStageName) return exercise.currentStageName;
     const exId = exercise.id || (window.ProgressionEngine ? window.ProgressionEngine.findExerciseIdByName(exercise.name) : (exercise.name || '').toLowerCase().replace(/\s+/g, '-'));
     const exDef = window.ProgressionEngine ? window.ProgressionEngine.getExercise(exId) : null;
-    const state = statesMap ? (statesMap[exId] || statesMap[exercise.name]) : null;
+    const effectiveMap = statesMap || statesMapCache;
+    const state = effectiveMap ? (effectiveMap[exId] || effectiveMap[exercise.name]) : null;
 
     if (exDef && exDef.stages && exDef.stages.length > 0) {
       if (state && state.currentStageIndex != null) {
@@ -812,6 +815,7 @@ const TodayPage = (() => {
 
     // Dynamic enrichment with Progression Engine states BEFORE rendering UI
     await enrichDayWithProgression(day);
+    const statesMap = statesMapCache;
 
     // Fetch & Cache User Weight
     const savedUserWeight = await DB.getSetting('userWeight');
@@ -3566,8 +3570,8 @@ const TodayPage = (() => {
       const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
       const isWeightChanged = prevEx && ex.weight !== prevEx.weight && isWeighted(ex);
 
-      const curStageName = ex.currentStageName || resolveExerciseStage(ex, day);
-      const prevStageName = prevEx ? (prevEx.currentStageName || resolveExerciseStage(prevEx, prevExDay)) : null;
+      const curStageName = ex.currentStageName || resolveExerciseStage(ex, day, statesMapCache);
+      const prevStageName = prevEx ? (prevEx.currentStageName || resolveExerciseStage(prevEx, prevExDay, statesMapCache)) : null;
       const isStageChanged = prevEx && prevStageName && curStageName && (prevStageName !== curStageName);
       const isAngleChanged = isStageChanged && (
         curStageName.toLowerCase().startsWith('angle') || 

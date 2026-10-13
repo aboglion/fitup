@@ -20,15 +20,17 @@ test('TRX Angle Display Above GIF & Angle Change Alerts Test', async () => {
       removeItem: (k) => { delete mockStorage[k]; }
     }
   };
+  global.localStorage = mockWindow.localStorage;
   const createMockElement = () => ({
-    style: {},
+    style: { setProperty: () => {}, removeProperty: () => {} },
     classList: { add: () => {}, remove: () => {}, contains: () => false },
     appendChild: () => {},
     querySelectorAll: () => [],
     addEventListener: () => {},
     removeEventListener: () => {},
     setAttribute: () => {},
-    getAttribute: () => null
+    getAttribute: () => null,
+    remove: () => {}
   });
   const elements = {};
   const getMockElement = (id) => {
@@ -36,14 +38,15 @@ test('TRX Angle Display Above GIF & Angle Change Alerts Test', async () => {
       elements[id] = {
         id,
         innerHTML: '',
-        style: {},
+        style: { setProperty: () => {}, removeProperty: () => {} },
         classList: { add: () => {}, remove: () => {}, contains: () => false },
         appendChild: () => {},
         querySelectorAll: () => [],
         addEventListener: () => {},
         removeEventListener: () => {},
         setAttribute: () => {},
-        getAttribute: () => null
+        getAttribute: () => null,
+        remove: () => {}
       };
     }
     return elements[id];
@@ -118,5 +121,46 @@ test('TRX Angle Display Above GIF & Angle Change Alerts Test', async () => {
   const imageModalContent = elements['modal-body']?.innerHTML || '';
   assert.ok(imageModalContent.includes('gif-modal-stage-header'), 'UI.showImageModal must include gif-modal-stage-header above GIF');
   assert.ok(imageModalContent.includes('📐'), 'gif-modal-stage-header must show 📐 icon');
+
+  // Regression test: TodayPage.init & render with equipment banner must not throw ReferenceError: statesMap is not defined
+  const mockDB = {
+    getSetting: async () => '2026-01-01',
+    getDayTracking: async () => ({ exerciseStatus: {}, setData: {} }),
+    getAllTracking: async () => [],
+    getAllProgressionState: async () => [
+      { exerciseId: 'trx-row', currentStageIndex: 1 }
+    ],
+    getExerciseGuide: async () => [],
+    getNutrition: async () => null,
+    saveNutrition: async () => {}
+  };
+  global.DB = mockDB;
+  mockWindow.DB = mockDB;
+  mockDoc.body = createMockElement();
+
+  const planDays = [
+    {
+      dayNum: 1,
+      dayOfWeek: 'Sunday',
+      week: 'Week 1',
+      dayType: 'Legs & Core',
+      exercises: [
+        { name: 'TRX Row', sets: '3x10', weight: 'Bodyweight' }
+      ]
+    },
+    {
+      dayNum: 2,
+      dayOfWeek: 'Monday',
+      week: 'Week 1',
+      dayType: 'Upper & Core',
+      exercises: [
+        { name: 'TRX Row', sets: '3x10', weight: 'Bodyweight' }
+      ]
+    }
+  ];
+
+  await assert.doesNotReject(async () => {
+    await mockWindow.TodayPage.init(planDays);
+  }, 'TodayPage.init must not throw ReferenceError: statesMap is not defined');
 });
 
