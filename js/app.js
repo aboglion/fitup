@@ -1752,6 +1752,10 @@ const App = (() => {
 
     if (!banner) return;
 
+    window.addEventListener('pointerdown', () => {
+      window._lastUserGestureTime = Date.now();
+    }, { capture: true, passive: true });
+
     let isDismissed = sessionStorage.getItem('authBannerDismissed') === 'true';
     let hasAutoTriggeredReauth = false;
     let isSimulatingClick = false;
@@ -1761,14 +1765,25 @@ const App = (() => {
       if (hasAutoTriggeredReauth) return;
       if (!bannerBtn || bannerBtn.disabled) return;
 
+      // In modern browsers, opening GIS popup requires an active user gesture (click/tap).
+      // Without user activation, synthetic button.click() will be blocked by the browser popup blocker.
+      const hasUserActivation = (typeof navigator !== 'undefined' && navigator.userActivation)
+        ? navigator.userActivation.isActive
+        : Boolean(window._lastUserGestureTime && (Date.now() - window._lastUserGestureTime < 1000));
+
+      if (!hasUserActivation) {
+        console.log('[AuthPrompt] Google disconnect/reauth detected. Waiting for direct user click on banner to prevent browser popup block.');
+        return;
+      }
+
       hasAutoTriggeredReauth = true;
       isSimulatingClick = true;
       console.log('[AuthPrompt] Google disconnect/reauth detected. Simulating automatic login button click...');
 
-      if (window.CloudSync && window.CloudSync.waitForGis) {
+      if (window.CloudSync && window.CloudSync.waitForGis && (!window.google || !window.google.accounts || !window.google.accounts.oauth2)) {
         await window.CloudSync.waitForGis(1500);
       } else {
-        await new Promise(r => setTimeout(r, 250));
+        await new Promise(r => setTimeout(r, 100));
       }
 
       if (bannerBtn && !bannerBtn.disabled) {
@@ -1803,6 +1818,7 @@ const App = (() => {
       if (isReauthNeeded) {
         if (bannerTitle) bannerTitle.textContent = I18n.t('auth_prompt_reauth_title');
         if (bannerSub) bannerSub.textContent = I18n.t('auth_prompt_reauth_sub');
+        if (bannerBtn) bannerBtn.disabled = false;
         banner.classList.remove('hidden');
 
         // Simulate automatic click as if user clicked the button, while keeping banner visible
@@ -1845,8 +1861,9 @@ const App = (() => {
           },
           (err) => {
             bannerBtn.disabled = false;
-            if (!isAuto) {
-              UI.toast(I18n.t('error_prefix') + (err.message || err), 'error');
+            if (err) {
+              const msg = typeof err === 'string' ? err : (err.message || String(err));
+              UI.toast(msg, 'warning');
             }
           },
           isAuto

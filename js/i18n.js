@@ -413,6 +413,7 @@ const I18n = (() => {
       auth_prompt_reauth_title: "Google Token Expired ⚠️",
       auth_prompt_reauth_sub: "Please re-authenticate to keep your Google Drive sync active.",
       auth_prompt_btn: "Sign in with Google",
+      popup_blocked_hint: "Popup was blocked by your browser. Please tap the button to sign in.",
 
       // PWA Install Floating Banner
       pwa_banner_title: "Install FitUp App 📱",
@@ -1802,6 +1803,7 @@ const I18n = (() => {
       auth_prompt_reauth_title: "פג תוקף חיבור גוגל! ⚠️",
       auth_prompt_reauth_sub: "אנא התחבר מחדש כדי להמשיך לסנכרן את ההתקדמות ב-Google Drive.",
       auth_prompt_btn: "התחבר בלחיצה",
+      popup_blocked_hint: "חלון ההתחברות נחסם על ידי הדפדפן. אנא לחץ על הכפתור כדי להתחבר.",
 
       // PWA Install Floating Banner
       pwa_banner_title: "התקנת אפליקציית FitUp 📱",
@@ -3354,6 +3356,7 @@ const I18n = (() => {
       auth_prompt_reauth_title: "انتهت صلاحية رمز Google ⚠️",
       auth_prompt_reauth_sub: "يرجى تسجيل الدخول مرة أخرى لمواصلة مزامنة تقدمك في Google Drive.",
       auth_prompt_btn: "تسجيل الدخول",
+      popup_blocked_hint: "تم حظر النافذة المنبثقة بواسطة المتصفح. يرجى الضغط على الزر لتسجيل الدخول.",
 
       // PWA Install Floating Banner
       pwa_banner_title: "تثبيت تطبيق FitUp 📱",

@@ -736,8 +736,9 @@ const CloudSync = (() => {
               if (onError) onError('התחברות גוגל בוטלה');
             } else if (error.type === 'popup_failed_to_open') {
               console.log('Popup failed to open, falling back to external OAuth window...');
+              const blockedMsg = (typeof I18n !== 'undefined' && I18n.t('popup_blocked_hint')) || 'חלון ההתחברות נחסם, לחץ על הכפתור כדי להתחבר';
               if (isAuto) {
-                if (onError) onError('חלון ההתחברות נחסם, לחץ על הכפתור כדי להתחבר');
+                if (onError) onError(blockedMsg);
               } else {
                 openExternalGoogleOAuth(clientId, false);
               }

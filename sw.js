@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v199-statesmap-fix';
+const CACHE_NAME = 'fitup-v200-auth-popup-fix';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
