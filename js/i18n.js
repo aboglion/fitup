@@ -109,7 +109,7 @@ const I18n = (() => {
 
       cond_replace: "החלפת",
       cond_replace_orig: "החלפת מקור",
-      cond_parallel: "חיזוק: מתווסף במקביל",
+      cond_parallel: "מתווסף במקביל",
 
 
       // Skill tree conditions and legends

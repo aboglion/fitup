@@ -1054,7 +1054,7 @@ const ExercisesPage = (() => {
         svgCanvas.appendChild(path);
 
         const isMobile = pathRect.width < 500;
-        const badgeWidth = isMobile ? 122 : 144;
+        const badgeWidth = isMobile ? 128 : 148;
         const badgeHeight = isMobile ? 26 : 30;
 
         const badgeGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -1097,7 +1097,9 @@ const ExercisesPage = (() => {
         condText.setAttribute('font-size', isMobile ? '8' : '9');
         condText.setAttribute('font-weight', '700');
         condText.setAttribute('fill', isActive ? (isReplace ? '#60a5fa' : '#f87171') : '#64748b');
-        condText.textContent = unlockCond ? I18n.t('level_up_condition') : (isReplace ? (parentShort ? `🔄 ${I18n.t('cond_replace') || 'Replacing'} ${parentShort}` : `🔄 ${I18n.t('cond_replace_orig') || 'Original replaced'}`) : `🔴 ${I18n.t('cond_parallel') || 'Added in parallel'}`);
+        condText.textContent = isReplace
+          ? (unlockCond ? I18n.t('level_up_condition') : (parentShort ? `🔄 ${I18n.t('cond_replace') || 'Replacing'} ${parentShort}` : `🔄 ${I18n.t('cond_replace_orig') || 'Original replaced'}`))
+          : `🔴 ${I18n.t('cond_parallel') || 'Added in parallel'}`;
 
         badgeGroup.appendChild(badgeBg);
         badgeGroup.appendChild(timingText);

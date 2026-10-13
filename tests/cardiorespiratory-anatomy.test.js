@@ -77,11 +77,13 @@ test('Cardiorespiratory - Skill Tree titles and condition fallback translations 
   assert.equal(I18n.t('quad_focus'), 'מיקוד ארבע-ראשי (Quad Focus)');
   assert.ok(I18n.t('cond_10kg_squat').includes('10'), 'Unlock condition cond_10kg_squat must be translated');
   assert.ok(I18n.t('level_up_condition').includes('תנאי'), 'level_up_condition must be translated');
+  assert.equal(I18n.t('cond_parallel'), 'מתווסף במקביל');
 
   I18n.setLanguage('en');
   assert.equal(I18n.t('squat_tree'), 'Leg Strength & Squats (Squat Tree)');
   assert.equal(I18n.t('quad_focus'), 'Quadriceps Focus');
   assert.ok(I18n.t('cond_10kg_squat').includes('10kg'), 'Unlock condition cond_10kg_squat must be translated in EN');
+  assert.equal(I18n.t('cond_parallel'), 'Added in parallel');
 });
 
 test('Cardiorespiratory - AnatomyMap renders front callouts for both Heart and Lungs', () => {
