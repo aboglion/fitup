@@ -366,12 +366,76 @@ const TodayPage = (() => {
 
       // 2. Handle Variation / Stage Exercises
       if (exDef && exDef.stages && exDef.stages.length > 0) {
-        const stageIdx = (state && state.currentStageIndex != null) ? state.currentStageIndex : 0;
+        let stageIdx = (state && state.currentStageIndex != null) ? state.currentStageIndex : null;
+        if (stageIdx == null) {
+          const weekNum = day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1;
+          const progTiers = (window.ExercisesPage && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION)
+            ? window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[ex.name]
+            : null;
+          if (progTiers && progTiers.length > 0) {
+            let activeTier = progTiers[0];
+            for (let t of progTiers) {
+              if (weekNum >= t.fromWeek) activeTier = t;
+            }
+            const foundIdx = exDef.stages.findIndex(s => s.toLowerCase() === (activeTier.weight || '').toLowerCase());
+            stageIdx = foundIdx !== -1 ? foundIdx : 0;
+          } else {
+            stageIdx = 0;
+          }
+        }
         const stageName = exDef.stages[stageIdx] || exDef.stages[0];
         ex.currentStageIndex = stageIdx;
         ex.currentStageName = stageName;
+      } else {
+        const stageResolved = resolveExerciseStage(ex, day, statesMap);
+        if (stageResolved) {
+          ex.currentStageName = stageResolved;
+        }
       }
     }
+  }
+
+  /**
+   * Helper to resolve current or scheduled stage/angle name for an exercise on a given day.
+   * Checks explicit currentStageName, DB state, and week-based EXERCISE_WEIGHT_PROGRESSION tiers.
+   */
+  function resolveExerciseStage(exercise, dayData, statesMap) {
+    if (!exercise) return null;
+    if (exercise.currentStageName) return exercise.currentStageName;
+    const exId = exercise.id || (window.ProgressionEngine ? window.ProgressionEngine.findExerciseIdByName(exercise.name) : (exercise.name || '').toLowerCase().replace(/\s+/g, '-'));
+    const exDef = window.ProgressionEngine ? window.ProgressionEngine.getExercise(exId) : null;
+    const state = statesMap ? (statesMap[exId] || statesMap[exercise.name]) : null;
+
+    if (exDef && exDef.stages && exDef.stages.length > 0) {
+      if (state && state.currentStageIndex != null) {
+        return exDef.stages[state.currentStageIndex] || exDef.stages[0];
+      }
+      const weekNum = dayData && dayData.week ? parseInt(dayData.week.replace(/\D/g, '')) || 1 : 1;
+      const progTiers = (window.ExercisesPage && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION)
+        ? window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[exercise.name]
+        : null;
+      if (progTiers && progTiers.length > 0) {
+        let activeTier = progTiers[0];
+        for (const t of progTiers) {
+          if (weekNum >= t.fromWeek) activeTier = t;
+        }
+        return activeTier.weight;
+      }
+      return exDef.stages[0];
+    }
+
+    const weekNum = dayData && dayData.week ? parseInt(dayData.week.replace(/\D/g, '')) || 1 : 1;
+    const progTiers = (window.ExercisesPage && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION)
+      ? window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[exercise.name]
+      : null;
+    if (progTiers && progTiers.length > 0) {
+      let activeTier = progTiers[0];
+      for (const t of progTiers) {
+        if (weekNum >= t.fromWeek) activeTier = t;
+      }
+      return activeTier.weight;
+    }
+    return null;
   }
 
   /**
@@ -1720,6 +1784,7 @@ const TodayPage = (() => {
         const unifiedRequirementsMap = new Map();
         let newExercisesList = [];
         let changedExercisesList = [];
+        let angleChangedList = [];
 
         day.exercises.forEach((ex, idx) => {
           const exNum = idx + 1;
@@ -1780,20 +1845,38 @@ const TodayPage = (() => {
           });
 
           let prevEx = null;
+          let prevExDay = null;
           for (let i = currentDayIndex - 1; i >= 0; i--) {
             const pastDay = allPlanDays[i];
             if (pastDay && pastDay.exercises) {
-              prevEx = pastDay.exercises.find(e => (e.id && ex.id && e.id === ex.id) || e.name === ex.name);
-              if (prevEx) break;
+              const found = pastDay.exercises.find(e => (e.id && ex.id && e.id === ex.id) || e.name === ex.name);
+              if (found) {
+                prevEx = found;
+                prevExDay = pastDay;
+                break;
+              }
             }
           }
 
           const isNewExercise = !prevEx && currentDayIndex > 0 && day.dayType !== 'Rest';
           if (isNewExercise) newExercisesList.push(exNum);
 
+          const curStageName = ex.currentStageName || resolveExerciseStage(ex, day, statesMap);
+          const prevStageName = prevEx ? (prevEx.currentStageName || resolveExerciseStage(prevEx, prevExDay, statesMap)) : null;
+          const isStageChanged = prevEx && prevStageName && curStageName && (prevStageName !== curStageName);
+          const isAngleChanged = isStageChanged && (
+            curStageName.toLowerCase().startsWith('angle') || 
+            prevStageName.toLowerCase().startsWith('angle') || 
+            (ex.name || '').toLowerCase().includes('trx')
+          );
+
+          if (isAngleChanged) {
+            angleChangedList.push(exNum);
+          }
+
           const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
           const isWeightChanged = prevEx && ex.weight !== prevEx.weight && isWeighted(ex);
-          if (isSetsChanged || isWeightChanged) changedExercisesList.push(exNum);
+          if (isSetsChanged || isWeightChanged || isStageChanged) changedExercisesList.push(exNum);
         });
 
         const reportSvgs = {
@@ -1843,6 +1926,19 @@ const TodayPage = (() => {
               <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
                 <span style="font-weight: 700; color: #ef4444;">${I18n.t('new_exercises_label')}</span> 
                 <b style="font-family: 'Inter', sans-serif; color: #ef4444;">${newExercisesList.map(n => `#${n}`).join(', ')}</b>. ${I18n.t('new_exercises_tip')}
+              </div>
+            </div>
+          `);
+        }
+
+        // 2.5 Angle Progression
+        if (angleChangedList.length > 0) {
+          bodyItems.push(`
+            <div style="display: flex; align-items: flex-start; gap: 10px; padding: 6px 10px; background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px;">
+              <span style="font-size: 16px; margin-top: 1px; display: flex;">📐</span>
+              <div style="font-size: 13px; color: var(--text-primary); line-height: 1.4;">
+                <span style="font-weight: 700; color: var(--accent-primary);">${I18n.t('angle_progression_label')}</span> 
+                ${I18n.t(angleChangedList.length > 1 ? 'angle_updated_in_exercises_plural' : 'angle_updated_in_exercises')} <b style="font-family: 'Inter', sans-serif;">${angleChangedList.map(n => `#${n}`).join(', ')}</b>. ${I18n.t('angle_updated_tip')}
               </div>
             </div>
           `);
@@ -3453,11 +3549,16 @@ const TodayPage = (() => {
 
       // Find previous occurrence
       let prevEx = null;
+      let prevExDay = null;
       for (let i = currentDayIndex - 1; i >= 0; i--) {
         const pastDay = allPlanDays[i];
         if (pastDay && pastDay.exercises) {
-          prevEx = pastDay.exercises.find(e => (e.id && ex.id && e.id === ex.id) || e.name === ex.name);
-          if (prevEx) break;
+          const found = pastDay.exercises.find(e => (e.id && ex.id && e.id === ex.id) || e.name === ex.name);
+          if (found) {
+            prevEx = found;
+            prevExDay = pastDay;
+            break;
+          }
         }
       }
 
@@ -3465,7 +3566,21 @@ const TodayPage = (() => {
       const isSetsChanged = prevEx && ex.sets !== prevEx.sets;
       const isWeightChanged = prevEx && ex.weight !== prevEx.weight && isWeighted(ex);
 
-      const newBadgeHTML = isNewExercise ? `<div class="new-exercise-badge" style="position: absolute; bottom: 12px; left: 12px; background: #ef4444; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 13px; animation: blinkRed 1.5s infinite; box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); z-index: 10;">${I18n.t('new_exercise_badge')}</div>` : '';
+      const curStageName = ex.currentStageName || resolveExerciseStage(ex, day);
+      const prevStageName = prevEx ? (prevEx.currentStageName || resolveExerciseStage(prevEx, prevExDay)) : null;
+      const isStageChanged = prevEx && prevStageName && curStageName && (prevStageName !== curStageName);
+      const isAngleChanged = isStageChanged && (
+        curStageName.toLowerCase().startsWith('angle') || 
+        prevStageName.toLowerCase().startsWith('angle') || 
+        (ex.name || '').toLowerCase().includes('trx')
+      );
+
+      let newBadgeHTML = '';
+      if (isNewExercise) {
+        newBadgeHTML = `<div class="new-exercise-badge" style="position: absolute; bottom: 12px; left: 12px; background: #ef4444; color: white; padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 13px; animation: blinkRed 1.5s infinite; box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); z-index: 10;">${I18n.t('new_exercise_badge')}</div>`;
+      } else if (isAngleChanged) {
+        newBadgeHTML = `<div class="new-exercise-badge angle-change-alert-badge" style="position: absolute; bottom: 12px; left: 12px; background: linear-gradient(135deg, #ef4444, #f97316); color: white; padding: 4px 12px; border-radius: 6px; font-weight: 800; font-size: 13px; animation: blinkRed 1.5s infinite; box-shadow: 0 0 12px rgba(239, 68, 68, 0.8); z-index: 10;">📐 ${I18n.t('new_angle_badge')}</div>`;
+      }
 
       // Detail line - only show weight if it exists
       const detailParts = [UI.getCategoryLabel(ex.slot)];
@@ -3488,19 +3603,20 @@ const TodayPage = (() => {
         const weightHTML = buildWeightBadgeHTML(weightInfo, true);
         detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="${I18n.t('weight_changed_title')}">${weightHTML}</span>` : weightHTML);
         detailParts.push(`<button type="button" class="sparkline-1rm-badge" style="padding: 1px 6px; font-size: 10px;" title="${I18n.t('sparkline_1rm_tooltip')}" onclick="event.stopPropagation(); TodayPage.open1RMCalculator('${ex.name.replace(/'/g, "\\'")}', 0, 8, 0);">🧮 1RM</button>`);
-      } else if (ex.currentStageName) {
-        const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
-        const stageLabel = (typeof I18n !== 'undefined' && I18n.t(ex.currentStageName) !== ex.currentStageName) ? I18n.t(ex.currentStageName) : ex.currentStageName;
+      } else if (curStageName) {
+        const isAngle = curStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+        const stageLabel = (typeof I18n !== 'undefined' && I18n.t(curStageName) !== curStageName) ? I18n.t(curStageName) : curStageName;
         const icon = isAngle ? '📐' : '🎯';
         const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (I18n.t('progression_stage_title') || 'שלב');
-        detailParts.push(`
+        const stageBadgeHTML = `
           <span class="weight-badge angle-stage-badge" style="background: rgba(59, 130, 246, 0.14); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--text-primary); padding: 2px 7px; border-radius: 8px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
             <bdi dir="ltr">${stageLabel}</bdi>
             <span style="background: #3b82f6; color: #ffffff; padding: 2px 6px; border-radius: 5px; font-size: 10px; font-weight: 900; letter-spacing: 0.2px; display: inline-flex; align-items: center; gap: 3px;">
               ${icon} ${tagText}
             </span>
           </span>
-        `);
+        `;
+        detailParts.push(isAngleChanged ? `<span class="alert-pulse-text" title="${I18n.t('angle_changed_title')}">${stageBadgeHTML}</span>` : stageBadgeHTML);
       }
 
       if (ex.tempo) {
@@ -3755,8 +3871,25 @@ const TodayPage = (() => {
         `;
       }
 
+      let heroAngleBadgeHTML = '';
+      if (curStageName) {
+        const isAngle = curStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+        const stageLabel = (typeof I18n !== 'undefined' && I18n.t(curStageName) !== curStageName) ? I18n.t(curStageName) : curStageName;
+        const icon = isAngle ? '📐' : '🎯';
+        const badgeBg = isAngleChanged 
+          ? 'background: rgba(239, 68, 68, 0.9); border: 2px solid #ef4444; box-shadow: 0 0 14px rgba(239, 68, 68, 0.8);' 
+          : 'background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 4px 12px rgba(0,0,0,0.35);';
+        heroAngleBadgeHTML = `
+          <div class="exercise-hero-angle-badge" style="position: absolute; top: 12px; left: 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); ${badgeBg} color: #ffffff; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; z-index: 10;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
+            <span style="color: ${isAngleChanged ? '#ffffff' : '#60a5fa'}; font-weight: 900;">${icon}</span>
+            <span><bdi dir="ltr">${stageLabel}</bdi></span>
+          </div>
+        `;
+      }
+      const isCardAlert = isNewExercise || isAngleChanged;
+
       return `
-        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isSkippedTemp ? 'skipped-temp' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isNewExercise ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
+        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isSkippedTemp ? 'skipped-temp' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isCardAlert ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
           <div class="exercise-hero-container skeleton-loading" style="position: relative;">
             <div class="skeleton-placeholder" style="gap: 4px;">
               <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
@@ -3764,6 +3897,7 @@ const TodayPage = (() => {
             <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-weight: 800; font-family: 'Inter', sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid rgba(255,255,255,0.1);">
               #${idx + 1}
             </div>
+            ${heroAngleBadgeHTML}
             <img src="${UI.getImageUrl(activeName, currentDayIndex)}" 
                  class="exercise-hero-image skeleton-img"
                  data-fallback-exname="${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/"/g, '&quot;')}"
@@ -5902,6 +6036,7 @@ const TodayPage = (() => {
     navMicroMobilityModal,
     completeMicroSubStepAndNext,
     getCurrentDayIndex: () => currentDayIndex,
+    resolveExerciseStage,
     goToDay,
     navigate,
     goToToday,

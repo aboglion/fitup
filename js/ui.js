@@ -1139,7 +1139,31 @@ const UI = (() => {
         </div>
       `;
     } else if (gifExists) {
+      let stageHeaderHTML = '';
+      const resolvedStageName = planEx?.currentStageName || 
+        (window.TodayPage && typeof window.TodayPage.resolveExerciseStage === 'function' ? window.TodayPage.resolveExerciseStage(planEx, null) : null) ||
+        (window.ExercisesPage?.EXERCISE_WEIGHT_PROGRESSION?.[effectiveTitle]?.[0]?.weight);
+
+      if (resolvedStageName) {
+        const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || (effectiveTitle || '').toLowerCase().includes('trx');
+        const stageLabel = (typeof I18n !== 'undefined' && I18n.t(resolvedStageName) !== resolvedStageName) ? I18n.t(resolvedStageName) : resolvedStageName;
+        const icon = isAngle ? '📐' : '🎯';
+        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (I18n.t('progression_stage_title') || 'שלב');
+        stageHeaderHTML = `
+          <div class="gif-modal-stage-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 7px 12px; border-radius: 10px; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; color: var(--text-primary);">
+              <span style="font-size: 16px;">${icon}</span>
+              <span>${tagText}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${stageLabel}</bdi></b></span>
+            </div>
+            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
+              ${isAngle ? 'TRX Progression' : (I18n.t('progression_stage_title') || 'שלב')}
+            </span>
+          </div>
+        `;
+      }
+
       mediaHTML = `
+        ${stageHeaderHTML}
         <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 180px; max-height: clamp(190px, 28vh, 230px); background: rgba(0, 0, 0, 0.25); border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); padding: 4px; box-shadow: inset 0 0 16px rgba(0,0,0,0.15);">
           <div class="skeleton-placeholder">
             <div class="skeleton-spinner"></div>
@@ -1157,7 +1181,31 @@ const UI = (() => {
         </div>
       `;
     } else {
+      let stageHeaderHTML = '';
+      const resolvedStageName = planEx?.currentStageName || 
+        (window.TodayPage && typeof window.TodayPage.resolveExerciseStage === 'function' ? window.TodayPage.resolveExerciseStage(planEx, null) : null) ||
+        (window.ExercisesPage?.EXERCISE_WEIGHT_PROGRESSION?.[effectiveTitle]?.[0]?.weight);
+
+      if (resolvedStageName) {
+        const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || (effectiveTitle || '').toLowerCase().includes('trx');
+        const stageLabel = (typeof I18n !== 'undefined' && I18n.t(resolvedStageName) !== resolvedStageName) ? I18n.t(resolvedStageName) : resolvedStageName;
+        const icon = isAngle ? '📐' : '🎯';
+        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (I18n.t('progression_stage_title') || 'שלב');
+        stageHeaderHTML = `
+          <div class="gif-modal-stage-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 7px 12px; border-radius: 10px; margin-bottom: 8px;">
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; color: var(--text-primary);">
+              <span style="font-size: 16px;">${icon}</span>
+              <span>${tagText}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${stageLabel}</bdi></b></span>
+            </div>
+            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
+              ${isAngle ? 'TRX Progression' : (I18n.t('progression_stage_title') || 'שלב')}
+            </span>
+          </div>
+        `;
+      }
+
       mediaHTML = `
+        ${stageHeaderHTML}
         <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 180px; max-height: clamp(190px, 28vh, 230px); border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); padding: 4px; display: flex; align-items: center; justify-content: center;">
           <div class="skeleton-placeholder">
             <div class="skeleton-spinner"></div>

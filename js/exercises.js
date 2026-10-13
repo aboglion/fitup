@@ -1241,8 +1241,8 @@ const ExercisesPage = (() => {
    * Show exercise details in modal
    */
   function showExerciseDetails(name) {
-    const ex = allExercises.find(e => e.name === name);
-    if (!ex) return;
+    const ex = (typeof name === 'object' && name) ? name : (allExercises.find(e => e.name === name) || { name });
+    if (!ex || !ex.name) return;
 
     const html = generateGuideCardHTML(ex);
 
@@ -1467,6 +1467,24 @@ const ExercisesPage = (() => {
 
     const gifPath = UI.getGifUrl(ex.name);
     const showSingleGif = !ex.name.toLowerCase().includes('deep mobility') && gifPath;
+    let exerciseAngleHeaderHTML = '';
+    const angleTiers = EXERCISE_WEIGHT_PROGRESSION[ex.name];
+    if (angleTiers && angleTiers.length > 0 && (angleTiers[0].weight || '').toLowerCase().startsWith('angle')) {
+      const firstAngle = angleTiers[0].weight;
+      const stageLabel = (typeof I18n !== 'undefined' && I18n.t(firstAngle) !== firstAngle) ? I18n.t(firstAngle) : firstAngle;
+      exerciseAngleHeaderHTML = `
+        <div class="exercise-guide-angle-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 8px 12px; border-radius: 10px; margin-bottom: 2px;">
+          <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; color: var(--text-primary);">
+            <span style="font-size: 16px;">📐</span>
+            <span>${I18n.t('angle_tag') || 'זווית'}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${stageLabel}</bdi></b></span>
+          </div>
+          <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
+            ${angleTiers.length} ${I18n.t('unit_levels') || 'רמות זווית'}
+          </span>
+        </div>
+      `;
+    }
+
     const fullHtml = `
       <div style="display: flex; flex-direction: column; gap: 16px;">
         ${html}
@@ -1474,6 +1492,7 @@ const ExercisesPage = (() => {
         ${progressionHubHtml}
         ${injurySafetyHtml}
         ${showSingleGif ? `
+        ${exerciseAngleHeaderHTML}
         <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 200px; border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;">
           <div class="skeleton-placeholder">
             <div class="skeleton-spinner"></div>

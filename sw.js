@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v197-trx-angle-progression';
+const CACHE_NAME = 'fitup-v198-trx-angle-alert';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
