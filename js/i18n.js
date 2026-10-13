@@ -548,6 +548,14 @@ const I18n = (() => {
 
       // Exercise notes
       exercise_notes_placeholder: "Exercise notes...",
+      target_strive_ceiling: "Target (Strive for High End):",
+      safety_floor_label: "Safety Floor:",
+      target_clean_reps: "Full Target Execution:",
+      myo_protocol_guide: "Myo-Reps Protocol: Activation set + mini-sets (15s rest). Stop at 2 tempo losses.",
+      outcome_in_window_hint: "Reached target ceiling with good form • Progresses toward weight increase (+2 kg)",
+      outcome_above_hint: "Exceeded target / too easy • Early weight promotion next session!",
+      outcome_below_hint: "Failed before safety floor / lost tempo • Adds +30s adaptive rest",
+      personal_notes_label: "Personal Note (Optional)...",
 
       // Prev performance
       prev_performance: "📊 Last performance:",
@@ -1927,6 +1935,14 @@ const I18n = (() => {
       swap_pro_tip: "פיצול השרירים בתוכנית מאפשר גמישות רבה, אך השתדל להימנע מרצף של יותר מ-2 אימונים עצימים ללא יום מנוחה או התאוששות (Recovery) ביניהם כדי למנוע עומס על מערכת העצבים.",
 
       exercise_notes_placeholder: "הערות לתרגיל...",
+      target_strive_ceiling: "יעד עבודה (שאיפה לגבוה):",
+      safety_floor_label: "רצפת ביטחון:",
+      target_clean_reps: "יעד ביצוע מלא:",
+      myo_protocol_guide: "פרוטוקול Myo-Reps: סט הפעלה + מיני-סטים (15 שנ' מנוחה). עצירה ב-2 אובדני קצב.",
+      outcome_in_window_hint: "הגעה ליעד הגבוה בטכניקה מלאה • נצבר לקידום משקל (+2 ק\"ג)",
+      outcome_above_hint: "ביצוע מעל היעד / קל מדי • הקפצת משקל מיידית באימון הבא!",
+      outcome_below_hint: "כשל לפני רצפת הביטחון / שבירת טמפו • מוסיף +30 שנ' מנוחה",
+      personal_notes_label: "הערה אישית (אופציונלי)...",
 
       prev_performance: "📊 ביצוע אחרון:",
       prev_record: "🏆 שיא:",
@@ -3458,6 +3474,14 @@ const I18n = (() => {
       swap_pro_tip: "تقسيم العضلات في البرنامج يتيح مرونة كبيرة، لكن حاول تجنب أكثر من تمرينين مكثفين متتاليين بدون يوم راحة أو تعافي لمنع إرهاق الجهاز العصبي.",
 
       exercise_notes_placeholder: "ملاحظات التمرين...",
+      target_strive_ceiling: "الهدف (السعي للأعلى):",
+      safety_floor_label: "الحد الأدنى للأمان:",
+      target_clean_reps: "هدف الأداء الكامل:",
+      myo_protocol_guide: "بروتوكول Myo-Reps: مجموعة تفعيل + مجموعات مصغرة (15 ثانية راحة). التوقف عند بطء التكرار مرتين.",
+      outcome_in_window_hint: "الوصول للهدف الأعلى بأداء متقن • يُحسب للتقدم في الوزن (+2 كجم)",
+      outcome_above_hint: "أداء أعلى من الهدف / سهل جداً • زيادة سريعة للوزن في التمرين القادم!",
+      outcome_below_hint: "فشل قبل الحد الأدنى / فقدان الإيقاع • يضيف +30 ثانية راحة متكيفة",
+      personal_notes_label: "ملاحظة شخصية (اختياري)...",
 
       prev_performance: "📊 الأداء السابق:",
       prev_record: "🏆 الرقم القياسي:",

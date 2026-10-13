@@ -2150,6 +2150,20 @@ const TodayPage = (() => {
   }
 
   /**
+   * Helper to parse numeric reps gracefully:
+   * If a range is provided (e.g. "6-12", "8-20 secs"), extracts the upper target ceiling (12, 20)
+   * rather than truncating to the floor (6, 8) as naive parseInt does.
+   */
+  function parseRepsSmart(val) {
+    if (val === null || val === undefined || val === '') return 0;
+    const s = String(val).trim();
+    const rm = s.match(/(\d+)\s*[-–]\s*(\d+)/);
+    if (rm) return parseInt(rm[2], 10);
+    const sm = s.match(/(\d+)/);
+    return sm ? parseInt(sm[1], 10) : 0;
+  }
+
+  /**
    * Extract chronological performance history for an exercise across recent sessions
    * Returns array of up to `limit` entries sorted oldest to newest:
    * [{ dayIndex, dayNum, date, value, unit }]
@@ -2184,7 +2198,7 @@ const TodayPage = (() => {
 
       for (let s = 0; s < 10; s++) {
         const wVal = parseFloat(sData[`set_${s}_weight`]);
-        const rVal = parseInt(sData[`set_${s}_reps`], 10);
+        const rVal = parseRepsSmart(sData[`set_${s}_reps`]);
         if (!isNaN(wVal) && wVal > maxWeight) maxWeight = wVal;
         if (!isNaN(rVal) && rVal > maxReps) maxReps = rVal;
         if (!isNaN(wVal) && wVal > 0 && !isNaN(rVal) && rVal > 0) {
@@ -2246,7 +2260,7 @@ const TodayPage = (() => {
 
       for (let s = 0; s < 10; s++) {
         const w = parseFloat(sData[`set_${s}_weight`]);
-        const r = parseInt(sData[`set_${s}_reps`], 10);
+        const r = parseRepsSmart(sData[`set_${s}_reps`]);
         if (!isNaN(w) && w > 0 && !isNaN(r) && r > 0) {
           const e1rm = r === 1 ? w : Math.round(w * (1 + r / 30) * 10) / 10;
           if (e1rm > peak1RM) {
@@ -3265,6 +3279,88 @@ const TodayPage = (() => {
   }
 
   /**
+   * Build Tactical Target & Set Outcome Guide card with optional personal note field
+   */
+  function buildExerciseNoteAndGuideHTML(ex, idx, exNote, checkDisabledAttr) {
+    if (!ex) return '';
+    const rawSets = ex.sets || ex.repWindow || '';
+    const rangeMatch = rawSets.match(/(\d+)\s*[-–]\s*(\d+)/);
+    const isTime = rawSets.includes('sec') || rawSets.includes('s') || rawSets.includes('min') || rawSets.includes('שנ');
+    const isMins = rawSets.includes('min') || rawSets.includes('דק');
+    const unitStr = isTime ? (isMins ? (I18n.t('unit_minutes') || 'דקות') : (I18n.t('unit_seconds') || 'שניות')) : (I18n.t('unit_reps') || 'חזרות');
+
+    const isMyo = (ex.name || '').toLowerCase().includes('arm block') || rawSets.toLowerCase().includes('myo');
+    let targetSummaryHTML = '';
+    let inWindowRule = '';
+    let aboveRule = '';
+    let belowRule = '';
+
+    if (isMyo) {
+      targetSummaryHTML = `
+        <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: var(--accent-primary, #3b82f6); font-size: 12px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed var(--border-light, rgba(255,255,255,0.1));">
+          <span>⚡</span>
+          <span>${I18n.t('myo_protocol_guide')}</span>
+        </div>
+      `;
+      inWindowRule = I18n.t('outcome_in_window_hint');
+      aboveRule = I18n.t('outcome_above_hint');
+      belowRule = I18n.t('outcome_below_hint');
+    } else if (rangeMatch) {
+      const minVal = rangeMatch[1];
+      const maxVal = rangeMatch[2];
+      targetSummaryHTML = `
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 12px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed var(--border-light, rgba(255,255,255,0.1));">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span>🎯</span>
+            <span style="color: var(--text-secondary); font-weight: 600;">${I18n.t('target_strive_ceiling')}</span>
+            <strong style="color: #60a5fa; font-size: 13px; font-weight: 800;">${maxVal} ${unitStr}</strong>
+          </div>
+          <div style="font-size: 11px; color: var(--text-muted); background: var(--bg-hover, rgba(255,255,255,0.06)); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-light, rgba(255,255,255,0.08)); display: inline-flex; align-items: center; gap: 4px;">
+            <span>🛡️ ${I18n.t('safety_floor_label')}</span>
+            <strong style="color: var(--text-primary);">${minVal} ${unitStr}</strong>
+          </div>
+        </div>
+      `;
+      inWindowRule = I18n.t('outcome_in_window_hint');
+      aboveRule = I18n.t('outcome_above_hint');
+      belowRule = I18n.t('outcome_below_hint');
+    } else {
+      const singleMatch = rawSets.match(/(\d+)/);
+      const targetVal = singleMatch ? singleMatch[1] : rawSets;
+      targetSummaryHTML = `
+        <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed var(--border-light, rgba(255,255,255,0.1));">
+          <span>🎯</span>
+          <span style="color: var(--text-secondary); font-weight: 600;">${I18n.t('target_clean_reps')}</span>
+          <strong style="color: #60a5fa; font-size: 13px; font-weight: 800;">${targetVal} ${unitStr}</strong>
+        </div>
+      `;
+      inWindowRule = I18n.t('outcome_in_window_hint');
+      aboveRule = I18n.t('outcome_above_hint');
+      belowRule = I18n.t('outcome_below_hint');
+    }
+
+    return `
+      <div class="exercise-note exercise-target-guide-container">
+        ${targetSummaryHTML}
+        <div class="target-outcomes-cheat">
+          <div style="display: flex; align-items: flex-start; gap: 6px;">
+            <span style="color: #10b981; font-weight: 800; white-space: nowrap;">${I18n.t('set_outcome_in_window')}:</span>
+            <span>${inWindowRule}</span>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 6px;">
+            <span style="color: #3b82f6; font-weight: 800; white-space: nowrap;">${I18n.t('set_outcome_above')}:</span>
+            <span>${aboveRule}</span>
+          </div>
+          <div style="display: flex; align-items: flex-start; gap: 6px;">
+            <span style="color: #ef4444; font-weight: 800; white-space: nowrap;">${I18n.t('set_outcome_below')}:</span>
+            <span>${belowRule}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
    * Render exercise cards
    */
   function renderExercises(day) {
@@ -3392,7 +3488,8 @@ const TodayPage = (() => {
             const pr = prevPerf.setData[`set_${ps}_reps`];
             if (pr) {
               prevSets.push(pr);
-              if (parseInt(pr) > maxReps) maxReps = parseInt(pr);
+              const pReps = parseRepsSmart(pr);
+              if (pReps > maxReps) maxReps = pReps;
             }
           }
           if (prevSets.length > 0) {
@@ -3951,10 +4048,7 @@ const TodayPage = (() => {
             ${protocolBannerHTML}
             ${goldCueHTML}
             ${setsHTML}
-            <div class="exercise-note">
-              <textarea placeholder="${I18n.t('exercise_notes_placeholder')}" rows="2" ${checkDisabledAttr}
-                        onchange="TodayPage.updateExerciseNote(${idx}, this.value)">${exNote}</textarea>
-            </div>
+            ${buildExerciseNoteAndGuideHTML(ex, idx, exNote, checkDisabledAttr)}
           </div>
         </div>
       `;
@@ -4181,11 +4275,16 @@ const TodayPage = (() => {
     const weightInfo = parseWeightDetails(ex, setData);
     const weightBadge = weightInfo && weightInfo.suggestedWeightNum > 0 ? `<span style="color: #f59e0b; font-weight: 700; margin-inline-start: 4px;">• ${weightInfo.suggestedWeightNum} kg</span>` : '';
     const repTarget = UI.parseReps(ex.sets || '');
+    const rm = repTarget.match(/(\d+)\s*[-–]\s*(\d+)/);
+    let targetDisplay = repTarget;
+    if (rm) {
+      targetDisplay = `${rm[2]} (${I18n.t('safety_floor_label', 'רצפת ביטחון:')} ${rm[1]})`;
+    }
 
     return `
       <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 10px 14px; margin: 10px 0 16px 0; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
         <span style="font-size: 13px; color: var(--text-secondary); font-weight: 600;">${I18n.t('planned_target')}</span>
-        <span style="font-size: 15px; color: var(--accent-primary); font-weight: 800;" dir="ltr">${repTarget}</span>
+        <span style="font-size: 15px; color: var(--accent-primary); font-weight: 800;" dir="ltr">${targetDisplay}</span>
         ${weightBadge}
       </div>
     `;
@@ -4513,7 +4612,7 @@ const TodayPage = (() => {
       const setResults = [];
 
       for (let s = 0; s < setsCount; s++) {
-        const setReps = parseInt(setData[`set_${s}_reps`]) || UI.parseReps(ex.sets);
+        const setReps = parseRepsSmart(setData[`set_${s}_reps`]) || parseRepsSmart(ex.sets);
         const setW = setData[`set_${s}_weight`] ? parseFloat(setData[`set_${s}_weight`]) : (ex.targetWeightKg || 0);
         totalReps += setReps;
         if (setW) lastWeight = setW;
@@ -4524,7 +4623,7 @@ const TodayPage = (() => {
           weightKg: setW
         });
       }
-      const avgReps = setsCount > 0 ? Math.round(totalReps / setsCount) : UI.parseReps(ex.sets);
+      const avgReps = setsCount > 0 ? Math.round(totalReps / setsCount) : parseRepsSmart(ex.sets);
       const isArmBlock = ex.name.toLowerCase().includes('arm block');
 
       await ProgressionEngine.commitExerciseProgression({
@@ -4574,7 +4673,8 @@ const TodayPage = (() => {
     if (!exData[`set_${setIdx}_reps`]) {
       if (prevReps) {
         const cleanReps = prevReps.toString().replace(/\s*(secs?|mins?|seconds?|minutes?|reps?)/gi, '').trim();
-        exData[`set_${setIdx}_reps`] = cleanReps;
+        const rm = cleanReps.match(/^(\d+)\s*[-–]\s*(\d+)$/);
+        exData[`set_${setIdx}_reps`] = rm ? rm[2] : cleanReps;
       }
     }
 

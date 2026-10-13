@@ -1197,6 +1197,33 @@ html[dir="ltr"] .set-modal-option-btn {
   box-sizing: border-box;
 }
 
+.exercise-target-guide-container {
+  background: var(--bg-card, rgba(15, 23, 42, 0.7));
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.exercise-target-guide-container:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.target-outcomes-cheat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+
 /* ===== Previous Performance Display ===== */
 .prev-performance {
   display: flex;
