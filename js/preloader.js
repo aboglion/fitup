@@ -282,15 +282,20 @@
     // Static assets to always preload
     staticAssets: STATIC_ASSETS,
 
+    // In-memory set of confirmed cached URLs (0ms instant hits)
+    cachedUrls: new Set(),
+    // Deduplicate in-flight fetches so same asset is never requested twice concurrently
+    inFlightFetches: new Map(),
+
     init: function() {
       if (this.started) return;
       this.started = true;
 
       // Run background preloader after initial frame render so startup is completely instantaneous
       if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
-        requestIdleCallback(() => this.startPreloading(), { timeout: 1200 });
+        requestIdleCallback(() => this.startPreloading(), { timeout: 1500 });
       } else {
-        setTimeout(() => this.startPreloading(), 400);
+        setTimeout(() => this.startPreloading(), 600);
       }
     },
 
@@ -322,6 +327,23 @@
       // Fetch today's assets with high priority in parallel
       const list = Array.from(priorityUrls);
       await Promise.all(list.map(url => this.preloadSingleUrl(url, 'high')));
+    },
+
+    /**
+     * JIT (Just-In-Time) on-demand preload for hovering or clicking an exercise.
+     * Warms cache before user click or modal transition completes.
+     */
+    preloadExercise: function(exerciseName) {
+      if (!exerciseName || typeof window === 'undefined' || !window.UI) return;
+      const decodeSafe = (u) => (window.UI && typeof window.UI.safeDecodeURIComponent === 'function' ? window.UI.safeDecodeURIComponent(u) : decodeURIComponent(u));
+      if (typeof window.UI.getImageUrl === 'function') {
+        const p = window.UI.getImageUrl(exerciseName);
+        if (p) this.preloadSingleUrl(decodeSafe(p.split('?')[0]), 'high');
+      }
+      if (typeof window.UI.getGifUrl === 'function') {
+        const g = window.UI.getGifUrl(exerciseName);
+        if (g) this.preloadSingleUrl(decodeSafe(g.split('?')[0]), 'high');
+      }
     },
 
     /**
@@ -373,77 +395,118 @@
      * Skips network round-trip if asset is already cached.
      */
     preloadSingleUrl: async function(url, priorityLevel = 'auto') {
+      if (!url) return false;
       const targetUrl = encodeURI(url);
       const isLocalFile = typeof window !== 'undefined' && window.location && window.location.protocol === 'file';
 
-      // 1. Direct CacheStorage check (Instant 0ms if already cached)
-      if (!isLocalFile && typeof window !== 'undefined' && 'caches' in window) {
-        try {
-          const mediaCache = await caches.open(MEDIA_CACHE_NAME);
-          const cached = await caches.match(targetUrl, { ignoreSearch: true });
-          if (cached) {
-            return true;
-          }
-
-          // Not in cache yet: Fetch from network
-          const isGif = url.toLowerCase().endsWith('.gif');
-          const timeoutMs = isGif ? 18000 : 7000;
-          const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-          const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
-
-          try {
-            const fetchOptions = {
-              signal: controller ? controller.signal : undefined
-            };
-            if (priorityLevel === 'high') {
-              fetchOptions.priority = 'high';
-            } else if (isGif) {
-              fetchOptions.priority = 'low';
-            }
-
-            const response = await fetch(targetUrl, fetchOptions);
-            if (timer) clearTimeout(timer);
-
-            if (response && response.status === 200) {
-              // Store directly in MEDIA_CACHE
-              await mediaCache.put(targetUrl, response.clone());
-
-              // Also store with query parameter for guaranteed exact hit
-              if (targetUrl.endsWith('.png') && !targetUrl.includes('?')) {
-                try {
-                  await mediaCache.put(targetUrl + '?v=136', response.clone());
-                } catch (_) {}
-              }
-              return true;
-            }
-          } catch (fetchErr) {
-            if (timer) clearTimeout(timer);
-          }
-        } catch (cacheErr) {
-          // Silent fallback
-        }
+      // 0. Instant in-memory check (0ms)
+      if (this.cachedUrls.has(targetUrl) || this.cachedUrls.has(url)) {
+        return true;
       }
 
-      // 2. Image fallback (handles file:// or environments without CacheStorage)
-      return new Promise((resolve) => {
-        let settled = false;
-        const done = () => {
-          if (!settled) {
-            settled = true;
-            resolve(true);
-          }
-        };
+      // Check if already in-flight to deduplicate concurrent requests
+      if (this.inFlightFetches.has(targetUrl)) {
+        return this.inFlightFetches.get(targetUrl);
+      }
 
-        if (typeof Image !== 'undefined') {
-          const img = new Image();
-          img.onload = img.onerror = done;
-          img.src = targetUrl;
-        } else {
-          done();
+      const fetchPromise = (async () => {
+        // 1. Direct CacheStorage check (Instant 0ms if already cached)
+        if (!isLocalFile && typeof window !== 'undefined' && 'caches' in window) {
+          try {
+            const mediaCache = await caches.open(MEDIA_CACHE_NAME);
+            const cached = await caches.match(targetUrl, { ignoreSearch: true });
+            if (cached) {
+              this.cachedUrls.add(targetUrl);
+              this.cachedUrls.add(url);
+              return true;
+            }
+
+            // Not in cache yet: Fetch from network
+            const isGif = url.toLowerCase().endsWith('.gif');
+            const timeoutMs = isGif ? 18000 : 7000;
+            const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+            const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+
+            try {
+              const fetchOptions = {
+                signal: controller ? controller.signal : undefined
+              };
+              if (priorityLevel === 'high') {
+                fetchOptions.priority = 'high';
+              } else if (isGif) {
+                fetchOptions.priority = 'low';
+              }
+
+              const response = await fetch(targetUrl, fetchOptions);
+              if (timer) clearTimeout(timer);
+
+              if (response && response.status === 200) {
+                // Store directly in MEDIA_CACHE
+                await mediaCache.put(targetUrl, response.clone());
+
+                // Also store with query parameter for guaranteed exact hit
+                if (targetUrl.endsWith('.png') && !targetUrl.includes('?')) {
+                  try {
+                    await mediaCache.put(targetUrl + '?v=136', response.clone());
+                  } catch (_) {}
+                }
+                // Also store decoded version for instant hit
+                try {
+                  const decoded = decodeURI(targetUrl);
+                  if (decoded !== targetUrl) {
+                    await mediaCache.put(decoded, response.clone());
+                  }
+                } catch (_) {}
+
+                this.cachedUrls.add(targetUrl);
+                this.cachedUrls.add(url);
+
+                // Warm browser's decoded bitmap memory cache
+                if (typeof Image !== 'undefined') {
+                  const img = new Image();
+                  img.src = targetUrl;
+                }
+                return true;
+              }
+            } catch (fetchErr) {
+              if (timer) clearTimeout(timer);
+            }
+          } catch (cacheErr) {
+            // Silent fallback
+          }
         }
 
-        setTimeout(done, 4000);
-      });
+        // 2. Image fallback (handles file:// or environments without CacheStorage)
+        return new Promise((resolve) => {
+          let settled = false;
+          const done = () => {
+            if (!settled) {
+              settled = true;
+              this.cachedUrls.add(targetUrl);
+              this.cachedUrls.add(url);
+              resolve(true);
+            }
+          };
+
+          if (typeof Image !== 'undefined') {
+            const img = new Image();
+            img.onload = img.onerror = done;
+            img.src = targetUrl;
+          } else {
+            done();
+          }
+
+          setTimeout(done, 4000);
+        });
+      })();
+
+      this.inFlightFetches.set(targetUrl, fetchPromise);
+      try {
+        const res = await fetchPromise;
+        return res;
+      } finally {
+        this.inFlightFetches.delete(targetUrl);
+      }
     },
 
     /**
@@ -472,23 +535,41 @@
         });
 
         // Worker runner helper
-        const runQueue = async (queue, concurrency) => {
+        const runQueue = async (queue, concurrency, delayMs = 0) => {
           const worker = async () => {
             while (queue.length > 0) {
               const url = queue.shift();
-              await this.preloadSingleUrl(url);
+              await this.preloadSingleUrl(url, 'low');
               this.completed++;
+              if (delayMs > 0 && queue.length > 0) {
+                await new Promise(r => {
+                  if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+                    requestIdleCallback(r, { timeout: delayMs + 100 });
+                  } else {
+                    setTimeout(r, delayMs);
+                  }
+                });
+              }
             }
           };
           const workers = Array.from({ length: concurrency }, () => worker());
           await Promise.all(workers);
         };
 
-        // Phase 1: High priority PNGs (fast, lightweight cards)
-        await runQueue(pngQueue, 4);
+        // Phase 1: High priority PNGs (fast, lightweight cards, ~50-100KB each)
+        await runQueue(pngQueue, 3);
 
-        // Phase 2: GIFs in the background (concurrency 2 so it never chokes user interaction)
-        await runQueue(gifQueue, 2);
+        // Phase 2: GIFs in the background
+        const navConn = (typeof navigator !== 'undefined' && (navigator.connection || navigator.mozConnection || navigator.webkitConnection));
+        const isDataSaver = navConn && (navConn.saveData === true || navConn.effectiveType === '2g' || navConn.effectiveType === '3g');
+
+        if (isDataSaver) {
+          console.log('[Preloader] Metered/SaveData connection detected. Deferring non-essential background GIFs to on-demand.');
+          this.completed = this.total;
+        } else {
+          // Concurrency 1 with gentle 150ms idle spacing so browsing and user actions remain completely unblocked
+          await runQueue(gifQueue, 1, 150);
+        }
 
         console.log(`[Preloader] Background preloading complete! (${this.completed}/${this.total} assets cached)`);
       })();

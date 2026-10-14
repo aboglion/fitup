@@ -63,13 +63,13 @@
       }
     } catch (e) {}
     if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(regs => {
-          regs.forEach(r => r.unregister());
-        });
-      }
       if ('caches' in window) {
-        caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+        // Clear app shell caches to load fresh code changes, but preserve heavy media cache
+        caches.keys().then(keys => keys.forEach(k => {
+          if (k !== 'fitup-media-cache-v1') {
+            caches.delete(k);
+          }
+        }));
       }
     }
   </script>
@@ -390,17 +390,28 @@
             </a>
 
             <div
-              style="font-size: 12px; color: var(--text-secondary); background: var(--bg-card); padding: 10px 14px; border-radius: 10px; border: 1px dashed var(--border-light); line-height: 1.6;"
-              data-i18n="get_free_key_steps">
-              1️⃣ Click the link above & log in with Google.<br>
-              2️⃣ Click "Create API Key" in Google AI Studio.<br>
-              3️⃣ Copy key and paste below. 100% Free!
+              style="font-size: 12px; color: var(--text-secondary); background: var(--bg-card); padding: 12px 14px; border-radius: 10px; border: 1px dashed var(--border-light);"
+              data-i18n-html="get_free_key_steps">
+              <div style="display: flex; flex-direction: column; gap: 7px;">
+                <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+                  <span style="font-size: 13px; flex-shrink: 0;">1️⃣</span>
+                  <span>Click the link above &amp; log in with Google.</span>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+                  <span style="font-size: 13px; flex-shrink: 0;">2️⃣</span>
+                  <span>Click <bdi dir="ltr">'Create API key'</bdi> in Google AI Studio.</span>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+                  <span style="font-size: 13px; flex-shrink: 0;">3️⃣</span>
+                  <span>Copy key and paste below. <b style="color: var(--accent-primary, #3b82f6); font-weight: 800;">100% Free!</b></span>
+                </div>
+              </div>
             </div>
 
             <div>
               <label
                 style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;"
-                data-i18n="api_key_label">API Key (Google Gemini)</label>
+                data-i18n-html="api_key_label">API Key (Google Gemini)</label>
               <input type="password" id="gemini-api-key-input" placeholder="AIzaSy..."
                 style="width: 100%; padding: 12px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-family: monospace;"
                 dir="ltr">
@@ -940,16 +951,27 @@
                   <span data-i18n="get_free_key_btn">🔑 Get Free API Key on Google AI Studio ↗</span>
                 </a>
                 <div
-                  style="font-size: 11px; color: var(--text-secondary); background: var(--bg-card); padding: 8px 12px; border-radius: 8px; border: 1px dashed var(--border-light); line-height: 1.5;"
-                  data-i18n="get_free_key_steps">
-                  1️⃣ Click the link above & log in with Google.<br>
-                  2️⃣ Click "Create API Key" in Google AI Studio.<br>
-                  3️⃣ Copy key and paste below. 100% Free!
+                  style="font-size: 11px; color: var(--text-secondary); background: var(--bg-card); padding: 10px 12px; border-radius: 8px; border: 1px dashed var(--border-light);"
+                  data-i18n-html="get_free_key_steps">
+                  <div style="display: flex; flex-direction: column; gap: 7px;">
+                    <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+                      <span style="font-size: 13px; flex-shrink: 0;">1️⃣</span>
+                      <span>Click the link above &amp; log in with Google.</span>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+                      <span style="font-size: 13px; flex-shrink: 0;">2️⃣</span>
+                      <span>Click <bdi dir="ltr">'Create API key'</bdi> in Google AI Studio.</span>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+                      <span style="font-size: 13px; flex-shrink: 0;">3️⃣</span>
+                      <span>Copy key and paste below. <b style="color: var(--accent-primary, #3b82f6); font-weight: 800;">100% Free!</b></span>
+                    </div>
+                  </div>
                 </div>
                 <div>
                   <label
                     style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 4px;"
-                    data-i18n="api_key_label">API Key (Google Gemini)</label>
+                    data-i18n-html="api_key_label">API Key (Google Gemini)</label>
                   <input type="password" id="settings-gemini-key" placeholder="AIzaSy..."
                     style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary);"
                     dir="ltr">
@@ -959,7 +981,7 @@
               <!-- Key Active / Delete Wrapper (Shown in place of key input ONLY when key IS defined) -->
               <div id="settings-gemini-key-active-wrapper" style="display: none; flex-direction: column; gap: 4px;">
                 <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: block;"
-                  data-i18n="api_key_label">API Key (Google Gemini)</label>
+                  data-i18n-html="api_key_label">API Key (Google Gemini)</label>
                 <div
                   style="display: flex; align-items: center; justify-content: space-between; background: var(--bg-elevated); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--border-light); gap: 12px;">
                   <div

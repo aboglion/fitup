@@ -3728,7 +3728,7 @@ const TodayPage = (() => {
       const gifPath = UI.getGifUrl(activeName);
       let videoBtn = '';
       if (!activeName.toLowerCase().includes('walking')) {
-        videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${activeName.replace(/'/g, "\\'")}', '${gifPath}', '${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/'/g, "\\'")}'); event.stopPropagation();">▶</button>`;
+        videoBtn = `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onpointerenter="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${activeName.replace(/'/g, "\\'")}')" ontouchstart="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${activeName.replace(/'/g, "\\'")}')" onclick="UI.showImageModal('${activeName.replace(/'/g, "\\'")}', '${gifPath}', '${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/'/g, "\\'")}'); event.stopPropagation();">▶</button>`;
       }
 
       // Find previous occurrence
@@ -4107,7 +4107,7 @@ const TodayPage = (() => {
       const isCardAlert = isNewExercise || isAngleChanged;
 
       return `
-        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isSkippedTemp ? 'skipped-temp' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isCardAlert ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};">
+        <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isSkippedTemp ? 'skipped-temp' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isCardAlert ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};" onpointerenter="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${activeName.replace(/'/g, "\\'")}')" ontouchstart="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${activeName.replace(/'/g, "\\'")}')">
           <div class="exercise-hero-container skeleton-loading" style="position: relative;">
             <div class="skeleton-placeholder" style="gap: 4px;">
               <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>

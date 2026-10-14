@@ -6,6 +6,8 @@ const ASSETS = [
   './manifest.json',
   './images/icon-192.png',
   './images/icon-512.png',
+  './images/anatomy-front.webp',
+  './images/anatomy-back.webp',
   './css/main.css',
   './css/components.css',
   './css/animations.css',
@@ -116,16 +118,32 @@ self.addEventListener('fetch', (event) => {
   // Cache-First with Network Fallback for media assets (images, gifs, webp)
   if (url.includes('/images/')) {
     event.respondWith(
-      caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+      caches.match(event.request, { ignoreSearch: true }).then(async (cachedResponse) => {
         if (cachedResponse) {
           return cachedResponse;
         }
+        // Fallback check in MEDIA_CACHE for decoded URI matching
+        try {
+          const mediaCache = await caches.open(MEDIA_CACHE);
+          const decoded = decodeURI(event.request.url);
+          if (decoded !== event.request.url) {
+            const decMatch = await mediaCache.match(decoded, { ignoreSearch: true });
+            if (decMatch) return decMatch;
+          }
+        } catch (_) {}
+
         return fetch(event.request)
           .then((networkResponse) => {
             if (networkResponse && networkResponse.status === 200) {
               const responseToCache = networkResponse.clone();
               caches.open(MEDIA_CACHE).then((cache) => {
                 cache.put(event.request, responseToCache).catch(() => { });
+                try {
+                  const dec = decodeURI(event.request.url);
+                  if (dec !== event.request.url) {
+                    cache.put(dec, responseToCache.clone()).catch(() => { });
+                  }
+                } catch (_) {}
               }).catch(() => { });
             }
             return networkResponse;

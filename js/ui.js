@@ -1311,13 +1311,10 @@ const UI = (() => {
 
         biomechanicalHTML = `
           <div style="background: var(--bg-card); padding: 12px; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+            <div style="display: flex; align-items: center; gap: 6px;">
               <div style="font-size: 13px; font-weight: 800; color: #10b981; display: flex; align-items: center; gap: 6px;">
                 <span>🛡️</span> <span>${I18n.t('injury_section_title')}</span>
               </div>
-              <button type="button" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="if(typeof AnatomyMap !== 'undefined') AnatomyMap.openJointsModal();">
-                🛡️ ${I18n.t('today_injury_banner_btn')}
-              </button>
             </div>
             ${activeAlertBox}
             <div style="display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0;">

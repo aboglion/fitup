@@ -304,7 +304,20 @@ const I18n = (() => {
       save_ai_scanner: "✨ Save & Enable AI Scanner",
       get_free_key_tip: "💡 Don't have a key? Get one for free in a minute at",
       get_free_key_btn: "🔑 Get Free API Key on Google AI Studio ↗",
-      get_free_key_steps: "1️⃣ Click the link above & log in with Google.<br>2️⃣ Click 'Create API key'.<br>3️⃣ Copy key and paste below. 100% Free!",
+      get_free_key_steps: `<div style="display: flex; flex-direction: column; gap: 7px;">
+  <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+    <span style="font-size: 13px; flex-shrink: 0;">1️⃣</span>
+    <span>Click the link above &amp; log in with Google.</span>
+  </div>
+  <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+    <span style="font-size: 13px; flex-shrink: 0;">2️⃣</span>
+    <span>Click <bdi dir="ltr">'Create API key'</bdi> in Google AI Studio.</span>
+  </div>
+  <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+    <span style="font-size: 13px; flex-shrink: 0;">3️⃣</span>
+    <span>Copy key and paste below. <b style="color: var(--accent-primary, #3b82f6); font-weight: 800;">100% Free!</b></span>
+  </div>
+</div>`,
       model_auto_updated: "Model automatically updated to {model}! 🚀",
       add_meal_ai: "📸 Add Meal with AI Scanner",
       snap_food: "Snap Food",
@@ -1725,12 +1738,25 @@ const I18n = (() => {
       ai_settings: "הגדרות AI",
       gemini_setup_title: "הגדרת Gemini AI (סורק אוכל)",
       gemini_setup_desc: "כדי לצלם אוכל ולקבל חישוב קלוריות וחלבון אוטומטי, הזן מפתח Gemini API חינמי",
-      api_key_label: "מפתח API (Google Gemini)",
+      api_key_label: "מפתח <bdi dir=\"ltr\">API (Google Gemini)</bdi>",
       ai_model_label: "מודל בינה מלאכותית (AI Model)",
       save_ai_scanner: "✨ שמור והפעל סורק AI",
       get_free_key_tip: "💡 אין לך מפתח? ניתן להנפיק מפתח בחינם דרך",
       get_free_key_btn: "🔑 לחץ כאן לקבלת מפתח API בחינם ב-Google AI Studio ↗",
-      get_free_key_steps: "1️⃣ לחץ על הלינק למעלה והתחבר עם חשבון Google.<br>2️⃣ לחץ על 'Create API key' ב-Google AI Studio.<br>3️⃣ העתק את המפתח והדבק אותו בשדה למטה. חינם לחלוטין!",
+      get_free_key_steps: `<div style="display: flex; flex-direction: column; gap: 7px;">
+  <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+    <span style="font-size: 13px; flex-shrink: 0;">1️⃣</span>
+    <span>לחץ על הלינק למעלה והתחבר עם חשבון Google.</span>
+  </div>
+  <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+    <span style="font-size: 13px; flex-shrink: 0;">2️⃣</span>
+    <span>לחץ על <bdi dir="ltr">'Create API key'</bdi> ב-Google AI Studio.</span>
+  </div>
+  <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+    <span style="font-size: 13px; flex-shrink: 0;">3️⃣</span>
+    <span>העתק את המפתח והדבק אותו בשדה למטה. <b style="color: var(--accent-primary, #3b82f6); font-weight: 800;">חינם לחלוטין!</b></span>
+  </div>
+</div>`,
       model_auto_updated: "המודל עודכן אוטומטית ל-{model} לביצועים מיטביים! 🚀",
       add_meal_ai: "📸 הוספת ארוחה מבוססת AI",
       snap_food: "צלם אוכל",
@@ -3333,12 +3359,25 @@ const I18n = (() => {
       ai_settings: "إعدادات الذكاء الاصطناعي",
       gemini_setup_title: "إعداد Gemini AI (ماسح الطعام)",
       gemini_setup_desc: "لتقاط صور الطعام وحساب السعرات والبروتين تلقائياً، أدخل مفتاح Gemini API المجاني",
-      api_key_label: "مفتاح API (Google Gemini)",
+      api_key_label: "مفتاح <bdi dir=\"ltr\">API (Google Gemini)</bdi>",
       ai_model_label: "نموذج الذكاء الاصطناعي",
       save_ai_scanner: "✨ حفظ وتفعيل ماسح AI",
       get_free_key_tip: "💡 ليس لديك مفتاح؟ يمكنك الحصول على مفتاح مجاني خلال دقيقة عبر",
       get_free_key_btn: "🔑 انقر هنا للحصول على مفتاح API مجاناً من Google AI Studio ↗",
-      get_free_key_steps: "1️⃣ انقر على الرابط أعلاه وسجل الدخول بحساب Google.<br>2️⃣ انقر على 'Create API key' في Google AI Studio.<br>3️⃣ انسخ المفتاح والصقه في الحقل أدناه. مجاني تماماً!",
+      get_free_key_steps: `<div style="display: flex; flex-direction: column; gap: 7px;">
+  <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+    <span style="font-size: 13px; flex-shrink: 0;">1️⃣</span>
+    <span>انقر على الرابط أعلاه وسجل الدخول بحساب Google.</span>
+  </div>
+  <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+    <span style="font-size: 13px; flex-shrink: 0;">2️⃣</span>
+    <span>انقر على <bdi dir="ltr">'Create API key'</bdi> في Google AI Studio.</span>
+  </div>
+  <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
+    <span style="font-size: 13px; flex-shrink: 0;">3️⃣</span>
+    <span>انسخ المفتاح والصقه في الحقل أدناه. <b style="color: var(--accent-primary, #3b82f6); font-weight: 800;">مجاني تماماً!</b></span>
+  </div>
+</div>`,
       model_auto_updated: "تم تحديث النموذج تلقائياً إلى {model} للحصول على أفضل أداء! 🚀",
       add_meal_ai: "📸 إضافة وجبة بالذكاء الاصطناعي",
       snap_food: "التقط صورة",
@@ -4339,6 +4378,8 @@ const I18n = (() => {
           el.placeholder = translation;
         } else if (el.tagName === 'TEXTAREA') {
           el.placeholder = translation;
+        } else if (translation && (translation.includes('<') && translation.includes('>'))) {
+          el.innerHTML = translation;
         } else {
           el.textContent = translation;
         }

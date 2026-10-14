@@ -1149,8 +1149,8 @@ const ExercisesPage = (() => {
       return;
     }
 
-    container.innerHTML = filtered.map(ex => {
-      return generateGuideCardHTML(ex);
+    container.innerHTML = filtered.map((ex, index) => {
+      return generateGuideCardHTML(ex, index);
     }).join('');
 
     // Immediate check for images already cached in browser/SW to clear skeleton spinners without delay
@@ -1170,10 +1170,10 @@ const ExercisesPage = (() => {
   /**
    * Generate HTML for a guide card
    */
-  function generateGuideCardHTML(ex) {
+  function generateGuideCardHTML(ex, index) {
     const diffClass = UI.getDifficultyClass(ex.difficulty);
     const gifPath = UI.getGifUrl(ex.name);
-    const videoLink = UI.hasGif(ex.name) ? `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>` : '';
+    const videoLink = UI.hasGif(ex.name) ? `<button type="button" class="exercise-video-btn" title="${I18n.t('view_gif_title')}" style="color: var(--danger);" onpointerenter="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${ex.name.replace(/'/g, "\\'")}')" ontouchstart="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${ex.name.replace(/'/g, "\\'")}')" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}', '${gifPath}'); event.stopPropagation();">▶</button>` : '';
 
     const equip = UI.getEquipment(ex.name);
     let weightDisplay = ex.weight || '';
@@ -1193,13 +1193,16 @@ const ExercisesPage = (() => {
       ? `<div style="font-size: 11px; color: var(--accent-orange, #f97316); margin-top: 4px; font-weight: 600;">🔗 תנאי קדם: ${ex.parentName}</div>`
       : '';
 
+    const isEager = (index === undefined || index < 6);
+    const loadingAttr = isEager ? 'loading="eager"' : 'loading="lazy"';
+
     return `
-      <div class="guide-card" style="cursor: pointer;" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}')">
+      <div class="guide-card" style="cursor: pointer;" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}')" onpointerenter="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${ex.name.replace(/'/g, "\\'")}')" ontouchstart="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${ex.name.replace(/'/g, "\\'")}')">
         <div class="guide-card-image-container diff-${diffClass} skeleton-loading">
           <div class="skeleton-placeholder" style="gap: 4px;">
             <div class="skeleton-spinner" style="width: 18px; height: 18px; border-width: 2px;"></div>
           </div>
-          <img src="${UI.getImageUrl(ex.name)}" class="exercise-image skeleton-img" alt="${ex.name}" loading="eager" decoding="async" onload="UI.handleImageLoaded(this)" onerror="UI.handleImageFallback(this, 'png')">
+          <img src="${UI.getImageUrl(ex.name)}" class="exercise-image skeleton-img" alt="${ex.name}" ${loadingAttr} decoding="async" onload="UI.handleImageLoaded(this)" onerror="UI.handleImageFallback(this, 'png')">
         </div>
         <div class="guide-card-content">
           <div class="guide-card-title">
@@ -1438,13 +1441,10 @@ const ExercisesPage = (() => {
 
         injurySafetyHtml = `
           <div style="background: var(--bg-card); border-radius: 12px; padding: 14px; border: 1px solid var(--border-light); margin-top: 8px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+            <div style="display: flex; align-items: center; margin-bottom: 8px; gap: 6px;">
               <h3 style="color: #10b981; font-size: 15px; font-weight: 800; margin: 0; display: flex; align-items: center; gap: 6px;">
                 <span>🛡️</span> <span>${I18n.t('injury_section_title')}</span>
               </h3>
-              <button type="button" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="if(typeof AnatomyMap !== 'undefined') AnatomyMap.openJointsModal();">
-                🛡️ ${I18n.t('today_injury_banner_btn')}
-              </button>
             </div>
             ${activeAlertBox}
             <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;">
