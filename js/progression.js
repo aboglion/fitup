@@ -208,7 +208,35 @@
         };
       }
 
-      // 2. Performance Below Target: Auto-regulated Reduction / Hold
+      // 2. Volume Stepping Bridge Fatigue Protection (Sisyphus Bug Fix):
+      // If trainee is in a Volume Stepping bridge (prescribed sets > baseSets),
+      // and performed the baseSets cleanly (in_window / above), but experienced BELOW ONLY on the added
+      // bridge sets (sets >= baseSets):
+      // Do NOT wipe out sessionsAtWeight to 0 or drop to baseSets (which causes an infinite regression loop).
+      // Instead, step down volume by 1 set (e.g. 4 -> 3 sets) to consolidate work capacity safely.
+      const baseSetsCount = exercise.sets || (isGrpA ? 3 : 2);
+      const currentSessionsCount = state ? (state.sessionsAtWeight || 0) : 0;
+      const prescribedBridgeSets = this.calculatePrescribedSets(exercise, currentWeight, currentSessionsCount, baseSetsCount);
+
+      if (setResults && setResults.length > baseSetsCount) {
+        const baseSetSlice = setResults.slice(0, baseSetsCount);
+        const bridgeSetSlice = setResults.slice(baseSetsCount);
+        const baseClean = baseSetSlice.every(s => s.result === 'in_window' || s.result === 'above');
+        const bridgeHasBelow = bridgeSetSlice.some(s => s.result === 'below');
+
+        if (baseClean && bridgeHasBelow) {
+          const stepDownSets = Math.max(baseSetsCount, prescribedBridgeSets - 1);
+          return {
+            action: 'maintain',
+            newWeight: currentWeight,
+            targetSets: stepDownSets,
+            reason: 'bridge_fatigue_step_down',
+            stepDownSessions: true
+          };
+        }
+      }
+
+      // 3. Performance Below Target: Auto-regulated Reduction / Hold
       // First BELOW session maintains weight and relieves volume fatigue (sets to base).
       // Only 2 consecutive BELOW sessions trigger a weight demotion (-2kg down to minWeight floor).
       if (evaluation === 'all_below') {
@@ -816,10 +844,17 @@
       let startWeight = isWeightedEx ? (exercise.startingWeight || 8) : 0;
 
       // Parent weight inheritance mapping for direct replacements (strictly weighted-to-weighted).
-      // Note: Unilateral replacements (e.g. Single-Leg RDL replacing bilateral Goblet RDL)
-      // MUST NOT inherit 100% of bilateral load directly due to L4-S1 spinal stability and balance,
-      // and to preserve the full 36-week progressive overload runway up to 32kg.
-      // Therefore, single-leg-rdl begins safely at its prescribed startingWeight (8 kg).
+      // Unilateral replacements (Single-Leg RDL replacing bilateral Goblet RDL)
+      // derive starting weight safely as 50% of bilateral load (rounded to nearest even kg, min 8 kg)
+      // to maintain mechanical tension without risking pelvic rotational torque on L4-S1.
+      if (exerciseId === 'single-leg-rdl' && allProgressionStates) {
+        const gobletState = allProgressionStates['goblet-rdl'] || allProgressionStates['goblet-romanian-deadlift'];
+        const gobletW = gobletState ? (gobletState.currentWeightKg || 0) : 0;
+        if (gobletW > 0) {
+          startWeight = Math.max(8, Math.round((gobletW * 0.5) / 2) * 2);
+        }
+      }
+
       const parentIdMap = {
         // Direct identical bilateral substitutions only (if any)
       };
@@ -978,8 +1013,17 @@
           state.sessionsAtWeight = 0;
           state.consecutiveBelow = 0;
         } else if (decision.action === 'maintain') {
-          if (decision.reason === 'first_below_maintain') {
-            state.sessionsAtWeight = 0;
+          if (decision.reason === 'bridge_fatigue_step_down') {
+            // Sisyphus Protection: step down volume bridge by 1 set rather than wiping progress
+            state.sessionsAtWeight = Math.max(0, (state.sessionsAtWeight || 1) - 1);
+            state.consecutiveBelow = 0;
+          } else if (decision.reason === 'first_below_maintain') {
+            // If they were in an expanded volume bridge (>1 session), step down by 1 rather than resetting to 0
+            if ((state.sessionsAtWeight || 0) > 1) {
+              state.sessionsAtWeight = state.sessionsAtWeight - 1;
+            } else {
+              state.sessionsAtWeight = 0;
+            }
             state.consecutiveBelow = (state.consecutiveBelow || 0) + 1;
           } else if (decision.reason && decision.reason.includes('accumulating')) {
             state.sessionsAtWeight = (state.sessionsAtWeight || 0) + 1;
@@ -1038,6 +1082,80 @@
       });
 
       return { state, decision, historyEntry, nextRest };
+    }
+
+    /**
+     * Post-Injury Load Safe Reset (Auto-Deload on Joint Recovery)
+     * When a joint recovers from an extended INJURED state (>= 10-14 days),
+     * applies an automatic safe load reduction (-2 to -4 kg) to primary compound exercises
+     * loading that joint to prevent tendon relapse and ensure safe re-acclimatization.
+     *
+     * @param {string} jointId - Recovered joint ID (e.g. 'knee_r', 'shoulder_l', 'lower_back')
+     * @param {number} daysInjured - Days spent in INJURED state
+     * @returns {Promise<Array<Object>>} affected exercises with their updated states
+     */
+    async applyInjuryRecoveryDeload(jointId, daysInjured = 14) {
+      if (!jointId || typeof DB === 'undefined' || !DB.getProgressionState) return [];
+
+      const affected = [];
+      const adaptations = (typeof InjuryEngine !== 'undefined') ? InjuryEngine.EXERCISE_ADAPTATIONS : {};
+
+      for (const [exName, rule] of Object.entries(adaptations)) {
+        if (!rule.joints || !rule.joints.includes(jointId)) continue;
+        const exId = this.findExerciseIdByName(exName) || exName.toLowerCase().replace(/\s+/g, '-');
+        const exDef = this.getExercise(exId);
+        if (!exDef || (exDef.type !== 'weighted' && exDef.startingWeight == null)) continue;
+
+        let state = await DB.getProgressionState(exId);
+        if (!state || !state.currentWeightKg) continue;
+
+        const minW = exDef.minWeight || 6;
+        if (state.currentWeightKg <= minW) continue;
+
+        // Reduction magnitude: -4kg if load was heavy (>=18kg), else -2kg
+        const reduction = (state.currentWeightKg >= 18) ? 4 : 2;
+        const previousWeight = state.currentWeightKg;
+        const newWeight = Math.max(minW, state.currentWeightKg - reduction);
+
+        if (newWeight < previousWeight) {
+          state.currentWeightKg = newWeight;
+          state.sessionsAtWeight = 0;
+          state.consecutiveBelow = 0;
+          state.lastUpdated = new Date().toISOString();
+
+          await DB.saveProgressionState(state);
+
+          const historyEntry = {
+            id: `dec_${exId}_${Date.now()}`,
+            exerciseId: exId,
+            action: 'decrease',
+            reason: 'post_injury_recovery_deload',
+            weightKg: newWeight,
+            previousWeightKg: previousWeight,
+            jointId,
+            daysInjured: Math.round(daysInjured),
+            timestamp: new Date().toISOString()
+          };
+          if (DB.saveProgressionHistory) {
+            await DB.saveProgressionHistory(historyEntry);
+          }
+
+          affected.push({
+            exerciseId: exId,
+            exerciseName: exName,
+            previousWeight,
+            newWeight,
+            reduction
+          });
+        }
+      }
+
+      if (affected.length > 0 && typeof window !== 'undefined' && window.UI && window.UI.toast && typeof I18n !== 'undefined') {
+        const msg = `${I18n.t('injury_post_recovery_deload') || 'התאמת עומס בטיחותית לאחר פציעה'}: ${affected.map(a => `${a.exerciseName} (${a.newWeight}kg)`).join(', ')}`;
+        UI.toast(msg, 'info', 6000);
+      }
+
+      return affected;
     }
   }
 

@@ -258,7 +258,7 @@ test('ProgressionEngine - Arm Block Gradual Ramp Phase resolver', () => {
   assert.equal(ProgressionEngine.isArmBlockAllowed(null, 6).active, true);
 });
 
-test('ProgressionEngine - Single-Leg RDL initializes safely at 8kg baseline without copying bilateral weight', () => {
+test('ProgressionEngine - Single-Leg RDL initializes safely at 50% bilateral baseline without copying 100% load', () => {
   window.TRAINING_DATA = {
     exercises: [
       { id: 'single-leg-rdl', name: 'Single-Leg RDL', type: 'weighted', startingWeight: 8, minWeight: 6, maxWeight: 32, increment: 2 },
@@ -266,13 +266,21 @@ test('ProgressionEngine - Single-Leg RDL initializes safely at 8kg baseline with
     ]
   };
   // Trainee has achieved 20kg on Goblet RDL at Week 17
-  const statesMap = {
+  const statesMap20 = {
     'goblet-rdl': { currentWeightKg: 20, sessionsAtWeight: 2 }
   };
-  const slState = ProgressionEngine.createInitialState('single-leg-rdl', statesMap);
-  // Must start at 8kg (safe unilateral baseline) rather than inheriting 20kg
-  assert.equal(slState.currentWeightKg, 8);
-  assert.equal(slState.exerciseId, 'single-leg-rdl');
+  const slState20 = ProgressionEngine.createInitialState('single-leg-rdl', statesMap20);
+  // Starts safely at 50% (10 kg) to maintain mechanical tension without copying full 20kg
+  assert.equal(slState20.currentWeightKg, 10);
+  assert.equal(slState20.exerciseId, 'single-leg-rdl');
+
+  // Trainee with 14kg on Goblet RDL
+  const statesMap14 = {
+    'goblet-rdl': { currentWeightKg: 14, sessionsAtWeight: 2 }
+  };
+  const slState14 = ProgressionEngine.createInitialState('single-leg-rdl', statesMap14);
+  // Bounded by safe 8kg floor
+  assert.equal(slState14.currentWeightKg, 8);
 });
 
 test('ProgressionEngine - calculateWeightedDecision and getDisplayPrescription handle 32kg ceiling overload', () => {

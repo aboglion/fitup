@@ -1622,10 +1622,13 @@ const I18n = (() => {
       injury_badge_rom_shield: "ROM Shield Active",
       injury_badge_swapped: "Safely Swapped",
       injury_muscle_alert: "Active Joint Sensitivity: Movements for this muscle are safely adapted!",
-      injury_clinical_warning_title: "Clinical Safety Warning",
-      injury_clinical_warning_body: "Acute pain or suspected tissue damage requires immediate rest and professional medical/physical therapy evaluation. Substitutions are pain-free maintenance movements only; do NOT perform if any pain persists.",
-      injury_clinical_warning_inline: "Acute joint pain requires medical evaluation. Execute strictly pain-free or skip exercise.",
-      injury_pill_joint_spared: "Joint Deload • Protected Movement"
+      injury_pill_joint_spared: "Joint Deload • Protected Movement",
+      injury_badge_volume_merged: "⚡ Volume Consolidated",
+      injury_post_recovery_deload: "🌿 Post-Injury Safe Load Reset (-2 to -4 kg)",
+      asymmetric_pair_straight_set: "Straight Set (Pair Complete)",
+      injury_cue_wall_sit: "Swapped to Wall Sit: Isometric quad stimulus at safe 60-70° angle with zero patellofemoral shear or joint translation.",
+      injury_cue_single_leg_bridge: "Swapped to Single-Leg Glute Bridge: Unilateral posterior overload with absolute knee joint safety.",
+      injury_cue_rdl_secondary_injured: "Swapped to Dead Bug: Deep anterior core stabilization with 100% spinal unloading."
     },
     he: {
 
@@ -3015,10 +3018,13 @@ const I18n = (() => {
       injury_badge_rom_shield: "הגנת ROM פעילה",
       injury_badge_swapped: "מוחלף בטיחותית",
       injury_muscle_alert: "שים לב: זוהתה רגישות מפרקית פעילה! תרגילי שריר זה מוגנים בהגבלת ROM או החלפה בטוחה.",
-      injury_clinical_warning_title: "אזהרה רפואית ובטיחותית",
-      injury_clinical_warning_body: "כאב אקוטי או חשד לנזק ברקמה מחייבים מנוחה של המפרק ופנייה לאבחון רפואי או פיזיותרפי. התרגילים החלופיים נועדו לתנועה משמרת ללא כאב בלבד; אין לבצעם אם מופיע כאב.",
-      injury_clinical_warning_inline: "כאב אקוטי מחייב אבחון רפואי. בצע רק אם נטול כאב לחלוטין או דלג על התרגיל.",
-      injury_pill_joint_spared: "פריקת עומס מפרקי • תנועה מוגנת"
+      injury_pill_joint_spared: "פריקת עומס מפרקי • תנועה מוגנת",
+      injury_badge_volume_merged: "⚡ נפח מאוחד (מניעת עומס יתר)",
+      injury_post_recovery_deload: "🌿 התאמת עומס בטיחותית לאחר פציעה (-2 עד -4 ק״ג)",
+      asymmetric_pair_straight_set: "סט עצמאי (צמד הושלם)",
+      injury_cue_wall_sit: "הוחלף ל-Wall Sit: גירוי איזומטרי לארבע-ראשי בזווית בטוחה (60°-70°) ב-0 עומס גזירה או שחיקה פטלופמורלית.",
+      injury_cue_single_leg_bridge: "הוחלף ל-Single-Leg Glute Bridge: עומס שרשרת אחורית חד-צדדי ב-0 לחץ על מפרק הברך.",
+      injury_cue_rdl_secondary_injured: "הוחלף ל-Dead Bug: ייצוב ליבה עמוק עם פריקת עומס מלאה מעמוד השדרה."
     },
     ar: {
 
@@ -4258,10 +4264,13 @@ const I18n = (() => {
       injury_badge_rom_shield: "درع نطاق الحركة نشط",
       injury_badge_swapped: "مستبدل بأمان",
       injury_muscle_alert: "تنبيه: تم رصد حساسية نشطة في المفاصل! تمارين هذه العضلة محمية بتعديل نطاق الحركة أو البديل الآمن.",
-      injury_clinical_warning_title: "تحذير طبي وسلامة سريرية",
-      injury_clinical_warning_body: "الألم الحاد أو الاشتباه في تلف الأنسجة يتطلب راحة فورية واستشارة طبية متخصصة. التمارين البديلة هي حركات للمحافظة فقط بدون ألم؛ لا تمارسها إذا استمر أي ألم.",
-      injury_clinical_warning_inline: "الألم الحاد يتطلب استشارة طبية. تدرب بدون أي ألم إطلاقاً أو تخطَّ التمرين.",
-      injury_pill_joint_spared: "تخفيف حمل المفاصل • حركة محمية"
+      injury_pill_joint_spared: "تخفيف حمل المفاصل • حركة محمية",
+      injury_badge_volume_merged: "⚡ دمج الحجم (منع الإجهاد الزائد)",
+      injury_post_recovery_deload: "🌿 ضبط آمن للوزن بعد التعافي من الإصابة (-2 إلى -4 كغ)",
+      asymmetric_pair_straight_set: "مجموعة فردية (اكتمل الزوج)",
+      injury_cue_wall_sit: "استبدل بـ Wall Sit: تحفيز متساوي القياس للعضلة رباعية الرؤوس بزاوية آمنة (60-70 درجة) بدون إجهاد للركبة.",
+      injury_cue_single_leg_bridge: "استبدل بـ Single-Leg Glute Bridge: حمل خلفي أحادي مع أمان تام لمفصل الركبة.",
+      injury_cue_rdl_secondary_injured: "استبدل بـ Dead Bug: استقرار عميق للجذع مع تفريغ كامل للحمل عن العمود الفقري."
     }
   };
 

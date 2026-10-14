@@ -36,7 +36,7 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 - **Quad Overload & Paused Squats**: Heels-Elevated Goblet Squats enforce a 1–2s isometric pause at the bottom (Paused Squat) to maintain continuous quad tension without ballistic bounce. The Goblet Bulgarian Split Squat (unlocked early in Phase 0) provides the primary unilateral overload mechanism, overcoming the dumbbell weight ceiling without compressive spinal torque.
 - **TRX**: Strictly for Face Pulls, TRX Rows, and TRX Y-T-W. Fixed body angles assigned per phase.
 - **Neutral Spine**: Rigid neutral alignment across all RDL, Row, and Carry variations. Lumbar rounding = load is too heavy.
-- **Unilateral Execution**: Complete all sets for side A, swap to side B, then proceed to the next exercise.
+- **Unilateral Execution**: For straight sets: complete all sets for side A, swap to side B, then proceed to the next exercise. For Lean Pairs: perform Set $N$ of Exercise 1, then Set $N$ of Exercise 2 (for unilateral movements: side A then side B), followed by the 75s pair rest.
 - **Handle Weight & Total Dumbbell Load**: Dumbbell handle weight is **6 kg** and is strictly included in total load calculations (the handle is NOT ignored). An empty dumbbell equals 6 kg. Loaded dumbbells progress in strictly 2 kg increments (8, 10, 12, 14, 16... up to 32 kg).
 
 ### 1.3 Biomechanical Joint & Injury Engine (Joint-Sparing Safety & 1-Tap Vulnerability Map)
@@ -110,9 +110,16 @@ When a joint is marked **Injured 🔴**, the engine executes the following joint
 | **Achilles Tendon** | `VO2 Max Norwegian 4x4` | Capped at 4% incline; treadmill speed max 6.5 km/h | **Brisk Walking** (Zone 2) | Eliminates high-impact Achilles recoil while preserving aerobic conditioning. |
 | **Neck / Cervical** | `Band Neck Flexion & Extension` | Light resistance, 3-1-3 tempo, chin-tuck cueing | **Relaxed Walking** | Active recovery walking with zero cervical spine tension. |
 
+- **Deduplication & Volume Consolidation Rule**: If a substituted movement (e.g. `DB Glute Bridge`) is already present in today's workout as an anchor exercise, or has already been assigned to another substituted exercise, the engine dynamically selects a secondary joint-sparing fallback:
+  - `Heels-Elevated Goblet Squat` $\to$ Secondary: **Wall Sit** (isometric quad stimulus at safe 60°–70° angle; zero patellofemoral shear or joint translation).
+  - `Goblet Bulgarian Split Squat` $\to$ Secondary: **Single-Leg Glute Bridge** (unilateral posterior overload; zero knee joint stress).
+  - `Goblet Romanian Deadlift` / `Single-Leg RDL` $\to$ Secondary: **Dead Bug** (deep anterior core stabilization with 100% spinal unloading).
+  - If both primary and secondary substitutes are already active, the engine consolidates volume into the existing exercise card (+1 set, strictly capped at 4–5 sets max), eliminating redundant duplicate exercise cards.
+
 #### 1.3.5 The 24-Hour Pain Rule & Return to Full Load
 - **The 24-Hour Pain Rule**: If an active twinge or ache (e.g. right knee electric sensation) resolves within 24–48 hours, the joint is safely maintained in **Sensitive 🟡** mode for 1 additional session to consolidate tendon recovery.
-- **Return to Full Load (🟢 Normal)**: When recovering from an **Injured 🔴** state, the trainee must first step down to **Sensitive 🟡** for 1–2 sessions to confirm pain-free tolerance under restricted ROM. Once the trainee confirms zero discomfort throughout daily activities and warmup, a single tap toggles the joint back to **Normal 🟢**, restoring the primary compound movement at the previously mastered progressive load.
+- **Return to Full Load (🟢 Normal)**: When recovering from an **Injured 🔴** state, the trainee must first step down to **Sensitive 🟡** for 1–2 sessions to confirm pain-free tolerance under restricted ROM. Once the trainee confirms zero discomfort throughout daily activities and warmup, a single tap toggles the joint back to **Normal 🟢**, restoring the primary compound movement at an auto-regulated safe load.
+- **Post-Injury Load Safe Reset (Auto-Deload on Joint Recovery)**: If a joint was maintained in the **Injured 🔴** state for $\ge 10$–14 days (during which the primary movement was suspended), returning to **Sensitive 🟡** or **Normal 🟢** triggers an automatic protective load reset of **-2 to -4 kg** on the primary compound exercise(s) loading that joint, and sets reset to baseSets. This prevents acute tendon relapse caused by tissue detraining while away from the compound movement.
 
 #### 1.3.6 Clinical Safety Architecture, Red Flags & Medical Referral Protocol
 The app provides proactive joint-sparing movement adaptations, but it is **not a medical diagnostic tool or treatment provider**.
@@ -151,12 +158,13 @@ The program is deliberately designed around a home gym environment with modular 
 
 ### 2.1 Lean Structure & Realistic Time Allocation (60–65 Minute Target)
 The v15.8 Accelerated Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts. Realistic session duration for full strength days (Day 1, Day 3, Day 5) is **60–65 minutes** to account for warm-up, 17–25+ working sets with 45–90s rest, paired transitions, and the Arm Block:
-- **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Chin-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
+- **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Chin-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
 - **Lean Pairs (Antagonistic & Non-Competing)**:
   - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
   - **Day 5 (d5-pushup-curl)**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-3).
   - **Day 5 (d5-facepull-lateral)**: TRX Face Pull ↔ Single-Arm Lateral Raise (75s rest after completing both, active only when Single-Arm Lateral Raise is unlocked).
   - **Day 5 (d5-grip-lsit)**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
+  - *Asymmetric Set Rule (Volume Stepping in Pairs)*: When Volume Stepping expands one member of a Lean Pair (e.g., Single-Arm Lateral Raise expanding to 3 or 4 sets while TRX Row remains at 2 sets), Sets 1–2 are executed as a pair. Once the shorter exercise completes its 2 sets, the pair completes and the remaining sets (Sets 3–4) transition to Straight Sets with dedicated individual rest.
   - *Pair Dissolution Rule*: If any set receives a `BELOW` result, or during Deload/light microcycle weeks, the pair dissolves into straight sets with dedicated rest.
   - *Lean Pair Availability Rule*: A Lean Pair is rendered only if both paired exercises are unlocked for the current week (Phase 0 performance graduation or calendar gate). If either exercise is still locked, the pair is omitted and the remaining member renders as a straight set — **no automatic substitution is created**.
 - **Core Circuit (Day 1 End of Workout)**: Pallof Press Progression → Dead Bug → Hollow Body Hold (30s rest between rounds).
@@ -165,7 +173,7 @@ The v15.8 Accelerated Edition organizes exercises into optimized structures to m
 ### 2.2 Weekly Alternating Toggles
 - **Day 1 Posterior Progression (not a week-parity toggle)**:
   - **Weeks 1–17**: Goblet RDL is the bilateral posterior anchor (starts at 8 kg, progresses up to ~18–20 kg).
-  - **Week 18+**: Single-Leg RDL replaces Goblet RDL as the Day 1 posterior anchor (unilateral progression, all weeks). It resets safely to **8 kg** (safe unilateral baseline) to protect the L4–S1 lumbar spine, develop pelvis balance, and open a brand-new **36-week progression window** up to 32 kg per leg.
+  - **Week 18+**: Single-Leg RDL replaces Goblet RDL as the Day 1 posterior anchor (unilateral progression, all weeks). Its starting load is safely derived as **50% of the achieved Goblet RDL weight** (rounded to the nearest even kg, minimum 8 kg): $\text{StartWeight} = \max(8, \text{roundToEven}(0.5 \times \text{GobletRDL\_Weight}))$. For example, a trainee completing 20 kg on Goblet RDL begins Single-Leg RDL at 10 kg (not 8 kg), eliminating the severe mechanical load cliff while maintaining 100% spinal and pelvic rotational safety on L4–S1.
   - **Quad Focus (independent, continuous)**: Heels-Elevated Goblet Squat is performed every week from Week 1 (3s descent, 1–2s isometric pause at bottom stretch).
 - **Day 3 Rear Delt Toggle**:
   - **Odd Weeks**: TRX Y-T-W (3-position posterior delt & scapular control).
@@ -418,7 +426,8 @@ To eliminate ambiguity between single-session softened progression and multi-ses
    - **Time Decay Gate**: If $>10$ days elapse between sessions, softened qualification is disabled, preventing premature overload on detrained tendons.
 
 3. **⚠️ BELOW Target Window / Mechanical Stop**:
-   - **First BELOW Session (Single-Session Fatigue Protection)**: Weight is held at the current load (`first_below_maintain`). Set expansion is reset to base sets (`targetSets = baseSets`) to relieve volume fatigue, and cadence accumulation resets to 0. Trainees are protected from a premature 25% load drop due to transient factors (tempo loss, poor sleep, or central fatigue).
+   - **Volume Stepping Bridge Fatigue Protection (Sisyphus Bug Fix)**: When Volume Stepping is active (prescribed sets > baseSets, e.g. 3 or 4 sets for Lateral Raise at 6 kg), if the trainee successfully completes all base sets in-window and experiences BELOW or fatigue exclusively on the added bridge sets (set 3 or 4), `sessionsAtWeight` is **NOT** wiped to 0. Instead, volume steps down by 1 set (e.g. 4 $\to$ 3 sets, `targetSets = prescribedSets - 1`) to consolidate work capacity without trapping the trainee in an infinite regression loop.
+   - **First BELOW Session (Single-Session Fatigue Protection)**: When a session yields `all_below` across base sets, weight is held at the current load (`first_below_maintain`). Set expansion steps down to relieve volume fatigue, protecting trainees from premature load drops.
    - **Second Consecutive BELOW Session**: If a second consecutive session yields `all_below` (`consecutiveBelow >= 1`), an auto-regulated load reduction of **-2 kg** is applied (`consecutive_below_decrease`), bounded strictly by the physical 6 kg handle floor (5 kg for weighted vest).
    - **Bodyweight / Stage Exercises**: The first BELOW maintains current stage; a second consecutive BELOW session regresses the movement by 1 stage (`consecutive_below_decrease_stage`).
    - **Mixed Results (`mixed_results_maintain`)**: When sets are mixed (e.g., 1 in-window, 1 below), load is maintained and consecutive below counter resets to 0.

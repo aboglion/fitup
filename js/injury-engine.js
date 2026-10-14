@@ -44,8 +44,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'DB Glute Bridge',
+        secondarySubstitute: 'Single-Leg Glute Bridge',
         badgeKey: 'injury_badge_knee_sub',
-        cueKey: 'injury_cue_bss_injured'
+        cueKey: 'injury_cue_bss_injured',
+        secondaryCueKey: 'injury_cue_single_leg_bridge'
       }
     },
     'Heels-Elevated Goblet Squat': {
@@ -57,8 +59,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'DB Glute Bridge',
+        secondarySubstitute: 'Wall Sit',
         badgeKey: 'injury_badge_knee_sub',
-        cueKey: 'injury_cue_squat_injured'
+        cueKey: 'injury_cue_squat_injured',
+        secondaryCueKey: 'injury_cue_wall_sit'
       }
     },
     'Bodyweight Squat': {
@@ -391,8 +395,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'DB Glute Bridge',
+        secondarySubstitute: 'Dead Bug',
         badgeKey: 'injury_badge_back_sub',
-        cueKey: 'injury_cue_rdl_injured'
+        cueKey: 'injury_cue_rdl_injured',
+        secondaryCueKey: 'injury_cue_rdl_secondary_injured'
       }
     },
     'Single-Leg RDL': {
@@ -403,8 +409,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'DB Glute Bridge',
+        secondarySubstitute: 'Dead Bug',
         badgeKey: 'injury_badge_back_sub',
-        cueKey: 'injury_cue_rdl_injured'
+        cueKey: 'injury_cue_rdl_injured',
+        secondaryCueKey: 'injury_cue_rdl_secondary_injured'
       }
     },
     'Suitcase Carry': {
@@ -505,12 +513,25 @@ const InjuryEngine = (() => {
     if (!jointStates || typeof jointStates !== 'object') {
       jointStates = {};
     }
-    // Ensure all joints have valid numeric state
+    // Ensure all joints have valid state structure
     Object.keys(JOINTS).forEach(k => {
-      if (jointStates[k] === undefined || ![0, 1, 2].includes(Number(jointStates[k]))) {
-        jointStates[k] = STATE_NORMAL;
+      const entry = jointStates[k];
+      if (entry === undefined) {
+        jointStates[k] = { state: STATE_NORMAL, updatedAt: new Date().toISOString(), injuredAt: null };
+      } else if (typeof entry === 'object' && entry !== null) {
+        const s = [0, 1, 2].includes(Number(entry.state)) ? Number(entry.state) : STATE_NORMAL;
+        jointStates[k] = {
+          state: s,
+          updatedAt: entry.updatedAt || new Date().toISOString(),
+          injuredAt: entry.injuredAt || (s === STATE_INJURED ? new Date().toISOString() : null)
+        };
       } else {
-        jointStates[k] = Number(jointStates[k]);
+        const s = [0, 1, 2].includes(Number(entry)) ? Number(entry) : STATE_NORMAL;
+        jointStates[k] = {
+          state: s,
+          updatedAt: new Date().toISOString(),
+          injuredAt: s === STATE_INJURED ? new Date().toISOString() : null
+        };
       }
     });
     return jointStates;
@@ -523,10 +544,23 @@ const InjuryEngine = (() => {
         if (dbStates && typeof dbStates === 'object') {
           jointStates = { ...dbStates };
           Object.keys(JOINTS).forEach(k => {
-            if (jointStates[k] === undefined || ![0, 1, 2].includes(Number(jointStates[k]))) {
-              jointStates[k] = STATE_NORMAL;
+            const entry = jointStates[k];
+            if (entry === undefined) {
+              jointStates[k] = { state: STATE_NORMAL, updatedAt: new Date().toISOString(), injuredAt: null };
+            } else if (typeof entry === 'object' && entry !== null) {
+              const s = [0, 1, 2].includes(Number(entry.state)) ? Number(entry.state) : STATE_NORMAL;
+              jointStates[k] = {
+                state: s,
+                updatedAt: entry.updatedAt || new Date().toISOString(),
+                injuredAt: entry.injuredAt || (s === STATE_INJURED ? new Date().toISOString() : null)
+              };
             } else {
-              jointStates[k] = Number(jointStates[k]);
+              const s = [0, 1, 2].includes(Number(entry)) ? Number(entry) : STATE_NORMAL;
+              jointStates[k] = {
+                state: s,
+                updatedAt: new Date().toISOString(),
+                injuredAt: s === STATE_INJURED ? new Date().toISOString() : null
+              };
             }
           });
           if (typeof localStorage !== 'undefined') {
@@ -575,15 +609,72 @@ const InjuryEngine = (() => {
 
   function getJointState(jointId) {
     const states = loadStates();
-    return states[jointId] !== undefined ? states[jointId] : STATE_NORMAL;
+    const entry = states[jointId];
+    if (entry === undefined) return STATE_NORMAL;
+    if (typeof entry === 'object' && entry !== null) {
+      return entry.state !== undefined ? entry.state : STATE_NORMAL;
+    }
+    return Number(entry);
   }
 
-  function setJointState(jointId, state) {
+  function getJointDetails(jointId) {
+    const states = loadStates();
+    const entry = states[jointId];
+    const s = getJointState(jointId);
+    if (typeof entry === 'object' && entry !== null) {
+      let daysInjured = 0;
+      if (entry.injuredAt) {
+        daysInjured = Math.max(0, (Date.now() - new Date(entry.injuredAt).getTime()) / (1000 * 60 * 60 * 24));
+      }
+      return {
+        state: s,
+        updatedAt: entry.updatedAt || new Date().toISOString(),
+        injuredAt: entry.injuredAt || null,
+        daysInjured
+      };
+    }
+    return {
+      state: s,
+      updatedAt: new Date().toISOString(),
+      injuredAt: null,
+      daysInjured: 0
+    };
+  }
+
+  function setJointState(jointId, state, options = {}) {
     if (!JOINTS[jointId]) return;
     const states = loadStates();
-    states[jointId] = Math.max(0, Math.min(2, Number(state) || 0));
+    const prevState = getJointState(jointId);
+    const nextState = Math.max(0, Math.min(2, Number(state) || 0));
+    const now = options.timestamp || new Date().toISOString();
+
+    const existingEntry = (typeof states[jointId] === 'object' && states[jointId] !== null) ? states[jointId] : {};
+    let injuredAt = existingEntry.injuredAt || null;
+
+    if (nextState === STATE_INJURED && prevState !== STATE_INJURED) {
+      injuredAt = now;
+    } else if (nextState !== STATE_INJURED && prevState === STATE_INJURED) {
+      // Joint recovered from INJURED (stepped down to Sensitive or Normal)
+      if (injuredAt) {
+        const daysInjured = (new Date(now).getTime() - new Date(injuredAt).getTime()) / (1000 * 60 * 60 * 24);
+        const minDays = options.minDaysForDeload || 10;
+        if (daysInjured >= minDays) {
+          // Trigger post-injury load decay in ProgressionEngine
+          if (typeof window !== 'undefined' && window.ProgressionEngine && window.ProgressionEngine.applyInjuryRecoveryDeload) {
+            InjuryEngine.lastRecoveryDeloadPromise = window.ProgressionEngine.applyInjuryRecoveryDeload(jointId, daysInjured);
+          }
+        }
+      }
+      injuredAt = null;
+    }
+
+    states[jointId] = {
+      state: nextState,
+      updatedAt: now,
+      injuredAt
+    };
     saveStates();
-    return states[jointId];
+    return nextState;
   }
 
   /**
@@ -598,8 +689,13 @@ const InjuryEngine = (() => {
 
   function resetAllJoints() {
     const states = loadStates();
+    const now = new Date().toISOString();
     Object.keys(JOINTS).forEach(k => {
-      states[k] = STATE_NORMAL;
+      states[k] = {
+        state: STATE_NORMAL,
+        updatedAt: now,
+        injuredAt: null
+      };
     });
     saveStates();
   }
@@ -608,11 +704,15 @@ const InjuryEngine = (() => {
     const states = loadStates();
     const active = {};
     Object.keys(states).forEach(k => {
-      if (states[k] > STATE_NORMAL) {
+      const s = getJointState(k);
+      if (s > STATE_NORMAL) {
+        const entry = typeof states[k] === 'object' ? states[k] : {};
         active[k] = {
           jointId: k,
-          state: states[k],
-          jointInfo: JOINTS[k]
+          state: s,
+          jointInfo: JOINTS[k],
+          updatedAt: entry.updatedAt,
+          injuredAt: entry.injuredAt
         };
       }
     });
@@ -621,33 +721,34 @@ const InjuryEngine = (() => {
 
   function hasActiveInjuries() {
     const states = loadStates();
-    return Object.values(states).some(v => v > STATE_NORMAL);
+    return Object.keys(states).some(k => getJointState(k) > STATE_NORMAL);
   }
 
   function hasInjuredJoints() {
     const states = loadStates();
-    return Object.values(states).some(v => v === STATE_INJURED);
+    return Object.keys(states).some(k => getJointState(k) === STATE_INJURED);
   }
 
   /**
    * Determine adaptation for a given exercise based on active joint states.
    * Prioritizes INJURED (2) over SENSITIVE (1).
+   * Supports session-level deduplication via existingExerciseNames.
    *
    * @param {string} exerciseName
+   * @param {Array<string>} [existingExerciseNames=[]]
    * @returns {object|null} adaptation info or null if healthy
    */
-  function getExerciseAdaptation(exerciseName) {
+  function getExerciseAdaptation(exerciseName, existingExerciseNames = []) {
     if (!exerciseName) return null;
     const cleanName = exerciseName.trim();
     const rule = EXERCISE_ADAPTATIONS[cleanName];
     if (!rule || !rule.joints) return null;
 
-    const states = loadStates();
     let highestSeverity = STATE_NORMAL;
     let triggeringJoint = null;
 
     for (const jId of rule.joints) {
-      const s = states[jId] || STATE_NORMAL;
+      const s = getJointState(jId);
       if (s > highestSeverity) {
         highestSeverity = s;
         triggeringJoint = jId;
@@ -659,15 +760,65 @@ const InjuryEngine = (() => {
     const jointDef = JOINTS[triggeringJoint] || { id: triggeringJoint, labelKey: triggeringJoint };
 
     if (highestSeverity === STATE_INJURED && rule.injured) {
+      let chosenSubstitute = rule.injured.substitute;
+      let chosenCueKey = rule.injured.cueKey;
+      let isSecondary = false;
+
+      // Deduplication & Secondary Fallback check
+      if (existingExerciseNames && existingExerciseNames.length > 0) {
+        const lowerExisting = existingExerciseNames.map(n => (n || '').toLowerCase().trim());
+        const primaryLower = (chosenSubstitute || '').toLowerCase().trim();
+
+        if (lowerExisting.includes(primaryLower)) {
+          if (rule.injured.secondarySubstitute) {
+            const secondaryLower = rule.injured.secondarySubstitute.toLowerCase().trim();
+            if (!lowerExisting.includes(secondaryLower)) {
+              chosenSubstitute = rule.injured.secondarySubstitute;
+              chosenCueKey = rule.injured.secondaryCueKey || rule.injured.cueKey;
+              isSecondary = true;
+            } else {
+              // Both primary and secondary exist in session -> trigger Volume Consolidation
+              return {
+                severity: STATE_INJURED,
+                type: 'injured',
+                jointId: triggeringJoint,
+                jointDef,
+                substituteName: chosenSubstitute,
+                badgeKey: rule.injured.badgeKey,
+                cueKey: chosenCueKey,
+                originalExercise: cleanName,
+                isConsolidated: true,
+                consolidatedInto: chosenSubstitute
+              };
+            }
+          } else {
+            // No secondary substitute -> trigger Volume Consolidation
+            return {
+              severity: STATE_INJURED,
+              type: 'injured',
+              jointId: triggeringJoint,
+              jointDef,
+              substituteName: chosenSubstitute,
+              badgeKey: rule.injured.badgeKey,
+              cueKey: chosenCueKey,
+              originalExercise: cleanName,
+              isConsolidated: true,
+              consolidatedInto: chosenSubstitute
+            };
+          }
+        }
+      }
+
       return {
         severity: STATE_INJURED,
         type: 'injured',
         jointId: triggeringJoint,
         jointDef,
-        substituteName: rule.injured.substitute,
+        substituteName: chosenSubstitute,
         badgeKey: rule.injured.badgeKey,
-        cueKey: rule.injured.cueKey,
-        originalExercise: cleanName
+        cueKey: chosenCueKey,
+        originalExercise: cleanName,
+        isSecondary
       };
     }
 
@@ -688,6 +839,81 @@ const InjuryEngine = (() => {
     return null;
   }
 
+  /**
+   * Adapts all exercises in a daily workout with intelligent deduplication & volume consolidation.
+   * Completely prevents multiple identical cards (e.g. 3-4 DB Glute Bridges on Day 1).
+   *
+   * @param {Array<Object>} exercises
+   * @returns {Array<Object>}
+   */
+  function adaptDayExercises(exercises) {
+    if (!Array.isArray(exercises) || exercises.length === 0) return exercises;
+
+    const adaptedList = [];
+    const activeNames = [];
+    const exerciseByActiveName = new Map();
+
+    // Pass 1: Identify all native un-substituted exercises in the session
+    exercises.forEach(ex => {
+      const ad = getExerciseAdaptation(ex.name);
+      if (!ad || ad.type !== 'injured' || !ad.substituteName) {
+        activeNames.push(ex.name);
+        exerciseByActiveName.set(ex.name, ex);
+      }
+    });
+
+    // Pass 2: Apply adaptations with deduplication and volume capping
+    exercises.forEach(ex => {
+      const ad = getExerciseAdaptation(ex.name, activeNames);
+      if (!ad) {
+        adaptedList.push(ex);
+        return;
+      }
+
+      if (ad.type === 'sensitive') {
+        adaptedList.push({
+          ...ex,
+          injuryAdaptation: ad
+        });
+        return;
+      }
+
+      if (ad.type === 'injured' && ad.substituteName) {
+        if (ad.isConsolidated) {
+          // Consolidate into existing exercise card
+          const targetEx = exerciseByActiveName.get(ad.consolidatedInto);
+          if (targetEx) {
+            const currentSetsMatch = (targetEx.sets || '').match(/^(\d+)/);
+            const currentSets = currentSetsMatch ? parseInt(currentSetsMatch[1], 10) : (targetEx.setsCount || 3);
+            const newSets = Math.min(5, currentSets + 1); // Capped at 5 sets max
+            if (typeof targetEx.sets === 'string' && targetEx.sets.includes('×')) {
+              targetEx.sets = targetEx.sets.replace(/^\d+/, newSets);
+            } else {
+              targetEx.sets = `${newSets} sets`;
+            }
+            targetEx.isVolumeConsolidated = true;
+            targetEx.consolidatedSources = targetEx.consolidatedSources || [];
+            targetEx.consolidatedSources.push(ex.name);
+          }
+          return;
+        }
+
+        activeNames.push(ad.substituteName);
+        const cloned = {
+          ...ex,
+          name: ad.substituteName,
+          originalName: ex.name,
+          injuryAdaptation: ad,
+          isInjuredSubstitute: true
+        };
+        exerciseByActiveName.set(ad.substituteName, cloned);
+        adaptedList.push(cloned);
+      }
+    });
+
+    return adaptedList;
+  }
+
   return {
     STATE_NORMAL,
     STATE_SENSITIVE,
@@ -695,6 +921,7 @@ const InjuryEngine = (() => {
     JOINTS,
     EXERCISE_ADAPTATIONS,
     getJointState,
+    getJointDetails,
     setJointState,
     cycleJointState,
     resetAllJoints,
@@ -702,6 +929,7 @@ const InjuryEngine = (() => {
     hasActiveInjuries,
     hasInjuredJoints,
     getExerciseAdaptation,
+    adaptDayExercises,
     loadFromDB
   };
 })();

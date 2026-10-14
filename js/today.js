@@ -231,6 +231,14 @@ const TodayPage = (() => {
       }
     });
 
+    // Injury Deduplication & Volume Consolidation (Issue #1):
+    // Replaces colliding duplicate substitutes (e.g. 3-4 DB Glute Bridges on Day 1)
+    // with clinical secondary substitutes (Wall Sit, Single-Leg Glute Bridge, Dead Bug)
+    // or consolidates duplicate volume (+1 set capped at 5).
+    if (typeof InjuryEngine !== 'undefined' && InjuryEngine.adaptDayExercises && day && day.exercises) {
+      day.exercises = InjuryEngine.adaptDayExercises(day.exercises);
+    }
+
     // v15.7 Accelerated: auto-regulated deload detection (2 consecutive failed sessions,
     // excessive demotions, or repeated joint-pain flags) — applies deload caps to this session.
     if (window.ProgressionEngine && window.ProgressionEngine.checkAutoDeloadTrigger && !isDeload) {
@@ -3711,6 +3719,11 @@ const TodayPage = (() => {
                          onchange="TodayPage.updateSetData(${idx}, ${s}, 'reps', this.value)">
                   ${unitLabel ? `<span class="set-unit">${unitLabel}</span>` : ''}
                 </div>
+                ${(s >= 2 && ((ex.name || '').toLowerCase().includes('lateral raise') || ex.pairId)) ? `
+                  <span class="badge" style="font-size: 10px; background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.25); padding: 1px 5px; border-radius: 4px; margin-inline-start: 4px;" title="${I18n.t('asymmetric_pair_straight_set')}">
+                    ${I18n.t('asymmetric_pair_straight_set') || 'סט עצמאי'}
+                  </span>
+                ` : ''}
               </div>
               ${outcomeBadgeHTML}
             </div>
@@ -3720,7 +3733,7 @@ const TodayPage = (() => {
       }
 
       // Check for biomechanical injury adaptation
-      const injuryAdaptation = (typeof InjuryEngine !== 'undefined') ? InjuryEngine.getExerciseAdaptation(ex.name) : null;
+      const injuryAdaptation = ex.injuryAdaptation || ((typeof InjuryEngine !== 'undefined') ? InjuryEngine.getExerciseAdaptation(ex.originalName || ex.name) : null);
       const isInjuredSwap = !!(injuryAdaptation && injuryAdaptation.type === 'injured' && injuryAdaptation.substituteName);
       const isSensitiveROM = !!(injuryAdaptation && injuryAdaptation.type === 'sensitive');
 
@@ -3821,6 +3834,10 @@ const TodayPage = (() => {
 
       if (ex.rest && ex.rest > 0) {
         detailParts.push(`<span style="color: var(--text-muted);">💤 ${ex.rest}s</span>`);
+      }
+
+      if (ex.isVolumeConsolidated) {
+        detailParts.push(`<span style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">${I18n.t('injury_badge_volume_merged') || '⚡ נפח מאוחד'}</span>`);
       }
 
       const lowerExName = (ex.name || '').toLowerCase();
