@@ -949,7 +949,7 @@ const App = (() => {
 
     const renderHrPreviewBadges = () => {
       if (!hrPreviewBadges || !userAgeInput) return;
-      const ageVal = parseInt(userAgeInput.value, 10) || 30;
+      const ageVal = parseInt(userAgeInput.value, 10) || 42;
       const customVal = (customHrInput && customHrInput.value) ? parseInt(customHrInput.value, 10) : null;
       const zones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(ageVal, customVal) : null;
       if (!zones) return;
@@ -969,7 +969,7 @@ const App = (() => {
 
     if (userAgeInput) {
       DB.getSetting('userAge').then(savedAge => {
-        const val = savedAge ? parseInt(savedAge, 10) : 30;
+        const val = savedAge ? parseInt(savedAge, 10) : 42;
         userAgeInput.value = val;
         window._cachedUserAge = val;
         renderHrPreviewBadges();

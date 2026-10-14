@@ -417,8 +417,10 @@ To eliminate ambiguity between single-session softened progression and multi-ses
    - **Time Decay Gate**: If $>10$ days elapse between sessions, softened qualification is disabled, preventing premature overload on detrained tendons.
 
 3. **⚠️ BELOW Target Window / Mechanical Stop**:
-   - **Weighted Exercises**: Triggers auto-regulated load reduction by **-2 kg** (down to the 6 kg handle minimum floor) to preserve form and joint safety.
-   - **Bodyweight / Stage Exercises**: Regresses by 1 stage (`decrease_stage`).
+   - **First BELOW Session (Single-Session Fatigue Protection)**: Weight is held at the current load (`first_below_maintain`). Set expansion is reset to base sets (`targetSets = baseSets`) to relieve volume fatigue, and cadence accumulation resets to 0. Trainees are protected from a premature 25% load drop due to transient factors (tempo loss, poor sleep, or central fatigue).
+   - **Second Consecutive BELOW Session**: If a second consecutive session yields `all_below` (`consecutiveBelow >= 1`), an auto-regulated load reduction of **-2 kg** is applied (`consecutive_below_decrease`), bounded strictly by the physical 6 kg handle floor (5 kg for weighted vest).
+   - **Bodyweight / Stage Exercises**: The first BELOW maintains current stage; a second consecutive BELOW session regresses the movement by 1 stage (`consecutive_below_decrease_stage`).
+   - **Mixed Results (`mixed_results_maintain`)**: When sets are mixed (e.g., 1 in-window, 1 below), load is maintained and consecutive below counter resets to 0.
 
 4. **Modular Dumbbells Physical Execution**:
    - Dumbbell handle = **6 kg** (strictly included in total load; not ignored).

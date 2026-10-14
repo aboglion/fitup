@@ -16,7 +16,7 @@ evalFunc(window);
 const ProgressionEngine = window.ProgressionEngine;
 
 test('ProgressionEngine - calculateWeightedDecision all_above increases weight', () => {
-  const exercise = { id: 'db-floor-press', startingWeight: 10, minWeight: 3, maxWeight: 24, increment: 1 };
+  const exercise = { id: 'db-floor-press', startingWeight: 10, minWeight: 6, maxWeight: 24, increment: 1 };
   const state = { currentWeightKg: 10 };
   const setResults = [{ result: 'above' }, { result: 'above' }, { result: 'above' }];
 
@@ -27,18 +27,31 @@ test('ProgressionEngine - calculateWeightedDecision all_above increases weight',
 });
 
 test('ProgressionEngine - calculateWeightedDecision all_below decreases weight', () => {
-  const exercise = { id: 'db-floor-press', startingWeight: 10, minWeight: 3, maxWeight: 24, increment: 1 };
-  const state = { currentWeightKg: 10 };
-  const setResults = [{ result: 'all_below' }, { result: 'all_below' }];
+  const exercise = { id: 'db-floor-press', startingWeight: 10, minWeight: 6, maxWeight: 24, increment: 2 };
 
-  const result = ProgressionEngine.calculateWeightedDecision(exercise, state, [{ result: 'below' }, { result: 'below' }], 1, null);
-  assert.equal(result.action, 'decrease');
-  assert.equal(result.newWeight, 9);
-  assert.equal(result.reason, 'all_below_window');
+  // 1st BELOW session maintains weight and sets targetSets to base
+  const state1 = { currentWeightKg: 10, consecutiveBelow: 0 };
+  const result1 = ProgressionEngine.calculateWeightedDecision(exercise, state1, [{ result: 'below' }, { result: 'below' }], 1, null);
+  assert.equal(result1.action, 'maintain');
+  assert.equal(result1.newWeight, 10);
+  assert.equal(result1.reason, 'first_below_maintain');
+
+  // 2nd consecutive BELOW session demotes weight
+  const state2 = { currentWeightKg: 10, consecutiveBelow: 1 };
+  const result2 = ProgressionEngine.calculateWeightedDecision(exercise, state2, [{ result: 'below' }, { result: 'below' }], 1, null);
+  assert.equal(result2.action, 'decrease');
+  assert.equal(result2.newWeight, 8);
+  assert.equal(result2.reason, 'consecutive_below_decrease');
+
+  // Decreasing at minWeight (6kg) cannot drop below 6kg handle floor
+  const stateMin = { currentWeightKg: 6, consecutiveBelow: 1 };
+  const resultMin = ProgressionEngine.calculateWeightedDecision(exercise, stateMin, [{ result: 'below' }, { result: 'below' }], 1, null);
+  assert.equal(resultMin.action, 'decrease');
+  assert.equal(resultMin.newWeight, 6);
 });
 
 test('ProgressionEngine - calculateWeightedDecision deload week maintains weight', () => {
-  const exercise = { id: 'db-floor-press', startingWeight: 10, minWeight: 3, maxWeight: 24, increment: 1 };
+  const exercise = { id: 'db-floor-press', startingWeight: 10, minWeight: 6, maxWeight: 24, increment: 1 };
   const state = { currentWeightKg: 10 };
   const setResults = [{ result: 'above' }, { result: 'above' }];
 
@@ -87,7 +100,7 @@ test('ProgressionEngine - evaluateMyoReps cancels block on joint pain', () => {
 });
 
 test('ProgressionEngine - Group A cadence promotes on 3rd in-window workout', () => {
-  const exGroupA = { id: 'goblet-rdl', category: 'Legs', compound: true, startingWeight: 8, increment: 2, minWeight: 3, maxWeight: 32 };
+  const exGroupA = { id: 'goblet-rdl', category: 'Legs', compound: true, startingWeight: 8, increment: 2, minWeight: 6, maxWeight: 32 };
   const inWindowResults = [{ result: 'in_window', reps: 10 }, { result: 'in_window', reps: 10 }, { result: 'in_window', reps: 10 }];
 
   // Session 1: 0 prior sessions -> maintain (1 of 3)
@@ -116,7 +129,7 @@ test('ProgressionEngine - Group A cadence promotes on 3rd in-window workout', ()
 });
 
 test('ProgressionEngine - Group B cadence promotes on 4th in-window workout', () => {
-  const exGroupB = { id: 'single-arm-lateral-raise', category: 'Shoulders', compound: false, startingWeight: 6, increment: 2, minWeight: 3, maxWeight: 12 };
+  const exGroupB = { id: 'single-arm-lateral-raise', category: 'Shoulders', compound: false, startingWeight: 6, increment: 2, minWeight: 6, maxWeight: 12 };
   const inWindowResults = [{ result: 'in_window', reps: 12 }, { result: 'in_window', reps: 12 }];
 
   // Sessions 1, 2, 3: accumulate

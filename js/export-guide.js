@@ -111,7 +111,7 @@ window.ExporterGuide = (() => {
       ],
       equipment_title: "🔧 ציוד נדרש ושימוש קבוע",
       equipment_list: [
-        "משקולות מודולריות: 8 פלטות × 3 ק\"ג (קיבולת 32 ק\"ג max) + 2 ידיות (טווח חוקי 3–32 ק\"ג ליד)",
+        "משקולות מודולריות: ידית 6 ק\"ג + פלטות מודולריות (קיבולת 32 ק\"ג max ליד, טווח חוקי 6–32 ק\"ג בקפיצות של 2 ק\"ג)",
         "מוט מתח (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "Push-up Bars (כל תרגילי הדחיפה: Push-Up, Deficit, Pike, L-sit — אין כפות ידיים על הרצפה)",
         "TRX (Face Pull, TRX Row, Y-T-W בזוויות קבועות)",
@@ -182,7 +182,7 @@ window.ExporterGuide = (() => {
       ],
       equipment_title: "🔧 ציוד נדרש ושימוש קבוע",
       equipment_list: [
-        "משקולות מודולריות: 8 פלטות × 3 ק\"ג (קיבולת 32 ק\"ג max) + 2 ידיות (טווח חוקי 3–32 ק\"ג ליד)",
+        "משקולות מודולריות: ידית 6 ק\"ג + פלטות מודולריות (קיבולת 32 ק\"ג max ליד, טווח חוקי 6–32 ק\"ג בקפיצות של 2 ק\"ג)",
         "מוט מתח (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "Push-up Bars (כל תרגילי הדחיפה: Push-Up, Deficit, Pike, L-sit — אין כפות ידיים על הרצפה)",
         "TRX (Face Pull, TRX Row, Y-T-W בזוויות קבועות)",
@@ -269,7 +269,7 @@ window.ExporterGuide = (() => {
       ],
       equipment_title: "🔧 المعدات المطلوبة",
       equipment_list: [
-        "أثقال يدوية قابلة للتعديل (3–32 كغم)",
+        "أثقال يدوية قابلة للتعديل (6–32 كغم، مقبض أساسي 6 كغم بقفزات 2 كغم)",
         "عقلة (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
         "مقابض ضغط / Parallettes (جميع تمارين الضغط)",
         "حبال TRX (Face Pull, TRX Row, Y-T-W)",

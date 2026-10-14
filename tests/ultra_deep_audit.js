@@ -159,15 +159,15 @@ info.push(`I18n translations key counts: HE=${Object.keys(I18n.translations.he |
 // ----------------------------------------------------
 console.log("\n--- TESTING PROGRESSION ENGINE EDGE CASES ---");
 
-const dummyExercise = { id: 'heels-elevated-goblet-squat', startingWeight: 6, minWeight: 3, maxWeight: 32, increment: 1 };
+const dummyExercise = { id: 'heels-elevated-goblet-squat', startingWeight: 8, minWeight: 6, maxWeight: 32, increment: 2 };
 
-// Test 1: Min Weight Bound (3kg)
-const minWeightState = { currentWeightKg: 3 };
+// Test 1: Min Weight Bound (6kg)
+const minWeightState = { currentWeightKg: 6, consecutiveBelow: 1 };
 const minDec = ProgressionEngine.calculateWeightedDecision(dummyExercise, minWeightState, [{ result: 'below' }], 1);
-if (minDec.newWeight < 3) {
-  errors.push(`ProgressionEngine Bug: Weight dropped below minimum threshold (3kg -> ${minDec.newWeight}kg)`);
+if (minDec.newWeight < 6) {
+  errors.push(`ProgressionEngine Bug: Weight dropped below minimum threshold (6kg -> ${minDec.newWeight}kg)`);
 } else {
-  info.push("ProgressionEngine minimum weight bound (3kg floor) verified.");
+  info.push("ProgressionEngine minimum weight bound (6kg floor) verified.");
 }
 
 // Test 2: Max Weight Bound (32kg)

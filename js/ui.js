@@ -2337,11 +2337,11 @@ const UI = (() => {
    */
   function enrichHeartRateText(text) {
     if (!text || typeof text !== 'string') return text || '';
-    const userAge = (typeof window !== 'undefined' && window._cachedUserAge) ? window._cachedUserAge : 30;
+    const userAge = (typeof window !== 'undefined' && window._cachedUserAge) ? window._cachedUserAge : 42;
     const customHRmax = (typeof window !== 'undefined' && window._cachedCustomHRmax) ? window._cachedCustomHRmax : null;
     const hr = (typeof getHRZones === 'function')
       ? getHRZones(userAge, customHRmax)
-      : { max: 187, zone1: [94, 112], zone2: [112, 131], zone5: [159, 178] };
+      : { max: 179, zone1: [90, 107], zone2: [107, 125], zone5: [152, 170] };
 
     let res = text;
     // Clean any existing BPM annotations to ensure fresh/accurate interpolation without duplication
@@ -2360,7 +2360,7 @@ const UI = (() => {
    * Show Interactive Max Heart Rate & Target Zones Calculator Modal
    */
   function showHeartRateModal(initialAge = null, initialCustomHRmax = null) {
-    let age = initialAge || window._cachedUserAge || 30;
+    let age = initialAge || window._cachedUserAge || 42;
     let customHRmax = initialCustomHRmax || window._cachedCustomHRmax || null;
 
     const modalTitle = I18n.t('hr_modal_title');

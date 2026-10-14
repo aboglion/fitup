@@ -19,8 +19,8 @@ const data = global.window.TRAINING_DATA;
 const engine = global.window.ProgressionEngine;
 
 test('Program Integrity - Progression Settings & Deload Parameters', () => {
-  // v15.7 Accelerated: fine-grained 0.5 kg legal weight grid (3.0 → 32.0)
-  const expectedLegalWeights = Array.from({ length: 59 }, (_, i) => 3 + i * 0.5);
+  // Modular Dumbbells: strictly 2 kg steps from 6 kg to 32 kg
+  const expectedLegalWeights = [6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32];
   assert.deepEqual(data.progressionSettings.legalWeights, expectedLegalWeights);
 
   assert.equal(data.progressionSettings.deloadEveryWeeks, 12);
@@ -167,13 +167,33 @@ test('Program Integrity - Progression Engine Decisions', () => {
   assert.equal(resAbove.action, 'increase');
   assert.equal(resAbove.newWeight, 6 + inc);
 
-  const resBelow = engine.calculateWeightedDecision(testEx, { currentWeightKg: 6 }, [
+  // 1st BELOW session: maintains current weight to protect against fatigue/tempo loss
+  const resBelow1 = engine.calculateWeightedDecision(testEx, { currentWeightKg: 8, consecutiveBelow: 0 }, [
     { result: 'below', reps: 5 },
     { result: 'below', reps: 5 },
     { result: 'below', reps: 5 }
   ], 1);
-  assert.equal(resBelow.action, 'decrease');
-  assert.equal(resBelow.newWeight, 6 - inc);
+  assert.equal(resBelow1.action, 'maintain');
+  assert.equal(resBelow1.newWeight, 8);
+  assert.equal(resBelow1.reason, 'first_below_maintain');
+
+  // 2nd consecutive BELOW session: decreases weight by decrement (bounded by minWeight: 6kg)
+  const resBelow2 = engine.calculateWeightedDecision(testEx, { currentWeightKg: 8, consecutiveBelow: 1 }, [
+    { result: 'below', reps: 5 },
+    { result: 'below', reps: 5 },
+    { result: 'below', reps: 5 }
+  ], 1);
+  assert.equal(resBelow2.action, 'decrease');
+  assert.equal(resBelow2.newWeight, 6);
+  assert.equal(resBelow2.reason, 'consecutive_below_decrease');
+
+  // Decreasing at minWeight (6kg) cannot drop below 6kg handle floor
+  const resBelowFloor = engine.calculateWeightedDecision(testEx, { currentWeightKg: 6, consecutiveBelow: 1 }, [
+    { result: 'below', reps: 5 },
+    { result: 'below', reps: 5 }
+  ], 1);
+  assert.equal(resBelowFloor.action, 'decrease');
+  assert.equal(resBelowFloor.newWeight, 6);
 
   // v15.7 Accelerated: deloads occur every 12 weeks (week 12 is a deload week)
   const resDeload = engine.calculateWeightedDecision(testEx, { currentWeightKg: 6 }, [

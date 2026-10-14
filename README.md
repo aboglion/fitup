@@ -192,7 +192,7 @@ The 80-week program is designed around a minimal yet complete home-gym setup:
 
 | Equipment Item | Specifications & Usage | Purpose in Program |
 | :--- | :--- | :--- |
-| **Modular Dumbbells** | Modular Dumbbell System (3–32 kg legal weight range per dumbbell in 1 kg increments). | Single-Arm Floor Press, Single-Arm Seated OHP, Goblet RDLs, Goblet Split Squats, Single-Arm Rows, Single-Arm Biceps Curls, Triceps Extensions. |
+| **Modular Dumbbells** | Modular Dumbbell System (6–32 kg legal weight range per dumbbell in 2 kg increments; 6 kg empty handle). | Single-Arm Floor Press, Single-Arm Seated OHP, Goblet RDLs, Goblet Split Squats, Single-Arm Rows, Single-Arm Biceps Curls, Triceps Extensions. |
 | **Mounted Pull-Up Bar** | Secure doorway or wall-mounted pull-up bar. | Overhand Pull-Ups, Chin-Ups, Dead Hangs, Towel Hangs for grip. |
 | **Push-Up Bars** | Ergonomic push-up handles / parallettes. | **Mandatory** for all Push-Ups, Deficit Push-Ups, Elevated Pike Push-Ups, and L-Sit Tucks to prevent wrist hyperextension. |
 | **TRX Suspension Trainer** | Adjustable suspension trainer anchored to door/wall. | TRX Face Pulls (Angles 1–4) and TRX Y-T-W shoulder stability sequences. |

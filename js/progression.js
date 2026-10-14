@@ -194,7 +194,7 @@
       const softened = this.checkSoftenedProgression(exercise, state, setResults, previousSessionData);
       const increment = exercise.increment || 2;
       const maxWeight = exercise.maxWeight || 32;
-      const minWeight = exercise.minWeight || 3;
+      const minWeight = exercise.minWeight || 6;
 
       // 1. Performance Above Target: Auto-regulated Early Promotion (ביצועים מעל מעלים מוקדם יותר)
       if (evaluation === 'all_above') {
@@ -208,15 +208,29 @@
         };
       }
 
-      // 2. Performance Below Target: Auto-regulated Reduction / Hold (פחות מושכים יותר / הורדה)
+      // 2. Performance Below Target: Auto-regulated Reduction / Hold
+      // First BELOW session maintains weight and relieves volume fatigue (sets to base).
+      // Only 2 consecutive BELOW sessions trigger a weight demotion (-2kg down to minWeight floor).
       if (evaluation === 'all_below') {
-        const decrement = exercise.increment || 2;
-        const newWeight = Math.max(minWeight, currentWeight - decrement);
-        return {
-          action: 'decrease',
-          newWeight,
-          reason: 'all_below_window'
-        };
+        const consecutiveBelow = (state && typeof state.consecutiveBelow === 'number') ? state.consecutiveBelow : 0;
+        const baseSets = exercise.sets || (isGrpA ? 3 : 2);
+        if (consecutiveBelow >= 1) {
+          const decrement = exercise.increment || 2;
+          const newWeight = Math.max(minWeight, currentWeight - decrement);
+          return {
+            action: 'decrease',
+            newWeight,
+            targetSets: baseSets,
+            reason: 'consecutive_below_decrease'
+          };
+        } else {
+          return {
+            action: 'maintain',
+            newWeight: currentWeight,
+            targetSets: baseSets,
+            reason: 'first_below_maintain'
+          };
+        }
       }
 
       // 3. Performance In Window: Cadence-Based Progression
@@ -285,13 +299,23 @@
       }
 
       if (evaluation === 'all_below') {
-        const newStageIndex = Math.max(0, currentStageIndex - 1);
-        return {
-          action: newStageIndex < currentStageIndex ? 'decrease_stage' : 'maintain',
-          newStageIndex,
-          stageName: stages[newStageIndex] || '',
-          reason: 'all_below_window'
-        };
+        const consecutiveBelow = (state && typeof state.consecutiveBelow === 'number') ? state.consecutiveBelow : 0;
+        if (consecutiveBelow >= 1) {
+          const newStageIndex = Math.max(0, currentStageIndex - 1);
+          return {
+            action: newStageIndex < currentStageIndex ? 'decrease_stage' : 'maintain',
+            newStageIndex,
+            stageName: stages[newStageIndex] || '',
+            reason: 'consecutive_below_decrease_stage'
+          };
+        } else {
+          return {
+            action: 'maintain',
+            newStageIndex: currentStageIndex,
+            stageName: stages[currentStageIndex] || '',
+            reason: 'first_below_maintain'
+          };
+        }
       }
 
       return {
@@ -691,7 +715,7 @@
       const deloadReduction = window.TRAINING_DATA?.progressionSettings?.deloadWeightReductionKg || 2;
 
       if (exercise.type === 'weighted') {
-        const minW = exercise.minWeight || 3;
+        const minW = exercise.minWeight || 6;
         updated.currentWeightKg = Math.max(minW, (updated.currentWeightKg || exercise.startingWeight || 6) - deloadReduction);
       } else if (exercise.stages && exercise.stages.length > 0) {
         updated.currentStageIndex = Math.max(0, (updated.currentStageIndex || 0) - 1);
@@ -818,6 +842,7 @@
         currentWeightKg: startWeight,
         currentStageIndex: 0,
         sessionsAtWeight: 0,
+        consecutiveBelow: 0,
         unlocked: exercise ? (exercise.unlocked ?? true) : true,
         lastUpdated: new Date().toISOString()
       };
@@ -859,7 +884,7 @@
         name: exercise.name,
         sets,
         repWindow: exercise.repWindow || (exercise.windowMin && exercise.windowMax ? exercise.windowMin + "–" + exercise.windowMax : "8–12"),
-        targetWeightKg: isDeload ? Math.max(exercise.minWeight || 3, currentWeight - deloadRed) : currentWeight,
+        targetWeightKg: isDeload ? Math.max(exercise.minWeight || 6, currentWeight - deloadRed) : currentWeight,
         targetStage: currentStage,
         restSeconds: exercise.rest || exercise.restSeconds || 60,
         isDeload,
@@ -951,12 +976,30 @@
         state.currentWeightKg = decision.newWeight;
         if (decision.action === 'increase' || decision.action === 'decrease') {
           state.sessionsAtWeight = 0;
-        } else if (decision.action === 'maintain' && decision.reason && decision.reason.includes('accumulating')) {
-          state.sessionsAtWeight = (state.sessionsAtWeight || 0) + 1;
+          state.consecutiveBelow = 0;
+        } else if (decision.action === 'maintain') {
+          if (decision.reason === 'first_below_maintain') {
+            state.sessionsAtWeight = 0;
+            state.consecutiveBelow = (state.consecutiveBelow || 0) + 1;
+          } else if (decision.reason && decision.reason.includes('accumulating')) {
+            state.sessionsAtWeight = (state.sessionsAtWeight || 0) + 1;
+            state.consecutiveBelow = 0;
+          } else {
+            state.consecutiveBelow = 0;
+          }
         }
       } else {
         decision = this.calculateStageDecision(exercise, state, setResults, weekNumber, previousSessionData);
         state.currentStageIndex = decision.newStageIndex;
+        if (decision.action === 'increase_stage' || decision.action === 'decrease_stage') {
+          state.consecutiveBelow = 0;
+        } else if (decision.action === 'maintain') {
+          if (decision.reason === 'first_below_maintain') {
+            state.consecutiveBelow = (state.consecutiveBelow || 0) + 1;
+          } else {
+            state.consecutiveBelow = 0;
+          }
+        }
       }
 
       // v15.7 Accelerated: track performance metrics used by performance-based unlocks

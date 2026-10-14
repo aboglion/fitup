@@ -3826,9 +3826,9 @@ const TodayPage = (() => {
       const lowerExName = (ex.name || '').toLowerCase();
       let cardioTimerBtn = '';
       let protocolBannerHTML = '';
-      const userAge = window._cachedUserAge || 30;
+      const userAge = window._cachedUserAge || 42;
       const customHRmax = window._cachedCustomHRmax || null;
-      const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 187, zone2: [112, 131], zone5: [159, 178] };
+      const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 179, zone2: [107, 125], zone5: [152, 170] };
 
       if (lowerExName.includes('vo2 max') || lowerExName.includes('norwegian')) {
         cardioTimerBtn = `
@@ -5456,9 +5456,9 @@ const TodayPage = (() => {
     const day = allPlanDays[currentDayIndex];
     const ex = (day && day.exercises) ? day.exercises[0] : null;
     const currentIncline = (ex && ex.weight) ? ex.weight : 'Incline 3%';
-    const userAge = window._cachedUserAge || 30;
+    const userAge = window._cachedUserAge || 42;
     const customHRmax = window._cachedCustomHRmax || null;
-    const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 187, zone1: [94, 112], zone2: [112, 131], zone5: [159, 178] };
+    const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 179, zone1: [90, 107], zone2: [107, 125], zone5: [152, 170] };
 
     const PHASES = [
       { id: 'warmup', type: 'cyan', duration: 10 * 60, titleKey: 'vo2_phase_warmup', descKey: 'vo2_phase_warmup_desc', speed: '5.0 km/h', incline: '0%', hr: `50-60% (${hrZones.zone1[0]}-${hrZones.zone1[1]} BPM)`, voiceKey: 'vo2_voice_warmup' },
