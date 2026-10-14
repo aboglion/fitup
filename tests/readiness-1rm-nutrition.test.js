@@ -127,6 +127,11 @@ test('Feature 2 - Carb & Calorie Cycling targets and UI in today.js & index.html
   assert.equal(exportedStrengthDay.targetCalories, 2120);
   assert.equal(exportedStrengthDay.targetCarbs, 220);
 
+  const exportedDay4 = EvaluatedTodayPage.getCyclingTargetsForDay({ dayType: 'Active Recovery', exercises: [{}, {}, {}] });
+  assert.equal(exportedDay4.mode, 'recovery');
+  assert.equal(exportedDay4.targetCalories, 1980);
+  assert.equal(exportedDay4.targetCarbs, 185);
+
   // Check DOM hooks in index.html
   const indexHtml = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
   assert.ok(indexHtml.includes('id="nutrition-cycling-banner"'), 'index.html has nutrition-cycling-banner');

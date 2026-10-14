@@ -180,7 +180,10 @@
       const isDeload = weekNumber % this.settings.deloadEveryWeeks === 0;
       const isGrpA = this.isGroupA(exercise);
       const defaultStartWeight = isGrpA ? 8 : 6;
-      const currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || defaultStartWeight);
+      let currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || defaultStartWeight);
+      if (setResults && setResults.length > 0 && setResults[0].weightKg && setResults[0].weightKg > currentWeight) {
+        currentWeight = setResults[0].weightKg;
+      }
 
       if (isDeload) {
         return {

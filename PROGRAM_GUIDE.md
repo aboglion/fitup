@@ -9,8 +9,13 @@
 
 ## Part 1 — Safety Declaration & Iron Rules
 
-### 1.1 Safety Declaration
-The program is tailored for age 42 with a minor lumbar disc bulge history.  
+### 1.1 Safety Declaration & Trainee Profile
+**פרופיל מתאמן וייעוד פיזיולוגי (Trainee Profile)**:
+- **גיל**: 43 (חישוב דופק מרבי ויעדי אירובי לפי נוסחת Tanaka המדעית: $\text{HRmax} = 178\text{ BPM}$).
+- **גובה ומשקל**: 179 ס"מ, 84 ק"ג (יעד חלבון יומי: $\approx 160\text{g}$, גירעון מתון סביב 1,980 קק"ל בימי התאוששות ו-2,120 קק"ל בימי כוח).
+- **היסטוריה אורתופדית**: בלט דיסק מותני קל L4-S1 (הגנה קפדנית מפני עומס דחיסה צירי כבד, איסור מוחלט על סקווט/דדליפט עם מוט חופשי, דגש על שחרור עמוס יומיומי, פרוטוקול McGill Big 3 ותלייה פסיבית).
+- **אורח חיים ושגרה יומית**: פעיל מאוד בעבודה עם מספר צעדים יומי גבוה (8,000–12,000 צעדים), המאפשר המרת הליכת ההתאוששות של יום 4 בפרוטוקול עמוד שדרה/צוואר ממוקד של 12–15 דקות.
+
 **Strict Stop Conditions (Immediate Session Termination)**:
 - Sharp or shooting pain in lower back, knees, shoulders, or Achilles tendon.
 - Dizziness, chest pain, or abnormal shortness of breath.
@@ -153,6 +158,15 @@ The program is deliberately designed around a home gym environment with modular 
      - **Rest Compression**: Reducing rest by 15s to enhance metabolic work capacity.
      - **Weighted Vest Integration**: The program's 5–20 kg weighted vest (unlocked in later phases) can be layered on top of the 32 kg dumbbell for advanced trainees.
 
+### 1.5 כיול משקל עבודה ראשוני ותדירות רגליים מותאמת (Weight Calibration & 2nd Leg Frequency)
+1. **כיול משקל עבודה ראשוני (Initial Working Weight Calibration)**:
+   - כפתור **"⚖️ כיול"** זמין על גבי כל כרטיס תרגיל עם משקולות באפליקציה.
+   - **מטרה:** ביטול עיכוב מתחילים ("Novice Calibration Delay"). מתאמן בעל כוח בסיסי יכול לכייל ישירות את משקל העבודה האמיתי שלו (למשל: 12 או 14 ק"ג ב-Goblet RDL או חתירה), במקום לבצע 4–6 שבועות של עבודה תת-מרבית סביב 8 ק"ג.
+   - מנוע ההתקדמות (`ProgressionEngine`) מאמץ את המשקל המכויל מיידית וממשיך ממנו בסולם עומס היסף (קבוצה A כל אימון 3, קבוצה B כל אימון 4).
+2. **תגבור תדירות רגליים דו-שבועית (2nd Leg Frequency Protocol)**:
+   - למתאמנים המעוניינים במקסום היפרטרופיה בפלג הגוף התחתון, מומלץ לבצע 2 סטים של `Heels-Elevated Goblet Squat` בסיום אימון יום 3 (רביעי).
+   - הדבר מעלה את נפח הארבע-ראשי לטווח האופטימלי (7–8 סטים שבועיים איכותיים) תוך שמירה על יום חמישי כהתאוששות מלאה, כך שהשרירים והמפרקים מגיעים רעננים לאימון האינטרוולים בשבת.
+
 ---
 
 ## Part 2 — Lean Architecture & Frequency Optimization
@@ -263,7 +277,7 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 #### 1. האם המערכת מחשבת לבד ואיזה נתון דרוש? (Automatic App Calculation)
 - **המערכת מחשבת הכל באופן אוטומטי מלא!**
 - **הנתון היחיד שנדרש** הוא **הגיל (Age)** של המתאמן.
-- בהגדרות האפליקציה (Settings) או בלחיצה על כפתור "🫀 מחשבון דופק" ב-Today View, המתאמן מזין את גילו (ברירת המחדל באפליקציה היא **42**).
+- בהגדרות האפליקציה (Settings) או בלחיצה על כפתור "🫀 מחשבון דופק" ב-Today View, המתאמן מזין את גילו (ברירת המחדל המעודכנת באפליקציה היא **43**).
 - האפליקציה מחשבת מיידית את הדופק המרבי (HRmax) וגוזרת ממנו את מספרי הפעימות לדקה (BPM) המדויקים המוצגים בכרטיס האימון ובתוך טיימר ההליכון (4×4 Modal Runner).
 
 #### 2. נוסחת החישוב המדעית באפליקציה (Tanaka Formula)
@@ -273,7 +287,7 @@ $$\text{HRmax} = 208 - (0.7 \times \text{גיל})$$
 - גיל 30: $208 - (0.7 \times 30) = 187\text{ BPM}$
 - גיל 35: $208 - (0.7 \times 35) = 184\text{ BPM}$
 - גיל 40: $208 - (0.7 \times 40) = 180\text{ BPM}$
-- **גיל 42 (ברירת מחדל באפליקציה)**: $208 - (0.7 \times 42) = 178.6 \approx \mathbf{179\text{ BPM}}$
+- **גיל 43 (ברירת מחדל באפליקציה)**: $208 - (0.7 \times 43) = 177.9 \approx \mathbf{178\text{ BPM}}$
 - גיל 45: $208 - (0.7 \times 45) = 177\text{ BPM}$
 
 *(האפליקציה מציגה במודאל גם את נוסחת Fox הקלאסית: $220 - \text{גיל}$ לשם השוואה).*
@@ -285,20 +299,22 @@ $$\text{HRmax} = 208 - (0.7 \times \text{גיל})$$
 המתאמן יכול להזין את המספר ישירות בשדה **"דופק מרבי ידוע (Custom HRmax)"**. במצב זה, האפליקציה תתעלם מנוסחת הגיל ותשתמש ב-100% בערך האמיתי שנמדד.
 
 #### 4. טווחי הדופק המחושבים באימונים (Target Zones)
-עבור דופק מרבי של 179 BPM (גיל 42 — ברירת המחדל באפליקציה):
-| אזור אימון | אחוז מדופק מרבי | טווח דופק (לגיל 42) | ייעוד ותחושה פיזיולוגית |
+עבור דופק מרבי של 178 BPM (גיל 43 — ברירת המחדל באפליקציה):
+| אזור אימון | אחוז מדופק מרבי | טווח דופק (לגיל 43) | ייעוד ותחושה פיזיולוגית |
 | :--- | :--- | :--- | :--- |
-| **Zone 1 (Warmup/Cooldown)** | 50%–60% | 90–107 BPM | חימום קל והורדת דופק הדרגתית בסיום אימון |
+| **Zone 1 (Warmup/Cooldown)** | 50%–60% | 89–107 BPM | חימום קל והורדת דופק הדרגתית בסיום אימון |
 | **Zone 2 (Aerobic Base - יום 2)** | 60%–70% | **107–125 BPM** | פיתוח נפח פעימה, שריפת שומן וצפיפות מיטוכונדריאלית. מבחן הדיבור: שיחה חופשית במשפטים מלאים |
-| **Zone 3 (Aerobic Tempo)** | 70%–80% | 125–143 BPM | קצב אירובי בינוני (אינו נדרש בפרוטוקול זה כדי למנוע עייפות מיותרת) |
-| **Zone 4 (Threshold)** | 80%–90% | 143–161 BPM | סף לקטט / כניסה לאזור עבודה אינטרוולית |
-| **Zone 5 (Norwegian 4×4 Work - יום 6)** | 85%–95% | **152–170 BPM** | מאמץ שיא ב-4 דקות עבודה! צריכת חמצן מרבית (VO2 Max). דיבור בלתי אפשרי מעבר למילה-שתיים |
+| **Zone 3 (Aerobic Tempo)** | 70%–80% | 125–142 BPM | קצב אירובי בינוני (אינו נדרש בפרוטוקול זה כדי למנוע עייפות מיותרת) |
+| **Zone 4 (Threshold)** | 80%–90% | 142–160 BPM | סף לקטט / כניסה לאזור עבודה אינטרוולית |
+| **Zone 5 (Norwegian 4×4 Work - יום 6)** | 85%–95% | **151–169 BPM** | מאמץ שיא ב-4 דקות עבודה! צריכת חמצן מרבית (VO2 Max). דיבור בלתי אפשרי מעבר למילה-שתיים |
 
 #### 5. כיצד מתאמנים ללא מד דופק? (מבחן הדיבור וה-RPE)
 - **Zone 2 (יום 2)**: **מבחן הדיבור (Talk Test)** — המתאמן חייב להיות מסוגל לדבר ברצף ובמשפטים שלמים מבלי להתנשף או לעצור לנשום באמצע משפט (נשימה מהאף צריכה להיות נוחה).
 - **Norwegian 4×4 (יום 6)**: המתאמן מתנשף בכבדות, מסוגל להוציא רק מילה בודדת או שתיים ("כן", "לא", "עצור"), ומדורג ברמת מאמץ סובייקטיבי של **8.5 עד 9.5 מתוך 10 (RPE)**. אם ניתן לדבר במשפטים — המהירות/שיפוע נמוכים מדי ויש להעלותם לריצה.
 
-🟡 **Active Recovery (Day 4):** 5 min Cervical Health protocol (Band Neck Flexion & Extension 2×15–20 each direction, 45s rest, 3-1-3 tempo, chin-tuck focus) + Treadmill 25 min @ 0% 4.5 km/h (20 min in W1-4) + 10 min deep mobility (5 min in W1-4).
+🟡 **Active Recovery (Day 4):** 
+- **צעדים יומיים מול הליכון (אופטימיזציית זמן):** מתאמנים המשיגים בשגרת היום ובעבודה **8,000–10,000 צעדים** יומיים פטורים לחלוטין מביצוע 25 דקות הליכה על הליכון, ויכולים לסמן את כרטיס ההליכה כהושלם! הליכה מרובה בעבודה מספקת את מלוא זרימת הדם וההוצאה האנרגטית הדרושה להתאוששות.
+- **פרוטוקול הליבה והגב המקוצר (12–15 דקות סך הכל):** 5 דק' Cervical Health protocol (Band Neck Flexion & Extension 2×15–20 לכל כיוון, 45 שנ' מנוחה, 3-1-3) + 10 דק' Deep Mobility sequence (Cat-Cow, פותחי אגן 90/90, Couch Stretch) לצד תלייה פסיבית ממתח (Dead Hang) או פרוטוקול McGill Big 3 לשחרור והורדת לחץ דחיסה מהדיסק המותני L4-S1.
 
 ---
 
@@ -535,9 +551,9 @@ This is the authoritative specification of all **59 unique exercises** appearing
 | **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
 | **Arm Block - Single-Arm Curl** | `arm-block-biceps-curl` | myo-reps | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 5 End (Stop: 2 tempo losses) |
 | **Band Neck Flexion & Extension** | `band-neck-flexion` | variation | Band | — | — | — | — | 2 | 15-20 | 3-1-3 slow | 45s | Day 4 Cervical Protocol (Chin-tuck focus) |
-| **Brisk Walking** | `brisk-walking` | timebased | BW | — | — | — | — | 1 | 30-45m | 60-70% HRmax (107-125 BPM for age 42, 4% @ 5.5 km/h base) | 0s | Day 2 Zone 2 Cardio (Weeks 3+) |
-| **Relaxed Walking** | `relaxed-walking` | timebased | BW | — | — | — | — | 1 | 20-30m | 0% @ 4.5 km/h | 0s | Ramp-up W1–2 / Day 4 Active Recovery |
-| **VO2 Max Norwegian 4x4** | `vo2-max-norwegian-4x4` | interval | BW | — | — | — | — | 4×4m | 16m effort | 85-95% HRmax (152-170 BPM for age 42, 6.5+ km/h / 4-6% incline effort) | 0s | Day 6 Cardio (Weeks 4+) |
+| **Brisk Walking** | `brisk-walking` | timebased | BW | — | — | — | — | 1 | 30-45m | 60-70% HRmax (107-125 BPM for age 43, 4% @ 5.5 km/h base) | 0s | Day 2 Zone 2 Cardio (Weeks 3+) |
+| **Relaxed Walking** | `relaxed-walking` | timebased | BW | — | — | — | — | 1 | 20-30m | 0% @ 4.5 km/h (או עמידה ביעד 8,000–10,000 צעדים יומיים) | 0s | Ramp-up W1–2 / Day 4 Active Recovery |
+| **VO2 Max Norwegian 4x4** | `vo2-max-norwegian-4x4` | interval | BW | — | — | — | — | 4×4m | 16m effort | 85-95% HRmax (151-169 BPM for age 43, 6.5+ km/h / 4-6% incline effort) | 0s | Day 6 Cardio (Weeks 4+) |
 | **Micro Mobility Protocol** | `micro-mobility-protocol` | timebased | BW | — | — | — | — | 1 | 5m | slow controlled | 0s | Post-workout 90s: Variant A (Upper) / B (Lower) |
 | **Deep Mobility Protocol** | `deep-mobility-protocol` | timebased | BW | — | — | — | — | 1 | 10m | slow deep stretch | 0s | Day 4 Joint & Spinal Health Protocol |
 | **Wall Sit** | `wall-sit` | timebased | Clinical Fallback | BW | — | — | — | — | 2 | 30-45s | isometric hold at 60°–70° | 60s | Injury Engine Secondary Fallback (Knee 🔴 Squat Substitute) |

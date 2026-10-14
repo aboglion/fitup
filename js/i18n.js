@@ -380,7 +380,7 @@ const I18n = (() => {
       // Settings Page
       settings_title: "Settings",
       user_weight_card_title: "⚖️ Body Weight Settings",
-      user_weight_card_desc: "Set your default body weight (83 kg) for accurate workout calorie burn calculations.",
+      user_weight_card_desc: "Set your default body weight (84 kg) for accurate workout calorie burn calculations.",
       weight_saved: "Body weight updated and scheduled for Google Drive sync! ⚖️",
       invalid_weight: "Please enter a valid weight between 30 and 250 kg",
       hr_calc_btn: "🫀 HR Targets",
@@ -1321,6 +1321,13 @@ const I18n = (() => {
       sparkline_1rm_tooltip: "Click to open 1RM Calculator & Intensity Table",
       e1rm_calc_desc: "Calculate your estimated 1-rep maximum using the proven Epley formula: Weight × (1 + Reps/30).",
       e1rm_quick_calc_btn: "🧮 1RM Calculator",
+      weight_calibration_title: "Working Weight Calibration",
+      weight_calibrate_desc: "Select your current working weight based on your strength level. Progressive Overload will continue from this weight onwards:",
+      weight_calibrated_toast: "Working weight calibrated successfully!",
+      calibrate_btn: "Calibrate",
+      calibrate_weight_tooltip: "Calibrate initial working weight",
+      weight_label: "Working Weight",
+      save_and_apply: "Save & Apply to Workout",
 
       // Feature 2: Dynamic Nutrition (Carb & Calorie Cycling)
       carb_cycling_title: "Dynamic Nutrition Cycling",
@@ -1845,7 +1852,7 @@ const I18n = (() => {
       // Settings Page
       settings_title: "הגדרות",
       user_weight_card_title: "⚖️ הגדרת משקל גוף",
-      user_weight_card_desc: "הגדר את משקל הגוף המעודכן שלך (ברירת מחדל 83 ק\"ג) לחישוב מדויק של שריפת קלוריות באימונים.",
+      user_weight_card_desc: "הגדר את משקל הגוף המעודכן שלך (ברירת מחדל 84 ק\"ג) לחישוב מדויק של שריפת קלוריות באימונים.",
       weight_saved: "משקל הגוף עודכן וסונכרן ל-Google Drive! ⚖️",
       invalid_weight: "נא להזין משקל תקין בין 30 ל-250 ק\"ג",
       hr_calc_btn: "🫀 מחשבון דופק",
@@ -2719,6 +2726,13 @@ const I18n = (() => {
       sparkline_1rm_tooltip: "לחץ לפתיחת מחשבון 1RM מוערך וטבלת עצימות",
       e1rm_calc_desc: "חישוב שיא הכוח המוערך שלך לחזרה אחת לפי נוסחת Epley: משקל × (1 + חזרות / 30).",
       e1rm_quick_calc_btn: "🧮 מחשבון 1RM",
+      weight_calibration_title: "כיול משקל עבודה",
+      weight_calibrate_desc: "בחר את משקל העבודה הנוכחי שמתאים לרמת הכוח שלך. התקדמות עומס היסף (Progressive Overload) תמשיך ממשקל זה ואילך:",
+      weight_calibrated_toast: "משקל העבודה כויל בהצלחה!",
+      calibrate_btn: "כיול",
+      calibrate_weight_tooltip: "כיול משקל עבודה ראשוני",
+      weight_label: "משקל עבודה",
+      save_and_apply: "שמור והחל באימון",
 
       // Feature 2: Dynamic Nutrition (Carb & Calorie Cycling)
       carb_cycling_title: "סנכרון יעדי תזונה דינמיים",
@@ -3454,7 +3468,7 @@ const I18n = (() => {
       // Settings Page
       settings_title: "الإعدادات",
       user_weight_card_title: "⚖️ إعداد وزن الجسم",
-      user_weight_card_desc: "حدد وزن جسمك الافتراضي (83 كجم) لحساب السعرات الحرارية المحروقة بدقة.",
+      user_weight_card_desc: "حدد وزن جسمك الافتراضي (84 كجم) لحساب السعرات الحرارية المحروقة بدقة.",
       weight_saved: "تم تحديث وزن الجسم ومزامنته مع Google Drive! ⚖️",
       invalid_weight: "يرجى إدخال وزن صحيح بين 30 و 250 كجم",
       hr_calc_btn: "🫀 حاسبة النبض",
@@ -3967,6 +3981,13 @@ const I18n = (() => {
       sparkline_1rm_tooltip: "انقر لفتح حاسبة 1RM وجدول الشدة",
       e1rm_calc_desc: "احسب أقصى وزن تقديري لتكرار واحد وفق معادلة إيبلي: الوزن × (1 + التكرارات / 30).",
       e1rm_quick_calc_btn: "🧮 حاسبة 1RM",
+      weight_calibration_title: "معايرة وزن التمرين",
+      weight_calibrate_desc: "حدد وزن التمرين الحالي بناءً على مستوى قوتك. سيستمر الحمل التدريجي من هذا الوزن فصاعدًا:",
+      weight_calibrated_toast: "تمت معايرة وزن التمرين بنجاح!",
+      calibrate_btn: "معايرة",
+      calibrate_weight_tooltip: "معايرة وزن البداية",
+      weight_label: "وزن التمرين",
+      save_and_apply: "حفظ وتطبيق في التمرين",
 
       // Feature 2: Dynamic Nutrition (Carb & Calorie Cycling)
       carb_cycling_title: "تزامن أهداف التغذية الديناميكية",

@@ -88,6 +88,8 @@ const ExercisesPage = (() => {
     'Pull-Up (Overhand)': [{ weight: 'Bodyweight', fromWeek: 10 }],
     'Chin-Up': [{ weight: 'Bodyweight', fromWeek: 10 }],
     'Wrist Rocks': [{ weight: 'Bodyweight', fromWeek: 53 }],
+    'Wall Sit': [{ weight: 'Bodyweight', fromWeek: 1 }],
+    'Single-Leg Glute Bridge': [{ weight: 'Bodyweight', fromWeek: 1 }],
 
     // Weighted Bodyweight
     'Weighted Deficit Push-Up': [{ weight: '+5 kg', fromWeek: 62 }],
@@ -168,7 +170,8 @@ const ExercisesPage = (() => {
       },
       {
         title: 'quad_focus', icon: '🦵', exercises: [
-          { name: 'Heels-Elevated Goblet Squat', unlockWeek: 1, id: 'squat-heels-1' }
+          { name: 'Heels-Elevated Goblet Squat', unlockWeek: 1, id: 'squat-heels-1' },
+          { name: 'Wall Sit', unlockWeek: 1, parentId: 'squat-heels-1', id: 'wall-sit-1', relType: 'accessory' }
         ]
       },
       {
@@ -182,6 +185,7 @@ const ExercisesPage = (() => {
         title: 'glutes_calves', icon: '🍑', exercises: [
           { name: 'Glute Bridge', unlockWeek: 1, id: 'glute-0' },
           { name: 'DB Glute Bridge', unlockWeek: 1, parentId: 'glute-0', id: 'glute-1', relType: 'replace' },
+          { name: 'Single-Leg Glute Bridge', unlockWeek: 1, parentId: 'glute-1', id: 'glute-2', relType: 'accessory' },
           { name: 'Standing Single-Leg Calf Raise', unlockWeek: 3, id: 'calf-1' },
           { name: 'Seated Single-Leg Calf Raise', unlockWeek: 3, parentId: 'calf-1', id: 'calf-2', relType: 'accessory' }
         ]

@@ -338,18 +338,22 @@ test('Program Integrity - Balanced Push-Pull (Day 3 Chin-Up, Day 5 Calves, Week 
   const hammerCatalog = data.exercises.find(e => e.id === 'single-arm-hammer-curl');
   assert.equal(hammerCatalog.fallbackId, 'single-arm-curl', 'Hammer curl must fall back to single-arm-curl');
 
-  // 5. Tanaka formula HR calculation for age 42:
-  // HRmax = 208 - 0.7 * 42 = 178.6 -> 179 BPM
+  // 5. Tanaka formula HR calculation for age 42 & age 43:
+  // Age 42: HRmax = 208 - 0.7 * 42 = 178.6 -> 179 BPM
+  const hrMax42 = Math.round(208 - (0.7 * 42));
+  assert.equal(hrMax42, 179, 'Age 42 HRmax must be 179 BPM');
+
+  // Age 43 (App Default): HRmax = 208 - 0.7 * 43 = 177.9 -> 178 BPM
   // Zone 2 (60-70%): 107 - 125 BPM
-  // Zone 5 (85-95%): 152 - 170 BPM
-  const hrMax = Math.round(208 - (0.7 * 42));
-  assert.equal(hrMax, 179, 'Age 42 HRmax must be 179 BPM');
-  const z2Low = Math.round(hrMax * 0.60);
-  const z2High = Math.round(hrMax * 0.70);
+  // Zone 5 (85-95%): 151 - 169 BPM
+  const hrMax43 = Math.round(208 - (0.7 * 43));
+  assert.equal(hrMax43, 178, 'Age 43 HRmax must be 178 BPM');
+  const z2Low = Math.round(hrMax43 * 0.60);
+  const z2High = Math.round(hrMax43 * 0.70);
   assert.equal(z2Low, 107, 'Zone 2 low must be 107 BPM');
   assert.equal(z2High, 125, 'Zone 2 high must be 125 BPM');
-  const z5Low = Math.round(hrMax * 0.85);
-  const z5High = Math.round(hrMax * 0.95);
-  assert.equal(z5Low, 152, 'Zone 5 low must be 152 BPM');
-  assert.equal(z5High, 170, 'Zone 5 high must be 170 BPM');
+  const z5Low = Math.round(hrMax43 * 0.85);
+  const z5High = Math.round(hrMax43 * 0.95);
+  assert.equal(z5Low, 151, 'Zone 5 low must be 151 BPM');
+  assert.equal(z5High, 169, 'Zone 5 high must be 169 BPM');
 });

@@ -862,7 +862,7 @@ EXERCISES_CATALOG = [
     { "id": "dead-hang", "name": "Dead Hang", "category": "Warmup", "type": "timebased", "restSeconds": 30, "repWindow": "15s" },
     { "id": "seated-band-row", "name": "Seated Band Row", "category": "Warmup", "type": "variation", "restSeconds": 30, "repWindow": "12" },
     { "id": "brisk-walking", "name": "Brisk Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "30-45m", "startingWeek": 3, "unlocked": False, "earliestWeek": 3, "fallbackId": "relaxed-walking" },
-    { "id": "relaxed-walking", "name": "Relaxed Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "25-30m" },
+    { "id": "relaxed-walking", "name": "Relaxed Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "25-30m", "rule": "יעד צעדים יומי (8,000–10,000 צעדים) או הליכה רגועה 20–25 דקות בשיפוע 0%. אם השגת את יעד הצעדים בשגרת היום בעבודה – סמן כהושלם! ניתן לשלב תלייה פסיבית ממתח (Dead Hang) לשחרור עמוד השדרה L4-S1." },
     { "id": "vo2-max-norwegian-4x4", "name": "VO2 Max Norwegian 4x4", "category": "Cardio", "type": "interval", "restSeconds": 0, "repWindow": "16m", "startingWeek": 4, "unlocked": False, "earliestWeek": 4, "fallbackId": "relaxed-walking" },
     { "id": "micro-mobility-protocol", "name": "Micro Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "5m" },
     { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "10m", "startingWeek": 3, "unlocked": False, "earliestWeek": 3, "fallbackId": "micro-mobility-protocol" },

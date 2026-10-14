@@ -570,7 +570,7 @@ const TodayPage = (() => {
 
       const streak = completedDays;
       const avgRPE = rpeCount > 0 ? (rpeSum / rpeCount).toFixed(1) : null;
-      if (!bodyWeight) bodyWeight = window._cachedUserWeight || 83;
+      if (!bodyWeight) bodyWeight = window._cachedUserWeight || 84;
 
       const historyContext = {
         streak,
@@ -792,9 +792,10 @@ const TodayPage = (() => {
    * - Active Recovery / Cardio: 1980 kcal, 185g Carbs (balanced baseline)
    */
   function getCyclingTargetsForDay(dayObj) {
-    const dayType = (dayObj && dayObj.dayType) || '';
+    const dayType = (dayObj && (dayObj.dayType || dayObj['Day Type'])) || '';
     const isRest = dayType === 'Rest' || /rest/i.test(dayType);
-    const isStrengthOrVO2 = !isRest && (/strength|push|pull|legs|skill|lower|upper|vo2/i.test(dayType) || (dayObj && dayObj.exercises && dayObj.exercises.length > 2));
+    const isRecovery = !isRest && /recovery|walk|zone\s*2/i.test(dayType);
+    const isStrengthOrVO2 = !isRest && !isRecovery && (/strength|push|pull|legs|skill|lower|upper|vo2/i.test(dayType) || (dayObj && dayObj.exercises && dayObj.exercises.length > 3));
 
     if (isStrengthOrVO2) {
       return {
@@ -852,7 +853,7 @@ const TodayPage = (() => {
 
     // Fetch & Cache User Weight
     const savedUserWeight = await DB.getSetting('userWeight');
-    window._cachedUserWeight = (savedUserWeight && !isNaN(parseFloat(savedUserWeight))) ? parseFloat(savedUserWeight) : 83;
+    window._cachedUserWeight = (savedUserWeight && !isNaN(parseFloat(savedUserWeight))) ? parseFloat(savedUserWeight) : 84;
 
     // Load tracking data
     currentTracking = await DB.getDayTracking(currentDayIndex) || {
@@ -1123,7 +1124,7 @@ const TodayPage = (() => {
     function calculateWorkoutBurn(day, tracking) {
       if (!day || !day.exercises || day.dayType === 'Rest') return 0;
 
-      let userWeightKg = window._cachedUserWeight || 83;
+      let userWeightKg = window._cachedUserWeight || 84;
       if (tracking && tracking.bodyWeight) {
         const bw = parseFloat(tracking.bodyWeight);
         if (!isNaN(bw) && bw > 30) userWeightKg = bw;
@@ -2041,7 +2042,7 @@ const TodayPage = (() => {
 
     // Update inputs
     document.getElementById('actual-rpe').value = currentTracking.actualRPE || '';
-    document.getElementById('body-weight').value = currentTracking.bodyWeight || window._cachedUserWeight || 83;
+    document.getElementById('body-weight').value = currentTracking.bodyWeight || window._cachedUserWeight || 84;
     document.getElementById('day-notes').value = currentTracking.notes || '';
 
     // Update navigation info and arrows direction according to language direction
@@ -2323,6 +2324,83 @@ const TodayPage = (() => {
     const initialW = parseFloat(weight) || hist.weight || 50;
     const initialR = parseInt(reps, 10) || hist.reps || 8;
     UI.showOneRepMaxModal(exerciseName, initialW, initialR, hist);
+  }
+
+  /**
+   * Open weight calibration modal for a weighted exercise to eliminate novice delay
+   */
+  async function openWeightCalibrationModal(exerciseId, exerciseName, currentWeight) {
+    if (!exerciseId && exerciseName) {
+      exerciseId = window.ProgressionEngine ? window.ProgressionEngine.findExerciseIdByName(exerciseName) : exerciseName.toLowerCase().replace(/\s+/g, '-');
+    }
+    const curW = parseFloat(currentWeight) || 8;
+    const isVest = (exerciseName || '').toLowerCase().includes('vest') || (exerciseName || '').toLowerCase().includes('weighted');
+    const minW = isVest ? 5 : 6;
+    const maxW = isVest ? 20 : 32;
+    const step = isVest ? 1 : 2;
+
+    let optionsHTML = '';
+    for (let w = minW; w <= maxW; w += step) {
+      const selected = (w === Math.round(curW)) ? 'selected' : '';
+      const note = (!isVest && w === 6) ? ' (ידית ריקה / Empty handle)' : '';
+      optionsHTML += `<option value="${w}" ${selected}>${w} kg${note}</option>`;
+    }
+
+    const modalContent = `
+      <div style="padding: 12px; display: flex; flex-direction: column; gap: 14px; text-align: start;">
+        <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 12px 14px;">
+          <div style="font-size: 13px; color: var(--text-primary); line-height: 1.5; margin-bottom: 10px;">
+            ${I18n.t('weight_calibrate_desc') || 'בחר את משקל העבודה הנוכחי שמתאים לרמת הכוח שלך. המערכת תתחיל את התקדמות עומס היסף (Progressive Overload) ממשקל זה ואילך:'}
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <label style="font-size: 13px; font-weight: 700; color: var(--accent-primary); white-space: nowrap;">
+              ⚖️ ${I18n.t('weight_label') || 'משקל עבודה'}:
+            </label>
+            <select id="modal-calibrated-weight-select" style="flex: 1; padding: 8px 12px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 14px; font-weight: 700;">
+              ${optionsHTML}
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 4px;">
+          <button type="button" class="btn-primary" onclick="TodayPage.saveCalibratedWeight('${exerciseId}', '${exerciseName.replace(/'/g, "\\'")}')" style="flex: 1; padding: 12px; font-weight: 700;">
+            💾 ${I18n.t('save_and_apply') || 'שמור והחל באימון'}
+          </button>
+          <button type="button" class="btn-secondary" onclick="UI.hideModal()" style="padding: 12px 18px;">
+            ${I18n.t('btn_cancel') || 'ביטול'}
+          </button>
+        </div>
+      </div>
+    `;
+
+    UI.showModal(`⚖️ ${I18n.t('weight_calibration_title') || 'כיול משקל עבודה'} — ${exerciseName}`, modalContent);
+  }
+
+  async function saveCalibratedWeight(exerciseId, exerciseName) {
+    const sel = document.getElementById('modal-calibrated-weight-select');
+    if (!sel) return;
+    const newW = parseFloat(sel.value) || 8;
+
+    try {
+      let state = await DB.getProgressionState(exerciseId);
+      if (!state) {
+        state = window.ProgressionEngine ? window.ProgressionEngine.createInitialState(exerciseId) : { exerciseId, sessionKey: exerciseId };
+      }
+      state.currentWeightKg = newW;
+      state.sessionsAtWeight = 0;
+      state.consecutiveBelow = 0;
+      state.lastUpdated = new Date().toISOString();
+      await DB.saveProgressionState(state);
+
+      if (typeof UI !== 'undefined' && UI.showToast) {
+        UI.showToast(`✅ ${exerciseName}: ${newW} kg — ${I18n.t('weight_calibrated_toast') || 'משקל העבודה כויל בהצלחה!'}`);
+      }
+      UI.hideModal();
+      refreshCurrentDayView();
+    } catch (err) {
+      console.error('Error saving calibrated weight:', err);
+      UI.hideModal();
+    }
   }
 
   /**
@@ -3802,6 +3880,7 @@ const TodayPage = (() => {
         const weightInfo = parseWeightDetails(ex.weight, ex.name);
         const weightHTML = buildWeightBadgeHTML(weightInfo, true);
         detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="${I18n.t('weight_changed_title')}">${weightHTML}</span>` : weightHTML);
+        detailParts.push(`<button type="button" class="sparkline-1rm-badge weight-calibrate-btn" style="padding: 1px 6px; font-size: 10px;" title="${I18n.t('calibrate_weight_tooltip') || 'כיול משקל עבודה ראשוני'}" onclick="event.stopPropagation(); TodayPage.openWeightCalibrationModal('${ex.id || ''}', '${ex.name.replace(/'/g, "\\'")}', ${(weightInfo && weightInfo.cleanWeight) || ex.targetWeightKg || 8});">⚖️ ${I18n.t('calibrate_btn') || 'כיול'}</button>`);
         detailParts.push(`<button type="button" class="sparkline-1rm-badge" style="padding: 1px 6px; font-size: 10px;" title="${I18n.t('sparkline_1rm_tooltip')}" onclick="event.stopPropagation(); TodayPage.open1RMCalculator('${ex.name.replace(/'/g, "\\'")}', 0, 8, 0);">🧮 1RM</button>`);
 
         const numericWeight = (weightInfo && parseFloat(weightInfo.cleanWeight)) || ex.targetWeightKg || 0;
@@ -3843,9 +3922,9 @@ const TodayPage = (() => {
       const lowerExName = (ex.name || '').toLowerCase();
       let cardioTimerBtn = '';
       let protocolBannerHTML = '';
-      const userAge = window._cachedUserAge || 42;
+      const userAge = window._cachedUserAge || 43;
       const customHRmax = window._cachedCustomHRmax || null;
-      const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 179, zone2: [107, 125], zone5: [152, 170] };
+      const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 178, zone2: [107, 125], zone5: [151, 169] };
 
       if (lowerExName.includes('vo2 max') || lowerExName.includes('norwegian')) {
         cardioTimerBtn = `
@@ -5473,9 +5552,9 @@ const TodayPage = (() => {
     const day = allPlanDays[currentDayIndex];
     const ex = (day && day.exercises) ? day.exercises[0] : null;
     const currentIncline = (ex && ex.weight) ? ex.weight : 'Incline 3%';
-    const userAge = window._cachedUserAge || 42;
+    const userAge = window._cachedUserAge || 43;
     const customHRmax = window._cachedCustomHRmax || null;
-    const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 179, zone1: [90, 107], zone2: [107, 125], zone5: [152, 170] };
+    const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 178, zone1: [89, 107], zone2: [107, 125], zone5: [151, 169] };
 
     const PHASES = [
       { id: 'warmup', type: 'cyan', duration: 10 * 60, titleKey: 'vo2_phase_warmup', descKey: 'vo2_phase_warmup_desc', speed: '5.0 km/h', incline: '0%', hr: `50-60% (${hrZones.zone1[0]}-${hrZones.zone1[1]} BPM)`, voiceKey: 'vo2_voice_warmup' },
@@ -5855,6 +5934,22 @@ const TodayPage = (() => {
     'VO2 MAX 4X4': {
       rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-85%-95% דופק מרבי (159-178 BPM) [בסיס 6.5+ קמ״ש בשיפוע השלב, הגבר מהירות/שיפוע לפי הצורך] + 3 דק׳ התאוששות ב-60%-70% דופק (112-131 BPM) [~4.5 קמ״ש]) | 5 דק׳ שחרור. יעד הדופק הוא המדד הקובע!',
       belowTrigger: 'אי-יכולת להגיע לטווח דופק 85%-95% (159-178 BPM) או לשמור עליו במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
+    },
+    'RELAXED WALKING': {
+      rule: 'יעד צעדים יומי (8,000–10,000 צעדים) או הליכה רגועה 20–25 דקות (שיפוע 0%, 4.5 קמ"ש). אם השגת את יעד הצעדים בשגרת היום בעבודה – סמן כהושלם! ניתן לשלב תלייה פסיבית ממתח (Dead Hang) לשחרור עמוד השדרה L4-S1.',
+      belowTrigger: 'אי-עמידה ביעד הצעדים היומי או ויתור על פעילות התאוששות.'
+    },
+    'BRISK WALKING': {
+      rule: 'הליכה מהירה בשיפוע 4% (מהירות בסיס 5.5 קמ"ש) בדופק Zone 2 (60%-70% מדופק מרבי, 107-125 BPM לגיל 43). מבחן הדיבור: מסוגל לדבר במשפטים שלמים ברצף.',
+      belowTrigger: 'חריגה אל מעבר ל-Zone 2 או אי-הגעה לטווח הדופק הרציף.'
+    },
+    'DEEP MOBILITY PROTOCOL': {
+      rule: 'פרוטוקול מוביליות עמוקה ושחרור עמוד שדרה: Cat-Cow, פותחי אגן 90/90, מתיחת בית חזה (Thoracic), Couch Stretch, ותלייה ממתח (Dead Hang) לשחרור הדיסק המותני L4-S1.',
+      belowTrigger: 'דילוג על תרגילי מפתח או תנועות מהירות ללא נשימה מבוקרת.'
+    },
+    'BAND NECK FLEXION & EXTENSION': {
+      rule: 'סט 1 (כפיפה): פנים הרחק מהעגינה, גומייה על המצח, סנטר אסוף (Chin-tuck). סט 2 (פשיטה): פנים לכיוון העגינה, גומייה על העורף. עגינה אופקית בגובה הראש, קצב איטי ומבוקר 3-1-3.',
+      belowTrigger: 'כאב חד בצוואר, אובדן שליטה בקצב, או תנועות ראש מהירות.'
     }
   };
 
@@ -6301,6 +6396,8 @@ const TodayPage = (() => {
     renderReadinessCheck,
     toggleReadinessCollapse,
     open1RMCalculator,
+    openWeightCalibrationModal,
+    saveCalibratedWeight,
     getCyclingTargetsForDay,
     getExercisePeak1RM,
     markCombatDone,
