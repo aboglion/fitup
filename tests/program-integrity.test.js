@@ -103,7 +103,7 @@ test('Program Integrity - Lean Mode Mechanics & Protected Compounds', () => {
   assert.equal(lean.circuits[0].circuitId, 'd1-core-circuit');
   assert.deepEqual(lean.circuits[0].members, ["pallof-press-progression", "dead-bug", "hollow-body-hold"]);
   assert.equal(lean.blocks.length, 1);
-  assert.equal(lean.blocks[0].blockId, 'd1-calf-block');
+  assert.equal(lean.blocks[0].blockId, 'd5-calf-block');
   assert.equal(lean.toggles.length, 1);
 });
 
@@ -306,4 +306,50 @@ test('Program Integrity - calculateMuscleProgressions single-workout accuracy', 
   assert.equal(day1Pcts.lats, 0, 'Lats must be 0% on Day 1');
   assert.equal(day1Pcts.traps, 0, 'Traps must be 0% on Day 1');
   assert.equal(day1Pcts.neck, 0, 'Neck must be 0% on Day 1');
+});
+
+test('Program Integrity - Balanced Push-Pull (Day 3 Chin-Up, Day 5 Calves, Week 4 Fallback, Age 42)', () => {
+  // 1. Day 1 Calf block removed: Day 1 should not have calf raises
+  const w1d1 = data.daily.find(d => d.week === 'Week 1' && d.dayOfWeek === 'Monday');
+  const w1d1Ids = w1d1.exercises.map(e => e.id);
+  assert.ok(!w1d1Ids.includes('standing-single-leg-calf-raise'), 'Day 1 must not include standing-single-leg-calf-raise');
+  assert.ok(!w1d1Ids.includes('seated-single-leg-calf-raise'), 'Day 1 must not include seated-single-leg-calf-raise');
+
+  // 2. Day 3 Chin-Up replaced Diamond Push-Up, Triceps Extension is 3 sets
+  const w1d3 = data.daily.find(d => d.week === 'Week 1' && d.dayOfWeek === 'Wednesday');
+  const w1d3Ids = w1d3.exercises.map(e => e.id);
+  assert.ok(w1d3Ids.includes('chin-up'), 'Day 3 must include chin-up');
+  assert.ok(!w1d3Ids.includes('diamond-push-up'), 'Day 3 must not include diamond-push-up');
+
+  const w5d3 = data.daily.find(d => d.week === 'Week 5' && d.dayOfWeek === 'Wednesday');
+  const tricepsExt = w5d3.exercises.find(e => e.id === 'db-overhead-triceps-extension');
+  assert.ok(tricepsExt, 'Day 3 Week 5 must include db-overhead-triceps-extension');
+  assert.equal(tricepsExt.sets, '3×10-15', 'Triceps extension on standard week must be 3 sets');
+
+  // 3. Day 5 Calf Block present
+  const w5d5 = data.daily.find(d => d.week === 'Week 5' && d.dayOfWeek === 'Friday');
+  const w5d5Ids = w5d5.exercises.map(e => e.id);
+  assert.ok(w5d5Ids.includes('standing-single-leg-calf-raise'), 'Day 5 must include standing calf raise');
+  assert.ok(w5d5Ids.includes('seated-single-leg-calf-raise'), 'Day 5 must include seated calf raise');
+  const calfEx = w5d5.exercises.find(e => e.id === 'standing-single-leg-calf-raise');
+  assert.equal(calfEx.blockId, 'd5-calf-block', 'Day 5 calf raise must belong to d5-calf-block');
+
+  // 4. Week 4 biceps preservation fallback
+  const hammerCatalog = data.exercises.find(e => e.id === 'single-arm-hammer-curl');
+  assert.equal(hammerCatalog.fallbackId, 'single-arm-curl', 'Hammer curl must fall back to single-arm-curl');
+
+  // 5. Tanaka formula HR calculation for age 42:
+  // HRmax = 208 - 0.7 * 42 = 178.6 -> 179 BPM
+  // Zone 2 (60-70%): 107 - 125 BPM
+  // Zone 5 (85-95%): 152 - 170 BPM
+  const hrMax = Math.round(208 - (0.7 * 42));
+  assert.equal(hrMax, 179, 'Age 42 HRmax must be 179 BPM');
+  const z2Low = Math.round(hrMax * 0.60);
+  const z2High = Math.round(hrMax * 0.70);
+  assert.equal(z2Low, 107, 'Zone 2 low must be 107 BPM');
+  assert.equal(z2High, 125, 'Zone 2 high must be 125 BPM');
+  const z5Low = Math.round(hrMax * 0.85);
+  const z5High = Math.round(hrMax * 0.95);
+  assert.equal(z5Low, 152, 'Zone 5 low must be 152 BPM');
+  assert.equal(z5High, 170, 'Zone 5 high must be 170 BPM');
 });

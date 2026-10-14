@@ -58,91 +58,20 @@ window.ExporterGuide = (() => {
       rampup_days_table: [
         { day: "Day 1", type: "🦵 Legs + Core Foundation", focus: "30 min — Warmup + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + DB Glute Bridge + Dead Bug + Micro Mobility Protocol (5 anchor exercises; Phase 0 locked exercises render hidden)" },
         { day: "Day 2", type: "🫀 Active Recovery Walk", focus: "20 min — Relaxed Walking (0% incline, 4.5 km/h) + Micro Mobility Protocol" },
-        { day: "Day 3", type: "💥 Push + Upper Body Foundation", focus: "30 min — Warmup + Single-Arm Floor Press + Push-up Bars Progression + Diamond Push-Up + TRX Row + TRX Y-T-W + Micro Mobility Protocol (5 anchor exercises; Phase 0 locked exercises render hidden)" },
+        { day: "Day 3", type: "💥 Push + Upper Body Foundation", focus: "30 min — Warmup + Single-Arm Floor Press + Push-up Bars Progression + Chin-Up + TRX Row + TRX Y-T-W + Micro Mobility Protocol (5 anchor exercises; Phase 0 locked exercises render hidden)" },
         { day: "Day 4", type: "🌿 Active Recovery + Cervical Health", focus: "25 min — Cervical Protocol (Band Neck Flexion & Extension 2×15-20) + 20 min Relaxed Walking + Micro Mobility Protocol" },
         { day: "Day 5", type: "🧲 Pull + Grip Foundation", focus: "30 min — Warmup + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + Micro Mobility Protocol (5 anchor exercises; Phase 0 locked exercises render hidden)" },
         { day: "Day 6", type: "🚶 Zone 2 Cardio (VO2 locked)", focus: "20 min — Relaxed Walking (0% incline, 4.5 km/h) — VO2 Max Norwegian 4×4 appears in the program data from Week 4" },
         { day: "Day 7", type: "😴 Full Rest Day", focus: "Complete Recovery & Nutrition" }
       ],
       standard_days_table: [
-        { day: "Day 1", type: "🦵 Legs + Core + Carry", focus: "65 min — RPE 7–9 — High Knees + Bodyweight Squat + Dead Bug + Glute Bridge + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + Goblet Bulgarian Split Squat + DB Glute Bridge + Suitcase Carry + Standing Single-Leg Calf Raise + Seated Single-Leg Calf Raise + Dead Bug + Hollow Body Hold + Micro Mobility Protocol (Single-Leg RDL replaces Goblet RDL from Week 18)" },
-        { day: "Day 2", type: "🫀 Zone 2 Cardio + Daily Mobility", focus: "45 min — Brisk Walking at Zone 2 HR 60–70% (baseline 4% incline, 5.5 km/h, conversational pace) + Micro Mobility Protocol" },
-        { day: "Day 3", type: "💥 Push + Shoulders + Triceps + Back Volume", focus: "65 min — RPE 7–9 — Arm Circles + Wall Slides + Scapular Push-up + Band Pull-Apart + Pike Progression + Single-Arm Floor Press + Push-up Bars Progression + Single-Arm Seated OHP + DB Overhead Triceps Extension + Diamond Push-Up + TRX Row + Single-Arm Lateral Raise + TRX Y-T-W + Micro Mobility Protocol (+ Arm Block from Week 6)" },
+        { day: "Day 1", type: "🦵 Legs + Core + Carry", focus: "60 min — RPE 7–9 — High Knees + Bodyweight Squat + Dead Bug + Glute Bridge + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + Goblet Bulgarian Split Squat + DB Glute Bridge + Suitcase Carry + Dead Bug + Hollow Body Hold + Micro Mobility Protocol (Single-Leg RDL replaces Goblet RDL from Week 18)" },
+        { day: "Day 2", type: "🫀 Zone 2 Cardio + Daily Mobility", focus: "45 min — Brisk Walking at Zone 2 HR 60–70% (107–125 BPM default @ age 42, baseline 4% incline, 5.5 km/h, conversational pace) + Micro Mobility Protocol" },
+        { day: "Day 3", type: "💥 Push + Shoulders + Triceps + Back Pull", focus: "60 min — RPE 7–9 — Arm Circles + Wall Slides + Scapular Push-up + Band Pull-Apart + Pike Progression + Single-Arm Floor Press + Push-up Bars Progression + Single-Arm Seated OHP + Chin-Up + DB Overhead Triceps Extension (3 sets) + TRX Row + Single-Arm Lateral Raise + TRX Y-T-W + Micro Mobility Protocol (+ Arm Block from Week 6)" },
         { day: "Day 4", type: "🌿 Active Recovery + Cervical & Joint Health", focus: "30 min — Band Neck Flexion & Extension 2×15-20 + 25 min Relaxed Walking (0% incline, 4.5 km/h) + 10 min Deep Mobility Protocol" },
-        { day: "Day 5", type: "🧲 Pull + Grip + Core + Chest Volume", focus: "65 min — RPE 7–9 — Arm Circles + Wall Slides + Scapular Pull-up + Dead Hang + Seated Band Row + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Push-Up Volume (Day 5) + Single-Arm Curl + Single-Arm Hammer Curl + Towel Hang + Tuck L-Sit + Micro Mobility Protocol (+ Arm Block from Week 6)" },
-        { day: "Day 6", type: "🔴 VO2 Max Norwegian 4×4 Cardio", focus: "35 min — 10m warmup, 4×(4m effort @ 85–95% HRmax [baseline 6.5+ km/h / phase incline, adjust speed/incline to hit HR target], 3m recovery @ 60–70% HRmax), 5m cooldown (Zone 2 walk in Deload)" },
+        { day: "Day 5", type: "🧲 Pull + Grip + Calves + Core + Chest Volume", focus: "65 min — RPE 7–9 — Arm Circles + Wall Slides + Scapular Pull-up + Dead Hang + Seated Band Row + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Push-Up Volume (Day 5) + Single-Arm Curl + Single-Arm Hammer Curl + Towel Hang + Tuck L-Sit + Standing Single-Leg Calf Raise + Seated Single-Leg Calf Raise + Micro Mobility Protocol (+ Arm Block from Week 6)" },
+        { day: "Day 6", type: "🔴 VO2 Max Norwegian 4×4 Cardio", focus: "35 min — 10m warmup, 4×(4m effort @ 85–95% HRmax [152–170 BPM default @ age 42, baseline 6.5+ km/h / phase incline, adjust speed/incline to hit HR target], 3m recovery @ 60–70% HRmax [107–125 BPM]), 5m cooldown (Zone 2 walk in Deload)" },
         { day: "Day 7", type: "😴 Full Rest Day", focus: "Complete Recovery, Nutrition & Sleep" }
-      ],
-      arm_block_title: "💪 Arm Block v15.7 (Myo-Reps Cluster Protocol)",
-      arm_block_desc: "Active from Week 6 at end of Day 3 (Single-Arm Lateral Raise + Overhead Triceps Extension) and Day 5 (Single-Arm Curl / Single-Arm Hammer Curl). 1 activation set to target + 3 mini-sets of 5 reps with 15s rest. Objective stop rule: 2 consecutive tempo losses or joint pain (reported via interactive prompt on BELOW outcome) terminates cluster. Capped at 1 exposure per muscle area per week.",
-      dictionary_title: "📚 Exercise Dictionary",
-      dictionary_subtitle: "Comprehensive list of all exercises in the program.",
-      full_plan_title: "📅 Full Program Breakdown",
-      full_plan_desc: "Detailed daily schedule of exercises, sets, reps, and tempos.",
-      table_ex: "Exercise",
-      table_sets: "Sets & Reps",
-      table_weight: "Resistance / Weight",
-      table_tempo: "Tempo",
-      table_rest: "Rest",
-      exporting_btn: "⏳ Preparing Guide...",
-      export_btn: "📄 View & Download Full Guide",
-      toast_success: "Program guide generated and downloaded! 📄",
-      toast_error: "Error exporting guide"
-    },
-    he: {
-      title: "FitUp Pro v15.7 Accelerated — מדריך תוכנית האימונים המלא",
-      subtitle: "פרוטוקול \"אפס החלטות\" בשיטת 3 כפתורים + מנוחה דינמית אדפטיבית — פריסה מלאה",
-      overview_title: "📖 אפיון והסבר על התוכנית — גרסה v15.7 Accelerated",
-      overview_desc: "תוכנית אימונים זו תוכננה עפ\"י פרוטוקול <strong>v15.7 Accelerated</strong> ומותאמת להגנה על הגב התחתון, לבניית גוף אתלטי, V-Taper, זרועות בולטות, וחיזוק גידים ומפרקים באמצעות <strong>התקדמות הדרגתית מבוקרת (Progressive Overload)</strong>.",
-      zero_decisions_title: "🎯 פילוסופיית \"אפס החלטות\" ומנגנון 3 תוצאות סט",
-      zero_decisions_desc: "התוכנית נבנתה במכוון סביב הרעיון של <strong>אפס החלטות מצד המתאמן</strong> באמצעות דיווח 3 תוצאות אובייקטיביות בלבד:",
-      mental_load: "<strong>אפס החלטות ודירוג 3 כפתורים:</strong> כל תרגיל, משקל, סטים, חזרות, קצב (Tempo) וזמני מנוחה קבועים מראש. בסיום סט בוחרים: 🚀 <strong>מעל היעד</strong>, ✅ <strong>בתחום היעד</strong>, או ⚠️ <strong>כשל / עצירה מכנית</strong> (מפעיל אוטומטית +30 שנ' מנוחה אדפטיבית). התקדמות משקלים מרוככת מבוטלת אוטומטית לאחר פער של 10 ימי חוסר אימון (Time Decay) כדי למנוע פציעות.",
-      strength_cardio: "<strong>מבנה שבועי קבוע (7 ימים):</strong> יום 1 (רגליים+ליבה+אחיזה), יום 2 (Zone 2+מוביליות), יום 3 (דחיפה+כתפיים+טריספס+נפח גב), יום 4 (התאוששות פעילה+פרוטוקול צוואר), יום 5 (משיכה+גב+ביספס+נפח חזה), יום 6 (VO2 Max 4x4), יום 7 (מנוחה מלאה).",
-      deload_cycles: "<strong>התאוששות מדעית (Deload Cycles):</strong> שבועות דילואד מוגדרים מראש (כל 8 שבועות: 12, 24, 36, 48, 60, 72...) שבהם הנפח יורד ל-2 סטים (~60% משקל) להורדת עומס מעצבים ומפרקים.",
-      time_efficiency_title: "⏱️ מבנה Lean וייעול זמנים (אימון כוח ב-60–65 דקות)",
-      time_efficiency_list: [
-        "<strong>הגנה על תרגילי בסיס:</strong> תרגילי כוח מורכבים כבדים מבוצעים תמיד כסטים ישרים עם מנוחה אדפטיבית מלאה להגנה על ביצועים.",
-        "<strong>זיווגי Lean (אנטגוניסטיים ולא-מתחרים):</strong> זיווג תרגילים לא מתחרים (יום 3: TRX Row ↔ Single-Arm Lateral Raise; יום 5: Push-Up Volume ↔ Single-Arm Curl; יום 5: Towel Hang ↔ L-Sit). מבוצע א' ← ב' ← מנוחה 45-75 שנ'.",
-        "<strong>פרוטוקול Arm Block ב-Myo-Reps:</strong> פעיל משבוע 6. צביר Myo-Reps (סט אקטיבציה + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה). עצירה אובייקטיבית ב-2 אובדני טמפו רצופים, מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.",
-        "<strong>עצי התקדמות ורוטציות שבועיות:</strong> יום 1 כולל פוקוס קוואדס רציף (Heels-Elevated Goblet Squat) ומעבר בשבוע 18 ל-Single-Leg RDL (מתחיל ב-8 ק״ג להגנה על L4-S1 ופותח חלון התקדמות של 36 שבועות עד 32 ק״ג לרגל). יום 3 מחליף TRX Y-T-W (אי-זוגי) עם Band Pull-Apart (זוגי).",
-        "<strong>אסטרטגיית תקרת ה-32 ק״ג ועומס יסף משני:</strong> מנוף כפול ברגליים (סקוואט עם עצירה + סקוואט בולגרי), מעבר לאחיזת מזוודה ב-20+ ק״ג, ועומס יסף משני (הרחבת חזרות עד 16 ועצירה מוארכת של 3 שנ׳) בהגעה לתקרת ה-32 ק״ג.",
-        "<strong>מיקרו-מחזור בייספס 4 שבועות (3:1):</strong> שבועות 1–3 עומס כבד וקידום, שבוע 4 שימור קל (Single-Arm Hammer Curl בלבד, 2 סטים, ללא קידום).",
-        "<strong>גיבוי נתונים וסנכרון ענן:</strong> ייצוא/ייבוא קובץ JSON מקומי בלחיצה אחת לצד סנכרון ענן דו-כיווני ל-Google Drive."
-      ],
-      equipment_title: "🔧 ציוד נדרש ושימוש קבוע",
-      equipment_list: [
-        "משקולות מודולריות: ידית 6 ק\"ג + פלטות מודולריות (קיבולת 32 ק\"ג max ליד, טווח חוקי 6–32 ק\"ג בקפיצות של 2 ק\"ג)",
-        "מוט מתח (Pull-Up, Chin-Up, Dead Hang, Towel Hang)",
-        "Push-up Bars (כל תרגילי הדחיפה: Push-Up, Deficit, Pike, L-sit — אין כפות ידיים על הרצפה)",
-        "TRX (Face Pull, TRX Row, Y-T-W בזוויות קבועות)",
-        "גומיות התנגדות: 30 ק\"ג (Pull-Apart, Pallof, כפיפה/פשיטת צוואר), 40 ק\"ג, 50 ק\"ג",
-        "כיסא / ספסל יציב (Goblet BSS, Feet-Elevated Push-Up, Pike Hold)",
-        "הליכון (Zone 2: דופק 60%–70% [112-131 BPM], בסיס שיפוע 4% ב-5.5 קמ\"ש; VO2 Max נורבגי 4×4: דופק 85%–95% [159-178 BPM], בסיס 6.5+ קמ\"ש בשיפוע 3%–6%)",
-        "וסט משוקלל (+2, +4, +5 ק\"ג לתרגילים המסומנים בלבד)"
-      ],
-      weekly_structure_title: "⚙️ מבנה מיקרו-מחזורים שבועיים",
-      rampup_microcycle_title: "🌱 Ramp-Up Microcycle — פעיל בשבועות 1–4 בלבד (Phase 0: הבסיס האנטומי)",
-      standard_microcycle_title: "⚡ Standard Weekly Microcycle — פעיל בשבועות 5–11, 13–23, 25–35... (Phase 1: התוכנית המלאה)",
-      col_day: "יום",
-      col_type: "סוג אימון",
-      col_intensity: "עצימות / דגשים",
-      rampup_days_table: [
-        { day: "יום 1", type: "🦵 רגליים + ליבה (בסיס)", focus: "30 דק' — RPE 7–8 — חימום + Goblet RDL + Heels-Elevated Goblet Squat + DB Glute Bridge + Dead Bug + מיקרו-מוביליות B (5 תרגילים בלבד)" },
-        { day: "יום 2", type: "🫀 התאוששות פעילה", focus: "20 דק' — הליכה קלה 20 דקות (0% שיפוע, 4.5 קמ\"ש) + מיקרו-מוביליות B" },
-        { day: "יום 3", type: "💥 דחיפה + גב (בסיס)", focus: "30 דק' — RPE 7–8 — חימום + Single-Arm Floor Press + Push-Up Bars + Diamond Push-Up + TRX Row + TRX Y-T-W + מיקרו-מוביליות A (5 תרגילים בלבד)" },
-        { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר", focus: "25 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 20 דק' הליכה קלה + מיקרו-מוביליות B" },
-        { day: "יום 5", type: "🧲 משיכה + ביספס (בסיס)", focus: "30 דק' — RPE 7–8 — חימום + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + מיקרו-מוביליות A (5 תרגילים בלבד)" },
-        { day: "יום 6", type: "🚶 התאוששות פעילה (אירובי נעול)", focus: "20 דק' — הליכה קלה 20 דקות (0% שיפוע, 4.5 קמ\"ש) — VO2 Max מופיע בנתוני התוכנית משבוע 4" },
-        { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה ותזונה" }
-      ],
-      standard_days_table: [
-        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "65 דק' — RPE 7–9 — שרשרת המסטרינג (Goblet RDL / Single-Leg RDL), פוקוס קוואדס (Heels-Elevated Goblet Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, בלוק תאומים, מעגל ליבה + מיקרו-מוביליות B" },
-        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — הליכה נמרצת בדופק Zone 2 של 60%–70% (112-131 BPM, בסיס שיפוע 4%, 5.5 קמ\"ש, מבחן דיבור שוטף) + מיקרו-מוביליות B" },
-        { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "65 דק' — RPE 7–9 — Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, OHP, Triceps Ext, Diamond Push-Up, זוג TRX Row ↔ Single-Arm Lateral Raise, רוטציית כתף אחורית + Arm Block (משבוע 6) + מיקרו-מוביליות A" },
-        { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 25 דק' הליכון 0% (4.5 קמ\"ש) + 10 דק' דיפ-מוביליות" },
-        { day: "יום 5", type: "🧲 משיכה + גב + ביספס + נפח חזה", focus: "65 דק' — RPE 7–9 — מתח, One-Arm Row, TRX Face Pull, מיקרו-מחזור בייספס, זוג Push-Up Volume ↔ Single-Arm Curl, זוג Towel Hang ↔ L-Sit + Arm Block (משבוע 6) + מיקרו-מוביליות A" },
-        { day: "יום 6", type: "🔴 VO2 Max 4×4 Cardio", focus: "35 דק' — פרוטוקול נורבגי: 10 דק' חימום, 4×(4 דק' מאמץ ב-85%–95% דופק מרבי [159-178 BPM, בסיס 6.5+ קמ\"ש / שיפוע שלב, התאם לדופק], 3 דק' התאוששות ב-60%–70% דופק [112-131 BPM]), 5 דק' שחרור" },
-        { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה, תזונה ושינה" }
       ],
       arm_block_title: "💪 Arm Block v15.7 (Myo-Reps Cluster Protocol)",
       arm_block_desc: "Active from Week 6 at end of Day 3 (Single-Arm Lateral Raise + Overhead Triceps Extension) and Day 5 (Single-Arm Curl / Single-Arm Hammer Curl). 1 activation set to target + 3 mini-sets of 5 reps with 15s rest. Objective stop rule: 2 consecutive tempo losses or joint pain (reported via interactive prompt on BELOW outcome) terminates cluster. Capped at 1 exposure per muscle area per week.",
@@ -177,7 +106,7 @@ window.ExporterGuide = (() => {
         "<strong>פרוטוקול Arm Block ב-Myo-Reps:</strong> פעיל משבוע 6. צביר Myo-Reps (סט אקטיבציה + 3 מיני-סטים של 5 חזרות עם 15 שנ' מנוחה). עצירה אובייקטיבית ב-2 אובדני טמפו רצופים, מוגבל לחשיפה אחת בשבוע לכל אזור שרירי.",
         "<strong>עצי התקדמות ורוטציות שבועיות:</strong> יום 1 כולל פוקוס קוואדס רציף (Heels-Elevated Goblet Squat) ומעבר בשבוע 18 ל-Single-Leg RDL (מתחיל ב-8 ק״ג להגנה על L4-S1 ופותח חלון התקדמות של 36 שבועות עד 32 ק״ג לרגל). יום 3 מחליף TRX Y-T-W (אי-זוגי) עם Band Pull-Apart (זוגי).",
         "<strong>אסטרטגיית תקרת ה-32 ק״ג ועומס יסף משני:</strong> מנוף כפול ברגליים (סקוואט עם עצירה + סקוואט בולגרי), מעבר לאחיזת מזוודה ב-20+ ק״ג, ועומס יסף משני (הרחבת חזרות עד 16 ועצירה מוארכת של 3 שנ׳) בהגעה לתקרת ה-32 ק״ג.",
-        "<strong>מיקרו-מחזור בייספס 4 שבועות (3:1):</strong> שבועות 1–3 עומס כבד וקידום, שבוע 4 שימור קל (Single-Arm Hammer Curl בלבד, 2 סטים, ללא קידום).",
+        "<strong>מיקרו-מחזור בייספס 4 שבועות (3:1):</strong> שבועות 1–3 עומס כבד וקידום, שבוע 4 שימור קל (Single-Arm Hammer Curl בלבד [או Single-Arm Curl אם Hammer עדיין נעול], 2 סטים, ללא קידום).",
         "<strong>גיבוי נתונים וסנכרון ענן:</strong> ייצוא/ייבוא קובץ JSON מקומי בלחיצה אחת לצד סנכרון ענן דו-כיווני ל-Google Drive."
       ],
       equipment_title: "🔧 ציוד נדרש ושימוש קבוע",
@@ -188,7 +117,7 @@ window.ExporterGuide = (() => {
         "TRX (Face Pull, TRX Row, Y-T-W בזוויות קבועות)",
         "גומיות התנגדות: 30 ק\"ג (Pull-Apart, Pallof, כפיפה/פשיטת צוואר), 40 ק\"ג, 50 ק\"ג",
         "כיסא / ספסל יציב (Goblet BSS, Feet-Elevated Push-Up, Pike Hold)",
-        "הליכון (Zone 2: שיפוע 4% ב-5.5 קמ\"ש; VO2 Max 4×4: שיפוע 3%–6% ב-6.5 קמ\"ש)",
+        "הליכון (Zone 2: דופק 60%–70% [107-125 BPM לפי גיל 42 כברירת מחדל בהגדרות], בסיס שיפוע 4% ב-5.5 קמ\"ש; VO2 Max נורבגי 4×4: דופק 85%–95% [152-170 BPM], בסיס 6.5+ קמ\"ש בשיפוע 3%–6%)",
         "וסט משוקלל (+2, +4, +5 ק\"ג לתרגילים המסומנים בלבד)"
       ],
       options_title: "⚙️ אפשרויות התוכנית והפיצ'רים הזמינים",
@@ -217,19 +146,19 @@ window.ExporterGuide = (() => {
       rampup_days_table: [
         { day: "יום 1", type: "🦵 רגליים + ליבה (בסיס)", focus: "30 דק' — חימום + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + DB Glute Bridge + Dead Bug + Micro Mobility Protocol (5 תרגילי עוגן; תרגילי Phase 0 הנעולים מוסתרים)" },
         { day: "יום 2", type: "🫀 התאוששות פעילה", focus: "20 דק' — Relaxed Walking (0% שיפוע, 4.5 קמ\"ש) + Micro Mobility Protocol" },
-        { day: "יום 3", type: "💥 דחיפה + גב (בסיס)", focus: "30 דק' — חימום + Single-Arm Floor Press + Push-up Bars Progression + Diamond Push-Up + TRX Row + TRX Y-T-W + Micro Mobility Protocol (5 תרגילי עוגן; תרגילי Phase 0 הנעולים מוסתרים)" },
+        { day: "יום 3", type: "💥 דחיפה + גב (בסיס)", focus: "30 דק' — חימום + Single-Arm Floor Press + Push-up Bars Progression + Chin-Up + TRX Row + TRX Y-T-W + Micro Mobility Protocol (5 תרגילי עוגן; תרגילי Phase 0 הנעולים מוסתרים)" },
         { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר", focus: "25 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2×15-20) + 20 דק' Relaxed Walking + Micro Mobility Protocol" },
         { day: "יום 5", type: "🧲 משיכה + ביספס (בסיס)", focus: "30 דק' — חימום + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + Micro Mobility Protocol (5 תרגילי עוגן; תרגילי Phase 0 הנעולים מוסתרים)" },
         { day: "יום 6", type: "🚶 Zone 2 Cardio (VO2 נעול)", focus: "20 דק' — Relaxed Walking (0% שיפוע, 4.5 קמ\"ש) — VO2 Max Norwegian 4×4 מופיע בנתוני התוכנית משבוע 4" },
         { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה ותזונה" }
       ],
       standard_days_table: [
-        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "65 דק' — RPE 7–9 — High Knees + Bodyweight Squat + Dead Bug + Glute Bridge + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + Goblet Bulgarian Split Squat + DB Glute Bridge + Suitcase Carry + Standing Single-Leg Calf Raise + Seated Single-Leg Calf Raise + Dead Bug + Hollow Body Hold + Micro Mobility Protocol (Single-Leg RDL מחליף את Goblet RDL משבוע 18)" },
-        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — Brisk Walking בדופק Zone 2 של 60%–70% (112-131 BPM, בסיס 4% שיפוע, 5.5 קמ\"ש) + Micro Mobility Protocol" },
-        { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "65 דק' — RPE 7–9 — Arm Circles + Wall Slides + Scapular Push-up + Band Pull-Apart + Pike Progression + Single-Arm Floor Press + Push-up Bars Progression + Single-Arm Seated OHP + DB Overhead Triceps Extension + Diamond Push-Up + TRX Row + Single-Arm Lateral Raise + TRX Y-T-W + Micro Mobility Protocol (+ Arm Block משבוע 6)" },
+        { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "60 דק' — RPE 7–9 — High Knees + Bodyweight Squat + Dead Bug + Glute Bridge + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + Goblet Bulgarian Split Squat + DB Glute Bridge + Suitcase Carry + Dead Bug + Hollow Body Hold + Micro Mobility Protocol (Single-Leg RDL מחליף את Goblet RDL משבוע 18)" },
+        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — Brisk Walking בדופק Zone 2 של 60%–70% (107-125 BPM לפי ברירת מחדל גיל 42, בסיס 4% שיפוע, 5.5 קמ\"ש) + Micro Mobility Protocol" },
+        { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "60 דק' — RPE 7–9 — Arm Circles + Wall Slides + Scapular Push-up + Band Pull-Apart + Pike Progression + Single-Arm Floor Press + Push-up Bars Progression + Single-Arm Seated OHP + Chin-Up + DB Overhead Triceps Extension (3 סטים) + TRX Row + Single-Arm Lateral Raise + TRX Y-T-W + Micro Mobility Protocol (+ Arm Block משבוע 6)" },
         { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — Band Neck Flexion & Extension 2×15-20 + 25 דק' Relaxed Walking (0% שיפוע, 4.5 קמ\"ש) + 10 דק' Deep Mobility Protocol" },
-        { day: "יום 5", type: "🧲 משיכה + גב + ביספס + נפח חזה", focus: "65 דק' — RPE 7–9 — Arm Circles + Wall Slides + Scapular Pull-up + Dead Hang + Seated Band Row + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Push-Up Volume (Day 5) + Single-Arm Curl + Single-Arm Hammer Curl + Towel Hang + Tuck L-Sit + Micro Mobility Protocol (+ Arm Block משבוע 6)" },
-        { day: "יום 6", type: "🔴 VO2 Max Norwegian 4×4 Cardio", focus: "35 דק' — 10 דק' חימום, 4×(4 דק' מאמץ ב-85%–95% דופק מרבי [159-178 BPM, בסיס 6.5+ קמ\"ש בשיפוע השלב / התאם לדופק], 3 דק' התאוששות 60%–70% [112-131 BPM]), 5 דק' שחרור (Zone 2 בדילואד)" },
+        { day: "יום 5", type: "🧲 משיכה + גב + ביספס + תאומים + נפח חזה", focus: "65 דק' — RPE 7–9 — Arm Circles + Wall Slides + Scapular Pull-up + Dead Hang + Seated Band Row + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Push-Up Volume (Day 5) + Single-Arm Curl + Single-Arm Hammer Curl + Towel Hang + Tuck L-Sit + Standing Single-Leg Calf Raise + Seated Single-Leg Calf Raise + Micro Mobility Protocol (+ Arm Block משבוע 6)" },
+        { day: "יום 6", type: "🔴 VO2 Max Norwegian 4×4 Cardio", focus: "35 דק' — 10 דק' חימום, 4×(4 דק' מאמץ ב-85%–95% דופק מרבי [152-170 BPM, בסיס 6.5+ קמ\"ש בשיפוע השלב / התאם לדופק], 3 דק' התאוששות 60%–70% [107-125 BPM]), 5 דק' שחרור (Zone 2 בדילואד)" },
         { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה, תזונה ושינה" }
       ],
       arm_block_title: "💪 בלוק זרועות v15.7 (פרוטוקול Myo-Reps Cluster)",
@@ -265,7 +194,7 @@ window.ExporterGuide = (() => {
         "<strong>بروتوكول بلوك الذراعين Myo-Reps:</strong> مفعل من الأسبوع 6. مجموعة تنشيط + 3 مجموعات مصغرة (5 تكرارات مع 15 ثانية راحة). توقف عند فقدان الإيقاع مرتين متتاليتين.",
         "<strong>التناوب الأسبوعي (Toggles):</strong> اليوم 3 يتناول TRX Y-T-W و Band Pull-Apart. اليوم 1 يتبع مسار التقدم الخطي (Heels-Elevated Goblet Squat و Single-Leg RDL يبدأ من 8 كغ لحماية L4-S1 ويفتح 36 أسبوعاً من التقدم).",
         "<strong>استراتيجية سقف الـ 32 كغ والتحميل الزائد الثانوي:</strong> ميكانيكا مضاعفة للأرجل (قرفصاء مع توقف + قرفصاء بلغارية)، الانتقال لقبضة الحقيبة عند 20+ كغ، وتوسيع التكرارات حتى 16 عند بلوغ سقف 32 كغ.",
-        "<strong>دورة البايسبس 4 أسابيع (3:1):</strong> 3 أسابيع حمولة زائدة تدريجية وأسبوع خفيف للتعافي الحركي."
+        "<strong>دورة البايسبس 4 أسابيع (3:1):</strong> 3 أسابيع حمولة زائدة تدريجية وأسبوع خفيف للتعافي الحركي (مع بديل Single-Arm Curl في حال قفل الهامر)."
       ],
       equipment_title: "🔧 المعدات المطلوبة",
       equipment_list: [
@@ -304,19 +233,19 @@ window.ExporterGuide = (() => {
       rampup_days_table: [
         { day: "اليوم 1", type: "🦵 الأرجل + الأساس", focus: "30 دقيقة — إحماء + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + DB Glute Bridge + Dead Bug + Micro Mobility Protocol (5 تمارين مرساة؛ تمارين المرحلة 0 المقفلة تُخفى)" },
         { day: "اليوم 2", type: "🫀 التعافي النشط", focus: "20 دقيقة — Relaxed Walking (0% ميل, 4.5 كم/س) + Micro Mobility Protocol" },
-        { day: "اليوم 3", type: "💥 الدفع + الجزء العلوي", focus: "30 دقيقة — إحماء + Single-Arm Floor Press + Push-up Bars Progression + Diamond Push-Up + TRX Row + TRX Y-T-W + Micro Mobility Protocol (5 تمارين مرساة؛ تمارين المرحلة 0 المقفلة تُخفى)" },
+        { day: "اليوم 3", type: "💥 الدفع + الجزء العلوي", focus: "30 دقيقة — إحماء + Single-Arm Floor Press + Push-up Bars Progression + Chin-Up + TRX Row + TRX Y-T-W + Micro Mobility Protocol (5 تمارين مرساة؛ تمارين المرحلة 0 المقفلة تُخفى)" },
         { day: "اليوم 4", type: "🌿 التعافي النشط + صحة الرقبة", focus: "25 دقيقة — بروتوكول الرقبة (Band Neck Flexion & Extension 2×15-20) + 20 دقيقة Relaxed Walking + Micro Mobility Protocol" },
         { day: "اليوم 5", type: "🧲 السحب + الأساس", focus: "30 دقيقة — إحماء + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + Micro Mobility Protocol (5 تمارين مرساة؛ تمارين المرحلة 0 المقفلة تُخفى)" },
         { day: "اليوم 6", type: "🚶 Zone 2 Cardio (VO2 مقفل)", focus: "20 دقيقة — Relaxed Walking (0% ميل, 4.5 كم/س) — VO2 Max Norwegian 4×4 يظهر في بيانات البرنامج من الأسبوع 4" },
         { day: "اليوم 7", type: "😴 راحة كاملة", focus: "راحة كاملة وتغذية" }
       ],
       standard_days_table: [
-        { day: "اليوم 1", type: "🦵 الأرجل + الجذع + الحمل", focus: "65 دقيقة — RPE 7–9 — High Knees + Bodyweight Squat + Dead Bug + Glute Bridge + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + Goblet Bulgarian Split Squat + DB Glute Bridge + Suitcase Carry + Standing Single-Leg Calf Raise + Seated Single-Leg Calf Raise + Dead Bug + Hollow Body Hold + Micro Mobility Protocol (Single-Leg RDL يستبدل Goblet RDL من الأسبوع 18)" },
-        { day: "اليوم 2", type: "🫀 Zone 2 Cardio + المرونة اليومية", focus: "45 دقيقة — مشي سريع عند نبض المنطقة 2 (60-70%، أساس 4% ميل، 5.5 كم/س) + Micro Mobility Protocol" },
-        { day: "اليوم 3", type: "💥 الدفع + الكتفين + الترايسبس", focus: "65 دقيقة — RPE 7–9 — Arm Circles + Wall Slides + Scapular Push-up + Band Pull-Apart + Pike Progression + Single-Arm Floor Press + Push-up Bars Progression + Single-Arm Seated OHP + DB Overhead Triceps Extension + Diamond Push-Up + TRX Row + Single-Arm Lateral Raise + TRX Y-T-W + Micro Mobility Protocol (+ بلوك الذراعين من الأسبوع 6)" },
+        { day: "اليوم 1", type: "🦵 الأرجل + الجذع + الحمل", focus: "60 دقيقة — RPE 7–9 — High Knees + Bodyweight Squat + Dead Bug + Glute Bridge + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + Goblet Bulgarian Split Squat + DB Glute Bridge + Suitcase Carry + Dead Bug + Hollow Body Hold + Micro Mobility Protocol (Single-Leg RDL يستبدل Goblet RDL من الأسبوع 18)" },
+        { day: "اليوم 2", type: "🫀 Zone 2 Cardio + المرونة اليومية", focus: "45 دقيقة — مشي سريع عند نبض المنطقة 2 (60-70% [107-125 نبضة/د افتراضياً لعمر 42]، أساس 4% ميل، 5.5 كم/س) + Micro Mobility Protocol" },
+        { day: "اليوم 3", type: "💥 الدفع + الكتفين + الترايسبس + السحب", focus: "60 دقيقة — RPE 7–9 — Arm Circles + Wall Slides + Scapular Push-up + Band Pull-Apart + Pike Progression + Single-Arm Floor Press + Push-up Bars Progression + Single-Arm Seated OHP + Chin-Up + DB Overhead Triceps Extension (3 مجموعات) + TRX Row + Single-Arm Lateral Raise + TRX Y-T-W + Micro Mobility Protocol (+ بلوك الذراعين من الأسبوع 6)" },
         { day: "اليوم 4", type: "🌿 التعافي النشط + صحة الرقبة والمفاصل", focus: "30 دقيقة — Band Neck Flexion & Extension 2×15-20 + 25 دقيقة Relaxed Walking (0% ميل, 4.5 كم/س) + 10 دقائق Deep Mobility Protocol" },
-        { day: "اليوم 5", type: "🧲 السحب + الظهر + البايسبس + القبضة", focus: "65 دقيقة — RPE 7–9 — Arm Circles + Wall Slides + Scapular Pull-up + Dead Hang + Seated Band Row + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Push-Up Volume (Day 5) + Single-Arm Curl + Single-Arm Hammer Curl + Towel Hang + Tuck L-Sit + Micro Mobility Protocol (+ بلوك الذراعين من الأسبوع 6)" },
-        { day: "اليوم 6", type: "🔴 VO2 Max Norwegian 4×4 Cardio", focus: "35 دقيقة — 10 د إحماء, 4×(4 د جهد عند 85-95% أقصى نبض [أساس 6.5+ كم/س بميل المرحلة / عدل حسب النبض], 3 د تعافي عند 60-70%), 5 د تبريد (Zone 2 في التخفيف)" },
+        { day: "اليوم 5", type: "🧲 السحب + الظهر + البايسبس + الساقين + القبضة", focus: "65 دقيقة — RPE 7–9 — Arm Circles + Wall Slides + Scapular Pull-up + Dead Hang + Seated Band Row + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Push-Up Volume (Day 5) + Single-Arm Curl + Single-Arm Hammer Curl + Towel Hang + Tuck L-Sit + Standing Single-Leg Calf Raise + Seated Single-Leg Calf Raise + Micro Mobility Protocol (+ بلوك الذراعين من الأسبوع 6)" },
+        { day: "اليوم 6", type: "🔴 VO2 Max Norwegian 4×4 Cardio", focus: "35 دقيقة — 10 د إحماء, 4×(4 د جهد عند 85-95% أقصى نبض [152-170 نبضة/د افتراضياً لعمر 42, أساس 6.5+ كم/س بميل المرحلة / عدل حسب النبض], 3 د تعافي عند 60-70% [107-125 نبضة/د]), 5 د تبريد (Zone 2 في التخفيف)" },
         { day: "اليوم 7", type: "😴 راحة كاملة", focus: "راحة كاملة وتغذية ونوم" }
       ],
       arm_block_title: "💪 بلوك الذراعين v15.7 (بروتوكول Myo-Reps)",
@@ -677,7 +606,7 @@ window.ExporterGuide = (() => {
         </tr>
         <tr><td>Weeks 1–2</td><td>Phase 0: Anatomical Foundation Ramp-Up</td><td>5–6 Anchor exercises/day, 20m light walks, protected joints & spine</td><td><span class="badge rest">Ramp-Up</span></td></tr>
         <tr><td>Weeks 3–4</td><td>Phase 0: Performance-Based Early Graduation</td><td>Locked movements unlock when performance criteria are met (Calendar Ceiling Rule)</td><td><span class="badge" style="background: #fef3c7; color: #92400e;">Ramp-Up + Unlocks</span></td></tr>
-        <tr><td>Week 5</td><td>🎓 Week 5 Graduation Event</td><td>Unlocks Goblet BSS, VO2 Max 4x4, Pike/OHP, Towel Hang, L-Sit, Suitcase Carry, Calf Block</td><td><span class="badge" style="background: #fef3c7; color: #92400e;">Graduation</span></td></tr>
+        <tr><td>Week 5</td><td>🎓 Week 5 Graduation Event</td><td>Unlocks Goblet BSS, VO2 Max 4x4, Pike/OHP, Towel Hang, L-Sit, Suitcase Carry, Calf Block (Day 5)</td><td><span class="badge" style="background: #fef3c7; color: #92400e;">Graduation</span></td></tr>
         <tr><td>Weeks 6–11</td><td>Phase 1: Foundation Hypertrophy + Arm Block</td><td>Heels-Elevated Squat, Rear Delt Toggle, Arm Block Myo-Reps active from Week 6</td><td><span class="badge">Standard + Myo-Reps</span></td></tr>
         <tr><td>Week 12</td><td>Phase 1 Deload</td><td>Volume ceiling 2 sets, -2kg load reduction, straight sets</td><td><span class="badge rest">Deload</span></td></tr>
         <tr><td>Weeks 18–23</td><td>Phase 2: Unilateral Posterior Progression</td><td>Single-Leg RDL replaces Goblet RDL on Day 1 (all weeks)</td><td><span class="badge">Standard + Progression</span></td></tr>
