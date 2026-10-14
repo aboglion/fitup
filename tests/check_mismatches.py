@@ -27,6 +27,6 @@ for name in sorted(program_exercises - tree_exercises):
 
 print("\nIn Skill Tree but NOT in Program:")
 for name in sorted(tree_exercises - program_exercises):
-    if name not in ['Chin-Up', 'Chin-Up Progression', 'Weighted Chin-Up', 'Wrist Rocks']:
+    if name not in ['Chin-Up', 'Chin-Up Progression', 'Weighted Chin-Up', 'Wrist Rocks', 'Diamond Push-Up', 'Weighted Diamond Push-Up']:
         print(f"  - {name}")
 

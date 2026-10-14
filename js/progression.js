@@ -135,28 +135,28 @@
       const sessions = Math.max(0, sessionsAtWeight || 0);
 
       // 1. Tier 1: Highest Jump >= 30% (e.g. 6 kg -> 8 kg is +33.3% jump - "הכי הרבה זה")
-      // Requires the largest volume bridge (+2 sets peak for Group B, +1 set for Group A)
+      // Requires volume bridge (up to +2 sets peak for Group B, +1 set for Group A, hard-capped at 4 sets max)
       if (pctJump >= 30) {
         if (isGrpA) {
-          // Compound: 3 -> 4 sets on 2nd+ session
-          return sessions >= 1 ? base + 1 : base;
+          // Compound: 3 -> 4 sets on 2nd+ session (capped at 4 sets max)
+          return sessions >= 1 ? Math.min(4, base + 1) : base;
         } else {
           // Isolation (e.g. Lateral Raise): 2 sets -> 3 sets -> 4 sets before advancing to 8 kg!
           if (sessions === 0) return base;       // Session 1: 2 sets
-          if (sessions === 1) return base + 1;   // Session 2: 3 sets
-          return base + 2;                       // Session 3+: 4 sets (peak volume bridge)
+          if (sessions === 1) return Math.min(4, base + 1);   // Session 2: 3 sets
+          return Math.min(4, base + 2);                       // Session 3+: 4 sets (peak volume bridge)
         }
       }
 
       // 2. Tier 2: Moderate-High Jump 23% - 29% (e.g. 8 kg -> 10 kg is +25.0% jump)
-      // Stepping bridge (+1 set for Group B and Group A)
+      // Stepping bridge (+1 set for Group B and Group A, capped at 4 sets max)
       if (pctJump >= 23) {
         if (isGrpA) {
-          return sessions >= 1 ? base + 1 : base;
+          return sessions >= 1 ? Math.min(4, base + 1) : base;
         } else {
           // Isolation: 2 sets for first 2 sessions -> 3 sets on session 3+ before advancing to 10 kg
           if (sessions <= 1) return base;
-          return base + 1; // 3 sets
+          return Math.min(4, base + 1); // 3 sets
         }
       }
 
@@ -167,7 +167,7 @@
           return base; // Compounds handle 20% comfortably at 3 sets
         } else {
           // Isolation: brief stepping bridge on session 3 only
-          return sessions >= 2 ? base + 1 : base;
+          return sessions >= 2 ? Math.min(4, base + 1) : base;
         }
       }
 

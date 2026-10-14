@@ -34,7 +34,7 @@ EXERCISES_CATALOG = [
         "compound": True,
         "structure": "straight",
         "sets": 3,
-        "rule": "neutral spine קשיח; אם הגב מתעגל, BELOW"
+        "rule": "neutral spine קשיח; אם הגב מתעגל, BELOW. חימום ספציפי (מעל 14 ק\"ג): סט 1 ב-50% (6-8 חזרות), סט 2 ב-75% (3-4 חזרות) לפני סטי העבודה"
     },
     {
         "id": "single-leg-rdl",
@@ -104,7 +104,7 @@ EXERCISES_CATALOG = [
         "compound": True,
         "structure": "straight",
         "sets": 2,
-        "rule": "עקבים מוגבהים; עצירה של 1-2 שניות בתחתית (Paused Squat) לשמירה על מתח ארבע-ראשי רציף וללא תנופה"
+        "rule": "עקבים מוגבהים; עצירה של 1-2 שניות בתחתית (Paused Squat) לשמירה על מתח ארבע-ראשי רציף וללא תנופה. חימום ספציפי (מעל 14 ק\"ג): סט 1 ב-50% (6-8 חזרות), סט 2 ב-75% (3-4 חזרות) לפני סטי העבודה"
     },
     {
         "id": "goblet-bulgarian-split-squat",
@@ -186,11 +186,12 @@ EXERCISES_CATALOG = [
         "compound": False,
         "sets": 3,
         "structure": "block",
-        "blockId": "d1-calf-block",
+        "blockId": "d5-calf-block",
         "blockOrder": 1,
         "startingWeek": 5,
         "unlocked": False,
         "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "heels-elevated-goblet-squat", "targetWeightKg": 10 },
         "fallbackId": None
     },
     {
@@ -209,11 +210,12 @@ EXERCISES_CATALOG = [
         "compound": False,
         "sets": 2,
         "structure": "block",
-        "blockId": "d1-calf-block",
+        "blockId": "d5-calf-block",
         "blockOrder": 2,
         "startingWeek": 5,
         "unlocked": False,
         "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "heels-elevated-goblet-squat", "targetWeightKg": 10 },
         "fallbackId": None
     },
     {
@@ -312,7 +314,8 @@ EXERCISES_CATALOG = [
         "tempo": "2s descent",
         "compound": True,
         "sets": 3,
-        "structure": "straight"
+        "structure": "straight",
+        "rule": "רצפה בולמת מרפק ב-90° ומגינה על קפסולת הכתף. חימום ספציפי (מעל 14 ק\"ג): סט 1 ב-50% (6-8 חזרות), סט 2 ב-75% (3-4 חזרות) לפני סטי העבודה"
     },
     {
         "id": "push-up-progression",
@@ -339,7 +342,15 @@ EXERCISES_CATALOG = [
         "tempo": "2s descent",
         "compound": True,
         "sets": 3,
-        "structure": "straight"
+        "structure": "straight",
+        "unlocked": False,
+        "startingWeek": 10,
+        "earliestWeek": 10,
+        "fallbackId": "push-up-progression",
+        "unlockCriteria": {
+            "exercise": "push-up-progression",
+            "targetReps": 12
+        }
     },
     {
         "id": "feet-elevated-push-up",
@@ -457,7 +468,15 @@ EXERCISES_CATALOG = [
         "compound": True,
         "sets": 3,
         "structure": "straight",
-        "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק"
+        "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק",
+        "unlocked": False,
+        "startingWeek": 10,
+        "earliestWeek": 10,
+        "fallbackId": "pull-up-progression",
+        "unlockCriteria": {
+            "exercise": "pull-up-progression",
+            "targetReps": 6
+        }
     },
     {
         "id": "chin-up",
@@ -468,9 +487,10 @@ EXERCISES_CATALOG = [
         "repWindow": "4-8",
         "tempo": "2s descent",
         "compound": True,
-        "sets": 3,
+        "sets": 2,
         "structure": "straight",
-        "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק"
+        "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק",
+        "stages": ["Negative Chin-Up", "Chin-Up", "Weighted Chin-Up (vest 5kg)"]
     },
     {
         "id": "weighted-pull-up",
@@ -523,6 +543,7 @@ EXERCISES_CATALOG = [
         "compound": True,
         "sets": 3,
         "structure": "straight",
+        "rule": "ישיבה זקופה, אחיזה ניטרלית, עצירה בגובה האוזן למניעת צביטה. חימום ספציפי (מעל 14 ק\"ג): סט 1 ב-50% (6-8 חזרות), סט 2 ב-75% (3-4 חזרות) לפני סטי העבודה",
         "startingWeek": 5,
         "unlocked": False,
         "earliestWeek": 3,
@@ -544,7 +565,7 @@ EXERCISES_CATALOG = [
         # v15.7.1: lengthened-position tempo — 2s lowering behind head, 1s pause at overhead stretch, 2s extension.
         "tempo": "2-1-2",
         "compound": False,
-        "sets": 4,
+        "sets": 3,
         "structure": "straight",
         "startingWeek": 5,
         "unlocked": False,
@@ -602,6 +623,7 @@ EXERCISES_CATALOG = [
         "startingWeek": 5,
         "unlocked": False,
         "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "push-up-progression", "targetReps": 10 },
         "fallbackId": None
     },
     {
@@ -650,7 +672,7 @@ EXERCISES_CATALOG = [
         "structure": "straight",
         "rule": "מוט מתח או טבעות/לולאת חבל (מומלץ להגנה על המרפקים ורוטציה חופשית); ללא תנופה",
         "stages": [
-            "Negative Pull-Up", "Pull-Up", "Chin-Up",
+            "Negative Pull-Up", "Chin-Up", "Pull-Up",
             "Pull-Up + vest 2kg", "+ vest 4kg", "+ vest 5kg"
         ]
     },
@@ -769,6 +791,7 @@ EXERCISES_CATALOG = [
         "startingWeek": 5,
         "unlocked": False,
         "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "pull-up-progression", "targetReps": 6 },
         "fallbackId": None
     },
     {
@@ -838,11 +861,11 @@ EXERCISES_CATALOG = [
     { "id": "scapular-pull-up", "name": "Scapular Pull-up", "category": "Warmup", "type": "variation", "restSeconds": 30, "repWindow": "6" },
     { "id": "dead-hang", "name": "Dead Hang", "category": "Warmup", "type": "timebased", "restSeconds": 30, "repWindow": "15s" },
     { "id": "seated-band-row", "name": "Seated Band Row", "category": "Warmup", "type": "variation", "restSeconds": 30, "repWindow": "12" },
-    { "id": "brisk-walking", "name": "Brisk Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "30-45m", "startingWeek": 5, "unlocked": False, "earliestWeek": 3, "fallbackId": "relaxed-walking" },
+    { "id": "brisk-walking", "name": "Brisk Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "30-45m", "startingWeek": 3, "unlocked": False, "earliestWeek": 3, "fallbackId": "relaxed-walking" },
     { "id": "relaxed-walking", "name": "Relaxed Walking", "category": "Cardio", "type": "timebased", "restSeconds": 0, "repWindow": "25-30m" },
-    { "id": "vo2-max-norwegian-4x4", "name": "VO2 Max Norwegian 4x4", "category": "Cardio", "type": "interval", "restSeconds": 0, "repWindow": "16m", "startingWeek": 5, "unlocked": False, "earliestWeek": 4, "fallbackId": "relaxed-walking" },
+    { "id": "vo2-max-norwegian-4x4", "name": "VO2 Max Norwegian 4x4", "category": "Cardio", "type": "interval", "restSeconds": 0, "repWindow": "16m", "startingWeek": 4, "unlocked": False, "earliestWeek": 4, "fallbackId": "relaxed-walking" },
     { "id": "micro-mobility-protocol", "name": "Micro Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "5m" },
-    { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "10m", "startingWeek": 5, "unlocked": False, "earliestWeek": 3, "fallbackId": "micro-mobility-protocol" },
+    { "id": "deep-mobility-protocol", "name": "Deep Mobility Protocol", "category": "Warmup", "type": "timebased", "restSeconds": 0, "repWindow": "10m", "startingWeek": 3, "unlocked": False, "earliestWeek": 3, "fallbackId": "micro-mobility-protocol" },
     {
         "id": "band-neck-flexion",
         "name": "Band Neck Flexion & Extension",

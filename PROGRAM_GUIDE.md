@@ -1,9 +1,9 @@
-# FitUp Pro v15.7 Accelerated — Master Program Guide
+# FitUp Pro v15.8 Accelerated — Master Program Guide
 **Target Objective**: Sculpted Athletic Physique | V-Taper | Prominent Arms | Strong Back | Resilient Tendons | Anti-Aging | Aerobic Engine | Flexibility  
 **Starting Level**: Beginner (0 years formal training) | Clean Pull-Ups: 2 | Clean Push-Ups: 7  
 **Core Philosophy**: **Zero Decisions. Everything is prescriptive. You only execute.**
 
-**v15.7.1 Patch (Safe Hypertrophy Dosing & Timing)**: This patch increases hamstring and lateral-delt dosing, improves Day 3 pressing order, and adds lengthened-position tempo cues without compressing Phase 0 or increasing injury risk.
+**v15.8 (Safe Hypertrophy Dosing & Timing)**: This release increases hamstring and lateral-delt dosing, improves Day 3 pressing order, and adds lengthened-position tempo cues without compressing Phase 0 or increasing injury risk.
 
 ---
 
@@ -129,11 +129,11 @@ The program is deliberately designed around a home gym environment with modular 
 
 1. **Bilateral to Unilateral Hip-Hinge Transition (Goblet RDL → Single-Leg RDL)**:
    - **Weeks 1–17 (Bilateral Foundation)**: `Goblet Romanian Deadlift` starts at 8 kg and progresses via Group A (+2 kg every 3 clean workouts) up to ~18–20 kg.
-   - **Week 18+ (Unilateral Overload & Reset)**: Goblet RDL is replaced by `Single-Leg RDL`. Critically, Single-Leg RDL **starts at 8 kg** (does NOT inherit 100% of bilateral load) to build unilateral pelvis stability, safeguard the L4–S1 disc bulge, and open a brand-new **36-week linear overload runway** up to 32 kg (effective bilateral stimulus equivalent to 64 kg).
+   - **Week 18+ (Unilateral Overload & Reset)**: Goblet RDL is replaced by `Single-Leg RDL`. Critically, Single-Leg RDL **starts at 8 kg** (does NOT inherit 100% of bilateral load) to build unilateral pelvis stability, safeguard the L4–S1 disc bulge, and open a brand-new **36-week linear overload runway** up to 32 kg.
 2. **Bodyweight Eccentric Hamstring Tension (Nordic Curl Progression)**:
    - Introduced in **Week 10**, the `Nordic Curl Progression` adds a dedicated eccentric hamstring overload vector that is completely independent of dumbbell weights, featuring infinite progressive resistance through lever angle and band assistance.
 3. **Dual-Leverage Quad Architecture (Paused Squats + Bulgarian Split Squat)**:
-   - **Heels-Elevated Goblet Squat**: Utilizes heel elevation (increasing knee extensor moment arm) combined with a strict 3s eccentric descent and a **1–2s isometric pause at bottom stretch**, eliminating stretch-shortening elastic rebound and increasing active mechanical motor-unit recruitment by 30%–40%.
+   - **Heels-Elevated Goblet Squat**: Utilizes heel elevation (increasing knee extensor moment arm) combined with a strict 3s eccentric descent and a **1–2s isometric pause at bottom stretch**, eliminating stretch-shortening elastic rebound and maximizing active mechanical tension at the lengthened position.
    - **Goblet Bulgarian Split Squat (Unlocked W3–W5)**: Provides the primary unilateral quad/glute driver up to 32 kg per working leg.
 4. **Heavy Load Suitcase Grip Transition (20 kg+)**:
    - Holding a single heavy dumbbell in Goblet position (in front of chest) eventually stresses upper-back postural endurance and grip rather than quad prime movers.
@@ -150,7 +150,7 @@ The program is deliberately designed around a home gym environment with modular 
 ## Part 2 — Lean Architecture & Frequency Optimization
 
 ### 2.1 Lean Structure & Realistic Time Allocation (60–65 Minute Target)
-The v15.7 Accelerated Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts. Realistic session duration for full strength days (Day 1, Day 3, Day 5) is **60–65 minutes** to account for warm-up, 17–25+ working sets with 45–90s rest, paired transitions, and the Arm Block:
+The v15.8 Accelerated Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts. Realistic session duration for full strength days (Day 1, Day 3, Day 5) is **60–65 minutes** to account for warm-up, 17–25+ working sets with 45–90s rest, paired transitions, and the Arm Block:
 - **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
 - **Lean Pairs (Antagonistic & Non-Competing)**:
   - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
@@ -165,7 +165,7 @@ The v15.7 Accelerated Edition organizes exercises into optimized structures to m
 ### 2.2 Weekly Alternating Toggles
 - **Day 1 Posterior Progression (not a week-parity toggle)**:
   - **Weeks 1–17**: Goblet RDL is the bilateral posterior anchor (starts at 8 kg, progresses up to ~18–20 kg).
-  - **Week 18+**: Single-Leg RDL replaces Goblet RDL as the Day 1 posterior anchor (unilateral progression, all weeks). It resets safely to **8 kg** (safe unilateral baseline) to protect the L4–S1 lumbar spine, develop pelvis balance, and open a brand-new **36-week progression window** up to 32 kg per leg (effective bilateral stimulus equivalent to 64 kg).
+  - **Week 18+**: Single-Leg RDL replaces Goblet RDL as the Day 1 posterior anchor (unilateral progression, all weeks). It resets safely to **8 kg** (safe unilateral baseline) to protect the L4–S1 lumbar spine, develop pelvis balance, and open a brand-new **36-week progression window** up to 32 kg per leg.
   - **Quad Focus (independent, continuous)**: Heels-Elevated Goblet Squat is performed every week from Week 1 (3s descent, 1–2s isometric pause at bottom stretch).
 - **Day 3 Rear Delt Toggle**:
   - **Odd Weeks**: TRX Y-T-W (3-position posterior delt & scapular control).
@@ -371,7 +371,7 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 ---
 
 ## Appendix B — System Definition & Master References
-- **Program Dataset**: `window.TRAINING_DATA` in `js/data.js` (FitUp v15.7.1 Accelerated).
+- **Program Dataset**: `window.TRAINING_DATA` in `js/data.js` (FitUp v15.8 Accelerated).
 - **Progression Engine**: `ProgressionEngine` in `js/progression.js`.
 - **Zero-0-Kg Weight Protection Engine**: All weighted exercises strictly enforce prescribed starting weights (`startingWeight`) and a physical minimum load floor (6 kg empty handle for dumbbells; 5 kg for weighted vest). Loads are guaranteed never to calculate or display as 0 kg under any fallback or parsing state.
 - **Starting Weight for Lateral Raise (6 kg Handle)**: Single-Arm Lateral Raise (`single-arm-lateral-raise`) and Arm Block Lateral Raise (`arm-block-lateral-raise`) start at **6 kg** (the empty handle) rather than 8 kg. For trainees starting at ~7 push-ups, an 8 kg lateral raise is disproportionately heavy and provokes trap shrugging and impingement; 6 kg ensures strict scaption plane mechanics.
@@ -470,7 +470,7 @@ Era-based history (`combatSchedule.history`, append-only) guarantees a full plan
 
 ## Appendix D — Complete Program Exercise Dictionary & Master Specifications
 
-This is the authoritative specification of all **59 unique exercises** appearing across the 560-day program schedule, plus catalog progressions referenced by `window.TRAINING_DATA` (`js/data.js`, v15.7.1 Accelerated). The in-app program is authoritative; this guide reflects the exact code parameters.
+This is the authoritative specification of all **59 unique exercises** appearing across the 560-day program schedule, plus catalog progressions referenced by `window.TRAINING_DATA` (`js/data.js`, v15.8 Accelerated). The in-app program is authoritative; this guide reflects the exact code parameters.
 
 ### D.1 Master Exercise Parameters & Catalog (Exact Weights, Reps, Tempos & Rest)
 
@@ -570,4 +570,4 @@ The training program is the prescriptive core; these are the controls the app ex
 
 ---
 
-FitUp Pro v15.7 Accelerated — Built for Precision, Zero Decisions, and Zero Regrets.
+FitUp Pro v15.8 Accelerated — Built for Precision, Zero Decisions, and Zero Regrets.
