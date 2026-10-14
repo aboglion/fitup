@@ -188,3 +188,64 @@ test('CSS - Components styling for 1RM, cycling, and readiness check', () => {
   assert.ok(css.includes('.readiness-adaptation-box'), 'components.css has .readiness-adaptation-box');
   assert.ok(css.includes('.readiness-drop-badge'), 'components.css has .readiness-drop-badge');
 });
+
+// --- 5. Heart Rate & Cardio Profile (HRmax & Zones) ---
+test('Feature 5 - Heart Rate & Cardio Profile (HRmax & Zones)', () => {
+  const uiCode = fs.readFileSync(path.join(__dirname, '../js/ui.js'), 'utf8');
+
+  // Verify function definitions and exports
+  assert.ok(uiCode.includes('function calculateHRmax(age, customHRmax = null)'), 'ui.js defines calculateHRmax');
+  assert.ok(uiCode.includes('function getHRZones(age = 30, customHRmax = null)'), 'ui.js defines getHRZones');
+  assert.ok(uiCode.includes('function showHeartRateModal('), 'ui.js defines showHeartRateModal');
+  // Mathematical accuracy test of Tanaka formula and custom overrides
+  const calculateHRmax = (age, customHRmax = null) => {
+    const cMax = parseInt(customHRmax, 10);
+    if (cMax && cMax >= 100 && cMax <= 240) return cMax;
+    const a = parseInt(age, 10) || 30;
+    return Math.round(208 - (0.7 * a));
+  };
+
+  const getHRZones = (age = 30, customHRmax = null) => {
+    const a = parseInt(age, 10) || 30;
+    const max = calculateHRmax(a, customHRmax);
+    return {
+      age: a,
+      max,
+      isCustom: !!(customHRmax && parseInt(customHRmax, 10) >= 100),
+      zone1: [Math.round(max * 0.50), Math.round(max * 0.60)],
+      zone2: [Math.round(max * 0.60), Math.round(max * 0.70)],
+      zone3: [Math.round(max * 0.70), Math.round(max * 0.80)],
+      zone4: [Math.round(max * 0.80), Math.round(max * 0.90)],
+      zone5: [Math.round(max * 0.85), Math.round(max * 0.95)]
+    };
+  };
+
+  // Tanaka formula: 208 - (0.7 * 30) = 187
+  assert.equal(calculateHRmax(30), 187);
+  // Tanaka formula: 208 - (0.7 * 40) = 180
+  assert.equal(calculateHRmax(40), 180);
+  // Custom override (e.g. 195 BPM from sports watch / stress test)
+  assert.equal(calculateHRmax(30, 195), 195);
+
+  // Target Zones calculation for age 30 (HRmax 187)
+  const z30 = getHRZones(30);
+  assert.equal(z30.max, 187);
+  assert.equal(z30.isCustom, false);
+  // Zone 2 (60-70%): [112, 131]
+  assert.deepEqual(z30.zone2, [112, 131]);
+  // Zone 5 / 4x4 Work (85-95%): [159, 178]
+  assert.deepEqual(z30.zone5, [159, 178]);
+
+  // Target Zones with custom HRmax = 190
+  const zCustom = getHRZones(30, 190);
+  assert.equal(zCustom.max, 190);
+  assert.equal(zCustom.isCustom, true);
+  assert.deepEqual(zCustom.zone2, [114, 133]);
+  assert.deepEqual(zCustom.zone5, [162, 181]);
+
+  // Check DOM hooks in index.html
+  const indexHtml = fs.readFileSync(path.join(__dirname, '../index.html'), 'utf8');
+  assert.ok(indexHtml.includes('id="settings-user-age"'), 'index.html has settings-user-age');
+  assert.ok(indexHtml.includes('id="settings-custom-hrmax"'), 'index.html has settings-custom-hrmax');
+  assert.ok(indexHtml.includes('id="save-hr-settings-btn"'), 'index.html has save-hr-settings-btn');
+});

@@ -27,7 +27,11 @@ const AnatomyMap = (() => {
       if (nextState === 2) stateName = I18n.t('injury_state_injured');
 
       if (typeof UI !== 'undefined' && UI.showToast) {
-        UI.showToast(`${jointName}: ${stateName}`);
+        if (nextState === 2) {
+          UI.showToast(`⚠️ ${jointName}: ${stateName} — ${I18n.t('injury_clinical_warning_inline')}`);
+        } else {
+          UI.showToast(`${jointName}: ${stateName}`);
+        }
       }
 
       if (lastContainer) {
@@ -475,6 +479,11 @@ const AnatomyMap = (() => {
             </button>
           ` : ''}
         </div>
+        ${typeof InjuryEngine !== 'undefined' && InjuryEngine.hasInjuredJoints && InjuryEngine.hasInjuredJoints() ? `
+          <div class="clinical-safety-alert" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 10px; padding: 10px 14px; margin-bottom: 12px; font-size: 11.5px; color: #fca5a5; line-height: 1.45;">
+            <strong>⚠️ ${I18n.t('injury_clinical_warning_title')}:</strong> ${I18n.t('injury_clinical_warning_body')}
+          </div>
+        ` : ''}
       ` : ''}
 
       <div class="anatomy-dual-container">

@@ -2290,6 +2290,210 @@ const UI = (() => {
     }, 50);
   }
 
+  /**
+   * Calculate Maximum Heart Rate (HRmax)
+   * Prioritizes custom user override if provided, otherwise applies Tanaka formula.
+   */
+  function calculateHRmax(age, customHRmax = null) {
+    const cMax = parseInt(customHRmax, 10);
+    if (cMax && cMax >= 100 && cMax <= 240) {
+      return cMax;
+    }
+    const a = parseInt(age, 10) || 30;
+    // Tanaka formula: 208 - (0.7 * age)
+    return Math.round(208 - (0.7 * a));
+  }
+
+  /**
+   * Calculate all training heart rate zones for given age or custom HRmax
+   */
+  function getHRZones(age = 30, customHRmax = null) {
+    const a = parseInt(age, 10) || 30;
+    const max = calculateHRmax(a, customHRmax);
+    const tanaka = Math.round(208 - (0.7 * a));
+    const fox = Math.max(100, 220 - a);
+    return {
+      age: a,
+      customHRmax: (customHRmax && parseInt(customHRmax, 10) >= 100) ? parseInt(customHRmax, 10) : null,
+      max,
+      isCustom: !!(customHRmax && parseInt(customHRmax, 10) >= 100),
+      tanaka,
+      fox,
+      // Target Zones
+      zone1: [Math.round(max * 0.50), Math.round(max * 0.60)], // Warmup / Cooldown (50-60%)
+      zone2: [Math.round(max * 0.60), Math.round(max * 0.70)], // Zone 2 Base (60-70%)
+      zone3: [Math.round(max * 0.70), Math.round(max * 0.80)], // Aerobic Tempo (70-80%)
+      zone4: [Math.round(max * 0.80), Math.round(max * 0.90)], // Anaerobic Threshold (80-90%)
+      zone5: [Math.round(max * 0.85), Math.round(max * 0.95)]  // Norwegian 4x4 Work (85-95%)
+    };
+  }
+
+  /**
+   * Show Interactive Max Heart Rate & Target Zones Calculator Modal
+   */
+  function showHeartRateModal(initialAge = null, initialCustomHRmax = null) {
+    let age = initialAge || window._cachedUserAge || 30;
+    let customHRmax = initialCustomHRmax || window._cachedCustomHRmax || null;
+
+    const modalTitle = I18n.t('hr_modal_title');
+
+    const renderContent = (currAge, currCustom) => {
+      const z = getHRZones(currAge, currCustom);
+      return `
+        <div class="hr-modal-container" style="display: flex; flex-direction: column; gap: 14px; text-align: start;">
+          
+          <!-- Hero Badge -->
+          <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(59, 130, 246, 0.15)); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 14px; padding: 16px; text-align: center;">
+            <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #f87171; letter-spacing: 1px; margin-bottom: 4px;">
+              ${I18n.t('hr_calculated_max')}
+            </div>
+            <div id="hr-modal-hero-val" style="font-size: 3rem; font-weight: 900; line-height: 1; color: var(--text-primary); margin: 6px 0;">
+              ${z.max} <span style="font-size: 1.1rem; color: var(--text-secondary); font-weight: 600;">BPM</span>
+            </div>
+            <div id="hr-modal-formula-desc" style="font-size: 12px; color: var(--text-secondary);">
+              ${z.isCustom ? '🎯 דופק מותאם אישית (משעון דופק / בדיקת מאמץ)' : `📐 נוסחת Tanaka המדעית: 208 - (0.7 × ${z.age}) = ${z.tanaka} BPM • נוסחת Fox: ${z.fox} BPM`}
+            </div>
+          </div>
+
+          <!-- Inputs -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.08);">
+            <div>
+              <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;">
+                ${I18n.t('hr_age_label')}
+              </label>
+              <input type="number" id="hr-modal-input-age" min="15" max="100" value="${z.age}"
+                style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 15px; font-weight: 800; text-align: center;"
+                dir="ltr">
+            </div>
+            <div>
+              <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;">
+                ${I18n.t('hr_custom_max_label')}
+              </label>
+              <input type="number" id="hr-modal-input-custom" min="100" max="230" placeholder="אופציונלי" value="${z.customHRmax || ''}"
+                style="width: 100%; box-sizing: border-box; padding: 8px 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 15px; font-weight: 800; text-align: center;"
+                dir="ltr">
+            </div>
+          </div>
+
+          <!-- Training Target Cards -->
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <!-- Zone 2 -->
+            <div style="background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 10px; padding: 10px 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 800; color: #4ade80; font-size: 13px;">🟢 יום 2 — Zone 2 Aerobic Base (60%–70%)</span>
+                <span id="hr-zone2-val" style="font-weight: 900; color: #4ade80; font-size: 14px;">${z.zone2[0]} – ${z.zone2[1]} BPM</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.4;">
+                🗣️ <b>מבחן הדיבור:</b> קצב המאפשר דיבור במשפטים שלמים ברצף ללא התנשפות (נשימה מהאף).
+              </div>
+            </div>
+
+            <!-- Norwegian 4x4 Work -->
+            <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 10px 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 800; color: #f87171; font-size: 13px;">🔴 יום 6 — 4×4 Work Effort (85%–95%)</span>
+                <span id="hr-zone5-val" style="font-weight: 900; color: #f87171; font-size: 14px;">${z.zone5[0]} – ${z.zone5[1]} BPM</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.4;">
+                ⚡ <b>מאמץ שיא (4 דקות):</b> דיבור מקוטע של מילה-שתיים בלבד, נשימה כבדה, פיתוח צריכת חמצן מרבית (VO2 Max). יש להעלות מהירות לריצה (7.5-10+ קמ״ש) במידת הצורך!
+              </div>
+            </div>
+
+            <!-- Norwegian 4x4 Rest -->
+            <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; padding: 10px 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-weight: 800; color: #60a5fa; font-size: 13px;">🔵 יום 6 — 4×4 Active Recovery (60%–70%)</span>
+                <span id="hr-zone-rest-val" style="font-weight: 900; color: #60a5fa; font-size: 14px;">${z.zone2[0]} – ${z.zone2[1]} BPM</span>
+              </div>
+              <div style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.4;">
+                🚶 <b>התאוששות פעילה (3 דקות):</b> הליכה מתונה (~4.5 קמ״ש) להורדת הדופק לקראת האינטרוול הבא.
+              </div>
+            </div>
+          </div>
+
+          <!-- Guide / How to know -->
+          <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 10px 12px; font-size: 12px; line-height: 1.5; color: var(--text-secondary);">
+            <div style="font-weight: 800; color: var(--text-primary); margin-bottom: 6px;">💡 איך יודעים את הדופק המרבי בפועל?</div>
+            <ul style="margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 4px;">
+              <li><b>חישוב אוטומטי (נוסחת Tanaka):</b> המערכת מחשבת לפי גילך באופן מיידי.</li>
+              <li><b>שעון דופק / צמיד חכם:</b> הדופק המרבי האמיתי שנרשם בספרינט מלא או בסוף אינטרוול 4 מתוך 4×4. אם ידוע, הזן אותו בשדה "דופק מרבי ידוע".</li>
+              <li><b>בדיקת מאמץ במעבדה (ארגומטריה):</b> הבדיקה המדויקת ביותר.</li>
+              <li><b>ללא שעון:</b> מבחן הדיבור מספק בקרה אמינה — דיבור רציף = Zone 2; חוסר יכולת לדבר = 85%+!</li>
+            </ul>
+          </div>
+
+          <!-- Save Button -->
+          <button id="hr-modal-save-btn" class="btn-primary" style="padding: 12px; font-size: 15px; font-weight: 800; border-radius: 10px;">
+            💾 ${I18n.t('save_preferences', 'שמור הגדרות')}
+          </button>
+        </div>
+      `;
+    };
+
+    showModal(modalTitle, renderContent(age, customHRmax));
+
+    setTimeout(() => {
+      const aInput = document.getElementById('hr-modal-input-age');
+      const cInput = document.getElementById('hr-modal-input-custom');
+      const saveBtn = document.getElementById('hr-modal-save-btn');
+      if (!aInput || !saveBtn) return;
+
+      const refreshLiveView = () => {
+        const curA = parseInt(aInput.value, 10) || 30;
+        const curC = cInput.value ? parseInt(cInput.value, 10) : null;
+        const newZ = getHRZones(curA, curC);
+
+        const heroVal = document.getElementById('hr-modal-hero-val');
+        if (heroVal) heroVal.innerHTML = `${newZ.max} <span style="font-size: 1.1rem; color: var(--text-secondary); font-weight: 600;">BPM</span>`;
+
+        const desc = document.getElementById('hr-modal-formula-desc');
+        if (desc) {
+          desc.innerHTML = newZ.isCustom ? '🎯 דופק מותאם אישית (משעון דופק / בדיקת מאמץ)' : `📐 נוסחת Tanaka המדעית: 208 - (0.7 × ${newZ.age}) = ${newZ.tanaka} BPM • נוסחת Fox: ${newZ.fox} BPM`;
+        }
+
+        const z2Val = document.getElementById('hr-zone2-val');
+        if (z2Val) z2Val.textContent = `${newZ.zone2[0]} – ${newZ.zone2[1]} BPM`;
+
+        const z5Val = document.getElementById('hr-zone5-val');
+        if (z5Val) z5Val.textContent = `${newZ.zone5[0]} – ${newZ.zone5[1]} BPM`;
+
+        const zRestVal = document.getElementById('hr-zone-rest-val');
+        if (zRestVal) zRestVal.textContent = `${newZ.zone2[0]} – ${newZ.zone2[1]} BPM`;
+      };
+
+      aInput.oninput = refreshLiveView;
+      if (cInput) cInput.oninput = refreshLiveView;
+
+      saveBtn.onclick = async () => {
+        const finalAge = parseInt(aInput.value, 10) || 30;
+        const finalCustom = cInput.value ? parseInt(cInput.value, 10) : null;
+
+        window._cachedUserAge = finalAge;
+        window._cachedCustomHRmax = finalCustom;
+
+        await DB.setSetting('userAge', finalAge);
+        await DB.setSetting('customHRmax', finalCustom);
+
+        // Also update settings page inputs if present
+        const sAge = document.getElementById('settings-user-age');
+        if (sAge) sAge.value = finalAge;
+        const sCustom = document.getElementById('settings-custom-hrmax');
+        if (sCustom) sCustom.value = finalCustom || '';
+
+        if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+          CloudSync.scheduleSync();
+        }
+
+        toast(I18n.t('hr_saved_toast'), 'success');
+        hideModal();
+
+        if (window.TodayPage && window.TodayPage.render) {
+          window.TodayPage.render();
+        }
+      };
+    }, 50);
+  }
+
   return {
     toast,
     showModal,
@@ -2301,6 +2505,9 @@ const UI = (() => {
     calculateBrzycki1RM,
     get1RMPercentages,
     showOneRepMaxModal,
+    calculateHRmax,
+    getHRZones,
+    showHeartRateModal,
     hasGif,
     handleImageLoaded,
     __build: 'media-fix-2026-08-26',

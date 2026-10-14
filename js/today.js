@@ -312,10 +312,12 @@ const TodayPage = (() => {
         }
       }
 
-      // Parent State Inheritance: Only for true weighted-to-weighted replacements
+      // Parent State Inheritance: Only for true weighted-to-weighted replacements.
+      // Note: Unilateral replacements (Single-Leg RDL) do NOT inherit 100% of bilateral load (Goblet RDL)
+      // to protect L4-S1 lumbar discs, maintain balance, and preserve the full 36-week progressive overload runway.
       if (!state) {
         const parentIdMap = {
-          'single-leg-rdl': ['goblet-rdl', 'rdl-1']
+          // Direct identical bilateral substitutions only (if any)
         };
         const candidateParents = parentIdMap[exId];
         if (candidateParents) {
@@ -363,6 +365,24 @@ const TodayPage = (() => {
           ex.weight = String(ex.weight).replace(/\d+(?:\.\d+)?/, targetW);
         } else {
           ex.weight = `${targetW} kg each`;
+        }
+
+        // Smart progressive set overload: adjust sets based on load jump tier & sessionsAtWeight
+        if (!isDeload && !day.autoDeload && window.ProgressionEngine && window.ProgressionEngine.calculatePrescribedSets) {
+          const originalSets = UI.parseSetsCount(ex.sets);
+          const sessions = state ? (state.sessionsAtWeight || 0) : 0;
+          const prescribedSets = window.ProgressionEngine.calculatePrescribedSets(
+            exDef,
+            currentW,
+            sessions,
+            originalSets
+          );
+          if (prescribedSets > 0 && ex.sets && typeof ex.sets === 'string') {
+            const repsPart = UI.parseReps(ex.sets);
+            ex.sets = `${prescribedSets}×${repsPart}`;
+            ex.targetSets = prescribedSets;
+            ex.isVolumeStepping = prescribedSets > originalSets;
+          }
         }
       }
 
@@ -651,6 +671,11 @@ const TodayPage = (() => {
     currentDayIndex = UI.findTodayIndex(planDays);
     allExercises = await DB.getExerciseGuide();
     selectedNutritionDate = UI.getLocalDateString();
+
+    if (window._cachedUserAge === undefined && typeof DB !== 'undefined' && DB.getSetting) {
+      DB.getSetting('userAge').then(a => { if (a) window._cachedUserAge = parseInt(a, 10); });
+      DB.getSetting('customHRmax').then(m => { if (m) window._cachedCustomHRmax = parseInt(m, 10); });
+    }
 
     const todayBtn = document.getElementById('today-btn');
     if (todayBtn) todayBtn.addEventListener('click', goToToday);
@@ -3693,6 +3718,9 @@ const TodayPage = (() => {
       if (ex.sets) {
         detailParts.push(isSetsChanged ? `<span class="alert-pulse-text" title="${I18n.t('sets_changed_title')}">${ex.sets}</span>` : ex.sets);
       }
+      if (ex.isVolumeStepping) {
+        detailParts.push(`<span class="volume-stepping-badge" style="background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700;" title="${I18n.t('volume_stepping_tooltip')}">📈 ${I18n.t('volume_stepping_badge')}</span>`);
+      }
       if (isReadinessDropSet) {
         detailParts.push(`<span class="readiness-drop-badge" title="${I18n.t('readiness_opt_drop_set')}">🌿 ${I18n.t('readiness_drop_applied_badge')}</span>`);
       }
@@ -3704,6 +3732,13 @@ const TodayPage = (() => {
         const weightHTML = buildWeightBadgeHTML(weightInfo, true);
         detailParts.push(isWeightChanged ? `<span class="alert-pulse-text" title="${I18n.t('weight_changed_title')}">${weightHTML}</span>` : weightHTML);
         detailParts.push(`<button type="button" class="sparkline-1rm-badge" style="padding: 1px 6px; font-size: 10px;" title="${I18n.t('sparkline_1rm_tooltip')}" onclick="event.stopPropagation(); TodayPage.open1RMCalculator('${ex.name.replace(/'/g, "\\'")}', 0, 8, 0);">🧮 1RM</button>`);
+
+        const numericWeight = (weightInfo && parseFloat(weightInfo.cleanWeight)) || ex.targetWeightKg || 0;
+        if (numericWeight >= 32) {
+          detailParts.push(`<span class="max-weight-overload-badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('max_weight_overload_desc')}">⭐ ${I18n.t('max_weight_overload_badge')}</span>`);
+        } else if (ex.name && ex.name.toLowerCase().includes('bulgarian') && numericWeight >= 20) {
+          detailParts.push(`<span class="suitcase-grip-badge" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary, #3b82f6); padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('suitcase_grip_desc')}">👜 ${I18n.t('suitcase_grip_badge')}</span>`);
+        }
       } else if (curStageName) {
         const isAngle = curStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(curStageName) !== curStageName) ? I18n.t(curStageName) : curStageName;
@@ -3732,8 +3767,15 @@ const TodayPage = (() => {
       const lowerExName = (ex.name || '').toLowerCase();
       let cardioTimerBtn = '';
       let protocolBannerHTML = '';
+      const userAge = window._cachedUserAge || 30;
+      const customHRmax = window._cachedCustomHRmax || null;
+      const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 187, zone2: [112, 131], zone5: [159, 178] };
+
       if (lowerExName.includes('vo2 max') || lowerExName.includes('norwegian')) {
-        cardioTimerBtn = `<button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); TodayPage.startIntervalTimer('${ex.name.replace(/'/g, "\\'")}');">⏱️ ${I18n.t('timer_4x4')}</button>`;
+        cardioTimerBtn = `
+          <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); UI.showHeartRateModal();">🫀 ${I18n.t('hr_calc_btn')}</button>
+          <button type="button" class="btn-primary" style="padding: 4px 10px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); TodayPage.startIntervalTimer('${ex.name.replace(/'/g, "\\'")}');">⏱️ ${I18n.t('timer_4x4')}</button>
+        `;
         protocolBannerHTML = `
           <div class="vo2-protocol-card-banner" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px; line-height: 1.5;">
             <div style="font-weight: 800; color: var(--accent-primary, #3b82f6); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; font-size: 14px;">
@@ -3744,11 +3786,16 @@ const TodayPage = (() => {
               ${I18n.t('rule_vo2_max_norwegian_4x4')}
             </div>
             <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--text-secondary); border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 8px; margin-top: 4px;">
-              <span>🔴 <b style="color: var(--text-primary);">${I18n.t('vo2_effort_label')}:</b> 4m @ 6.5 km/h</span>
-              <span>🟢 <b style="color: var(--text-primary);">${I18n.t('vo2_rest_label')}:</b> 3m @ 4.5 km/h</span>
+              <span>🔴 <b style="color: var(--text-primary);">${I18n.t('vo2_effort_label')}:</b> 4m @ 85-95% HRmax (${hrZones.zone5[0]}-${hrZones.zone5[1]} BPM) (בסיס 6.5+ קמ״ש)</span>
+              <span>🟢 <b style="color: var(--text-primary);">${I18n.t('vo2_rest_label')}:</b> 3m @ 60-70% HRmax (${hrZones.zone2[0]}-${hrZones.zone2[1]} BPM) (4.0-4.5 קמ״ש)</span>
+            </div>
+            <div style="margin-top: 6px; font-size: 11.5px; color: #f59e0b; font-weight: 600; line-height: 1.4;">
+              💡 ${I18n.t('vo2_hr_priority_note')}
             </div>
           </div>
         `;
+      } else if (lowerExName.includes('brisk walking') || lowerExName.includes('zone 2')) {
+        cardioTimerBtn = `<button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); UI.showHeartRateModal();">🫀 ${I18n.t('hr_calc_btn')}</button>`;
       } else if (lowerExName.includes('deep mobility')) {
         const subSteps = (currentTracking && currentTracking.deepMobilitySteps) || {};
         const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
@@ -3939,16 +3986,24 @@ const TodayPage = (() => {
           <div class="injury-card-banner banner-injured" style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 13px; line-height: 1.5;">
             <div style="font-weight: 800; color: #f87171; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
               <span>${I18n.t(injuryAdaptation.badgeKey)}</span>
-              <span style="font-size: 11px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 2px 8px; border-radius: 6px; font-weight: 700;">100% שריר • 0 עומס מפרקי</span>
+              <span style="font-size: 11px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; padding: 2px 8px; border-radius: 6px; font-weight: 700;">${I18n.t('injury_pill_joint_spared')}</span>
+            </div>
+            <div style="font-size: 11.5px; color: #fca5a5; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; line-height: 1.4;">
+              ⚠️ <b>${I18n.t('injury_clinical_warning_title')}:</b> ${I18n.t('injury_clinical_warning_inline')}
             </div>
             <div style="color: var(--text-primary); margin-bottom: 8px;">
               ${I18n.t(injuryAdaptation.cueKey)}
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(239, 68, 68, 0.25); padding-top: 8px; margin-top: 4px; font-size: 12px; color: var(--text-secondary);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed rgba(239, 68, 68, 0.25); padding-top: 8px; margin-top: 4px; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; gap: 6px;">
               <span><b>${I18n.t('cond_replace_orig', 'הוחלף מ')}:</b> ${I18n.t(ex.name) || ex.name}</span>
-              <button type="button" class="btn-secondary" style="font-size: 11px; padding: 3px 10px; border-radius: 6px; border-color: rgba(239, 68, 68, 0.4); color: #f87171;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">
-                🛡️ ${I18n.t('injury_map_title')}
-              </button>
+              <div style="display: flex; gap: 6px;">
+                <button type="button" class="btn-secondary" style="font-size: 11px; padding: 3px 10px; border-radius: 6px; border-color: rgba(239, 68, 68, 0.4); color: #fca5a5;" onclick="event.stopPropagation(); TodayPage.toggleSkipExerciseTemp(${idx});">
+                  ⏭️ ${I18n.t('skip_exercise_temp')}
+                </button>
+                <button type="button" class="btn-secondary" style="font-size: 11px; padding: 3px 10px; border-radius: 6px; border-color: rgba(239, 68, 68, 0.4); color: #f87171;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">
+                  🛡️ ${I18n.t('injury_map_title')}
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -5337,17 +5392,20 @@ const TodayPage = (() => {
     const day = allPlanDays[currentDayIndex];
     const ex = (day && day.exercises) ? day.exercises[0] : null;
     const currentIncline = (ex && ex.weight) ? ex.weight : 'Incline 3%';
+    const userAge = window._cachedUserAge || 30;
+    const customHRmax = window._cachedCustomHRmax || null;
+    const hrZones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(userAge, customHRmax) : { max: 187, zone1: [94, 112], zone2: [112, 131], zone5: [159, 178] };
 
     const PHASES = [
-      { id: 'warmup', type: 'cyan', duration: 10 * 60, titleKey: 'vo2_phase_warmup', descKey: 'vo2_phase_warmup_desc', speed: '5.0 km/h', incline: '0%', hr: '50-60%', voiceKey: 'vo2_voice_warmup' },
-      { id: 'work_1', type: 'work', round: 1, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5 km/h', incline: currentIncline, hr: '85-95%', voiceKey: 'vo2_voice_work' },
-      { id: 'rest_1', type: 'rest', round: 1, duration: 3 * 60, titleKey: 'vo2_phase_rest', descKey: 'vo2_phase_rest_desc', speed: '4.5 km/h', incline: '0%', hr: '60-70%', voiceKey: 'vo2_voice_rest' },
-      { id: 'work_2', type: 'work', round: 2, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5 km/h', incline: currentIncline, hr: '85-95%', voiceKey: 'vo2_voice_work' },
-      { id: 'rest_2', type: 'rest', round: 2, duration: 3 * 60, titleKey: 'vo2_phase_rest', descKey: 'vo2_phase_rest_desc', speed: '4.5 km/h', incline: '0%', hr: '60-70%', voiceKey: 'vo2_voice_rest' },
-      { id: 'work_3', type: 'work', round: 3, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5 km/h', incline: currentIncline, hr: '85-95%', voiceKey: 'vo2_voice_work' },
-      { id: 'rest_3', type: 'rest', round: 3, duration: 3 * 60, titleKey: 'vo2_phase_rest', descKey: 'vo2_phase_rest_desc', speed: '4.5 km/h', incline: '0%', hr: '60-70%', voiceKey: 'vo2_voice_rest' },
-      { id: 'work_4', type: 'work', round: 4, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5 km/h', incline: currentIncline, hr: '85-95%', voiceKey: 'vo2_voice_work' },
-      { id: 'cooldown', type: 'cyan', duration: 5 * 60, titleKey: 'vo2_phase_cooldown', descKey: 'vo2_phase_cooldown_desc', speed: '4.0 km/h', incline: '0%', hr: '50-60%', voiceKey: 'vo2_voice_cooldown' }
+      { id: 'warmup', type: 'cyan', duration: 10 * 60, titleKey: 'vo2_phase_warmup', descKey: 'vo2_phase_warmup_desc', speed: '5.0 km/h', incline: '0%', hr: `50-60% (${hrZones.zone1[0]}-${hrZones.zone1[1]} BPM)`, voiceKey: 'vo2_voice_warmup' },
+      { id: 'work_1', type: 'work', round: 1, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5+ km/h (בסיס)', incline: currentIncline, hr: `85-95% (${hrZones.zone5[0]}-${hrZones.zone5[1]} BPM)`, voiceKey: 'vo2_voice_work' },
+      { id: 'rest_1', type: 'rest', round: 1, duration: 3 * 60, titleKey: 'vo2_phase_rest', descKey: 'vo2_phase_rest_desc', speed: '4.5 km/h', incline: '0%', hr: `60-70% (${hrZones.zone2[0]}-${hrZones.zone2[1]} BPM)`, voiceKey: 'vo2_voice_rest' },
+      { id: 'work_2', type: 'work', round: 2, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5+ km/h (בסיס)', incline: currentIncline, hr: `85-95% (${hrZones.zone5[0]}-${hrZones.zone5[1]} BPM)`, voiceKey: 'vo2_voice_work' },
+      { id: 'rest_2', type: 'rest', round: 2, duration: 3 * 60, titleKey: 'vo2_phase_rest', descKey: 'vo2_phase_rest_desc', speed: '4.5 km/h', incline: '0%', hr: `60-70% (${hrZones.zone2[0]}-${hrZones.zone2[1]} BPM)`, voiceKey: 'vo2_voice_rest' },
+      { id: 'work_3', type: 'work', round: 3, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5+ km/h (בסיס)', incline: currentIncline, hr: `85-95% (${hrZones.zone5[0]}-${hrZones.zone5[1]} BPM)`, voiceKey: 'vo2_voice_work' },
+      { id: 'rest_3', type: 'rest', round: 3, duration: 3 * 60, titleKey: 'vo2_phase_rest', descKey: 'vo2_phase_rest_desc', speed: '4.5 km/h', incline: '0%', hr: `60-70% (${hrZones.zone2[0]}-${hrZones.zone2[1]} BPM)`, voiceKey: 'vo2_voice_rest' },
+      { id: 'work_4', type: 'work', round: 4, duration: 4 * 60, titleKey: 'vo2_phase_work', descKey: 'vo2_phase_work_desc', speed: '6.5+ km/h (בסיס)', incline: currentIncline, hr: `85-95% (${hrZones.zone5[0]}-${hrZones.zone5[1]} BPM)`, voiceKey: 'vo2_voice_work' },
+      { id: 'cooldown', type: 'cyan', duration: 5 * 60, titleKey: 'vo2_phase_cooldown', descKey: 'vo2_phase_cooldown_desc', speed: '4.0 km/h', incline: '0%', hr: `50-60% (${hrZones.zone1[0]}-${hrZones.zone1[1]} BPM)`, voiceKey: 'vo2_voice_cooldown' }
     ];
 
     let phaseIndex = 0;
@@ -5710,12 +5768,12 @@ const TodayPage = (() => {
       belowTrigger: 'נגיעת עקבים/אגן ברצפה במהלך הזמן המתוכנן.'
     },
     'VO2 MAX NORWEGIAN 4X4': {
-      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-6.5 קמ״ש בשיפוע השלב + 3 דק׳ הליכת התאוששות ב-4.5 קמ״ש) | 5 דק׳ שחרור.',
-      belowTrigger: 'אי-יכולת לשמור על מהירות 6.5 קמ״ש במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
+      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-85%-95% דופק מרבי [בסיס 6.5+ קמ״ש בשיפוע השלב, הגבר מהירות/שיפוע לפי הצורך] + 3 דק׳ התאוששות ב-60%-70% דופק [~4.5 קמ״ש]) | 5 דק׳ שחרור. יעד הדופק הוא המדד הקובע!',
+      belowTrigger: 'אי-יכולת להגיע לטווח דופק 85%-95% או לשמור עליו במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
     },
     'VO2 MAX 4X4': {
-      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-6.5 קמ״ש בשיפוע השלב + 3 דק׳ הליכת התאוששות ב-4.5 קמ״ש) | 5 דק׳ שחרור.',
-      belowTrigger: 'אי-יכולת לשמור על מהירות 6.5 קמ״ש במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
+      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-85%-95% דופק מרבי [בסיס 6.5+ קמ״ש בשיפוע השלב, הגבר מהירות/שיפוע לפי הצורך] + 3 דק׳ התאוששות ב-60%-70% דופק [~4.5 קמ״ש]) | 5 דק׳ שחרור. יעד הדופק הוא המדד הקובע!',
+      belowTrigger: 'אי-יכולת להגיע לטווח דופק 85%-95% או לשמור עליו במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
     }
   };
 

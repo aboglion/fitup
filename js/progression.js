@@ -106,9 +106,81 @@
       return this.isGroupA(exercise) ? 3 : 4;
     }
 
+    /**
+     * Calculate smart progressive sets overload based on percentage load jump to next weight
+     * and exercise classification (Group A Compound vs Group B Isolation).
+     * Prevents shock ("שלא יהיה מכה") when jumping weights like 6->8kg (+33.3%), 8->10kg (+25%), or 10->12kg (+20%).
+     *
+     * @param {Object} exercise - Exercise definition
+     * @param {number} currentWeightKg - Current weight in kg
+     * @param {number} sessionsAtWeight - Accumulated qualifying sessions at current weight
+     * @param {number} baseSets - Default base sets for the exercise (e.g. 2 for isolation, 3 for compound)
+     * @returns {number} Prescribed sets for the current session
+     */
+    calculatePrescribedSets(exercise, currentWeightKg, sessionsAtWeight = 0, baseSets = null) {
+      if (!exercise) return baseSets || 3;
+      const isGrpA = this.isGroupA(exercise);
+      const defaultBase = isGrpA ? 3 : 2;
+      const base = (baseSets && baseSets > 0) ? baseSets : (exercise.sets || defaultBase);
+
+      const curW = currentWeightKg || exercise.startingWeight || (isGrpA ? 8 : 6);
+      const increment = exercise.increment || 2;
+      const maxW = exercise.maxWeight || 32;
+
+      // If already at maximum weight, no jump occurs -> keep base sets
+      if (curW >= maxW) return base;
+
+      // Percentage increase of the upcoming weight jump: (increment / currentWeight) * 100
+      const pctJump = (increment / curW) * 100;
+      const sessions = Math.max(0, sessionsAtWeight || 0);
+
+      // 1. Tier 1: Highest Jump >= 30% (e.g. 6 kg -> 8 kg is +33.3% jump - "הכי הרבה זה")
+      // Requires the largest volume bridge (+2 sets peak for Group B, +1 set for Group A)
+      if (pctJump >= 30) {
+        if (isGrpA) {
+          // Compound: 3 -> 4 sets on 2nd+ session
+          return sessions >= 1 ? base + 1 : base;
+        } else {
+          // Isolation (e.g. Lateral Raise): 2 sets -> 3 sets -> 4 sets before advancing to 8 kg!
+          if (sessions === 0) return base;       // Session 1: 2 sets
+          if (sessions === 1) return base + 1;   // Session 2: 3 sets
+          return base + 2;                       // Session 3+: 4 sets (peak volume bridge)
+        }
+      }
+
+      // 2. Tier 2: Moderate-High Jump 23% - 29% (e.g. 8 kg -> 10 kg is +25.0% jump)
+      // Stepping bridge (+1 set for Group B and Group A)
+      if (pctJump >= 23) {
+        if (isGrpA) {
+          return sessions >= 1 ? base + 1 : base;
+        } else {
+          // Isolation: 2 sets for first 2 sessions -> 3 sets on session 3+ before advancing to 10 kg
+          if (sessions <= 1) return base;
+          return base + 1; // 3 sets
+        }
+      }
+
+      // 3. Tier 3: Moderate Jump 18% - 22% (e.g. 10 kg -> 12 kg is +20.0% jump)
+      // Less volume ramp than 8->10 or 6->8 ("מ 10 ל 12 פחות מ 8 ל 10 או 6 ל 8")
+      if (pctJump >= 18) {
+        if (isGrpA) {
+          return base; // Compounds handle 20% comfortably at 3 sets
+        } else {
+          // Isolation: brief stepping bridge on session 3 only
+          return sessions >= 2 ? base + 1 : base;
+        }
+      }
+
+      // 4. Tier 4: Low Jump < 18% (e.g. 12 kg -> 14 kg is +16.7%, 14 -> 16 is +14.3%)
+      // Jumps are manageable without set expansion
+      return base;
+    }
+
     calculateWeightedDecision(exercise, state, setResults, weekNumber, previousSessionData) {
       const isDeload = weekNumber % this.settings.deloadEveryWeeks === 0;
-      const currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || 8);
+      const isGrpA = this.isGroupA(exercise);
+      const defaultStartWeight = isGrpA ? 8 : 6;
+      const currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || defaultStartWeight);
 
       if (isDeload) {
         return {
@@ -126,11 +198,13 @@
 
       // 1. Performance Above Target: Auto-regulated Early Promotion (ביצועים מעל מעלים מוקדם יותר)
       if (evaluation === 'all_above') {
+        const atCeiling = currentWeight >= maxWeight;
         const newWeight = Math.min(maxWeight, currentWeight + increment);
         return {
           action: 'increase',
           newWeight,
-          reason: 'all_above_max'
+          atMaxWeight: atCeiling,
+          reason: atCeiling ? 'max_weight_ceiling_reached' : 'all_above_max'
         };
       }
 
@@ -148,23 +222,28 @@
       // 3. Performance In Window: Cadence-Based Progression
       // Group A: Promotes on 3rd workout (after 2 sessions accumulated at current weight)
       // Group B: Promotes on 4th workout (after 3 sessions accumulated at current weight)
-      const isGrpA = this.isGroupA(exercise);
       const targetCadence = isGrpA ? 3 : 4;
       const requiredPriorSessions = targetCadence - 1; // 2 for Group A, 3 for Group B
       const currentSessions = state ? (state.sessionsAtWeight || 0) : 0;
+      const baseSets = exercise.sets || (isGrpA ? 3 : 2);
+      const targetSets = this.calculatePrescribedSets(exercise, currentWeight, currentSessions, baseSets);
 
       if (evaluation === 'all_in_window' || softened) {
         if (currentSessions >= requiredPriorSessions) {
+          const atCeiling = currentWeight >= maxWeight;
           const newWeight = Math.min(maxWeight, currentWeight + increment);
           return {
             action: 'increase',
             newWeight,
-            reason: isGrpA ? 'cadence_group_a_3rd_session' : 'cadence_group_b_4th_session'
+            targetSets: baseSets, // Resets to base sets at the higher weight to prevent shock
+            atMaxWeight: atCeiling,
+            reason: atCeiling ? 'max_weight_ceiling_reached' : (isGrpA ? 'cadence_group_a_3rd_session' : 'cadence_group_b_4th_session')
           };
         } else {
           return {
             action: 'maintain',
             newWeight: currentWeight,
+            targetSets,
             reason: isGrpA ? `cadence_group_a_accumulating_${currentSessions + 1}_of_3` : `cadence_group_b_accumulating_${currentSessions + 1}_of_4`
           };
         }
@@ -173,6 +252,7 @@
       return {
         action: 'maintain',
         newWeight: currentWeight,
+        targetSets,
         reason: 'mixed_results_maintain'
       };
     }
@@ -711,10 +791,13 @@
       const isWeightedEx = exercise && (exercise.type === 'weighted' || exercise.startingWeight != null);
       let startWeight = isWeightedEx ? (exercise.startingWeight || 8) : 0;
 
-      // Parent weight inheritance mapping for direct replacements (strictly weighted-to-weighted)
+      // Parent weight inheritance mapping for direct replacements (strictly weighted-to-weighted).
+      // Note: Unilateral replacements (e.g. Single-Leg RDL replacing bilateral Goblet RDL)
+      // MUST NOT inherit 100% of bilateral load directly due to L4-S1 spinal stability and balance,
+      // and to preserve the full 36-week progressive overload runway up to 32kg.
+      // Therefore, single-leg-rdl begins safely at its prescribed startingWeight (8 kg).
       const parentIdMap = {
-        'single-leg-rdl': ['goblet-rdl', 'rdl-1'],
-        'pistol-squat': ['heels-elevated-goblet-squat', 'goblet-bulgarian-split-squat', 'lunge-1']
+        // Direct identical bilateral substitutions only (if any)
       };
 
       const candidateParents = parentIdMap[exerciseId];
@@ -751,16 +834,26 @@
       const bicepsConfig = window.TRAINING_DATA?.progressionSettings?.bicepsMicrocycle;
       const isBicepsLightWeek = bicepsConfig && bicepsConfig.lightWeeks && bicepsConfig.lightWeeks.includes(((weekNumber - 1) % bicepsConfig.cycleLength) + 1);
 
-      let sets = exercise.sets || 3;
-      if (isDeload) sets = Math.min(sets, 2);
-      else if (isBicepsLightWeek && (exercise.id === 'db-curl' || exercise.id === 'single-arm-curl' || exercise.id === 'hammer-curl' || exercise.id === 'single-arm-hammer-curl')) {
+      const isGrpA = this.isGroupA(exercise);
+      let baseSets = exercise.sets || (isGrpA ? 3 : 2);
+      let sets = baseSets;
+
+      const currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || (isGrpA ? 8 : 6));
+      const sessionsAtWeight = state ? (state.sessionsAtWeight || 0) : 0;
+
+      if (isDeload) {
+        sets = Math.min(sets, 2);
+      } else if (isBicepsLightWeek && (exercise.id === 'db-curl' || exercise.id === 'single-arm-curl' || exercise.id === 'hammer-curl' || exercise.id === 'single-arm-hammer-curl')) {
         sets = bicepsConfig.lightWeekSets || 2;
+      } else if (exercise.type === 'weighted' || exercise.startingWeight != null) {
+        sets = this.calculatePrescribedSets(exercise, currentWeight, sessionsAtWeight, baseSets);
       }
 
-      const currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || 3);
       const currentStage = state ? (exercise.stages ? exercise.stages[state.currentStageIndex || 0] : null) : (exercise.stages ? exercise.stages[0] : null);
 
       const deloadRed = window.TRAINING_DATA?.progressionSettings?.deloadWeightReductionKg || 2;
+      const atMaxWeight = currentWeight >= (exercise.maxWeight || 32);
+
       return {
         exerciseId: exercise.id,
         name: exercise.name,
@@ -770,7 +863,8 @@
         targetStage: currentStage,
         restSeconds: exercise.rest || exercise.restSeconds || 60,
         isDeload,
-        isBicepsLightWeek
+        isBicepsLightWeek,
+        atMaxWeight
       };
     }
 

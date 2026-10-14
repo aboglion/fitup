@@ -585,8 +585,8 @@ EXERCISES_CATALOG = [
         "name": "Single-Arm Lateral Raise",
         "category": "Shoulders",
         "type": "weighted",
-        "startingWeight": 8,
-        "minWeight": 3,
+        "startingWeight": 6,
+        "minWeight": 6,
         "maxWeight": 12,
         "increment": 2,
         "loadType": "each",
@@ -865,8 +865,8 @@ EXERCISES_CATALOG = [
         "name": "Arm Block - Single-Arm Lateral Raise",
         "category": "Shoulders",
         "type": "myo-reps",
-        "startingWeight": 8,
-        "minWeight": 3,
+        "startingWeight": 6,
+        "minWeight": 6,
         "maxWeight": 12,
         "increment": 2,
         "loadType": "each",
@@ -1018,7 +1018,7 @@ def generate_day_exercises(dow, week):
             ]
         walking_time = "30 mins" if is_deload else "45 mins"
         incline = "Incline 2%" if is_deload else "Incline 4%"
-        speed = "5.0 km/h" if is_deload else "5.5 km/h"
+        speed = "5.0 km/h (Zone 2 HR)" if is_deload else "5.5 km/h (Zone 2 HR: 60-70%)"
         return "Zone 2 Cardio", "—", [
             make_ex_obj("A1", "brisk-walking", "Brisk Walking", walking_time, weight=incline, tempo=speed, rest=0)
         ]
@@ -1045,7 +1045,7 @@ def generate_day_exercises(dow, week):
             ]
         incline_val = "4%" if week <= 8 else ("5%" if week <= 16 else "6%")
         return "VO2 Max", "9-10", [
-            make_ex_obj("A1", "vo2-max-norwegian-4x4", "VO2 Max Norwegian 4x4", "4x4 mins (3 min rest)", weight=f"Incline {incline_val}", tempo="6.5 km/h effort / 4.5 km/h rest", rest=0)
+            make_ex_obj("A1", "vo2-max-norwegian-4x4", "VO2 Max Norwegian 4x4", "4x4 mins (3 min rest)", weight=f"Incline {incline_val}", tempo="85-95% HRmax (6.5+ km/h effort) / 60-70% HRmax (4.5 km/h rest)", rest=0)
         ]
 
     # ---------------- DOW 1: LEGS + CORE ----------------
@@ -1138,7 +1138,7 @@ def generate_day_exercises(dow, week):
         # Pair: TRX Row ↔ Single-Arm Lateral Raise (v15.7: lateral raise performance unlock from Week 3;
         # v15.7.1: lengthened-position tempo 2-1-2)
         exs.append(make_ex_obj("A7", "trx-row", "TRX Row", "2×10" if is_deload else "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=1))
-        exs.append(make_ex_obj("A8", "single-arm-lateral-raise", "Single-Arm Lateral Raise", "2×12" if is_deload else "2×12-20", rep_window="12-20", weight="8 kg each", tempo="2-1-2", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=2))
+        exs.append(make_ex_obj("A8", "single-arm-lateral-raise", "Single-Arm Lateral Raise", "2×12" if is_deload else "2×12-20", rep_window="12-20", weight="6 kg each", tempo="2-1-2", rest=75, structure="straight" if is_deload else "pair", pair_id="d3-row-lateral", order_in_pair=2))
 
         # Rear Delt Toggle
         if is_odd:
@@ -1149,15 +1149,15 @@ def generate_day_exercises(dow, week):
         if week >= 3 and not is_deload:
             if week == 3:
                 # Week 3: Micro-Dose 1 (1 Activation Set + 1 Mini-Set of 4 reps)
-                exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "1+1 Myo-Mini", rep_window="12 + 1×4", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 1, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
+                exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "1+1 Myo-Mini", rep_window="12 + 1×4", weight="6 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 1, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
                 exs.append(make_ex_obj("A11", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "1+1 Myo-Mini", rep_window="12 + 1×4", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 1, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
             elif week in (4, 5):
                 # Weeks 4-5: Micro-Dose 2 & Consolidation (1 Activation Set + 2 Mini-Sets of 4 reps)
-                exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "1+2 Myo-Mini", rep_window="12 + 2×4", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 2, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
+                exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "1+2 Myo-Mini", rep_window="12 + 2×4", weight="6 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 2, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
                 exs.append(make_ex_obj("A11", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "1+2 Myo-Mini", rep_window="12 + 2×4", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 2, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
             else:
                 # Week 6+: Full Arm Block Cluster (1 Activation Set + 3 Mini-Sets of 5 reps)
-                exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 15, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
+                exs.append(make_ex_obj("A10", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="6 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 15, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
                 exs.append(make_ex_obj("A11", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
 
         exs.append(make_ex_obj("A12", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
@@ -1185,7 +1185,7 @@ def generate_day_exercises(dow, week):
         # the runtime hides the lateral raise and TRX Face Pull dissolves to a straight set with dedicated rest.
         # Deload: straight sets, dedicated rest. No Arm Block is added to Day 5.)
         exs.append(make_ex_obj("A3", "trx-face-pull", "TRX Face Pull", "2×10" if is_deload else "2×12-20", rep_window="12-20", weight="Bodyweight", tempo="2s descent", rest=45 if is_deload else 75, structure="straight" if is_deload else "pair", pair_id="d5-facepull-lateral", order_in_pair=1))
-        exs.append(make_ex_obj("A4", "single-arm-lateral-raise", "Single-Arm Lateral Raise", "2×12" if is_deload else "2×12-15", rep_window="12-15", weight="8 kg each", tempo="2-1-2", rest=75, structure="straight" if is_deload else "pair", pair_id="d5-facepull-lateral", order_in_pair=2))
+        exs.append(make_ex_obj("A4", "single-arm-lateral-raise", "Single-Arm Lateral Raise", "2×12" if is_deload else "2×12-15", rep_window="12-15", weight="6 kg each", tempo="2-1-2", rest=75, structure="straight" if is_deload else "pair", pair_id="d5-facepull-lateral", order_in_pair=2))
 
         biceps_cycle_week = ((week - 1) % 4) + 1
         is_biceps_light = (biceps_cycle_week == 4)

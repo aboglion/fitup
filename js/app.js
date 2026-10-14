@@ -941,6 +941,84 @@ const App = (() => {
       });
     }
 
+    // ============ Heart Rate & Cardio Profile Settings ============
+    const saveHrBtn = document.getElementById('save-hr-settings-btn');
+    const userAgeInput = document.getElementById('settings-user-age');
+    const customHrInput = document.getElementById('settings-custom-hrmax');
+    const hrPreviewBadges = document.getElementById('settings-hr-preview-badges');
+
+    const renderHrPreviewBadges = () => {
+      if (!hrPreviewBadges || !userAgeInput) return;
+      const ageVal = parseInt(userAgeInput.value, 10) || 30;
+      const customVal = (customHrInput && customHrInput.value) ? parseInt(customHrInput.value, 10) : null;
+      const zones = (typeof UI !== 'undefined' && UI.getHRZones) ? UI.getHRZones(ageVal, customVal) : null;
+      if (!zones) return;
+
+      hrPreviewBadges.innerHTML = `
+        <span style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; padding: 3px 8px; border-radius: 6px; font-weight: 700;">
+          HRmax: ${zones.max} BPM
+        </span>
+        <span style="background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.4); color: #4ade80; padding: 3px 8px; border-radius: 6px; font-weight: 700;">
+          Zone 2: ${zones.zone2[0]}–${zones.zone2[1]} BPM
+        </span>
+        <span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); color: #60a5fa; padding: 3px 8px; border-radius: 6px; font-weight: 700;">
+          4×4 Work: ${zones.zone5[0]}–${zones.zone5[1]} BPM
+        </span>
+      `;
+    };
+
+    if (userAgeInput) {
+      DB.getSetting('userAge').then(savedAge => {
+        const val = savedAge ? parseInt(savedAge, 10) : 30;
+        userAgeInput.value = val;
+        window._cachedUserAge = val;
+        renderHrPreviewBadges();
+      });
+      userAgeInput.addEventListener('input', renderHrPreviewBadges);
+    }
+
+    if (customHrInput) {
+      DB.getSetting('customHRmax').then(savedMax => {
+        const val = savedMax ? parseInt(savedMax, 10) : null;
+        if (val) customHrInput.value = val;
+        window._cachedCustomHRmax = val;
+        renderHrPreviewBadges();
+      });
+      customHrInput.addEventListener('input', renderHrPreviewBadges);
+    }
+
+    if (saveHrBtn && userAgeInput) {
+      saveHrBtn.addEventListener('click', async () => {
+        const ageVal = parseInt(userAgeInput.value, 10);
+        if (!ageVal || isNaN(ageVal) || ageVal < 15 || ageVal > 100) {
+          UI.toast('נא להזין גיל תקין בין 15 ל-100', 'warning');
+          return;
+        }
+        const customVal = (customHrInput && customHrInput.value) ? parseInt(customHrInput.value, 10) : null;
+        if (customVal && (customVal < 100 || customVal > 240)) {
+          UI.toast('דופק מרבי צריך להיות בין 100 ל-240 פעימות לדקה', 'warning');
+          return;
+        }
+
+        window._cachedUserAge = ageVal;
+        window._cachedCustomHRmax = customVal;
+
+        await DB.setSetting('userAge', ageVal);
+        await DB.setSetting('customHRmax', customVal);
+
+        renderHrPreviewBadges();
+
+        if (typeof CloudSync !== 'undefined' && CloudSync.scheduleSync) {
+          CloudSync.scheduleSync();
+        }
+
+        UI.toast(I18n.t('hr_saved_toast'), 'success');
+        if (window.TodayPage && window.TodayPage.render) {
+          window.TodayPage.render();
+        }
+      });
+    }
+
     // ============ Combat Training Integration Settings ============
     const combatToggle = document.getElementById('combat-enabled-toggle');
     const combatBody = document.getElementById('combat-settings-body');

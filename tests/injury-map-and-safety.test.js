@@ -236,6 +236,35 @@ test('AnatomyMap - showMuscleDetails renders joint protection alert when joint i
   InjuryEngine.resetAllJoints();
 });
 
+test('InjuryEngine - Achilles tendon adaptations: Injured state suspends loaded calf raises to Brisk Walking', () => {
+  InjuryEngine.resetAllJoints();
+  assert.strictEqual(InjuryEngine.hasInjuredJoints(), false);
+
+  // Achilles sensitive
+  InjuryEngine.setJointState('achilles_r', 1);
+  const sensitiveCalf = InjuryEngine.getExerciseAdaptation('Standing Single-Leg Calf Raise');
+  assert.ok(sensitiveCalf);
+  assert.strictEqual(sensitiveCalf.type, 'sensitive');
+  assert.strictEqual(sensitiveCalf.badgeKey, 'injury_badge_achilles_rom');
+
+  // Achilles injured: Loaded plantarflexion MUST be suspended (both soleus and gastrocnemius pull via Achilles)
+  InjuryEngine.setJointState('achilles_r', 2);
+  assert.strictEqual(InjuryEngine.hasInjuredJoints(), true);
+
+  const injuredStandingCalf = InjuryEngine.getExerciseAdaptation('Standing Single-Leg Calf Raise');
+  assert.ok(injuredStandingCalf);
+  assert.strictEqual(injuredStandingCalf.type, 'injured');
+  assert.strictEqual(injuredStandingCalf.substituteName, 'Brisk Walking', 'Standing calf raise must substitute with Brisk Walking, not loaded seated calf raise');
+
+  const injuredSeatedCalf = InjuryEngine.getExerciseAdaptation('Seated Single-Leg Calf Raise');
+  assert.ok(injuredSeatedCalf);
+  assert.strictEqual(injuredSeatedCalf.type, 'injured');
+  assert.strictEqual(injuredSeatedCalf.substituteName, 'Brisk Walking', 'Seated calf raise must also substitute with Brisk Walking to spare Achilles tendon');
+
+  InjuryEngine.resetAllJoints();
+  assert.strictEqual(InjuryEngine.hasInjuredJoints(), false);
+});
+
 test('PROGRAM_GUIDE.md - Includes Section 1.3 Biomechanical Joint & Injury Engine', () => {
   const guideContent = fs.readFileSync(path.join(root, 'PROGRAM_GUIDE.md'), 'utf8');
   assert.ok(guideContent.includes('### 1.3 Biomechanical Joint & Injury Engine'), 'Must include Section 1.3 header');
@@ -243,6 +272,8 @@ test('PROGRAM_GUIDE.md - Includes Section 1.3 Biomechanical Joint & Injury Engin
   assert.ok(guideContent.includes('DB Glute Bridge'), 'Must mention DB Glute Bridge substitute');
   assert.ok(guideContent.includes('24-Hour Pain Rule'), 'Must document 24-Hour Pain Rule');
   assert.ok(guideContent.includes('1-Tap Biomechanical Joint & Injury Engine'), 'Must include Appendix E entry');
+  assert.ok(guideContent.includes('1.3.6 Clinical Safety Architecture, Red Flags & Medical Referral Protocol'), 'Must document Section 1.3.6 Clinical Safety');
+  assert.ok(!guideContent.includes('quad/hip extension tension with **0 kg patellofemoral shear**'), 'Must not claim quad tension in glute bridge');
 });
 
 test('InjuryEngine & UI Modal - All exercise adaptations have valid cueKey translations and never yield undefined', () => {

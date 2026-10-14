@@ -19,14 +19,17 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 
 ### 1.2 Iron Rules — Zero Decisions
 - **No Choices**: Exercise selection, load, set count, rep count, tempo, rest intervals, incline, and treadmill speed are 100% pre-determined.
-- **No Ambiguity**: No ranges or vague descriptions. Only exact numeric values.
+- **Structured Prescriptions & Defined Target Windows**: All movements feature strictly defined target rep windows (e.g., 6–12, 8–12, 10–15, 12–20), exact set counts, precise tempo pacing, and prescribed rest intervals. Trainees execute within these explicit windows without subjective guesswork, governed by the objective 3-button logging system (🚀 ABOVE, ✅ IN_WINDOW, ⚠️ BELOW).
 - **3-Button Set Outcome Classification**: Every set is logged using one of 3 objective buttons:
   - **🚀 ABOVE**: Exceeded target rep window at prescribed tempo.
   - **✅ IN_WINDOW**: Achieved target rep window at prescribed tempo.
   - **⚠️ BELOW / Mechanical Stop**: Failed to reach minimum window or suffered tempo loss (triggers automatic +30s adaptive rest extension).
-- **Softened Progression Policy (v15.7)**: Weight increases when all sets are `🚀 ABOVE`, OR under single-session Softened criteria (all sets `✅ IN_WINDOW` at →\ge \text{max}-1→ reps with no mechanical stops). The previous-session all-max requirement was removed in v15.7 to accelerate progression for consistent trainees. **Note: Softened progression is automatically disabled if there is a gap of more than 10 days since the previous session (Time Decay) to prevent injury from detraining.**
+- **Progression Hierarchy & Dual-Cadence Rule**: Progression decisions are strictly governed by performance outcome and exercise type:
+  - **🚀 ABOVE (Ceiling Exceeded)**: Triggers immediate load promotion (+2 kg for weighted exercises, +1 stage for bodyweight) in a single session.
+  - **✅ IN_WINDOW & Softened Criteria**: For **weighted exercises**, in-window and softened sessions (all sets in window, $\ge \text{max}-1$ reps, 0 mechanical stops) count as qualifying clean workouts that accumulate toward the **Dual-Cadence ladder** (Group A compounds promote on the 3rd workout; Group B isolations promote on the 4th workout). For **bodyweight / stage exercises**, meeting Softened criteria promotes directly to the next stage in a single session.
+  - **Time Decay Protection**: Softened qualification is automatically disabled if there is a gap of more than 10 days since the previous session, requiring standard in-window performance to safeguard detrained connective tissues.
 - **Adaptive Intra-Workout Rest**: Rest timers adapt automatically (+30s extension following a BELOW / Mechanical Stop outcome) to guarantee full recovery before subsequent sets.
-- **Arm Block Protocol (Gradual Myo-Reps Ramp)**: Introduced progressively from **Week 3 onwards** (Micro-Dose 1 in W3: 1 activation set + 1 mini-set of 4 reps; Micro-Dose 2 in W4–5: 1 activation set + 2 mini-sets of 4 reps; Full Cluster in W6+: 1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped automatically by 2 consecutive tempo losses or joint pain (reported via an interactive prompt when selecting `⚠️ BELOW`).
+- **Arm Block Protocol (Gradual Myo-Reps Ramp)**: Introduced progressively from **Week 3 onwards** (Micro-Dose 1 in W3: 1 activation set + 1 mini-set of 4 reps; Micro-Dose 2 in W4–5: 1 activation set + 2 mini-sets of 4 reps; Full Cluster in W6+: 1 activation set + 3 mini-sets of 5 reps with 15s rest). Stopped automatically by 2 consecutive tempo losses or joint pain (reported via an interactive prompt when selecting `⚠️ BELOW`). **Interaction with Phase 0 locks**: Single-Arm Curl is active from Week 1 (so Biceps Arm Block begins directly in Week 3). On Day 3, Single-Arm Lateral Raise and DB Overhead Triceps Extension main working sets unlock at Week 5 (or early in Weeks 3–4 if performance criteria are met), while their Arm Block micro-doses serve as low-volume neuromuscular priming at the end of the session from Week 3 onward.
 - **Arm Block Exposure Limit**: Maximum 1 exposure per muscle area per week (Lateral Shoulder, Triceps, Biceps).
 - **Push-Up Bars**: All push-up variations must strictly use Push-Up Bars. Palms flat on the floor is strictly forbidden.
 - **Pull-Up Bar & Rings / Rope Loops (טבעות / לולאת חבל)**: Trainees may execute all Pull-Up, Chin-Up, and Hang progressions using Gymnastic Rings or Short Rope Loops hung from the pull-up bar. This grants natural rotational freedom for wrists and forearms (pronated to neutral/supinated), eliminating torsional stress on elbow tendons (medial/lateral epicondyles) and building superior functional grip strength without joint wear.
@@ -34,18 +37,19 @@ The program is tailored for age 42 with a minor lumbar disc bulge history.
 - **TRX**: Strictly for Face Pulls, TRX Rows, and TRX Y-T-W. Fixed body angles assigned per phase.
 - **Neutral Spine**: Rigid neutral alignment across all RDL, Row, and Carry variations. Lumbar rounding = load is too heavy.
 - **Unilateral Execution**: Complete all sets for side A, swap to side B, then proceed to the next exercise.
-- **Handle Weight**: Small dumbbell handle weight is constant and ignored. Only plate weight is counted.
+- **Handle Weight & Total Dumbbell Load**: Dumbbell handle weight is **6 kg** and is strictly included in total load calculations (the handle is NOT ignored). An empty dumbbell equals 6 kg. Loaded dumbbells progress in strictly 2 kg increments (8, 10, 12, 14, 16... up to 32 kg).
 
-### 1.3 Biomechanical Joint & Injury Engine (Zero-Compromise Safety & 1-Tap Vulnerability Map)
+### 1.3 Biomechanical Joint & Injury Engine (Joint-Sparing Safety & 1-Tap Vulnerability Map)
 
-#### 1.3.1 Core Philosophy: Zero-Friction Protection Without Sacrificing Hypertrophy
+#### 1.3.1 Core Philosophy: Zero-Friction Protection & Evidence-Based Load Management
 Traditional fitness applications fail trainees encountering joint twinges or tendon strain in two distinct ways:
 1. **The Friction Trap**: Forcing the trainee through exhaustive questionnaires, checkboxes, and subjective self-assessments before every workout kills consistency, flow, and momentum.
 2. **The Progression Trap**: Aggressively cancelling workouts or dropping total volume causes muscle detraining and destroys progressive overload gains.
 
-The FitUp **Biomechanical Joint & Injury Engine** eliminates both pitfalls under a prescriptive, zero-friction model:
+The FitUp **Biomechanical Joint & Injury Engine** eliminates both pitfalls under a prescriptive, evidence-based joint-sparing model:
 - **Zero Pre-Workout Friction**: Managed 100% via single-tap nodes on the interactive **Anatomy Map** (`🛡️ מפת מפרקים ופציעות`). No questions, no forms, no confirmations.
-- **Biomechanical Zero-Compromise Principle**: Every movement adaptation is designed by biomechanical principles to either **constrain harmful joint angles** (e.g. knee shear past 90°, lumbar rounding, shoulder impingement) or **substitute an equivalent motor pattern** that produces identical primary mover tension and hypertrophy stimulus with **zero joint compression or spinal shear**.
+- **Evidence-Based Joint-Sparing Principle**: Every movement adaptation is designed by biomechanical and clinical principles to either **constrain harmful joint angles** (e.g. knee shear past 90°, lumbar rounding, shoulder impingement) or **substitute a pain-free joint-sparing motor pattern** that safely maintains physical conditioning, neuromuscular patterns, and surrounding musculature with **zero compressive or shear stress on the injured structure**. 
+- **Honest Hypertrophic Expectations**: When a joint is completely unloaded to protect damaged or inflamed tissues, the primary movers crossing that joint (such as the quadriceps during acute knee injury) are intentionally and safely deloaded to allow biological healing. We do not make false claims of "identical hypertrophy without a joint" — tissue preservation and clinical recovery take absolute priority.
 
 #### 1.3.2 The 3-State Lifecycle Model
 Every one of the 12 critical joints cycles seamlessly through 3 discrete operational states via single tap:
@@ -56,16 +60,17 @@ Every one of the 12 critical joints cycles seamlessly through 3 discrete operati
 
 2. 🟡 **Sensitive (1 — רגיש / עקיצות / עומס גידי)**:
    - **ROM Constraint & Tendon Shield Protocol**: Applied immediately to all exercises loading the sensitive joint.
-   - Preserves 100% of target muscle activation while eliminating end-range articular shear and passive tendon strain:
+   - Preserves high target muscle activation while eliminating end-range articular shear and passive tendon strain:
      - **Knee Sensitivity (e.g. Right Knee Twitches / Post-Squat Electric Zaps)**: Squats and Bulgarian Split Squats strictly capped at 90° parallel knee angle; eccentric tempo locked at controlled 3-1-1; bottom ballistic bouncing is strictly prohibited.
      - **Shoulder Sensitivity**: Single-Arm Seated OHP executes strictly with neutral grip (palm inward) and stops at ear height (preventing acromial impingement); Lateral Raises execute strictly within the scapular plane (scaption — 30° forward).
      - **Lower Back (L4–S1 Bulge History)**: Romanian Deadlifts stop at knee/mid-shin height before lumbar flexion occurs; strict neutral spine and lat engagement enforced.
      - **Elbow / Wrist Sensitivity**: Overhead extensions capped at 90° elbow flexion; Push-ups strictly utilize Push-Up Bars (180° wrist alignment); Curls halt 5° before extreme extension.
+     - **Achilles Tendon Sensitivity**: Calf raises performed exclusively on flat ground (0° plane), avoiding negative heel drop stretch below floor level.
 
 3. 🔴 **Injured (2 — פצוע / כאב אקוטי)**:
-   - **Biomechanical Zero-Compromise Substitution**: High-joint-stress compound lifts are automatically substituted in real time with biomechanically equivalent lifts targeting the EXACT same primary movers with zero joint compression.
-   - **Preserved Progression**: Hypertrophy stimulus is preserved; sets and volume match the day's targets.
-   - When the pain subsides, 1 tap cycles the joint back to 🟢 Normal, instantly restoring the original exercise without data loss.
+   - **Pain-Free Joint-Sparing Substitution**: High-joint-stress compound lifts are automatically substituted in real time with safe, joint-friendly movements that unload the compromised joint.
+   - **Deliberate Load & Target Adaptation**: The program shifts focus to maintaining non-provocative movement and supporting muscle chains (e.g., glute bridge replacing squats to keep hip drive active while letting the patellofemoral joint and quads rest).
+   - **Step-Down Recovery Gate**: When symptoms resolve, the joint is stepped down to 🟡 Sensitive first for 1–2 sessions to confirm pain-free load tolerance under restricted ROM, before returning to 🟢 Normal.
 
 #### 1.3.3 The 12 Calibrated Critical Joint Nodes
 The engine monitors and adapts 12 primary structural articulation nodes:
@@ -78,16 +83,16 @@ The engine monitors and adapts 12 primary structural articulation nodes:
 - **🧣 Cervical Neck (`neck`)**: Protects C3–C7 cervical spine and upper traps during loading.
 
 #### 1.3.4 Master Biomechanical Substitution Matrix
-When a joint is marked **Injured 🔴**, the engine executes the following zero-compromise swaps:
+When a joint is marked **Injured 🔴**, the engine executes the following joint-sparing substitutions:
 
-| Joint / Articulation | Stressed Program Exercise | 🟡 Sensitive State (ROM Constraint Cue) | 🔴 Injured State (Zero-Compromise Substitute) | Hypertrophic Rationale & Safety Mechanism |
+| Joint / Articulation | Stressed Program Exercise | 🟡 Sensitive State (ROM Constraint Cue) | 🔴 Injured State (Joint-Sparing Substitute) | Biomechanical Rationale & Safety Mechanism |
 | :--- | :--- | :--- | :--- | :--- |
-| **Knee (Right/Left)** | `Heels-Elevated Goblet Squat` | Stop at 90° parallel knee angle; 3-1-1 tempo, no bottom bounce | **DB Glute Bridge** | Peak glute & quad/hip extension tension with **0 kg patellofemoral shear**. |
-| **Knee (Right/Left)** | `Goblet Bulgarian Split Squat` | 90° knee angle; upright torso, no forward knee slide | **DB Glute Bridge** | Unilateral knee stress eliminated while preserving hip-drive progressive load. |
+| **Knee (Right/Left)** | `Heels-Elevated Goblet Squat` | Stop at 90° parallel knee angle; 3-1-1 tempo, no bottom bounce | **DB Glute Bridge** | Overloads glutes and hip extension with **0 kg patellofemoral shear**. Quads are intentionally rested to allow tissue healing. |
+| **Knee (Right/Left)** | `Goblet Bulgarian Split Squat` | 90° knee angle; upright torso, no forward knee slide | **DB Glute Bridge** | Unilateral knee shear eliminated; posterior chain and glute hip-drive maintained while quads recover. |
 | **Knee (Right/Left)** | `Nordic Curl Progression` | Hand-assisted partial range (30°–45° descent only) | **Goblet Romanian Deadlift** | Posterior chain hamstring tension maintained via pure hip hinge with 0 knee flexion shear. |
 | **Knee (Right/Left)** | `Bodyweight Squat` (Warmup) | Chair-height Box Squat (stop at 90°) | **Glute Bridge** (Bodyweight) | Glute activation without knee joint loading. |
 | **Knee (Right/Left)** | `High Knees` (Warmup) | Low knee lift (hip level only), soft foot strike | **Brisk Walking** (0% incline) | Cardiovascular elevation without joint impact. |
-| **Shoulder (Right/Left)** | `Single-Arm Seated OHP` | Neutral grip (palm facing in), stop at ear level | **Single-Arm Floor Press** | Floor creates an uncompromised 90° elbow stop, eliminating anterior capsule stress. |
+| **Shoulder (Right/Left)** | `Single-Arm Seated OHP` | Neutral grip (palm facing in), stop at ear level | **Single-Arm Floor Press** | Floor creates an uncompromised 90° elbow stop, eliminating anterior capsule stress and impingement. |
 | **Shoulder (Right/Left)** | `Pike Progression` / Handstand | Moderate pike angle hold, avoid deep pressing | **Push-up Bars Progression** | Shifts force vector to horizontal plane, sparing the subacromial space. |
 | **Shoulder (Right/Left)** | `Single-Arm Lateral Raise` | Scaption plane (30° anterior to torso), shoulder height only | **TRX Face Pull** | Shifts recruitment to rear delts and rotator cuff with zero impingement risk. |
 | **Shoulder (Right/Left)** | `TRX Y-T-W` | Execute T and W angles only (omit high Y reach) | **Band Pull-Apart** | High-density scapular retraction without end-range overhead glenohumeral shear. |
@@ -95,25 +100,57 @@ When a joint is marked **Injured 🔴**, the engine executes the following zero-
 | **Lower Back (L4–S1)** | `Single-Leg RDL` | Hand support on wall, shallow hinge | **DB Glute Bridge** | Pure posterior chain overload with absolute spinal safety. |
 | **Lower Back (L4–S1)** | `Suitcase Carry` | Short controlled strides, 20% weight reduction | **Dead Bug** | Deep core and transverse abdominis anti-rotation without axial vertical carry torque. |
 | **Lower Back (L4–S1)** | `One-Arm DB Row` | Full bench support (knee + hand flat), parallel spine | **Seated Band Row** | Horizontal back retraction with zero unsupported lumbar shear. |
-| **Elbow (Right/Left)** | `DB Overhead Triceps Ext` | Stop at 90° elbow flexion, avoid deep stretch behind neck | **Single-Arm Floor Press** | Overloads triceps via lockout mechanics while floor halts elbow before strain occurs. |
+| **Elbow (Right/Left)** | `DB Overhead Triceps Ext` | Stop at 90° elbow flexion, avoid deep stretch behind neck | **Single-Arm Floor Press** | Eliminates extreme end-range triceps stretch behind neck. Note: Floor press still involves elbow lockout compression; execute with moderate load. |
 | **Elbow (Right/Left)** | `Diamond Push-Up` | Widen hands to standard shoulder-width bar position | **Push-up Bars Progression** | Eliminates high torsional elbow torque and cubital tunnel compression. |
-| **Elbow (Right/Left)** | `Single-Arm Curl` | Strict controlled descent; stop 5° before full extension | **Single-Arm Hammer Curl** | Neutral grip recruits brachialis and brachioradialis while drastically sparing distal biceps tendon. |
+| **Elbow (Right/Left)** | `Single-Arm Curl` | Strict controlled descent; stop 5° before full extension | **Single-Arm Hammer Curl** | Neutral grip recruits brachialis and brachioradialis, reducing radial supination torque. Deload weight by 40–50%; in acute distal biceps pain, discontinue elbow flexion. |
 | **Elbow / Wrist** | `Pull-Up Progression` | Execute strictly on gymnastic rings or rope loops | **TRX Row** (Neutral Grip) | Rotational freedom relieves medial epicondyle stress while preserving lat/upper back volume. |
 | **Wrist (Right/Left)** | `Push-up Bars Progression` | Strictly use Push-Up Bars (180° wrist alignment) | **Single-Arm Floor Press** | Neutral dumbbell handle grip eliminates 90° wrist extension compression entirely. |
-| **Achilles Tendon** | `Standing Single-Leg Calf Raise` | Flat ground only (0° plane), no negative heel drop | **Seated Single-Leg Calf Raise** | Weight on bent knee transfers tension to soleus muscle, sparing gastrocnemius & Achilles tendon. |
+| **Achilles Tendon** | `Standing Single-Leg Calf Raise` | Flat ground only (0° plane), no negative heel drop | **Brisk Walking** (Zone 2) | Loaded plantarflexion suspended to prevent Achilles strain (soleus & gastrocnemius both pull via Achilles). Flat walking maintains circulation without impact. |
+| **Achilles Tendon** | `Seated Single-Leg Calf Raise` | Flat ground only (0° plane), light load, 3-1-3 tempo | **Brisk Walking** (Zone 2) | Avoid heavy soleus loading during acute Achilles injury, as soleus produces huge tensile strain across the calcaneal tendon. |
 | **Achilles Tendon** | `VO2 Max Norwegian 4x4` | Capped at 4% incline; treadmill speed max 6.5 km/h | **Brisk Walking** (Zone 2) | Eliminates high-impact Achilles recoil while preserving aerobic conditioning. |
 | **Neck / Cervical** | `Band Neck Flexion & Extension` | Light resistance, 3-1-3 tempo, chin-tuck cueing | **Relaxed Walking** | Active recovery walking with zero cervical spine tension. |
 
 #### 1.3.5 The 24-Hour Pain Rule & Return to Full Load
 - **The 24-Hour Pain Rule**: If an active twinge or ache (e.g. right knee electric sensation) resolves within 24–48 hours, the joint is safely maintained in **Sensitive 🟡** mode for 1 additional session to consolidate tendon recovery.
-- **Return to Full Load (🟢 Normal)**: As soon as the trainee confirms zero discomfort throughout daily activities and warmup, a single tap toggles the joint back to **Normal 🟢**. The app instantly re-engages the primary compound movement at the previously mastered progressive load — **no restart, no regression, zero lost time**.
+- **Return to Full Load (🟢 Normal)**: When recovering from an **Injured 🔴** state, the trainee must first step down to **Sensitive 🟡** for 1–2 sessions to confirm pain-free tolerance under restricted ROM. Once the trainee confirms zero discomfort throughout daily activities and warmup, a single tap toggles the joint back to **Normal 🟢**, restoring the primary compound movement at the previously mastered progressive load.
+
+#### 1.3.6 Clinical Safety Architecture, Red Flags & Medical Referral Protocol
+The app provides proactive joint-sparing movement adaptations, but it is **not a medical diagnostic tool or treatment provider**.
+
+- **🚩 Medical Red Flags (דגלים אדומים המחייבים עצירה מיידית ובירור רפואי)**:
+  1. **חוסר יכולת לשאת משקל**: אי-יכולת לדרוך על הרגל או להחזיק משקל קל ביד.
+  2. **כאב אקוטי או עצבי**: כאב חד, דוקר, שורף או מקרין (כמו זרם בגפה, נימול, או אובדן תחושה/כוח).
+  3. **סימני דלקת או טראומה חריפים**: נפיחות ניכרת ומהירה, אדמומיות, חום מקומי גבוה, או שטף דם.
+  4. **נעילה מכנית או חוסר יציבות**: תחושה שהמפרק "בורח", קורס או ננעל, או הישמעות "קנאק" מלווה בכאב עז.
+- **Clinical Directive**: במקרה של זיהוי דגל אדום או כאב אקוטי מתמשך, על המתאמן להפסיק כל העמסה של המפרק ולפנות לבדיקת רופא אורתופד או פיזיותרפיסט ספורט מוסמך. התרגילים החלופיים המוצעים במצב 🔴 נועדו לתנועתיות מבוקרת ושימור תנועה כללי בלבד, ויש לבצעם אך ורק אם הם נטולי כאב לחלוטין. אם קיים ספק — יש לדלג על התרגיל (Skip Exercise) ולהעניק למפרק מנוחה מלאה.
+
+### 1.4 The 32 kg Dumbbell Ceiling Strategy & Advanced Overload Vectors (אסטרטגיית תקרת ה-32 ק"ג ועומס יסף מתקדם)
+The program is deliberately designed around a home gym environment with modular adjustable dumbbells capped at **32 kg** (6 kg handle + plates progressing in 2 kg increments). To guarantee continuous, unhindered progressive overload throughout the entire 80-week timeline without hitting an artificial plateau or compromising spinal safety:
+
+1. **Bilateral to Unilateral Hip-Hinge Transition (Goblet RDL → Single-Leg RDL)**:
+   - **Weeks 1–17 (Bilateral Foundation)**: `Goblet Romanian Deadlift` starts at 8 kg and progresses via Group A (+2 kg every 3 clean workouts) up to ~18–20 kg.
+   - **Week 18+ (Unilateral Overload & Reset)**: Goblet RDL is replaced by `Single-Leg RDL`. Critically, Single-Leg RDL **starts at 8 kg** (does NOT inherit 100% of bilateral load) to build unilateral pelvis stability, safeguard the L4–S1 disc bulge, and open a brand-new **36-week linear overload runway** up to 32 kg (effective bilateral stimulus equivalent to 64 kg).
+2. **Bodyweight Eccentric Hamstring Tension (Nordic Curl Progression)**:
+   - Introduced in **Week 10**, the `Nordic Curl Progression` adds a dedicated eccentric hamstring overload vector that is completely independent of dumbbell weights, featuring infinite progressive resistance through lever angle and band assistance.
+3. **Dual-Leverage Quad Architecture (Paused Squats + Bulgarian Split Squat)**:
+   - **Heels-Elevated Goblet Squat**: Utilizes heel elevation (increasing knee extensor moment arm) combined with a strict 3s eccentric descent and a **1–2s isometric pause at bottom stretch**, eliminating stretch-shortening elastic rebound and increasing active mechanical motor-unit recruitment by 30%–40%.
+   - **Goblet Bulgarian Split Squat (Unlocked W3–W5)**: Provides the primary unilateral quad/glute driver up to 32 kg per working leg.
+4. **Heavy Load Suitcase Grip Transition (20 kg+)**:
+   - Holding a single heavy dumbbell in Goblet position (in front of chest) eventually stresses upper-back postural endurance and grip rather than quad prime movers.
+   - **Guidance Protocol**: At **20 kg and above**, trainees are instructed to transition from a Goblet hold to a **Suitcase Grip** (holding the dumbbell at the side of the working or contralateral leg), freeing the upper body and allowing the legs to absorb 100% of the mechanical tension.
+5. **Peak Load Overload Protocol (32 kg Ceiling)**:
+   - When an exercise hits the 32 kg ceiling (around Weeks 36–45 for squatting/hinging movements), progressive overload transitions into **Secondary Overload Vectors**:
+     - **Rep Expansion**: Working rep window expands from 8–12 up to 12–16 reps.
+     - **Lengthened-Position Pauses**: Increasing pause duration to 3 full seconds at deep stretch.
+     - **Rest Compression**: Reducing rest by 15s to enhance metabolic work capacity.
+     - **Weighted Vest Integration**: The program's 5–20 kg weighted vest (unlocked in later phases) can be layered on top of the 32 kg dumbbell for advanced trainees.
 
 ---
 
 ## Part 2 — Lean Architecture & Frequency Optimization
 
-### 2.1 Lean Structure & Time-Efficiency (40–45 Minute Target)
-The v15.7 Accelerated Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts:
+### 2.1 Lean Structure & Realistic Time Allocation (60–65 Minute Target)
+The v15.7 Accelerated Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts. Realistic session duration for full strength days (Day 1, Day 3, Day 5) is **60–65 minutes** to account for warm-up, 17–25+ working sets with 45–90s rest, paired transitions, and the Arm Block:
 - **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
 - **Lean Pairs (Antagonistic & Non-Competing)**:
   - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
@@ -127,9 +164,9 @@ The v15.7 Accelerated Edition organizes exercises into optimized structures to m
 
 ### 2.2 Weekly Alternating Toggles
 - **Day 1 Posterior Progression (not a week-parity toggle)**:
-  - **Weeks 1–17**: Goblet RDL is the bilateral posterior anchor.
-  - **Week 18+**: Single-Leg RDL replaces Goblet RDL as the Day 1 posterior anchor (unilateral progression, all weeks).
-  - **Quad Focus (independent, continuous)**: Heels-Elevated Goblet Squat is performed every week from Week 1.
+  - **Weeks 1–17**: Goblet RDL is the bilateral posterior anchor (starts at 8 kg, progresses up to ~18–20 kg).
+  - **Week 18+**: Single-Leg RDL replaces Goblet RDL as the Day 1 posterior anchor (unilateral progression, all weeks). It resets safely to **8 kg** (safe unilateral baseline) to protect the L4–S1 lumbar spine, develop pelvis balance, and open a brand-new **36-week progression window** up to 32 kg per leg (effective bilateral stimulus equivalent to 64 kg).
+  - **Quad Focus (independent, continuous)**: Heels-Elevated Goblet Squat is performed every week from Week 1 (3s descent, 1–2s isometric pause at bottom stretch).
 - **Day 3 Rear Delt Toggle**:
   - **Odd Weeks**: TRX Y-T-W (3-position posterior delt & scapular control).
   - **Even Weeks**: Band Pull-Apart (Scapular retraction & posture density).
@@ -153,8 +190,8 @@ To prevent elbow tendonitis while maximizing hyper-trophy:
 ### 3.0 Phase 0 — Anatomical Foundation Ramp-Up (Weeks 1–4) & Performance-Based Graduation
 To protect connective tissue, adapt the lumbar spine, and prevent Achilles & shoulder impingement in novice trainees:
 - **Weeks 1–2 (Ramp-Up Foundation)**: Exercise volume is reduced to 5–6 anchor exercises per session (25–30 min target). High-peak-load and complex unilateral movements are locked (`Suitcase Carry`, `Calf Block`, `Goblet BSS`, `Hollow Body Hold`, `Pike Progression`, `Single-Arm Seated OHP`, `Single-Arm Lateral Raise`, `DB Overhead Triceps Ext`, `Single-Arm Hammer Curl`, `Towel Hang`, `Tuck L-Sit`, `Push-Up Volume Day 5`). Days 2 & 6 feature 20-min light walks (0% incline, 4.5 km/h) instead of Zone 2 / VO2 Max.
-- **Weeks 3–4 (Performance-Based Early Graduation)**: Locked movements unlock as soon as their performance criteria are met (e.g., Heels-Elevated Goblet Squat ≥ 10 kg for Goblet BSS; Push-Up Progression ≥ 10 reps for OHP / Pike / Triceps Ext; Dead Bug ≥ 16 reps for Hollow Body / Tuck L-Sit; Single-Arm Curl ≥ 12 reps for Hammer Curl). **Calendar Ceiling Rule**: nothing unlocks later than the old Week-5 gate — performance can only accelerate, never delay.
-- **Week 5 (Graduation Event)**: The system automatically unlocks the full exercise suit (`Goblet BSS`, `VO2 Max Norwegian 4x4`, `Pike/OHP`, `Lateral Raise`, `Hammer Curl`, `Towel Hang`, `L-Sit`, `Suitcase Carry`, `Calf Block`, `Hollow Body Hold`).
+- **Weeks 3–4 (Performance-Based Early Graduation)**: Locked movements unlock as soon as their performance criteria are met (e.g., Heels-Elevated Goblet Squat ≥ 10 kg for Goblet BSS; Push-Up Progression ≥ 10 reps for OHP / Pike / Triceps Ext; Dead Bug ≥ 16 reps for Hollow Body / Tuck L-Sit; Single-Arm Curl ≥ 12 reps for Hammer Curl). **Calendar Ceiling Rule**: nothing unlocks later than the Week-5 gate — performance can only accelerate, never delay. **VO2 Max Launch**: In Week 4, Day 6 transitions from light walking to `VO2 Max Norwegian 4x4` (4% incline). **Arm Block Micro-Dosing**: Week 3 introduces introductory Arm Block micro-doses (W3: 1+1×4, W4: 1+2×4) for biceps, triceps, and side delts.
+- **Week 5 (Graduation Event)**: The system automatically unlocks the remaining full exercise suite (`Goblet BSS`, `Pike/OHP`, `Lateral Raise`, `Hammer Curl`, `Towel Hang`, `L-Sit`, `Suitcase Carry`, `Calf Block`, `Hollow Body Hold`; note that `VO2 Max Norwegian 4x4` already unlocked in Week 4).
 - **Unlock Precedence Rule**: If any exercise-dictionary note, appendix note, or day-card description conflicts with the Phase 0 graduation gates, the Phase 0 graduation rules and `ProgressionEngine` unlock logic are authoritative. In plain terms — if a note says an exercise appears from a certain week, but the unlock engine says it is still locked, **the engine wins**.
 
 ### 3.1a Ramp-Up Microcycle Structure (Phase 0 — Weeks 1–4 ONLY)
@@ -162,38 +199,94 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 | Day | Workout Type | Target Focus & Exercises | Target Duration |
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **Legs + Core Foundation** | Warmup (High Knees, BW Squat, Dead Bug, Glute Bridge) + Goblet RDL + Heels-Elevated Goblet Squat + DB Glute Bridge + Dead Bug + Micro Mobility B (5 anchor exercises) | 30 min |
-| **Day 2** | **Zone 2 / Active Recovery Walk** | Weeks 1–2: Relaxed Walking 20 min (0% incline, 4.5 km/h); Weeks 3+: Brisk Walking Zone 2 (4% incline, 5.5 km/h) + Micro Mobility B | 20–45 min |
+| **Day 2** | **Zone 2 / Active Recovery Walk** | Weeks 1–2: Relaxed Walking 20 min (0% incline, 4.5 km/h); Weeks 3+: Brisk Walking Zone 2 at 60–70% HRmax (baseline 4% incline, 5.5 km/h, conversational pace) + Micro Mobility B | 20–45 min |
 | **Day 3** | **Push + Upper Foundation** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) + Single-Arm Floor Press + Push-Up Bars + Diamond Push-Up + TRX Row + TRX Y-T-W + Micro Mobility A (5 anchor exercises) | 30 min |
 | **Day 4** | **Active Recovery + Neck** | Cervical Protocol (Band Neck Flexion & Extension 2x15-20) + 20 min Relaxed Walking + Micro Mobility B | 25 min |
 | **Day 5** | **Pull + Core Foundation** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + Micro Mobility A (5 anchor exercises) | 30 min |
-| **Day 6** | **Cardio (VO2 from Week 4)** | Weeks 1–3: Relaxed Walking 20 min (0% incline, 4.5 km/h); Week 4+: VO2 Max 4x4 (4% incline) | 20–35 min |
+| **Day 6** | **Cardio (VO2 from Week 4)** | Weeks 1–3: Relaxed Walking 20 min (0% incline, 4.5 km/h); Week 4+: VO2 Max 4x4 at 85–95% HRmax (baseline 6.5+ km/h @ phase incline, adjust to HR) | 20–35 min |
 | **Day 7** | **Complete Rest** | Passive recovery, hydration & CNS regeneration | — |
 
 ### 3.1b Standard Weekly Microcycle Structure (Phase 1 — Weeks 5–11, 13–23, 25–35...)
 
 | Day | Workout Type | Target Focus & Exact Sequential Structure | Target Duration |
 | :--- | :--- | :--- | :--- |
-| **Day 1** | **Legs + Core + Carry** | Warmup (High Knees, BW Squat, Dead Bug, Glute Bridge) → Goblet Romanian Deadlift (W1–17) / Single-Leg RDL (W18+) → Nordic Curl Progression (from W10) → Heels-Elevated Goblet Squat → Goblet Bulgarian Split Squat → DB Glute Bridge → Suitcase Carry → Calf Block (Standing & Seated) → Core Circuit (Pallof from W6, Dead Bug, Hollow Body) → Micro Mobility B | 45 min |
-| **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building: treadmill brisk walking 45 min (4% incline, 5.5 km/h) & daily Micro Mobility B (hip flexor + deep squat) | 45 min |
-| **Day 3** | **Push + Shoulders + Triceps** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) → Single-Arm Seated OHP (first, fresh) → Pike / Overhead Skill Tree → Single-Arm Floor Press → Push-Up Tree → DB Overhead Triceps Ext → Diamond Push-Up → Lean Pair (TRX Row ↔ Single-Arm Lateral Raise) → Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart) → Arm Block (W3+ Gradual Ramp) → Micro Mobility A | 45 min |
+| **Day 1** | **Legs + Core + Carry** | Warmup (High Knees, BW Squat, Dead Bug, Glute Bridge) → Goblet Romanian Deadlift (W1–17) / Single-Leg RDL (W18+) → Nordic Curl Progression (from W10) → Heels-Elevated Goblet Squat → Goblet Bulgarian Split Squat → DB Glute Bridge → Suitcase Carry → Calf Block (Standing & Seated) → Core Circuit (Pallof from W6, Dead Bug, Hollow Body) → Micro Mobility B | 65 min |
+| **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building: treadmill brisk walking 45 min at Zone 2 HR 60–70% (baseline 4% incline, 5.5 km/h, conversational test) & daily Micro Mobility B (hip flexor + deep squat) | 45 min |
+| **Day 3** | **Push + Shoulders + Triceps** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) → Single-Arm Seated OHP (first, fresh) → Pike / Overhead Skill Tree → Single-Arm Floor Press → Push-Up Tree → DB Overhead Triceps Ext → Diamond Push-Up → Lean Pair (TRX Row ↔ Single-Arm Lateral Raise) → Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart) → Arm Block (W3+ Gradual Ramp) → Micro Mobility A | 65 min |
 | **Day 4** | **Active Recovery + Joint Health** | Band Neck Flexion & Extension protocol (A1, 2×15–20), light treadmill recovery walk (A2, 25 min @ 0% 4.5 km/h) & 10-min Deep Mobility sequence (A3) | 30 min |
-| **Day 5** | **Pull + Back + Biceps + Grip** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) → Pull-Up Tree → One-Arm DB Row → Lean Pair (TRX Face Pull ↔ Single-Arm Lateral Raise) → Lean Pair (Push-Up Volume ↔ Single-Arm Curl) → Single-Arm Hammer Curl → Lean Pair (Towel Hang ↔ L-Sit Tree) → Arm Block (W3+ Gradual Ramp) → Micro Mobility A | 45 min |
-| **Day 6** | **Cardio VO2 Max 4x4** | Norwegian 4x4 interval treadmill protocol: 10m warmup @ 4.5 km/h, 4×(4m effort @ 6.5 km/h phase incline, 3m recovery @ 4.5 km/h), 5m cooldown (replaced with 30 min Zone 2 walk during Deload) | 35 min |
+| **Day 5** | **Pull + Back + Biceps + Grip** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) → Pull-Up Tree → One-Arm DB Row → Lean Pair (TRX Face Pull ↔ Single-Arm Lateral Raise) → Lean Pair (Push-Up Volume ↔ Single-Arm Curl) → Single-Arm Hammer Curl → Lean Pair (Towel Hang ↔ L-Sit Tree) → Arm Block (W3+ Gradual Ramp) → Micro Mobility A | 65 min |
+| **Day 6** | **Cardio VO2 Max 4x4** | Norwegian 4x4 interval protocol: 10m warmup @ 4.5 km/h, 4×(4m effort @ 85–95% HRmax [baseline 6.5+ km/h at phase incline, adjust speed/incline to hit HR target], 3m recovery @ 60–70% HRmax [4.5 km/h]), 5m cooldown (replaced with 30 min Zone 2 walk during Deload) | 35 min |
 | **Day 7** | **Complete Rest** | Complete passive recovery, protein repair, hydration & CNS regeneration | — |
 
-### 3.2 Cardio Protocols
+### 3.2 Cardio Protocols & Physiological Heart Rate Targets
 
-🟢 **Zone 2 Base (Day 2):** 4% incline | 5.5 km/h | 45 min continuous | Conversational test: Must speak full sentences, otherwise lower to 5.0 km/h. *Weeks 1–2*: 20 min light walk (0% incline). *Deload*: 30 min, 2% incline, 5.0 km/h.
+> [!IMPORTANT]
+> **Heart Rate is the Primary Governing Target**:
+> Fixed treadmill speeds and inclines (e.g. 5.5 km/h @ 4%, or 6.5 km/h @ 3–6%) are **starting baseline recommendations**, NOT dogmatic targets. Cardiovascular fitness adapts rapidly:
+> - **Zone 2**: 5.5 km/h @ 4% incline will not produce Zone 2 in every trainee (some require 4.8 km/h, others 6.0+ km/h).
+> - **Norwegian 4×4**: 6.5 km/h at 4–6% incline will **NOT** reach 85–95% HRmax after several weeks/months of aerobic adaptation. Without increasing intensity, the 4×4 devolves into a fast walk without developing VO2 Max.
+> Trainees MUST monitor heart rate and adjust speed (e.g. transitioning into a jog/run: 7.5–10+ km/h) or steepen incline to hit and sustain the designated HR zones.
 
-🔴 **Norwegian 4×4 VO2 Max (Day 6):** Active from Week 4 (v15.7; previously Week 5). Achilles Protection — Max 6% incline, NO sprinting.
-Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase incline | Active recovery 3×3 min @ 0% 4.5 km/h | Cooldown 5 min @ 0% 4.0 km/h. *Weeks 1–3*: Replaced with 20 min light walk. *Deload*: Replaced with 30 min Zone 2 walk.
+🟢 **Zone 2 Base (Day 2):**
+- **Governing Metric**: **60%–70% of Maximum Heart Rate (HRmax)**, or the **Conversational Breathing Test** (must be able to speak complete sentences comfortably without gasping; nasal breathing preferred).
+- **Treadmill Baseline**: 4% incline | 5.5 km/h | 45 min continuous (adjust speed between 4.8–6.2 km/h and incline between 2%–6% to keep HR squarely in Zone 2).
+- *Weeks 1–2*: 20 min light walk (0% incline, 4.5 km/h). *Deload*: 30 min, 2% incline, 5.0 km/h.
 
-| Phase Weeks | Work Interval Incline |
-| :--- | :--- |
-| **Weeks 1–3** | Replaced with 20m Light Walk (0% Incline) |
-| **Weeks 4–8** | 4% |
-| **Weeks 10–16** | 5% |
-| **Weeks 18–80+** | 6% |
+🔴 **Norwegian 4×4 VO2 Max Protocol (Day 6):**
+- **Governing Metric**: **85%–95% of Maximum Heart Rate (HRmax)** during the 4-minute work intervals (Zone 4/5, anaerobic threshold / peak aerobic power; speech impossible beyond 1–2 gasped words). Active recovery intervals strictly target **60%–70% HRmax** (Zone 2).
+- **Intensity Adjustment Rule**: 6.5 km/h at 3%–6% incline is the starting entry baseline for untrained trainees. As aerobic capacity develops over weeks and months, trainees **MUST increase speed into a jog/run (7.5–10.5+ km/h)** or steepen incline so that by minute 2 of each 4-minute interval, heart rate reaches and stays in the 85%–95% HRmax zone.
+- **Protocol Structure**:
+  - Warmup: 10 min light walk (0% incline, 4.5–5.0 km/h, 50%–60% HRmax).
+  - 4 Work Intervals: 4 × 4 min @ **85%–95% HRmax** (baseline 6.5+ km/h at phase incline, increase speed to run/jog as needed to reach target HR).
+  - 3 Recovery Intervals: 3 × 3 min active walking @ **60%–70% HRmax** (0% incline, 4.0–4.5 km/h).
+  - Cooldown: 5 min light walk (0% incline, 4.0 km/h, HR drops below 60%).
+- *Weeks 1–3*: Replaced with 20 min light walk. *Deload*: Replaced with 30 min Zone 2 walk.
+
+| Phase Weeks | Work Interval Incline | Work Heart Rate | Active Recovery | Notes / Deload Protocol |
+| :--- | :--- | :--- | :--- | :--- |
+| **Weeks 1–3** | 0% Incline | 50%–60% HRmax | — | Anatomical foundation ramp-up; 20m light walk (protects Achilles tendon) |
+| **Weeks 4–8** | **4% Incline** | **85%–95% HRmax** | 60%–70% HRmax | VO2 Max 4x4 begins in Week 4 (6.5+ km/h work / 4.5 km/h recovery) |
+| **Weeks 9–16** | **5% Incline** | **85%–95% HRmax** | 60%–70% HRmax | Week 12 is Deload (VO2 replaced by light 30 min Zone 2 walk @ 2%) |
+| **Weeks 17–80+** | **6% Incline** | **85%–95% HRmax** | 60%–70% HRmax | Incline ceiling capped at 6% (Achilles protection). Deload every 12 weeks |
+
+### 3.2.1 How to Determine Your HRmax & How FitUp Calculates It (כיצד נקבע הדופק המרבי ואיך האפליקציה מחשבת אותו)
+
+#### 1. האם המערכת מחשבת לבד ואיזה נתון דרוש? (Automatic App Calculation)
+- **המערכת מחשבת הכל באופן אוטומטי מלא!**
+- **הנתון היחיד שנדרש** הוא **הגיל (Age)** של המתאמן.
+- בהגדרות האפליקציה (Settings) או בלחיצה על כפתור "🫀 מחשבון דופק" ב-Today View, המתאמן מזין את גילו (ברירת המחדל היא 30).
+- האפליקציה מחשבת מיידית את הדופק המרבי (HRmax) וגוזרת ממנו את מספרי הפעימות לדקה (BPM) המדויקים המוצגים בכרטיס האימון ובתוך טיימר ההליכון (4×4 Modal Runner).
+
+#### 2. נוסחת החישוב המדעית באפליקציה (Tanaka Formula)
+האפליקציה משתמשת כברירת מחדל ב**נוסחת Tanaka** (תקן הזהב במדעי הספורט עבור מבוגרים בריאים):
+$$\text{HRmax} = 208 - (0.7 \times \text{גיל})$$
+*דוגמאות:*
+- גיל 25: $208 - (0.7 \times 25) = 191\text{ BPM}$
+- גיל 30: $208 - (0.7 \times 30) = 187\text{ BPM}$
+- גיל 35: $208 - (0.7 \times 35) = 184\text{ BPM}$
+- גיל 40: $208 - (0.7 \times 40) = 180\text{ BPM}$
+
+*(האפליקציה מציגה במודאל גם את נוסחת Fox הקלאסית: $220 - \text{גיל}$ לשם השוואה).*
+
+#### 3. הזנת דופק מרבי ידוע משעון או מעבדה (Custom HRmax Override)
+אם ידוע למתאמן דופק מרבי מדויק שנמדד בפועל:
+1. **שעון ספורט / צמיד חכם (Garmin, Apple Watch, Polar, Google Fit)**: הדופק המקסימלי שנרשם בספרינט שיא או בעלייה תלולה בקצה אינטרוול 4 ב-4×4.
+2. **בדיקת מאמץ קלינית במעבדה (ארגומטריה / CPET)**.
+המתאמן יכול להזין את המספר ישירות בשדה **"דופק מרבי ידוע (Custom HRmax)"**. במצב זה, האפליקציה תתעלם מנוסחת הגיל ותשתמש ב-100% בערך האמיתי שנמדד.
+
+#### 4. טווחי הדופק המחושבים באימונים (Target Zones)
+עבור דופק מרבי של 187 BPM (גיל 30):
+| אזור אימון | אחוז מדופק מרבי | טווח דופק (לגיל 30) | ייעוד ותחושה פיזיולוגית |
+| :--- | :--- | :--- | :--- |
+| **Zone 1 (Warmup/Cooldown)** | 50%–60% | 94–112 BPM | חימום קל והורדת דופק הדרגתית בסיום אימון |
+| **Zone 2 (Aerobic Base - יום 2)** | 60%–70% | **112–131 BPM** | פיתוח נפח פעימה, שריפת שומן וצפיפות מיטוכונדריאלית. מבחן הדיבור: שיחה חופשית במשפטים מלאים |
+| **Zone 3 (Aerobic Tempo)** | 70%–80% | 131–150 BPM | קצב אירובי בינוני (אינו נדרש בפרוטוקול זה כדי למנוע עייפות מיותרת) |
+| **Zone 4 (Threshold)** | 80%–90% | 150–168 BPM | סף לקטט / כניסה לאזור עבודה אינטרוולית |
+| **Zone 5 (Norwegian 4×4 Work - יום 6)** | 85%–95% | **159–178 BPM** | מאמץ שיא ב-4 דקות עבודה! צריכת חמצן מרבית (VO2 Max). דיבור בלתי אפשרי מעבר למילה-שתיים |
+
+#### 5. כיצד מתאמנים ללא מד דופק? (מבחן הדיבור וה-RPE)
+- **Zone 2 (יום 2)**: **מבחן הדיבור (Talk Test)** — המתאמן חייב להיות מסוגל לדבר ברצף ובמשפטים שלמים מבלי להתנשף או לעצור לנשום באמצע משפט (נשימה מהאף צריכה להיות נוחה).
+- **Norwegian 4×4 (יום 6)**: המתאמן מתנשף בכבדות, מסוגל להוציא רק מילה בודדת או שתיים ("כן", "לא", "עצור"), ומדורג ברמת מאמץ סובייקטיבי של **8.5 עד 9.5 מתוך 10 (RPE)**. אם ניתן לדבר במשפטים — המהירות/שיפוע נמוכים מדי ויש להעלותם לריצה.
 
 🟡 **Active Recovery (Day 4):** 5 min Cervical Health protocol (Band Neck Flexion & Extension 2×15–20 each direction, 45s rest, 3-1-3 tempo, chin-tuck focus) + Treadmill 25 min @ 0% 4.5 km/h (20 min in W1-4) + 10 min deep mobility (5 min in W1-4).
 
@@ -213,7 +306,7 @@ Warmup 10 min @ 0% 4.5 km/h | Work intervals 4×4 min @ 6.5 km/h at phase inclin
 
 Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks; v15.7 — previously every 8 weeks), plus an **auto-regulated early deload** triggered when performance drops over consecutive sessions (2 consecutive strength sessions with ≥2 main compounds all-`BELOW`, or ≥3 load demotions within 7 days, or repeated joint-pain flags). The auto-regulated deload applies to the next session only (max 2 sets, reduced load, no progression) and is announced with an explanatory banner.
 - **Volume Ceiling**: Maximum 2 sets per strength exercise.
-- **Load Reduction**: Loads reduced by 2 kg (rounded to nearest legal increment [3..32] kg).
+- **Load Reduction**: Loads reduced by 2 kg (rounded to nearest legal increment [6..32] kg; minimum 6 kg empty handle / 8 kg loaded; vest min 5 kg).
 - **Structure**: All pairs, circuits, and blocks dissolve into straight sets with dedicated rest.
 - **Toggles**: Toggles remain active according to week parity.
 - **Nordic Curl on Deload**: 1 set of 6–10 reps only, hands-assisted, progression frozen.
@@ -223,20 +316,28 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 
 ---
 
-## Part 6 — Complete 80-Week Physiological Adaptation Timeline & Biomarker Map
-### טבלת שינויים פיזיולוגיים, תאיים ואסתטיים לאורך 80 שבועות
+## Part 6 — Evidence-Based Physiological Adaptation Timeline & Reality Check
+### טבלת הסתגלות פיזיולוגית מבוססת ראיות (Evidence-Based Physiology) לאורך 80 שבועות
 
-כאשר כל האימונים מבוצעים בזמן, הקפדה על זמני המנוחה האדפטיביים מלאה, וצריכת החלבון אופטימלית (**1.6–2.2 גרם חלבון לכל ק"ג משקל גוף ביום**), הגוף עובר מסלול טרנספורמציה ביולוגי מבוסס מדע (Evidence-Based Physiology). להלן מיפוי מלא של השינויים:
+אימון גופני שיטתי מייצר הסתגלויות עצביות, מבניות ומטבוליות הדרגתיות. כדי למנוע אשליות שיווקיות וציפיות בלתי ריאליות, להלן עקרונות המפתח המדעיים של התהליך:
 
-| שלב וטווח שבועות | מה השינוי הביולוגי והתאי בגוף? | איך תיראה ויזואלית? (אסתטיקה וקומפוזיציה) | איך זה ישפיע עליך תפקודית וביומיום? | דגש תזונתי וסינרגיית חלבון |
+> [!IMPORTANT]
+> **עקרונות מדע האימון והתזונה (Reality Check)**:
+> 1. **הרכב גוף ואחוז שומן**: אחוז השומן נקבע בראש ובראשונה על ידי **מאזן אנרגטי תזונתי (קלוריות נכנסות מול קלוריות יוצאות)**. שום תוכנית אימונים אינה יכולה "להבטיח" אחוז שומן מוגדר (כגון 10%–13%) ללא גרעון קלורי יזום ומבוקר בתפריט. האימון שומר על מסת השריר ומעלה את ההוצאה האנרגטית, אך התזונה קובעת את החיטוב.
+> 2. **תפקיד ה-Carb Cycling**: לחלוקת פחמימות מתוזמנת (יותר פחמימות בימי אימון עצימים ופחות בימי מנוחה) **אין שום יתרון מטבולי בירידה בשומן** מעבר לשליטה בסך הקלוריות הכולל. יתרונה הוא פרקטי-ביצועי בלבד: תדלוק מאגרי הגליקוגן לביצועים מיטביים בימי כוח ו-VO2 Max, וסיוע בעמידה ביעד הקלורי השבועי בימי מנוחה.
+> 3. **ציר הזמן של היפרטרופיה**: בשבועות הראשונים (1–4) עיקר השיפור הוא **הסתגלות עצבית** (גיוס יחידות מוטוריות, סנכרון תנועתי) וצבירת נוזלים תוך-תאיים זמנית ("פאמפ"). צמיחה מבנית ממשית של סיבי השריר (היפרטרופיה נראית לעין) דורשת חודשי אימון עקביים של עומס פרוגרסיבי.
+> 4. **הגנה מפרקית אינה "חסינות מוחלטת"**: חיזוק שרירי הליבה, הצוואר והשרשרת האחורית מפחית משמעותית את השכיחות והחומרה של כאבי גב וצוואר על ידי שיפור ייצוב עמוד השדרה וסובלנות הרקמות לעומס. עם זאת, אין בנמצא "חסינות מוחלטת" מפציעות, ודרושה הקפדה מתמדת על טכניקה וטמפו (במיוחד לאור רקע של בלט דיסק).
+> 5. **מדדים אישיים (דופק מנוחה וגנטיקה)**: ירידה בדופק מנוחה בעקבות אימוני Zone 2 ו-VO2 Max היא תוצאה של שיפור בנפח הפעימה וביכולת הקרדיווסקולרית, אך המספר המדויק תלוי גנטיקה, גיל ונקודת מוצא אישית ולא בהבטחות שווא.
+
+| שלב וטווח שבועות | מה השינוי הביולוגי והתאי האמיתי? | מה השינוי הוויזואלי המציאותי? | השפעה תפקודית וביומיום | דגש תזונתי מבוסס מדע |
 | :--- | :--- | :--- | :--- | :--- |
-| **שבועות 1–2** <br>*(Phase 0: בסיס אנטומי ראשוני)* | **הסתגלות עצבית (Neural Adaptation):** שיפור דרמטי בגיוס יחידות מוטוריות (Motor Unit Recruitment) וסנכרון קצב הירי (Rate Coding). התחלת צבירת גליקוגן ומים תוך-תאיים בשרירים (Cell Swelling). גידים מתחילים לייצר קולגן ראשוני ללא דלקת הודות לעומס מתון מבוקר (5 תרגילי עוגן בלבד). | שרירים מוצקים ומלאים יותר (טונוס מוגבר). שיפור מיידי ביציבה: חזה פתוח יותר הודות ל-Wall Slides ותרגילי מוביליות, אגן מאוזן. אין עדיין שינוי בהיקפים. | ירידה חדה בנוקשות בוקר בגב התחתון (L4-S1 מוגן לחלוטין). תחושת שחרור ורעננות. כאבי שרירים קלים (DOMS) ב-48 שעות ראשונות שנעלמים מהר (Repeated Bout Effect). | 1.6 גרם חלבון/ק"ג (חלוקה ל-3-4 ארוחות) להאצת שיקום ראשוני והתאוששות רקמות חיבור. |
-| **שבועות 3–4** <br>*(Phase 0: פתיחה מוקדמת, מיקרו-דוזינג זרועות וביוגנזה)* | **היפרטרופיה מיופיברילרית ראשונית והאצת זרועות הדרגתית:** תחילת סינתזת חלבוני אקטין ומיוזין. כניסת שיפוע 4% ב-Zone 2 ופרוטוקול VO2 Max 4x4 (משבוע 4) מעוררת **PGC-1α**. **האצת זרועות הדרגתית (Arm Block Micro-Dosing משבוע 3):** שבוע 3 מתחיל במינון מיקרו 1 (סט אקטיבציה + מיני-סט 1 של 4 חזרות) ושבוע 4 מתקדם למינון מיקרו 2 (אקטיבציה + 2 מיני-סטים) – גיוס סיבים מהירים מוקדם תוך הגנה מוחלטת על גידי המרפק והכתף. | הידוק מותניים ראשוני (Transverse Abdominis מתכווץ בזכות Dead Bug ו-Suitcase Carry). קווי מתאר ראשונים בכתפיים ובחזה עליון, ותחילת התעבות נראית לעין של היקף הזרוע (Biceps Peak ו-Triceps Sweep). | כושר העבודה (Work Capacity) מזנק: פחות התנשמות במאמצים יומיומיים. דופק המנוחה (RHR) יורד ב-2-4 פעימות לדקה. יכולת התאוששות מהירה יותר בין סטים. | העלאה ל-1.8 גרם חלבון/ק"ג. תזמון 25-30 גרם חלבון בתוך שעתיים מסיום אימון כוח. |
-| **שבועות 5–8** <br>*(Phase 1: סיום שלב הבסיס, BSS, V-Taper והאצת זרועות מלאה)* | **קפיצת עומס מכני חד-צדדית והיפרטרופיה מהירה:** פתיחת Bulgarian Split Squat מייצרת עומס עילאי על הארבע-ראשי והגלוטס ללא דחיסה שדרתית. **Arm Blocks:** ביסוס בשבוע 5 (אקטיבציה + 2 מיני-סטים) ומעבר לצביר מלא משבוע 6+ (אקטיבציה + 3 מיני-סטים של 5 חזרות). תדירות צדית כפולה בכתפיים (Lateral Raise ביום 3 וביום 5) מגדילה שטח חתך רוחבי (CSA). | **ניצני V-Taper מובהקים:** הגב מתרחב (Lats) מהמתח וה-TRX Row, הכתפיים מקבלות רוחב צדי בולט, והיקף הזרועות (ביספס + טריספס) גדל בעין בלתי מזוינת. ישבן אסוף ומוצק. | קלות פנומנלית בעלייה במדרגות ונשיאת חפצים. שרירי הליבה מרגישים כמו "מחוך פלדה". אפס כאבים בגב התחתון בזכות חיזוק שרשרת אחורית וייצוב אגן. | 1.8–2.0 גרם חלבון/ק"ג. צריכת חלבון עשיר בלאוצין (Leucine →\ge→ 3g לארוחה) להפעלת מתג ה-mTORC1. |
-| **שבועות 9–12** <br>*(הארכת המסטרינגס בנורדיק קרל, פריצת מתח ודילואד שבוע 12)* | **סרקומרוגנזה בטור (Sarcomerogenesis in series):** כניסת ה-Nordic Curl Progression (משבוע 10) מאריכה את סיבי ההמסטרינגס בעומס אקסצנטרי טהור, ומחסנת את הברכיים והאגן מפציעות. **שבוע 12 (דילואד):** Supercompensation – שיקום מערכת העצבים, ירידה ברמות קורטיזול, חידוש קולגן בגידים ומילוי מאגרי אנרגיה. | גב עליון חטוב, שרירי זרוע מוגדרים וחתוכים (טריספס סוס-ברזל מאחור). בשבוע הדילואד נעלמת אגירת נוזלים דלקתית והשרירים נראים "יבשים" ומפוסלים יותר. | עלייה חדה בכוח משיכה: מסוגל לבצע 5-8 עליות מתח נקיות (לעומת 2 בתחילת התוכנית). VO2 Max עולה ב-8-12%. תחושת רעננות וקלילות מפרקית כללית. | שמירה על 2.0 גרם חלבון/ק"ג גם בשבוע הדילואד! שבוע דילואד הוא חלון הזמן שבו השריר והגידים נבנים ומתחדשים. |
-| **שבועות 13–24** <br>*(Phase 2: מעבר ל-Single-Leg RDL, צפיפות גידים ודילואד שבוע 24)* | **שליטה חד-צדדית מוחלטת וקשיחות גידים (Tendon Stiffness):** שבוע 18 מחליף את הגובלט RDL ב-Single-Leg RDL – הפעלת Gluteus Medius ושרשרת אחורית מייצבת שמבטלת לחלוטין אסימטריות תנועתיות. צפיפות קולגן גבוהה בגיד האכילס, בפיקה ובמרפקים מונעת דלקות כרוניות. | **גוף אתלטי מובהק:** כתפיים תלת-ממדיות עגולות ("3D Delts"), גב V רחב ומוגדר, מותניים צרות (ירידה באחוז שומן הודות ל-Zone 2 קבוע), זרועות מפותחות שלא דורשות חולצה צמודה כדי לבלוט. | אנרגיה יומיומית גבוהה ויציבה ללא נפילות עייפות. יכולת עמידה, הליכה ומאמץ ממושך ללא שום מאמץ נשימתי. שינה עמוקה ואיכותית יותר (עלייה בשלבי REM ו-Deep Sleep). | 2.0 גרם חלבון/ק"ג. שילוב Carb Cycling: תוספת פחמימות מורכבות בימי כוח ו-VO2, והורדת פחמימות בימי התאוששות ומנוחה (האצת שריפת שומן). |
-| **שבועות 25–48** <br>*(Phase 3 & 4: שליטה גופנית עילאית, L-Sit מלא, עמידות ידיים ו-Peak Mastery)* | **כוח ליבה גימנסטי וקפילריזציה גבוהה:** פתיחת Wall Handstand (שבוע 26) ו-Full L-Sit (שבוע 34) מביאה לרמת גיוס סיבים תוך-בטנית שאינה קיימת אצל מתאמנים רגילים. עלייה בצפיפות כלי הדם המזינים את השריר (Capillarization), רגישות לאינסולין בשיא (Insulin Sensitivity), צפיפות מינרלים בעצם עולה (Bone Density). | קוביות בטן עמוקות ומעוצבות (Core Citadel), רגליים אתלטיות חטובות ללא שומן עודף, שרירי שכמות וטרפז תחתון מפוסלים, זרועות חזקות ועור מתוח. | כוח תפקודי מוחלט: מסוגל לבצע מעל 10 עליות מתח ו-25+ שכיבות סמיכה רצופות בקלות. עמידות מלאה בפציעות, תחושת גוף קל, גמיש וקפיצי. | 2.0–2.2 גרם חלבון/ק"ג. דגש על שומנים בריאים (אומגה 3) להגנה על ממברנות התא ומפרקים. |
-| **שבועות 49–80** <br>*(Phase 5 & 6: עומסים משוקללים, שיא אריכות הימים ו-Longevity Peak)* | **חסינות מסרקופניה ואנטי-אייג'ינג ביולוגי:** כניסת מתח ושכיבות סמיכה משוקללות (וסט 5 ק"ג משבוע 62) מקבעת מסת שריר איכותית וצפיפות עצם לטווח ארוך. שימור אורך טלומרים (Telomere Integrity), מיטוכונדריות צעירות ויעילות, פרופיל ליפידים ומדדי דלקת (hs-CRP) ברמות של אתלט צעיר. | **מראה אתלטי מפוסל (Sculpted Athletic Physique):** גב V-Taper מרשים, זרועות מלאות ועוצמתיות, יציבה אצילית ומתוחה, אחוז שומן אתלטי של 10%–13%, עור בריא ומראה פנים רענן וצעיר. | **גיל ביולוגי צעיר ב-10–15 שנים מהגיל הכרונולוגי:** דופק מנוחה 48–54 פעימות לדקה, VO2 Max בקטגוריית "Superior", תפקוד קוגניטיבי חד, חסינות מוחלטת מכאבי גב וצוואר. | 2.0 גרם חלבון/ק"ג לשימור מתמיד. תזונה מגוונת נוגדת חמצון, נוזלים מספקים (3+ ליטר מים ביום). |
+| **שבועות 1–2** <br>*(Phase 0: בסיס אנטומי ראשוני)* | **הסתגלות עצבית (Neural Adaptation):** שיפור דרמטי בגיוס יחידות מוטוריות (Motor Unit Recruitment) וקואורדינציה תוך-שרירית. תחילת צבירת גליקוגן ומים תוך-תאיים קלה עקב הגירוי הראשוני. הסתגלות ראשונית של רקמות חיבור לעומס מתון ומבוקר (5 תרגילי עוגן). | שיפור ביציבה עקב תרגילי המוביליות (Wall Slides) ועלייה קלה בטונוס השרירי המנוחתי. **אין עדיין היפרטרופיה מבנית או שינוי בהיקפים**. | ירידה בנוקשות בוקר בגב התחתון (L4-S1 מוגן בעומס מבוקר). כאבי שרירים מאוחרים (DOMS) מתמתנים במהירות לאחר האימונים הראשונים (Repeated Bout Effect). | 1.6 גרם חלבון/ק"ג ליום, מחולק ל-3–4 ארוחות לתמיכה בהתאוששות רקמות החיבור וסינתזת חלבון ראשונית. |
+| **שבועות 3–4** <br>*(Phase 0: עומס מבוקר, כניסת אירובי עצים ומיקרו-דוזינג זרועות)* | **התחלת איתות היפרטרופי מולקולרי:** איתות תוך-תאי (mTORC1) לסינתזת חלבוני כיווץ. כניסת שיפוע 4% ופרוטוקול VO2 Max 4x4 (משבוע 4) משפעלת איתות מיטוכונדריאלי (PGC-1α) לשיפור יעילות אירובית. מיקרו-דוזינג זרועות ב-Arm Block (W3: 1+1, W4: 1+2) מספק גירוי נוירו-שרירי ממוקד בנפח נמוך להגנת גידים. | שיפור במודעות היציבתית ובשליטה בשרירי הבטן הרוחביים (Transverse Abdominis מ-Dead Bug). "פאמפ" זמני לאחר אימון. **אין לצפות לצמיחה נראית לעין בזרועות בשלב כה מוקדם**. | עלייה מתונה בכושר העבודה הכללי (Work Capacity), פחות התנשמות במאמצים שגרתיים, והתאוששות טובה יותר בין סטים. | 1.6–1.8 גרם חלבון/ק"ג. הקפדה על הידרציה (2.5–3 ליטר מים) לתמיכה בנפח הפלזמה ובאימוני האינטרוולים. |
+| **שבועות 5–8** <br>*(Phase 1: סיום שלב הבסיס, עומס חד-צדדי והרחבת נפח)* | **היפרטרופיה מבנית ראשונית:** תחילת גדילה מדידה בשטח חתך רוחבי של סיבי שריר (Muscle CSA). פתיחת Bulgarian Split Squat מייצרת עומס מכני גבוה על הארבע-ראשי והעכוז ללא דחיסה שדרתית. Arm Blocks בצביר מלא (משבוע 6+) מעלים את גיוס הסיבים בעצימות גבוהה בסיום אימון. | התחלת שינויים ראשוניים במבנה: הרחבה מתונה של הגב העליון (Lats) מהמתח והחתירה, והגדרה ראשונית בכתפיים ובזרועות. היקף המותניים ירד רק אם נשמר גרעון קלורי בתזונה. | שיפור ניכר בכוח הרגליים (עלייה במדרגות, נשיאה). ייצוב משופר של האגן ועמוד השדרה מפחית עומסים שגרתיים על הגב התחתון. | 1.8–2.0 גרם חלבון/ק"ג. חלוקה איכותית לארוחות (25–35 גרם חלבון עם סף לאוצין מספק לעירור MPS). |
+| **שבועות 9–12** <br>*(עומס אקסצנטרי בנורדיק קרל, התקדמות במתח ודילואד שבוע 12)* | **הסתגלות אקסצנטרית וסופר-קומפנסציה:** ה-Nordic Curl (משבוע 10) מאריך את סיבי ההמסטרינגס בעומס אקסצנטרי ומגביר עמידות למתיחות שריר. **שבוע 12 (דילואד):** פריקת עייפות עצבית ושרירית מצטברת, התאוששות קולגן בגידים ומילוי מאגרי אנרגיה. | מסת שריר מוגדרת ומוצקה יותר בפלג הגוף העליון והזרועות. בשבוע הדילואד, ירידה באגירת נוזלים מקומית ודלקתיות מעניקה לשרירים מראה מהודק וברור יותר. | עלייה בכוח משיכה יחסי (התקדמות בחזרות מתח נקיות). שיפור במדדי סבולת לב-ריאה וצריכת חמצן מרבית (VO2 Max). תחושת רעננות מפרקית. | שמירה על 1.8–2.0 גרם חלבון/ק"ג גם בשבוע הדילואד לתמיכה מלאה בתהליכי בנייה ושיקום רקמות. |
+| **שבועות 13–24** <br>*(Phase 2: ייצוב חד-צדדי מתקדם, קשיחות גידים ודילואד שבוע 24)* | **קשיחות גידים (Tendon Stiffness) ושליטה חד-צדדית:** Single-Leg RDL (משבוע 18) מאתגר את ה-Gluteus Medius ומייצבי הירך ומאזן פערים דו-צדדיים. עומס מתמשך מגביר צפיפות קולגן ומייעל העברת כוח במפרקים (ברכיים, מרפקים, אכילס). | התפתחות שרירית בולטת יותר בכתפיים, בגב ובזרועות. רמת החיטוב והנראות של מסת השריר מושפעות ישירות מרמת השומן שהושגה דרך התפריט התזונתי. | יציבות גבוהה בתנועה חד-צדדית, סבולת אירובית גבוהה במאמצים יומיומיים, וירידה הדרגתית בדופק המנוחה (בהתאם לנקודת המוצא האישית). | 1.8–2.0 גרם חלבון/ק"ג. ניהול פחמימות מתוזמן (תעדוף פחמימות סביב אימונים קשים לתמיכה באנרגיה, ובקרה קלורית בימי מנוחה – ללא יתרון מטבולי מעבר למאזן האנרגטי). |
+| **שבועות 25–48** <br>*(Phase 3 & 4: שליטה גופנית מתקדמת, עבודת ליבה ומיומנות תנועה)* | **קפילריזציה וגיוס שרירי ליבה מרבי:** פתיחת תרגילי משקל גוף מתקדמים (Wall Handstand משבוע 26, Full L-Sit משבוע 34) מפתחת כוח ייצוב מורכב. הסתגלות קרדיווסקולרית: עלייה בצפיפות נימי הדם בשריר (Capillarization), נפח פעימה משופר ורגישות מיטבית לאינסולין. | גוף אתלטי בעל מסת שריר מוצקה ומפותחת. נראות שרירי הבטן (Six-Pack) אינה תוצר של תרגילי בטן בלבד אלא תלויה בהגעה לאחוז שומן נמוך באמצעות גירעון קלורי. | כוח תפקודי גבוה כנגד משקל הגוף (מתח, שכיבות סמיכה, החזקות איזומטריות), חיוניות יומיומית וסובלנות גבוהה לעומסים פיזיים. | 1.8–2.0 גרם חלבון/ק"ג. צריכת שומנים חיוניים (אומגה 3, שומן בלתי-רווי) לשמירה על בריאות תאית ומפרקית. |
+| **שבועות 49–80** <br>*(Phase 5 & 6: עומסים משוקללים, שימור מסת שריר והרגלי בריאות ארוכי טווח)* | **שימור מסת שריר (Sarcopenia Prevention) וצפיפות עצם:** תוספת וסט משקולות (5 ק"ג משבוע 62) מספקת עומס מתמשך לשימור מסת שריר איכותית וצפיפות מינרלים בעצם (BMD). אימוני ה-Zone 2 ו-VO2 Max משמרים כושר קרדיווסקולרי ובריאות מטבולית לאורך זמן. | מבנה גוף אתלטי, שרירי ומאוזן (V-Taper, זרועות מפותחות, יציבה אסופה וזקופה). הרכב גוף יציב לאורך זמן כל עוד נשמרת התמדה באימונים ובמאזן תזונתי מתאים. | כושר תפקודי מעולה לגיל 40+, הפחתה ניכרת בהישנות של עומסים וכאבי גב וצוואר (הודות לשרירי ליבה וצוואר חזקים ומיוצבים, ללא יומרה לחסינות רפואית עיוורת), ומדדי סיבולת אישיים משופרים ביחס לנקודת ההתחלה. | 1.8–2.0 גרם חלבון/ק"ג לשימור לאורך זמן. תזונה מגוונת עשירה בסיבים תזונתיים ונוגדי חמצון, ומאזן נוזלים תקין. |
 
 ---
 
@@ -251,6 +352,10 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 | **Micro-Dose 2** | Week 4 | `1+2 Myo-Mini` | 1×12 clean reps | **2 mini-sets** × 4 clean reps | 15s | Volume elevation & metabolic conditioning |
 | **Consolidation** | Week 5 | `1+2 Myo-Mini` | 1×12 clean reps | **2 mini-sets** × 4 clean reps | 15s | Adaptation consolidation prior to full cluster |
 | **Full Cluster** | Week 6+ | `Myo-Reps Cluster` | 1×12–15 clean reps | **3 mini-sets** × 5 clean reps | 15s | Maximum effective reps & high-threshold MUs |
+
+### Phase 0 Unlock Interaction & Connective Tissue Priming
+- **Biceps (Day 5)**: `Single-Arm Curl` is unlocked from Day 1. Therefore, `arm-block-biceps-curl` initiates directly on Week 3 without any prerequisite blocker.
+- **Side Delts & Triceps (Day 3)**: While the full straight-set volume of `Single-Arm Lateral Raise` and `DB Overhead Triceps Extension` officially unlocks at Week 5 (or early in Weeks 3–4 if performance criteria are met: Push-Up Progression $\ge 10$ reps for Triceps Extension), their Arm Block entries (`arm-block-lateral-raise` and `arm-block-triceps-ext`) initiate micro-dosing starting from Week 3 (`startingWeek: 3`). In the software, these micro-doses (1 activation set + 1 mini-set in W3; 1 activation set + 2 mini-sets in W4) function as controlled, low-volume introductory stimulus at the end of the session, providing safe connective-tissue adaptation before full straight-set volume unlocks at Week 5.
 
 ### Myo-Reps Cluster Mechanics
 1. **Activation Set**: Executed to target reps (12 reps; 15 reps on lateral raise full cluster) at assigned load. Rest 15 seconds.
@@ -268,35 +373,57 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 ## Appendix B — System Definition & Master References
 - **Program Dataset**: `window.TRAINING_DATA` in `js/data.js` (FitUp v15.7.1 Accelerated).
 - **Progression Engine**: `ProgressionEngine` in `js/progression.js`.
-- **Zero-0-Kg Weight Protection Engine**: All weighted exercises strictly enforce prescribed starting weights (`startingWeight`) and a hard `minWeight` floor (3 kg minimum). Loads are guaranteed never to calculate or display as 0 kg / 0 kg each under any fallback or parsing state.
-- **Fine-Grained Load Increments (v15.7)**: Isolation exercises (Single-Arm Lateral Raise, Single-Arm Curl, Single-Arm Hammer Curl, DB Overhead Triceps Extension, Arm Blocks) progress in **0.5 kg steps**; `legalWeights` includes 0.5 kg increments to eliminate the 3→4 kg (33%) stall trap.
+- **Zero-0-Kg Weight Protection Engine**: All weighted exercises strictly enforce prescribed starting weights (`startingWeight`) and a physical minimum load floor (6 kg empty handle for dumbbells; 5 kg for weighted vest). Loads are guaranteed never to calculate or display as 0 kg under any fallback or parsing state.
+- **Starting Weight for Lateral Raise (6 kg Handle)**: Single-Arm Lateral Raise (`single-arm-lateral-raise`) and Arm Block Lateral Raise (`arm-block-lateral-raise`) start at **6 kg** (the empty handle) rather than 8 kg. For trainees starting at ~7 push-ups, an 8 kg lateral raise is disproportionately heavy and provokes trap shrugging and impingement; 6 kg ensures strict scaption plane mechanics.
+- **Equipment Reality & Progression Steps**: Dumbbell hardware consists of a **6 kg handle** and 1 kg / 2 kg plates, progressing strictly in **2 kg steps** (6, 8, 10, 12, 14... 32 kg). The handle is 6 kg and is always part of the total weight (the handle is never ignored; 0.5 kg steps and a 3 kg minimum are physically impossible).
+- **Smart Progressive Set Overload (Volume Stepping Engine)**:
+  Because dumbbells advance in fixed +2 kg steps, the percentage jump at lower weights is substantial:
+  - **6 kg $\to$ 8 kg**: **+33.3% load jump** (Tier 1 — Highest load jump in the program: "הכי הרבה זה").
+  - **8 kg $\to$ 10 kg**: **+25.0% load jump** (Tier 2 — Moderate-High load jump).
+  - **10 kg $\to$ 12 kg**: **+20.0% load jump** (Tier 3 — Moderate load jump: "פחות מ-8 ל-10 או 6 ל-8").
+  - **12 kg $\to$ 14 kg+**: **$\le 16.7\%$ load jump** (Tier 4 — Manageable load jump).
+
+  To eliminate acute load shock ("שלא יהיה מכה") and allow tendons to adapt, the engine **progressively steps up sets at the current weight** before graduating to the heavier load:
+  - **At 6 kg (jumping to 8 kg, +33.3%)**:
+    - Group B (Isolation, e.g. Lateral Raise): 2 sets (Session 1) $\to$ 3 sets (Session 2) $\to$ 4 sets (Session 3+ peak volume bridge). Once 4 sets are mastered in-window, load promotes to **8 kg** and sets reset back to base **2 sets**!
+    - Group A (Compound): 3 sets (Session 1) $\to$ 4 sets (Session 2+) before promoting to 8 kg @ base 3 sets.
+  - **At 8 kg (jumping to 10 kg, +25.0%)**:
+    - Group B: 2 sets (Sessions 1–2) $\to$ 3 sets (Session 3+) before promoting to **10 kg** @ base **2 sets**.
+    - Group A: 3 sets (Session 1) $\to$ 4 sets (Session 2+) before promoting to 10 kg @ base 3 sets.
+  - **At 10 kg (jumping to 12 kg, +20.0%)**:
+    - Group B: 2 sets (Sessions 1–2) $\to$ 3 sets (Session 3) before promoting to **12 kg** @ base **2 sets** (milder volume stepping than 8 $\to$ 10 or 6 $\to$ 8).
+    - Group A: Standard 3 sets across cadence.
+  - **At 12 kg+ ($\le 16.7\%$)**: Standard cadence at base sets.
+
+  Resetting sets back to base sets upon weight promotion ensures smooth volume transitions and complete joint safety.
 - **Unlock Precedence Rule**: The Phase 0 graduation gates (Part 3.0) and `ProgressionEngine.checkUnlockCriteria()` unlock logic are authoritative over any exercise-dictionary note, appendix note, or day-card description. An exercise is never unlocked later than its calendar gate, and never earlier than its `earliestWeek` connective-tissue floor or its performance criteria. Notes are descriptive; the engine decides.
 - **Database Version**: IndexedDB Version 9 (`DBVERSION = 9`).
 - **Cloud Synchronization & Local Data Export**: Automatic bidirectional sync with Google Drive alongside one-click local JSON data backup (`fitup_backup_[DATE].json`) and import verification.
 
-### B.1 Dual-Cadence Auto-Regulated Progression Architecture (v15.7.2)
+### B.1 Progression Hierarchy: Softened Progression vs. Dual-Cadence Engine
 
-To maximize hypertrophy velocity while preventing connective-tissue overuse in smaller joint levers, FitUp v15.7.2 implements a **dual-cadence auto-regulated overload model**:
+To eliminate ambiguity between single-session softened progression and multi-session cadence rules, FitUp enforces a definitive **progression hierarchy**:
 
-1. **Group A — Compounds & Large Muscle Groups (Cadence: Every 3rd Workout)**:
-   - **Target Muscle Groups**: Quadriceps, Hamstrings, Glutes, Chest, Latissimus/Back, Compound Deltoids (Overhead Press).
-   - **Covered Exercises**: `heels-elevated-goblet-squat`, `goblet-bulgarian-split-squat`, `goblet-rdl`, `single-leg-rdl`, `db-glute-bridge`, `suitcase-carry`, `single-arm-floor-press`, `one-arm-db-row`, `single-arm-seated-ohp`.
-   - **Standard Progression Cadence**: Promotes by **+2 kg** on the **3rd consecutive workout** at the same load when sets are performed in-window (i.e., after accumulating 2 clean sessions at current load, the 3rd triggers promotion).
-   - **Auto-Regulation Rules**:
-     - 🚀 **Above Ceiling (`all_above`)**: If all prescribed sets exceed the rep window ceiling, early promotion is triggered immediately (skips accumulation).
-     - 🛡️ **Below Target / Mixed (`below` / `mixed`)**: Weight is held at the current load (`mixed_results_maintain`), requiring additional clean in-window sessions before advancing.
+1. **🚀 ABOVE Target Window (Ceiling Exceeded)**:
+   - **Precedence**: Overrides cadence accumulation immediately.
+   - **Weighted Exercises**: Advances load by **+2 kg** after a single session (`all_above_max`), resetting sets to base.
+   - **Bodyweight / Stage Exercises**: Advances to the next progression stage after a single session.
 
-2. **Group B — Isolations & Small Muscle Groups (Cadence: Every 4th Workout)**:
-   - **Target Muscle Groups**: Side Deltoids (Lateral Raise), Biceps (Curls), Triceps (Overhead Extension), Calves (Standing/Seated Calf Raises).
-   - **Covered Exercises**: `single-arm-lateral-raise`, `arm-block-lateral-raise`, `single-arm-curl`, `single-arm-hammer-curl`, `arm-block-biceps-curl`, `db-overhead-triceps-extension`, `arm-block-triceps-ext`, `standing-single-leg-calf-raise`, `seated-single-leg-calf-raise`.
-   - **Standard Progression Cadence**: Promotes by **+2 kg** on the **4th consecutive workout** at the same load when sets are performed in-window (requires 3 clean accumulation sessions; 4th session promotes).
-   - **Auto-Regulation Rules**:
-     - 🚀 **Above Ceiling (`all_above`)**: Promotes earlier if exceptional clean volume is achieved without momentum.
-     - 🛡️ **Below Target / Mixed (`below` / `mixed`)**: Load is strictly maintained until 12–15 strict reps are mastered, protecting elbow and shoulder tendons from premature load jumps.
+2. **✅ IN_WINDOW & Softened Criteria ($\ge \text{max}-1$ Reps)**:
+   - **Weighted Exercises (Governed by Dual-Cadence & Volume Stepping)**: A softened or in-window workout qualifies the session, but does **NOT** trigger an immediate load jump. It increments the `sessionsAtWeight` accumulation counter toward the cadence gate while applying **Progressive Set Stepping**:
+     - **Group A (Compounds)**: Promotes by **+2 kg on the 3rd workout** (requires 2 accumulated qualifying sessions at current weight).
+     - **Group B (Isolations)**: Promotes by **+2 kg on the 4th workout** (requires 3 accumulated qualifying sessions at current weight).
+   - **Bodyweight / Stage Exercises (Single-Session Promotion)**: For non-weighted progression trees (Push-Up, Pull-Up, Pike, L-Sit, Nordic Curl), achieving `Softened` criteria promotes immediately to the next stage after 1 session (`softened_progression_achieved`).
+   - **Time Decay Gate**: If $>10$ days elapse between sessions, softened qualification is disabled, preventing premature overload on detrained tendons.
 
-3. **Modular Dumbbells Physical Execution**:
-   - Empty handle = 6 kg.
-   - Even load ladder in strictly 2 kg steps: `8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32 kg`.
+3. **⚠️ BELOW Target Window / Mechanical Stop**:
+   - **Weighted Exercises**: Triggers auto-regulated load reduction by **-2 kg** (down to the 6 kg handle minimum floor) to preserve form and joint safety.
+   - **Bodyweight / Stage Exercises**: Regresses by 1 stage (`decrease_stage`).
+
+4. **Modular Dumbbells Physical Execution**:
+   - Dumbbell handle = **6 kg** (strictly included in total load; not ignored).
+   - Even load ladder in strictly 2 kg steps: `6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32 kg`.
+   - 6 kg = empty handle.
    - 8 kg = 6 kg handle + 2 × 1 kg plates.
    - 10 kg = 6 kg handle + 2 × 2 kg plates (swap out 1 kg plates).
    - 12 kg = 10 kg + 2 × 1 kg plates.
@@ -349,39 +476,39 @@ This is the authoritative specification of all **59 unique exercises** appearing
 
 | Exercise Name | Catalog ID | Type | Cadence Group | Start Wt | Min Wt | Max Wt | Step | Load Type | Sets | Rep Window | Prescribed Tempo | Base Rest | Calendar / Phase 0 Gate |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Goblet Romanian Deadlift** | `goblet-rdl` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 3 | 6-12 | 3s descent (neutral spine) | 90s | Week 1 Anchor (Weeks 1–17) |
-| **Single-Leg RDL** | `single-leg-rdl` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 2 | 8-10 | 3s descent | 75s | Calendar Gate Week 18+ |
+| **Goblet Romanian Deadlift** | `goblet-rdl` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 6-12 | 3s descent (neutral spine) | 90s | Week 1 Anchor (Weeks 1–17) |
+| **Single-Leg RDL** | `single-leg-rdl` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 2 | 8-10 | 3s descent | 75s | Calendar Gate Week 18+ (Starts at 8kg; safe reset protects spine) |
 | **Nordic Curl Progression** | `nordic-curl-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 6-10 | 3-1-1 (lengthened pause) | 90s | Calendar Gate Week 10+ (Deload 1 set) |
-| **Heels-Elevated Goblet Squat** | `heels-elevated-goblet-squat` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 2 | 8-12 | 3s descent, 1-2s pause, 1s up | 75s | Week 1 Continuous Quad Anchor |
-| **Goblet Bulgarian Split Squat** | `goblet-bulgarian-split-squat` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | total | 3 | 6-12 | 2s descent | 82s | W5 (early W3 if Squat →\ge→ 10kg) |
+| **Heels-Elevated Goblet Squat** | `heels-elevated-goblet-squat` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 2 | 8-12 | 3s descent, 1-2s pause, 1s up | 75s | Week 1 Continuous Quad Anchor |
+| **Goblet Bulgarian Split Squat** | `goblet-bulgarian-split-squat` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 6-12 | 2s descent | 82s | W5 (early W3 if Squat →\ge→ 10kg; Suitcase grip at ≥20kg) |
 | **DB Glute Bridge** | `db-glute-bridge` | weighted | Group A (3rd) | 8 kg | 8 kg | 32 kg | 2 kg | total | 3 | 10-15 | 1s pause at top squeeze | 75s | Week 1 Anchor (75s post W5, 60s W1-4) |
 | **Suitcase Carry** | `suitcase-carry` | weighted | Group A (3rd) | 12 kg | 8 kg | 32 kg | 2 kg | total | 3 | 25-40m | controlled walk | 60s | W5 (early W4 if RDL →\ge→ 10kg) |
-| **Standing Single-Leg Calf Raise** | `standing-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | single_hand | 3 | 12-20 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #1 |
-| **Seated Single-Leg Calf Raise** | `seated-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | on_knee | 2 | 15-25 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #2 |
+| **Standing Single-Leg Calf Raise** | `standing-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | single_hand | 3 | 12-20 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #1 |
+| **Seated Single-Leg Calf Raise** | `seated-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | on_knee | 2 | 15-25 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Calf Block #2 |
 | **Pallof Press Progression** | `pallof-press-progression` | variation | BW / Stage | Band | — | — | — | — | 2 | 10-12 | 1s pause at extension | 30s | W6+ (unlock: Dead Bug stage 2); Core Circuit #1 |
 | **Dead Bug** | `dead-bug` | variation | BW / Stage | BW | — | — | — | — | 3 | 12-20 | slow controlled | 30s | Core Circuit #2 |
 | **Hollow Body Hold** | `hollow-body-hold` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-30s | static hollow hold | 30s | W5 (early W3 if Dead Bug →\ge→ 16 reps); Core Circuit #3 |
-| **Single-Arm Seated OHP** | `single-arm-seated-ohp` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up →\ge→ 10); Day 3 First Main |
+| **Single-Arm Seated OHP** | `single-arm-seated-ohp` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up →\ge→ 10); Day 3 First Main |
 | **Pike Progression** | `pike-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 15-30s or 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up →\ge→ 10); Pike Tree W1-9 |
 | **Wall Walk (Partial)** | `wall-walk-partial` | variation | BW / Stage | BW | — | — | — | — | 2 | 3-6 | controlled | 75s | Calendar Gate Week 10–17 |
 | **Wall Walk (Full)** | `wall-walk-full` | variation | BW / Stage | BW | — | — | — | — | 2 | 3-6 | controlled | 90s | Calendar Gate Week 18–25 |
 | **Wall Handstand** | `wall-handstand` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-45s | static hold | 90s | Calendar Gate Week 26–40 |
 | **Elevated Pike Push-Up** | `elevated-pike-push-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 6-10 | 2s descent | 90s | Calendar Gate Week 41+ |
-| **Single-Arm Floor Press** | `single-arm-floor-press` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 90s | Day 3 Compound Anchor (all weeks) |
+| **Single-Arm Floor Press** | `single-arm-floor-press` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 90s | Day 3 Compound Anchor (all weeks) |
 | **Push-up Bars Progression** | `push-up-progression` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-15 | 2s descent | 75s | Push Tree W1–9 |
 | **Deficit Push-Up** | `deficit-push-up` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-15 | 2s descent | 75s | Push Tree W10–17 |
 | **Feet-Elevated Push-Up** | `feet-elevated-push-up` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-12 | 2s descent | 75s | Push Tree W18–61 |
 | **Weighted Deficit Push-Up** | `weighted-deficit-push-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 6-12 | 2s descent | 90s | Push Tree W62+ (weighted vest) |
-| **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | total | 4 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up →\ge→ 10); 2kg increments |
+| **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 4 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up →\ge→ 10); 2kg increments |
 | **Diamond Push-Up** | `diamond-push-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 45s | Day 3 Triceps / Chest Anchor |
 | **TRX Row** | `trx-row` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | Lean Pair #1 with Lateral Raise |
-| **Single-Arm Lateral Raise** | `single-arm-lateral-raise` | weighted | Group B (4th) | 8 kg | 3 kg | 12 kg | 2 kg | each | 2 | 12-20 | 2-1-2 (lengthened pause) | 75s | W5 (early W3); 2kg increments; Max 12kg |
+| **Single-Arm Lateral Raise** | `single-arm-lateral-raise` | weighted | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 2 | 12-20 | 2-1-2 (lengthened pause) | 75s | W5 (early W3); 2kg increments; Max 12kg |
 | **TRX Y-T-W** | `trx-ytw` | variation | BW / Stage | BW | — | — | — | — | 2 | 8-12 | 1s pause at peak | 45s | Rear Delt Toggle (Odd Weeks) |
 | **Band Pull-Apart** | `band-pull-apart` | variation | BW / Stage | Band | — | — | — | — | 3 | 15-20 | 1s squeeze | 45s | Rear Delt Toggle (Even Weeks) |
 | **Pull-Up Progression** | `pull-up-progression` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W1–9 |
 | **Pull-Up (Overhand)** | `pull-up-overhand` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W10–61 |
 | **Weighted Pull-Up** | `weighted-pull-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 4-8 | 2s descent | 105–120s | Pull Tree W62+ (weighted vest) |
-| **One-Arm DB Row** | `one-arm-db-row` | weighted | Group A (3rd) | 8 kg | 3 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | Day 5 Primary Horizontal Pull Anchor |
+| **One-Arm DB Row** | `one-arm-db-row` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | Day 5 Primary Horizontal Pull Anchor |
 | **TRX Face Pull** | `trx-face-pull` | variation | BW / Stage | BW | — | — | — | — | 2 | 12-20 | 2s descent | 75s / 45s | Lean Pair with Day 5 Lateral Raise (W5+) |
 | **Push-Up Volume (Day 5)** | `push-up-volume` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | W5 (early W3); Lean Pair with Curl |
 | **Single-Arm Curl** | `single-arm-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-15 | 2-1-2 (lengthened pause) | 45s | Biceps Microcycle Heavy W1–3; 2kg increments |
@@ -390,13 +517,13 @@ This is the authoritative specification of all **59 unique exercises** appearing
 | **Tuck L-Sit** | `tuck-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | W5 (early W3 if Dead Bug →\ge→ 16); L-Sit W1–17 |
 | **One-Leg Extended L-Sit** | `one-leg-extended-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 18–33 |
 | **Full L-Sit** | `full-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 34+ |
-| **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | Group B (4th) | 8 kg | 3 kg | 12 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12/15 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
-| **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | Group B (4th) | 8 kg | 3 kg | 32 kg | 2 kg | total | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
+| **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12/15 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
+| **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
 | **Arm Block - Single-Arm Curl** | `arm-block-biceps-curl` | myo-reps | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 5 End (Stop: 2 tempo losses) |
 | **Band Neck Flexion & Extension** | `band-neck-flexion` | variation | Band | — | — | — | — | 2 | 15-20 | 3-1-3 slow | 45s | Day 4 Cervical Protocol (Chin-tuck focus) |
-| **Brisk Walking** | `brisk-walking` | timebased | BW | — | — | — | — | 1 | 30-45m | 4% @ 5.5 km/h (Deload 2% @ 5.0) | 0s | Day 2 Zone 2 Cardio (Weeks 3+) |
+| **Brisk Walking** | `brisk-walking` | timebased | BW | — | — | — | — | 1 | 30-45m | 60-70% HRmax (4% @ 5.5 km/h base) | 0s | Day 2 Zone 2 Cardio (Weeks 3+) |
 | **Relaxed Walking** | `relaxed-walking` | timebased | BW | — | — | — | — | 1 | 20-30m | 0% @ 4.5 km/h | 0s | Ramp-up W1–2 / Day 4 Active Recovery |
-| **VO2 Max Norwegian 4x4** | `vo2-max-norwegian-4x4` | interval | BW | — | — | — | — | 4×4m | 16m effort | 6.5 km/h (4%–6% incline) | 0s | Day 6 Cardio (Weeks 4+) |
+| **VO2 Max Norwegian 4x4** | `vo2-max-norwegian-4x4` | interval | BW | — | — | — | — | 4×4m | 16m effort | 85-95% HRmax (6.5+ km/h / 4-6% incline effort) | 0s | Day 6 Cardio (Weeks 4+) |
 | **Micro Mobility Protocol** | `micro-mobility-protocol` | timebased | BW | — | — | — | — | 1 | 5m | slow controlled | 0s | Post-workout 90s: Variant A (Upper) / B (Lower) |
 | **Deep Mobility Protocol** | `deep-mobility-protocol` | timebased | BW | — | — | — | — | 1 | 10m | slow deep stretch | 0s | Day 4 Joint & Spinal Health Protocol |
 
@@ -427,10 +554,10 @@ The training program is the prescriptive core; these are the controls the app ex
 - **🥊 Combat Training Integration** — up to 3 combat days/week (2 external class days + 1 auto home practice) with an optimal weekly re-order; sport presets (Muay Thai / Boxing / Kickboxing / Judo / Other); hardest-class selection (Auto/First/Second); live 7-day preview; era-based history.
 - **→ Combat Flexibility (v2)** — move/cancel any single class (Undo), muscle-aware interference per session type, ★ best-target move picker, one-tap strength-day swap, per-class time inputs → morning run prescription on evening-class days (≥6h), in-card warm-up rules, 4-state calendar badges.
 - **💤 Subjective Readiness Check & Auto-Regulation** — daily 1–5 score; low scores auto-extend rest (+30s) or drop a set.
-- **🥗 Carb & Calorie Cycling** — daily macro targets adapt to the day type (strength/VO2, active recovery, rest).
+- **🥗 Carb & Calorie Cycling** — daily macro targets adapt to day type for workout fueling and caloric adherence (higher carbs/calories on strength/VO2 days for training glycogen, lower on active recovery/rest; no independent metabolic fat loss claims over caloric balance).
 - **🧮 1RM Calculator** — Epley-based estimated 1RM + percentage/load table.
 - **⏱ Adaptive Rest** — rest timers auto-extend +30s after a BELOW / mechanical-stop outcome.
-- **🚀 3-Button Progression** — ABOVE / IN_WINDOW / BELOW drive weight progression (0.5 kg fine increments for isolation), softened progression, and Time Decay protection.
+- **🚀 3-Button Progression** — ABOVE / IN_WINDOW / BELOW drive weight progression (+2 kg load jumps via Dual-Cadence accumulation for weighted exercises, +1 stage for bodyweight), softened progression, and Time Decay protection.
 - **💪 Arm Block (Myo-Reps)** — Gradual micro-dose protocol starting Week 3 (W3: 1+1×4, W4–5: 1+2×4, W6+: 1+3×5); objective stop on 2 consecutive tempo losses; 1 exposure/week/muscle-area.
 - **🌿 Auto-Regulated Deload** — every 12 weeks (12, 24, 36, 48, 60, 72): 2-set ceiling, −2 kg, pairs dissolve; early auto-deload on consecutive drops.
 - **📅 Calendar & Swap / Unlock Early** — navigate weeks, swap day content, unlock future days early.
@@ -438,7 +565,7 @@ The training program is the prescriptive core; these are the controls the app ex
 - **🧠 Gemini AI Nutrition & Fitness Coach** — photo macro analysis + recovery advice.
 - **🏃 Google Fit integration** — activity/health data connectivity.
 - **🗣 Multi-Language** — English / Hebrew (RTL) / Arabic (RTL).
-- **🛡️ 1-Tap Biomechanical Joint & Injury Engine** — Dual-mode Anatomy visualizer (Muscles ⟷ Joints & Vulnerabilities) covering 12 calibrated joint nodes. Interactive 1-tap cycling (Normal 🟢 / Sensitive 🟡 / Injured 🔴) that automatically adapts Today's workout in real-time, displays protective badges across Skill Tree nodes and Exercise Guide cards, enforces ROM constraints, or executes zero-compromise biomechanical substitutions without sacrificing hypertrophy.
+- **🛡️ 1-Tap Biomechanical Joint & Injury Engine** — Dual-mode Anatomy visualizer (Muscles ⟷ Joints & Vulnerabilities) covering 12 calibrated joint nodes. Interactive 1-tap cycling (Normal 🟢 / Sensitive 🟡 / Injured 🔴) that automatically adapts Today's workout in real-time, displays protective badges across Skill Tree nodes and Exercise Guide cards, enforces ROM constraints, or executes evidence-based joint-sparing substitutions with clinical safety guidance.
 - **☁️ Backup & Cloud Sync** — one-click local JSON export/import + automatic bidirectional Google Drive sync.
 
 ---

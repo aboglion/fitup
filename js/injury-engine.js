@@ -1,7 +1,7 @@
 /**
  * Injury & Biomechanical Safety Engine — FitUp Pro
- * Manages vulnerable joint states and applies Zero-Compromise adaptations
- * (Restricted ROM / Safe Technique or 100% Muscle-Preserving Substitutions).
+ * Manages vulnerable joint states and applies Evidence-Based Joint-Sparing adaptations
+ * (Restricted ROM / Safe Technique or Non-Provocative Substitutions).
  */
 const InjuryEngine = (() => {
   const STORAGE_KEY = 'fitup_joint_injuries';
@@ -9,7 +9,7 @@ const InjuryEngine = (() => {
   // State constants:
   // 0: Normal (🟢 Healthy, 100% load)
   // 1: Sensitive (🟡 Protected technique, restricted ROM, controlled tempo)
-  // 2: Injured (🔴 Biomechanical equivalent substitute, 0 joint shear)
+  // 2: Injured (🔴 Joint-sparing substitute, unloads joint shear)
   const STATE_NORMAL = 0;
   const STATE_SENSITIVE = 1;
   const STATE_INJURED = 2;
@@ -440,9 +440,33 @@ const InjuryEngine = (() => {
         cueKey: 'injury_cue_calf_sensitive'
       },
       injured: {
-        substitute: 'Seated Single-Leg Calf Raise',
+        substitute: 'Brisk Walking',
         badgeKey: 'injury_badge_achilles_sub',
         cueKey: 'injury_cue_calf_injured'
+      }
+    },
+    'Seated Single-Leg Calf Raise': {
+      joints: ['achilles_r', 'achilles_l'],
+      sensitive: {
+        badgeKey: 'injury_badge_achilles_rom',
+        cueKey: 'injury_cue_seated_calf_sensitive'
+      },
+      injured: {
+        substitute: 'Brisk Walking',
+        badgeKey: 'injury_badge_achilles_sub',
+        cueKey: 'injury_cue_seated_calf_injured'
+      }
+    },
+    'VO2 Max Norwegian 4x4': {
+      joints: ['achilles_r', 'achilles_l', 'knee_r', 'knee_l'],
+      sensitive: {
+        badgeKey: 'injury_badge_achilles_rom',
+        cueKey: 'injury_cue_vo2_sensitive'
+      },
+      injured: {
+        substitute: 'Brisk Walking',
+        badgeKey: 'injury_badge_achilles_sub',
+        cueKey: 'injury_cue_vo2_injured'
       }
     },
 
@@ -600,6 +624,11 @@ const InjuryEngine = (() => {
     return Object.values(states).some(v => v > STATE_NORMAL);
   }
 
+  function hasInjuredJoints() {
+    const states = loadStates();
+    return Object.values(states).some(v => v === STATE_INJURED);
+  }
+
   /**
    * Determine adaptation for a given exercise based on active joint states.
    * Prioritizes INJURED (2) over SENSITIVE (1).
@@ -671,6 +700,7 @@ const InjuryEngine = (() => {
     resetAllJoints,
     getActiveInjuries,
     hasActiveInjuries,
+    hasInjuredJoints,
     getExerciseAdaptation,
     loadFromDB
   };

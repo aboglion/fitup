@@ -116,32 +116,91 @@ test('ProgressionEngine - Group A cadence promotes on 3rd in-window workout', ()
 });
 
 test('ProgressionEngine - Group B cadence promotes on 4th in-window workout', () => {
-  const exGroupB = { id: 'single-arm-lateral-raise', category: 'Shoulders', compound: false, startingWeight: 8, increment: 2, minWeight: 3, maxWeight: 12 };
+  const exGroupB = { id: 'single-arm-lateral-raise', category: 'Shoulders', compound: false, startingWeight: 6, increment: 2, minWeight: 3, maxWeight: 12 };
   const inWindowResults = [{ result: 'in_window', reps: 12 }, { result: 'in_window', reps: 12 }];
 
   // Sessions 1, 2, 3: accumulate
-  const res1 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 0 }, inWindowResults, 1, null);
+  const res1 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 6, sessionsAtWeight: 0 }, inWindowResults, 1, null);
   assert.equal(res1.action, 'maintain');
   assert.equal(res1.reason, 'cadence_group_b_accumulating_1_of_4');
+  assert.equal(res1.targetSets, 2); // Session 1 base sets
 
-  const res2 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 1 }, inWindowResults, 2, null);
+  const res2 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 6, sessionsAtWeight: 1 }, inWindowResults, 2, null);
   assert.equal(res2.action, 'maintain');
   assert.equal(res2.reason, 'cadence_group_b_accumulating_2_of_4');
+  assert.equal(res2.targetSets, 3); // Stepped up to 3 sets (Tier 1: 6->8kg is +33.3%)
 
-  const res3 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 2 }, inWindowResults, 3, null);
+  const res3 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 6, sessionsAtWeight: 2 }, inWindowResults, 3, null);
   assert.equal(res3.action, 'maintain');
   assert.equal(res3.reason, 'cadence_group_b_accumulating_3_of_4');
+  assert.equal(res3.targetSets, 4); // Peak bridge to 4 sets for session 3
 
-  // Session 4: 3 prior sessions -> increase (+2kg)!
-  const res4 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 3 }, inWindowResults, 4, null);
+  // Session 4: 3 prior sessions -> increase (+2kg to 8kg)!
+  const res4 = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 6, sessionsAtWeight: 3 }, inWindowResults, 4, null);
   assert.equal(res4.action, 'increase');
-  assert.equal(res4.newWeight, 10);
+  assert.equal(res4.newWeight, 8);
+  assert.equal(res4.targetSets, 2); // Resets back to base sets!
   assert.equal(res4.reason, 'cadence_group_b_4th_session');
 
   // Mixed results: hold longer (maintain)
-  const resMixed = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 8, sessionsAtWeight: 2 }, [{ result: 'in_window' }, { result: 'below' }], 3, null);
+  const resMixed = ProgressionEngine.calculateWeightedDecision(exGroupB, { currentWeightKg: 6, sessionsAtWeight: 2 }, [{ result: 'in_window' }, { result: 'below' }], 3, null);
   assert.equal(resMixed.action, 'maintain');
   assert.equal(resMixed.reason, 'mixed_results_maintain');
+});
+
+test('ProgressionEngine - calculatePrescribedSets percentage-based volume stepping', () => {
+  const lateralRaise = { id: 'single-arm-lateral-raise', category: 'Shoulders', compound: false, startingWeight: 6, increment: 2 };
+  const baseSets = 2;
+
+  // Tier 1: 6 kg -> 8 kg (+33.3% jump)
+  // Session 1 (0 prior sessions): base 2 sets
+  const t1_s0 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 6, 0, baseSets);
+  assert.equal(t1_s0, 2);
+
+  // Session 2 (1 prior session): step to 3 sets
+  const t1_s1 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 6, 1, baseSets);
+  assert.equal(t1_s1, 3);
+
+  // Session 3 (2 prior sessions): step to 4 sets (peak bridge)
+  const t1_s2 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 6, 2, baseSets);
+  assert.equal(t1_s2, 4);
+
+  // Tier 2: 8 kg -> 10 kg (+25.0% jump)
+  // Session 1 & 2: base 2 sets
+  const t2_s0 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 8, 0, baseSets);
+  assert.equal(t2_s0, 2);
+
+  const t2_s1 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 8, 1, baseSets);
+  assert.equal(t2_s1, 2);
+
+  // Session 3 (2 prior sessions): step to 3 sets
+  const t2_s2 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 8, 2, baseSets);
+  assert.equal(t2_s2, 3);
+
+  // Tier 3: 10 kg -> 12 kg (+20.0% jump) - less than 8->10 and 6->8
+  const t3_s0 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 10, 0, baseSets);
+  assert.equal(t3_s0, 2);
+
+  const t3_s1 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 10, 1, baseSets);
+  assert.equal(t3_s1, 2);
+
+  const t3_s2 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 10, 2, baseSets);
+  assert.equal(t3_s2, 3);
+
+  // Tier 4: 12 kg -> 14 kg (+16.7% jump, < 18%) - base sets maintained
+  const t4_s0 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 12, 0, baseSets);
+  assert.equal(t4_s0, 2);
+
+  const t4_s2 = ProgressionEngine.calculatePrescribedSets(lateralRaise, 12, 2, baseSets);
+  assert.equal(t4_s2, 2);
+
+  // Group A Compound Exercise (e.g. Floor Press starting base 3 sets)
+  const floorPress = { id: 'single-arm-floor-press', category: 'Push', compound: true, startingWeight: 8, increment: 2 };
+  // 8 -> 10kg (+25% jump): session 2 steps from 3 to 4 sets
+  const fp_s0 = ProgressionEngine.calculatePrescribedSets(floorPress, 8, 0, 3);
+  assert.equal(fp_s0, 3);
+  const fp_s1 = ProgressionEngine.calculatePrescribedSets(floorPress, 8, 1, 3);
+  assert.equal(fp_s1, 4);
 });
 
 test('ProgressionEngine - Arm Block Gradual Ramp Phase resolver', () => {
@@ -185,4 +244,50 @@ test('ProgressionEngine - Arm Block Gradual Ramp Phase resolver', () => {
   assert.equal(ProgressionEngine.isArmBlockAllowed(null, 3).active, true);
   assert.equal(ProgressionEngine.isArmBlockAllowed(null, 6).active, true);
 });
+
+test('ProgressionEngine - Single-Leg RDL initializes safely at 8kg baseline without copying bilateral weight', () => {
+  window.TRAINING_DATA = {
+    exercises: [
+      { id: 'single-leg-rdl', name: 'Single-Leg RDL', type: 'weighted', startingWeight: 8, minWeight: 6, maxWeight: 32, increment: 2 },
+      { id: 'goblet-rdl', name: 'Goblet Romanian Deadlift', type: 'weighted', startingWeight: 8, minWeight: 6, maxWeight: 32, increment: 2 }
+    ]
+  };
+  // Trainee has achieved 20kg on Goblet RDL at Week 17
+  const statesMap = {
+    'goblet-rdl': { currentWeightKg: 20, sessionsAtWeight: 2 }
+  };
+  const slState = ProgressionEngine.createInitialState('single-leg-rdl', statesMap);
+  // Must start at 8kg (safe unilateral baseline) rather than inheriting 20kg
+  assert.equal(slState.currentWeightKg, 8);
+  assert.equal(slState.exerciseId, 'single-leg-rdl');
+});
+
+test('ProgressionEngine - calculateWeightedDecision and getDisplayPrescription handle 32kg ceiling overload', () => {
+  window.TRAINING_DATA = {
+    progressionSettings: { deloadEveryWeeks: 12, deloadWeightReductionKg: 2 },
+    exercises: [
+      { id: 'heels-elevated-goblet-squat', name: 'Heels-Elevated Goblet Squat', type: 'weighted', startingWeight: 8, minWeight: 6, maxWeight: 32, increment: 2 }
+    ]
+  };
+  const ex = window.TRAINING_DATA.exercises[0];
+  const ceilingState = { currentWeightKg: 32, sessionsAtWeight: 2 };
+  
+  // Clean in-window performance at 32kg
+  const decisionInWindow = ProgressionEngine.calculateWeightedDecision(ex, ceilingState, [{ result: 'in_window' }, { result: 'in_window' }], 1, null);
+  assert.equal(decisionInWindow.newWeight, 32);
+  assert.equal(decisionInWindow.atMaxWeight, true);
+  assert.equal(decisionInWindow.reason, 'max_weight_ceiling_reached');
+
+  // Above window performance at 32kg
+  const decisionAbove = ProgressionEngine.calculateWeightedDecision(ex, ceilingState, [{ result: 'above' }, { result: 'above' }], 1, null);
+  assert.equal(decisionAbove.newWeight, 32);
+  assert.equal(decisionAbove.atMaxWeight, true);
+  assert.equal(decisionAbove.reason, 'max_weight_ceiling_reached');
+
+  // Prescription reflects atMaxWeight on regular weeks (e.g. Week 35)
+  const rx = ProgressionEngine.getDisplayPrescription('heels-elevated-goblet-squat', 35, ceilingState);
+  assert.equal(rx.targetWeightKg, 32);
+  assert.equal(rx.atMaxWeight, true);
+});
+
 

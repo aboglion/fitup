@@ -1,6 +1,6 @@
 # 🏋️‍♂️ FitUp Pro v15.7 Accelerated
 
-> **A 80-Week (560-Day) Prescriptive FitUp v15.7 Accelerated Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Performance-Based Unlocks, Objective Myo-Reps Arm Block Clusters (from Week 6), Biceps 4-Week Microcycle (3:1), Auto-Regulated Deloads, Fine-Grained 0.5 kg Load Increments, Cervical Health Protocol, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
+> **A 80-Week (560-Day) Prescriptive FitUp v15.7 Accelerated Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Performance-Based Unlocks, Gradual Myo-Reps Arm Block Clusters (from Week 3), Biceps 4-Week Microcycle (3:1), Auto-Regulated Deloads, Dual-Cadence Progression Engine, Cervical Health Protocol, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
 
 ---
 
@@ -18,11 +18,11 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ### 🏋️‍♂️ Prescriptive 80-Week Accelerated Training Engine
 - **v15.7 Accelerated Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
-- **Phase 0 Anatomical Foundation (Weeks 1–4) & Performance-Based Graduation**: Reduced initial volume (5–6 anchor exercises per session, 20m light walks) protecting connective tissue and lumbar spine. From Week 3, locked movements unlock as soon as performance criteria are met (Calendar Ceiling Rule — performance can only accelerate, never delay), with an automatic Week 5 Graduation Event unlocking VO2 Max 4x4, BSS, OHP/Pike, Towel Hang, and L-Sits.
-- **Zero Decisions 3-Button Outcome Selector & Minimum Weight Protection Engine**: Objective set classification with guaranteed `minWeight` floor protection (3 kg minimum) preventing invalid 0 kg displays under any fallback.
-- **Objective Myo-Reps & Arm Block Protocol**: Active from Week 6 onwards (v15.7; previously Week 10) — 1 activation set + 3 mini-sets of 5 reps with 15s rest. Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
+- **Phase 0 Anatomical Foundation (Weeks 1–4) & Performance-Based Graduation**: Reduced initial volume (5–6 anchor exercises per session, 20m light walks) protecting connective tissue and lumbar spine. From Week 3, locked movements unlock as soon as performance criteria are met (Calendar Ceiling Rule — performance can only accelerate, never delay). VO2 Max 4x4 launches in Week 4, followed by the automatic Week 5 Graduation Event unlocking remaining full volume (BSS, OHP/Pike, Towel Hang, and L-Sits).
+- **Zero Decisions 3-Button Outcome Selector & Minimum Weight Protection Engine**: Objective set classification with physical floor protection (6 kg empty handle / 8 kg loaded for dumbbells; 5 kg for vest) preventing invalid 0 kg displays under any fallback.
+- **Objective Myo-Reps & Arm Block Protocol**: Micro-dosing begins progressively from **Week 3 onwards** (W3: 1+1×4, W4–5: 1+2×4, W6+: 1+3×5 full cluster). Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
 - **Biceps 4-Week Microcycle (3:1)**: 3 heavy progressive overload weeks + 1 light preservation week (Single-Arm Hammer Curl 2 sets, no progression) to maximize hypertrophy while protecting elbow joints.
-- **Faster Progression Engine (v15.7)**: Single-session softened progression gate (~2× faster load increases) + fine-grained **0.5 kg increments** for isolation exercises (lateral raise, curls, hammer curls, arm blocks, triceps extension) eliminating the 3→4 kg stall trap.
+- **Dual-Cadence & Softened Progression Engine**: `🚀 ABOVE` triggers immediate early promotion; in-window / softened performances accumulate towards the Dual-Cadence ladder (+2 kg every 3rd workout for Group A compounds, every 4th workout for Group B isolations) to protect joint tendons, while bodyweight stages advance directly upon achieving softened criteria.
 - **Deload Every 12 Weeks + Auto-Regulated Deload**: Calendar deloads on Weeks 12/24/36/48/60/72, plus an automatic early deload triggered by 2 consecutive failed sessions, excessive load demotions, or repeated joint-pain flags — with an explanatory banner.
 - **Weekly Frequency Additions**: 2nd Back Frequency (TRX Row on Day 3 = 10 weekly back sets) and 2nd Chest Frequency (Push-Up Volume on Day 5 = 8 weekly chest sets).
 - **Cervical Health Protocol**: Dedicated Band Neck Flexion & Extension protocol on Day 4 for neck/postural resilience.
@@ -33,7 +33,7 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ### 🧬 Dual-Mode Anatomy Visualizer & Biomechanical Joint Engine
 - Dual-mode switch: **🦾 Muscles & Load (14 Muscle Groups)** ⟷ **🛡️ Joints & Vulnerabilities (12 Critical Joint Nodes)**.
-- **1-Tap Vulnerability Map**: Single-tap cycling through Normal 🟢 (100% Load), Sensitive 🟡 (Protected ROM Shield), and Injured 🔴 (Zero-Compromise Biomechanical Substitution).
+- **1-Tap Vulnerability Map**: Single-tap cycling through Normal 🟢 (100% Load), Sensitive 🟡 (Protected ROM Shield), and Injured 🔴 (Evidence-Based Joint-Sparing Substitution).
 - **Zero Pre-Workout Friction**: No tedious questionnaires or check-in forms. Adaptations apply immediately across Today's workout session, including dynamic exercise swaps, GIF/image updates, ROM constraint cues, and Skill Tree badges.
 - Weighted multi-exercise contribution model calculating live muscle activation percentages based on logged completions and exercise progression milestones.
 
@@ -153,28 +153,30 @@ Each week follows a strictly optimized 7-day routine designed to balance muscula
 
 | Day | Workout Type | Focus / Key Movements | Target Duration |
 | :--- | :--- | :--- | :--- |
-| **Day 1 (Mon)** | **Legs + Core + Carry** | Goblet RDL, Day 1 Toggle (Single-Leg RDL / Heels-Elevated Goblet Squat / Pistol Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, Calf Block, Core Circuit | 45 min |
-| **Day 2 (Tue)** | **Zone 2 Cardio** | Treadmill Walking (4% incline, 5.5 km/h, conversational test), Daily Micro-Mobility | 45 min |
-| **Day 3 (Wed)** | **Push + Shoulders + Triceps + Back Vol** | Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ Single-Arm Lateral Raise pair, Rear Delt Toggle, Arm Block (W6+) | 45 min |
+| **Day 1 (Mon)** | **Legs + Core + Carry** | Goblet RDL, Day 1 Toggle (Single-Leg RDL / Heels-Elevated Goblet Squat / Pistol Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, Calf Block, Core Circuit | 65 min |
+| **Day 2 (Tue)** | **Zone 2 Cardio** | Treadmill Walking (60–70% HRmax / Zone 2 target, 4% incline @ 5.5 km/h base), Daily Micro-Mobility | 45 min |
+| **Day 3 (Wed)** | **Push + Shoulders + Triceps + Back Vol** | Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ Single-Arm Lateral Raise pair, Rear Delt Toggle, Arm Block (W6+) | 65 min |
 | **Day 4 (Thu)** | **Active Recovery & Joint Health** | Band Neck Flexion & Extension protocol (A1), Light Treadmill Recovery Walk (A2), 10-min Deep Mobility sequence (A3) | 30 min |
-| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression, One-Arm DB Row, TRX Face Pull, Biceps Microcycle (Single-Arm Curl & Single-Arm Hammer Curl), Push-Up Volume ↔ Single-Arm Curl pair, Towel Hang ↔ L-Sit pair, Arm Block (W6+) | 45 min |
-| **Day 6 (Sat)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 6.5 km/h at phase incline, ≤6% treadmill incline) | 35 min |
+| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression, One-Arm DB Row, TRX Face Pull, Biceps Microcycle (Single-Arm Curl & Single-Arm Hammer Curl), Push-Up Volume ↔ Single-Arm Curl pair, Towel Hang ↔ L-Sit pair, Arm Block (W6+) | 65 min |
+| **Day 6 (Sat)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 85–95% HRmax target, 6.5+ km/h / 4–6% incline effort; 3 min recovery @ 60–70% HRmax) | 35 min |
 | **Day 7 (Sun)** | **Complete Rest** | System Regeneration, Hydration & Passive Recovery | — |
 
 ---
 
 ### ⏱️ v15.7 Accelerated Architecture & Structural Optimization
-The program organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts (target session duration: **40–45 minutes**):
+The program organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts (realistic target session duration: **60–65 minutes** on strength days):
 1. **Protected Compound Lifts**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet BSS, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
-2. **Lean Pairs (Antagonistic & Non-Competing)**:
+2. **Percentage-Based Volume Stepping Overload**: Fixed +2 kg dumbbell jumps represent sharp relative jumps at lower loads (6→8 kg is +33.3%, 8→10 kg is +25.0%, 10→12 kg is +20.0%). The progression engine steps volume (prescribing extra sets based on the percentage change) before advancing the weight, resetting back to base sets once the higher load is unlocked. Single-Arm Lateral Raise starts at 6 kg (empty handle) to accommodate baseline upper-body strength safely.
+3. **Heart-Rate Governed Cardio**: Zone 2 (60–70% HRmax) and Norwegian 4×4 (85–95% HRmax) prioritize physiological heart-rate targets as primary drivers so that cardiovascular stimulus scales with aerobic adaptations rather than remaining at a fixed walking speed.
+4. **Lean Pairs (Antagonistic & Non-Competing)**:
    - **Day 3**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
    - **Day 5**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-3).
    - **Day 5**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
-3. **Weekly Alternating Toggles**:
+5. **Weekly Alternating Toggles**:
    - **Quad Focus**: Heels-Elevated Goblet Squat is performed continuously from Week 1.
    - **Day 3 Rear Delt Toggle**: Odd weeks = TRX Y-T-W; Even weeks = Band Pull-Apart.
-4. **Arm Block Myo-Reps Clusters (W6+)**: 1 activation set + 3 mini-sets of 5 reps with 15s rest. Terminated by 2 consecutive tempo losses (`two_consecutive_tempo_losses`). Maximum 1 exposure per muscle area per week.
-5. **Scheduled Deload Microcycles (Every 12 Weeks)**: Occur on Weeks 12, 24, 36, 48, 60, 72. Sets capped at 2 per exercise, loads reduced by 2 kg (rounded to legal range [3..32] kg). All pairs/circuits/blocks dissolve into straight sets, supplemented by runtime auto-regulated deload triggers.
+6. **Arm Block Myo-Reps Clusters (W6+)**: 1 activation set + 3 mini-sets of 5 reps with 15s rest. Terminated by 2 consecutive tempo losses (`two_consecutive_tempo_losses`). Maximum 1 exposure per muscle area per week.
+7. **Scheduled Deload Microcycles (Every 12 Weeks)**: Occur on Weeks 12, 24, 36, 48, 60, 72. Sets capped at 2 per exercise, loads reduced by 2 kg (rounded to legal range [3..32] kg). All pairs/circuits/blocks dissolve into straight sets, supplemented by runtime auto-regulated deload triggers.
 
 ---
 
