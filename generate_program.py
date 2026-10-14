@@ -957,6 +957,34 @@ EXERCISES_CATALOG = [
         "earliestWeek": 3,
         "unlockCriteria": { "exercise": "single-arm-curl", "targetReps": 12 },
         "fallbackId": None
+    },
+    {
+        "id": "wall-sit",
+        "name": "Wall Sit",
+        "category": "Legs",
+        "type": "timebased",
+        "restSeconds": 60,
+        "restRange": [45, 75],
+        "repWindow": "30-45s",
+        "tempo": "isometric hold at 60°-70°",
+        "compound": False,
+        "sets": 2,
+        "structure": "straight",
+        "rule": "חלופה קלינית שניונית למנוע הפציעות (ברך 🔴); שוקיים אנכיות, זווית ברך 60°-70°, גב צמוד לקיר, ללא עומס גזירה פטלופמורלי"
+    },
+    {
+        "id": "single-leg-glute-bridge",
+        "name": "Single-Leg Glute Bridge",
+        "category": "Glutes",
+        "type": "variation",
+        "restSeconds": 60,
+        "restRange": [45, 75],
+        "repWindow": "10-15 each",
+        "tempo": "2-1-1",
+        "compound": False,
+        "sets": 2,
+        "structure": "straight",
+        "rule": "חלופה קלינית שניונית למנוע הפציעות (ברך 🔴); עקב קרוב לישבן, ניתוק רגל נגדית, כיווץ שיא בישבן ללא פשיטת יתר מותנית"
     }
 ]
 

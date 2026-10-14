@@ -230,6 +230,7 @@
             action: 'maintain',
             newWeight: currentWeight,
             targetSets: stepDownSets,
+            newSessionsAtWeight: Math.max(0, currentSessionsCount - 1),
             reason: 'bridge_fatigue_step_down',
             stepDownSessions: true
           };
@@ -1015,7 +1016,9 @@
         } else if (decision.action === 'maintain') {
           if (decision.reason === 'bridge_fatigue_step_down') {
             // Sisyphus Protection: step down volume bridge by 1 set rather than wiping progress
-            state.sessionsAtWeight = Math.max(0, (state.sessionsAtWeight || 1) - 1);
+            state.sessionsAtWeight = typeof decision.newSessionsAtWeight === 'number'
+              ? decision.newSessionsAtWeight
+              : Math.max(0, (state.sessionsAtWeight || 1) - 1);
             state.consecutiveBelow = 0;
           } else if (decision.reason === 'first_below_maintain') {
             // If they were in an expanded volume bridge (>1 session), step down by 1 rather than resetting to 0

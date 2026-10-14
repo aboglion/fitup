@@ -120,6 +120,7 @@ When a joint is marked **Injured 🔴**, the engine executes the following joint
 - **The 24-Hour Pain Rule**: If an active twinge or ache (e.g. right knee electric sensation) resolves within 24–48 hours, the joint is safely maintained in **Sensitive 🟡** mode for 1 additional session to consolidate tendon recovery.
 - **Return to Full Load (🟢 Normal)**: When recovering from an **Injured 🔴** state, the trainee must first step down to **Sensitive 🟡** for 1–2 sessions to confirm pain-free tolerance under restricted ROM. Once the trainee confirms zero discomfort throughout daily activities and warmup, a single tap toggles the joint back to **Normal 🟢**, restoring the primary compound movement at an auto-regulated safe load.
 - **Post-Injury Load Safe Reset (Auto-Deload on Joint Recovery)**: If a joint was maintained in the **Injured 🔴** state for $\ge 10$–14 days (during which the primary movement was suspended), returning to **Sensitive 🟡** or **Normal 🟢** triggers an automatic protective load reset of **-2 to -4 kg** on the primary compound exercise(s) loading that joint, and sets reset to baseSets. This prevents acute tendon relapse caused by tissue detraining while away from the compound movement.
+- **Single-Execution Guarantee (Prevention of Double-Demotion)**: This load reduction executes strictly once at the transition boundary leaving the 🔴 Injured state (`prevState === 2 && nextState < 2`), immediately resetting the injury duration clock (`injuredAt = null`). A subsequent transition from 🟡 Sensitive to 🟢 Normal does NOT trigger a second reduction, preventing an unintended cumulative double-demotion.
 
 #### 1.3.6 Clinical Safety Architecture, Red Flags & Medical Referral Protocol
 The app provides proactive joint-sparing movement adaptations, but it is **not a medical diagnostic tool or treatment provider**.
@@ -136,7 +137,7 @@ The program is deliberately designed around a home gym environment with modular 
 
 1. **Bilateral to Unilateral Hip-Hinge Transition (Goblet RDL → Single-Leg RDL)**:
    - **Weeks 1–17 (Bilateral Foundation)**: `Goblet Romanian Deadlift` starts at 8 kg and progresses via Group A (+2 kg every 3 clean workouts) up to ~18–20 kg.
-   - **Week 18+ (Unilateral Overload & Reset)**: Goblet RDL is replaced by `Single-Leg RDL`. Critically, Single-Leg RDL **starts at 8 kg** (does NOT inherit 100% of bilateral load) to build unilateral pelvis stability, safeguard the L4–S1 disc bulge, and open a brand-new **36-week linear overload runway** up to 32 kg.
+   - **Week 18+ (Unilateral Overload & Reset)**: Goblet RDL is replaced by `Single-Leg RDL`. Critically, Single-Leg RDL starting load is safely derived as **50% of the achieved Goblet RDL weight** (rounded to the nearest even kg, minimum 8 kg: $\text{StartWeight} = \max(8, \text{roundToEven}(0.5 \times \text{GobletRDL\_Weight}))$; does NOT inherit 100% of bilateral load) to build unilateral pelvis stability, safeguard the L4–S1 disc bulge, eliminate severe mechanical cliff drops, and open a brand-new **36-week linear overload runway** up to 32 kg.
 2. **Bodyweight Eccentric Hamstring Tension (Nordic Curl Progression)**:
    - Introduced in **Week 10**, the `Nordic Curl Progression` adds a dedicated eccentric hamstring overload vector that is completely independent of dumbbell weights, featuring infinite progressive resistance through lever angle and band assistance.
 3. **Dual-Leverage Quad Architecture (Paused Squats + Bulgarian Split Squat)**:
@@ -426,7 +427,7 @@ To eliminate ambiguity between single-session softened progression and multi-ses
    - **Time Decay Gate**: If $>10$ days elapse between sessions, softened qualification is disabled, preventing premature overload on detrained tendons.
 
 3. **⚠️ BELOW Target Window / Mechanical Stop**:
-   - **Volume Stepping Bridge Fatigue Protection (Sisyphus Bug Fix)**: When Volume Stepping is active (prescribed sets > baseSets, e.g. 3 or 4 sets for Lateral Raise at 6 kg), if the trainee successfully completes all base sets in-window and experiences BELOW or fatigue exclusively on the added bridge sets (set 3 or 4), `sessionsAtWeight` is **NOT** wiped to 0. Instead, volume steps down by 1 set (e.g. 4 $\to$ 3 sets, `targetSets = prescribedSets - 1`) to consolidate work capacity without trapping the trainee in an infinite regression loop.
+   - **Volume Stepping Bridge Fatigue Protection (Sisyphus Bug Fix)**: When Volume Stepping is active (prescribed sets > baseSets, e.g. 3 or 4 sets for Lateral Raise at 6 kg), if the trainee successfully completes all base sets in-window and experiences BELOW or fatigue exclusively on the added bridge sets (set 3 or 4), `sessionsAtWeight` is **NOT** wiped to 0. Instead of leaving the counter unchanged (which would create an early promotion trap by advancing the trainee after completing a reduced 3-set session without ever completing 4 sets), the engine decrements the counter by 1 (`sessionsAtWeight = Math.max(0, sessionsAtWeight - 1)`, e.g. $2 \to 1$). This automatically steps down prescribed volume by 1 set (e.g. 4 $\to$ 3 sets, `targetSets = prescribedSets - 1`) for the next workout, requiring the trainee to reconquer 3 clean sets and then successfully complete the 4-set peak bridge before qualifying for promotion to the higher load (+2 kg).
    - **First BELOW Session (Single-Session Fatigue Protection)**: When a session yields `all_below` across base sets, weight is held at the current load (`first_below_maintain`). Set expansion steps down to relieve volume fatigue, protecting trainees from premature load drops.
    - **Second Consecutive BELOW Session**: If a second consecutive session yields `all_below` (`consecutiveBelow >= 1`), an auto-regulated load reduction of **-2 kg** is applied (`consecutive_below_decrease`), bounded strictly by the physical 6 kg handle floor (5 kg for weighted vest).
    - **Bodyweight / Stage Exercises**: The first BELOW maintains current stage; a second consecutive BELOW session regresses the movement by 1 stage (`consecutive_below_decrease_stage`).
@@ -489,19 +490,19 @@ This is the authoritative specification of all **59 unique exercises** appearing
 | Exercise Name | Catalog ID | Type | Cadence Group | Start Wt | Min Wt | Max Wt | Step | Load Type | Sets | Rep Window | Prescribed Tempo | Base Rest | Calendar / Phase 0 Gate |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Goblet Romanian Deadlift** | `goblet-rdl` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 6-12 | 3s descent (neutral spine) | 90s | Week 1 Anchor (Weeks 1–17) |
-| **Single-Leg RDL** | `single-leg-rdl` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 2 | 8-10 | 3s descent | 75s | Calendar Gate Week 18+ (Starts at 8kg; safe reset protects spine) |
+| **Single-Leg RDL** | `single-leg-rdl` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 2 | 8-10 | 3s descent | 75s | Calendar Gate Week 18+ (Starts at 50% Goblet RDL, min 8kg; safe reset protects spine) |
 | **Nordic Curl Progression** | `nordic-curl-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 6-10 | 3-1-1 (lengthened pause) | 90s | Calendar Gate Week 10+ (Deload 1 set) |
 | **Heels-Elevated Goblet Squat** | `heels-elevated-goblet-squat` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 2 | 8-12 | 3s descent, 1-2s pause, 1s up | 75s | Week 1 Continuous Quad Anchor |
-| **Goblet Bulgarian Split Squat** | `goblet-bulgarian-split-squat` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 6-12 | 2s descent | 82s | W5 (early W3 if Squat →\ge→ 10kg; Suitcase grip at ≥20kg) |
+| **Goblet Bulgarian Split Squat** | `goblet-bulgarian-split-squat` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 6-12 | 2s descent | 82s | W5 (early W3 if Squat ≥ 10kg; Suitcase grip at ≥20kg) |
 | **DB Glute Bridge** | `db-glute-bridge` | weighted | Group A (3rd) | 8 kg | 8 kg | 32 kg | 2 kg | total | 3 | 10-15 | 1s pause at top squeeze | 75s | Week 1 Anchor (75s post W5, 60s W1-4) |
-| **Suitcase Carry** | `suitcase-carry` | weighted | Group A (3rd) | 12 kg | 8 kg | 32 kg | 2 kg | total | 3 | 25-40m | controlled walk | 60s | W5 (early W4 if RDL →\ge→ 10kg) |
+| **Suitcase Carry** | `suitcase-carry` | weighted | Group A (3rd) | 12 kg | 8 kg | 32 kg | 2 kg | total | 3 | 25-40m | controlled walk | 60s | W5 (early W4 if RDL ≥ 10kg) |
 | **Standing Single-Leg Calf Raise** | `standing-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | single_hand | 3 | 12-20 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Day 5 Calf Block #1 |
 | **Seated Single-Leg Calf Raise** | `seated-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | on_knee | 2 | 15-25 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Day 5 Calf Block #2 |
 | **Pallof Press Progression** | `pallof-press-progression` | variation | BW / Stage | Band | — | — | — | — | 2 | 10-12 | 1s pause at extension | 30s | W6+ (unlock: Dead Bug stage 2); Core Circuit #1 |
 | **Dead Bug** | `dead-bug` | variation | BW / Stage | BW | — | — | — | — | 3 | 12-20 | slow controlled | 30s | Core Circuit #2 |
-| **Hollow Body Hold** | `hollow-body-hold` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-30s | static hollow hold | 30s | W5 (early W3 if Dead Bug →\ge→ 16 reps); Core Circuit #3 |
+| **Hollow Body Hold** | `hollow-body-hold` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-30s | static hollow hold | 30s | W5 (early W3 if Dead Bug ≥ 16 reps); Core Circuit #3 |
 | **Single-Arm Seated OHP** | `single-arm-seated-ohp` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up $\ge$ 10); Day 3 Overhead Compound |
-| **Pike Progression** | `pike-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 15-30s or 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up →\ge→ 10); Pike Tree W1-9 |
+| **Pike Progression** | `pike-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 15-30s or 6-12 | 2s descent | 75s | W5 (early W3 if Push-Up ≥ 10); Pike Tree W1-9 |
 | **Wall Walk (Partial)** | `wall-walk-partial` | variation | BW / Stage | BW | — | — | — | — | 2 | 3-6 | controlled | 75s | Calendar Gate Week 10–17 |
 | **Wall Walk (Full)** | `wall-walk-full` | variation | BW / Stage | BW | — | — | — | — | 2 | 3-6 | controlled | 90s | Calendar Gate Week 18–25 |
 | **Wall Handstand** | `wall-handstand` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-45s | static hold | 90s | Calendar Gate Week 26–40 |
@@ -511,7 +512,7 @@ This is the authoritative specification of all **59 unique exercises** appearing
 | **Deficit Push-Up** | `deficit-push-up` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-15 | 2s descent | 75s | Push Tree W10–17 |
 | **Feet-Elevated Push-Up** | `feet-elevated-push-up` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-12 | 2s descent | 75s | Push Tree W18–61 |
 | **Weighted Deficit Push-Up** | `weighted-deficit-push-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 6-12 | 2s descent | 90s | Push Tree W62+ (weighted vest) |
-| **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up →\ge→ 10); 2kg increments |
+| **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up ≥ 10); 2kg increments |
 | **Chin-Up** | `chin-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 4-8 | 2s descent (rings/loops OK) | 90s | Day 3 Vertical Pull 2×/week (V-Taper & elbow relief) |
 | **Diamond Push-Up** | `diamond-push-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 45s | Skill Tree Accessory (Replaced by Chin-Up on Day 3) |
 | **TRX Row** | `trx-row` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | Lean Pair #1 with Lateral Raise |
@@ -525,9 +526,9 @@ This is the authoritative specification of all **59 unique exercises** appearing
 | **TRX Face Pull** | `trx-face-pull` | variation | BW / Stage | BW | — | — | — | — | 2 | 12-20 | 2s descent | 75s / 45s | Lean Pair with Day 5 Lateral Raise (W5+) |
 | **Push-Up Volume (Day 5)** | `push-up-volume` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | W5 (early W3); Lean Pair with Curl |
 | **Single-Arm Curl** | `single-arm-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-15 | 2-1-2 (lengthened pause) | 45s | Biceps Microcycle Heavy W1–3; 2kg increments |
-| **Single-Arm Hammer Curl** | `single-arm-hammer-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-12 | 2s descent | 45s | W5 (early W3 if Curl →\ge→ 12); Light W4 = 2 sets |
+| **Single-Arm Hammer Curl** | `single-arm-hammer-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-12 | 2s descent | 45s | W5 (early W3 if Curl ≥ 12); Light W4 = 2 sets |
 | **Towel Hang** | `towel-hang` | timebased | BW / Stage | BW | — | — | — | — | 2 | 15-45s | static grip hold | 45s | W5 (early W3); Lean Pair with L-Sit |
-| **Tuck L-Sit** | `tuck-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | W5 (early W3 if Dead Bug →\ge→ 16); L-Sit W1–17 |
+| **Tuck L-Sit** | `tuck-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | W5 (early W3 if Dead Bug ≥ 16); L-Sit W1–17 |
 | **One-Leg Extended L-Sit** | `one-leg-extended-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 18–33 |
 | **Full L-Sit** | `full-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 34+ |
 | **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12/15 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
@@ -539,6 +540,8 @@ This is the authoritative specification of all **59 unique exercises** appearing
 | **VO2 Max Norwegian 4x4** | `vo2-max-norwegian-4x4` | interval | BW | — | — | — | — | 4×4m | 16m effort | 85-95% HRmax (152-170 BPM for age 42, 6.5+ km/h / 4-6% incline effort) | 0s | Day 6 Cardio (Weeks 4+) |
 | **Micro Mobility Protocol** | `micro-mobility-protocol` | timebased | BW | — | — | — | — | 1 | 5m | slow controlled | 0s | Post-workout 90s: Variant A (Upper) / B (Lower) |
 | **Deep Mobility Protocol** | `deep-mobility-protocol` | timebased | BW | — | — | — | — | 1 | 10m | slow deep stretch | 0s | Day 4 Joint & Spinal Health Protocol |
+| **Wall Sit** | `wall-sit` | timebased | Clinical Fallback | BW | — | — | — | — | 2 | 30-45s | isometric hold at 60°–70° | 60s | Injury Engine Secondary Fallback (Knee 🔴 Squat Substitute) |
+| **Single-Leg Glute Bridge** | `single-leg-glute-bridge` | variation | Clinical Fallback | BW | — | — | — | — | 2 | 10-15 each | 2-1-1 | 60s | Injury Engine Secondary Fallback (Knee 🔴 BSS Substitute) |
 
 ### D.2 Warm-up & Activation Protocols (by Strength Day)
 - **Day 1 Warm-up (Legs & Core)**:

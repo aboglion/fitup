@@ -93,8 +93,8 @@ test('Fix 1 - Injury Engine Day 1 Deduplication & Secondary Fallbacks', () => {
   InjuryEngine.resetAllJoints();
 });
 
-// ── TEST 2: Sisyphus Bug Fix (Volume Stepping Bridge Fatigue Step-Down) ──
-test('Fix 2 - Volume Stepping Bridge Fatigue Step-Down (Sisyphus Bug Fix)', () => {
+// ── TEST 2: Sisyphus Bug Fix (Volume Stepping Bridge Fatigue Step-Down & Early Promotion Guard) ──
+test('Fix 2 - Volume Stepping Bridge Fatigue Step-Down & Early Promotion Guard', async () => {
   const lateralRaiseEx = {
     id: 'single-arm-lateral-raise',
     name: 'Single-Arm Lateral Raise',
@@ -131,12 +131,13 @@ test('Fix 2 - Volume Stepping Bridge Fatigue Step-Down (Sisyphus Bug Fix)', () =
   assert.strictEqual(decision.action, 'maintain');
   assert.strictEqual(decision.reason, 'bridge_fatigue_step_down');
   assert.strictEqual(decision.targetSets, 3, 'Volume should step down from 4 to 3 sets, not crash to 2');
+  assert.strictEqual(decision.newSessionsAtWeight, 1, 'Decision must explicitly specify decrementing sessionsAtWeight to 1');
 
   // Verify commitExerciseProgression updates sessionsAtWeight from 2 down to 1 (not 0!)
   DB._states['single-arm-lateral-raise'] = { ...state };
   window.TRAINING_DATA = { exercises: [lateralRaiseEx] };
 
-  ProgressionEngine.commitExerciseProgression({
+  const commitRes = await ProgressionEngine.commitExerciseProgression({
     exerciseId: 'single-arm-lateral-raise',
     exerciseName: 'Single-Arm Lateral Raise',
     dayIndex: 2,
@@ -144,10 +145,38 @@ test('Fix 2 - Volume Stepping Bridge Fatigue Step-Down (Sisyphus Bug Fix)', () =
     setResults,
     actualReps: 12,
     weightKg: 6
-  }).then(res => {
-    assert.strictEqual(res.state.sessionsAtWeight, 1, 'sessionsAtWeight should step down from 2 to 1 (prescribing 3 sets next)');
-    assert.strictEqual(res.state.consecutiveBelow, 0);
   });
+
+  assert.strictEqual(commitRes.state.sessionsAtWeight, 1, 'sessionsAtWeight should step down from 2 to 1 (prescribing 3 sets next)');
+  assert.strictEqual(commitRes.state.consecutiveBelow, 0);
+
+  // Natural Progression Verification after bridge decrement:
+  // Next session at sessionsAtWeight = 1 prescribes 3 sets (not 4)
+  const nextPrescribed = ProgressionEngine.calculatePrescribedSets(lateralRaiseEx, 6, commitRes.state.sessionsAtWeight);
+  assert.strictEqual(nextPrescribed, 3, 'Next session after bridge fatigue must prescribe 3 sets');
+
+  // Trainee reconquers the 3-set session cleanly
+  const reconqueredThreeSets = [
+    { result: 'in_window', reps: 15, weightKg: 6 },
+    { result: 'in_window', reps: 14, weightKg: 6 },
+    { result: 'in_window', reps: 12, weightKg: 6 }
+  ];
+  const step2Res = await ProgressionEngine.commitExerciseProgression({
+    exerciseId: 'single-arm-lateral-raise',
+    exerciseName: 'Single-Arm Lateral Raise',
+    dayIndex: 3,
+    weekNumber: 3,
+    setResults: reconqueredThreeSets,
+    actualReps: 12,
+    weightKg: 6
+  });
+  // Counter advances from 1 -> 2 (NOT promoted to 8kg yet!)
+  assert.strictEqual(step2Res.state.currentWeightKg, 6, 'Must remain at 6kg while consolidating 3 sets');
+  assert.strictEqual(step2Res.state.sessionsAtWeight, 2, 'Counter advances from 1 to 2');
+
+  // At sessionsAtWeight = 2, the peak bridge (4 sets) is prescribed again!
+  const peakPrescribed = ProgressionEngine.calculatePrescribedSets(lateralRaiseEx, 6, step2Res.state.sessionsAtWeight);
+  assert.strictEqual(peakPrescribed, 4, 'Trainee is strictly required to face and conquer 4 sets again before 8kg');
 });
 
 // ── TEST 3: Single-Leg RDL Starting Weight 50% Derivation (Week 18) ──
@@ -178,8 +207,8 @@ test('Fix 3 - Single-Leg RDL safely derives 50% of Goblet RDL weight without mec
   assert.strictEqual(state14.currentWeightKg, 8, '14kg bilateral RDL should initialize Single-Leg RDL at 8kg floor');
 });
 
-// ── TEST 4: Post-Injury Recovery Auto-Deload ──
-test('Fix 4 - Post-Injury Auto-Deload on Joint Recovery (>= 14 days in Injured State)', async () => {
+// ── TEST 4: Post-Injury Recovery Auto-Deload & Double-Demotion Prevention ──
+test('Fix 4 - Post-Injury Auto-Deload on Joint Recovery (>= 14 days in Injured State) with Double-Demotion Prevention', async () => {
   InjuryEngine.resetAllJoints();
 
   const squatEx = {
@@ -211,39 +240,62 @@ test('Fix 4 - Post-Injury Auto-Deload on Joint Recovery (>= 14 days in Injured S
   assert.strictEqual(details.state, 2);
   assert.ok(details.daysInjured >= 15);
 
-  // Transition knee back to Sensitive (1) -> triggers post-injury deload
+  // Transition knee back to Sensitive (1) -> triggers post-injury deload strictly ONCE
   InjuryEngine.setJointState('knee_r', 1);
   if (InjuryEngine.lastRecoveryDeloadPromise) {
     await InjuryEngine.lastRecoveryDeloadPromise;
   }
 
   // Verify Heels-Elevated Goblet Squat received automatic protective reduction (-4kg from 22kg to 18kg)
-  const updatedState = await DB.getProgressionState('heels-elevated-goblet-squat');
-  assert.strictEqual(updatedState.currentWeightKg, 18, '22kg squat should safely deload to 18kg upon recovery from >14-day injury');
-  assert.strictEqual(updatedState.sessionsAtWeight, 0);
+  const updatedState1 = await DB.getProgressionState('heels-elevated-goblet-squat');
+  assert.strictEqual(updatedState1.currentWeightKg, 18, '22kg squat should safely deload to 18kg upon recovery from >14-day injury');
+  assert.strictEqual(updatedState1.sessionsAtWeight, 0);
+
+  // Subsequent transition from Sensitive (1) -> Normal (0):
+  // Double-Demotion Prevention: Must NOT deload again! Weight must stay at 18kg.
+  InjuryEngine.setJointState('knee_r', 0);
+  if (InjuryEngine.lastRecoveryDeloadPromise) {
+    await InjuryEngine.lastRecoveryDeloadPromise;
+  }
+
+  const updatedState2 = await DB.getProgressionState('heels-elevated-goblet-squat');
+  assert.strictEqual(updatedState2.currentWeightKg, 18, 'Subsequent transition from Sensitive to Normal must NOT trigger a second deload');
 
   InjuryEngine.resetAllJoints();
 });
 
-// ── TEST 5: PROGRAM_GUIDE.md Content Verification ──
-test('Fix 5 - PROGRAM_GUIDE.md Documentation Integrity for All Fixes', () => {
+// ── TEST 5: PROGRAM_GUIDE.md Content Verification & Catalog Integrity ──
+test('Fix 5 - PROGRAM_GUIDE.md Documentation Integrity for All Fixes & SSOT Catalog', () => {
   const guidePath = path.join(__dirname, '..', 'PROGRAM_GUIDE.md');
   const content = fs.readFileSync(guidePath, 'utf8');
 
-  // Fix 1: Deduplication rule
+  // Fix 1: Deduplication rule & Secondary Fallbacks
   assert.ok(content.includes('Deduplication & Volume Consolidation Rule'), 'Guide must document Deduplication Rule');
   assert.ok(content.includes('Wall Sit'), 'Guide must document Wall Sit secondary fallback');
+  assert.ok(content.includes('Single-Leg Glute Bridge'), 'Guide must document Single-Leg Glute Bridge secondary fallback');
 
-  // Fix 2: Sisyphus bug fix
+  // Fix 2: Sisyphus bug fix & decrement explanation
   assert.ok(content.includes('Volume Stepping Bridge Fatigue Protection (Sisyphus Bug Fix)'), 'Guide must document Bridge Fatigue Protection');
+  assert.ok(content.includes('sessionsAtWeight = Math.max(0, sessionsAtWeight - 1)'), 'Guide must document exact counter decrement');
 
   // Fix 3: Lean Pairs asymmetric sets & unilateral execution
   assert.ok(content.includes('Asymmetric Set Rule (Volume Stepping in Pairs)'), 'Guide must document Asymmetric Set Rule');
   assert.ok(content.includes('For Lean Pairs: perform Set $N$ of Exercise 1'), 'Guide must clarify Lean Pair execution order');
 
-  // Fix 4: Single-Leg RDL 50% derivation
+  // Fix 4: Single-Leg RDL 50% derivation (Harmonized across Sections 1.4, 2.2, and Table D.1)
   assert.ok(content.includes('50% of the achieved Goblet RDL weight'), 'Guide must document 50% Single-Leg RDL derivation');
+  assert.ok(content.includes('Starts at 50% Goblet RDL, min 8kg'), 'Table D.1 must document 50% Goblet RDL start for single-leg-rdl');
 
-  // Fix 5: Post-injury auto-deload
+  // Fix 5: Post-injury auto-deload & single execution guarantee
   assert.ok(content.includes('Post-Injury Load Safe Reset (Auto-Deload on Joint Recovery)'), 'Guide must document Post-Injury Safe Reset');
+  assert.ok(content.includes('Single-Execution Guarantee (Prevention of Double-Demotion)'), 'Guide must document Single-Execution Guarantee');
+
+  // Fix 6: Table D.1 formatting sanity — zero corrupted '→\\ge→' strings
+  assert.strictEqual(content.includes('→\\ge→'), false, 'Table D.1 must have zero corrupted "→\\ge→" strings');
+  assert.ok(content.includes('Squat ≥ 10kg'), 'Table D.1 must contain cleanly formatted ≥ symbols');
+
+  // Catalog Registration: Secondary Fallback exercises must be registered in TRAINING_DATA.exercises
+  const dataJsContent = fs.readFileSync(path.join(__dirname, '..', 'js/data.js'), 'utf8');
+  assert.ok(dataJsContent.includes('"id": "wall-sit"'), 'data.js must register wall-sit in exercises catalog');
+  assert.ok(dataJsContent.includes('"id": "single-leg-glute-bridge"'), 'data.js must register single-leg-glute-bridge in exercises catalog');
 });
