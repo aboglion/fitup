@@ -1001,14 +1001,17 @@ const UI = (() => {
       // 7. Rule resolution
       const ruleKey = 'rule_' + (exId || searchTitle).replace(/[-_]+/g, '_');
       let ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (exData?.rule || '');
+      if (ruleText) {
+        ruleText = enrichHeartRateText(ruleText);
+      }
 
       const chips = [];
-      if (repText) chips.push({ icon: '🎯', label: I18n.t('label_rep_window', 'יעד חזרות:'), val: repText });
-      if (restText) chips.push({ icon: '⏳', label: I18n.t('label_rest', 'מנוחה:'), val: restText });
-      if (tempoText) chips.push({ icon: '⏱️', label: I18n.t('label_tempo', 'טמפו:'), val: tempoText });
-      if (structureText) chips.push({ icon: '🏗️', label: I18n.t('label_structure', 'מבנה:'), val: structureText });
+      if (repText) chips.push({ icon: '🎯', label: I18n.t('label_rep_window', 'יעד חזרות:'), val: enrichHeartRateText(repText) });
+      if (restText) chips.push({ icon: '⏳', label: I18n.t('label_rest', 'מנוחה:'), val: enrichHeartRateText(restText) });
+      if (tempoText) chips.push({ icon: '⏱️', label: I18n.t('label_tempo', 'טמפו:'), val: enrichHeartRateText(tempoText) });
+      if (structureText) chips.push({ icon: '🏗️', label: I18n.t('label_structure', 'מבנה:'), val: enrichHeartRateText(structureText) });
       if (muscleFocusText) chips.push({ icon: '💪', label: I18n.t('label_target_muscle', 'מיקוד שרירי:'), val: muscleFocusText });
-      if (weightText) chips.push({ icon: '⚖️', label: I18n.t('label_starting_weight', 'משקל / התנגדות:'), val: weightText, fullWidth: true });
+      if (weightText) chips.push({ icon: '⚖️', label: I18n.t('label_starting_weight', 'משקל / התנגדות:'), val: enrichHeartRateText(weightText), fullWidth: true });
 
       if (chips.length > 0 || ruleText) {
         metadataHTML = `
@@ -1170,9 +1173,11 @@ const UI = (() => {
 
       if (resolvedStageName) {
         const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || (effectiveTitle || '').toLowerCase().includes('trx');
+        const isIncline = resolvedStageName.toLowerCase().includes('incline');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(resolvedStageName) !== resolvedStageName) ? I18n.t(resolvedStageName) : resolvedStageName;
-        const icon = isAngle ? '📐' : '🎯';
-        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (I18n.t('progression_stage_title') || 'שלב');
+        const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
+        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
+        const badgeLabel = isAngle ? 'TRX Progression' : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
         stageHeaderHTML = `
           <div class="gif-modal-stage-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 7px 12px; border-radius: 10px; margin-bottom: 8px;">
             <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; color: var(--text-primary);">
@@ -1180,7 +1185,7 @@ const UI = (() => {
               <span>${tagText}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${stageLabel}</bdi></b></span>
             </div>
             <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
-              ${isAngle ? 'TRX Progression' : (I18n.t('progression_stage_title') || 'שלב')}
+              ${badgeLabel}
             </span>
           </div>
         `;
@@ -1212,9 +1217,11 @@ const UI = (() => {
 
       if (resolvedStageName) {
         const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || (effectiveTitle || '').toLowerCase().includes('trx');
+        const isIncline = resolvedStageName.toLowerCase().includes('incline');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(resolvedStageName) !== resolvedStageName) ? I18n.t(resolvedStageName) : resolvedStageName;
-        const icon = isAngle ? '📐' : '🎯';
-        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (I18n.t('progression_stage_title') || 'שלב');
+        const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
+        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
+        const badgeLabel = isAngle ? 'TRX Progression' : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
         stageHeaderHTML = `
           <div class="gif-modal-stage-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 7px 12px; border-radius: 10px; margin-bottom: 8px;">
             <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; color: var(--text-primary);">
@@ -1222,7 +1229,7 @@ const UI = (() => {
               <span>${tagText}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${stageLabel}</bdi></b></span>
             </div>
             <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
-              ${isAngle ? 'TRX Progression' : (I18n.t('progression_stage_title') || 'שלב')}
+              ${badgeLabel}
             </span>
           </div>
         `;
@@ -2329,6 +2336,30 @@ const UI = (() => {
   }
 
   /**
+   * Enrich text containing heart rate percentages with user's personal numerical BPM targets
+   */
+  function enrichHeartRateText(text) {
+    if (!text || typeof text !== 'string') return text || '';
+    const userAge = (typeof window !== 'undefined' && window._cachedUserAge) ? window._cachedUserAge : 30;
+    const customHRmax = (typeof window !== 'undefined' && window._cachedCustomHRmax) ? window._cachedCustomHRmax : null;
+    const hr = (typeof getHRZones === 'function')
+      ? getHRZones(userAge, customHRmax)
+      : { max: 187, zone1: [94, 112], zone2: [112, 131], zone5: [159, 178] };
+
+    let res = text;
+    // Clean any existing BPM annotations to ensure fresh/accurate interpolation without duplication
+    res = res.replace(/(?:85|90)%?\s*[-–]\s*95%?(?:\s*(?:דופק\s*מרבי|דופק|HRmax|HR|من أقصى معدل نبض|أقصى نبض|نبض))?\s*\(\d+[-–]\d+\s*BPM\)/gi, (m) => m.replace(/\s*\(\d+[-–]\d+\s*BPM\)/, ''));
+    res = res.replace(/60%?\s*[-–]\s*70%?(?:\s*(?:דופק\s*מרבי|דופק|HRmax|HR|من أقصى معدل نبض|أقصى نبض|نبض))?\s*\(\d+[-–]\d+\s*BPM\)/gi, (m) => m.replace(/\s*\(\d+[-–]\d+\s*BPM\)/, ''));
+    res = res.replace(/50%?\s*[-–]\s*60%?(?:\s*(?:דופק\s*מרבי|דופק|HRmax|HR|من أقصى معدل نبض|أقصى نبض|نبض))?\s*\(\d+[-–]\d+\s*BPM\)/gi, (m) => m.replace(/\s*\(\d+[-–]\d+\s*BPM\)/, ''));
+
+    res = res.replace(/((?:85|90)%?\s*[-–]\s*95%?(?:\s*(?:דופק\s*מרבי|דופק|HRmax|HR|من أقصى معدل نبض|أقصى نبض|نبض))?)/gi, `$1 (${hr.zone5[0]}-${hr.zone5[1]} BPM)`);
+    res = res.replace(/(60%?\s*[-–]\s*70%?(?:\s*(?:דופק\s*מרבי|דופק|HRmax|HR|من أقصى معدل نبض|أقصى نبض|نبض))?)/gi, `$1 (${hr.zone2[0]}-${hr.zone2[1]} BPM)`);
+    res = res.replace(/(50%?\s*[-–]\s*60%?(?:\s*(?:דופק\s*מרבי|דופק|HRmax|HR|من أقصى معدل نبض|أقصى نبض|نبض))?)/gi, `$1 (${hr.zone1[0]}-${hr.zone1[1]} BPM)`);
+
+    return res;
+  }
+
+  /**
    * Show Interactive Max Heart Rate & Target Zones Calculator Modal
    */
   function showHeartRateModal(initialAge = null, initialCustomHRmax = null) {
@@ -2507,6 +2538,7 @@ const UI = (() => {
     showOneRepMaxModal,
     calculateHRmax,
     getHRZones,
+    enrichHeartRateText,
     showHeartRateModal,
     hasGif,
     handleImageLoaded,

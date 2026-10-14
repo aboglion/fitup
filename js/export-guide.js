@@ -117,7 +117,7 @@ window.ExporterGuide = (() => {
         "TRX (Face Pull, TRX Row, Y-T-W בזוויות קבועות)",
         "גומיות התנגדות: 30 ק\"ג (Pull-Apart, Pallof, כפיפה/פשיטת צוואר), 40 ק\"ג, 50 ק\"ג",
         "כיסא / ספסל יציב (Goblet BSS, Feet-Elevated Push-Up, Pike Hold)",
-        "הליכון (Zone 2: דופק 60%–70%, בסיס שיפוע 4% ב-5.5 קמ\"ש; VO2 Max נורבגי 4×4: דופק 85%–95%, בסיס 6.5+ קמ\"ש בשיפוע 3%–6%)",
+        "הליכון (Zone 2: דופק 60%–70% [112-131 BPM], בסיס שיפוע 4% ב-5.5 קמ\"ש; VO2 Max נורבגי 4×4: דופק 85%–95% [159-178 BPM], בסיס 6.5+ קמ\"ש בשיפוע 3%–6%)",
         "וסט משוקלל (+2, +4, +5 ק\"ג לתרגילים המסומנים בלבד)"
       ],
       weekly_structure_title: "⚙️ מבנה מיקרו-מחזורים שבועיים",
@@ -137,11 +137,11 @@ window.ExporterGuide = (() => {
       ],
       standard_days_table: [
         { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "65 דק' — RPE 7–9 — שרשרת המסטרינג (Goblet RDL / Single-Leg RDL), פוקוס קוואדס (Heels-Elevated Goblet Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, בלוק תאומים, מעגל ליבה + מיקרו-מוביליות B" },
-        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — הליכה נמרצת בדופק Zone 2 של 60%–70% (בסיס שיפוע 4%, 5.5 קמ\"ש, מבחן דיבור שוטף) + מיקרו-מוביליות B" },
+        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — הליכה נמרצת בדופק Zone 2 של 60%–70% (112-131 BPM, בסיס שיפוע 4%, 5.5 קמ\"ש, מבחן דיבור שוטף) + מיקרו-מוביליות B" },
         { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "65 דק' — RPE 7–9 — Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, OHP, Triceps Ext, Diamond Push-Up, זוג TRX Row ↔ Single-Arm Lateral Raise, רוטציית כתף אחורית + Arm Block (משבוע 6) + מיקרו-מוביליות A" },
         { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — פרוטוקול צוואר (Band Neck Flexion & Extension 2x15-20) + 25 דק' הליכון 0% (4.5 קמ\"ש) + 10 דק' דיפ-מוביליות" },
         { day: "יום 5", type: "🧲 משיכה + גב + ביספס + נפח חזה", focus: "65 דק' — RPE 7–9 — מתח, One-Arm Row, TRX Face Pull, מיקרו-מחזור בייספס, זוג Push-Up Volume ↔ Single-Arm Curl, זוג Towel Hang ↔ L-Sit + Arm Block (משבוע 6) + מיקרו-מוביליות A" },
-        { day: "יום 6", type: "🔴 VO2 Max 4×4 Cardio", focus: "35 דק' — פרוטוקול נורבגי: 10 דק' חימום, 4×(4 דק' מאמץ ב-85%–95% דופק מרבי [בסיס 6.5+ קמ\"ש / שיפוע שלב, התאם לדופק], 3 דק' התאוששות ב-60%–70% דופק), 5 דק' שחרור" },
+        { day: "יום 6", type: "🔴 VO2 Max 4×4 Cardio", focus: "35 דק' — פרוטוקול נורבגי: 10 דק' חימום, 4×(4 דק' מאמץ ב-85%–95% דופק מרבי [159-178 BPM, בסיס 6.5+ קמ\"ש / שיפוע שלב, התאם לדופק], 3 דק' התאוששות ב-60%–70% דופק [112-131 BPM]), 5 דק' שחרור" },
         { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה, תזונה ושינה" }
       ],
       arm_block_title: "💪 Arm Block v15.7 (Myo-Reps Cluster Protocol)",
@@ -225,11 +225,11 @@ window.ExporterGuide = (() => {
       ],
       standard_days_table: [
         { day: "יום 1", type: "🦵 רגליים + ליבה + אחיזה/נשיאה", focus: "65 דק' — RPE 7–9 — High Knees + Bodyweight Squat + Dead Bug + Glute Bridge + Goblet Romanian Deadlift + Heels-Elevated Goblet Squat + Goblet Bulgarian Split Squat + DB Glute Bridge + Suitcase Carry + Standing Single-Leg Calf Raise + Seated Single-Leg Calf Raise + Dead Bug + Hollow Body Hold + Micro Mobility Protocol (Single-Leg RDL מחליף את Goblet RDL משבוע 18)" },
-        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — Brisk Walking בדופק Zone 2 של 60%–70% (בסיס 4% שיפוע, 5.5 קמ\"ש) + Micro Mobility Protocol" },
+        { day: "יום 2", type: "🫀 Zone 2 Cardio + מוביליות יומית", focus: "45 דק' — Brisk Walking בדופק Zone 2 של 60%–70% (112-131 BPM, בסיס 4% שיפוע, 5.5 קמ\"ש) + Micro Mobility Protocol" },
         { day: "יום 3", type: "💥 דחיפה + כתפיים + טריספס + נפח גב", focus: "65 דק' — RPE 7–9 — Arm Circles + Wall Slides + Scapular Push-up + Band Pull-Apart + Pike Progression + Single-Arm Floor Press + Push-up Bars Progression + Single-Arm Seated OHP + DB Overhead Triceps Extension + Diamond Push-Up + TRX Row + Single-Arm Lateral Raise + TRX Y-T-W + Micro Mobility Protocol (+ Arm Block משבוע 6)" },
         { day: "יום 4", type: "🌿 התאוששות פעילה + בריאות צוואר ומפרקים", focus: "30 דק' — Band Neck Flexion & Extension 2×15-20 + 25 דק' Relaxed Walking (0% שיפוע, 4.5 קמ\"ש) + 10 דק' Deep Mobility Protocol" },
         { day: "יום 5", type: "🧲 משיכה + גב + ביספס + נפח חזה", focus: "65 דק' — RPE 7–9 — Arm Circles + Wall Slides + Scapular Pull-up + Dead Hang + Seated Band Row + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Push-Up Volume (Day 5) + Single-Arm Curl + Single-Arm Hammer Curl + Towel Hang + Tuck L-Sit + Micro Mobility Protocol (+ Arm Block משבוע 6)" },
-        { day: "יום 6", type: "🔴 VO2 Max Norwegian 4×4 Cardio", focus: "35 דק' — 10 דק' חימום, 4×(4 דק' מאמץ ב-85%–95% דופק מרבי [בסיס 6.5+ קמ\"ש בשיפוע השלב / התאם לדופק], 3 דק' התאוששות 60%–70%), 5 דק' שחרור (Zone 2 בדילואד)" },
+        { day: "יום 6", type: "🔴 VO2 Max Norwegian 4×4 Cardio", focus: "35 דק' — 10 דק' חימום, 4×(4 דק' מאמץ ב-85%–95% דופק מרבי [159-178 BPM, בסיס 6.5+ קמ\"ש בשיפוע השלב / התאם לדופק], 3 דק' התאוששות 60%–70% [112-131 BPM]), 5 דק' שחרור (Zone 2 בדילואד)" },
         { day: "יום 7", type: "😴 מנוחה מלאה", focus: "התאוששות מלאה, תזונה ושינה" }
       ],
       arm_block_title: "💪 בלוק זרועות v15.7 (פרוטוקול Myo-Reps Cluster)",

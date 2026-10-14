@@ -3308,17 +3308,39 @@ const TodayPage = (() => {
    */
   function buildExerciseNoteAndGuideHTML(ex, idx, exNote, checkDisabledAttr) {
     if (!ex) return '';
+
+    const noteTextareaHTML = `
+      <div class="exercise-note" style="margin-top: 8px;">
+        <textarea placeholder="${I18n.t('exercise_notes_placeholder') || 'הערות לתרגיל...'}" rows="2" ${checkDisabledAttr}
+                  onchange="TodayPage.updateExerciseNote(${idx}, this.value)">${exNote || ''}</textarea>
+      </div>
+    `;
+
+    // 1. Warm-up exercises never have target strive / progression outcome cheats
+    const isWarmupEx = ex.isWarmup || (ex.slot && ex.slot.startsWith('W')) || (ex.category && ex.category.toLowerCase() === 'warmup');
+    if (isWarmupEx) {
+      return noteTextareaHTML;
+    }
+
     const rawSets = ex.sets || ex.repWindow || '';
     const rangeMatch = rawSets.match(/(\d+)\s*[-–]\s*(\d+)/);
-    const isTime = rawSets.includes('sec') || rawSets.includes('s') || rawSets.includes('min') || rawSets.includes('שנ');
-    const isMins = rawSets.includes('min') || rawSets.includes('דק');
+
+    const exNameLower = (ex.name || '').toLowerCase();
+    const isCardio = (ex.category || '').toLowerCase() === 'cardio' || /walk|vo2|running|cardio/i.test(exNameLower) || /walk|vo2/i.test(ex.id || '');
+    const isTime = rawSets.includes('sec') || rawSets.includes('s') || rawSets.includes('min') || rawSets.includes('שנ') || isCardio || (ex.type === 'timebased') || (ex.type === 'interval');
+    const isMins = rawSets.includes('min') || rawSets.includes('דק') || isCardio || (ex.type === 'timebased' && parseInt(rawSets) >= 5);
     const unitStr = isTime ? (isMins ? (I18n.t('unit_minutes') || 'דקות') : (I18n.t('unit_seconds') || 'שניות')) : (I18n.t('unit_reps') || 'חזרות');
 
-    const isMyo = (ex.name || '').toLowerCase().includes('arm block') || rawSets.toLowerCase().includes('myo');
+    const isTimeHold = isTime && !isCardio;
+    const isMyo = exNameLower.includes('arm block') || rawSets.toLowerCase().includes('myo');
+    const isWeighted = Boolean(ex.startingWeight || (ex.targetWeightKg && ex.targetWeightKg > 0) || /\d+\s*kg/i.test(ex.weight || '') || /\d+\s*kg/i.test(ex.targetWeight || ''));
+    const isStageProgression = !isTime && !isCardio && !isMyo && !isWeighted && (ex.stages?.length > 1 || /trx|push-up|pull-up|chin-up|pike/i.test(exNameLower) || /angle/i.test(ex.weight || ''));
+
     let targetSummaryHTML = '';
     let inWindowRule = '';
     let aboveRule = '';
     let belowRule = '';
+    let belowLabel = I18n.t('set_outcome_below') || '⚠️ עצירה מכנית';
 
     if (isMyo) {
       targetSummaryHTML = `
@@ -3327,9 +3349,9 @@ const TodayPage = (() => {
           <span>${I18n.t('myo_protocol_guide')}</span>
         </div>
       `;
-      inWindowRule = I18n.t('outcome_in_window_hint');
-      aboveRule = I18n.t('outcome_above_hint');
-      belowRule = I18n.t('outcome_below_hint');
+      inWindowRule = I18n.t('outcome_myo_in_window') || I18n.t('outcome_in_window_hint');
+      aboveRule = I18n.t('outcome_myo_above') || I18n.t('outcome_above_hint');
+      belowRule = I18n.t('outcome_myo_below') || I18n.t('outcome_below_hint');
     } else if (rangeMatch) {
       const minVal = rangeMatch[1];
       const maxVal = rangeMatch[2];
@@ -3346,22 +3368,57 @@ const TodayPage = (() => {
           </div>
         </div>
       `;
-      inWindowRule = I18n.t('outcome_in_window_hint');
-      aboveRule = I18n.t('outcome_above_hint');
-      belowRule = I18n.t('outcome_below_hint');
+      if (isCardio) {
+        belowLabel = `⚠️ ${I18n.t('set_outcome_below_cardio') || 'עצירה מוקדמת'}`;
+        inWindowRule = I18n.t('outcome_cardio_in_window');
+        aboveRule = I18n.t('outcome_cardio_above');
+        belowRule = I18n.t('outcome_cardio_below');
+      } else if (isTimeHold) {
+        belowLabel = `⚠️ ${I18n.t('set_outcome_below_hold') || 'שבירת מנח'}`;
+        inWindowRule = I18n.t('outcome_hold_in_window');
+        aboveRule = I18n.t('outcome_hold_above');
+        belowRule = I18n.t('outcome_hold_below');
+      } else if (isStageProgression) {
+        inWindowRule = I18n.t('outcome_stage_in_window');
+        aboveRule = I18n.t('outcome_stage_above');
+        belowRule = I18n.t('outcome_stage_below');
+      } else {
+        inWindowRule = I18n.t('outcome_in_window_hint');
+        aboveRule = I18n.t('outcome_above_hint');
+        belowRule = I18n.t('outcome_below_hint');
+      }
     } else {
       const singleMatch = rawSets.match(/(\d+)/);
       const targetVal = singleMatch ? singleMatch[1] : rawSets;
       targetSummaryHTML = `
-        <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed var(--border-light, rgba(255,255,255,0.1));">
-          <span>🎯</span>
-          <span style="color: var(--text-secondary); font-weight: 600;">${I18n.t('target_clean_reps')}</span>
-          <strong style="color: #60a5fa; font-size: 13px; font-weight: 800;">${targetVal} ${unitStr}</strong>
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 12px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px dashed var(--border-light, rgba(255,255,255,0.1));">
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <span>🎯</span>
+            <span style="color: var(--text-secondary); font-weight: 600;">${I18n.t('target_clean_reps')}</span>
+            <strong style="color: #60a5fa; font-size: 13px; font-weight: 800;">${targetVal} ${unitStr}</strong>
+          </div>
+          ${ex.tempo ? `<div style="font-size: 11px; color: var(--text-muted); background: var(--bg-hover, rgba(255,255,255,0.06)); padding: 2px 8px; border-radius: 6px; border: 1px solid var(--border-light, rgba(255,255,255,0.08)); display: inline-flex; align-items: center; gap: 4px;"><span>⏱️</span><span>${ex.tempo}</span></div>` : ''}
         </div>
       `;
-      inWindowRule = I18n.t('outcome_in_window_hint');
-      aboveRule = I18n.t('outcome_above_hint');
-      belowRule = I18n.t('outcome_below_hint');
+      if (isCardio) {
+        belowLabel = `⚠️ ${I18n.t('set_outcome_below_cardio') || 'עצירה מוקדמת'}`;
+        inWindowRule = I18n.t('outcome_cardio_in_window');
+        aboveRule = I18n.t('outcome_cardio_above');
+        belowRule = I18n.t('outcome_cardio_below');
+      } else if (isTimeHold) {
+        belowLabel = `⚠️ ${I18n.t('set_outcome_below_hold') || 'שבירת מנח'}`;
+        inWindowRule = I18n.t('outcome_hold_in_window');
+        aboveRule = I18n.t('outcome_hold_above');
+        belowRule = I18n.t('outcome_hold_below');
+      } else if (isStageProgression) {
+        inWindowRule = I18n.t('outcome_stage_in_window');
+        aboveRule = I18n.t('outcome_stage_above');
+        belowRule = I18n.t('outcome_stage_below');
+      } else {
+        inWindowRule = I18n.t('outcome_in_window_hint');
+        aboveRule = I18n.t('outcome_above_hint');
+        belowRule = I18n.t('outcome_below_hint');
+      }
     }
 
     return `
@@ -3377,10 +3434,11 @@ const TodayPage = (() => {
             <span>${aboveRule}</span>
           </div>
           <div style="display: flex; align-items: flex-start; gap: 6px;">
-            <span style="color: #ef4444; font-weight: 800; white-space: nowrap;">${I18n.t('set_outcome_below')}:</span>
+            <span style="color: #ef4444; font-weight: 800; white-space: nowrap;">${belowLabel}:</span>
             <span>${belowRule}</span>
           </div>
         </div>
+        ${noteTextareaHTML}
       </div>
     `;
   }
@@ -3741,9 +3799,10 @@ const TodayPage = (() => {
         }
       } else if (curStageName) {
         const isAngle = curStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+        const isIncline = curStageName.toLowerCase().includes('incline');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(curStageName) !== curStageName) ? I18n.t(curStageName) : curStageName;
-        const icon = isAngle ? '📐' : '🎯';
-        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (I18n.t('progression_stage_title') || 'שלב');
+        const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
+        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
         const stageBadgeHTML = `
           <span class="weight-badge angle-stage-badge" style="background: rgba(59, 130, 246, 0.14); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--text-primary); padding: 2px 7px; border-radius: 8px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
             <bdi dir="ltr">${stageLabel}</bdi>
@@ -3783,14 +3842,14 @@ const TodayPage = (() => {
               <span style="font-size: 11px; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 2px 8px; border-radius: 6px; font-weight: 700;">35 min</span>
             </div>
             <div style="color: var(--text-primary); margin-bottom: 8px;">
-              ${I18n.t('rule_vo2_max_norwegian_4x4')}
+              ${(typeof UI !== 'undefined' && UI.enrichHeartRateText) ? UI.enrichHeartRateText(I18n.t('rule_vo2_max_norwegian_4x4')) : I18n.t('rule_vo2_max_norwegian_4x4')}
             </div>
             <div style="display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--text-secondary); border-top: 1px dashed rgba(255,255,255,0.12); padding-top: 8px; margin-top: 4px;">
               <span>🔴 <b style="color: var(--text-primary);">${I18n.t('vo2_effort_label')}:</b> 4m @ 85-95% HRmax (${hrZones.zone5[0]}-${hrZones.zone5[1]} BPM) (בסיס 6.5+ קמ״ש)</span>
               <span>🟢 <b style="color: var(--text-primary);">${I18n.t('vo2_rest_label')}:</b> 3m @ 60-70% HRmax (${hrZones.zone2[0]}-${hrZones.zone2[1]} BPM) (4.0-4.5 קמ״ש)</span>
             </div>
             <div style="margin-top: 6px; font-size: 11.5px; color: #f59e0b; font-weight: 600; line-height: 1.4;">
-              💡 ${I18n.t('vo2_hr_priority_note')}
+              💡 ${(typeof UI !== 'undefined' && UI.enrichHeartRateText) ? UI.enrichHeartRateText(I18n.t('vo2_hr_priority_note')) : I18n.t('vo2_hr_priority_note')}
             </div>
           </div>
         `;
@@ -3972,7 +4031,10 @@ const TodayPage = (() => {
       const exRuleKey = 'rule_' + (ex.name || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
       const exCleanName = (ex.name || '').trim().toUpperCase();
       const exRuleObj = EXERCISE_FORM_RULES[exCleanName] || EXERCISE_FORM_RULES[ex.name];
-      const exRuleText = (I18n.t(exRuleKey) !== exRuleKey) ? I18n.t(exRuleKey) : (exRuleObj ? (typeof exRuleObj === 'string' ? exRuleObj : exRuleObj.rule) : null);
+      let exRuleText = (I18n.t(exRuleKey) !== exRuleKey) ? I18n.t(exRuleKey) : (exRuleObj ? (typeof exRuleObj === 'string' ? exRuleObj : exRuleObj.rule) : null);
+      if (exRuleText && typeof UI !== 'undefined' && typeof UI.enrichHeartRateText === 'function') {
+        exRuleText = UI.enrichHeartRateText(exRuleText);
+      }
       const goldCueHTML = exRuleText && !ex.isWarmup && !lowerExName.includes('mobility') ? `
         <div class="exercise-gold-cue" style="background: rgba(59, 130, 246, 0.08); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 12px; line-height: 1.45; display: flex; align-items: flex-start; gap: 8px; border: 1px solid rgba(59, 130, 246, 0.25);">
           <span style="color: var(--accent-primary); font-weight: 800; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;">🎯 ${I18n.t('cue_gold_standard')}:</span>
@@ -4074,9 +4136,11 @@ const TodayPage = (() => {
                   ${isSensitiveROM ? `<span class="injury-name-badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>` : ''}
                   ${ex.currentStageName ? (() => {
                     const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+                    const isIncline = ex.currentStageName.toLowerCase().includes('incline');
                     const stageLabel = (typeof I18n !== 'undefined' && I18n.t(ex.currentStageName) !== ex.currentStageName) ? I18n.t(ex.currentStageName) : ex.currentStageName;
-                    const icon = isAngle ? '📐' : '🎯';
-                    return `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">${icon} ${stageLabel}</span>`;
+                    const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
+                    const tagTitle = isAngle ? (I18n.t('angle_tag') || 'זווית') : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('progression_stage_title') || 'שלב התקדמות'));
+                    return `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${tagTitle}">${icon} ${stageLabel}</span>`;
                   })() : ''}
                   <button type="button" class="form-rule-info-btn" onclick="event.stopPropagation(); TodayPage.showFormRuleModal('${ex.name.replace(/'/g, "\\'")}')" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-primary); border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 2px;" title="${I18n.t('form_rules_title') || 'חוקי טכניקה'}">ℹ️</button>
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
@@ -5478,7 +5542,7 @@ const TodayPage = (() => {
           </div>
 
           <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; min-height: 38px; display: flex; align-items: center; justify-content: center;">
-            ${I18n.t(p.descKey)}
+            ${(typeof UI !== 'undefined' && UI.enrichHeartRateText) ? UI.enrichHeartRateText(I18n.t(p.descKey)) : I18n.t(p.descKey)}
           </div>
 
           <!-- Target HUD Card -->
@@ -5768,12 +5832,12 @@ const TodayPage = (() => {
       belowTrigger: 'נגיעת עקבים/אגן ברצפה במהלך הזמן המתוכנן.'
     },
     'VO2 MAX NORWEGIAN 4X4': {
-      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-85%-95% דופק מרבי [בסיס 6.5+ קמ״ש בשיפוע השלב, הגבר מהירות/שיפוע לפי הצורך] + 3 דק׳ התאוששות ב-60%-70% דופק [~4.5 קמ״ש]) | 5 דק׳ שחרור. יעד הדופק הוא המדד הקובע!',
-      belowTrigger: 'אי-יכולת להגיע לטווח דופק 85%-95% או לשמור עליו במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
+      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-85%-95% דופק מרבי (159-178 BPM) [בסיס 6.5+ קמ״ש בשיפוע השלב, הגבר מהירות/שיפוע לפי הצורך] + 3 דק׳ התאוששות ב-60%-70% דופק (112-131 BPM) [~4.5 קמ״ש]) | 5 דק׳ שחרור. יעד הדופק הוא המדד הקובע!',
+      belowTrigger: 'אי-יכולת להגיע לטווח דופק 85%-95% (159-178 BPM) או לשמור עליו במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
     },
     'VO2 MAX 4X4': {
-      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-85%-95% דופק מרבי [בסיס 6.5+ קמ״ש בשיפוע השלב, הגבר מהירות/שיפוע לפי הצורך] + 3 דק׳ התאוששות ב-60%-70% דופק [~4.5 קמ״ש]) | 5 דק׳ שחרור. יעד הדופק הוא המדד הקובע!',
-      belowTrigger: 'אי-יכולת להגיע לטווח דופק 85%-95% או לשמור עליו במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
+      rule: '10 דק׳ חימום הליכה | 4×(4 דק׳ מאמץ ב-85%-95% דופק מרבי (159-178 BPM) [בסיס 6.5+ קמ״ש בשיפוע השלב, הגבר מהירות/שיפוע לפי הצורך] + 3 דק׳ התאוששות ב-60%-70% דופק (112-131 BPM) [~4.5 קמ״ש]) | 5 דק׳ שחרור. יעד הדופק הוא המדד הקובע!',
+      belowTrigger: 'אי-יכולת להגיע לטווח דופק 85%-95% (159-178 BPM) או לשמור עליו במשך 4 דקות מלאות, או עצירת האינטרוול מוקדם.'
     }
   };
 
@@ -5787,8 +5851,12 @@ const TodayPage = (() => {
 
     const ruleKey = 'rule_' + (exName || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
     const ruleBelowKey = 'rule_below_trigger_' + (exName || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
-    const ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (typeof ruleObj === 'string' ? ruleObj : ruleObj.rule);
-    const belowTriggerText = (I18n.t(ruleBelowKey) !== ruleBelowKey) ? I18n.t(ruleBelowKey) : (typeof ruleObj === 'object' ? ruleObj.belowTrigger : 'איבוד טכניקה חמור או אובדן קצב (Tempo Loss > 2 שניות).');
+    let ruleText = (I18n.t(ruleKey) !== ruleKey) ? I18n.t(ruleKey) : (typeof ruleObj === 'string' ? ruleObj : ruleObj.rule);
+    let belowTriggerText = (I18n.t(ruleBelowKey) !== ruleBelowKey) ? I18n.t(ruleBelowKey) : (typeof ruleObj === 'object' ? ruleObj.belowTrigger : 'איבוד טכניקה חמור או אובדן קצב (Tempo Loss > 2 שניות).');
+    if (typeof UI !== 'undefined' && typeof UI.enrichHeartRateText === 'function') {
+      ruleText = UI.enrichHeartRateText(ruleText);
+      belowTriggerText = UI.enrichHeartRateText(belowTriggerText);
+    }
 
     UI.showModal(`ℹ️ ${exName} — ${I18n.t('form_rules_title') || 'חוקי טכניקה'}`, `
       <div style="padding: 12px; display: flex; flex-direction: column; gap: 14px; text-align: start;">
