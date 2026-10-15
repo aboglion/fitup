@@ -576,12 +576,12 @@ This is the authoritative specification of all **61 unique exercises** appearing
 | **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12/15 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
 | **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
 | **Arm Block - Single-Arm Curl** | `arm-block-biceps-curl` | myo-reps | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 5 End (Stop: 2 tempo losses) |
-| **Band Neck Flexion & Extension** | `band-neck-flexion` | variation | Band | — | — | — | — | 2 | 15-20 | 3-1-3 slow | 45s | Day 4 Cervical Protocol (Chin-tuck focus) |
-| **Brisk Walking** | `brisk-walking` | timebased | BW | — | — | — | — | 1 | 30-45m | 60-70% HRmax (107-125 BPM for age 43, 4% @ 5.5 km/h base) | 0s | Day 2 Zone 2 Cardio (Weeks 3+) |
-| **Relaxed Walking** | `relaxed-walking` | timebased | BW | — | — | — | — | 1 | 20-30m | 0% @ 4.5 km/h (או עמידה ביעד 8,000–10,000 צעדים יומיים) | 0s | Ramp-up W1–2 / Day 4 Active Recovery |
-| **VO2 Max Norwegian 4x4** | `vo2-max-norwegian-4x4` | interval | BW | — | — | — | — | 4×4m | 16m effort | 85-95% HRmax (151-169 BPM for age 43; Power Walk: 4-6% incline \| Jog/Run $\ge$7.5 km/h: 1-2% incline) | 0s | Day 6 Cardio (Weeks 4+) |
-| **Micro Mobility Protocol** | `micro-mobility-protocol` | timebased | BW | — | — | — | — | 1 | 5m | slow controlled | 0s | Post-workout 90s: Variant A (Upper) / B (Lower) |
-| **Deep Mobility Protocol** | `deep-mobility-protocol` | timebased | BW | — | — | — | — | 1 | 10m | slow deep stretch | 0s | Day 4 Joint & Spinal Health Protocol |
+| **Band Neck Flexion & Extension** | `band-neck-flexion` | variation | — | Band | — | — | — | — | 2 | 15-20 | 3-1-3 slow | 45s | Day 4 Cervical Protocol (Chin-tuck focus) |
+| **Brisk Walking** | `brisk-walking` | timebased | — | BW | — | — | — | — | 1 | 30-45m | 60-70% HRmax (107-125 BPM for age 43, 4% @ 5.5 km/h base) | 0s | Day 2 Zone 2 Cardio (Weeks 3+) |
+| **Relaxed Walking** | `relaxed-walking` | timebased | — | BW | — | — | — | — | 1 | 20-30m | 0% @ 4.5 km/h (או עמידה ביעד 8,000–10,000 צעדים יומיים) | 0s | Ramp-up W1–2 / Day 4 Active Recovery |
+| **VO2 Max Norwegian 4x4** | `vo2-max-norwegian-4x4` | interval | — | BW | — | — | — | — | 4×4m | 16m effort | 85-95% HRmax (151-169 BPM for age 43; Power Walk: 4-6% incline \| Jog/Run $\ge$7.5 km/h: 1-2% incline) | 0s | Day 6 Cardio (Weeks 4+) |
+| **Micro Mobility Protocol** | `micro-mobility-protocol` | timebased | — | BW | — | — | — | — | 1 | 5m | slow controlled | 0s | Post-workout 90s: Variant A (Upper) / B (Lower) |
+| **Deep Mobility Protocol** | `deep-mobility-protocol` | timebased | — | BW | — | — | — | — | 1 | 10m | slow deep stretch | 0s | Day 4 Joint & Spinal Health Protocol |
 | **Wall Sit** | `wall-sit` | timebased | Clinical Fallback | BW | — | — | — | — | 2 | 30-45s | isometric hold at 60°–70° | 60s | Injury Engine Secondary Fallback (Knee 🔴 Squat Substitute) |
 | **Single-Leg Glute Bridge** | `single-leg-glute-bridge` | variation | Clinical Fallback | BW | — | — | — | — | 2 | 10-15 each | 2-1-1 | 60s | Injury Engine Secondary Fallback (Knee 🔴 BSS Substitute) |
 
