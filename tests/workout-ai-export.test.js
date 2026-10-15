@@ -198,11 +198,11 @@ test('AI Workout Export - openAiExportModal opens modal with both options and co
   assert.ok(sandbox._lastModal, 'Modal should be opened');
   assert.ok(sandbox._lastModal.title.includes('ייצוא ל-AI') || sandbox._lastModal.title.includes('Export to AI'));
 
-  // 2. Contains Option 1: Today's workout in English
+  // 2. Contains Option 1: Today's workout in English (without external link buttons)
   assert.ok(sandbox._lastModal.body.includes('TodayPage.copyTodayWorkoutPrompt()'), 'Modal must have copy today workout button');
   assert.ok(sandbox._lastModal.body.includes('TodayPage.downloadTodayWorkoutPrompt()'), 'Modal must have download today workout button');
-  assert.ok(sandbox._lastModal.body.includes('https://chatgpt.com/'), 'Modal must have ChatGPT link');
-  assert.ok(sandbox._lastModal.body.includes('https://gemini.google.com/app'), 'Modal must have Gemini link');
+  assert.ok(!sandbox._lastModal.body.includes('https://chatgpt.com/'), 'Modal must not have external ChatGPT link');
+  assert.ok(!sandbox._lastModal.body.includes('https://gemini.google.com/app'), 'Modal must not have external Gemini link');
 
   // 3. Contains Option 2: Full Program Guide (PROGRAM_GUIDE.md)
   assert.ok(sandbox._lastModal.body.includes('TodayPage.copyFullProgramGuide()'), 'Modal must have copy full program guide button');

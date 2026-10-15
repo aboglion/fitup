@@ -7372,20 +7372,6 @@ const TodayPage = (() => {
             </button>
           </div>
 
-          <!-- Quick AI Links -->
-          <div style="display: flex; gap: 8px;">
-            <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" 
-               class="btn-secondary" 
-               style="flex: 1; text-decoration: none; padding: 7px 10px; font-size: 11.5px; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; color: #10b981; border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.08);">
-              <span>🤖</span> <span>${(typeof I18n !== 'undefined' ? I18n.t('export_workout_open_chatgpt') : '') || 'פתח ב-ChatGPT'}</span>
-            </a>
-            <a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" 
-               class="btn-secondary" 
-               style="flex: 1; text-decoration: none; padding: 7px 10px; font-size: 11.5px; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); background: rgba(59, 130, 246, 0.08);">
-              <span>✨</span> <span>${(typeof I18n !== 'undefined' ? I18n.t('export_workout_open_gemini') : '') || 'פתח ב-Gemini'}</span>
-            </a>
-          </div>
-
           <!-- Preview Collapsible -->
           <details style="margin-top: 2px; font-size: 12px;">
             <summary style="cursor: pointer; color: var(--text-secondary); font-weight: 700; user-select: none; padding: 2px 0;">
