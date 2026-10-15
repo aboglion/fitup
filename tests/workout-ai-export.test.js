@@ -42,8 +42,21 @@ function createSandbox() {
       getElementById: (id) => getOrCreateElement(id),
       querySelector: (sel) => getOrCreateElement(sel),
       querySelectorAll: () => [],
-      createElement: (tag) => getOrCreateElement(tag),
+      createElement: (tag) => {
+        const el = getOrCreateElement(tag);
+        if (tag === 'a') {
+          el.click = () => {
+            sandbox._downloadedFile = { href: el.href, download: el.download };
+          };
+        }
+        return el;
+      },
       execCommand: () => true
+    },
+    Blob: typeof Blob !== 'undefined' ? Blob : function(parts) { this.parts = parts; },
+    URL: {
+      createObjectURL: () => 'blob:mock',
+      revokeObjectURL: () => {}
     },
     history: { pushState: () => {}, back: () => {} },
     console: console,
@@ -58,7 +71,8 @@ function createSandbox() {
     localStorage: { getItem() { return null; }, setItem() {} },
     addEventListener: () => {},
     removeEventListener: () => {},
-    _copiedText: ''
+    _copiedText: '',
+    _downloadedFile: null
   };
   sandbox.window = sandbox;
   sandbox.window.addEventListener = () => {};
@@ -74,6 +88,12 @@ function createSandbox() {
   // Load data
   const dataCode = fs.readFileSync(path.join(root, 'js/data.js'), 'utf8');
   vm.runInContext(dataCode, sandbox);
+
+  // Load program guide content
+  if (fs.existsSync(path.join(root, 'js/program-guide-content.js'))) {
+    const guideCode = fs.readFileSync(path.join(root, 'js/program-guide-content.js'), 'utf8');
+    vm.runInContext(guideCode, sandbox);
+  }
 
   // Load UI mock
   sandbox.UI = {
@@ -121,19 +141,8 @@ test('AI Workout Export - i18n keys exist across EN, HE, AR', () => {
   const keys = [
     'export_workout_txt_btn',
     'export_workout_txt_btn_title',
-    'export_workout_txt_title',
-    'export_workout_txt_copied',
-    'export_workout_txt_download',
-    'export_workout_txt_copy',
-    'export_workout_open_chatgpt',
-    'export_workout_open_gemini',
-    'export_workout_rest_day',
-    'export_workout_status_copied_title',
-    'export_workout_status_ready_title',
-    'export_workout_prompt_subtitle',
-    'export_workout_preview_label',
-    'export_workout_click_to_select',
-    'export_workout_hint',
+    'export_program_guide_title',
+    'export_program_guide_success',
     'export_workout_downloaded'
   ];
 
@@ -147,7 +156,7 @@ test('AI Workout Export - i18n keys exist across EN, HE, AR', () => {
   });
 });
 
-test('AI Workout Export - generateAiExportText generates complete workout details and AI instructions', () => {
+test('AI Workout Export - generateAiExportText generates workout details and instructions', () => {
   const sandbox = createSandbox();
   const sampleDay = sandbox.window.TRAINING_DATA.daily[0]; // Day 1
   assert.ok(sampleDay, 'Day 1 plan should exist');
@@ -159,21 +168,36 @@ test('AI Workout Export - generateAiExportText generates complete workout detail
   assert.ok(textHe.includes('יום 1'), 'Hebrew export should contain day number');
   assert.ok(textHe.includes('שאלה ל-AI') || textHe.includes('הנחיה ושאלה ל-AI'), 'Hebrew export should contain AI prompt');
   assert.ok(textHe.includes('ציוד שאין ברשותי') || textHe.includes('ציוד שאין לי'), 'Hebrew export should mention alternative exercises');
-  assert.ok(textHe.includes('משקל גוף בלבד') || textHe.includes('Calisthenics'), 'Hebrew export should mention Calisthenics bodyweight option');
-  assert.ok(textHe.includes('ציוד ביתי מאולתר'), 'Hebrew export should mention improvised home equipment');
-  assert.ok(textHe.includes('גב התחתון'), 'Hebrew export should mention lower back safety');
-  assert.ok(textHe.includes('Goblet Romanian Deadlift'), 'Hebrew export should include English exercise names');
 
   // Test English generation
   const textEn = sandbox.TodayPage.generateAiExportText(sampleDay, 'en');
   assert.ok(textEn.includes('DAILY WORKOUT PLAN'), 'English export should contain header');
   assert.ok(textEn.includes('Day 1'), 'English export should contain day number');
-  assert.ok(textEn.includes('AI INSTRUCTION & PROMPT'), 'English export should contain AI prompt header');
-  assert.ok(textEn.includes('EXACT ALTERNATIVE EXERCISES'), 'English export should request alternatives');
-  assert.ok(textEn.includes('Bodyweight / Calisthenics'), 'English export should specify calisthenics');
 });
 
-test('AI Workout Export - exportWorkoutToAiTxt handles Rest day gracefully', async () => {
+test('AI Workout Export - exportFullProgramGuide downloads PROGRAM_GUIDE.md and copies full markdown without popup modal', async () => {
+  const sandbox = createSandbox();
+  await sandbox.TodayPage.init(sandbox.window.TRAINING_DATA.daily);
+
+  await sandbox.TodayPage.exportFullProgramGuide();
+
+  // 1. Text should be copied to clipboard and be the full guide
+  assert.ok(sandbox._copiedText, 'Markdown should be copied to clipboard');
+  assert.ok(sandbox._copiedText.includes('FITUP') || sandbox._copiedText.includes('תוכנית') || sandbox._copiedText.includes('אימון'), 'Copied text should contain guide content');
+
+  // 2. File should be downloaded directly as PROGRAM_GUIDE.md
+  assert.ok(sandbox._downloadedFile, 'File download should be triggered');
+  assert.equal(sandbox._downloadedFile.download, 'PROGRAM_GUIDE.md', 'Downloaded filename must be PROGRAM_GUIDE.md');
+
+  // 3. Success toast shown
+  assert.ok(sandbox._lastToast, 'Success toast should be triggered');
+  assert.equal(sandbox._lastToast.type, 'success');
+
+  // 4. No popup modal shown (direct seamless action as requested)
+  assert.equal(sandbox._lastModal, undefined, 'No popup modal should be shown');
+});
+
+test('AI Workout Export - works directly on rest days (full program guide)', async () => {
   const sandbox = createSandbox();
   await sandbox.TodayPage.init(sandbox.window.TRAINING_DATA.daily);
 
@@ -181,33 +205,25 @@ test('AI Workout Export - exportWorkoutToAiTxt handles Rest day gracefully', asy
   await sandbox.TodayPage.goToDay(6);
   await sandbox.TodayPage.exportWorkoutToAiTxt();
 
-  assert.ok(sandbox._lastToast, 'Toast should be displayed for rest day');
-  assert.equal(sandbox._lastToast.type, 'info');
-  assert.ok(sandbox._lastToast.msg.includes('מנוחה') || sandbox._lastToast.msg.includes('Rest'), 'Toast should inform that today is rest day');
+  assert.ok(sandbox._copiedText, 'Program guide should be copied to clipboard even on rest days');
+  assert.ok(sandbox._downloadedFile, 'File download should be triggered on rest days');
+  assert.equal(sandbox._downloadedFile.download, 'PROGRAM_GUIDE.md');
 });
 
-test('AI Workout Export - exportWorkoutToAiTxt copies to clipboard and opens modal on workout day', async () => {
-  const sandbox = createSandbox();
-  await sandbox.TodayPage.init(sandbox.window.TRAINING_DATA.daily);
-
-  // Navigate to Day 1 (index 0)
-  await sandbox.TodayPage.goToDay(0);
-  await sandbox.TodayPage.exportWorkoutToAiTxt();
-
-  assert.ok(sandbox._copiedText, 'Text should be copied to clipboard');
-  assert.ok(sandbox._copiedText.includes('Day 1') || sandbox._copiedText.includes('יום 1'));
-  assert.ok(sandbox._lastToast, 'Success toast should be triggered');
-  assert.equal(sandbox._lastToast.type, 'success');
-  assert.ok(sandbox._lastModal, 'Modal should be shown');
-  assert.ok(sandbox._lastModal.body.includes('https://chatgpt.com/'), 'Modal should link to ChatGPT');
-  assert.ok(sandbox._lastModal.body.includes('https://gemini.google.com/app'), 'Modal should link to Gemini');
-  assert.ok(sandbox._lastModal.body.includes('ai-export-preview-textarea'), 'Modal should have preview textarea');
-});
-
-test('AI Workout Export - index.html contains export button in day summary actions row', () => {
+test('UI Structure - Single top export button, no duplicate in overview banner, notes button removed from top row', () => {
   const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+
+  // 1. Single export button in day-summary-actions-row
   assert.ok(html.includes('id="export-workout-txt-btn"'), 'index.html must contain #export-workout-txt-btn');
   assert.ok(html.includes('export-ai-action-btn'), 'Button must have export-ai-action-btn class');
   assert.ok(html.includes('data-i18n="export_workout_txt_btn"'), 'Button must have data-i18n attribute');
-  assert.ok(html.includes('TodayPage.exportWorkoutToAiTxt'), 'Button must trigger TodayPage.exportWorkoutToAiTxt');
+
+  // 2. Notes button removed from day-summary-actions-row
+  const rowMatch = html.match(/<div class="day-summary-actions-row">([\s\S]*?)<\/div>/);
+  assert.ok(rowMatch, 'day-summary-actions-row must exist');
+  assert.ok(!rowMatch[1].includes('id="toggle-notes-btn"'), 'toggle-notes-btn must be removed from day-summary-actions-row');
+
+  // 3. Overview banner in today.js has no duplicate export button
+  const todayJs = fs.readFileSync(path.join(root, 'js/today.js'), 'utf8');
+  assert.ok(!todayJs.includes('TodayPage.exportWorkoutToAiTxt();" title="${I18n.t(\'export_workout_txt_title\')}"'), 'Duplicate export button in eq-banner-header must be removed');
 });

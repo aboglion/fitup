@@ -805,7 +805,7 @@ const TodayPage = (() => {
 
     const exportTxtBtn = document.getElementById('export-workout-txt-btn');
     if (exportTxtBtn) {
-      exportTxtBtn.addEventListener('click', () => exportWorkoutToAiTxt());
+      exportTxtBtn.addEventListener('click', () => exportFullProgramGuide());
     }
 
     // Auto-save inputs on change
@@ -990,6 +990,10 @@ const TodayPage = (() => {
     // Deload Alert Banner logic
     let deloadBanner = document.getElementById('deload-mode-banner');
     const currentWeekNum = day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1;
+    const isBannerClosed = Boolean(
+      (window._deloadBannerClosed && window._deloadBannerClosed[currentWeekNum]) ||
+      (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('deload_closed_' + currentWeekNum) === '1')
+    );
 
     if (isDeloadDay) {
       if (summaryCard) summaryCard.classList.add('is-deload');
@@ -999,74 +1003,106 @@ const TodayPage = (() => {
         summaryCard.parentNode.insertBefore(deloadBanner, summaryCard);
       }
       if (deloadBanner) {
-        deloadBanner.className = 'deload-warning-banner';
-        const isPassiveRest = checkPassiveRestDetection(currentDayIndex, allTrackingCache);
-        const titleText = day.autoDeload
-          ? I18n.t('auto_deload_title')
-          : (day.isPostponedDeload ? I18n.t('deload_postponed_active_title') : I18n.t('deload_title'));
-        const descText = day.autoDeload
-          ? I18n.t('auto_deload_desc')
-          : (day.isPostponedDeload ? I18n.t('deload_postponed_active_desc') : I18n.t('deload_desc'));
+        if (isBannerClosed) {
+          deloadBanner.className = 'deload-collapsed-wrapper';
+          deloadBanner.innerHTML = `
+            <button type="button" id="btn-open-deload" class="btn btn-sm btn-deload-open-pill">
+              <span>🌿</span> ${I18n.t('open_deload_banner_btn')}
+            </button>
+          `;
+          const openBtn = deloadBanner.querySelector('#btn-open-deload');
+          if (openBtn) {
+            openBtn.onclick = async (e) => {
+              e.preventDefault();
+              if (window._deloadBannerClosed) delete window._deloadBannerClosed[currentWeekNum];
+              try { sessionStorage.removeItem('deload_closed_' + currentWeekNum); } catch (err) {}
+              await render();
+            };
+          }
+        } else {
+          deloadBanner.className = 'deload-warning-banner';
+          const isPassiveRest = checkPassiveRestDetection(currentDayIndex, allTrackingCache);
+          const titleText = day.autoDeload
+            ? I18n.t('auto_deload_title')
+            : (day.isPostponedDeload ? I18n.t('deload_postponed_active_title') : I18n.t('deload_title'));
+          const descText = day.autoDeload
+            ? I18n.t('auto_deload_desc')
+            : (day.isPostponedDeload ? I18n.t('deload_postponed_active_desc') : I18n.t('deload_desc'));
 
-        deloadBanner.innerHTML = `
-          <div class="deload-banner-icon">🌿</div>
-          <div class="deload-banner-content" style="flex: 1;">
-            <strong class="deload-banner-title">${titleText}</strong>
-            <span class="deload-banner-sub">${descText}</span>
-            ${isPassiveRest ? `
-              <div class="deload-smart-alert">
-                <div class="deload-smart-alert-header">
-                  <span>💡</span> <strong>${I18n.t('passive_rest_detected_title')}</strong>
+          deloadBanner.innerHTML = `
+            <div class="deload-banner-icon">🌿</div>
+            <div class="deload-banner-content" style="flex: 1;">
+              <strong class="deload-banner-title">${titleText}</strong>
+              <span class="deload-banner-sub">${descText}</span>
+              ${isPassiveRest ? `
+                <div class="deload-smart-alert">
+                  <div class="deload-smart-alert-header">
+                    <span>💡</span> <strong>${I18n.t('passive_rest_detected_title')}</strong>
+                  </div>
+                  <div class="deload-smart-alert-body">
+                    ${I18n.t('passive_rest_detected_desc')}
+                  </div>
                 </div>
-                <div class="deload-smart-alert-body">
-                  ${I18n.t('passive_rest_detected_desc')}
-                </div>
-              </div>
-            ` : ''}
-            <div class="deload-banner-actions">
-              <button type="button" id="btn-cancel-deload" class="btn btn-sm btn-deload-action btn-deload-cancel">
-                <span>⚡</span> ${I18n.t('cancel_deload_btn')}
-              </button>
-              ${!day.autoDeload ? `
-                <button type="button" id="btn-postpone-deload" class="btn btn-sm btn-deload-action btn-deload-postpone">
-                  <span>⏱️</span> ${I18n.t('postpone_deload_btn')}
-                </button>
               ` : ''}
+              <div class="deload-banner-actions">
+                <button type="button" id="btn-cancel-deload" class="btn btn-sm btn-deload-action btn-deload-cancel">
+                  <span>⚡</span> ${I18n.t('cancel_deload_btn')}
+                </button>
+                ${!day.autoDeload ? `
+                  <button type="button" id="btn-postpone-deload" class="btn btn-sm btn-deload-action btn-deload-postpone">
+                    <span>⏱️</span> ${I18n.t('postpone_deload_btn')}
+                  </button>
+                ` : ''}
+                <button type="button" id="btn-close-deload" class="btn btn-sm btn-deload-action btn-deload-close">
+                  <span>✕</span> ${I18n.t('close_deload_banner_btn')}
+                </button>
+              </div>
             </div>
-          </div>
-        `;
+          `;
 
-        const cancelBtn = deloadBanner.querySelector('#btn-cancel-deload');
-        if (cancelBtn) {
-          cancelBtn.onclick = async (e) => {
-            e.preventDefault();
-            if (day.autoDeload) {
-              window._dismissedAutoDeloadDays = window._dismissedAutoDeloadDays || {};
-              window._dismissedAutoDeloadDays[currentDayIndex] = true;
-            } else {
+          const cancelBtn = deloadBanner.querySelector('#btn-cancel-deload');
+          if (cancelBtn) {
+            cancelBtn.onclick = async (e) => {
+              e.preventDefault();
+              if (day.autoDeload) {
+                window._dismissedAutoDeloadDays = window._dismissedAutoDeloadDays || {};
+                window._dismissedAutoDeloadDays[currentDayIndex] = true;
+              } else {
+                const overrides = (await DB.getSetting('deloadOverrides')) || {};
+                overrides[currentWeekNum] = 'cancelled';
+                await DB.setSetting('deloadOverrides', overrides);
+              }
+              if (window.UI && window.UI.showToast) {
+                UI.showToast(I18n.t('deload_cancelled_title'));
+              }
+              await render();
+            };
+          }
+
+          const postponeBtn = deloadBanner.querySelector('#btn-postpone-deload');
+          if (postponeBtn) {
+            postponeBtn.onclick = async (e) => {
+              e.preventDefault();
               const overrides = (await DB.getSetting('deloadOverrides')) || {};
-              overrides[currentWeekNum] = 'cancelled';
+              overrides[currentWeekNum] = 'postponed';
               await DB.setSetting('deloadOverrides', overrides);
-            }
-            if (window.UI && window.UI.showToast) {
-              UI.showToast(I18n.t('deload_cancelled_title'));
-            }
-            await render();
-          };
-        }
+              if (window.UI && window.UI.showToast) {
+                UI.showToast(I18n.t('deload_postponed_title'));
+              }
+              await render();
+            };
+          }
 
-        const postponeBtn = deloadBanner.querySelector('#btn-postpone-deload');
-        if (postponeBtn) {
-          postponeBtn.onclick = async (e) => {
-            e.preventDefault();
-            const overrides = (await DB.getSetting('deloadOverrides')) || {};
-            overrides[currentWeekNum] = 'postponed';
-            await DB.setSetting('deloadOverrides', overrides);
-            if (window.UI && window.UI.showToast) {
-              UI.showToast(I18n.t('deload_postponed_title'));
-            }
-            await render();
-          };
+          const closeBtn = deloadBanner.querySelector('#btn-close-deload');
+          if (closeBtn) {
+            closeBtn.onclick = async (e) => {
+              e.preventDefault();
+              window._deloadBannerClosed = window._deloadBannerClosed || {};
+              window._deloadBannerClosed[currentWeekNum] = true;
+              try { sessionStorage.setItem('deload_closed_' + currentWeekNum, '1'); } catch (err) {}
+              await render();
+            };
+          }
         }
       }
     } else if (day.deloadCancelled) {
@@ -1077,32 +1113,64 @@ const TodayPage = (() => {
         summaryCard.parentNode.insertBefore(deloadBanner, summaryCard);
       }
       if (deloadBanner) {
-        deloadBanner.className = 'deload-warning-banner deload-cancelled-banner';
-        deloadBanner.innerHTML = `
-          <div class="deload-banner-icon" style="animation: none;">⚡</div>
-          <div class="deload-banner-content" style="flex: 1;">
-            <strong class="deload-banner-title" style="color: #818cf8;">${I18n.t('deload_cancelled_title')}</strong>
-            <span class="deload-banner-sub">${I18n.t('deload_cancelled_desc')}</span>
-            <div class="deload-banner-actions">
-              <button type="button" id="btn-restore-deload" class="btn btn-sm btn-deload-action">
-                <span>↩️</span> ${I18n.t('restore_deload_btn')}
-              </button>
+        if (isBannerClosed) {
+          deloadBanner.className = 'deload-collapsed-wrapper';
+          deloadBanner.innerHTML = `
+            <button type="button" id="btn-open-deload" class="btn btn-sm btn-deload-open-pill">
+              <span>🌿</span> ${I18n.t('open_deload_banner_btn')}
+            </button>
+          `;
+          const openBtn = deloadBanner.querySelector('#btn-open-deload');
+          if (openBtn) {
+            openBtn.onclick = async (e) => {
+              e.preventDefault();
+              if (window._deloadBannerClosed) delete window._deloadBannerClosed[currentWeekNum];
+              try { sessionStorage.removeItem('deload_closed_' + currentWeekNum); } catch (err) {}
+              await render();
+            };
+          }
+        } else {
+          deloadBanner.className = 'deload-warning-banner deload-cancelled-banner';
+          deloadBanner.innerHTML = `
+            <div class="deload-banner-icon" style="animation: none;">⚡</div>
+            <div class="deload-banner-content" style="flex: 1;">
+              <strong class="deload-banner-title" style="color: #818cf8;">${I18n.t('deload_cancelled_title')}</strong>
+              <span class="deload-banner-sub">${I18n.t('deload_cancelled_desc')}</span>
+              <div class="deload-banner-actions">
+                <button type="button" id="btn-restore-deload" class="btn btn-sm btn-deload-action">
+                  <span>↩️</span> ${I18n.t('restore_deload_btn')}
+                </button>
+                <button type="button" id="btn-close-deload" class="btn btn-sm btn-deload-action btn-deload-close">
+                  <span>✕</span> ${I18n.t('close_deload_banner_btn')}
+                </button>
+              </div>
             </div>
-          </div>
-        `;
-        const restoreBtn = deloadBanner.querySelector('#btn-restore-deload');
-        if (restoreBtn) {
-          restoreBtn.onclick = async (e) => {
-            e.preventDefault();
-            const overrides = (await DB.getSetting('deloadOverrides')) || {};
-            delete overrides[currentWeekNum];
-            delete overrides[currentWeekNum - 1];
-            await DB.setSetting('deloadOverrides', overrides);
-            if (window.UI && window.UI.showToast) {
-              UI.showToast(I18n.t('deload_title'));
-            }
-            await render();
-          };
+          `;
+          const restoreBtn = deloadBanner.querySelector('#btn-restore-deload');
+          if (restoreBtn) {
+            restoreBtn.onclick = async (e) => {
+              e.preventDefault();
+              const overrides = (await DB.getSetting('deloadOverrides')) || {};
+              delete overrides[currentWeekNum];
+              delete overrides[currentWeekNum - 1];
+              await DB.setSetting('deloadOverrides', overrides);
+              if (window.UI && window.UI.showToast) {
+                UI.showToast(I18n.t('deload_title'));
+              }
+              await render();
+            };
+          }
+
+          const closeBtn = deloadBanner.querySelector('#btn-close-deload');
+          if (closeBtn) {
+            closeBtn.onclick = async (e) => {
+              e.preventDefault();
+              window._deloadBannerClosed = window._deloadBannerClosed || {};
+              window._deloadBannerClosed[currentWeekNum] = true;
+              try { sessionStorage.setItem('deload_closed_' + currentWeekNum, '1'); } catch (err) {}
+              await render();
+            };
+          }
         }
       }
     } else if (day.deloadPostponed) {
@@ -1113,32 +1181,64 @@ const TodayPage = (() => {
         summaryCard.parentNode.insertBefore(deloadBanner, summaryCard);
       }
       if (deloadBanner) {
-        deloadBanner.className = 'deload-warning-banner deload-postponed-banner';
-        deloadBanner.innerHTML = `
-          <div class="deload-banner-icon" style="animation: none;">⏱️</div>
-          <div class="deload-banner-content" style="flex: 1;">
-            <strong class="deload-banner-title" style="color: #facc15;">${I18n.t('deload_postponed_title')}</strong>
-            <span class="deload-banner-sub">${I18n.t('deload_postponed_desc')}</span>
-            <div class="deload-banner-actions">
-              <button type="button" id="btn-restore-deload" class="btn btn-sm btn-deload-action">
-                <span>↩️</span> ${I18n.t('restore_deload_btn')}
-              </button>
+        if (isBannerClosed) {
+          deloadBanner.className = 'deload-collapsed-wrapper';
+          deloadBanner.innerHTML = `
+            <button type="button" id="btn-open-deload" class="btn btn-sm btn-deload-open-pill">
+              <span>🌿</span> ${I18n.t('open_deload_banner_btn')}
+            </button>
+          `;
+          const openBtn = deloadBanner.querySelector('#btn-open-deload');
+          if (openBtn) {
+            openBtn.onclick = async (e) => {
+              e.preventDefault();
+              if (window._deloadBannerClosed) delete window._deloadBannerClosed[currentWeekNum];
+              try { sessionStorage.removeItem('deload_closed_' + currentWeekNum); } catch (err) {}
+              await render();
+            };
+          }
+        } else {
+          deloadBanner.className = 'deload-warning-banner deload-postponed-banner';
+          deloadBanner.innerHTML = `
+            <div class="deload-banner-icon" style="animation: none;">⏱️</div>
+            <div class="deload-banner-content" style="flex: 1;">
+              <strong class="deload-banner-title" style="color: #facc15;">${I18n.t('deload_postponed_title')}</strong>
+              <span class="deload-banner-sub">${I18n.t('deload_postponed_desc')}</span>
+              <div class="deload-banner-actions">
+                <button type="button" id="btn-restore-deload" class="btn btn-sm btn-deload-action">
+                  <span>↩️</span> ${I18n.t('restore_deload_btn')}
+                </button>
+                <button type="button" id="btn-close-deload" class="btn btn-sm btn-deload-action btn-deload-close">
+                  <span>✕</span> ${I18n.t('close_deload_banner_btn')}
+                </button>
+              </div>
             </div>
-          </div>
-        `;
-        const restoreBtn = deloadBanner.querySelector('#btn-restore-deload');
-        if (restoreBtn) {
-          restoreBtn.onclick = async (e) => {
-            e.preventDefault();
-            const overrides = (await DB.getSetting('deloadOverrides')) || {};
-            delete overrides[currentWeekNum];
-            delete overrides[currentWeekNum - 1];
-            await DB.setSetting('deloadOverrides', overrides);
-            if (window.UI && window.UI.showToast) {
-              UI.showToast(I18n.t('deload_title'));
-            }
-            await render();
-          };
+          `;
+          const restoreBtn = deloadBanner.querySelector('#btn-restore-deload');
+          if (restoreBtn) {
+            restoreBtn.onclick = async (e) => {
+              e.preventDefault();
+              const overrides = (await DB.getSetting('deloadOverrides')) || {};
+              delete overrides[currentWeekNum];
+              delete overrides[currentWeekNum - 1];
+              await DB.setSetting('deloadOverrides', overrides);
+              if (window.UI && window.UI.showToast) {
+                UI.showToast(I18n.t('deload_title'));
+              }
+              await render();
+            };
+          }
+
+          const closeBtn = deloadBanner.querySelector('#btn-close-deload');
+          if (closeBtn) {
+            closeBtn.onclick = async (e) => {
+              e.preventDefault();
+              window._deloadBannerClosed = window._deloadBannerClosed || {};
+              window._deloadBannerClosed[currentWeekNum] = true;
+              try { sessionStorage.setItem('deload_closed_' + currentWeekNum, '1'); } catch (err) {}
+              await render();
+            };
+          }
         }
       }
     } else {
@@ -1332,13 +1432,8 @@ const TodayPage = (() => {
 
     const exportTxtBtn = document.getElementById('export-workout-txt-btn');
     if (exportTxtBtn) {
-      if (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0) {
-        exportTxtBtn.style.opacity = '0.55';
-        exportTxtBtn.setAttribute('title', (typeof I18n !== 'undefined' ? I18n.t('export_workout_rest_day') : '') || 'היום מוגדר כיום מנוחה, אין תרגילים לייצוא.');
-      } else {
-        exportTxtBtn.style.opacity = '1';
-        exportTxtBtn.setAttribute('title', (typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_btn_title') : '') || 'ייצוא תרגילי היום בפורמט TXT מותאם ל-ChatGPT / Gemini');
-      }
+      exportTxtBtn.style.opacity = '1';
+      exportTxtBtn.setAttribute('title', (typeof I18n !== 'undefined' ? I18n.t('export_program_guide_title') : '') || 'ייצוא כל תוכנית האימונים (PROGRAM_GUIDE.md)');
     }
 
 
@@ -2233,9 +2328,6 @@ const TodayPage = (() => {
                   <span style="display: flex; color: var(--accent-primary);">${reportSvgs.report}</span> ${I18n.t('workout_overview_title')}
                 </h3>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                  <button type="button" class="btn-secondary" style="font-size: 11px; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);" onclick="event.stopPropagation(); TodayPage.exportWorkoutToAiTxt();" title="${I18n.t('export_workout_txt_title')}">
-                    📋 ${I18n.t('export_workout_txt_btn')}
-                  </button>
                   <span id="eq-banner-arrow" style="font-size: 12px; color: var(--text-muted); transition: transform 0.3s ease; transform: rotate(${isHidden ? '180deg' : '0deg'});">
                     ▲
                   </span>
@@ -7179,143 +7271,73 @@ const TodayPage = (() => {
     return lines.join('\n');
   }
 
-  /**
-   * Export today's workout as AI prompt text, copy directly to clipboard and show interactive modal
-   */
-  async function exportWorkoutToAiTxt() {
-    const day = allPlanDays[currentDayIndex];
-    if (!day) return;
+  function recopyAiExportText() {
+    exportFullProgramGuide();
+  }
 
-    if (!day.exercises || day.exercises.length === 0 || day.dayType === 'Rest') {
+  function downloadAiExportFile() {
+    exportFullProgramGuide();
+  }
+
+  function showAiExportModal() {
+    exportFullProgramGuide();
+  }
+
+  /**
+   * Export the complete program guide (PROGRAM_GUIDE.md):
+   * Copies the full markdown content to clipboard and triggers direct file download.
+   */
+  async function exportFullProgramGuide() {
+    let mdContent = '';
+
+    // 1. Check window.PROGRAM_GUIDE_TEXT (pre-loaded from js/program-guide-content.js)
+    if (typeof window !== 'undefined' && window.PROGRAM_GUIDE_TEXT) {
+      mdContent = window.PROGRAM_GUIDE_TEXT;
+    }
+
+    // 2. Fallback: try fetching PROGRAM_GUIDE.md
+    if (!mdContent && typeof fetch === 'function') {
+      try {
+        const resp = await fetch('PROGRAM_GUIDE.md');
+        if (resp.ok) {
+          mdContent = await resp.text();
+        }
+      } catch (e) {
+        console.warn('Fetch PROGRAM_GUIDE.md fallback error:', e);
+      }
+    }
+
+    // 3. Fallback: generate from ExporterGuide if available
+    if (!mdContent && typeof ExporterGuide !== 'undefined' && typeof ExporterGuide.generateProgramGuide === 'function') {
+      try {
+        mdContent = await ExporterGuide.generateProgramGuide();
+      } catch (e) {
+        console.warn('ExporterGuide fallback error:', e);
+      }
+    }
+
+    if (!mdContent) {
       if (window.UI && window.UI.toast) {
-        UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_workout_rest_day') : '') || 'היום מוגדר כיום מנוחה, אין תרגילים לייצוא.', 'info');
+        UI.toast('שגיאה בייצוא PROGRAM_GUIDE.md', 'error');
       }
       return;
     }
 
-    const currentLang = (typeof I18n !== 'undefined' && I18n.currentLocale) ? I18n.currentLocale : 'he';
-    const textPrompt = generateAiExportText(day, currentLang);
-    lastGeneratedExportText = textPrompt;
+    // Copy full markdown text directly to clipboard
+    await copyTextToClipboard(mdContent);
 
-    const isCopied = await copyTextToClipboard(textPrompt);
+    // Download PROGRAM_GUIDE.md directly as markdown file
+    downloadAiExportTxt('PROGRAM_GUIDE.md', mdContent);
 
+    // Toast confirmation
     if (window.UI && window.UI.toast) {
-      if (isCopied) {
-        UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_copied') : '') || 'תרגילי האימון הועתקו ללוח! 📋 מוכנים להדבקה ב-ChatGPT או Gemini', 'success');
-      } else {
-        UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_title') : '') || 'פרומפט האימון מוכן לשליחה ל-AI', 'info');
-      }
-    }
-
-    showAiExportModal(day, textPrompt, isCopied);
-  }
-
-  function showAiExportModal(day, textPrompt, isCopied) {
-    const titleText = (typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_title') : '') || 'ייצוא תרגילי האימון ל-AI (ChatGPT / Gemini)';
-    const modalTitle = `<div style="display: flex; align-items: center; gap: 8px;"><span>📋</span> <span>${titleText}</span></div>`;
-    const escapedFilename = `fitup-day-${day.dayNum || 1}-exercises.txt`;
-
-    const chatGptUrl = 'https://chatgpt.com/';
-    const geminiUrl = 'https://gemini.google.com/app';
-
-    const statusTitle = isCopied 
-      ? ((typeof I18n !== 'undefined' ? I18n.t('export_workout_status_copied_title') : '') || 'הועתק ללוח בהצלחה!') 
-      : ((typeof I18n !== 'undefined' ? I18n.t('export_workout_status_ready_title') : '') || 'פרומפט האימון מוכן ל-AI');
-    const subtitle = (typeof I18n !== 'undefined' ? I18n.t('export_workout_prompt_subtitle') : '') || 'הפרומפט הועתק ללוח. הדבק אותו ב-ChatGPT או ב-Gemini לקבלת תרגילים חלופיים מדויקים לציוד שחסר לך.';
-    const chatGptLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_open_chatgpt') : '') || 'פתח ב-ChatGPT';
-    const geminiLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_open_gemini') : '') || 'פתח ב-Gemini';
-    const copyLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_copy') : '') || 'העתק שוב ללוח';
-    const downloadLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_download') : '') || 'הורד קובץ TXT';
-    const previewLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_preview_label') : '') || 'תצוגה מקדימה של הטקסט:';
-    const clickHint = (typeof I18n !== 'undefined' ? I18n.t('export_workout_click_to_select') : '') || '(לחיצה על התיבה תסמן את כל הטקסט)';
-    const hintText = (typeof I18n !== 'undefined' ? I18n.t('export_workout_hint') : '') || 'טיפ: פתח את ChatGPT או Gemini, הדבק (Ctrl+V או לחיצה ארוכה \'הדבק\') ולחץ שלח!';
-
-    const modalBody = `
-      <div class="ai-export-modal-content" style="display: flex; flex-direction: column; gap: 14px; text-align: start;">
-        
-        <!-- Status Banner -->
-        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 24px; flex-shrink: 0;">${isCopied ? '✅' : '📋'}</span>
-          <div style="font-size: 13px; line-height: 1.4; color: var(--text-primary);">
-            <div style="font-weight: 800; color: #10b981; margin-bottom: 2px;">
-              ${statusTitle}
-            </div>
-            <div style="color: var(--text-secondary); font-size: 12px;">
-              ${subtitle}
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick AI & Export Action Buttons -->
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-          <a href="${chatGptUrl}" target="_blank" rel="noopener noreferrer" 
-             class="btn-primary" 
-             style="flex: 1; min-width: 130px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 14px; font-weight: 700; font-size: 13px; border-radius: 10px; background: linear-gradient(135deg, #10a37f, #0d8a6c); color: white; box-shadow: 0 4px 12px rgba(16, 163, 127, 0.25);">
-            <span>🤖</span> <span>${chatGptLabel}</span>
-          </a>
-          <a href="${geminiUrl}" target="_blank" rel="noopener noreferrer" 
-             class="btn-primary" 
-             style="flex: 1; min-width: 130px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 14px; font-weight: 700; font-size: 13px; border-radius: 10px; background: linear-gradient(135deg, #4285f4, #1a73e8); color: white; box-shadow: 0 4px 12px rgba(66, 133, 244, 0.25);">
-            <span>✨</span> <span>${geminiLabel}</span>
-          </a>
-        </div>
-
-        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-          <button type="button" id="ai-export-recopy-btn" class="btn-secondary" 
-                  style="flex: 1; min-width: 120px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; font-size: 12px; font-weight: 700; border-radius: 8px;"
-                  onclick="TodayPage.recopyAiExportText()">
-            <span>📋</span> <span id="recopy-btn-text">${copyLabel}</span>
-          </button>
-          <button type="button" class="btn-secondary" 
-                  style="flex: 1; min-width: 120px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; font-size: 12px; font-weight: 700; border-radius: 8px;"
-                  onclick="TodayPage.downloadAiExportFile('${escapedFilename}')">
-            <span>💾</span> <span>${downloadLabel}</span>
-          </button>
-        </div>
-
-        <!-- Preview Textarea -->
-        <div style="display: flex; flex-direction: column; gap: 6px;">
-          <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
-            <span>${previewLabel}</span>
-            <span style="font-size: 11px; color: var(--text-muted);">${clickHint}</span>
-          </label>
-          <textarea id="ai-export-preview-textarea" readonly 
-                    rows="9" 
-                    dir="auto"
-                    style="width: 100%; box-sizing: border-box; background: var(--bg-primary, #0f172a); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; line-height: 1.5; padding: 12px; resize: vertical; user-select: all;"
-                    onclick="this.select();">${escapeHtml(textPrompt)}</textarea>
-        </div>
-
-        <div style="font-size: 11.5px; color: var(--text-muted); text-align: center;">
-          💡 ${hintText}
-        </div>
-
-      </div>
-    `;
-
-    if (window.UI && window.UI.showModal) {
-      UI.showModal(modalTitle, modalBody);
+      const msg = (typeof I18n !== 'undefined' ? I18n.t('export_program_guide_success') : '') || 'קובץ PROGRAM_GUIDE.md יוצא והועתק ללוח בהצלחה! 📋';
+      UI.toast(msg, 'success');
     }
   }
 
-  async function recopyAiExportText() {
-    if (!lastGeneratedExportText) return;
-    const ok = await copyTextToClipboard(lastGeneratedExportText);
-    const btnText = document.getElementById('recopy-btn-text');
-    if (btnText) {
-      const orig = btnText.textContent;
-      btnText.textContent = ok ? ((typeof I18n !== 'undefined' ? I18n.t('copied_badge') : '') || '✓ הועתק!') : orig;
-      setTimeout(() => { if (btnText) btnText.textContent = orig; }, 2000);
-    }
-    if (window.UI && window.UI.toast) {
-      UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_copied') : '') || 'תרגילי האימון הועתקו ללוח! 📋 מוכנים להדבקה ב-ChatGPT או Gemini', 'success');
-    }
-  }
-
-  function downloadAiExportFile(filename) {
-    if (!lastGeneratedExportText) return;
-    downloadAiExportTxt(filename, lastGeneratedExportText);
-  }
+  // Alias for backward compatibility
+  const exportWorkoutToAiTxt = exportFullProgramGuide;
 
   return {
     init,
@@ -7363,6 +7385,7 @@ const TodayPage = (() => {
     getCurrentDayIndex: () => currentDayIndex,
     resolveExerciseStage,
     getActiveExerciseName,
+    exportFullProgramGuide,
     exportWorkoutToAiTxt,
     generateAiExportText,
     recopyAiExportText,

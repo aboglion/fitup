@@ -598,6 +598,8 @@ const I18n = (() => {
       export_workout_click_to_select: "(Click box to select all)",
       export_workout_hint: "Tip: Simply open ChatGPT or Gemini, paste (Ctrl+V / Long press 'Paste') and hit send!",
       export_workout_downloaded: "Workout file downloaded successfully! 💾",
+      export_program_guide_title: "Export full workout program (PROGRAM_GUIDE.md)",
+      export_program_guide_success: "PROGRAM_GUIDE.md copied to clipboard and downloaded! 📋",
 
       // Timer
       timer_rest_done: "Rest is over! 💪",
@@ -1117,6 +1119,8 @@ const I18n = (() => {
       deload_postponed_active_desc: "This week is running in Deload mode as postponed from last week (max 2 sets, reduced load).",
       passive_rest_detected_title: "Passive Rest Week Detected",
       passive_rest_detected_desc: "0 workouts logged in the last 7 days. Your joints and CNS are fully rested! An active deload may cause unnecessary detraining. Recommended: train full.",
+      close_deload_banner_btn: "Close Window",
+      open_deload_banner_btn: "Open Deload Management",
 
       // Nutrition
       nut_date_label: "Date:",
@@ -2122,6 +2126,8 @@ const I18n = (() => {
       export_workout_click_to_select: "(לחיצה על התיבה תסמן את כל הטקסט)",
       export_workout_hint: "טיפ: פתח את ChatGPT או Gemini, הדבק (Ctrl+V או לחיצה ארוכה 'הדבק') ולחץ שלח!",
       export_workout_downloaded: "קובץ האימון ירד בהצלחה! 💾",
+      export_program_guide_title: "ייצוא כל תוכנית האימונים (PROGRAM_GUIDE.md)",
+      export_program_guide_success: "קובץ PROGRAM_GUIDE.md יוצא והועתק ללוח בהצלחה! 📋",
 
       timer_rest_done: "המנוחה הסתיימה! 💪",
       timer_title: "⏱️ טיימר מנוחה",
@@ -2606,6 +2612,8 @@ const I18n = (() => {
       deload_postponed_active_desc: "שבוע זה פועל במצב דילואד כפי שנדחה מהשבוע הקודם (2 סטים, עומס מופחת).",
       passive_rest_detected_title: "זוהה שבוע מנוחה פסיבי",
       passive_rest_detected_desc: "לא נרשמו אימונים ב-7 הימים האחרונים. המפרקים ומערכת העצבים כבר התאוששו לחלוטין! דילואד כעת עלול לגרום לתת-גירוי (Detraining). מומלץ להתאמן מלא.",
+      close_deload_banner_btn: "סגור חלון",
+      open_deload_banner_btn: "פתח ניהול דילואד",
 
       nut_date_label: "תאריך:",
       nut_kcal_label: "קק\"ל",
@@ -3758,6 +3766,8 @@ const I18n = (() => {
       deload_postponed_active_desc: "يعمل هذا الأسبوع بوضع التخفيف كما تم تأجيله من الأسبوع الماضي (مجموعتان، حمل مخفض).",
       passive_rest_detected_title: "تم اكتشاف أسبوع راحة سلبية",
       passive_rest_detected_desc: "لم يتم تسجيل تمارين في آخر 7 أيام. مفاصلك وجهازك العصبي في تعافٍ كامل! التخفيف الآن قد يسبب تراجعاً. يُنصح بالتمرين الكامل.",
+      close_deload_banner_btn: "إغلاق النافذة",
+      open_deload_banner_btn: "فتح إدارة التخفيف",
 
       nut_date_label: "التاريخ:",
       nut_no_meals: "لم يتم تسجيل وجبات اليوم بعد 🥗",
@@ -3808,6 +3818,8 @@ const I18n = (() => {
       export_workout_click_to_select: "(اضغط لتحديد الكل)",
       export_workout_hint: "تلميح: افتح ChatGPT أو Gemini، ثم قم باللصق واضغط إرسال!",
       export_workout_downloaded: "تم تحميل ملف التمرين بنجاح! 💾",
+      export_program_guide_title: "تصدير دليل البرنامج كاملاً (PROGRAM_GUIDE.md)",
+      export_program_guide_success: "تم تصدير ونسخ ملف PROGRAM_GUIDE.md إلى الحافظة بنجاح! 📋",
 
       timer_rest_done: "انتهت الراحة! 💪",
       timer_title: "⏱️ مؤقت الراحة",

@@ -245,9 +245,6 @@
 
             <!-- Row 3: Full-Width Action Buttons Bar -->
             <div class="day-summary-actions-row">
-              <button id="toggle-notes-btn" class="day-summary-action-btn" title="Notes">
-                <span>📝</span> <span data-i18n="notes">Notes</span>
-              </button>
               <button id="toggle-calendar-btn" class="day-summary-action-btn" title="Dates">
                 <span>📆</span> <span data-i18n="dates">Dates</span>
               </button>
@@ -260,10 +257,10 @@
                 <span data-i18n="daily_briefing_btn">🤖 Briefing</span>
               </button>
               <button id="export-workout-txt-btn" class="day-summary-action-btn export-ai-action-btn"
-                onclick="if(window.TodayPage && window.TodayPage.exportWorkoutToAiTxt){window.TodayPage.exportWorkoutToAiTxt();}"
-                data-i18n-title="export_workout_txt_btn_title"
-                title="Export Workout to AI">
-                <span>📋</span> <span data-i18n="export_workout_txt_btn">Export to AI</span>
+                onclick="if(window.TodayPage && window.TodayPage.exportFullProgramGuide){window.TodayPage.exportFullProgramGuide();}else if(window.TodayPage && window.TodayPage.exportWorkoutToAiTxt){window.TodayPage.exportWorkoutToAiTxt();}"
+                data-i18n-title="export_program_guide_title"
+                title="ייצוא כל תוכנית האימונים (PROGRAM_GUIDE.md)">
+                <span>📋</span> <span data-i18n="export_workout_txt_btn">יצוא ל-AI</span>
               </button>
             </div>
 
@@ -1301,6 +1298,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="js/data.js?v=147"></script>
+  <script src="js/program-guide-content.js?v=156"></script>
   <script src="js/preloader.js?v=151"></script>
   <script src="js/i18n.js?v=156"></script>
   <script src="js/effects3d.js?v=147"></script>
