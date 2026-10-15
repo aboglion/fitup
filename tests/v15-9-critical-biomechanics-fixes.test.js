@@ -29,10 +29,11 @@ test('v15.9 Fix 1: Lateral Raise Ping-Pong Bug Resolution (10-18 Rep Window & Tr
 
   // Verify Transition Buffer in ProgressionEngine:
   // Trainee at 8kg with sessionsAtWeight = 0, facing 2nd below session (consecutiveBelow = 1)
-  // Normally consecutiveBelow = 1 would trigger a -2kg decrease to 6kg!
+  // When attemptsAtCurrentWeight <= 1 (session 1-2 at new weight), buffer protects from premature demotion:
   const exState = {
     currentWeightKg: 8,
     sessionsAtWeight: 0,
+    attemptsAtCurrentWeight: 1, // 2nd attempt at 8kg
     consecutiveBelow: 1,
     history: []
   };
@@ -45,6 +46,20 @@ test('v15.9 Fix 1: Lateral Raise Ping-Pong Bug Resolution (10-18 Rep Window & Tr
   assert.equal(decision.action, 'maintain', 'Transition buffer must maintain 8kg instead of premature demotion');
   assert.equal(decision.transitionBufferActive, true, 'transitionBufferActive must be true');
   assert.equal(decision.newWeight, 8, 'Weight must remain at 8kg');
+
+  // Verify Buffer Expiration (Infinite Loop Prevention):
+  // When attemptsAtCurrentWeight >= 2 (attempt 3+ at new weight), buffer expires and standard BELOW demotion executes:
+  const expiredState = {
+    currentWeightKg: 8,
+    sessionsAtWeight: 0,
+    attemptsAtCurrentWeight: 2, // 3rd attempt at 8kg - grace period expired
+    consecutiveBelow: 1,
+    history: []
+  };
+  const expiredDecision = engine.calculateWeightedDecision(latEx, expiredState, setResults, 6);
+  assert.equal(expiredDecision.action, 'decrease', 'Buffer must expire after 2 sessions, triggering demotion');
+  assert.equal(expiredDecision.newWeight, 6, 'Weight must decrease to 6kg');
+  assert.equal(expiredDecision.reason, 'consecutive_below_decrease', 'Reason must be consecutive_below_decrease');
 });
 
 test('v15.9 Fix 2: Volume Stepping vs. Arm Block Volume Collision (Suppression Rule)', () => {

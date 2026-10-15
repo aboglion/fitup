@@ -247,9 +247,14 @@
         const consecutiveBelow = (state && typeof state.consecutiveBelow === 'number') ? state.consecutiveBelow : 0;
         const baseSets = exercise.sets || (isGrpA ? 3 : 2);
         const isLowWeightTier = !isGrpA && currentWeight <= 10;
-        const isTransitionPhase = (state && (state.sessionsAtWeight || 0) < 2);
-
         // Transition Rep Buffer (v15.9):
+        // Strictly tracked via attemptsAtCurrentWeight <= 2 (attempts prior to this session < 2)
+        // so the buffer expires after 2 sessions and cannot loop indefinitely.
+        const attempts = (state && typeof state.attemptsAtCurrentWeight === 'number')
+          ? state.attemptsAtCurrentWeight
+          : (state && typeof state.sessionsAtWeight === 'number' ? state.sessionsAtWeight : 0);
+        const isTransitionPhase = (attempts < 2);
+
         // On Tier 1/2 load jumps for Group B isolations (6->8 kg: +33.3%, 8->10 kg: +25.0%),
         // during the first 2 sessions at the new weight, a 2-session adaptation grace period
         // is granted where a 2nd below session maintains weight to prevent premature ping-pong demotion.
@@ -938,6 +943,7 @@
         currentWeightKg: startWeight,
         currentStageIndex: 0,
         sessionsAtWeight: 0,
+        attemptsAtCurrentWeight: 0,
         consecutiveBelow: 0,
         unlocked: exercise ? (exercise.unlocked ?? true) : true,
         lastUpdated: new Date().toISOString()
@@ -1072,13 +1078,18 @@
         state.currentWeightKg = decision.newWeight;
         if (decision.action === 'increase' || decision.action === 'decrease') {
           state.sessionsAtWeight = 0;
+          state.attemptsAtCurrentWeight = 0;
           state.consecutiveBelow = 0;
         } else if (decision.action === 'maintain') {
+          state.attemptsAtCurrentWeight = (state.attemptsAtCurrentWeight || 0) + 1;
           if (decision.reason === 'bridge_fatigue_step_down') {
             // Sisyphus Protection: step down volume bridge by 1 set rather than wiping progress
             state.sessionsAtWeight = typeof decision.newSessionsAtWeight === 'number'
               ? decision.newSessionsAtWeight
               : Math.max(0, (state.sessionsAtWeight || 1) - 1);
+            state.consecutiveBelow = 0;
+          } else if (decision.reason === 'transition_buffer_maintain') {
+            // Transition buffer maintains weight and resets consecutiveBelow during initial 2 attempts
             state.consecutiveBelow = 0;
           } else if (decision.reason === 'first_below_maintain') {
             // If they were in an expanded volume bridge (>1 session), step down by 1 rather than resetting to 0
