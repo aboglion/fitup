@@ -139,7 +139,74 @@ const TodayPage = (() => {
     const weekNum = day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1;
     // v15.7 Accelerated: deload cadence is settings-driven (every 12 weeks)
     const deloadEvery = window.TRAINING_DATA?.progressionSettings?.deloadEveryWeeks || 12;
-    const isDeload = weekNum % deloadEvery === 0;
+    const baseIsDeload = weekNum % deloadEvery === 0;
+
+    // Deload Overrides & Postponement (v15.7.2)
+    let deloadOverrides = {};
+    try {
+      if (window.DB && window.DB.getSetting) {
+        deloadOverrides = (await DB.getSetting('deloadOverrides')) || {};
+      }
+    } catch (e) {
+      console.warn('[Today] Failed to load deloadOverrides:', e);
+    }
+
+    let isDeload = baseIsDeload;
+    let isDeloadPostponedHere = false;
+
+    if (deloadOverrides[weekNum] === 'cancelled') {
+      isDeload = false;
+      day.deloadCancelled = true;
+      day.deloadPostponed = false;
+    } else if (deloadOverrides[weekNum] === 'postponed') {
+      isDeload = false;
+      day.deloadPostponed = true;
+      day.deloadCancelled = false;
+    } else if (deloadOverrides[weekNum - 1] === 'postponed') {
+      isDeload = true;
+      isDeloadPostponedHere = true;
+      day.isPostponedDeload = true;
+    } else {
+      day.deloadCancelled = false;
+      day.deloadPostponed = false;
+      day.isPostponedDeload = false;
+    }
+
+    // If scheduled deload was cancelled or postponed for this week, un-deload the day
+    if (baseIsDeload && !isDeload) {
+      day.isDeload = false;
+      if (day.dayType && day.dayType.includes('Deload')) {
+        day.dayType = day.dayType.replace(/\s*\(Deload\)/gi, '').trim();
+      }
+      // Restore normal sets from reference non-deload week
+      const refDayIdx = currentDayIndex >= 7 ? (currentDayIndex - 7) : (currentDayIndex + 7);
+      const refDay = (allPlanDays && allPlanDays[refDayIdx]) ? allPlanDays[refDayIdx] : null;
+      if (refDay && refDay.exercises && Array.isArray(day.exercises)) {
+        day.exercises.forEach(ex => {
+          const match = refDay.exercises.find(r => (r.id && ex.id && r.id === ex.id) || r.name === ex.name);
+          if (match) {
+            ex.sets = match.sets;
+            ex.repWindow = match.repWindow;
+            if (match.structure) ex.structure = match.structure;
+            if (match.pairId !== undefined) ex.pairId = match.pairId;
+            if (match.orderInPair !== undefined) ex.orderInPair = match.orderInPair;
+          }
+        });
+      }
+    } else if (isDeloadPostponedHere) {
+      day.isDeload = true;
+      if (day.dayType && !day.dayType.includes('Deload') && !day.dayType.includes('Rest')) {
+        day.dayType = `${day.dayType} (Deload)`;
+      }
+      const ceiling = window.TRAINING_DATA?.progressionSettings?.deloadSetsCeiling || 2;
+      day.exercises.forEach(ex => {
+        if (!ex.sets || typeof ex.sets !== 'string') return;
+        const mult = ex.sets.match(/^(\d+)\s*×/);
+        if (mult && parseInt(mult[1]) > ceiling) {
+          ex.sets = ex.sets.replace(/^\d+\s*×/, `${ceiling}×`);
+        }
+      });
+    }
 
     let statesList = [];
     try {
@@ -241,7 +308,9 @@ const TodayPage = (() => {
 
     // v15.7 Accelerated: auto-regulated deload detection (2 consecutive failed sessions,
     // excessive demotions, or repeated joint-pain flags) — applies deload caps to this session.
-    if (window.ProgressionEngine && window.ProgressionEngine.checkAutoDeloadTrigger && !isDeload) {
+    if (window._dismissedAutoDeloadDays && window._dismissedAutoDeloadDays[currentDayIndex]) {
+      day.autoDeload = false;
+    } else if (window.ProgressionEngine && window.ProgressionEngine.checkAutoDeloadTrigger && !isDeload) {
       try {
         const autoDeload = await window.ProgressionEngine.checkAutoDeloadTrigger(currentDayIndex);
         if (autoDeload && autoDeload.triggered) {
@@ -734,6 +803,11 @@ const TodayPage = (() => {
       openBriefingBtn.addEventListener('click', () => checkAndShowDailyBriefing(true));
     }
 
+    const exportTxtBtn = document.getElementById('export-workout-txt-btn');
+    if (exportTxtBtn) {
+      exportTxtBtn.addEventListener('click', () => exportWorkoutToAiTxt());
+    }
+
     // Auto-save inputs on change
     const actualRpe = document.getElementById('actual-rpe');
     if (actualRpe) actualRpe.addEventListener('change', autoSave);
@@ -839,6 +913,13 @@ const TodayPage = (() => {
     }
   }
 
+  function checkPassiveRestDetection(dayIndex, allTracking) {
+    if (!allTracking || !Array.isArray(allTracking) || dayIndex < 7) return false;
+    const startIdx = Math.max(0, dayIndex - 7);
+    const completedPastWeek = allTracking.filter(t => t && t.dayIndex >= startIdx && t.dayIndex < dayIndex && t.completed);
+    return completedPastWeek.length === 0;
+  }
+
   /**
    * Render the today page
    */
@@ -871,7 +952,7 @@ const TodayPage = (() => {
 
     // Update header badges
     const typeInfo = UI.getDayTypeInfo(day.dayType);
-    const isDeloadDay = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload')) || (day.week && day.week.includes('Deload')) || Boolean(day.autoDeload);
+    const isDeloadDay = Boolean((day.isDeload || day.autoDeload || typeInfo.isDeload) && !day.deloadCancelled && !day.deloadPostponed);
 
     // Deload UI Background differentiation
     if (isDeloadDay) {
@@ -908,20 +989,157 @@ const TodayPage = (() => {
 
     // Deload Alert Banner logic
     let deloadBanner = document.getElementById('deload-mode-banner');
+    const currentWeekNum = day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1;
+
     if (isDeloadDay) {
       if (summaryCard) summaryCard.classList.add('is-deload');
       if (!deloadBanner && summaryCard) {
         deloadBanner = document.createElement('div');
         deloadBanner.id = 'deload-mode-banner';
+        summaryCard.parentNode.insertBefore(deloadBanner, summaryCard);
+      }
+      if (deloadBanner) {
         deloadBanner.className = 'deload-warning-banner';
+        const isPassiveRest = checkPassiveRestDetection(currentDayIndex, allTrackingCache);
+        const titleText = day.autoDeload
+          ? I18n.t('auto_deload_title')
+          : (day.isPostponedDeload ? I18n.t('deload_postponed_active_title') : I18n.t('deload_title'));
+        const descText = day.autoDeload
+          ? I18n.t('auto_deload_desc')
+          : (day.isPostponedDeload ? I18n.t('deload_postponed_active_desc') : I18n.t('deload_desc'));
+
         deloadBanner.innerHTML = `
           <div class="deload-banner-icon">🌿</div>
-          <div class="deload-banner-content">
-            <strong class="deload-banner-title">${day.autoDeload ? I18n.t('auto_deload_title') : I18n.t('deload_title')}</strong>
-            <span class="deload-banner-sub">${day.autoDeload ? I18n.t('auto_deload_desc') : I18n.t('deload_desc')}</span>
+          <div class="deload-banner-content" style="flex: 1;">
+            <strong class="deload-banner-title">${titleText}</strong>
+            <span class="deload-banner-sub">${descText}</span>
+            ${isPassiveRest ? `
+              <div class="deload-smart-alert">
+                <div class="deload-smart-alert-header">
+                  <span>💡</span> <strong>${I18n.t('passive_rest_detected_title')}</strong>
+                </div>
+                <div class="deload-smart-alert-body">
+                  ${I18n.t('passive_rest_detected_desc')}
+                </div>
+              </div>
+            ` : ''}
+            <div class="deload-banner-actions">
+              <button type="button" id="btn-cancel-deload" class="btn btn-sm btn-deload-action btn-deload-cancel">
+                <span>⚡</span> ${I18n.t('cancel_deload_btn')}
+              </button>
+              ${!day.autoDeload ? `
+                <button type="button" id="btn-postpone-deload" class="btn btn-sm btn-deload-action btn-deload-postpone">
+                  <span>⏱️</span> ${I18n.t('postpone_deload_btn')}
+                </button>
+              ` : ''}
+            </div>
           </div>
         `;
+
+        const cancelBtn = deloadBanner.querySelector('#btn-cancel-deload');
+        if (cancelBtn) {
+          cancelBtn.onclick = async (e) => {
+            e.preventDefault();
+            if (day.autoDeload) {
+              window._dismissedAutoDeloadDays = window._dismissedAutoDeloadDays || {};
+              window._dismissedAutoDeloadDays[currentDayIndex] = true;
+            } else {
+              const overrides = (await DB.getSetting('deloadOverrides')) || {};
+              overrides[currentWeekNum] = 'cancelled';
+              await DB.setSetting('deloadOverrides', overrides);
+            }
+            if (window.UI && window.UI.showToast) {
+              UI.showToast(I18n.t('deload_cancelled_title'));
+            }
+            await render();
+          };
+        }
+
+        const postponeBtn = deloadBanner.querySelector('#btn-postpone-deload');
+        if (postponeBtn) {
+          postponeBtn.onclick = async (e) => {
+            e.preventDefault();
+            const overrides = (await DB.getSetting('deloadOverrides')) || {};
+            overrides[currentWeekNum] = 'postponed';
+            await DB.setSetting('deloadOverrides', overrides);
+            if (window.UI && window.UI.showToast) {
+              UI.showToast(I18n.t('deload_postponed_title'));
+            }
+            await render();
+          };
+        }
+      }
+    } else if (day.deloadCancelled) {
+      if (summaryCard) summaryCard.classList.remove('is-deload');
+      if (!deloadBanner && summaryCard) {
+        deloadBanner = document.createElement('div');
+        deloadBanner.id = 'deload-mode-banner';
         summaryCard.parentNode.insertBefore(deloadBanner, summaryCard);
+      }
+      if (deloadBanner) {
+        deloadBanner.className = 'deload-warning-banner deload-cancelled-banner';
+        deloadBanner.innerHTML = `
+          <div class="deload-banner-icon" style="animation: none;">⚡</div>
+          <div class="deload-banner-content" style="flex: 1;">
+            <strong class="deload-banner-title" style="color: #818cf8;">${I18n.t('deload_cancelled_title')}</strong>
+            <span class="deload-banner-sub">${I18n.t('deload_cancelled_desc')}</span>
+            <div class="deload-banner-actions">
+              <button type="button" id="btn-restore-deload" class="btn btn-sm btn-deload-action">
+                <span>↩️</span> ${I18n.t('restore_deload_btn')}
+              </button>
+            </div>
+          </div>
+        `;
+        const restoreBtn = deloadBanner.querySelector('#btn-restore-deload');
+        if (restoreBtn) {
+          restoreBtn.onclick = async (e) => {
+            e.preventDefault();
+            const overrides = (await DB.getSetting('deloadOverrides')) || {};
+            delete overrides[currentWeekNum];
+            delete overrides[currentWeekNum - 1];
+            await DB.setSetting('deloadOverrides', overrides);
+            if (window.UI && window.UI.showToast) {
+              UI.showToast(I18n.t('deload_title'));
+            }
+            await render();
+          };
+        }
+      }
+    } else if (day.deloadPostponed) {
+      if (summaryCard) summaryCard.classList.remove('is-deload');
+      if (!deloadBanner && summaryCard) {
+        deloadBanner = document.createElement('div');
+        deloadBanner.id = 'deload-mode-banner';
+        summaryCard.parentNode.insertBefore(deloadBanner, summaryCard);
+      }
+      if (deloadBanner) {
+        deloadBanner.className = 'deload-warning-banner deload-postponed-banner';
+        deloadBanner.innerHTML = `
+          <div class="deload-banner-icon" style="animation: none;">⏱️</div>
+          <div class="deload-banner-content" style="flex: 1;">
+            <strong class="deload-banner-title" style="color: #facc15;">${I18n.t('deload_postponed_title')}</strong>
+            <span class="deload-banner-sub">${I18n.t('deload_postponed_desc')}</span>
+            <div class="deload-banner-actions">
+              <button type="button" id="btn-restore-deload" class="btn btn-sm btn-deload-action">
+                <span>↩️</span> ${I18n.t('restore_deload_btn')}
+              </button>
+            </div>
+          </div>
+        `;
+        const restoreBtn = deloadBanner.querySelector('#btn-restore-deload');
+        if (restoreBtn) {
+          restoreBtn.onclick = async (e) => {
+            e.preventDefault();
+            const overrides = (await DB.getSetting('deloadOverrides')) || {};
+            delete overrides[currentWeekNum];
+            delete overrides[currentWeekNum - 1];
+            await DB.setSetting('deloadOverrides', overrides);
+            if (window.UI && window.UI.showToast) {
+              UI.showToast(I18n.t('deload_title'));
+            }
+            await render();
+          };
+        }
       }
     } else {
       if (summaryCard) summaryCard.classList.remove('is-deload');
@@ -1110,6 +1328,17 @@ const TodayPage = (() => {
       rpeBadge.style.display = '';
     } else {
       rpeBadge.style.display = 'none';
+    }
+
+    const exportTxtBtn = document.getElementById('export-workout-txt-btn');
+    if (exportTxtBtn) {
+      if (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0) {
+        exportTxtBtn.style.opacity = '0.55';
+        exportTxtBtn.setAttribute('title', (typeof I18n !== 'undefined' ? I18n.t('export_workout_rest_day') : '') || 'היום מוגדר כיום מנוחה, אין תרגילים לייצוא.');
+      } else {
+        exportTxtBtn.style.opacity = '1';
+        exportTxtBtn.setAttribute('title', (typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_btn_title') : '') || 'ייצוא תרגילי היום בפורמט TXT מותאם ל-ChatGPT / Gemini');
+      }
     }
 
 
@@ -2003,9 +2232,14 @@ const TodayPage = (() => {
                 <h3 style="font-size: 15px; font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 8px;">
                   <span style="display: flex; color: var(--accent-primary);">${reportSvgs.report}</span> ${I18n.t('workout_overview_title')}
                 </h3>
-                <span id="eq-banner-arrow" style="font-size: 12px; color: var(--text-muted); transition: transform 0.3s ease; transform: rotate(${isHidden ? '180deg' : '0deg'});">
-                  ▲
-                </span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <button type="button" class="btn-secondary" style="font-size: 11px; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; border-color: rgba(168, 85, 247, 0.4); color: #c084fc; background: rgba(168, 85, 247, 0.1);" onclick="event.stopPropagation(); TodayPage.exportWorkoutToAiTxt();" title="${I18n.t('export_workout_txt_title')}">
+                    📋 ${I18n.t('export_workout_txt_btn')}
+                  </button>
+                  <span id="eq-banner-arrow" style="font-size: 12px; color: var(--text-muted); transition: transform 0.3s ease; transform: rotate(${isHidden ? '180deg' : '0deg'});">
+                    ▲
+                  </span>
+                </div>
               </div>
               <div id="eq-banner-body" style="display: ${isHidden ? 'none' : 'flex'}; flex-direction: column; gap: 8px; margin-top: ${isHidden ? '0' : '10px'};">
                 ${bodyItems.join('')}
@@ -2036,6 +2270,14 @@ const TodayPage = (() => {
 
     // Active injury & vulnerability strip
     renderInjuryStrip(day);
+
+    // Auto-sync steps for Relaxed Walking if present
+    if (day && day.exercises) {
+      const relaxedWalkIdx = day.exercises.findIndex(isRelaxedWalkingExercise);
+      if (relaxedWalkIdx >= 0) {
+        await syncRelaxedWalkingSteps(day, relaxedWalkIdx, false);
+      }
+    }
 
     // Render exercises
     renderExercises(day);
@@ -3873,6 +4115,9 @@ const TodayPage = (() => {
       if (isReadinessDropSet) {
         detailParts.push(`<span class="readiness-drop-badge" title="${I18n.t('readiness_opt_drop_set')}">🌿 ${I18n.t('readiness_drop_applied_badge')}</span>`);
       }
+      if (isRelaxedWalkingExercise(ex)) {
+        detailParts.push(`<span class="step-target-badge" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #10b981; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('walking_step_tracker_desc')}">👟 8,000 ${I18n.t('steps_unit')}</span>`);
+      }
 
       const equip = UI.getEquipment(ex.name);
 
@@ -3951,6 +4196,12 @@ const TodayPage = (() => {
         `;
       } else if (lowerExName.includes('brisk walking') || lowerExName.includes('zone 2')) {
         cardioTimerBtn = `<button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 12px; margin-left: 6px;" onclick="event.stopPropagation(); UI.showHeartRateModal();">🫀 ${I18n.t('hr_calc_btn')}</button>`;
+      } else if (isRelaxedWalkingExercise(ex)) {
+        cardioTimerBtn = `
+          <button type="button" class="btn-secondary" style="padding: 4px 8px; font-size: 12px; margin-left: 6px; display: inline-flex; align-items: center; gap: 4px; border-color: rgba(16, 185, 129, 0.4); color: #10b981;" onclick="event.stopPropagation(); TodayPage.promptManualSteps(${idx});" title="${I18n.t('enter_steps_manual_title')}">
+            👟 8,000 ${I18n.t('steps_unit')}
+          </button>
+        `;
       } else if (lowerExName.includes('deep mobility')) {
         const subSteps = (currentTracking && currentTracking.deepMobilitySteps) || {};
         const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
@@ -4119,6 +4370,80 @@ const TodayPage = (() => {
               <button type="button" class="btn-primary" style="font-size: 12px; padding: 6px 14px; background: linear-gradient(135deg, #3b82f6, #1d4ed8);" onclick="event.stopPropagation(); TodayPage.openMicroMobilityModal(${idx});">
                 ${I18n.t('micro_mobility_open_runner')}
               </button>
+            </div>
+          </div>
+        `;
+      } else if (isRelaxedWalkingExercise(ex)) {
+        const recordedSteps = (currentTracking && typeof currentTracking.dailySteps === 'number') ? currentTracking.dailySteps : 0;
+        const targetSteps = 8000;
+        const stepPct = Math.min(100, Math.round((recordedSteps / targetSteps) * 100));
+        const isGoalReached = recordedSteps >= targetSteps;
+        const remainingSteps = Math.max(0, targetSteps - recordedSteps);
+
+        protocolBannerHTML = `
+          <div class="relaxed-walk-steps-widget" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08)); border: 1px solid ${isGoalReached ? 'rgba(16, 185, 129, 0.45)' : 'rgba(59, 130, 246, 0.3)'}; border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; position: relative; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.12);">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 22px;">👟</span>
+                <div>
+                  <div style="font-weight: 800; color: ${isGoalReached ? '#10b981' : '#60a5fa'}; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                    <span>${I18n.t('walking_step_tracker_title')}</span>
+                    ${isGoalReached ? `<span style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 800;">✓ ${I18n.t('steps_completed_badge') || 'הושלם'}</span>` : ''}
+                  </div>
+                  <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 2px;">
+                    ${I18n.t('walking_step_tracker_desc')}
+                  </div>
+                </div>
+              </div>
+              <div style="background: ${isGoalReached ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.15)'}; border: 1px solid ${isGoalReached ? 'rgba(16, 185, 129, 0.4)' : 'rgba(59, 130, 246, 0.3)'}; border-radius: 10px; padding: 4px 10px; text-align: center;">
+                <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">${I18n.t('target_label') || 'יעד נדרש'}</div>
+                <div style="font-size: 13px; font-weight: 900; color: ${isGoalReached ? '#10b981' : 'var(--accent-primary)'};">8,000 ${I18n.t('steps_unit')}</div>
+              </div>
+            </div>
+
+            <!-- Numbers and percentage bar -->
+            <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px;">
+                <span style="color: var(--text-secondary); font-weight: 600;">
+                  ${I18n.t('steps_achieved')}: <strong style="color: ${isGoalReached ? '#10b981' : 'var(--text-primary)'}; font-size: 14px;">${recordedSteps.toLocaleString()}</strong> / 8,000
+                </span>
+                <span style="font-weight: 900; color: ${isGoalReached ? '#10b981' : '#f59e0b'}; font-size: 13px;">
+                  ${stepPct}%
+                </span>
+              </div>
+              <div style="width: 100%; height: 10px; background: rgba(255, 255, 255, 0.08); border-radius: 5px; overflow: hidden; position: relative;">
+                <div class="steps-progress-bar-fill" style="height: 100%; width: ${stepPct}%; background: ${isGoalReached ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #3b82f6, #06b6d4)'}; border-radius: 5px; transition: width 0.4s ease; box-shadow: ${isGoalReached ? '0 0 10px rgba(16, 185, 129, 0.5)' : 'none'};"></div>
+              </div>
+            </div>
+
+            <!-- Live insight message -->
+            <div style="font-size: 11.5px; line-height: 1.4; margin-bottom: 12px; padding: 6px 10px; border-radius: 8px; background: ${isGoalReached ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.08)'}; border: 1px solid ${isGoalReached ? 'rgba(16, 185, 129, 0.25)' : 'rgba(59, 130, 246, 0.2)'}; color: ${isGoalReached ? '#10b981' : 'var(--text-primary)'};">
+              ${isGoalReached 
+                ? `🎉 <b>${I18n.t('steps_goal_reached_title')}</b> ${I18n.t('steps_goal_reached_desc')}`
+                : `💡 <b>${I18n.t('steps_goal_pending_title')}:</b> ${I18n.t('steps_goal_pending_desc', '', { remaining: remainingSteps.toLocaleString() })}`}
+            </div>
+
+            <!-- Quick action buttons -->
+            <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+              <button type="button" class="btn-primary steps-quick-complete-btn" 
+                      style="font-size: 12px; padding: 6px 14px; font-weight: 700; background: ${isCompleted ? 'rgba(16, 185, 129, 0.25)' : 'linear-gradient(135deg, #10b981, #059669)'}; border: 1px solid ${isCompleted ? '#10b981' : 'transparent'}; color: white; display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer;"
+                      onclick="event.stopPropagation(); TodayPage.toggleRelaxedWalkBySteps(${idx});">
+                ${isCompleted ? '↩️ ' + I18n.t('unmark_exercise') : '✓ ' + I18n.t('mark_complete_by_steps')}
+              </button>
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <button type="button" class="btn-secondary" 
+                        style="font-size: 11px; padding: 5px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;"
+                        onclick="event.stopPropagation(); TodayPage.syncStepsFromFit(${idx});" 
+                        title="${I18n.t('sync_from_fit_title')}">
+                  🔄 ${I18n.t('sync_fit_steps_btn')}
+                </button>
+                <button type="button" class="btn-secondary" 
+                        style="font-size: 11px; padding: 5px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;"
+                        onclick="event.stopPropagation(); TodayPage.promptManualSteps(${idx});" 
+                        title="${I18n.t('enter_steps_manual_title')}">
+                  ✏️ ${I18n.t('enter_steps_manual_btn')}
+                </button>
+              </div>
             </div>
           </div>
         `;
@@ -4846,6 +5171,7 @@ const TodayPage = (() => {
         exerciseName: ex.name,
         dayIndex: currentDayIndex,
         weekNumber: weekNum,
+        isDeload: Boolean(day.isDeload || day.autoDeload),
         setResults: setResults,
         targetReps: UI.parseReps(ex.sets),
         actualReps: avgReps,
@@ -6340,6 +6666,657 @@ const TodayPage = (() => {
     }
   }
 
+  function isRelaxedWalkingExercise(ex) {
+    if (!ex) return false;
+    const id = (ex.id || '').toLowerCase();
+    const name = (ex.name || '').toLowerCase();
+    const orig = (ex.originalName || '').toLowerCase();
+    return id === 'relaxed-walking' || 
+           name.includes('relaxed walking') || 
+           orig.includes('relaxed walking') || 
+           name.includes('active recovery walk') || 
+           orig.includes('active recovery walk') ||
+           name.includes('הליכה רגועה') ||
+           name.includes('مشي مريح');
+  }
+
+  function getDayIsoDate(day) {
+    if (!day) return null;
+    const raw = day.date || '';
+    if (raw.includes('/')) {
+      const parts = raw.split('/');
+      if (parts.length === 3) {
+        const dd = parts[0].padStart(2, '0');
+        const mm = parts[1].padStart(2, '0');
+        const yyyy = parts[2];
+        return `${yyyy}-${mm}-${dd}`;
+      }
+    } else if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+      return raw;
+    }
+    return null;
+  }
+
+  async function syncRelaxedWalkingSteps(day, exIdx, isUserTriggered = false) {
+    if (!day || !day.exercises || exIdx < 0 || !day.exercises[exIdx]) return;
+    const ex = day.exercises[exIdx];
+    if (!isRelaxedWalkingExercise(ex)) return;
+
+    if (!currentTracking) {
+      currentTracking = {
+        exerciseStatus: {},
+        setData: {},
+        dailySteps: 0
+      };
+    }
+
+    const dateIso = getDayIsoDate(day);
+
+    if (window.GoogleFitService && typeof GoogleFitService.fetchDailyFitData === 'function' && window.CloudSync) {
+      try {
+        const isLoggedIn = await CloudSync.isLoggedIn();
+        if (isLoggedIn) {
+          const fitData = await GoogleFitService.fetchDailyFitData(dateIso);
+          if (fitData && typeof fitData.steps === 'number') {
+            currentTracking.dailySteps = fitData.steps;
+          }
+        } else if (isUserTriggered) {
+          if (typeof CloudSync.loginWithGoogle === 'function') {
+            CloudSync.loginWithGoogle(
+              async () => {
+                await syncRelaxedWalkingSteps(day, exIdx, true);
+              },
+              () => {
+                if (window.UI && window.UI.toast) UI.toast(I18n.t('fit_login_canceled'), 'warning');
+              }
+            );
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Google Fit steps fetch error:', err);
+      }
+    }
+
+    const steps = (currentTracking && typeof currentTracking.dailySteps === 'number') ? currentTracking.dailySteps : 0;
+    const isGoalReached = steps >= 8000;
+
+    if (isGoalReached && (!currentTracking.exerciseStatus || !currentTracking.exerciseStatus[exIdx])) {
+      if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+      currentTracking.exerciseStatus[exIdx] = true;
+      if (!currentTracking.setData) currentTracking.setData = {};
+      if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+      currentTracking.setData[exIdx]['set_0_done'] = true;
+      currentTracking.setData[exIdx]['set_0_result'] = 'in_window';
+      currentTracking.setData[exIdx]['set_0_reps'] = `${steps.toLocaleString()} ${I18n.t('steps_unit') || 'צעדים'}`;
+      currentTracking.stepsAutoCompleted = true;
+
+      updateProgress(day);
+      const total = day.exercises.length;
+      let completed = 0;
+      day.exercises.forEach((_, i) => {
+        if (currentTracking.exerciseStatus[i]) completed++;
+      });
+      currentTracking.completed = completed === total;
+
+      await autoSave();
+
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('steps_auto_completed_toast', '', { steps: steps.toLocaleString() }), 'success');
+      }
+    } else if (isUserTriggered) {
+      if (steps > 0) {
+        if (window.UI && window.UI.toast) {
+          UI.toast(I18n.t('steps_synced_toast', '', { steps: steps.toLocaleString() }), isGoalReached ? 'success' : 'info');
+        }
+      } else {
+        if (window.UI && window.UI.toast) {
+          UI.toast(I18n.t('fit_no_data'), 'warning');
+        }
+      }
+      await autoSave();
+      renderExercises(day);
+      updateProgress(day);
+    }
+  }
+
+  async function toggleRelaxedWalkBySteps(idx) {
+    if (!checkExerciseUnlockedOrWarn(idx)) return;
+    const day = allPlanDays[currentDayIndex];
+    if (!day || !day.exercises || !day.exercises[idx]) return;
+
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    const isNowCompleted = !currentTracking.exerciseStatus[idx];
+
+    if (isNowCompleted) {
+      currentTracking.exerciseStatus[idx] = true;
+      if (!currentTracking.setData) currentTracking.setData = {};
+      if (!currentTracking.setData[idx]) currentTracking.setData[idx] = {};
+      currentTracking.setData[idx]['set_0_done'] = true;
+      currentTracking.setData[idx]['set_0_result'] = 'in_window';
+      if (!currentTracking.dailySteps || currentTracking.dailySteps < 8000) {
+        currentTracking.dailySteps = 8000;
+      }
+      currentTracking.setData[idx]['set_0_reps'] = `${currentTracking.dailySteps.toLocaleString()} ${I18n.t('steps_unit') || 'צעדים'}`;
+      currentTracking.stepsAutoCompleted = true;
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('steps_goal_achieved_toast', '', { steps: currentTracking.dailySteps.toLocaleString() }), 'success');
+      }
+    } else {
+      currentTracking.exerciseStatus[idx] = false;
+      if (currentTracking.setData && currentTracking.setData[idx]) {
+        currentTracking.setData[idx]['set_0_done'] = false;
+      }
+      currentTracking.stepsAutoCompleted = false;
+    }
+
+    updateProgress(day);
+    const total = day.exercises.length;
+    let completed = 0;
+    day.exercises.forEach((_, i) => {
+      if (currentTracking.exerciseStatus[i]) completed++;
+    });
+    currentTracking.completed = completed === total;
+
+    await autoSave();
+    renderExercises(day);
+  }
+
+  async function syncStepsFromFit(idx) {
+    const day = allPlanDays[currentDayIndex];
+    if (!day) return;
+    await syncRelaxedWalkingSteps(day, idx, true);
+  }
+
+  async function promptManualSteps(idx) {
+    if (!checkExerciseUnlockedOrWarn(idx)) return;
+    const cur = (currentTracking && typeof currentTracking.dailySteps === 'number' && currentTracking.dailySteps > 0) ? currentTracking.dailySteps : '';
+    const promptMsg = `${I18n.t('enter_steps_prompt_desc')}`;
+    const val = window.prompt(promptMsg, cur);
+    if (val === null) return;
+    const parsed = parseInt(String(val).replace(/[^0-9]/g, ''), 10);
+    if (isNaN(parsed) || parsed < 0) {
+      if (window.UI && window.UI.toast) UI.toast(I18n.t('invalid_number') || 'מספר לא תקין', 'warning');
+      return;
+    }
+
+    currentTracking.dailySteps = parsed;
+    const day = allPlanDays[currentDayIndex];
+
+    if (parsed >= 8000) {
+      if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+      currentTracking.exerciseStatus[idx] = true;
+      if (!currentTracking.setData) currentTracking.setData = {};
+      if (!currentTracking.setData[idx]) currentTracking.setData[idx] = {};
+      currentTracking.setData[idx]['set_0_done'] = true;
+      currentTracking.setData[idx]['set_0_result'] = 'in_window';
+      currentTracking.setData[idx]['set_0_reps'] = `${parsed.toLocaleString()} ${I18n.t('steps_unit') || 'צעדים'}`;
+      currentTracking.stepsAutoCompleted = true;
+
+      updateProgress(day);
+      const total = day.exercises.length;
+      let completed = 0;
+      day.exercises.forEach((_, i) => {
+        if (currentTracking.exerciseStatus[i]) completed++;
+      });
+      currentTracking.completed = completed === total;
+
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('steps_auto_completed_toast', '', { steps: parsed.toLocaleString() }), 'success');
+      }
+    } else {
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('steps_synced_toast', '', { steps: parsed.toLocaleString() }), 'info');
+      }
+    }
+
+    await autoSave();
+    renderExercises(day);
+  }
+
+  let lastGeneratedExportText = '';
+
+  /**
+   * Escape HTML special characters
+   */
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  /**
+   * Copy string to clipboard with navigator.clipboard and execCommand fallback
+   */
+  async function copyTextToClipboard(text) {
+    if (!text) return false;
+    try {
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch (err) {
+      console.warn('navigator.clipboard.writeText failed, falling back:', err);
+    }
+
+    try {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      textarea.style.top = '-9999px';
+      textarea.setAttribute('readonly', '');
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      return !!ok;
+    } catch (err) {
+      console.error('Fallback execCommand copy failed:', err);
+      return false;
+    }
+  }
+
+  /**
+   * Download text content as a .txt file
+   */
+  function downloadAiExportTxt(filename, text) {
+    try {
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || 'fitup-workout-ai.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      if (window.UI && window.UI.toast) {
+        UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_workout_downloaded') : '') || 'קובץ ה-TXT ירד בהצלחה! 💾', 'success');
+      }
+    } catch (err) {
+      console.error('downloadAiExportTxt failed:', err);
+    }
+  }
+
+  /**
+   * Build complete formatted AI prompt text for the specified workout day
+   */
+  function generateAiExportText(day, lang = null) {
+    if (!day || !day.exercises) return '';
+
+    const effectiveLang = lang || ((typeof I18n !== 'undefined' && I18n.currentLocale) ? I18n.currentLocale : 'he');
+    const isEn = effectiveLang === 'en';
+    const isAr = effectiveLang === 'ar';
+
+    const dayNum = day.dayNum || (currentDayIndex + 1);
+    const dayOfWeek = day.dayOfWeek || '';
+    const dateStr = day.date || '';
+    const weekStr = day.week || '';
+    const dayType = day.dayType || '';
+    const rpe = (day.plannedRPE && day.plannedRPE !== '—') ? day.plannedRPE : '7-8';
+
+    const lines = [];
+    if (isEn) {
+      lines.push('📋 DAILY WORKOUT PLAN — FITUP PRO');
+      lines.push('==================================================');
+      lines.push(`📅 Day: Day ${dayNum} (${dayOfWeek} ${dateStr})`);
+      lines.push(`🏷️ Week: ${weekStr}`);
+      lines.push(`🎯 Workout Type: ${dayType}`);
+      lines.push(`🔥 Target Intensity (RPE): ${rpe}`);
+      lines.push(`📊 Total Exercises: ${day.exercises.length}`);
+      lines.push('==================================================');
+      lines.push('');
+      lines.push("TODAY'S EXERCISES:");
+      lines.push('--------------------------------------------------');
+    } else if (isAr) {
+      lines.push('📋 خطة التمرين اليومية — FitUp Pro');
+      lines.push('==================================================');
+      lines.push(`📅 اليوم: اليوم ${dayNum} (${dayOfWeek} ${dateStr})`);
+      lines.push(`🏷️ الأسبوع: ${weekStr}`);
+      lines.push(`🎯 نوع التمرين: ${dayType}`);
+      lines.push(`🔥 الشدة المخططة (RPE): ${rpe}`);
+      lines.push(`📊 إجمالي التمارين: ${day.exercises.length}`);
+      lines.push('==================================================');
+      lines.push('');
+      lines.push('قائمة التمارين اليومية:');
+      lines.push('--------------------------------------------------');
+    } else {
+      lines.push('📋 תוכנית אימון יומית — FitUp Pro');
+      lines.push('==================================================');
+      lines.push(`📅 יום: יום ${dayNum} (${dayOfWeek} ${dateStr})`);
+      lines.push(`🏷️ שבוע: ${weekStr}`);
+      lines.push(`🎯 סוג אימון: ${dayType}`);
+      lines.push(`🔥 עצימות מתוכננת (RPE): ${rpe}`);
+      lines.push(`📊 סה"כ תרגילים: ${day.exercises.length}`);
+      lines.push('==================================================');
+      lines.push('');
+      lines.push('רשימת תרגילי האימון להיום:');
+      lines.push('--------------------------------------------------');
+    }
+
+    day.exercises.forEach((ex, idx) => {
+      const exNum = idx + 1;
+      const injuryAdaptation = ex.injuryAdaptation || ((typeof InjuryEngine !== 'undefined') ? InjuryEngine.getExerciseAdaptation(ex.originalName || ex.name) : null);
+      const isInjuredSwap = !!(injuryAdaptation && injuryAdaptation.type === 'injured' && injuryAdaptation.substituteName);
+      const isSensitiveROM = !!(injuryAdaptation && injuryAdaptation.type === 'sensitive');
+      const activeName = isInjuredSwap ? injuryAdaptation.substituteName : getActiveExerciseName(ex);
+
+      let translatedName = '';
+      if (typeof I18n !== 'undefined') {
+        const tr = I18n.t(activeName);
+        if (tr && tr !== activeName) translatedName = tr;
+        else {
+          const trOrig = I18n.t(ex.name);
+          if (trOrig && trOrig !== ex.name) translatedName = trOrig;
+        }
+      }
+
+      let titleLine = '';
+      if (isEn) {
+        titleLine = `${exNum}. ${activeName}`;
+        if (translatedName && translatedName !== activeName) {
+          titleLine += ` (${translatedName})`;
+        }
+      } else {
+        titleLine = `${exNum}. ${translatedName || activeName}`;
+        if (translatedName && activeName && translatedName !== activeName) {
+          titleLine += ` (${activeName})`;
+        }
+      }
+
+      let tag = '';
+      if (ex.isWarmup) {
+        tag = isEn ? ' [Warmup 🔥]' : (isAr ? ' [إحماء 🔥]' : ' [חימום 🔥]');
+      } else if (ex.structure === 'pair') {
+        tag = isEn ? ' [Lean Pair 🔄]' : (isAr ? ' [زوج تمارين 🔄]' : ' [זוג Lean Pair 🔄]');
+      } else if (ex.structure === 'circuit') {
+        tag = isEn ? ' [Core Circuit ⚡]' : (isAr ? ' [جولة بطن ⚡]' : ' [סבב ליבה ⚡]');
+      } else if (ex.structure === 'block') {
+        tag = isEn ? ' [Block 🧱]' : (isAr ? ' [مجموعة 🧱]' : ' [בלוק 🧱]');
+      } else {
+        tag = isEn ? ' [Work Set 💪]' : (isAr ? ' [تمرين رئيسي 💪]' : ' [תרגיל עבודה 💪]');
+      }
+      lines.push(`${titleLine}${tag}`);
+
+      // Sets & Reps
+      const setsStr = ex.sets || ex.repWindow || '';
+      if (setsStr) {
+        if (isEn) lines.push(`   • Sets & Reps: ${setsStr}`);
+        else if (isAr) lines.push(`   • المجموعات والتكرارات: ${setsStr}`);
+        else lines.push(`   • סטים וחזרות: ${setsStr}`);
+      }
+
+      // Weight / Stage
+      const isW = isWeighted(ex);
+      const stageName = ex.currentStageName || (typeof resolveExerciseStage === 'function' ? resolveExerciseStage(ex, day, statesMapCache) : null);
+
+      if (isW && ex.weight) {
+        if (isEn) lines.push(`   • Prescribed Weight: ${ex.weight}`);
+        else if (isAr) lines.push(`   • الوزن المحدد: ${ex.weight}`);
+        else lines.push(`   • משקל מוגדר: ${ex.weight}`);
+      } else if (stageName) {
+        const stageLabel = (typeof I18n !== 'undefined' && I18n.t(stageName) !== stageName) ? I18n.t(stageName) : stageName;
+        if (isEn) lines.push(`   • Progression Stage: ${stageLabel}`);
+        else if (isAr) lines.push(`   • مرحلة التقدم: ${stageLabel}`);
+        else lines.push(`   • שלב התקדמות: ${stageLabel}`);
+      }
+
+      // Required Equipment
+      let equips = [];
+      if (typeof UI !== 'undefined' && UI.getEquipments) {
+        equips = UI.getEquipments(activeName);
+      } else if (typeof UI !== 'undefined' && UI.getEquipment) {
+        const eq = UI.getEquipment(activeName);
+        if (eq) equips = [eq];
+      }
+      const equipNames = (equips && equips.length > 0)
+        ? equips.map(e => e.label).filter(Boolean).join(', ')
+        : (isEn ? 'Bodyweight' : (isAr ? 'وزن الجسم' : 'משקל גוף'));
+
+      if (isEn) lines.push(`   • Required Equipment: ${equipNames}`);
+      else if (isAr) lines.push(`   • المعدات المطلوبة: ${equipNames}`);
+      else lines.push(`   • ציוד נדרש: ${equipNames}`);
+
+      // Tempo
+      if (ex.tempo) {
+        const tempoDisplay = (typeof UI !== 'undefined' && UI.formatTempo) ? UI.formatTempo(ex.tempo) : ex.tempo;
+        if (isEn) lines.push(`   • Tempo: ${tempoDisplay}`);
+        else if (isAr) lines.push(`   • الإيقاع: ${tempoDisplay}`);
+        else lines.push(`   • קצב ביצוע (Tempo): ${tempoDisplay}`);
+      }
+
+      // Rest
+      if (ex.rest && ex.rest > 0) {
+        if (isEn) lines.push(`   • Rest between sets: ${ex.rest}s`);
+        else if (isAr) lines.push(`   • راحة بين المجموعات: ${ex.rest} ثانية`);
+        else lines.push(`   • מנוחה בין סטים: ${ex.rest} שניות`);
+      }
+
+      // Special Cardio/Steps details
+      if (isRelaxedWalkingExercise(ex)) {
+        if (isEn) lines.push(`   • Daily Steps Target: 8,000 steps (or 20-25 min brisk walk)`);
+        else if (isAr) lines.push(`   • هدف الخطوات اليومي: 8,000 خطوة (أو 20-25 دقيقة مشي مريح)`);
+        else lines.push(`   • יעד צעדים יומי: 8,000 צעדים (או 20-25 דקות הליכה רגועה)`);
+      }
+
+      // Injury note
+      if (isInjuredSwap && injuryAdaptation) {
+        const origName = I18n.t(ex.name) || ex.name;
+        const cue = I18n.t(injuryAdaptation.cueKey) || '';
+        if (isEn) lines.push(`   ⚠️ Injury Swap: Substituted from ${origName}. ${cue}`);
+        else if (isAr) lines.push(`   ⚠️ استبدال لإصابة: تم الاستبدال من ${origName}. ${cue}`);
+        else lines.push(`   ⚠️ התאמת פציעה: הוחלף מ-${origName}. ${cue}`);
+      } else if (isSensitiveROM && injuryAdaptation) {
+        const cue = I18n.t(injuryAdaptation.cueKey) || '';
+        if (isEn) lines.push(`   ⚠️ Joint Protection: ${cue}`);
+        else if (isAr) lines.push(`   ⚠️ حماية المفاصل: ${cue}`);
+        else lines.push(`   ⚠️ הגנת מפרקים: ${cue}`);
+      }
+
+      lines.push('');
+    });
+
+    lines.push('==================================================');
+    if (isEn) {
+      lines.push('🤖 AI INSTRUCTION & PROMPT (ChatGPT / Gemini / Claude):');
+      lines.push('--------------------------------------------------');
+      lines.push("Hello! I am planning to do today's workout, but I may lack some of the equipment listed above (such as dumbbells, TRX suspension trainer, pull-up bar, resistance bands, or bench).");
+      lines.push('');
+      lines.push('Please act as an elite biomechanics and strength coach and provide:');
+      lines.push('1. EXACT ALTERNATIVE EXERCISES for each exercise that requires equipment I don\'t have:');
+      lines.push('   • Alternative A (Bodyweight / Calisthenics): Pure bodyweight option with no gear.');
+      lines.push('   • Alternative B (Improvised Home Gear): Using household items (towel, sturdy chair, door anchor, water jugs, or loaded backpack).');
+      lines.push('   • Alternative C (Single Tool): Dumbbell-only or Resistance Band-only equivalent.');
+      lines.push('2. BIOMECHANICAL & MUSCLE MATCHING:');
+      lines.push('   • Ensure each substitute strictly preserves the same movement pattern (Push / Pull / Squat / Hinge / Carry / Core).');
+      lines.push('   • Match the target agonist muscles and protect the lower back (L4-S1 spinal sparing).');
+      lines.push('3. VOLUME & REPS CALIBRATION:');
+      lines.push('   • Specify the recommended sets, rep ranges, or tempo (e.g. 2-3s pause) for the substitute to match the planned RPE and training stimulus.');
+      lines.push('');
+      lines.push('Thank you!');
+    } else if (isAr) {
+      lines.push('🤖 توجيه وسؤال للذكاء الاصطناعي (ChatGPT / Gemini / Claude):');
+      lines.push('--------------------------------------------------');
+      lines.push('مرحباً! أود أداء تمرين اليوم، ولكن قد تنقصني بعض المعدات المذكورة أعلاه (مثل الدامبلز، أحزمة TRX، عقلة السحب، أو أربطة المقاومة).');
+      lines.push('');
+      lines.push('يرجى التصرف كمدرب لياقة بدنية وخبير ميكانيكا حيوية وتقديم:');
+      lines.push('1. بدائل دقيقة لكل تمرين يتطلب معدات غير متوفرة لدي:');
+      lines.push('   • البديل الأول (وزن الجسم فقط / كاليستهنكس): بدون أي معدات إطلاقاً.');
+      lines.push('   • البديل الثاني (أدوات منزلية بسيطة): باستخدام منشفة، كرسي متين، باب، أو حقيبة ظهر محملة.');
+      lines.push('   • البديل الثالث: باستخدام الدامبل فقط أو حبل المقاومة فقط.');
+      lines.push('2. الحفاظ على الميكانيكا الحيوية والعضلات المستهدفة:');
+      lines.push('   • التأكد من أن التمرين البديل يحافظ على نفس نمط الحركة ويستهدف نفس العضلات بالضبط مع حماية أسفل الظهر.');
+      lines.push('3. ضبط التكرارات والمجهود:');
+      lines.push('   • حدد عدد المجموعات والتكرارات أو الإيقاع (Tempo) المناسب للوصول لنفس مستوى الجهد (RPE).');
+      lines.push('');
+      lines.push('شكراً جزيلاً!');
+    } else {
+      lines.push('🤖 הנחיה ושאלה ל-AI (ChatGPT / Gemini / Claude):');
+      lines.push('--------------------------------------------------');
+      lines.push('שלום! אני עומד לבצע את אימון היום, אך ייתכן שחסר לי חלק מהציוד המוגדר למעלה (כגון משקולות יד מסוימות, רצועות TRX, מתח, ספסל, או גומיית התנגדות).');
+      lines.push('');
+      lines.push('אנא פעל כמאמן כושר ומומחה ביומכניקה בכיר והצע עבורי:');
+      lines.push('1. תרגילים חלופיים מדויקים לכל תרגיל שדורש ציוד שאין ברשותי:');
+      lines.push('   • חלופה א׳ (משקל גוף בלבד / Calisthenics): תרגיל ללא ציוד כלל שניתן לבצע בכל חדר.');
+      lines.push('   • חלופה ב׳ (ציוד ביתי מאולתר): שימוש בחפצים ביתיים נגישים (מגבת, כיסא יציב, דלת, בקבוקי מים או תיק גב עם ספרים).');
+      lines.push('   • חלופה ג׳ (ציוד חלופי זמין): שימוש במשקולות יד בלבד או בגומיית התנגדות בלבד.');
+      lines.push('2. דיוק ביומכני ושרירי מטרה:');
+      lines.push('   • ודא שכל תרגיל חלופי שומר על אותו דפוס תנועה בדיוק (Push / Pull / Squat / Hinge / Carry / Core).');
+      lines.push('   • ודא גירוי לאותם שרירי מטרה בדיוק (חזה, גב, כתפיים, ארבע-ראשי, מיתרי הברך, ישבן או ליבה), תוך שמירה מלאה על הגב התחתון.');
+      lines.push('3. כיול עומס וחזרות:');
+      lines.push('   • כמה סטים וחזרות מומלץ לבצע בתרגיל החלופי, או איזה קצב (Tempo / עצירה סטטית) לבצע כדי לקבל עומס ומאמץ שווה (RPE)?');
+      lines.push('');
+      lines.push('תודה רבה!');
+    }
+    lines.push('==================================================');
+
+    return lines.join('\n');
+  }
+
+  /**
+   * Export today's workout as AI prompt text, copy directly to clipboard and show interactive modal
+   */
+  async function exportWorkoutToAiTxt() {
+    const day = allPlanDays[currentDayIndex];
+    if (!day) return;
+
+    if (!day.exercises || day.exercises.length === 0 || day.dayType === 'Rest') {
+      if (window.UI && window.UI.toast) {
+        UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_workout_rest_day') : '') || 'היום מוגדר כיום מנוחה, אין תרגילים לייצוא.', 'info');
+      }
+      return;
+    }
+
+    const currentLang = (typeof I18n !== 'undefined' && I18n.currentLocale) ? I18n.currentLocale : 'he';
+    const textPrompt = generateAiExportText(day, currentLang);
+    lastGeneratedExportText = textPrompt;
+
+    const isCopied = await copyTextToClipboard(textPrompt);
+
+    if (window.UI && window.UI.toast) {
+      if (isCopied) {
+        UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_copied') : '') || 'תרגילי האימון הועתקו ללוח! 📋 מוכנים להדבקה ב-ChatGPT או Gemini', 'success');
+      } else {
+        UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_title') : '') || 'פרומפט האימון מוכן לשליחה ל-AI', 'info');
+      }
+    }
+
+    showAiExportModal(day, textPrompt, isCopied);
+  }
+
+  function showAiExportModal(day, textPrompt, isCopied) {
+    const titleText = (typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_title') : '') || 'ייצוא תרגילי האימון ל-AI (ChatGPT / Gemini)';
+    const modalTitle = `<div style="display: flex; align-items: center; gap: 8px;"><span>📋</span> <span>${titleText}</span></div>`;
+    const escapedFilename = `fitup-day-${day.dayNum || 1}-exercises.txt`;
+
+    const chatGptUrl = 'https://chatgpt.com/';
+    const geminiUrl = 'https://gemini.google.com/app';
+
+    const statusTitle = isCopied 
+      ? ((typeof I18n !== 'undefined' ? I18n.t('export_workout_status_copied_title') : '') || 'הועתק ללוח בהצלחה!') 
+      : ((typeof I18n !== 'undefined' ? I18n.t('export_workout_status_ready_title') : '') || 'פרומפט האימון מוכן ל-AI');
+    const subtitle = (typeof I18n !== 'undefined' ? I18n.t('export_workout_prompt_subtitle') : '') || 'הפרומפט הועתק ללוח. הדבק אותו ב-ChatGPT או ב-Gemini לקבלת תרגילים חלופיים מדויקים לציוד שחסר לך.';
+    const chatGptLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_open_chatgpt') : '') || 'פתח ב-ChatGPT';
+    const geminiLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_open_gemini') : '') || 'פתח ב-Gemini';
+    const copyLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_copy') : '') || 'העתק שוב ללוח';
+    const downloadLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_download') : '') || 'הורד קובץ TXT';
+    const previewLabel = (typeof I18n !== 'undefined' ? I18n.t('export_workout_preview_label') : '') || 'תצוגה מקדימה של הטקסט:';
+    const clickHint = (typeof I18n !== 'undefined' ? I18n.t('export_workout_click_to_select') : '') || '(לחיצה על התיבה תסמן את כל הטקסט)';
+    const hintText = (typeof I18n !== 'undefined' ? I18n.t('export_workout_hint') : '') || 'טיפ: פתח את ChatGPT או Gemini, הדבק (Ctrl+V או לחיצה ארוכה \'הדבק\') ולחץ שלח!';
+
+    const modalBody = `
+      <div class="ai-export-modal-content" style="display: flex; flex-direction: column; gap: 14px; text-align: start;">
+        
+        <!-- Status Banner -->
+        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(59, 130, 246, 0.1)); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 24px; flex-shrink: 0;">${isCopied ? '✅' : '📋'}</span>
+          <div style="font-size: 13px; line-height: 1.4; color: var(--text-primary);">
+            <div style="font-weight: 800; color: #10b981; margin-bottom: 2px;">
+              ${statusTitle}
+            </div>
+            <div style="color: var(--text-secondary); font-size: 12px;">
+              ${subtitle}
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick AI & Export Action Buttons -->
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <a href="${chatGptUrl}" target="_blank" rel="noopener noreferrer" 
+             class="btn-primary" 
+             style="flex: 1; min-width: 130px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 14px; font-weight: 700; font-size: 13px; border-radius: 10px; background: linear-gradient(135deg, #10a37f, #0d8a6c); color: white; box-shadow: 0 4px 12px rgba(16, 163, 127, 0.25);">
+            <span>🤖</span> <span>${chatGptLabel}</span>
+          </a>
+          <a href="${geminiUrl}" target="_blank" rel="noopener noreferrer" 
+             class="btn-primary" 
+             style="flex: 1; min-width: 130px; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 14px; font-weight: 700; font-size: 13px; border-radius: 10px; background: linear-gradient(135deg, #4285f4, #1a73e8); color: white; box-shadow: 0 4px 12px rgba(66, 133, 244, 0.25);">
+            <span>✨</span> <span>${geminiLabel}</span>
+          </a>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <button type="button" id="ai-export-recopy-btn" class="btn-secondary" 
+                  style="flex: 1; min-width: 120px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; font-size: 12px; font-weight: 700; border-radius: 8px;"
+                  onclick="TodayPage.recopyAiExportText()">
+            <span>📋</span> <span id="recopy-btn-text">${copyLabel}</span>
+          </button>
+          <button type="button" class="btn-secondary" 
+                  style="flex: 1; min-width: 120px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 8px 12px; font-size: 12px; font-weight: 700; border-radius: 8px;"
+                  onclick="TodayPage.downloadAiExportFile('${escapedFilename}')">
+            <span>💾</span> <span>${downloadLabel}</span>
+          </button>
+        </div>
+
+        <!-- Preview Textarea -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <label style="font-size: 12px; font-weight: 700; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between;">
+            <span>${previewLabel}</span>
+            <span style="font-size: 11px; color: var(--text-muted);">${clickHint}</span>
+          </label>
+          <textarea id="ai-export-preview-textarea" readonly 
+                    rows="9" 
+                    dir="auto"
+                    style="width: 100%; box-sizing: border-box; background: var(--bg-primary, #0f172a); border: 1px solid var(--border-color); border-radius: 10px; color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; line-height: 1.5; padding: 12px; resize: vertical; user-select: all;"
+                    onclick="this.select();">${escapeHtml(textPrompt)}</textarea>
+        </div>
+
+        <div style="font-size: 11.5px; color: var(--text-muted); text-align: center;">
+          💡 ${hintText}
+        </div>
+
+      </div>
+    `;
+
+    if (window.UI && window.UI.showModal) {
+      UI.showModal(modalTitle, modalBody);
+    }
+  }
+
+  async function recopyAiExportText() {
+    if (!lastGeneratedExportText) return;
+    const ok = await copyTextToClipboard(lastGeneratedExportText);
+    const btnText = document.getElementById('recopy-btn-text');
+    if (btnText) {
+      const orig = btnText.textContent;
+      btnText.textContent = ok ? ((typeof I18n !== 'undefined' ? I18n.t('copied_badge') : '') || '✓ הועתק!') : orig;
+      setTimeout(() => { if (btnText) btnText.textContent = orig; }, 2000);
+    }
+    if (window.UI && window.UI.toast) {
+      UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_workout_txt_copied') : '') || 'תרגילי האימון הועתקו ללוח! 📋 מוכנים להדבקה ב-ChatGPT או Gemini', 'success');
+    }
+  }
+
+  function downloadAiExportFile(filename) {
+    if (!lastGeneratedExportText) return;
+    downloadAiExportTxt(filename, lastGeneratedExportText);
+  }
+
   return {
     init,
     render,
@@ -6377,9 +7354,20 @@ const TodayPage = (() => {
     openMicroMobilityModal,
     navMicroMobilityModal,
     completeMicroSubStepAndNext,
+    toggleRelaxedWalkBySteps,
+    syncStepsFromFit,
+    promptManualSteps,
+    isRelaxedWalkingExercise,
+    syncRelaxedWalkingSteps,
+    getDayIsoDate,
     getCurrentDayIndex: () => currentDayIndex,
     resolveExerciseStage,
     getActiveExerciseName,
+    exportWorkoutToAiTxt,
+    generateAiExportText,
+    recopyAiExportText,
+    downloadAiExportFile,
+    showAiExportModal,
     goToDay,
     navigate,
     goToToday,

@@ -176,8 +176,8 @@
       return base;
     }
 
-    calculateWeightedDecision(exercise, state, setResults, weekNumber, previousSessionData) {
-      const isDeload = weekNumber % this.settings.deloadEveryWeeks === 0;
+    calculateWeightedDecision(exercise, state, setResults, weekNumber, previousSessionData, isDeloadOverride = undefined) {
+      const isDeload = isDeloadOverride !== undefined ? isDeloadOverride : (weekNumber % this.settings.deloadEveryWeeks === 0);
       const isGrpA = this.isGroupA(exercise);
       const defaultStartWeight = isGrpA ? 8 : 6;
       let currentWeight = state ? state.currentWeightKg : (exercise.startingWeight || defaultStartWeight);
@@ -890,11 +890,11 @@
     // ----------------------------
     // Get Display Prescription
     // ----------------------------
-    getDisplayPrescription(exerciseId, weekNumber = 1, state = null) {
+    getDisplayPrescription(exerciseId, weekNumber = 1, state = null, isDeloadOverride = undefined) {
       const exercise = this.getExercise(exerciseId);
       if (!exercise) return null;
 
-      const isDeload = weekNumber % (this.settings.deloadEveryWeeks || 12) === 0;
+      const isDeload = isDeloadOverride !== undefined ? isDeloadOverride : (weekNumber % (this.settings.deloadEveryWeeks || 12) === 0);
       const bicepsConfig = window.TRAINING_DATA?.progressionSettings?.bicepsMicrocycle;
       const isBicepsLightWeek = bicepsConfig && bicepsConfig.lightWeeks && bicepsConfig.lightWeeks.includes(((weekNumber - 1) % bicepsConfig.cycleLength) + 1);
 
@@ -1011,7 +1011,7 @@
       // 2. Calculate progression decision
       let decision;
       if (exercise.type === 'weighted' || exercise.startingWeight != null) {
-        decision = this.calculateWeightedDecision(exercise, state, setResults, weekNumber, previousSessionData);
+        decision = this.calculateWeightedDecision(exercise, state, setResults, weekNumber, previousSessionData, exerciseData.isDeload);
         state.currentWeightKg = decision.newWeight;
         if (decision.action === 'increase' || decision.action === 'decrease') {
           state.sessionsAtWeight = 0;

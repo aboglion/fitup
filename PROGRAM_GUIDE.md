@@ -313,7 +313,7 @@ $$\text{HRmax} = 208 - (0.7 \times \text{גיל})$$
 - **Norwegian 4×4 (יום 6)**: המתאמן מתנשף בכבדות, מסוגל להוציא רק מילה בודדת או שתיים ("כן", "לא", "עצור"), ומדורג ברמת מאמץ סובייקטיבי של **8.5 עד 9.5 מתוך 10 (RPE)**. אם ניתן לדבר במשפטים — המהירות/שיפוע נמוכים מדי ויש להעלותם לריצה.
 
 🟡 **Active Recovery (Day 4):** 
-- **צעדים יומיים מול הליכון (אופטימיזציית זמן):** מתאמנים המשיגים בשגרת היום ובעבודה **8,000–10,000 צעדים** יומיים פטורים לחלוטין מביצוע 25 דקות הליכה על הליכון, ויכולים לסמן את כרטיס ההליכה כהושלם! הליכה מרובה בעבודה מספקת את מלוא זרימת הדם וההוצאה האנרגטית הדרושה להתאוששות.
+- **צעדים יומיים מול הליכון (אופטימיזציית זמן וסנכרון צעדים אוטומטי):** מתאמנים המשיגים בשגרת היום ובעבודה **8,000–10,000 צעדים** יומיים פטורים לחלוטין מביצוע 25 דקות הליכה על הליכון. האפליקציה כוללת מד בר התקדמות צעדים חי באחוזים בכרטיס התרגיל, מסנכרנת מ-Google Fit או מהזנה ידנית, ומסמנת את התרגיל אוטומטית כהושלם ברגע שהושג סף 8,000 הצעדים! הליכה מרובה בעבודה מספקת את מלוא זרימת הדם וההוצאה האנרגטית הדרושה להתאוששות.
 - **פרוטוקול הליבה והגב המקוצר (12–15 דקות סך הכל):** 5 דק' Cervical Health protocol (Band Neck Flexion & Extension 2×15–20 לכל כיוון, 45 שנ' מנוחה, 3-1-3) + 10 דק' Deep Mobility sequence (Cat-Cow, פותחי אגן 90/90, Couch Stretch) לצד תלייה פסיבית ממתח (Dead Hang) או פרוטוקול McGill Big 3 לשחרור והורדת לחץ דחיסה מהדיסק המותני L4-S1.
 
 ---
@@ -339,6 +339,11 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 - **Biceps Microcycle on Deload**: 1 set of Single-Arm Hammer Curl only.
 - **Arm Block**: Omitted during Deload weeks to ensure complete central and peripheral recovery.
 - **Cardio**: VO2 Max interval omitted; replaced with light 30 min Zone 2 treadmill walk (2% incline, 5.0 km/h).
+- **Manual Overrides (דחייה וביטול דילואד)**: ממשק הבאנר של הדילואד כולל כפתורי פעולה אינטראקטיביים:
+  1. **`[התאמן מלא (בטל דילואד)]`**: מסיר את תקרת 2 הסטים, מחזיר את משקלי העבודה המלאים (ללא הורדת 2 ק"ג) ומחזיר את הסופר-סטים.
+  2. **`[דחה דילואד בשבוע]`**: מעביר את שבוע ההתאוששות לשבוע הבא ומאפשר המשך אימונים מלאים השבוע למי שנמצא במומנטום שיא.
+  3. **`[החזר למצב דילואד]`**: מאפשר ביטול חזרה של ההגדרה בכל עת.
+- **Smart Passive-Rest Detection (זיהוי אוטומטי של שבוע מנוחה פסיבי)**: אם המערכת מזהה שב-7 הימים שקדמו לשבוע הדילואד נרשמו 0 אימונים שהושלמו (חופשה, מחלה או אילוצים), היא מתריעה יזומה כי התאוששות רקמות החיבור ומערכת העצבים כבר הושלמה במלואה במנוחה הפסיבית, וכי ביצוע דילואד אקטיבי מיד לאחר שבוע ללא אימונים ייצור 14 ימים של תת-גירוי (Detraining). הבאנר מציג התראה חכמה וממליץ לבטל את הדילואד ולחזור ישירות לאימון מלא.
 
 ---
 
@@ -598,6 +603,7 @@ The training program is the prescriptive core; these are the controls the app ex
 - **🏃 Google Fit integration** — activity/health data connectivity.
 - **🗣 Multi-Language** — English / Hebrew (RTL) / Arabic (RTL).
 - **🛡️ 1-Tap Biomechanical Joint & Injury Engine** — Dual-mode Anatomy visualizer (Muscles ⟷ Joints & Vulnerabilities) covering 12 calibrated joint nodes. Interactive 1-tap cycling (Normal 🟢 / Sensitive 🟡 / Injured 🔴) that automatically adapts Today's workout in real-time, displays protective badges across Skill Tree nodes and Exercise Guide cards, enforces ROM constraints, or executes evidence-based joint-sparing substitutions with clinical safety guidance.
+- **📋 AI Workout Prompt & TXT Export (ChatGPT / Gemini)** — לחצן ייצוא עליון מהיר בכל יום אימון המעתיק אוטומטית ללוח (בפורמט TXT) פרומפט מובנה ומקצועי עם כל תרגילי היום, סטים, חזרות, משקלים, ציוד נדרש, קצב ומנוחה — מוכן להדבקה מיידית ב-ChatGPT או Gemini עם קישורי פתיחה ישירים בלחיצה אחת לקבלת תרגילים חלופיים מדויקים (משקל גוף / ציוד מאולתר) תוך שמירה מלאה על שרירי המטרה ועל הגב התחתון.
 - **☁️ Backup & Cloud Sync** — one-click local JSON export/import + automatic bidirectional Google Drive sync.
 
 ---

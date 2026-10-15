@@ -169,7 +169,7 @@ const CalendarPage = (() => {
         const typeInfo = UI.getDayTypeInfo(day.dayType);
         const isToday = (day.dayIndex === realTodayIndex);
         const isSelected = (day.dayIndex === currentViewedIndex);
-        const isDeload = typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload'));
+        const isDeload = (typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload'))) && !day.deloadCancelled && !day.deloadPostponed;
         const combatBadge = combatBadgeFor(day);
 
         return `
