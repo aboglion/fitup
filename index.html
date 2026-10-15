@@ -257,9 +257,9 @@
                 <span data-i18n="daily_briefing_btn">🤖 Briefing</span>
               </button>
               <button id="export-workout-txt-btn" class="day-summary-action-btn export-ai-action-btn"
-                onclick="if(window.TodayPage && window.TodayPage.exportFullProgramGuide){window.TodayPage.exportFullProgramGuide();}else if(window.TodayPage && window.TodayPage.exportWorkoutToAiTxt){window.TodayPage.exportWorkoutToAiTxt();}"
-                data-i18n-title="export_program_guide_title"
-                title="ייצוא כל תוכנית האימונים (PROGRAM_GUIDE.md)">
+                onclick="if(window.TodayPage && window.TodayPage.openAiExportModal){window.TodayPage.openAiExportModal();}else if(window.TodayPage && window.TodayPage.exportWorkoutToAiTxt){window.TodayPage.exportWorkoutToAiTxt();}"
+                data-i18n-title="export_ai_modal_title"
+                title="ייצוא ל-AI (ChatGPT / Gemini)">
                 <span>📋</span> <span data-i18n="export_workout_txt_btn">יצוא ל-AI</span>
               </button>
             </div>

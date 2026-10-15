@@ -805,7 +805,7 @@ const TodayPage = (() => {
 
     const exportTxtBtn = document.getElementById('export-workout-txt-btn');
     if (exportTxtBtn) {
-      exportTxtBtn.addEventListener('click', () => exportFullProgramGuide());
+      exportTxtBtn.addEventListener('click', () => openAiExportModal());
     }
 
     // Auto-save inputs on change
@@ -1433,7 +1433,7 @@ const TodayPage = (() => {
     const exportTxtBtn = document.getElementById('export-workout-txt-btn');
     if (exportTxtBtn) {
       exportTxtBtn.style.opacity = '1';
-      exportTxtBtn.setAttribute('title', (typeof I18n !== 'undefined' ? I18n.t('export_program_guide_title') : '') || 'ייצוא כל תוכנית האימונים (PROGRAM_GUIDE.md)');
+      exportTxtBtn.setAttribute('title', (typeof I18n !== 'undefined' ? I18n.t('export_ai_modal_title') : '') || 'ייצוא ל-AI (ChatGPT / Gemini)');
     }
 
 
@@ -7167,9 +7167,30 @@ const TodayPage = (() => {
         const eq = UI.getEquipment(activeName);
         if (eq) equips = [eq];
       }
-      const equipNames = (equips && equips.length > 0)
-        ? equips.map(e => e.label).filter(Boolean).join(', ')
-        : (isEn ? 'Bodyweight' : (isAr ? 'وزن الجسم' : 'משקל גוף'));
+      const enEquipMap = {
+        db: 'Dumbbells',
+        trx: 'TRX Suspension Trainer',
+        bars: 'Push-up Bars / Parallettes',
+        vest: 'Weighted Vest',
+        band: 'Resistance Band',
+        wall: 'Wall',
+        bench: 'Bench / Sturdy Chair',
+        bar: 'Pull-up Bar',
+        towel: 'Towel',
+        treadmill: 'Treadmill',
+        bodyweight: 'Bodyweight',
+        weighted: 'Weighted Vest / Added Weight'
+      };
+      let equipNames = '';
+      if (equips && equips.length > 0) {
+        if (isEn) {
+          equipNames = equips.map(e => enEquipMap[e.key] || e.label || 'Bodyweight').join(', ');
+        } else {
+          equipNames = equips.map(e => e.label).filter(Boolean).join(', ');
+        }
+      } else {
+        equipNames = isEn ? 'Bodyweight' : (isAr ? 'وزن الجسم' : 'משקל גוף');
+      }
 
       if (isEn) lines.push(`   • Required Equipment: ${equipNames}`);
       else if (isAr) lines.push(`   • المعدات المطلوبة: ${equipNames}`);
@@ -7271,73 +7292,227 @@ const TodayPage = (() => {
     return lines.join('\n');
   }
 
-  function recopyAiExportText() {
-    exportFullProgramGuide();
-  }
-
-  function downloadAiExportFile() {
-    exportFullProgramGuide();
-  }
-
-  function showAiExportModal() {
-    exportFullProgramGuide();
-  }
+  let currentAiExportDay = null;
+  let currentTodayEnglishPrompt = '';
+  let currentFullProgramGuideText = '';
 
   /**
-   * Export the complete program guide (PROGRAM_GUIDE.md):
-   * Copies the full markdown content to clipboard and triggers direct file download.
+   * Open the AI Export Modal containing two clear options:
+   * 1. Today's workout (English prompt for ChatGPT / Gemini)
+   * 2. Full program guide (PROGRAM_GUIDE.md)
+   * Both include one-click Copy to clipboard and Download.
    */
-  async function exportFullProgramGuide() {
-    let mdContent = '';
+  async function openAiExportModal(dayParam = null) {
+    const day = dayParam || allPlanDays[currentDayIndex];
+    if (!day) return;
 
-    // 1. Check window.PROGRAM_GUIDE_TEXT (pre-loaded from js/program-guide-content.js)
-    if (typeof window !== 'undefined' && window.PROGRAM_GUIDE_TEXT) {
-      mdContent = window.PROGRAM_GUIDE_TEXT;
-    }
+    currentAiExportDay = day;
 
-    // 2. Fallback: try fetching PROGRAM_GUIDE.md
-    if (!mdContent && typeof fetch === 'function') {
+    // 1. Generate English prompt for today's workout (always in English as requested)
+    currentTodayEnglishPrompt = generateAiExportText(day, 'en');
+
+    // 2. Load full program guide text
+    currentFullProgramGuideText = (typeof window !== 'undefined' && window.PROGRAM_GUIDE_TEXT) ? window.PROGRAM_GUIDE_TEXT : '';
+    if (!currentFullProgramGuideText && typeof fetch === 'function') {
       try {
         const resp = await fetch('PROGRAM_GUIDE.md');
-        if (resp.ok) {
-          mdContent = await resp.text();
-        }
+        if (resp.ok) currentFullProgramGuideText = await resp.text();
       } catch (e) {
-        console.warn('Fetch PROGRAM_GUIDE.md fallback error:', e);
+        console.warn('Fetch PROGRAM_GUIDE.md error:', e);
       }
     }
 
-    // 3. Fallback: generate from ExporterGuide if available
-    if (!mdContent && typeof ExporterGuide !== 'undefined' && typeof ExporterGuide.generateProgramGuide === 'function') {
-      try {
-        mdContent = await ExporterGuide.generateProgramGuide();
-      } catch (e) {
-        console.warn('ExporterGuide fallback error:', e);
-      }
+    // 3. Pre-copy today's English prompt immediately so user has it ready
+    await copyTextToClipboard(currentTodayEnglishPrompt);
+
+    // 4. Build modal HTML
+    const dayNum = day.dayNum || (currentDayIndex + 1);
+    const modalTitle = `<div style="display: flex; align-items: center; gap: 8px;"><span>📋</span> <span>${(typeof I18n !== 'undefined' ? I18n.t('export_ai_modal_title') : '') || 'ייצוא ל-AI (ChatGPT / Gemini)'}</span></div>`;
+
+    const guidePreviewSnippet = currentFullProgramGuideText ? (currentFullProgramGuideText.slice(0, 1500) + '\n\n... (560 days continued in full file)') : '';
+
+    const modalBody = `
+      <div class="ai-export-modal-container" style="display: flex; flex-direction: column; gap: 14px; text-align: start;">
+        
+        <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.4;">
+          ${(typeof I18n !== 'undefined' ? I18n.t('export_ai_modal_subtitle') : '') || 'בחר באחת משתי אפשרויות הייצוא: אימון היום באנגלית (מותאם ל-AI), או ייצוא כל תוכנית האימונים השלמה.'}
+        </div>
+
+        <!-- Option 1: Today's Workout in English -->
+        <div class="ai-export-card" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(59, 130, 246, 0.08)); border: 1.5px solid rgba(168, 85, 247, 0.35); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+          
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 22px;">🏋️</span>
+              <div>
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-primary);">
+                  ${(typeof I18n !== 'undefined' ? I18n.t('export_opt_today_title') : '') || 'אימון היום (באנגלית מותאם ל-AI)'}
+                </div>
+                <div style="font-size: 11.5px; color: var(--text-secondary);">
+                  ${(typeof I18n !== 'undefined' ? I18n.t('export_opt_today_subtitle') : '') || 'פרומפט מובנה באנגלית עם תרגילי היום, סטים, חזרות, ציוד ובקשת חלופות'}
+                </div>
+              </div>
+            </div>
+            <span style="font-size: 10.5px; font-weight: 800; background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.4); padding: 3px 8px; border-radius: 9999px; white-space: nowrap;">
+              English • #${dayNum}
+            </span>
+          </div>
+
+          <!-- Buttons Row for Today's Workout -->
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <button type="button" id="copy-today-ai-btn" class="btn-primary" 
+                    style="flex: 1; min-width: 140px; padding: 9px 12px; font-size: 12.5px; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(135deg, #a855f7, #6366f1); color: white; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.25);"
+                    onclick="TodayPage.copyTodayWorkoutPrompt()">
+              <span>📋</span> <span id="copy-today-ai-btn-text">${(typeof I18n !== 'undefined' ? I18n.t('export_opt_today_copy') : '') || 'העתק פרומפט ללוח'}</span>
+            </button>
+            <button type="button" class="btn-secondary" 
+                    style="flex: 1; min-width: 130px; padding: 9px 12px; font-size: 12.5px; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"
+                    onclick="TodayPage.downloadTodayWorkoutPrompt()">
+              <span>💾</span> <span>${(typeof I18n !== 'undefined' ? I18n.t('export_opt_today_download') : '') || 'הורד קובץ TXT'}</span>
+            </button>
+          </div>
+
+          <!-- Quick AI Links -->
+          <div style="display: flex; gap: 8px;">
+            <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" 
+               class="btn-secondary" 
+               style="flex: 1; text-decoration: none; padding: 7px 10px; font-size: 11.5px; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; color: #10b981; border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.08);">
+              <span>🤖</span> <span>${(typeof I18n !== 'undefined' ? I18n.t('export_workout_open_chatgpt') : '') || 'פתח ב-ChatGPT'}</span>
+            </a>
+            <a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" 
+               class="btn-secondary" 
+               style="flex: 1; text-decoration: none; padding: 7px 10px; font-size: 11.5px; font-weight: 700; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); background: rgba(59, 130, 246, 0.08);">
+              <span>✨</span> <span>${(typeof I18n !== 'undefined' ? I18n.t('export_workout_open_gemini') : '') || 'פתח ב-Gemini'}</span>
+            </a>
+          </div>
+
+          <!-- Preview Collapsible -->
+          <details style="margin-top: 2px; font-size: 12px;">
+            <summary style="cursor: pointer; color: var(--text-secondary); font-weight: 700; user-select: none; padding: 2px 0;">
+              ${(typeof I18n !== 'undefined' ? I18n.t('export_opt_today_preview_toggle') : '') || '👁️ הצג תצוגה מקדימה של הפרומפט באנגלית'}
+            </summary>
+            <textarea id="ai-export-today-preview" readonly rows="7" dir="ltr" 
+                      style="width: 100%; box-sizing: border-box; margin-top: 6px; background: var(--bg-primary, #0f172a); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; line-height: 1.4; padding: 10px; resize: vertical; user-select: all;"
+                      onclick="this.select();">${escapeHtml(currentTodayEnglishPrompt)}</textarea>
+          </details>
+
+        </div>
+
+        <!-- Option 2: Full Program Guide -->
+        <div class="ai-export-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(6, 182, 212, 0.08)); border: 1.5px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 10px;">
+          
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 22px;">📚</span>
+              <div>
+                <div style="font-size: 14px; font-weight: 800; color: var(--text-primary);">
+                  ${(typeof I18n !== 'undefined' ? I18n.t('export_opt_all_title') : '') || 'כל תוכנית האימונים השלמה (PROGRAM_GUIDE.md)'}
+                </div>
+                <div style="font-size: 11.5px; color: var(--text-secondary);">
+                  ${(typeof I18n !== 'undefined' ? I18n.t('export_opt_all_subtitle') : '') || 'קובץ ההנחיות המקיף של כל 560 הימים, עקרונות העומס והתרגילים'}
+                </div>
+              </div>
+            </div>
+            <span style="font-size: 10.5px; font-weight: 800; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 3px 8px; border-radius: 9999px; white-space: nowrap;">
+              560 Days • Full
+            </span>
+          </div>
+
+          <!-- Buttons Row for Full Program Guide -->
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <button type="button" id="copy-full-guide-btn" class="btn-primary" 
+                    style="flex: 1; min-width: 140px; padding: 9px 12px; font-size: 12.5px; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);"
+                    onclick="TodayPage.copyFullProgramGuide()">
+              <span>📋</span> <span id="copy-full-guide-btn-text">${(typeof I18n !== 'undefined' ? I18n.t('export_opt_all_copy') : '') || 'העתק את כל התוכנית ללוח'}</span>
+            </button>
+            <button type="button" class="btn-secondary" 
+                    style="flex: 1; min-width: 130px; padding: 9px 12px; font-size: 12.5px; font-weight: 700; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer;"
+                    onclick="TodayPage.downloadFullProgramGuide()">
+              <span>💾</span> <span>${(typeof I18n !== 'undefined' ? I18n.t('export_opt_all_download') : '') || 'הורד PROGRAM_GUIDE.md'}</span>
+            </button>
+          </div>
+
+          <!-- Preview Collapsible for Guide -->
+          <details style="margin-top: 2px; font-size: 12px;">
+            <summary style="cursor: pointer; color: var(--text-secondary); font-weight: 700; user-select: none; padding: 2px 0;">
+              ${(typeof I18n !== 'undefined' ? I18n.t('export_opt_all_preview_toggle') : '') || '👁️ הצג תצוגה מקדימה של תוכן המדריך'}
+            </summary>
+            <textarea id="ai-export-guide-preview" readonly rows="7" dir="auto" 
+                      style="width: 100%; box-sizing: border-box; margin-top: 6px; background: var(--bg-primary, #0f172a); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; line-height: 1.4; padding: 10px; resize: vertical; user-select: all;"
+                      onclick="this.select();">${escapeHtml(guidePreviewSnippet)}</textarea>
+          </details>
+
+        </div>
+
+      </div>
+    `;
+
+    if (window.UI && window.UI.showModal) {
+      UI.showModal(modalTitle, modalBody);
     }
 
-    if (!mdContent) {
-      if (window.UI && window.UI.toast) {
-        UI.toast('שגיאה בייצוא PROGRAM_GUIDE.md', 'error');
-      }
-      return;
-    }
-
-    // Copy full markdown text directly to clipboard
-    await copyTextToClipboard(mdContent);
-
-    // Download PROGRAM_GUIDE.md directly as markdown file
-    downloadAiExportTxt('PROGRAM_GUIDE.md', mdContent);
-
-    // Toast confirmation
     if (window.UI && window.UI.toast) {
-      const msg = (typeof I18n !== 'undefined' ? I18n.t('export_program_guide_success') : '') || 'קובץ PROGRAM_GUIDE.md יוצא והועתק ללוח בהצלחה! 📋';
-      UI.toast(msg, 'success');
+      UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_today_copied_toast') : '') || 'תרגילי אימון היום (באנגלית) הועתקו ללוח! 📋', 'success');
     }
   }
 
-  // Alias for backward compatibility
-  const exportWorkoutToAiTxt = exportFullProgramGuide;
+  async function copyTodayWorkoutPrompt() {
+    const day = currentAiExportDay || allPlanDays[currentDayIndex];
+    if (!day) return;
+    const text = currentTodayEnglishPrompt || generateAiExportText(day, 'en');
+    const ok = await copyTextToClipboard(text);
+    const btnText = document.getElementById('copy-today-ai-btn-text');
+    if (btnText && ok) {
+      const orig = btnText.textContent;
+      btnText.textContent = (typeof I18n !== 'undefined' ? I18n.t('copied_badge') : '') || '✓ הועתק!';
+      setTimeout(() => { if (btnText) btnText.textContent = orig; }, 2000);
+    }
+    if (window.UI && window.UI.toast) {
+      UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_today_copied_toast') : '') || 'תרגילי אימון היום (באנגלית) הועתקו ללוח! 📋', 'success');
+    }
+  }
+
+  function downloadTodayWorkoutPrompt() {
+    const day = currentAiExportDay || allPlanDays[currentDayIndex];
+    if (!day) return;
+    const text = currentTodayEnglishPrompt || generateAiExportText(day, 'en');
+    const dayNum = day.dayNum || (currentDayIndex + 1);
+    downloadAiExportTxt(`fitup-day-${dayNum}-workout-en.txt`, text);
+  }
+
+  async function copyFullProgramGuide() {
+    const text = currentFullProgramGuideText || ((typeof window !== 'undefined' && window.PROGRAM_GUIDE_TEXT) ? window.PROGRAM_GUIDE_TEXT : '');
+    if (!text) {
+      if (window.UI && window.UI.toast) UI.toast('שגיאה בקריאת PROGRAM_GUIDE.md', 'error');
+      return;
+    }
+    const ok = await copyTextToClipboard(text);
+    const btnText = document.getElementById('copy-full-guide-btn-text');
+    if (btnText && ok) {
+      const orig = btnText.textContent;
+      btnText.textContent = (typeof I18n !== 'undefined' ? I18n.t('copied_badge') : '') || '✓ הועתק!';
+      setTimeout(() => { if (btnText) btnText.textContent = orig; }, 2000);
+    }
+    if (window.UI && window.UI.toast) {
+      UI.toast((typeof I18n !== 'undefined' ? I18n.t('export_all_copied_toast') : '') || 'כל תוכנית האימונים (PROGRAM_GUIDE.md) הועתקה ללוח! 📋', 'success');
+    }
+  }
+
+  function downloadFullProgramGuide() {
+    const text = currentFullProgramGuideText || ((typeof window !== 'undefined' && window.PROGRAM_GUIDE_TEXT) ? window.PROGRAM_GUIDE_TEXT : '');
+    if (!text) {
+      if (window.UI && window.UI.toast) UI.toast('שגיאה בהורדת PROGRAM_GUIDE.md', 'error');
+      return;
+    }
+    downloadAiExportTxt('PROGRAM_GUIDE.md', text);
+  }
+
+  // Aliases for compatibility
+  const exportWorkoutToAiTxt = openAiExportModal;
+  const exportFullProgramGuide = copyFullProgramGuide;
+  const showAiExportModal = openAiExportModal;
+  const recopyAiExportText = copyTodayWorkoutPrompt;
+  const downloadAiExportFile = downloadTodayWorkoutPrompt;
 
   return {
     init,
@@ -7385,6 +7560,11 @@ const TodayPage = (() => {
     getCurrentDayIndex: () => currentDayIndex,
     resolveExerciseStage,
     getActiveExerciseName,
+    openAiExportModal,
+    copyTodayWorkoutPrompt,
+    downloadTodayWorkoutPrompt,
+    copyFullProgramGuide,
+    downloadFullProgramGuide,
     exportFullProgramGuide,
     exportWorkoutToAiTxt,
     generateAiExportText,
