@@ -570,13 +570,17 @@ const TodayPage = (() => {
     }
 
     if (lower.includes('trx face pull')) {
-      if (stageName.toLowerCase().startsWith('angle')) {
-        return `TRX Face Pull (${stageName})`;
+      if (stageName.toLowerCase().startsWith('angle') || stageName.includes('°') || stageName.includes('זווית') || stageName.includes('زاوية')) {
+        let baseAngle = stageName;
+        if (/1|75|gentle|מתונה|معتدلة/i.test(stageName)) baseAngle = 'Angle 1';
+        else if (/2|45|moderate|בינונית|متوسطة/i.test(stageName)) baseAngle = 'Angle 2';
+        else if (/3|30|steep|עמוקה|عميقة/i.test(stageName)) baseAngle = 'Angle 3';
+        return `TRX Face Pull (${baseAngle})`;
       }
       return 'TRX Face Pull';
     }
 
-    if (/^(angle\s*\d+|feet-elevated|bodyweight|\+?\s*\d+\s*kg|band\s*\d+\s*kg|incline\s*\d+%?)/i.test(stageName.trim())) {
+    if (/^(angle\s*\d+|זווית|زاوية|\d+°|feet-elevated|רגליים|أقدام|bodyweight|\+?\s*\d+\s*kg|band\s*\d+\s*kg|incline\s*\d+%?)/i.test(stageName.trim())) {
       return exName;
     }
 
@@ -2325,6 +2329,10 @@ const TodayPage = (() => {
           const isAngleChanged = isStageChanged && (
             curStageName.toLowerCase().startsWith('angle') || 
             prevStageName.toLowerCase().startsWith('angle') || 
+            curStageName.includes('°') ||
+            prevStageName.includes('°') ||
+            curStageName.includes('זווית') ||
+            prevStageName.includes('זווית') ||
             (ex.name || '').toLowerCase().includes('trx')
           );
 
@@ -4196,12 +4204,15 @@ const TodayPage = (() => {
 
           let setStagePill = '';
           if (!hasWeight && ex.currentStageName) {
-            const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+            const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || ex.currentStageName.includes('°') || ex.currentStageName.includes('זווית') || ex.currentStageName.includes('زاوية') || (ex.name || '').toLowerCase().includes('trx');
             const stageLabel = (typeof I18n !== 'undefined' && I18n.t(ex.currentStageName) !== ex.currentStageName) ? I18n.t(ex.currentStageName) : ex.currentStageName;
             const icon = isAngle ? '📐' : '🎯';
+            const angleMiniSvg = (isAngle && typeof UI !== 'undefined' && typeof UI.getTrxAngleSvg === 'function')
+              ? UI.getTrxAngleSvg(ex.currentStageName, { width: 30, height: 20 })
+              : '';
             setStagePill = `
-              <div class="set-input-pill set-stage-pill" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--text-primary); font-weight: 800; font-size: 11px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; height: 38px; border-radius: 8px; white-space: nowrap; gap: 4px;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
-                <span style="color: var(--accent-primary); font-weight: 900;">${icon}</span>
+              <div class="set-input-pill set-stage-pill" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--text-primary); font-weight: 800; font-size: 11px; padding: 0 8px; display: inline-flex; align-items: center; justify-content: center; height: 38px; border-radius: 8px; white-space: nowrap; gap: 5px;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
+                ${angleMiniSvg ? `<span style="display: inline-flex; align-items: center;">${angleMiniSvg}</span>` : `<span style="color: var(--accent-primary); font-weight: 900;">${icon}</span>`}
                 <span>${stageLabel}</span>
               </div>
             `;
@@ -4353,13 +4364,17 @@ const TodayPage = (() => {
           detailParts.push(`<span class="suitcase-grip-badge" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary, #3b82f6); padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('suitcase_grip_desc')}">👜 ${I18n.t('suitcase_grip_badge')}</span>`);
         }
       } else if (curStageName) {
-        const isAngle = curStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+        const isAngle = curStageName.toLowerCase().startsWith('angle') || curStageName.includes('°') || curStageName.includes('זווית') || curStageName.includes('زاوية') || (ex.name || '').toLowerCase().includes('trx');
         const isIncline = curStageName.toLowerCase().includes('incline');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(curStageName) !== curStageName) ? I18n.t(curStageName) : curStageName;
         const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
-        const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
+        const tagText = isAngle ? 'TRX' : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
+        const angleMiniSvg = (isAngle && typeof UI !== 'undefined' && typeof UI.getTrxAngleSvg === 'function')
+          ? UI.getTrxAngleSvg(curStageName, { width: 30, height: 20 })
+          : '';
         const stageBadgeHTML = `
           <span class="weight-badge angle-stage-badge" style="background: rgba(59, 130, 246, 0.14); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--text-primary); padding: 2px 7px; border-radius: 8px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
+            ${angleMiniSvg ? `<span style="display: inline-flex; align-items: center;">${angleMiniSvg}</span>` : ''}
             <bdi dir="ltr">${stageLabel}</bdi>
             <span style="background: #3b82f6; color: #ffffff; padding: 2px 6px; border-radius: 5px; font-size: 10px; font-weight: 900; letter-spacing: 0.2px; display: inline-flex; align-items: center; gap: 3px;">
               ${icon} ${tagText}
@@ -4729,15 +4744,18 @@ const TodayPage = (() => {
 
       let heroAngleBadgeHTML = '';
       if (curStageName) {
-        const isAngle = curStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+        const isAngle = curStageName.toLowerCase().startsWith('angle') || curStageName.includes('°') || curStageName.includes('זווית') || curStageName.includes('زاوية') || (ex.name || '').toLowerCase().includes('trx');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(curStageName) !== curStageName) ? I18n.t(curStageName) : curStageName;
         const icon = isAngle ? '📐' : '🎯';
         const badgeBg = isAngleChanged 
           ? 'background: rgba(239, 68, 68, 0.9); border: 2px solid #ef4444; box-shadow: 0 0 14px rgba(239, 68, 68, 0.8);' 
           : 'background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 4px 12px rgba(0,0,0,0.35);';
+        const angleMiniSvg = (isAngle && typeof UI !== 'undefined' && typeof UI.getTrxAngleSvg === 'function')
+          ? UI.getTrxAngleSvg(curStageName, { width: 34, height: 22 })
+          : '';
         heroAngleBadgeHTML = `
-          <div class="exercise-hero-angle-badge" style="position: absolute; top: 12px; left: 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); ${badgeBg} color: #ffffff; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; display: inline-flex; align-items: center; gap: 5px; z-index: 10;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
-            <span style="color: ${isAngleChanged ? '#ffffff' : '#60a5fa'}; font-weight: 900;">${icon}</span>
+          <div class="exercise-hero-angle-badge" style="position: absolute; top: 12px; left: 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); ${badgeBg} color: #ffffff; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; z-index: 10;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
+            ${angleMiniSvg ? `<span style="display: inline-flex; align-items: center;">${angleMiniSvg}</span>` : `<span style="color: ${isAngleChanged ? '#ffffff' : '#60a5fa'}; font-weight: 900;">${icon}</span>`}
             <span><bdi dir="ltr">${stageLabel}</bdi></span>
           </div>
         `;
@@ -4773,7 +4791,7 @@ const TodayPage = (() => {
                   ${isInjuredSwap ? `<span class="injury-name-badge" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>` : ''}
                   ${isSensitiveROM ? `<span class="injury-name-badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>` : ''}
                   ${ex.currentStageName ? (() => {
-                    const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || (ex.name || '').toLowerCase().includes('trx');
+                    const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || ex.currentStageName.includes('°') || ex.currentStageName.includes('זווית') || ex.currentStageName.includes('زاوية') || (ex.name || '').toLowerCase().includes('trx');
                     const isIncline = ex.currentStageName.toLowerCase().includes('incline');
                     const stageLabel = (typeof I18n !== 'undefined' && I18n.t(ex.currentStageName) !== ex.currentStageName) ? I18n.t(ex.currentStageName) : ex.currentStageName;
                     const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
@@ -6462,16 +6480,16 @@ const TodayPage = (() => {
       belowTrigger: 'קריסת אגן או מרפקים נפתחים לצדדים.'
     },
     'TRX ROW': {
-      rule: 'גוף ישר כחץ, משיכה לחזה התחתון תוך כיווץ חזק של השכמות בסוף התנועה.',
-      belowTrigger: 'שבירת אגן (כיפוף ירך) או מומנטום של התנדנדות.'
+      rule: 'גוף ישר כחץ, משיכה לחזה התחתון תוך כיווץ שכמות. התקדמות לפי זווית גוף: 75° מתונה ← 45° בינונית ← 30° עמוקה ← רגליים מוגבהות 180°.',
+      belowTrigger: 'שבירת אגן (כיפוף ירך), שימוש במומנטום או התפשרות על זווית הגוף.'
     },
     'DB LATERAL RAISE': {
       rule: 'עצירה קצרה בשיא בגובה הכתף, הרמה דרך הכתף הצידית ללא הנפת גו.',
       belowTrigger: 'הנפת גב (Cheating) או הרמת המשקולת מעל גובה הכתפיים במומנטום.'
     },
     'TRX Y-T-W': {
-      rule: 'זרועות כמעט ישרות, תנועה מבוקרת וטהורה מהכתף האחורית והשכמות.',
-      belowTrigger: 'כיפוף מרפקים מוגזם במקום עבודת כתף אחורית.'
+      rule: 'זרועות כמעט ישרות, תנועה מבוקרת וטהורה מהכתף האחורית והשכמות. התקדמות זווית: 75° מתונה ← 45° בינונית ← 30° עמוקה.',
+      belowTrigger: 'כיפוף מרפקים מוגזם במקום עבודת כתף אחורית או שימוש בתנופה.'
     },
     'BAND PULL-APART': {
       rule: 'מתיחת הגומייה עד לנגיעה קלה בחזה עם שכמות אסופות מאחור.',
@@ -6486,8 +6504,8 @@ const TodayPage = (() => {
       belowTrigger: 'סובב גו מוגזם (Torso rotation) או הנפת המשקולת עם מומנטום.'
     },
     'TRX FACE PULL': {
-      rule: 'משיכה לכיוון המצח עם סיבוב חיצוני של הכתף (Hands high, elbows wide).',
-      belowTrigger: 'משיכה לבטן/חזה במקום למצח, או שמיטת מרפקים.'
+      rule: 'משיכה לכיוון המצח עם סיבוב חיצוני של הכתף (Hands high, elbows wide). התקדמות זווית: 75° מתונה ← 45° בינונית ← 30° עמוקה.',
+      belowTrigger: 'משיכה לבטן/חזה במקום למצח, שמיטת מרפקים או כיפוף מפרקי ידיים.'
     },
     'DB CURL': {
       rule: 'סופינציה מלאה (זרת מסתובבת גבוה יותר מהאגודל בשיא הכיווץ), יישור מרפק מלא בתחתית למתיחה מקסימלית, קצב 2-1-2 קפדני ללא שום תנופת כתף או גב.',
@@ -6576,6 +6594,44 @@ const TodayPage = (() => {
       belowTriggerText = UI.enrichHeartRateText(belowTriggerText);
     }
 
+    let trxAngleOverviewHTML = '';
+    const isTrx = (exName || '').toLowerCase().includes('trx');
+    if (isTrx && typeof UI !== 'undefined' && typeof UI.getTrxAngleSvg === 'function') {
+      const isRow = (exName || '').toLowerCase().includes('row');
+      const tiers = isRow
+        ? [
+            { key: '75', label: I18n.t('Angle 1') },
+            { key: '45', label: I18n.t('Angle 2 (45°)') },
+            { key: '30', label: I18n.t('Angle 3') },
+            { key: '180', label: I18n.t('Feet-Elevated (180°)') }
+          ]
+        : [
+            { key: '75', label: I18n.t('Angle 1') },
+            { key: '45', label: I18n.t('Angle 2 (45°)') },
+            { key: '30', label: I18n.t('Angle 3') }
+          ];
+
+      trxAngleOverviewHTML = `
+        <div style="background: rgba(15, 23, 42, 0.45); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+          <strong style="color: var(--accent-primary); font-size: 13px; display: flex; align-items: center; gap: 6px;">
+            <span>📐</span> ${I18n.t('angle_progression_label') || 'התקדמות זווית:'}
+          </strong>
+          <div style="display: grid; grid-template-columns: repeat(${tiers.length}, 1fr); gap: 6px;">
+            ${tiers.map(t => `
+              <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px;">
+                <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 4px; padding: 2px 3px;">
+                  ${UI.getTrxAngleSvg(t.key, { width: 38, height: 24 })}
+                </div>
+                <span style="font-size: 10px; font-weight: 800; color: var(--text-primary); line-height: 1.2;">
+                  <bdi dir="ltr">${t.label.replace(/^(?:זווית|Angle|زاوية)\s*/i, '')}</bdi>
+                </span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
     UI.showModal(`ℹ️ ${exName} — ${I18n.t('form_rules_title') || 'חוקי טכניקה'}`, `
       <div style="padding: 12px; display: flex; flex-direction: column; gap: 14px; text-align: start;">
         <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; padding: 12px 14px;">
@@ -6584,6 +6640,7 @@ const TodayPage = (() => {
           </strong>
           <div style="font-size: 13px; color: var(--text-primary); line-height: 1.5;">${ruleText}</div>
         </div>
+        ${trxAngleOverviewHTML}
 
         <button type="button" class="btn-primary" onclick="UI.hideModal()" style="width: 100%; padding: 12px; margin-top: 6px;">
           ${I18n.t('modal_got_it') || 'הבנתי, תודה!'}

@@ -267,13 +267,22 @@ const UI = (() => {
     'TRX ROW ANGLE 2 45': 'TRX Row.gif',
     'TRX ROW ANGLE 3': 'TRX Row.gif',
     'TRX ROW FEET ELEVATED': 'TRX Row.gif',
+    'TRX ROW 75': 'TRX Row.gif',
+    'TRX ROW 45': 'TRX Row.gif',
+    'TRX ROW 30': 'TRX Row.gif',
     'TRX Y T W': 'TRX Y-T-W.gif',
     'TRX Y T W ANGLE 1': 'TRX Y-T-W.gif',
     'TRX Y T W ANGLE 2': 'TRX Y-T-W.gif',
     'TRX Y T W ANGLE 3': 'TRX Y-T-W.gif',
+    'TRX Y T W 75': 'TRX Y-T-W.gif',
+    'TRX Y T W 45': 'TRX Y-T-W.gif',
+    'TRX Y T W 30': 'TRX Y-T-W.gif',
     'TRX FACE PULL ANGLE 1': 'TRX Face Pull (Angle 1).gif',
     'TRX FACE PULL ANGLE 2': 'TRX Face Pull (Angle 2).gif',
     'TRX FACE PULL ANGLE 3': 'TRX Face Pull (Angle 3).gif',
+    'TRX FACE PULL 75': 'TRX Face Pull (Angle 1).gif',
+    'TRX FACE PULL 45': 'TRX Face Pull (Angle 2).gif',
+    'TRX FACE PULL 30': 'TRX Face Pull (Angle 3).gif',
     'L SIT PROGRESSION': 'Tuck Hold (Bars).gif',
     'L SIT TUCK (BARS)': 'Tuck Hold (Bars).gif',
     'TUCK HOLD (CHAIR)': 'Tuck Hold (Chair).gif',
@@ -804,15 +813,97 @@ const UI = (() => {
     return encodeMediaPath(path);
   }
 
+  /**
+   * Helper to resolve the angle tier ('75', '45', '30', '180') from an exercise/stage string
+   */
+  function resolveTrxAngleTier(str) {
+    if (!str) return '75';
+    const s = String(str).toLowerCase();
+    if (s.includes('180') || s.includes('elevated') || s.includes('מוגבה') || s.includes('مرفوع') || s.includes('feet') || s.includes('רגליים') || s.includes('أقدام')) {
+      return '180';
+    }
+    if (s.includes('30') || s.includes('angle 3') || s.includes('זווית 3') || s.includes('זאויה 3') || s.includes('steep') || s.includes('עמוקה') || s.includes('عميقة')) {
+      return '30';
+    }
+    if (s.includes('45') || s.includes('angle 2') || s.includes('זווית 2') || s.includes('זאויה 2') || s.includes('moderate') || s.includes('בינונית') || s.includes('متوسطة')) {
+      return '45';
+    }
+    return '75';
+  }
+
+  /**
+   * Returns a lightweight, high-contrast, biomechanically accurate mini-SVG illustration
+   * showing the athlete's body angle relative to the TRX straps and ground.
+   */
+  function getTrxAngleSvg(angleOrStage, options = {}) {
+    const width = options.width || 44;
+    const height = options.height || 28;
+    const tier = resolveTrxAngleTier(angleOrStage);
+    const title = options.title || (typeof I18n !== 'undefined' ? I18n.t(`Angle ${tier}°`) : `TRX ${tier}°`);
+
+    let content = '';
+
+    if (tier === '75') {
+      content = `
+        <line x1="2" y1="26" x2="44" y2="26" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="4" y1="3" x2="12" y2="3" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+        <line x1="8" y1="3" x2="22" y2="10" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="28" y1="10" x2="22" y2="10" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="28" y1="10" x2="33" y2="26" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="27" cy="5.5" r="2.2" fill="#38bdf8"/>
+        <path d="M 37 26 A 4 4 0 0 0 34.5 22.5" fill="none" stroke="#60a5fa" stroke-width="1.2"/>
+        <text x="37" y="19" font-size="7" font-weight="900" fill="#60a5fa" font-family="'Inter', system-ui, sans-serif">75°</text>
+      `;
+    } else if (tier === '45') {
+      content = `
+        <line x1="2" y1="26" x2="44" y2="26" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="4" y1="3" x2="12" y2="3" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+        <line x1="8" y1="3" x2="16" y2="13" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="22" y1="14" x2="16" y2="13" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="22" y1="14" x2="35" y2="26" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="20" cy="10" r="2.2" fill="#38bdf8"/>
+        <path d="M 40 26 A 5 5 0 0 0 37 22.5" fill="none" stroke="#60a5fa" stroke-width="1.2"/>
+        <text x="33" y="14" font-size="7" font-weight="900" fill="#60a5fa" font-family="'Inter', system-ui, sans-serif">45°</text>
+      `;
+    } else if (tier === '30') {
+      content = `
+        <line x1="2" y1="26" x2="44" y2="26" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="4" y1="3" x2="12" y2="3" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+        <line x1="8" y1="3" x2="15" y2="15" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="22" y1="18" x2="15" y2="15" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="22" y1="18" x2="38" y2="26" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="18.5" cy="15.5" r="2.2" fill="#38bdf8"/>
+        <path d="M 43 26 A 5 5 0 0 0 40 23.5" fill="none" stroke="#60a5fa" stroke-width="1.2"/>
+        <text x="30" y="12" font-size="7" font-weight="900" fill="#60a5fa" font-family="'Inter', system-ui, sans-serif">30°</text>
+      `;
+    } else {
+      content = `
+        <line x1="2" y1="26" x2="44" y2="26" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round"/>
+        <rect x="29" y="16" width="13" height="10" rx="1.5" fill="rgba(148, 163, 184, 0.2)" stroke="#94a3b8" stroke-width="1"/>
+        <line x1="14" y1="3" x2="22" y2="3" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18" y1="3" x2="18" y2="11" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="16" y1="16" x2="18" y2="11" stroke="#38bdf8" stroke-width="1.6" stroke-linecap="round"/>
+        <line x1="16" y1="16" x2="33" y2="16" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="12" cy="16" r="2.2" fill="#38bdf8"/>
+        <text x="22" y="10" font-size="6.5" font-weight="900" fill="#60a5fa" font-family="'Inter', system-ui, sans-serif">180°</text>
+      `;
+    }
+
+    return `<svg class="trx-angle-mini-diagram" width="${width}" height="${height}" viewBox="0 0 46 28" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block; vertical-align: middle; flex-shrink: 0;" aria-label="${title}"><title>${title}</title>${content}</svg>`;
+  }
+
   function showImageModal(title, src, fallbackTitle) {
     let effectiveTitle = title || '';
     if (fallbackTitle) {
       const fbClean = fallbackTitle.trim();
       const tClean = effectiveTitle.trim();
       // If title is just a generic stage/angle/tier name, resolve using the base fallback exercise
-      if (/^(angle\s*\d+|feet-elevated|bodyweight|\+?\s*\d+\s*kg|band\s*\d+\s*kg|incline\s*\d+%?)/i.test(tClean)) {
+      if (/^(angle\s*\d+|זווית|زاوية|\d+°|feet-elevated|רגליים|أقدام|bodyweight|\+?\s*\d+\s*kg|band\s*\d+\s*kg|incline\s*\d+%?)/i.test(tClean)) {
         if (fbClean.toLowerCase().includes('face pull')) {
-          effectiveTitle = `TRX Face Pull (${tClean})`;
+          let baseAngle = 'Angle 1';
+          if (/2|45|moderate|בינונית|متوسطة/i.test(tClean)) baseAngle = 'Angle 2';
+          else if (/3|30|steep|עמוקה|عميقة/i.test(tClean)) baseAngle = 'Angle 3';
+          effectiveTitle = `TRX Face Pull (${baseAngle})`;
         } else {
           effectiveTitle = fbClean;
         }
@@ -1199,19 +1290,22 @@ const UI = (() => {
         (window.ExercisesPage?.EXERCISE_WEIGHT_PROGRESSION?.[effectiveTitle]?.[0]?.weight);
 
       if (resolvedStageName) {
-        const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || (effectiveTitle || '').toLowerCase().includes('trx');
+        const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || resolvedStageName.includes('°') || resolvedStageName.includes('זווית') || resolvedStageName.includes('زاوية') || (effectiveTitle || '').toLowerCase().includes('trx');
         const isIncline = resolvedStageName.toLowerCase().includes('incline');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(resolvedStageName) !== resolvedStageName) ? I18n.t(resolvedStageName) : resolvedStageName;
         const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
         const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
         const badgeLabel = isAngle ? 'TRX Progression' : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
+        const cleanAngleLabel = isAngle ? stageLabel.replace(/^(?:זווית|Angle|زاوية)\s*/i, '') : stageLabel;
+        const angleSvg = isAngle ? getTrxAngleSvg(resolvedStageName, { width: 42, height: 26 }) : '';
         stageHeaderHTML = `
-          <div class="gif-modal-stage-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 7px 12px; border-radius: 10px; margin-bottom: 8px;">
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; color: var(--text-primary);">
+          <div class="gif-modal-stage-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; color: var(--text-primary); min-width: 0;">
               <span style="font-size: 16px;">${icon}</span>
-              <span>${tagText}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${stageLabel}</bdi></b></span>
+              ${angleSvg ? `<div class="trx-angle-badge-icon" style="background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 6px; padding: 1px 3px; display: inline-flex; align-items: center;" title="${stageLabel}">${angleSvg}</div>` : ''}
+              <span>${tagText}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${cleanAngleLabel}</bdi></b></span>
             </div>
-            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
+            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700; white-space: nowrap;">
               ${badgeLabel}
             </span>
           </div>
@@ -1243,19 +1337,22 @@ const UI = (() => {
         (window.ExercisesPage?.EXERCISE_WEIGHT_PROGRESSION?.[effectiveTitle]?.[0]?.weight);
 
       if (resolvedStageName) {
-        const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || (effectiveTitle || '').toLowerCase().includes('trx');
+        const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || resolvedStageName.includes('°') || resolvedStageName.includes('זווית') || resolvedStageName.includes('زاوية') || (effectiveTitle || '').toLowerCase().includes('trx');
         const isIncline = resolvedStageName.toLowerCase().includes('incline');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(resolvedStageName) !== resolvedStageName) ? I18n.t(resolvedStageName) : resolvedStageName;
         const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
         const tagText = isAngle ? (I18n.t('angle_tag') || 'זווית') : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
         const badgeLabel = isAngle ? 'TRX Progression' : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('stage_tag') || 'שלב'));
+        const cleanAngleLabel = isAngle ? stageLabel.replace(/^(?:זווית|Angle|زاوية)\s*/i, '') : stageLabel;
+        const angleSvg = isAngle ? getTrxAngleSvg(resolvedStageName, { width: 42, height: 26 }) : '';
         stageHeaderHTML = `
-          <div class="gif-modal-stage-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 7px 12px; border-radius: 10px; margin-bottom: 8px;">
-            <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; color: var(--text-primary);">
+          <div class="gif-modal-stage-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; color: var(--text-primary); min-width: 0;">
               <span style="font-size: 16px;">${icon}</span>
-              <span>${tagText}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${stageLabel}</bdi></b></span>
+              ${angleSvg ? `<div class="trx-angle-badge-icon" style="background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 6px; padding: 1px 3px; display: inline-flex; align-items: center;" title="${stageLabel}">${angleSvg}</div>` : ''}
+              <span>${tagText}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${cleanAngleLabel}</bdi></b></span>
             </div>
-            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
+            <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700; white-space: nowrap;">
               ${badgeLabel}
             </span>
           </div>
@@ -2602,7 +2699,8 @@ const UI = (() => {
     MICRO_MOBILITY_SUB_EXERCISES,
     MICRO_MOBILITY_A_SUB_EXERCISES,
     MICRO_MOBILITY_B_SUB_EXERCISES,
-    getMicroMobilitySubExercises
+    getMicroMobilitySubExercises,
+    getTrxAngleSvg
   };
 })();
 

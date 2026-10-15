@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v201-uri-fallback-fix';
+const CACHE_NAME = 'fitup-v203-trx-angle-diagrams';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

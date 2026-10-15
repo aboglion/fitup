@@ -42,7 +42,31 @@
 - **Push-Up Bars**: All push-up variations must strictly use Push-Up Bars. Palms flat on the floor is strictly forbidden.
 - **Pull-Up Bar & Rings / Rope Loops (טבעות / לולאת חבל)**: Trainees may execute all Pull-Up, Chin-Up, and Hang progressions using Gymnastic Rings or Short Rope Loops hung from the pull-up bar. This grants natural rotational freedom for wrists and forearms (pronated to neutral/supinated), eliminating torsional stress on elbow tendons (medial/lateral epicondyles) and building superior functional grip strength without joint wear.
 - **Quad Overload & Paused Squats**: Heels-Elevated Goblet Squats enforce a 1–2s isometric pause at the bottom (Paused Squat) to maintain continuous quad tension without ballistic bounce. The Goblet Bulgarian Split Squat (unlocked early in Phase 0) provides the primary unilateral overload mechanism, overcoming the dumbbell weight ceiling without compressive spinal torque.
-- **TRX**: Strictly for Face Pulls, TRX Rows, and TRX Y-T-W. Fixed body angles assigned per phase.
+- **TRX Fixed Body Angles (פרוטוקול זוויות גוף מדויקות ב-TRX)**: Strictly for Face Pulls, TRX Rows, and TRX Y-T-W. Rather than arbitrary stage numbers (זווית 1, זווית 2), progression is biomechanically defined by the body angle relative to the floor and gravitational load vector:
+  - **TRX Row (חתירה ב-TRX)**:
+    - **Stage 1 (Weeks 1–17)**: **זווית 75° (מתונה / Angle 75° Gentle)** — Torso inclined at 75° relative to the floor (~35% BW resistance); gentle initial back loading.
+    - **Stage 2 (Weeks 18–41)**: **זווית 45° (בינונית / Angle 45° Moderate)** — Torso inclined at 45° relative to the floor (~70% BW resistance); intermediate hypertrophy anchor.
+    - **Stage 3 (Weeks 42–59)**: **זווית 30° (עמוקה / Angle 30° Steep)** — Torso inclined deeply at 30° relative to the floor (~85% BW resistance); high-density horizontal pull.
+    - **Stage 4 (Weeks 60+)**: **רגליים מוגבהות (180° אופקי / Feet-Elevated 180°)** — Feet placed on a sturdy chair/bench forming a 180° horizontal plane with the anchor (100%+ BW overload).
+  - **TRX Face Pull (פייס פול TRX) & TRX Y-T-W (הרחקות כתף TRX)**:
+    - **Stage 1 (Weeks 1–17)**: **זווית 75° (מתונה / Angle 75° Gentle)** — Gentle incline protecting subacromial space while cueing external rotation and scapular retraction.
+    - **Stage 2 (Weeks 18–41)**: **זווית 45° (בינונית / Angle 45° Moderate)** — Balanced incline for posterior shoulder overload.
+    - **Stage 3 (Weeks 42+)**: **זווית 30° (עמוקה / Angle 30° Steep)** — Deep incline maximizing peak scapular tension.
+  
+  ```
+  TRX Body Angle Visual Progression (המחשת זוויות הגוף ביחס לקרקע):
+
+     Anchor                      Anchor                      Anchor                   Ceiling Anchor
+       |                           \                           \                            |
+     [Strap]                     [Strap]                     [Strap]                      [Strap]
+       |                           \                           \                            |
+     ● [75°]                     ●  \                        ●   \                        ●=● [180° Flat]
+     |  \                       /    \                      /     \                      /   \
+     |   \                     /      \                    /       \                 [Bench]
+  ───┴────●──────────────   ───┴───────●──────────────   ──┴────────●──────────────   ───┴───[===]───────────
+     75° Gentle                  45° Moderate                30° Steep                    Feet-Elevated
+     (~35% BW Load)              (~70% BW Load)              (~85% BW Load)               (100%+ BW Overload)
+  ```
 - **Neutral Spine**: Rigid neutral alignment across all RDL, Row, and Carry variations. Lumbar rounding = load is too heavy.
 - **Unilateral Execution (Alternating Sides per Set)**: Across all unilateral exercises (both Straight Sets and Lean Pairs — including `Single-Leg RDL`, `Goblet Bulgarian Split Squat`, `Suitcase Carry`, `Single-Arm Seated OHP`, `Single-Arm Floor Press`, `One-Arm DB Row`, `Single-Arm Lateral Raise`, `Single-Arm Curl`, `Single-Arm Hammer Curl`, and `Single-Leg Calf Raises`), trainees execute **Side A (weaker side first) → 15s transition → Side B**, followed by the prescribed full rest interval. Never complete all sets on one limb before starting the other. (For Lean Pairs: perform Set $N$ of Exercise 1 [Side A → Side B], then Set $N$ of Exercise 2 [Side A → Side B], followed by the 75s pair rest).
 - **Handle Weight & Total Dumbbell Load**: Dumbbell handle weight is **6 kg** and is strictly included in total load calculations (the handle is NOT ignored). An empty dumbbell equals 6 kg. Loaded dumbbells progress in strictly 2 kg increments (8, 10, 12, 14, 16... up to 32 kg).
@@ -557,15 +581,15 @@ This is the authoritative specification of all **61 unique exercises** appearing
 | **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up ≥ 10); 2kg increments |
 | **Chin-Up** | `chin-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 4-8 | 2s descent (rings/loops OK) | 90s | Day 3 Vertical Pull 2×/week (V-Taper & elbow relief) |
 | **Diamond Push-Up** | `diamond-push-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 45s | Skill Tree Accessory (Replaced by Chin-Up on Day 3) |
-| **TRX Row** | `trx-row` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | Lean Pair #1 with Lateral Raise |
+| **TRX Row** | `trx-row` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | Lean Pair #1 with Lateral Raise; W1–17: 75° (מתונה) \| W18–41: 45° (בינונית) \| W42–59: 30° (עמוקה) \| W60+: רגליים מוגבהות (180°) |
 | **Single-Arm Lateral Raise** | `single-arm-lateral-raise` | weighted | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 2 | 10-18 | 2-1-2 (lengthened pause) | 75s | W5 (early W3); 2kg increments; Max 12kg |
-| **TRX Y-T-W** | `trx-ytw` | variation | BW / Stage | BW | — | — | — | — | 2 | 8-12 | 1s pause at peak | 45s | Rear Delt Toggle (Odd Weeks) |
+| **TRX Y-T-W** | `trx-ytw` | variation | BW / Stage | BW | — | — | — | — | 2 | 8-12 | 1s pause at peak | 45s | Rear Delt Toggle (Odd Weeks); W1–17: 75° (מתונה) \| W18–41: 45° (בינונית) \| W42+: 30° (עמוקה) |
 | **Band Pull-Apart** | `band-pull-apart` | variation | BW / Stage | Band | — | — | — | — | 3 | 15-20 | 1s squeeze | 45s | Rear Delt Toggle (Even Weeks) |
 | **Pull-Up Progression** | `pull-up-progression` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W1–9 |
 | **Pull-Up (Overhand)** | `pull-up-overhand` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W10–61 |
 | **Weighted Pull-Up** | `weighted-pull-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 4-8 | 2s descent | 105–120s | Pull Tree W62+ (weighted vest) |
 | **One-Arm DB Row** | `one-arm-db-row` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | Day 5 Primary Horizontal Pull Anchor |
-| **TRX Face Pull** | `trx-face-pull` | variation | BW / Stage | BW | — | — | — | — | 2 | 12-20 | 2s descent | 75s / 45s | Lean Pair with Day 5 Lateral Raise (W5+) |
+| **TRX Face Pull** | `trx-face-pull` | variation | BW / Stage | BW | — | — | — | — | 2 | 12-20 | 2s descent | 75s / 45s | Lean Pair with Day 5 Lateral Raise (W5+); W1–17: 75° (מתונה) \| W18–41: 45° (בינונית) \| W42+: 30° (עמוקה) |
 | **Push-Up Volume (Day 5)** | `push-up-volume` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | W5 (early W3); Lean Pair with Curl |
 | **Single-Arm Curl** | `single-arm-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-15 | 2-1-2 (lengthened pause) | 45s | Biceps Microcycle Heavy W1–3; 2kg increments |
 | **Single-Arm Hammer Curl** | `single-arm-hammer-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-12 | 2s descent | 45s | W5 (early W3 if Curl ≥ 12); Light W4 = 2 sets |

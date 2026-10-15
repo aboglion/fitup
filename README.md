@@ -184,7 +184,7 @@ The 80-week program is designed around a minimal yet complete home-gym setup:
 | **Modular Dumbbells** | Modular Dumbbell System (6–32 kg legal weight range per dumbbell in 2 kg increments; 6 kg empty handle). | Single-Arm Floor Press, Single-Arm Seated OHP, Goblet RDLs, Goblet Split Squats, Single-Arm Rows, Single-Arm Biceps Curls, Triceps Extensions. |
 | **Mounted Pull-Up Bar** | Secure doorway or wall-mounted pull-up bar. | Overhand Pull-Ups, Chin-Ups, Dead Hangs, Towel Hangs for grip. |
 | **Push-Up Bars** | Ergonomic push-up handles / parallettes. | **Mandatory** for all Push-Ups, Deficit Push-Ups, Elevated Pike Push-Ups, and L-Sit Tucks to prevent wrist hyperextension. |
-| **TRX Suspension Trainer** | Adjustable suspension trainer anchored to door/wall. | TRX Face Pulls (Angles 1–4) and TRX Y-T-W shoulder stability sequences. |
+| **TRX Suspension Trainer** | Adjustable suspension trainer anchored to door/wall. | TRX Row (75° Gentle → 45° Moderate → 30° Steep → 180° Feet-Elevated), TRX Face Pulls (75° → 45° → 30°), and TRX Y-T-W shoulder stability sequences. |
 | **Resistance Bands** | Loop/flat resistance bands: 30 kg band & 40 kg band. | Band Pull-Aparts, Pallof Press (core anti-rotation), and light warmups. |
 | **Sturdy Chair / Box** | Flat, stable chair or workout bench (knee-to-hip height). | Goblet Bulgarian Split Squats, Feet-Elevated Push-Ups, Pistol Squats to chair, Single-Arm Seated OHP. |
 | **Treadmill** | Home or gym treadmill with adjustable speed & incline. | Zone 2 Aerobic Base walking, Norwegian 4x4 VO2 Max intervals (incline strictly capped at ≤6%). |

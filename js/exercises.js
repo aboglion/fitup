@@ -1183,7 +1183,7 @@ const ExercisesPage = (() => {
     let weightDisplay = ex.weight || '';
     if (weightDisplay && equip && equip.label === I18n.t('equip_band') && weightDisplay !== '—') {
       weightDisplay = `${I18n.t('equip_band')}: ${weightDisplay}`;
-    } else if (weightDisplay && weightDisplay.toLowerCase().startsWith('angle')) {
+    } else if (weightDisplay && (weightDisplay.toLowerCase().startsWith('angle') || weightDisplay.includes('°') || (ex.name || '').toLowerCase().includes('trx'))) {
       const stageLabel = (typeof I18n !== 'undefined' && I18n.t(weightDisplay) !== weightDisplay) ? I18n.t(weightDisplay) : weightDisplay;
       weightDisplay = `📐 ${stageLabel}`;
     }
@@ -1475,16 +1475,21 @@ const ExercisesPage = (() => {
     const showSingleGif = !ex.name.toLowerCase().includes('deep mobility') && gifPath;
     let exerciseAngleHeaderHTML = '';
     const angleTiers = EXERCISE_WEIGHT_PROGRESSION[ex.name];
-    if (angleTiers && angleTiers.length > 0 && (angleTiers[0].weight || '').toLowerCase().startsWith('angle')) {
+    if (angleTiers && angleTiers.length > 0 && ((angleTiers[0].weight || '').toLowerCase().startsWith('angle') || (angleTiers[0].weight || '').includes('°') || ex.name.toLowerCase().includes('trx'))) {
       const firstAngle = angleTiers[0].weight;
       const stageLabel = (typeof I18n !== 'undefined' && I18n.t(firstAngle) !== firstAngle) ? I18n.t(firstAngle) : firstAngle;
+      const cleanAngleLabel = stageLabel.replace(/^(?:זווית|Angle|زاوية)\s*/i, '');
+      const angleSvg = (typeof UI !== 'undefined' && typeof UI.getTrxAngleSvg === 'function')
+        ? UI.getTrxAngleSvg(firstAngle, { width: 42, height: 26 })
+        : '';
       exerciseAngleHeaderHTML = `
-        <div class="exercise-guide-angle-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 8px 12px; border-radius: 10px; margin-bottom: 2px;">
-          <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; color: var(--text-primary);">
+        <div class="exercise-guide-angle-header" style="display: flex; align-items: center; justify-content: space-between; background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); padding: 6px 12px; border-radius: 10px; margin-bottom: 2px; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; color: var(--text-primary); min-width: 0;">
             <span style="font-size: 16px;">📐</span>
-            <span>${I18n.t('angle_tag') || 'זווית'}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${stageLabel}</bdi></b></span>
+            ${angleSvg ? `<div class="trx-angle-badge-icon" style="background: rgba(15, 23, 42, 0.55); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 6px; padding: 1px 3px; display: inline-flex; align-items: center;" title="${stageLabel}">${angleSvg}</div>` : ''}
+            <span>${I18n.t('angle_tag') || 'זווית'}: <b style="color: var(--accent-primary);"><bdi dir="ltr">${cleanAngleLabel}</bdi></b></span>
           </div>
-          <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700;">
+          <span style="font-size: 11px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; font-weight: 700; white-space: nowrap;">
             ${angleTiers.length} ${I18n.t('unit_levels') || 'רמות זווית'}
           </span>
         </div>

@@ -12,6 +12,7 @@ test('TRX Angle Display Above GIF & Angle Change Alerts Test', async () => {
   global.history = { pushState: () => {}, replaceState: () => {} };
   const mockStorage = {};
   const mockWindow = {
+    location: { hash: '', reload: () => {} },
     addEventListener: () => {},
     history: { pushState: () => {}, replaceState: () => {} },
     localStorage: {
@@ -104,7 +105,23 @@ test('TRX Angle Display Above GIF & Angle Change Alerts Test', async () => {
   assert.equal(mockWindow.TodayPage.resolveExerciseStage(trxRowEx, week42Day), 'Angle 3');
   assert.equal(mockWindow.TodayPage.resolveExerciseStage(trxRowEx, week60Day), 'Feet-Elevated');
 
-  // Test that showExerciseDetails in ExercisesPage generates angle header above GIF
+  // Assert descriptive angle labels with degrees and positions
+  assert.equal(I18n.translations.he['Angle 1'], 'זווית 75° (מתונה)');
+  assert.equal(I18n.translations.he['Angle 2 (45°)'], 'זווית 45° (בינונית)');
+  assert.equal(I18n.translations.he['Angle 3'], 'זווית 30° (עמוקה)');
+  assert.equal(I18n.translations.he['Feet-Elevated'], 'רגליים מוגבהות (180°)');
+
+  assert.equal(I18n.translations.en['Angle 1'], 'Angle 75° (Gentle)');
+  assert.equal(I18n.translations.en['Angle 2 (45°)'], 'Angle 45° (Moderate)');
+  assert.equal(I18n.translations.en['Angle 3'], 'Angle 30° (Steep)');
+  assert.equal(I18n.translations.en['Feet-Elevated'], 'Feet-Elevated (180°)');
+
+  assert.equal(I18n.translations.ar['Angle 1'], 'زاوية 75° (معتدلة)');
+  assert.equal(I18n.translations.ar['Angle 2 (45°)'], 'زاوية 45° (متوسطة)');
+  assert.equal(I18n.translations.ar['Angle 3'], 'زاوية 30° (عميقة)');
+  assert.equal(I18n.translations.ar['Feet-Elevated'], 'أقدام مرفوعة (180°)');
+
+  // Test that showExerciseDetails in ExercisesPage generates angle header above GIF without label stutter
   let modalTitle = '';
   let modalContent = '';
   mockWindow.UI.showModal = (title, content) => {
@@ -112,15 +129,47 @@ test('TRX Angle Display Above GIF & Angle Change Alerts Test', async () => {
     modalContent = content;
   };
 
+  // Default mock language is EN
   mockWindow.ExercisesPage.showExerciseDetails({ name: 'TRX Row', category: 'Back' });
   assert.ok(modalContent.includes('exercise-guide-angle-header'), 'ExercisesPage modal must include exercise-guide-angle-header above GIF');
   assert.ok(modalContent.includes('📐'), 'Angle header must show 📐 icon');
+  assert.ok(!modalContent.includes('Angle: Angle'), 'ExercisesPage modal must not stutter "Angle: Angle"');
+  assert.ok(modalContent.includes('75° (Gentle)'), 'ExercisesPage modal must show descriptive 75° (Gentle)');
 
-  // Test that showImageModal in UI generates angle header above GIF
+  // Switch to Hebrew and test localized modal rendering
+  await I18n.setLanguage('he');
+  mockWindow.ExercisesPage.showExerciseDetails({ name: 'TRX Row', category: 'Back' });
+  assert.ok(!modalContent.includes('זווית: זווית'), 'ExercisesPage modal must not stutter "זווית: זווית"');
+  assert.ok(modalContent.includes('75° (מתונה)'), 'ExercisesPage modal must show descriptive 75° (מתונה)');
+
+  // Test that showImageModal in UI generates angle header above GIF without label stutter
   mockWindow.UI.showImageModal('TRX Row');
   const imageModalContent = elements['modal-body']?.innerHTML || '';
   assert.ok(imageModalContent.includes('gif-modal-stage-header'), 'UI.showImageModal must include gif-modal-stage-header above GIF');
   assert.ok(imageModalContent.includes('📐'), 'gif-modal-stage-header must show 📐 icon');
+  assert.ok(imageModalContent.includes('75° (מתונה)'), 'UI.showImageModal must show descriptive 75° (מתונה)');
+  assert.ok(imageModalContent.includes('trx-angle-mini-diagram'), 'UI.showImageModal must include trx-angle-mini-diagram');
+  assert.ok(modalContent.includes('trx-angle-mini-diagram'), 'ExercisesPage modal must include trx-angle-mini-diagram');
+
+  // Test UI.getTrxAngleSvg across all angle tiers
+  assert.equal(typeof mockWindow.UI.getTrxAngleSvg, 'function');
+  const svg75 = mockWindow.UI.getTrxAngleSvg('75');
+  const svg45 = mockWindow.UI.getTrxAngleSvg('Angle 2 (45°)');
+  const svg30 = mockWindow.UI.getTrxAngleSvg('Angle 3');
+  const svg180 = mockWindow.UI.getTrxAngleSvg('Feet-Elevated (180°)');
+
+  assert.ok(svg75.includes('trx-angle-mini-diagram') && svg75.includes('75°'), 'SVG 75 must render 75°');
+  assert.ok(svg45.includes('trx-angle-mini-diagram') && svg45.includes('45°'), 'SVG 45 must render 45°');
+  assert.ok(svg30.includes('trx-angle-mini-diagram') && svg30.includes('30°'), 'SVG 30 must render 30°');
+  assert.ok(svg180.includes('trx-angle-mini-diagram') && svg180.includes('180°'), 'SVG 180 must render 180°');
+
+  // Test TodayPage.showFormRuleModal renders multi-stage angle progression diagrams for TRX Row
+  let formRuleModalHtml = '';
+  mockWindow.UI.showModal = (title, content) => { formRuleModalHtml = content; };
+  mockWindow.TodayPage.showFormRuleModal('TRX Row');
+  assert.ok(formRuleModalHtml.includes('trx-angle-mini-diagram'), 'showFormRuleModal must include angle diagrams for TRX');
+  assert.ok(formRuleModalHtml.includes('75°'), 'showFormRuleModal must include 75°');
+  assert.ok(formRuleModalHtml.includes('180°'), 'showFormRuleModal must include 180° for TRX Row');
 
   // Regression test: TodayPage.init & render with equipment banner must not throw ReferenceError: statesMap is not defined
   const mockDB = {
