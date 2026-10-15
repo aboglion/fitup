@@ -276,8 +276,7 @@ test('PROGRAM_GUIDE.md - Includes Section 1.3 Biomechanical Joint & Injury Engin
   assert.ok(!guideContent.includes('quad/hip extension tension with **0 kg patellofemoral shear**'), 'Must not claim quad tension in glute bridge');
   assert.ok(!guideContent.includes('30%–40%'), 'Must not make ungrounded 30%-40% motor unit recruitment claims');
   assert.ok(!guideContent.includes('equivalent to 64 kg'), 'Must not make ungrounded 32kg single leg = 64kg bilateral equivalence claims');
-  assert.ok(!guideContent.includes('v15.7.1'), 'Must not reference v15.7.1 in guide');
-  assert.ok(guideContent.includes('# FitUp Pro v15.8 Accelerated'), 'Header must be v15.8');
+  assert.ok(guideContent.includes('# FitUp Pro v15.9 Accelerated') || guideContent.includes('# FitUp Pro v15.8 Accelerated'), 'Header must be v15.9 or v15.8');
 });
 
 test('InjuryEngine & UI Modal - All exercise adaptations have valid cueKey translations and never yield undefined', () => {

@@ -866,51 +866,111 @@ const TodayPage = (() => {
    * - Active Recovery / Cardio: 1980 kcal, 185g Carbs (balanced baseline)
    */
   function getCyclingTargetsForDay(dayObj) {
+    const options = (arguments.length > 1 && arguments[1] !== undefined) ? arguments[1] : {};
     const dayType = (dayObj && (dayObj.dayType || dayObj['Day Type'])) || '';
     const isRest = dayType === 'Rest' || /rest/i.test(dayType);
     const isRecovery = !isRest && /recovery|walk|zone\s*2/i.test(dayType);
     const isStrengthOrVO2 = !isRest && !isRecovery && (/strength|push|pull|legs|skill|lower|upper|vo2/i.test(dayType) || (dayObj && dayObj.exercises && dayObj.exercises.length > 3));
 
-    if (isStrengthOrVO2) {
-      return {
-        mode: 'strength_vo2',
-        nameKey: 'carb_cycling_strength_badge',
-        descKey: 'carb_cycling_strength_desc',
-        icon: '⚡',
-        badgeClass: 'cycling-strength',
-        targetCalories: 2120, // 1980 + 140
-        targetProtein: 160,
-        targetCarbs: 220,     // 185 + 35
-        carbDelta: '+35g',
-        calorieDelta: '+140 kcal'
-      };
-    } else if (isRest) {
-      return {
-        mode: 'rest',
-        nameKey: 'carb_cycling_rest_badge',
-        descKey: 'carb_cycling_rest_desc',
-        icon: '🔥',
-        badgeClass: 'cycling-rest',
-        targetCalories: 1780, // 1980 - 200
-        targetProtein: 160,
-        targetCarbs: 140,     // lower carb
-        carbDelta: '-45g',
-        calorieDelta: '-200 kcal'
-      };
+    const isMaintenance = options.isMaintenance || (options.mode === 'maintenance') || (dayObj && dayObj.isMaintenance);
+    const hasCombat = Boolean(options.hasCombat || options.isCombatDay || (dayObj && (dayObj.combat || dayObj.hasCombat)) || (options.tracking && options.tracking.combat && options.tracking.combat.done));
+
+    let res;
+    if (isMaintenance) {
+      if (isStrengthOrVO2) {
+        res = {
+          mode: 'strength_vo2',
+          nameKey: 'carb_cycling_strength_badge',
+          descKey: 'carb_cycling_strength_desc',
+          icon: '⚡',
+          badgeClass: 'cycling-strength',
+          targetCalories: 2650,
+          targetProtein: 160,
+          targetCarbs: 310,
+          carbDelta: '+50g',
+          calorieDelta: '+200 kcal'
+        };
+      } else if (isRest) {
+        res = {
+          mode: 'rest',
+          nameKey: 'carb_cycling_rest_badge',
+          descKey: 'carb_cycling_rest_desc',
+          icon: '🔥',
+          badgeClass: 'cycling-rest',
+          targetCalories: 2250,
+          targetProtein: 160,
+          targetCarbs: 210,
+          carbDelta: '-50g',
+          calorieDelta: '-200 kcal'
+        };
+      } else {
+        res = {
+          mode: 'recovery',
+          nameKey: 'carb_cycling_recovery_badge',
+          descKey: 'carb_cycling_recovery_desc',
+          icon: '🌿',
+          badgeClass: 'cycling-recovery',
+          targetCalories: 2450,
+          targetProtein: 160,
+          targetCarbs: 260,
+          carbDelta: '±0g',
+          calorieDelta: '±0 kcal'
+        };
+      }
     } else {
-      return {
-        mode: 'recovery',
-        nameKey: 'carb_cycling_recovery_badge',
-        descKey: 'carb_cycling_recovery_desc',
-        icon: '🌿',
-        badgeClass: 'cycling-recovery',
-        targetCalories: 1980,
-        targetProtein: 160,
-        targetCarbs: 185,
-        carbDelta: '±0g',
-        calorieDelta: '±0 kcal'
-      };
+      if (isStrengthOrVO2) {
+        res = {
+          mode: 'strength_vo2',
+          nameKey: 'carb_cycling_strength_badge',
+          descKey: 'carb_cycling_strength_desc',
+          icon: '⚡',
+          badgeClass: 'cycling-strength',
+          targetCalories: 2120, // 1980 + 140
+          targetProtein: 160,
+          targetCarbs: 220,     // 185 + 35
+          carbDelta: '+35g',
+          calorieDelta: '+140 kcal'
+        };
+      } else if (isRest) {
+        res = {
+          mode: 'rest',
+          nameKey: 'carb_cycling_rest_badge',
+          descKey: 'carb_cycling_rest_desc',
+          icon: '🔥',
+          badgeClass: 'cycling-rest',
+          targetCalories: 1780, // 1980 - 200
+          targetProtein: 160,
+          targetCarbs: 140,     // lower carb
+          carbDelta: '-45g',
+          calorieDelta: '-200 kcal'
+        };
+      } else {
+        res = {
+          mode: 'recovery',
+          nameKey: 'carb_cycling_recovery_badge',
+          descKey: 'carb_cycling_recovery_desc',
+          icon: '🌿',
+          badgeClass: 'cycling-recovery',
+          targetCalories: 1980,
+          targetProtein: 160,
+          targetCarbs: 185,
+          carbDelta: '±0g',
+          calorieDelta: '±0 kcal'
+        };
+      }
     }
+
+    if (hasCombat) {
+      res.hasCombat = true;
+      res.targetCalories += 450;
+      res.targetCarbs += 60;
+      res.icon = '🥊';
+      res.carbDelta = '+60g (Combat Refuel)';
+      res.calorieDelta = '+450 kcal (Combat Refuel)';
+      res.descKey = 'carb_cycling_combat_desc';
+    }
+
+    return res;
   }
 
   function checkPassiveRestDetection(dayIndex, allTracking) {
@@ -1642,8 +1702,29 @@ const TodayPage = (() => {
         }
       }
 
+      // Check if combat is active for this day
+      let isCombatActive = false;
+      if (window.CombatScheduler && targetPlanDay) {
+        try {
+          const combatCfg = await getCombatSchedule();
+          if (combatCfg && combatCfg.enabled) {
+            const planIdx = targetPlanDay.dayIndex != null ? targetPlanDay.dayIndex : currentDayIndex;
+            const targetDate = new Date(queryDateStr + 'T12:00:00');
+            const targetJsDow = targetDate.getDay();
+            const exceptions = await getCombatExceptions();
+            const cInfo = CombatScheduler.combatInfoForDay(combatCfg, planIdx, targetJsDow, targetPlanDay.dayType, exceptions);
+            if (cInfo && (cInfo.isCombatDay || cInfo.kind)) {
+              isCombatActive = true;
+            }
+          }
+        } catch (_) {}
+      }
+      if (!isCombatActive && currentTracking && currentTracking.combat && currentTracking.combat.done && queryDateStr === todayStr) {
+        isCombatActive = true;
+      }
+
       // Calculate dynamic cycling targets
-      const cyclingTargets = getCyclingTargetsForDay(targetPlanDay);
+      const cyclingTargets = getCyclingTargetsForDay(targetPlanDay, { hasCombat: isCombatActive });
       const targetCals = cyclingTargets.targetCalories;
       const targetProtein = cyclingTargets.targetProtein;
       const targetCarbs = cyclingTargets.targetCarbs;
@@ -6222,8 +6303,8 @@ const TodayPage = (() => {
       belowTrigger: 'איבוד שיווי משקל חמור, קריסת ברך פנימה (Valgus), או עילוי עקב קדמי.'
     },
     'SINGLE-LEG RDL': {
-      rule: 'אגן אופקי ומקביל לרצפה, רגל אחורית מתוחה קדימה/אחורה בקו ישר.',
-      belowTrigger: 'סיבוב אגן צידי מופרז, איבוד יציבות מוחלט, או עגלת גב.'
+      rule: 'Contralateral Hand-Supported מחייב: משקולת ביד הנגדית, יד פנויה נתמכת קלות בקיר/עמוד. neutral spine קשיח; מנטרל 100% רוטציה אגנית ומגן הרמטית על L4–S1.',
+      belowTrigger: 'איבוד שיווי משקל, עגלת גב (Lumbopelvic flexion), או חוסר תמיכה ביד הפנויה.'
     },
     'DB GLUTE BRIDGE': {
       rule: 'כיווץ מלא ונעילה של הגלוטאוס בשיא התנועה, סנטר אסוף (Posterior tilt).',

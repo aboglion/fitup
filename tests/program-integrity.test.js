@@ -103,7 +103,7 @@ test('Program Integrity - Lean Mode Mechanics & Protected Compounds', () => {
   assert.equal(lean.circuits[0].circuitId, 'd1-core-circuit');
   assert.deepEqual(lean.circuits[0].members, ["pallof-press-progression", "dead-bug", "hollow-body-hold"]);
   assert.equal(lean.blocks.length, 1);
-  assert.equal(lean.blocks[0].blockId, 'd5-calf-block');
+  assert.equal(lean.blocks[0].blockId, 'd3-calf-block');
   assert.equal(lean.toggles.length, 1);
 });
 
@@ -326,13 +326,12 @@ test('Program Integrity - Balanced Push-Pull (Day 3 Chin-Up, Day 5 Calves, Week 
   assert.ok(tricepsExt, 'Day 3 Week 5 must include db-overhead-triceps-extension');
   assert.equal(tricepsExt.sets, '3×10-15', 'Triceps extension on standard week must be 3 sets');
 
-  // 3. Day 5 Calf Block present
-  const w5d5 = data.daily.find(d => d.week === 'Week 5' && d.dayOfWeek === 'Friday');
-  const w5d5Ids = w5d5.exercises.map(e => e.id);
-  assert.ok(w5d5Ids.includes('standing-single-leg-calf-raise'), 'Day 5 must include standing calf raise');
-  assert.ok(w5d5Ids.includes('seated-single-leg-calf-raise'), 'Day 5 must include seated calf raise');
-  const calfEx = w5d5.exercises.find(e => e.id === 'standing-single-leg-calf-raise');
-  assert.equal(calfEx.blockId, 'd5-calf-block', 'Day 5 calf raise must belong to d5-calf-block');
+  // 3. Day 3 Calf Block present (v15.9: moved from Day 5 to protect Achilles before Day 6 VO2 Max)
+  const w5d3Ids = w5d3.exercises.map(e => e.id);
+  assert.ok(w5d3Ids.includes('standing-single-leg-calf-raise'), 'Day 3 must include standing calf raise');
+  assert.ok(w5d3Ids.includes('seated-single-leg-calf-raise'), 'Day 3 must include seated calf raise');
+  const calfEx = w5d3.exercises.find(e => e.id === 'standing-single-leg-calf-raise');
+  assert.equal(calfEx.blockId, 'd3-calf-block', 'Day 3 calf raise must belong to d3-calf-block');
 
   // 4. Week 4 biceps preservation fallback
   const hammerCatalog = data.exercises.find(e => e.id === 'single-arm-hammer-curl');

@@ -85,8 +85,8 @@ test('v15.7.1 - Day 5 Single-Arm Lateral Raise renders only when unlocked', () =
     assert.equal(lat.startingWeek, 5, 'calendar gate = Week 5');
     assert.equal(lat.earliestWeek, 3, 'performance unlock from Week 3');
     assert.equal(lat.fallbackId, null, 'locked -> hidden (no fallback)');
-    assert.equal(lat.sets, '2×12-15');
-    assert.equal(lat.repWindow, '12-15');
+    assert.equal(lat.sets, '2×10-18');
+    assert.equal(lat.repWindow, '10-18');
     assert.equal(lat.tempo, '2-1-2');
     assert.equal(lat.rest, 75);
     assert.equal(lat.structure, 'pair');
@@ -244,7 +244,7 @@ test('v15.7.1 - Rep windows frozen (only new Nordic entry added)', () => {
         'elevated-pike-push-up': '6-10', 'pull-up-overhand': '4-8', 'chin-up': '4-8',
         'weighted-pull-up': '4-8', 'weighted-chin-up': '4-8', 'single-arm-seated-ohp': '6-12',
         'db-overhead-triceps-extension': '10-15', 'diamond-push-up': '10-15', 'trx-row': '10-15',
-        'single-arm-lateral-raise': '12-20', 'trx-ytw': '8-12', 'band-pull-apart': '15-20',
+        'single-arm-lateral-raise': '10-18', 'trx-ytw': '8-12', 'band-pull-apart': '15-20',
         'pull-up-progression': '4-8', 'one-arm-db-row': '6-12', 'trx-face-pull': '12-20',
         'push-up-volume': '10-15', 'single-arm-curl': '10-15', 'single-arm-hammer-curl': '10-12',
         'towel-hang': '15-45s', 'tuck-l-sit': '8-20s', 'one-leg-extended-l-sit': '8-20s', 'full-l-sit': '8-20s'
@@ -255,11 +255,11 @@ test('v15.7.1 - Rep windows frozen (only new Nordic entry added)', () => {
     }
     const nordic = data.exercises.find(e => e.id === 'nordic-curl-progression');
     assert.equal(nordic.repWindow, '6-10');
-    // Day 5 lateral instance uses the explicitly-stated 12-15 dose; Day 3 stays 12-20
+    // v15.9: Both Day 3 and Day 5 lateral instances use the 10-18 range to prevent ping-pong stall
     const d5lat = dayOf(10, 'Friday').exercises.find(e => e.id === 'single-arm-lateral-raise');
-    assert.equal(d5lat.repWindow, '12-15');
+    assert.equal(d5lat.repWindow, '10-18');
     const d3lat = dayOf(10, 'Wednesday').exercises.find(e => e.id === 'single-arm-lateral-raise');
-    assert.equal(d3lat.repWindow, '12-20');
+    assert.equal(d3lat.repWindow, '10-18');
 });
 
 // ---------------------------------------------------------------------------
@@ -313,6 +313,13 @@ test('v15.7.1 - Strength-day duration estimate stays within 45 minutes', () => {
                     total += work + rest; // pair rest counted once after both members
                 } else {
                     total += work; // second member: work only
+                }
+            } else if (ex.blockId) {
+                if (!seenPairs.has(ex.blockId)) {
+                    seenPairs.add(ex.blockId);
+                    total += work + rest; // block rest counted once after block
+                } else {
+                    total += work;
                 }
             } else {
                 total += work + rest * Math.max(1, sets - 1);

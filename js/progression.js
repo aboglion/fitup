@@ -246,7 +246,25 @@
       if (evaluation === 'all_below') {
         const consecutiveBelow = (state && typeof state.consecutiveBelow === 'number') ? state.consecutiveBelow : 0;
         const baseSets = exercise.sets || (isGrpA ? 3 : 2);
-        if (consecutiveBelow >= 1) {
+        const isLowWeightTier = !isGrpA && currentWeight <= 10;
+        const isTransitionPhase = (state && (state.sessionsAtWeight || 0) < 2);
+
+        // Transition Rep Buffer (v15.9):
+        // On Tier 1/2 load jumps for Group B isolations (6->8 kg: +33.3%, 8->10 kg: +25.0%),
+        // during the first 2 sessions at the new weight, a 2-session adaptation grace period
+        // is granted where a 2nd below session maintains weight to prevent premature ping-pong demotion.
+        if (isLowWeightTier && isTransitionPhase && consecutiveBelow === 1) {
+          return {
+            action: 'maintain',
+            newWeight: currentWeight,
+            targetSets: baseSets,
+            reason: 'transition_buffer_maintain',
+            transitionBufferActive: true
+          };
+        }
+
+        const requiredConsecutiveBelow = (isLowWeightTier && isTransitionPhase) ? 2 : 1;
+        if (consecutiveBelow >= requiredConsecutiveBelow) {
           const decrement = exercise.increment || 2;
           const newWeight = Math.max(minWeight, currentWeight - decrement);
           return {
@@ -464,7 +482,7 @@
       return { active: true, phase: 'FULL_CLUSTER', stage: 'Full Arm Block Cluster (Week 6+)', sets: 'Myo-Reps Cluster', repWindow: 'Myo-Reps Cluster', miniSets: 3, miniReps: 5, rest: 15, label: 'צביר Myo מלא' };
     }
 
-    isArmBlockAllowed(dayTrackingData, weekNumber, existingExposures = []) {
+    isArmBlockAllowed(dayTrackingData, weekNumber, existingExposures = [], exerciseIdOrMuscleArea = null, allProgressionStates = {}) {
       const armBlockCfg = this.settings.armBlock || { enabledFromWeek: 3, maxArmBlockExposurePerMusclePerWeek: 1 };
 
       if (weekNumber < armBlockCfg.enabledFromWeek) {
@@ -473,6 +491,45 @@
 
       if (weekNumber % (this.settings.deloadEveryWeeks || 12) === 0) {
         return { active: true, sets: 1, reason: 'deload_single_set' };
+      }
+
+      // 1. Injury Engine Check (v15.9): Automatic suppression if relevant joint is Sensitive (1) or Injured (2)
+      if (typeof InjuryEngine !== 'undefined') {
+        const areaStr = (exerciseIdOrMuscleArea || '').toLowerCase();
+        if (areaStr.includes('shoulder') || areaStr.includes('lateral')) {
+          if (InjuryEngine.getJointState('shoulder_r') > 0 || InjuryEngine.getJointState('shoulder_l') > 0) {
+            return { active: false, reason: 'joint_vulnerability_shoulder' };
+          }
+        }
+        if (areaStr.includes('triceps') || areaStr.includes('biceps') || areaStr.includes('elbow') || areaStr.includes('curl')) {
+          if (InjuryEngine.getJointState('elbow_r') > 0 || InjuryEngine.getJointState('elbow_l') > 0) {
+            return { active: false, reason: 'joint_vulnerability_elbow' };
+          }
+        }
+      }
+
+      // 2. Volume Stepping Bridge Suppression (v15.9):
+      // When a trainee is in a Volume Stepping bridge (prescribedSets > baseSets, e.g. 3 or 4 sets),
+      // the metabolic/hypertrophic volume threshold is already achieved via main sets.
+      // Suppress the Arm Block for that muscle to prevent 10+ set overload and tendon strain.
+      if (exerciseIdOrMuscleArea && allProgressionStates) {
+        const exId = String(exerciseIdOrMuscleArea).toLowerCase();
+        let targetMainId = null;
+        if (exId.includes('lateral')) targetMainId = 'single-arm-lateral-raise';
+        else if (exId.includes('triceps')) targetMainId = 'db-overhead-triceps-extension';
+        else if (exId.includes('curl') || exId.includes('biceps')) targetMainId = 'single-arm-curl';
+
+        if (targetMainId && allProgressionStates[targetMainId]) {
+          const mainState = allProgressionStates[targetMainId];
+          const mainEx = this.getExercise(targetMainId);
+          if (mainEx) {
+            const base = mainEx.sets || 2;
+            const prescribed = this.calculatePrescribedSets(mainEx, mainState.currentWeightKg, mainState.sessionsAtWeight || 0, base);
+            if (prescribed > base) {
+              return { active: false, reason: 'suppressed_due_to_volume_stepping', prescribedSets: prescribed };
+            }
+          }
+        }
       }
 
       if (dayTrackingData) {

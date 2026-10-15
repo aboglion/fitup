@@ -1,9 +1,9 @@
-# FitUp Pro v15.8 Accelerated — Master Program Guide
+# FitUp Pro v15.9 Accelerated — Master Program Guide
 **Target Objective**: Sculpted Athletic Physique | V-Taper | Prominent Arms | Strong Back | Resilient Tendons | Anti-Aging | Aerobic Engine | Flexibility  
 **Starting Level**: Beginner (0 years formal training) | Clean Pull-Ups: 2 | Clean Push-Ups: 7  
 **Core Philosophy**: **Zero Decisions. Everything is prescriptive. You only execute.**
 
-**v15.8 (Safe Hypertrophy Dosing & Timing)**: This release increases hamstring and lateral-delt dosing, improves Day 3 pressing order, and adds lengthened-position tempo cues without compressing Phase 0 or increasing injury risk.
+**v15.9 (Biomechanical Joint Protection & Transition Buffering Patch)**: This release introduces the Transition Rep Buffer (resolving the 6kg → 8kg Lateral Raise ping-pong loop), Arm Block volume stepping suppression, mandatory Contralateral Hand-Supported cue for Single-Leg RDL, Day 3 antagonistic Chin-Up insertion, Day 3 Calf Block relocation for >60h Achilles recovery before VO2 Max, multi-joint conflict resolution in the Injury Engine, and combat refuel nutrition cycling.
 
 ---
 
@@ -172,7 +172,7 @@ The program is deliberately designed around a home gym environment with modular 
 ## Part 2 — Lean Architecture & Frequency Optimization
 
 ### 2.1 Lean Structure & Realistic Time Allocation (60–65 Minute Target)
-The v15.8 Accelerated Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts. Realistic session duration for full strength days (Day 1, Day 3, Day 5) is **60–65 minutes** to account for warm-up, 17–25+ working sets with 45–90s rest, paired transitions, and the Arm Block:
+The v15.9 Accelerated Edition organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts. Realistic session duration for full strength days (Day 1, Day 3, Day 5) is **60–65 minutes** to account for warm-up, 17–25+ working sets with 45–90s rest, paired transitions, and the Arm Block:
 - **Protected Compound Exercises**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet Bulgarian Split Squat, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Extension, Diamond Push-Up, Chin-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated rest.
 - **Lean Pairs (Antagonistic & Non-Competing)**:
   - **Day 3 (d3-row-lateral)**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
@@ -235,10 +235,10 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **Legs + Core + Carry** | Warmup (High Knees, BW Squat, Dead Bug, Glute Bridge) → Goblet Romanian Deadlift (W1–17) / Single-Leg RDL (W18+) → Nordic Curl Progression (from W10) → Heels-Elevated Goblet Squat → Goblet Bulgarian Split Squat → DB Glute Bridge → Suitcase Carry → Core Circuit (Pallof from W6, Dead Bug, Hollow Body) → Micro Mobility B | 55–60 min |
 | **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building: treadmill brisk walking 45 min at Zone 2 HR 60–70% (baseline 4% incline, 5.5 km/h, conversational test) & daily Micro Mobility B (hip flexor + deep squat) | 45 min |
-| **Day 3** | **Push + Shoulders + Skill** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) → Pike / Overhead Skill Tree → Single-Arm Floor Press → Push-Up Tree → Single-Arm Seated OHP → Chin-Up (2×4–8, 2nd weekly vertical pull) → DB Overhead Triceps Ext (3 sets) → Lean Pair (TRX Row ↔ Single-Arm Lateral Raise) → Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart) → Arm Block (W3+ Gradual Ramp) → Micro Mobility A | 55–60 min |
+| **Day 3** | **Push + Shoulders + Skill** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) → Single-Arm Seated OHP (A1) → Overhead Skill Tree (Pike / Wall Walk, A2) → Single-Arm Floor Press (A3) → **Chin-Up (A4, 2×4–8, antagonistic vertical pulling break)** → Push-Up Tree (A5) → DB Overhead Triceps Ext (A6, 3 sets) → Lean Pair (TRX Row ↔ Single-Arm Lateral Raise, A7/A8) → Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart, A9) → **Calf Block (Standing & Seated, A10/A11 — moved from Day 5 to spare Achilles before Day 6 VO2 Max)** → Arm Block (W3+ Gradual Ramp, A12) → Micro Mobility A (A13) | 55–60 min |
 | **Day 4** | **Active Recovery + Joint Health** | Band Neck Flexion & Extension protocol (A1, 2×15–20), light treadmill recovery walk (A2, 25 min @ 0% 4.5 km/h) & 10-min Deep Mobility sequence (A3) | 30 min |
-| **Day 5** | **Pull + Back + Biceps + Calves** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) → Pull-Up Tree → One-Arm DB Row → Lean Pair (TRX Face Pull ↔ Single-Arm Lateral Raise) → Lean Pair (Push-Up Volume ↔ Single-Arm Curl) → Single-Arm Hammer Curl → Lean Pair (Towel Hang ↔ L-Sit Tree) → Calf Block (Standing & Seated) → Arm Block (W3+ Gradual Ramp, active on heavy weeks 1-3) → Micro Mobility A | 45–50 min |
-| **Day 6** | **Cardio VO2 Max 4x4** | Norwegian 4x4 interval protocol: 10m warmup @ 4.5 km/h, 4×(4m effort @ 85–95% HRmax [baseline 6.5+ km/h at phase incline, adjust speed/incline to hit HR target], 3m recovery @ 60–70% HRmax [4.5 km/h]), 5m cooldown (replaced with 30 min Zone 2 walk during Deload) | 35 min |
+| **Day 5** | **Pull + Back + Biceps** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) → Pull-Up Tree (A1) → One-Arm DB Row (A2) → Lean Pair (TRX Face Pull ↔ Single-Arm Lateral Raise, A3/A4) → Lean Pair (Push-Up Volume ↔ Single-Arm Curl, A5/A6) → Single-Arm Hammer Curl (A7) → Lean Pair (Towel Hang ↔ L-Sit Tree, A8/A9) → Arm Block (W3+ Gradual Ramp, active on heavy weeks 1-3, A10) → Micro Mobility A (A11) | 45–50 min |
+| **Day 6** | **Cardio VO2 Max 4x4** | Norwegian 4x4 interval protocol: 10m warmup @ 4.5 km/h, 4×(4m effort @ 85–95% HRmax [Walking: 5.8–6.8 km/h @ 4–6% incline | Running: ≥7.5 km/h @ 1–2% incline to spare Achilles tendon], 3m recovery @ 60–70% HRmax [4.5 km/h]), 5m cooldown (replaced with 30 min Zone 2 walk during Deload) | 35 min |
 | **Day 7** | **Complete Rest** | Complete passive recovery, protein repair, hydration & CNS regeneration | — |
 
 ### 3.2 Cardio Protocols & Physiological Heart Rate Targets
@@ -402,7 +402,7 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 ---
 
 ## Appendix B — System Definition & Master References
-- **Program Dataset**: `window.TRAINING_DATA` in `js/data.js` (FitUp v15.8 Accelerated).
+- **Program Dataset**: `window.TRAINING_DATA` in `js/data.js` (FitUp v15.9 Accelerated).
 - **Progression Engine**: `ProgressionEngine` in `js/progression.js`.
 - **Zero-0-Kg Weight Protection Engine**: All weighted exercises strictly enforce prescribed starting weights (`startingWeight`) and a physical minimum load floor (6 kg empty handle for dumbbells; 5 kg for weighted vest). Loads are guaranteed never to calculate or display as 0 kg under any fallback or parsing state.
 - **Starting Weight for Lateral Raise (6 kg Handle)**: Single-Arm Lateral Raise (`single-arm-lateral-raise`) and Arm Block Lateral Raise (`arm-block-lateral-raise`) start at **6 kg** (the empty handle) rather than 8 kg. For trainees starting at ~7 push-ups, an 8 kg lateral raise is disproportionately heavy and provokes trap shrugging and impingement; 6 kg ensures strict scaption plane mechanics.
@@ -449,6 +449,9 @@ To eliminate ambiguity between single-session softened progression and multi-ses
 
 3. **⚠️ BELOW Target Window / Mechanical Stop**:
    - **Volume Stepping Bridge Fatigue Protection (Sisyphus Bug Fix)**: When Volume Stepping is active (prescribed sets > baseSets, e.g. 3 or 4 sets for Lateral Raise at 6 kg), if the trainee successfully completes all base sets in-window and experiences BELOW or fatigue exclusively on the added bridge sets (set 3 or 4), `sessionsAtWeight` is **NOT** wiped to 0. Instead of leaving the counter unchanged (which would create an early promotion trap by advancing the trainee after completing a reduced 3-set session without ever completing 4 sets), the engine decrements the counter by 1 (`sessionsAtWeight = Math.max(0, sessionsAtWeight - 1)`, e.g. $2 \to 1$). This automatically steps down prescribed volume by 1 set (e.g. 4 $\to$ 3 sets, `targetSets = prescribedSets - 1`) for the next workout, requiring the trainee to reconquer 3 clean sets and then successfully complete the 4-set peak bridge before qualifying for promotion to the higher load (+2 kg).
+   - **Transition Rep Buffer (Ping-Pong Loop Resolution — v15.9)**: When a trainee graduates from 6 kg to 8 kg on Single-Arm Lateral Raise (+33.3% load jump at the end of a long lever arm), performing 8–10 clean reps at 8 kg with strict 2-1-2 tempo is physiologically normal and represents successful adaptation. To prevent premature demotion back to 6 kg after just 2 sessions, the engine grants a **Transition Rep Buffer**: during the first 2 sessions at the higher load (or while `sessionsAtWeight <= 1` at 8 kg), achieving $\ge 8$ reps is treated as a valid transition (`transition_buffer_maintain`), holding the 8 kg load rather than triggering a double-BELOW demotion.
+   - **Unilateral Alternating Sets Execution Rule**: All unilateral exercises (`Single-Arm Lateral Raise`, `Single-Arm Curl`, `Single-Arm Hammer Curl`, `Single-Leg RDL`, `One-Arm DB Row`) must be executed **alternating sides per set** (Right side set 1 $\to$ Left side set 1 $\to$ 60–75s intra-set rest $\to$ Right side set 2 $\to$ Left side set 2). Executing straight sets on one side before touching the other doubles intra-workout rest from 45 min to 80+ min and causes excessive session bloat.
+   - **Arm Block Volume Stepping Suppression Rule**: When a trainee is in a Volume Stepping bridge on a main exercise (`prescribedSets > baseSets`, e.g. 3 or 4 sets of Lateral Raise at 6 kg), the muscle has already received its maximal weekly volume stimulus. The engine automatically suppresses the corresponding Arm Block for that muscle area, preventing dangerous 11–12 set weekly overload on small muscle groups (side delts / triceps).
    - **First BELOW Session (Single-Session Fatigue Protection)**: When a session yields `all_below` across base sets, weight is held at the current load (`first_below_maintain`). Set expansion steps down to relieve volume fatigue, protecting trainees from premature load drops.
    - **Second Consecutive BELOW Session**: If a second consecutive session yields `all_below` (`consecutiveBelow >= 1`), an auto-regulated load reduction of **-2 kg** is applied (`consecutive_below_decrease`), bounded strictly by the physical 6 kg handle floor (5 kg for weighted vest).
    - **Bodyweight / Stage Exercises**: The first BELOW maintains current stage; a second consecutive BELOW session regresses the movement by 1 stage (`consecutive_below_decrease_stage`).
@@ -504,7 +507,7 @@ Era-based history (`combatSchedule.history`, append-only) guarantees a full plan
 
 ## Appendix D — Complete Program Exercise Dictionary & Master Specifications
 
-This is the authoritative specification of all **61 unique exercises** appearing across the 560-day program schedule, plus catalog progressions referenced by `window.TRAINING_DATA` (`js/data.js`, v15.8 Accelerated). The in-app program is authoritative; this guide reflects the exact code parameters.
+This is the authoritative specification of all **61 unique exercises** appearing across the 560-day program schedule, plus catalog progressions referenced by `window.TRAINING_DATA` (`js/data.js`, v15.9 Accelerated). The in-app program is authoritative; this guide reflects the exact code parameters.
 
 ### D.1 Master Exercise Parameters & Catalog (Exact Weights, Reps, Tempos & Rest)
 
@@ -537,7 +540,7 @@ This is the authoritative specification of all **61 unique exercises** appearing
 | **Chin-Up** | `chin-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 4-8 | 2s descent (rings/loops OK) | 90s | Day 3 Vertical Pull 2×/week (V-Taper & elbow relief) |
 | **Diamond Push-Up** | `diamond-push-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 45s | Skill Tree Accessory (Replaced by Chin-Up on Day 3) |
 | **TRX Row** | `trx-row` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | Lean Pair #1 with Lateral Raise |
-| **Single-Arm Lateral Raise** | `single-arm-lateral-raise` | weighted | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 2 | 12-20 | 2-1-2 (lengthened pause) | 75s | W5 (early W3); 2kg increments; Max 12kg |
+| **Single-Arm Lateral Raise** | `single-arm-lateral-raise` | weighted | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 2 | 10-18 | 2-1-2 (lengthened pause) | 75s | W5 (early W3); 2kg increments; Max 12kg |
 | **TRX Y-T-W** | `trx-ytw` | variation | BW / Stage | BW | — | — | — | — | 2 | 8-12 | 1s pause at peak | 45s | Rear Delt Toggle (Odd Weeks) |
 | **Band Pull-Apart** | `band-pull-apart` | variation | BW / Stage | Band | — | — | — | — | 3 | 15-20 | 1s squeeze | 45s | Rear Delt Toggle (Even Weeks) |
 | **Pull-Up Progression** | `pull-up-progression` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W1–9 |
@@ -608,4 +611,4 @@ The training program is the prescriptive core; these are the controls the app ex
 
 ---
 
-FitUp Pro v15.8 Accelerated — Built for Precision, Zero Decisions, and Zero Regrets.
+FitUp Pro v15.9 Accelerated — Built for Precision, Zero Decisions, and Zero Regrets.

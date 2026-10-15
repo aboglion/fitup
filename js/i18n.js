@@ -950,7 +950,7 @@ const I18n = (() => {
       rule_arm_block___single_arm_lateral_raise: "Myo-Reps progressive cluster: 1 clean activation set to target + mini-sets by week (W3: 1×4; W4-5: 2×4; W6+: 3×5) with 15s rest. Strict stop on 2 consecutive tempo losses.",
       rule_goblet_bulgarian_split_squat: "Rear foot on bench/chair, front shin nearly vertical, 2s controlled descent. At heavy loads (≥20kg), transition from Goblet to Suitcase grip (at side) to prevent upper-body/grip fatigue from limiting leg stimulus.",
       rule_goblet_rdl: "Rigid neutral spine, hinge purely from hips, stop at knee/mid-shin before any lumbar flexion occurs. 3s controlled descent, squeeze glutes at top.",
-      rule_single_leg_rdl: "Starts safely at 8kg to build unilateral stability and protect L4-S1 lumbar discs. Soft bend in standing knee, rigid neutral spine, back leg extends straight behind. 3s controlled descent.",
+      rule_single_leg_rdl: "Contralateral Hand-Supported mandatory: dumbbell in opposite hand, free hand lightly supported on wall/post. Starts safely at 8kg; rigid neutral spine eliminates 100% pelvic rotation, hermetically protecting L4-S1. 3s descent. If balance is lost, BELOW.",
       max_weight_overload_badge: "Peak Load (32kg)",
       max_weight_overload_desc: "Max dumbbell ceiling reached (32kg). Progress via rep expansion (up to 16 reps), 3s lengthened pauses, or adding a weighted vest.",
       suitcase_grip_badge: "Suitcase Grip (20kg+)",
@@ -1713,7 +1713,20 @@ const I18n = (() => {
       asymmetric_pair_straight_set: "Straight Set (Pair Complete)",
       injury_cue_wall_sit: "Swapped to Wall Sit: Isometric quad stimulus at safe 60-70° angle with zero patellofemoral shear or joint translation.",
       injury_cue_single_leg_bridge: "Swapped to Single-Leg Glute Bridge: Unilateral posterior overload with absolute knee joint safety.",
-      injury_cue_rdl_secondary_injured: "Swapped to Dead Bug: Deep anterior core stabilization with 100% spinal unloading."
+      injury_cue_rdl_secondary_injured: "Swapped to Dead Bug: Deep anterior core stabilization with 100% spinal unloading.",
+      injury_cue_ohp_secondary_injured: "Swapped to Band Pull-Apart: Safe horizontal scapular retraction and rotator cuff activation with zero impingement or pressing shear.",
+      injury_cue_pike_secondary_injured: "Swapped to Scapular Push-up: Safe serratus anterior and scapular stability work with zero overhead compression.",
+      injury_cue_triceps_ext_secondary_injured: "Swapped to Band Pull-Apart: Sparing triceps and elbow joint completely while preserving upper body posterior chain activation.",
+      injury_cue_nordic_secondary_injured: "Swapped to DB Glute Bridge: Zero spinal axial compression and zero knee shear, safely maintaining posterior chain hip extension.",
+      injury_cue_hang_sensitive: "Feet lightly touching floor (partial bodyweight) to reduce traction strain, active scapular depression.",
+      injury_cue_hang_injured: "Swapped to Dead Bug: Full core and abdominal loading with zero hanging traction on shoulders, elbows, or wrists.",
+      injury_cue_towel_hang_sensitive: "Restricted hold duration, feet lightly assisting on floor to prevent flexor tendon overstrain.",
+      injury_cue_towel_hang_injured: "Swapped to Dead Bug: Discontinuing aggressive towel grip stress to allow forearm and flexor tendons to recover.",
+      injury_cue_hollow_body_sensitive: "Tuck knees to chest and focus on posterior pelvic tilt: keep lumbar spine completely flat against the floor (zero arching).",
+      injury_cue_hollow_body_injured: "Swapped to Dead Bug: Alternating limb movement completely prevents lumbar hyperextension and spares L4-S1 discs.",
+      injury_cue_lsit_sensitive: "Tuck knees closely to chest, push hard into bars for maximal scapular depression, avoid lumbar extension.",
+      injury_cue_lsit_injured: "Swapped to Dead Bug: Full core bracing with zero hip flexor psoas pull on lumbar vertebrae and zero wrist/shoulder compression.",
+      carb_cycling_combat_desc: "Combat Training Day: +450 kcal and +60g carbohydrates to fuel intense martial arts exertion and prevent catabolism."
     },
     he: {
 
@@ -2465,7 +2478,7 @@ const I18n = (() => {
       rule_arm_block___single_arm_lateral_raise: "צביר Myo-Reps הדרגתי: סט אקטיבציה נקי ליעד + מיני-סטים לפי שבוע (שבוע 3: 1×4; שבועות 4-5: 2×4; שבוע 6+: 3×5) עם 15 שנ' מנוחה. עצירה מיידית ב-2 אובדני טמפו רצופים.",
       rule_goblet_bulgarian_split_squat: "רגל אחורית על ספסל/כיסא, שוק קדמית אנכית, ירידה מבוקרת של 2 שניות. במשקלים כבדים (20 ק״ג ומעלה), מומלץ לעבור מאחיזת גובלט לאחיזת מזוודה (לצד הגוף) כדי למנוע מעייפות הזרועות להגביל את עומס הרגליים.",
       rule_goblet_rdl: "עמוד שדרה ניטרלי ומיוצב, היפ-הינג' טהור מהאגן, עצירה בברך/אמצע השוק לפני כל כיפוף מותני. ירידה איטית של 3 שניות וכיווץ ישבן בנעילה.",
-      rule_single_leg_rdl: "התחלה בטוחה ב-8 ק״ג לבניית שיווי משקל ויציבות אגנית תוך הגנה על L4-S1. כיפוף קל בברך העומדת, גב ניטרלי מיוצב, רגל אחורית נשלחת ישרה לאחור. ירידה מבוקרת של 3 שניות.",
+      rule_single_leg_rdl: "Contralateral Hand-Supported מחייב: משקולת ביד הנגדית, יד פנויה נתמכת קלות בקיר/עמוד. התחלה בטוחה ב-8 ק״ג ליציבות אגנית תוך הגנה הרמטית על L4–S1 ומניעת רוטציה. גב ניטרלי קשיח, ירידה מבוקרת של 3 שניות. אם מאבד שיווי משקל, BELOW.",
       max_weight_overload_badge: "עומס שיא (32 ק״ג)",
       max_weight_overload_desc: "הגעת לתקרת המשקולת המקסימלית (32 ק״ג). המשך התקדמות דרך הרחבת חזרות (עד 16 חזרות), עצירה מוארכת של 3 שנ׳ במתיחה, או שילוב וסט משקולות.",
       suitcase_grip_badge: "אחיזת מזוודה (20+ ק״ג)",
@@ -3194,7 +3207,20 @@ const I18n = (() => {
       asymmetric_pair_straight_set: "סט עצמאי (צמד הושלם)",
       injury_cue_wall_sit: "הוחלף ל-Wall Sit: גירוי איזומטרי לארבע-ראשי בזווית בטוחה (60°-70°) ב-0 עומס גזירה או שחיקה פטלופמורלית.",
       injury_cue_single_leg_bridge: "הוחלף ל-Single-Leg Glute Bridge: עומס שרשרת אחורית חד-צדדי ב-0 לחץ על מפרק הברך.",
-      injury_cue_rdl_secondary_injured: "הוחלף ל-Dead Bug: ייצוב ליבה עמוק עם פריקת עומס מלאה מעמוד השדרה."
+      injury_cue_rdl_secondary_injured: "הוחלף ל-Dead Bug: ייצוב ליבה עמוק עם פריקת עומס מלאה מעמוד השדרה.",
+      injury_cue_ohp_secondary_injured: "הוחלף ל-Band Pull-Apart: קירוב שכמות אופקי וחיזוק מסובבי הכתף ללא לחץ דחיסה או צביטה מפרקית.",
+      injury_cue_pike_secondary_injured: "הוחלף ל-Scapular Push-up: חיזוק יציבות השכמות והמסור הקדמי ללא דחיסה אנכית של הכתפיים.",
+      injury_cue_triceps_ext_secondary_injured: "הוחלף ל-Band Pull-Apart: מנוחה מוחלטת למפרק המרפק והיד האחורית תוך שמירה על הפעלת הגב העליון.",
+      injury_cue_nordic_secondary_injured: "הוחלף ל-DB Glute Bridge: אפס עומס צירי על עמוד השדרה ואפס גזירה על הברך, שמירה בטוחה על פשיטת ירך בשרשרת האחורית.",
+      injury_cue_hang_sensitive: "רגליים נוגעות קלות ברצפה להפחתת משקל הגוף, שמירה על שכמות מהודקות ואקטיביות.",
+      injury_cue_hang_injured: "הוחלף ל-Dead Bug: גירוי שרירי ליבה מלא ללא כל עומס מתיחה או תלייה על הכתפיים, המרפקים ושורש כף היד.",
+      injury_cue_towel_hang_sensitive: "משך החזקה מוגבל, רגליים תומכות קלות ברצפה למניעת עומס יתר על גידי האצבעות והאמה.",
+      injury_cue_towel_hang_injured: "הוחלף ל-Dead Bug: הפסקת עומס האחיזה האגרסיבי במגבת כדי לאפשר התאוששות לגידי האמה ושורש היד.",
+      injury_cue_hollow_body_sensitive: "ברכיים כפופות לכיוון החזה וסיבוב אגן לאחור: שמירה על גב תחתון צמוד לחלוטין לרצפה (ללא שום קשת).",
+      injury_cue_hollow_body_injured: "הוחלף ל-Dead Bug: תנועה לסירוגין המונעת היפר-אקסטנציה בגב התחתון ומגינה לחלוטין על דיסקים L4-S1.",
+      injury_cue_lsit_sensitive: "ברכיים צמודות היטב לחזה, דחיפה חזקה של המקבילים להורדת שכמות, הימנעות מוחלטת מפשיטת יתר בגב.",
+      injury_cue_lsit_injured: "הוחלף ל-Dead Bug: ייצוב ליבה מלא ללא משיכת שריר המותן-כסל (Psoas) על חוליות הגב וללא לחץ על הכתפיים/שורש כף היד.",
+      carb_cycling_combat_desc: "יום אימון קרבי: תוספת של 450+ קק״ל ו-60+ גרם פחמימות לתדלוק מאמץ אומנויות הלחימה ומניעת פירוק שריר."
     },
     ar: {
 
@@ -4058,7 +4084,7 @@ const I18n = (() => {
       rule_arm_block___single_arm_lateral_raise: "مجموعة Myo-Reps تدريجية: مجموعة تفعيل نظيفة للهدف + مجموعات مصغرة حسب الأسبوع (الأسبوع 3: 1×4؛ الأسابيع 4-5: 2×4؛ الأسبوع 6+: 3×5) مع 15 ثانية راحة. توقف فوري عند فقدانين متتاليين للإيقاع.",
       rule_goblet_bulgarian_split_squat: "القدم الخلفية على مقعد/كرسي، الساق الأمامية شبه عمودية، نزول محكوم لمدّة ثانيتين. في الأوزان الثقيلة (20 كغ فما فوق)، انتقل من قبضة الجوبلت إلى قبضة الحقيبة (جانب الجسم) لتجنب إجهاد الذراعين من إعاقة عضلات الأرجل.",
       rule_goblet_rdl: "عمود فقري محايد ومستقيم، حركة مفصل ورك نقية، توقف عند الركبة/منتصف الساق قبل أي انحناء قطني. نزول محكوم لمدّة 3 ثوانٍ وضغط الألوية في الأعلى.",
-      rule_single_leg_rdl: "بداية آمنة بوزن 8 كغ لبناء التوازن وثبات الحوض وحماية فقرات القطنية L4-S1. ثني طفيف في ركبة الساق الواقفة، عمود فقري محايد، الساق الخلفية ممتدة للخلف. نزول محكوم لمدّة 3 ثوانٍ.",
+      rule_single_leg_rdl: "دعم باليد المعاكسة إلزامي: الدمبل باليد المقابلة واليد الحرة مستندة بخفة على جدار أو عامود. بداية آمنة بوزن 8 كغ؛ عمود فقري محايد يمنع دوران الحوض بنسبة 100% ويحمي L4-S1 بإحكام. نزول 3 ثوانٍ. إذا فُقد التوازن، اختر BELOW.",
       max_weight_overload_badge: "أقصى وزن (32 كغ)",
       max_weight_overload_desc: "تم الوصول إلى أقصى وزن للدمبل (32 كغ). تابع التقدم عبر زيادة التكرارات (حتى 16 تكرار)، والتوقف لمدّة 3 ثوانٍ في أقصى تمدد، أو إضافة سترة أوزان.",
       suitcase_grip_badge: "قبضة الحقيبة (20+ كغ)",
@@ -4525,7 +4551,20 @@ const I18n = (() => {
       asymmetric_pair_straight_set: "مجموعة فردية (اكتمل الزوج)",
       injury_cue_wall_sit: "استبدل بـ Wall Sit: تحفيز متساوي القياس للعضلة رباعية الرؤوس بزاوية آمنة (60-70 درجة) بدون إجهاد للركبة.",
       injury_cue_single_leg_bridge: "استبدل بـ Single-Leg Glute Bridge: حمل خلفي أحادي مع أمان تام لمفصل الركبة.",
-      injury_cue_rdl_secondary_injured: "استبدل بـ Dead Bug: استقرار عميق للجذع مع تفريغ كامل للحمل عن العمود الفقري."
+      injury_cue_rdl_secondary_injured: "استبدل بـ Dead Bug: استقرار عميق للجذع مع تفريغ كامل للحمل عن العمود الفقري.",
+      injury_cue_ohp_secondary_injured: "تم الاستبدال بـ Band Pull-Apart: تفعيل آمن لعضلات لوح الكتف والكفة المدورة بدون ضغط أو احتكاك مفصلي.",
+      injury_cue_pike_secondary_injured: "تم الاستبدال بـ Scapular Push-up: استقرار آمن لعضلات لوح الكتف بدون ضغط رأسي على الكتفين.",
+      injury_cue_triceps_ext_secondary_injured: "تم الاستبدال بـ Band Pull-Apart: إراحة تامة لمفصل المرفق والعضلة ثلاثية الرؤوس مع الحفاظ على تنشيط الجزء العلوي من الظهر.",
+      injury_cue_nordic_secondary_injured: "تم الاستبدال بـ DB Glute Bridge: بدون أي ضغط محوري على العمود الفقري وبدون إجهاد للركبة مع الحفاظ على تمديد الورك بأمان.",
+      injury_cue_hang_sensitive: "ملامسة خفيفة للقدمين للأرض لتقليل وزن الجسم مع شد نشط لعضلات لوح الكتف.",
+      injury_cue_hang_injured: "تم الاستبدال بـ Dead Bug: تمرين عضلات البطن والجذع بدون أي إجهاد تعليق على الأكتاف أو المرفقين أو المعصمين.",
+      injury_cue_towel_hang_sensitive: "تقليل مدة الثبات مع ملامسة خفيفة للأرض لتجنب إجهاد أوتار الأصابع والساعد.",
+      injury_cue_towel_hang_injured: "تم الاستبدال بـ Dead Bug: إيقاف قبضة المنشفة الشديدة لإتاحة تعافي أوتار الساعد والمعصم.",
+      injury_cue_hollow_body_sensitive: "ثني الركبتين نحو الصدر مع تدوير الحوض للخلف: إبقاء أسفل الظهر مسطحاً تماماً على الأرض بدون أي تقوس.",
+      injury_cue_hollow_body_injured: "تم الاستبدال بـ Dead Bug: حركة متبادلة تمنع تقوس أسفل الظهر وتحمي أقراص الفقرات القطنية L4-S1.",
+      injury_cue_lsit_sensitive: "ضم الركبتين جيداً إلى الصدر، دفع قوي للأشرطة لخفض لوحي الكتف وتجنب تمدد أسفل الظهر.",
+      injury_cue_lsit_injured: "تم الاستبدال بـ Dead Bug: تثبيت كامل للجذع بدون سحب عضلة البسواس على فقرات الظهر وبدون ضغط على المعصم أو الكتف.",
+      carb_cycling_combat_desc: "يوم تدريب قتالي: زيادة +450 سعرة حرارية و +60 غرام كربوهيدرات لتغذية الجهد القتالي المكثف ومنع الهدم العضلي."
     }
   };
 

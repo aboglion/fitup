@@ -85,8 +85,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'Goblet Romanian Deadlift',
+        secondarySubstitute: 'DB Glute Bridge',
         badgeKey: 'injury_badge_knee_sub',
-        cueKey: 'injury_cue_nordic_injured'
+        cueKey: 'injury_cue_nordic_injured',
+        secondaryCueKey: 'injury_cue_nordic_secondary_injured'
       }
     },
     'High Knees': {
@@ -112,8 +114,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'Single-Arm Floor Press',
+        secondarySubstitute: 'Band Pull-Apart',
         badgeKey: 'injury_badge_shoulder_sub',
-        cueKey: 'injury_cue_ohp_injured'
+        cueKey: 'injury_cue_ohp_injured',
+        secondaryCueKey: 'injury_cue_ohp_secondary_injured'
       }
     },
     'Pike Progression': {
@@ -124,8 +128,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'Push-up Bars Progression',
+        secondarySubstitute: 'Scapular Push-up',
         badgeKey: 'injury_badge_shoulder_sub',
-        cueKey: 'injury_cue_pike_injured'
+        cueKey: 'injury_cue_pike_injured',
+        secondaryCueKey: 'injury_cue_pike_secondary_injured'
       }
     },
     'Elevated Pike Push-Up': {
@@ -136,8 +142,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'Push-up Bars Progression',
+        secondarySubstitute: 'Scapular Push-up',
         badgeKey: 'injury_badge_shoulder_sub',
-        cueKey: 'injury_cue_pike_injured'
+        cueKey: 'injury_cue_pike_injured',
+        secondaryCueKey: 'injury_cue_pike_secondary_injured'
       }
     },
     'Wall Handstand': {
@@ -222,8 +230,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'Single-Arm Floor Press',
+        secondarySubstitute: 'Band Pull-Apart',
         badgeKey: 'injury_badge_elbow_sub',
-        cueKey: 'injury_cue_triceps_ext_injured'
+        cueKey: 'injury_cue_triceps_ext_injured',
+        secondaryCueKey: 'injury_cue_triceps_ext_secondary_injured'
       }
     },
     'Arm Block - DB Overhead Triceps Ext': {
@@ -234,8 +244,10 @@ const InjuryEngine = (() => {
       },
       injured: {
         substitute: 'Single-Arm Floor Press',
+        secondarySubstitute: 'Band Pull-Apart',
         badgeKey: 'injury_badge_elbow_sub',
-        cueKey: 'injury_cue_triceps_ext_injured'
+        cueKey: 'injury_cue_triceps_ext_injured',
+        secondaryCueKey: 'injury_cue_triceps_ext_secondary_injured'
       }
     },
     'Diamond Push-Up': {
@@ -287,27 +299,31 @@ const InjuryEngine = (() => {
       }
     },
     'Chin-Up': {
-      joints: ['elbow_r', 'elbow_l'],
+      joints: ['elbow_r', 'elbow_l', 'shoulder_r', 'shoulder_l'],
       sensitive: {
         badgeKey: 'injury_badge_elbow_rom',
         cueKey: 'injury_cue_chinup_sensitive'
       },
       injured: {
         substitute: 'TRX Row',
+        secondarySubstitute: 'Seated Band Row',
         badgeKey: 'injury_badge_elbow_sub',
-        cueKey: 'injury_cue_pullup_injured'
+        cueKey: 'injury_cue_pullup_injured',
+        secondaryCueKey: 'injury_cue_db_row_injured'
       }
     },
     'Chin-Up Progression': {
-      joints: ['elbow_r', 'elbow_l'],
+      joints: ['elbow_r', 'elbow_l', 'shoulder_r', 'shoulder_l'],
       sensitive: {
         badgeKey: 'injury_badge_elbow_rom',
         cueKey: 'injury_cue_chinup_sensitive'
       },
       injured: {
         substitute: 'TRX Row',
+        secondarySubstitute: 'Seated Band Row',
         badgeKey: 'injury_badge_elbow_sub',
-        cueKey: 'injury_cue_pullup_injured'
+        cueKey: 'injury_cue_pullup_injured',
+        secondaryCueKey: 'injury_cue_db_row_injured'
       }
     },
 
@@ -437,6 +453,80 @@ const InjuryEngine = (() => {
         substitute: 'Seated Band Row',
         badgeKey: 'injury_badge_back_sub',
         cueKey: 'injury_cue_db_row_injured'
+      }
+    },
+    'Hollow Body Hold': {
+      joints: ['lower_back'],
+      sensitive: {
+        badgeKey: 'injury_badge_back_rom',
+        cueKey: 'injury_cue_hollow_body_sensitive'
+      },
+      injured: {
+        substitute: 'Dead Bug',
+        badgeKey: 'injury_badge_back_sub',
+        cueKey: 'injury_cue_hollow_body_injured'
+      }
+    },
+    'Tuck L-Sit': {
+      joints: ['lower_back', 'shoulder_r', 'shoulder_l', 'wrist_r', 'wrist_l'],
+      sensitive: {
+        badgeKey: 'injury_badge_back_rom',
+        cueKey: 'injury_cue_lsit_sensitive'
+      },
+      injured: {
+        substitute: 'Dead Bug',
+        badgeKey: 'injury_badge_back_sub',
+        cueKey: 'injury_cue_lsit_injured'
+      }
+    },
+    'One-Leg Extended L-Sit': {
+      joints: ['lower_back', 'shoulder_r', 'shoulder_l', 'wrist_r', 'wrist_l'],
+      sensitive: {
+        badgeKey: 'injury_badge_back_rom',
+        cueKey: 'injury_cue_lsit_sensitive'
+      },
+      injured: {
+        substitute: 'Dead Bug',
+        badgeKey: 'injury_badge_back_sub',
+        cueKey: 'injury_cue_lsit_injured'
+      }
+    },
+    'Full L-Sit': {
+      joints: ['lower_back', 'shoulder_r', 'shoulder_l', 'wrist_r', 'wrist_l'],
+      sensitive: {
+        badgeKey: 'injury_badge_back_rom',
+        cueKey: 'injury_cue_lsit_sensitive'
+      },
+      injured: {
+        substitute: 'Dead Bug',
+        badgeKey: 'injury_badge_back_sub',
+        cueKey: 'injury_cue_lsit_injured'
+      }
+    },
+    'Dead Hang': {
+      joints: ['shoulder_r', 'shoulder_l', 'elbow_r', 'elbow_l', 'wrist_r', 'wrist_l'],
+      sensitive: {
+        badgeKey: 'injury_badge_shoulder_rom',
+        cueKey: 'injury_cue_hang_sensitive'
+      },
+      injured: {
+        substitute: 'Dead Bug',
+        secondarySubstitute: 'Band Pull-Apart',
+        badgeKey: 'injury_badge_shoulder_sub',
+        cueKey: 'injury_cue_hang_injured'
+      }
+    },
+    'Towel Hang': {
+      joints: ['elbow_r', 'elbow_l', 'wrist_r', 'wrist_l', 'shoulder_r', 'shoulder_l'],
+      sensitive: {
+        badgeKey: 'injury_badge_elbow_rom',
+        cueKey: 'injury_cue_towel_hang_sensitive'
+      },
+      injured: {
+        substitute: 'Dead Bug',
+        secondarySubstitute: 'Band Pull-Apart',
+        badgeKey: 'injury_badge_elbow_sub',
+        cueKey: 'injury_cue_towel_hang_injured'
       }
     },
 
@@ -764,6 +854,35 @@ const InjuryEngine = (() => {
       let chosenCueKey = rule.injured.cueKey;
       let isSecondary = false;
 
+      // Multi-joint safety check: Verify candidate does not stress any currently injured joint
+      const isCandidateSafe = (name) => {
+        if (!name) return false;
+        const candRule = EXERCISE_ADAPTATIONS[name];
+        if (!candRule || !candRule.joints) return true;
+        for (const jId of candRule.joints) {
+          if (getJointState(jId) === STATE_INJURED) {
+            return false;
+          }
+        }
+        return true;
+      };
+
+      if (!isCandidateSafe(chosenSubstitute)) {
+        if (rule.injured.secondarySubstitute && isCandidateSafe(rule.injured.secondarySubstitute)) {
+          chosenSubstitute = rule.injured.secondarySubstitute;
+          chosenCueKey = rule.injured.secondaryCueKey || rule.injured.cueKey;
+          isSecondary = true;
+        } else if (isCandidateSafe('DB Glute Bridge')) {
+          chosenSubstitute = 'DB Glute Bridge';
+          chosenCueKey = 'injury_cue_nordic_secondary_injured';
+          isSecondary = true;
+        } else if (isCandidateSafe('Dead Bug')) {
+          chosenSubstitute = 'Dead Bug';
+          chosenCueKey = 'injury_cue_carry_injured';
+          isSecondary = true;
+        }
+      }
+
       // Deduplication & Secondary Fallback check
       if (existingExerciseNames && existingExerciseNames.length > 0) {
         const lowerExisting = existingExerciseNames.map(n => (n || '').toLowerCase().trim());
@@ -772,12 +891,75 @@ const InjuryEngine = (() => {
         if (lowerExisting.includes(primaryLower)) {
           if (rule.injured.secondarySubstitute) {
             const secondaryLower = rule.injured.secondarySubstitute.toLowerCase().trim();
-            if (!lowerExisting.includes(secondaryLower)) {
+            if (!lowerExisting.includes(secondaryLower) && isCandidateSafe(rule.injured.secondarySubstitute)) {
               chosenSubstitute = rule.injured.secondarySubstitute;
               chosenCueKey = rule.injured.secondaryCueKey || rule.injured.cueKey;
               isSecondary = true;
             } else {
-              // Both primary and secondary exist in session -> trigger Volume Consolidation
+              // Upper body safety: Never consolidate volume onto an already injured shoulder/elbow/wrist press!
+              const upperJoints = ['shoulder_r', 'shoulder_l', 'elbow_r', 'elbow_l', 'wrist_r', 'wrist_l'];
+              const isUpper = upperJoints.includes(triggeringJoint);
+              if (isUpper) {
+                if (!lowerExisting.includes('band pull-apart') && isCandidateSafe('Band Pull-Apart')) {
+                  chosenSubstitute = 'Band Pull-Apart';
+                  chosenCueKey = 'injury_cue_ohp_secondary_injured';
+                  isSecondary = true;
+                } else if (!lowerExisting.includes('scapular push-up') && isCandidateSafe('Scapular Push-up')) {
+                  chosenSubstitute = 'Scapular Push-up';
+                  chosenCueKey = 'injury_cue_pike_secondary_injured';
+                  isSecondary = true;
+                } else {
+                  return {
+                    severity: STATE_INJURED,
+                    type: 'injured',
+                    jointId: triggeringJoint,
+                    jointDef,
+                    substituteName: chosenSubstitute,
+                    badgeKey: rule.injured.badgeKey,
+                    cueKey: chosenCueKey,
+                    originalExercise: cleanName,
+                    isConsolidated: false,
+                    isSuppressed: true
+                  };
+                }
+              } else {
+                return {
+                  severity: STATE_INJURED,
+                  type: 'injured',
+                  jointId: triggeringJoint,
+                  jointDef,
+                  substituteName: chosenSubstitute,
+                  badgeKey: rule.injured.badgeKey,
+                  cueKey: chosenCueKey,
+                  originalExercise: cleanName,
+                  isConsolidated: true,
+                  consolidatedInto: chosenSubstitute
+                };
+              }
+            }
+          } else {
+            const upperJoints = ['shoulder_r', 'shoulder_l', 'elbow_r', 'elbow_l', 'wrist_r', 'wrist_l'];
+            const isUpper = upperJoints.includes(triggeringJoint);
+            if (isUpper) {
+              if (!lowerExisting.includes('band pull-apart') && isCandidateSafe('Band Pull-Apart')) {
+                chosenSubstitute = 'Band Pull-Apart';
+                chosenCueKey = 'injury_cue_ohp_secondary_injured';
+                isSecondary = true;
+              } else {
+                return {
+                  severity: STATE_INJURED,
+                  type: 'injured',
+                  jointId: triggeringJoint,
+                  jointDef,
+                  substituteName: chosenSubstitute,
+                  badgeKey: rule.injured.badgeKey,
+                  cueKey: chosenCueKey,
+                  originalExercise: cleanName,
+                  isConsolidated: false,
+                  isSuppressed: true
+                };
+              }
+            } else {
               return {
                 severity: STATE_INJURED,
                 type: 'injured',
@@ -791,20 +973,6 @@ const InjuryEngine = (() => {
                 consolidatedInto: chosenSubstitute
               };
             }
-          } else {
-            // No secondary substitute -> trigger Volume Consolidation
-            return {
-              severity: STATE_INJURED,
-              type: 'injured',
-              jointId: triggeringJoint,
-              jointDef,
-              substituteName: chosenSubstitute,
-              badgeKey: rule.injured.badgeKey,
-              cueKey: chosenCueKey,
-              originalExercise: cleanName,
-              isConsolidated: true,
-              consolidatedInto: chosenSubstitute
-            };
           }
         }
       }
@@ -879,21 +1047,30 @@ const InjuryEngine = (() => {
       }
 
       if (ad.type === 'injured' && ad.substituteName) {
+        if (ad.isSuppressed) {
+          // Suppressed to prevent overloading injured joint with excessive sets
+          return;
+        }
         if (ad.isConsolidated) {
           // Consolidate into existing exercise card
           const targetEx = exerciseByActiveName.get(ad.consolidatedInto);
           if (targetEx) {
-            const currentSetsMatch = (targetEx.sets || '').match(/^(\d+)/);
-            const currentSets = currentSetsMatch ? parseInt(currentSetsMatch[1], 10) : (targetEx.setsCount || 3);
-            const newSets = Math.min(5, currentSets + 1); // Capped at 5 sets max
-            if (typeof targetEx.sets === 'string' && targetEx.sets.includes('×')) {
-              targetEx.sets = targetEx.sets.replace(/^\d+/, newSets);
-            } else {
-              targetEx.sets = `${newSets} sets`;
+            // Safety check: Never consolidate into a target exercise if it loads the injured joint!
+            const targetRule = EXERCISE_ADAPTATIONS[ad.consolidatedInto];
+            const stressesInjured = targetRule && targetRule.joints && targetRule.joints.some(j => getJointState(j) === STATE_INJURED);
+            if (!stressesInjured) {
+              const currentSetsMatch = (targetEx.sets || '').match(/^(\d+)/);
+              const currentSets = currentSetsMatch ? parseInt(currentSetsMatch[1], 10) : (targetEx.setsCount || 3);
+              const newSets = Math.min(5, currentSets + 1); // Capped at 5 sets max
+              if (typeof targetEx.sets === 'string' && targetEx.sets.includes('×')) {
+                targetEx.sets = targetEx.sets.replace(/^\d+/, newSets);
+              } else {
+                targetEx.sets = `${newSets} sets`;
+              }
+              targetEx.isVolumeConsolidated = true;
+              targetEx.consolidatedSources = targetEx.consolidatedSources || [];
+              targetEx.consolidatedSources.push(ex.name);
             }
-            targetEx.isVolumeConsolidated = true;
-            targetEx.consolidatedSources = targetEx.consolidatedSources || [];
-            targetEx.consolidatedSources.push(ex.name);
           }
           return;
         }

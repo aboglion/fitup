@@ -153,37 +153,26 @@ Each week follows a strictly optimized 7-day routine designed to balance muscula
 
 | Day | Workout Type | Focus / Key Movements | Target Duration |
 | :--- | :--- | :--- | :--- |
-| **Day 1 (Mon)** | **Legs + Core + Carry** | Goblet RDL, Day 1 Toggle (Single-Leg RDL / Heels-Elevated Goblet Squat / Pistol Squat), Goblet BSS, DB Glute Bridge, Suitcase Carry, Calf Block, Core Circuit | 65 min |
+| **Day 1 (Mon)** | **Legs + Core + Carry** | Goblet RDL (W1–17) / Contralateral Hand-Supported Single-Leg RDL (W18+), Nordic Curl Progression (W10+), Heels-Elevated Goblet Squat, Goblet BSS, DB Glute Bridge, Suitcase Carry, Core Circuit | 60–65 min |
 | **Day 2 (Tue)** | **Zone 2 Cardio** | Treadmill Walking (60–70% HRmax / Zone 2 target, 4% incline @ 5.5 km/h base), Daily Micro-Mobility | 45 min |
-| **Day 3 (Wed)** | **Push + Shoulders + Triceps + Back Vol** | Pike Hold/Push-Up, Single-Arm Floor Press, Push-Up Bars, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, TRX Row ↔ Single-Arm Lateral Raise pair, Rear Delt Toggle, Arm Block (W6+) | 65 min |
+| **Day 3 (Wed)** | **Push + Shoulders + Skill + Calves** | Single-Arm Seated OHP (A1) → Overhead Skill Tree (A2) → Single-Arm Floor Press (A3) → **Chin-Up (A4, 2×4–8, antagonistic vertical pull)** → Push-Up Tree (A5) → DB Overhead Triceps Ext (A6) → TRX Row ↔ Single-Arm Lateral Raise pair (A7/A8) → Rear Delt Toggle (A9) → **Calf Block (A10/A11 — moved from Day 5 to spare Achilles)** → Arm Block (W3+ Gradual Ramp) | 60–65 min |
 | **Day 4 (Thu)** | **Active Recovery & Joint Health** | Band Neck Flexion & Extension protocol (A1), Light Treadmill Recovery Walk (A2), 10-min Deep Mobility sequence (A3) | 30 min |
-| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression, One-Arm DB Row, TRX Face Pull, Biceps Microcycle (Single-Arm Curl & Single-Arm Hammer Curl), Push-Up Volume ↔ Single-Arm Curl pair, Towel Hang ↔ L-Sit pair, Arm Block (W6+) | 65 min |
-| **Day 6 (Sat)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 85–95% HRmax target, 6.5+ km/h / 4–6% incline effort; 3 min recovery @ 60–70% HRmax) | 35 min |
+| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression (A1), One-Arm DB Row (A2), TRX Face Pull ↔ Single-Arm Lateral Raise pair, Push-Up Volume ↔ Single-Arm Curl pair, Single-Arm Hammer Curl, Towel Hang ↔ L-Sit pair, Arm Block (W3+ Gradual Ramp) | 55–60 min |
+| **Day 6 (Sat)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 85–95% HRmax target; Walking: 5.8–6.8 km/h @ 4–6% incline | Running: ≥7.5 km/h @ 1–2% incline to spare Achilles tendon; 3 min recovery @ 60–70% HRmax) | 35 min |
 | **Day 7 (Sun)** | **Complete Rest** | System Regeneration, Hydration & Passive Recovery | — |
 
 ---
 
-### ⏱️ v15.7 Accelerated Architecture & Structural Optimization
+### ⏱️ v15.9 Accelerated Architecture & Structural Optimization
 The program organizes exercises into optimized structures to maximize metabolic density while protecting compound lifts (realistic target session duration: **60–65 minutes** on strength days):
-1. **Protected Compound Lifts**: Base compound lifts (Goblet RDL, Single-Leg RDL, Goblet BSS, Heels-Elevated Goblet Squat, DB Glute Bridge, Suitcase Carry, Pike Progression, Single-Arm Floor Press, Push-Up Progression, Single-Arm Seated OHP, DB Overhead Triceps Ext, Diamond Push-Up, Pull-Up Progression, One-Arm DB Row, Single-Arm Curl, Single-Arm Hammer Curl) are strictly performed as straight sets with dedicated adaptive rest.
-2. **Percentage-Based Volume Stepping Overload**: Fixed +2 kg dumbbell jumps represent sharp relative jumps at lower loads (6→8 kg is +33.3%, 8→10 kg is +25.0%, 10→12 kg is +20.0%). The progression engine steps volume (prescribing extra sets based on the percentage change) before advancing the weight, resetting back to base sets once the higher load is unlocked. Single-Arm Lateral Raise starts at 6 kg (empty handle) to accommodate baseline upper-body strength safely.
-3. **Heart-Rate Governed Cardio**: Zone 2 (60–70% HRmax) and Norwegian 4×4 (85–95% HRmax) prioritize physiological heart-rate targets as primary drivers so that cardiovascular stimulus scales with aerobic adaptations rather than remaining at a fixed walking speed.
-4. **Lean Pairs (Antagonistic & Non-Competing)**:
-   - **Day 3**: TRX Row ↔ Single-Arm Lateral Raise (75s rest after completing both).
-   - **Day 5**: Push-Up Volume ↔ Single-Arm Curl (75s rest after completing both, active during heavy microcycle weeks 1-3).
-   - **Day 5**: Towel Hang ↔ L-Sit Progression (45s rest after completing both).
-5. **Weekly Alternating Toggles**:
-   - **Quad Focus**: Heels-Elevated Goblet Squat is performed continuously from Week 1.
-   - **Day 3 Rear Delt Toggle**: Odd weeks = TRX Y-T-W; Even weeks = Band Pull-Apart.
-6. **Arm Block Myo-Reps Clusters (W6+)**: 1 activation set + 3 mini-sets of 5 reps with 15s rest. Terminated by 2 consecutive tempo losses (`two_consecutive_tempo_losses`). Maximum 1 exposure per muscle area per week.
-7. **Scheduled Deload Microcycles (Every 12 Weeks)**: Occur on Weeks 12, 24, 36, 48, 60, 72. Sets capped at 2 per exercise, loads reduced by 2 kg (rounded to legal range [3..32] kg). All pairs/circuits/blocks dissolve into straight sets, supplemented by runtime auto-regulated deload triggers.
-
----
-
-### 🛡️ Injury Prevention & Biomechanical Safety Rules
-- **Spine & Lumbar Protection**: Hinge movements (RDLs & Glute Bridges) enforce rigid neutral spine alignment with 2–3 second eccentric control; heavy axial loading is replaced with high-stimulus unilateral Dumbbell Loading.
-- **Wrist & Joint Integrity**: Floor pressing and push-up variations strictly utilize Push-Up Bars or dumbbells to prevent wrist hyperextension.
-- **Achilles Tendon Guard**: Treadmill running in Norwegian 4x4 intervals is capped at a maximum of **6% incline** to prevent excessive Achilles strain.
+1. **Protected Compound Lifts & Antagonistic Sequencing**: Heavy compounds are protected as straight sets. Day 3 inserts the Chin-Up at position #4 (between Floor Press and Push-Up Tree) to give anterior shoulder/triceps pressing muscles a complete neuromuscular break while driving vertical pulling frequency (2×/week).
+2. **Ping-Pong Resolution & Transition Buffer**: Single-Arm Lateral Raise working rep window is optimized to **10–18 reps** with strict 2-1-2 tempo. Stepping from 6 kg to 8 kg incorporates a 2-session Transition Rep Buffer (8–18 reps at 8 kg maintains load) eliminating premature demotion loops.
+3. **Unilateral Alternating Sets**: Unilateral exercises are performed alternating sides per set (Right set 1 → Left set 1 → 60–75s rest → Right set 2 → Left set 2) to eliminate session bloat and maintain cardiovascular density.
+4. **Volume Stepping vs. Arm Block Collision Rule**: When a main exercise enters Volume Stepping (`prescribedSets > baseSets`), the corresponding Arm Block for that muscle area is automatically suppressed to protect tendons and prevent 11–12 weekly sets on small muscle groups.
+5. **Achilles Tendon Guard**: Calf Block is scheduled on Day 3 (Wednesday), providing >60 hours of connective-tissue recovery before Day 6 Norwegian 4×4. Running intervals (≥7.5 km/h) are capped at 1–2% incline to prevent eccentric Achilles recoil overload.
+6. **L4–S1 Disc Protection**: Single-Leg RDL mandates Contralateral Hand Support (non-working hand lightly touching a wall/chair) to eliminate rotational spinal shear. Hollow Body Hold and L-Sit enforce strict posterior pelvic tilt and knee tuck cues.
+7. **Multi-Joint Clinical Safety Engine**: Secondary substitutes provided for upper-body movements (`Band Pull-Apart`, `Scapular Push-up`), strict ban on consolidating extra sets onto injured joints, and conflict resolution across multi-joint injuries.
+8. **Nutrition & Combat Training Boost**: On combat days (Muay Thai / MMA), targets receive a **Combat Refuel Boost of +450 kcal and +60g carbohydrates**. Maintenance/Recomp phase provides 2,650 strength / 2,450 recovery / 2,250 rest kcal.
 
 ---
 

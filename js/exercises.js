@@ -1194,7 +1194,7 @@ const ExercisesPage = (() => {
       : `<span class="guide-unlock-badge unlocked" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 8px; border-radius: 6px; font-weight: 700; font-size: 11px;">🔓 ${I18n.t('unlocked_week') || I18n.t('week_label')} 1</span>`;
 
     const parentLineHTML = ex.parentName
-      ? `<div style="font-size: 11px; color: var(--accent-orange, #f97316); margin-top: 4px; font-weight: 600;">🔗 תנאי קדם: ${ex.parentName}</div>`
+      ? `<div style="font-size: 11px; color: var(--accent-orange, #f97316); margin-top: 4px; font-weight: 600;">🔗 ${I18n.t('prerequisite') || 'תנאי קדם'}: ${ex.parentName}</div>`
       : '';
 
     const isEager = (index === undefined || index < 6);
