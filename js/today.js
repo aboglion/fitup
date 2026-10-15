@@ -253,11 +253,26 @@ const TodayPage = (() => {
             if (fallbackId) {
               const fallbackDef = window.ProgressionEngine.getExercise(fallbackId);
               if (fallbackDef) {
+                // Duplicate prevention: If the fallback target is already present elsewhere in this session
+                // (e.g. Single-Arm Curl is already present as A6, so falling back from Hammer Curl would duplicate it),
+                // hide this locked slot (Phase 0 volume) instead of creating an identical twin exercise.
+                const isAlreadyInSession = day.exercises.some((other, oIdx) => oIdx !== i && (other.id === fallbackId || other.name === fallbackDef.name));
+                if (isAlreadyInSession) {
+                  console.log(`[Today] Hiding ${exId} (fallback ${fallbackId} is already in session) — Phase 0 volume`);
+                  day.exercises.splice(i, 1);
+                  i--;
+                  break;
+                }
+
                 console.log(`[Today] Downgrading ${exId} -> ${fallbackId} due to unmet criteria (${unlockStatus.reason})`);
                 ex.id = fallbackDef.id;
                 ex.name = fallbackDef.name;
                 // Inherit prescription details so the user gets the correct fallback parameters
-                if (fallbackDef.sets) ex.sets = String(fallbackDef.sets);
+                if (fallbackDef.sets) {
+                  const s = fallbackDef.sets;
+                  const rw = fallbackDef.repWindow || '10-12';
+                  ex.sets = (typeof s === 'number') ? `${s}×${rw}` : (String(s).includes('×') ? String(s) : `2×${rw}`);
+                }
                 if (fallbackDef.repWindow) ex.repWindow = fallbackDef.repWindow;
                 if (fallbackDef.restSeconds) ex.rest = fallbackDef.restSeconds;
                 if (fallbackDef.tempo) ex.tempo = fallbackDef.tempo;
@@ -3817,9 +3832,10 @@ const TodayPage = (() => {
       </div>
     `;
 
-    // 1. Warm-up exercises never have target strive / progression outcome cheats
+    // 1. Warm-up and mobility protocol exercises never have target strive / progression outcome cheats
     const isWarmupEx = ex.isWarmup || (ex.slot && ex.slot.startsWith('W')) || (ex.category && ex.category.toLowerCase() === 'warmup');
-    if (isWarmupEx) {
+    const isMobilityProtocol = (ex.name || '').toLowerCase().includes('mobility');
+    if (isWarmupEx || isMobilityProtocol) {
       return noteTextareaHTML;
     }
 
@@ -3992,6 +4008,8 @@ const TodayPage = (() => {
       return;
     }
     container.innerHTML = day.exercises.map((ex, idx) => {
+      const lowerExName = (ex.name || '').toLowerCase();
+      const isMobilityProtocol = lowerExName.includes('micro mobility') || lowerExName.includes('deep mobility');
       const originalSetsCount = UI.parseSetsCount(ex.sets);
       const isReadinessDropSet = Boolean(
         currentTracking &&
@@ -4003,8 +4021,35 @@ const TodayPage = (() => {
       const setsCount = isReadinessDropSet ? Math.max(1, originalSetsCount - 1) : originalSetsCount;
       const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
 
-      // Auto-evaluate exercise completion from set status:
-      if (setsCount > 0) {
+      // Auto-evaluate exercise completion from sub-steps or set status:
+      if (isMobilityProtocol) {
+        if (lowerExName.includes('micro mobility')) {
+          const subSteps = (currentTracking && currentTracking.microMobilitySteps) || {};
+          const dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
+          const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNum) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+          let doneCount = 0;
+          subExercises.forEach(sub => {
+            if (subSteps[sub.id]) doneCount++;
+          });
+          const isAllSubDone = subExercises.length > 0 && doneCount === subExercises.length;
+          if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+          if (isAllSubDone) {
+            currentTracking.exerciseStatus[idx] = true;
+          }
+        } else if (lowerExName.includes('deep mobility')) {
+          const subSteps = (currentTracking && currentTracking.deepMobilitySteps) || {};
+          const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
+          let doneCount = 0;
+          subExercises.forEach(sub => {
+            if (subSteps[sub.id]) doneCount++;
+          });
+          const isAllSubDone = subExercises.length > 0 && doneCount === subExercises.length;
+          if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+          if (isAllSubDone) {
+            currentTracking.exerciseStatus[idx] = true;
+          }
+        }
+      } else if (setsCount > 0) {
         let allDone = true;
         for (let s = 0; s < setsCount; s++) {
           if (!setData[`set_${s}_done`]) {
@@ -4023,7 +4068,7 @@ const TodayPage = (() => {
       const isExUnlocked = isEditable && isExerciseUnlocked(idx);
       const checkDisabledAttr = isExUnlocked ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"';
       const exCheckContent = isExUnlocked ? '✓' : '🔒';
-      const exCheckTitle = !isExUnlocked ? I18n.t('exercise_locked') : (setsCount > 1 && !isCompleted ? I18n.t('complete_sets_individually') : '');
+      const exCheckTitle = !isExUnlocked ? I18n.t('exercise_locked') : (setsCount > 1 && !isCompleted && !isMobilityProtocol ? I18n.t('complete_sets_individually') : '');
 
       let skipBtnHTML = '';
       if (isEditable && !isCompleted && isExUnlocked) {
@@ -4062,7 +4107,7 @@ const TodayPage = (() => {
       const prevPerf = findPrevPerformance(ex.name, currentDayIndex);
 
       let setsHTML = '';
-      if (setsCount > 0) {
+      if (setsCount > 0 && !isMobilityProtocol) {
         // Previous performance summary
         let prevPerfHTML = '';
         if (prevPerf && prevPerf.setData) {
@@ -4337,7 +4382,6 @@ const TodayPage = (() => {
         detailParts.push(`<span style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">${I18n.t('injury_badge_volume_merged') || '⚡ נפח מאוחד'}</span>`);
       }
 
-      const lowerExName = (ex.name || '').toLowerCase();
       let cardioTimerBtn = '';
       let protocolBannerHTML = '';
       const userAge = window._cachedUserAge || 43;
@@ -4956,15 +5000,78 @@ const TodayPage = (() => {
 
     const day = allPlanDays[currentDayIndex];
     const ex = (day && day.exercises) ? day.exercises[idx] : null;
+    const lowerExName = (ex?.name || '').toLowerCase();
+    const isMobilityProtocol = lowerExName.includes('micro mobility') || lowerExName.includes('deep mobility');
     const setsCount = ex ? UI.parseSetsCount(ex.sets) : 0;
 
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     const isNowCompleted = !currentTracking.exerciseStatus[idx];
 
-    if (setsCount > 1) {
+    if (setsCount > 1 && !isMobilityProtocol) {
       if (window.UI && window.UI.toast) {
         UI.toast(I18n.t('complete_sets_individually'), 'warning');
       }
+      return;
+    }
+
+    if (isMobilityProtocol) {
+      if (lowerExName.includes('micro mobility')) {
+        const dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
+        const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNum) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+        if (!currentTracking.microMobilitySteps) currentTracking.microMobilitySteps = {};
+        subExercises.forEach(sub => {
+          currentTracking.microMobilitySteps[sub.id] = isNowCompleted;
+        });
+      } else if (lowerExName.includes('deep mobility')) {
+        const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
+        if (!currentTracking.deepMobilitySteps) currentTracking.deepMobilitySteps = {};
+        subExercises.forEach(sub => {
+          currentTracking.deepMobilitySteps[sub.id] = isNowCompleted;
+        });
+      }
+
+      currentTracking.exerciseStatus[idx] = isNowCompleted;
+      if (!currentTracking.setData) currentTracking.setData = {};
+      if (!currentTracking.setData[idx]) currentTracking.setData[idx] = {};
+      if (isNowCompleted) {
+        currentTracking.setData[idx]['set_0_done'] = true;
+        currentTracking.setData[idx]['set_0_reps'] = (ex && ex.sets) ? ex.sets : (lowerExName.includes('deep') ? '10 mins' : '5 mins');
+        currentTracking.setData[idx]['set_0_result'] = 'in_window';
+      } else {
+        currentTracking.setData[idx]['set_0_done'] = false;
+      }
+
+      if (btn) {
+        if (isNowCompleted) btn.classList.add('checked');
+        else btn.classList.remove('checked');
+      }
+      const card = document.getElementById(`ex-card-${idx}`);
+      if (card) {
+        if (isNowCompleted) card.classList.add('completed');
+        else card.classList.remove('completed');
+      }
+
+      updateProgress(day);
+      const total = day.exercises.length;
+      let completed = 0;
+      day.exercises.forEach((_, i) => {
+        if (currentTracking.exerciseStatus[i]) completed++;
+      });
+      currentTracking.completed = completed === total;
+
+      if (isNowCompleted) {
+        if (navigator.vibrate) navigator.vibrate(50);
+        if (window.Effects3D && ex) {
+          window.Effects3D.triggerExerciseEffect(ex.name);
+        }
+        await handleExerciseCompleted(idx, day);
+        if (currentTracking.completed) {
+          showWorkoutCelebration(day);
+        }
+      }
+
+      await autoSave();
+      renderExercises(day);
       return;
     }
 
@@ -5008,7 +5115,7 @@ const TodayPage = (() => {
     if (ex.isWarmup || ex.rest === 0) return true;
     if (ex.slot && ex.slot.startsWith('W')) return true;
     const name = (ex.name || '').toLowerCase();
-    if (name.includes('walking') || name.includes('deep mobility')) return true;
+    if (name.includes('walking') || name.includes('deep mobility') || name.includes('micro mobility')) return true;
     return false;
   }
 
@@ -6501,16 +6608,49 @@ const TodayPage = (() => {
       if (currentTracking.deepMobilitySteps[sub.id]) doneCount++;
     });
 
+    const isAllDone = subExercises.length > 0 && doneCount === subExercises.length;
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+    currentTracking.exerciseStatus[exIdx] = isAllDone;
 
-    if (doneCount === subExercises.length) {
-      currentTracking.exerciseStatus[exIdx] = true;
+    if (!currentTracking.setData) currentTracking.setData = {};
+    if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+    const day = allPlanDays[currentDayIndex];
+    const ex = (day && day.exercises) ? day.exercises[exIdx] : null;
+    if (isAllDone) {
+      currentTracking.setData[exIdx]['set_0_done'] = true;
+      currentTracking.setData[exIdx]['set_0_reps'] = (ex && ex.sets) ? ex.sets : '10 mins';
+      currentTracking.setData[exIdx]['set_0_result'] = 'in_window';
     } else {
-      currentTracking.exerciseStatus[exIdx] = false;
+      currentTracking.setData[exIdx]['set_0_done'] = false;
+    }
+
+    if (day && day.exercises) {
+      updateProgress(day);
+      const total = day.exercises.length;
+      let completed = 0;
+      day.exercises.forEach((_, i) => {
+        if (currentTracking.exerciseStatus[i]) completed++;
+      });
+      currentTracking.completed = completed === total;
     }
 
     await autoSave();
-    render();
+    await render();
+
+    if (isAllDone && day) {
+      if (navigator.vibrate) navigator.vibrate(50);
+      if (window.Effects3D && ex) {
+        window.Effects3D.triggerExerciseEffect(ex.name);
+      }
+      try {
+        await handleExerciseCompleted(exIdx, day);
+        if (currentTracking.completed) {
+          showWorkoutCelebration(day);
+        }
+      } catch (e) {
+        console.warn('[Today] Completion effect error:', e);
+      }
+    }
   }
 
   /**
@@ -6535,8 +6675,45 @@ const TodayPage = (() => {
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     currentTracking.exerciseStatus[exIdx] = shouldMarkAll;
 
+    if (!currentTracking.setData) currentTracking.setData = {};
+    if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+    const day = allPlanDays[currentDayIndex];
+    const ex = (day && day.exercises) ? day.exercises[exIdx] : null;
+    if (shouldMarkAll) {
+      currentTracking.setData[exIdx]['set_0_done'] = true;
+      currentTracking.setData[exIdx]['set_0_reps'] = (ex && ex.sets) ? ex.sets : '10 mins';
+      currentTracking.setData[exIdx]['set_0_result'] = 'in_window';
+    } else {
+      currentTracking.setData[exIdx]['set_0_done'] = false;
+    }
+
+    if (day && day.exercises) {
+      updateProgress(day);
+      const total = day.exercises.length;
+      let completed = 0;
+      day.exercises.forEach((_, i) => {
+        if (currentTracking.exerciseStatus[i]) completed++;
+      });
+      currentTracking.completed = completed === total;
+    }
+
     await autoSave();
-    render();
+    await render();
+
+    if (shouldMarkAll && day) {
+      if (navigator.vibrate) navigator.vibrate(50);
+      if (window.Effects3D && ex) {
+        window.Effects3D.triggerExerciseEffect(ex.name);
+      }
+      try {
+        await handleExerciseCompleted(exIdx, day);
+        if (currentTracking.completed) {
+          showWorkoutCelebration(day);
+        }
+      } catch (e) {
+        console.warn('[Today] Completion effect error:', e);
+      }
+    }
   }
 
   /**
@@ -6677,15 +6854,49 @@ const TodayPage = (() => {
       if (currentTracking.microMobilitySteps[sub.id]) doneCount++;
     });
 
+    const isAllDone = subExercises.length > 0 && doneCount === subExercises.length;
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
-    if (doneCount === subExercises.length) {
-      currentTracking.exerciseStatus[exIdx] = true;
+    currentTracking.exerciseStatus[exIdx] = isAllDone;
+
+    if (!currentTracking.setData) currentTracking.setData = {};
+    if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+    const day = allPlanDays[currentDayIndex];
+    const ex = (day && day.exercises) ? day.exercises[exIdx] : null;
+    if (isAllDone) {
+      currentTracking.setData[exIdx]['set_0_done'] = true;
+      currentTracking.setData[exIdx]['set_0_reps'] = (ex && ex.sets) ? ex.sets : '5 mins';
+      currentTracking.setData[exIdx]['set_0_result'] = 'in_window';
     } else {
-      currentTracking.exerciseStatus[exIdx] = false;
+      currentTracking.setData[exIdx]['set_0_done'] = false;
+    }
+
+    if (day && day.exercises) {
+      updateProgress(day);
+      const total = day.exercises.length;
+      let completed = 0;
+      day.exercises.forEach((_, i) => {
+        if (currentTracking.exerciseStatus[i]) completed++;
+      });
+      currentTracking.completed = completed === total;
     }
 
     await autoSave();
-    render();
+    await render();
+
+    if (isAllDone && day) {
+      if (navigator.vibrate) navigator.vibrate(50);
+      if (window.Effects3D && ex) {
+        window.Effects3D.triggerExerciseEffect(ex.name);
+      }
+      try {
+        await handleExerciseCompleted(exIdx, day);
+        if (currentTracking.completed) {
+          showWorkoutCelebration(day);
+        }
+      } catch (e) {
+        console.warn('[Today] Completion effect error:', e);
+      }
+    }
   }
 
   /**
@@ -6711,8 +6922,45 @@ const TodayPage = (() => {
     if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
     currentTracking.exerciseStatus[exIdx] = shouldMarkAll;
 
+    if (!currentTracking.setData) currentTracking.setData = {};
+    if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+    const day = allPlanDays[currentDayIndex];
+    const ex = (day && day.exercises) ? day.exercises[exIdx] : null;
+    if (shouldMarkAll) {
+      currentTracking.setData[exIdx]['set_0_done'] = true;
+      currentTracking.setData[exIdx]['set_0_reps'] = (ex && ex.sets) ? ex.sets : '5 mins';
+      currentTracking.setData[exIdx]['set_0_result'] = 'in_window';
+    } else {
+      currentTracking.setData[exIdx]['set_0_done'] = false;
+    }
+
+    if (day && day.exercises) {
+      updateProgress(day);
+      const total = day.exercises.length;
+      let completed = 0;
+      day.exercises.forEach((_, i) => {
+        if (currentTracking.exerciseStatus[i]) completed++;
+      });
+      currentTracking.completed = completed === total;
+    }
+
     await autoSave();
-    render();
+    await render();
+
+    if (shouldMarkAll && day) {
+      if (navigator.vibrate) navigator.vibrate(50);
+      if (window.Effects3D && ex) {
+        window.Effects3D.triggerExerciseEffect(ex.name);
+      }
+      try {
+        await handleExerciseCompleted(exIdx, day);
+        if (currentTracking.completed) {
+          showWorkoutCelebration(day);
+        }
+      } catch (e) {
+        console.warn('[Today] Completion effect error:', e);
+      }
+    }
   }
 
   /**

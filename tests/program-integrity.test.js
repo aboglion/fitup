@@ -356,3 +356,51 @@ test('Program Integrity - Balanced Push-Pull (Day 3 Chin-Up, Day 5 Calves, Week 
   assert.equal(z5Low, 151, 'Zone 5 low must be 151 BPM');
   assert.equal(z5High, 169, 'Zone 5 high must be 169 BPM');
 });
+
+test('Program Integrity - Locked exercise fallback does not duplicate in same session', () => {
+  // Simulate Day 5 Week 1 unlock/fallback pass as performed by today.js
+  const d5 = JSON.parse(JSON.stringify(data.daily.find(d => d.week === 'Week 1' && d.dayOfWeek === 'Friday')));
+  const weekNum = 1;
+  const statesMap = {};
+
+  for (let i = 0; i < d5.exercises.length; i++) {
+    let ex = d5.exercises[i];
+    let exId = ex.id || engine.findExerciseIdByName(ex.name) || ex.name.toLowerCase().replace(/\s+/g, '-');
+
+    let maxDepth = 5;
+    while (maxDepth > 0) {
+      const unlockStatus = engine.checkUnlockCriteria(exId, statesMap, weekNum);
+      if (!unlockStatus.unlocked) {
+        const exDef = engine.getExercise(exId);
+        const fallbackId = exDef && exDef.fallbackId !== undefined
+          ? exDef.fallbackId
+          : (exDef && exDef.unlockCriteria ? exDef.unlockCriteria.exercise : null);
+        if (fallbackId) {
+          const fallbackDef = engine.getExercise(fallbackId);
+          if (fallbackDef) {
+            const isAlreadyInSession = d5.exercises.some((other, oIdx) => oIdx !== i && (other.id === fallbackId || other.name === fallbackDef.name));
+            if (isAlreadyInSession) {
+              d5.exercises.splice(i, 1);
+              i--;
+              break;
+            }
+            ex.id = fallbackDef.id;
+            ex.name = fallbackDef.name;
+            exId = fallbackId;
+            maxDepth--;
+            continue;
+          }
+        }
+        if (exDef && exDef.fallbackId === null) {
+          d5.exercises.splice(i, 1);
+          i--;
+        }
+        break;
+      }
+      break;
+    }
+  }
+
+  const curlCount = d5.exercises.filter(e => e.id === 'single-arm-curl').length;
+  assert.equal(curlCount, 1, 'Day 5 Week 1 must render exactly one single-arm-curl (no duplicate fallback)');
+});
