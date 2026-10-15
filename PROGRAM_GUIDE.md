@@ -499,7 +499,7 @@ Era-based history (`combatSchedule.history`, append-only) guarantees a full plan
 
 ## Appendix D — Complete Program Exercise Dictionary & Master Specifications
 
-This is the authoritative specification of all **59 unique exercises** appearing across the 560-day program schedule, plus catalog progressions referenced by `window.TRAINING_DATA` (`js/data.js`, v15.8 Accelerated). The in-app program is authoritative; this guide reflects the exact code parameters.
+This is the authoritative specification of all **61 unique exercises** appearing across the 560-day program schedule, plus catalog progressions referenced by `window.TRAINING_DATA` (`js/data.js`, v15.8 Accelerated). The in-app program is authoritative; this guide reflects the exact code parameters.
 
 ### D.1 Master Exercise Parameters & Catalog (Exact Weights, Reps, Tempos & Rest)
 

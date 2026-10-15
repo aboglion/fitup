@@ -298,4 +298,7 @@ test('Fix 5 - PROGRAM_GUIDE.md Documentation Integrity for All Fixes & SSOT Cata
   const dataJsContent = fs.readFileSync(path.join(__dirname, '..', 'js/data.js'), 'utf8');
   assert.ok(dataJsContent.includes('"id": "wall-sit"'), 'data.js must register wall-sit in exercises catalog');
   assert.ok(dataJsContent.includes('"id": "single-leg-glute-bridge"'), 'data.js must register single-leg-glute-bridge in exercises catalog');
+
+  // Appendix D opening line: 61 unique exercises across schedule & catalog progressions
+  assert.ok(content.includes('all **61 unique exercises**'), 'Appendix D intro must state 61 unique exercises');
 });

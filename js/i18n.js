@@ -188,7 +188,7 @@ const I18n = (() => {
   const TRANSLATIONS = {
     en: {
 
-      // Exercise Names Translations (59 Exercises)
+      // Exercise Names Translations (61 Exercises)
       'Arm Block - DB Overhead Triceps Ext': 'Arm Block - DB Overhead Triceps Ext',
       'Arm Block - Single-Arm Curl': 'Arm Block - Single-Arm Curl',
       'Arm Block - Single-Arm Lateral Raise': 'Arm Block - Single-Arm Lateral Raise',
@@ -1641,7 +1641,7 @@ const I18n = (() => {
     },
     he: {
 
-      // Exercise Names Translations (59 Exercises)
+      // Exercise Names Translations (61 Exercises)
       'Arm Block - DB Overhead Triceps Ext': 'בלוק זרועות - פשיטת מרפקים משקולת מעל הראש',
       'Arm Block - Single-Arm Curl': 'בלוק זרועות - כפילת מרפקים יד-יד',
       'Arm Block - Single-Arm Lateral Raise': 'בלוק זרועות - הרחקה לצדדים יד-יד',
@@ -3276,7 +3276,7 @@ const I18n = (() => {
       keep_cloud_data: "الاحتفاظ ببيانات السحابة (Drive)",
 
 
-      // Exercise Names Translations (59 Exercises)
+      // Exercise Names Translations (61 Exercises)
       'Arm Block - DB Overhead Triceps Ext': 'كتلة الذراع - تمديد الترايسبس بالدمبل فوق الرأس',
       'Arm Block - Single-Arm Curl': 'كتلة الذراع - ثني البايسبس ذراع واحدة',
       'Arm Block - Single-Arm Lateral Raise': 'كتلة الذراع - رفع جانبي ذراع واحدة',
