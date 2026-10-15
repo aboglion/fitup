@@ -125,6 +125,7 @@
     "VO2 MAX NORWEGIAN 4X4.png",
     "WALKING LUNGE (GOBLET).png",
     "WALL HANDSTAND.png",
+    "WALL SIT.png",
     "WALL SLIDES.png",
     "WALL WALK (FULL).png",
     "WALL WALK (PARTIAL).png",
@@ -270,6 +271,7 @@
     "DB Hammer Curl.gif",
     "Weighted Chin-Up.gif",
     "Couch Stretch.gif",
+    "Wall Sit.gif",
     "Relaxed Walking.gif"
   ];
 

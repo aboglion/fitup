@@ -492,30 +492,48 @@ const AnatomyMap = (() => {
       </div>`;
   }
 
+  const muscleExerciseMap = {
+    chest: ['Single-Arm Floor Press', 'Push-up Bars Progression', 'Push-Up Volume (Day 5)', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Weighted Deficit Push-Up', 'Diamond Push-Up', 'Scapular Push-up'],
+    shoulders: ['Single-Arm Seated OHP', 'Pike Progression', 'Elevated Pike Push-Up', 'Wall Walk (Partial)', 'Wall Walk (Full)', 'Wall Handstand', 'Single-Arm Lateral Raise', 'Arm Block - Single-Arm Lateral Raise', 'TRX Y-T-W', 'TRX Face Pull', 'Scapular Push-up', 'Arm Circles', 'Wall Slides', 'Band Pull-Apart', 'Feet-Elevated Push-Up', 'Band Neck Flexion & Extension'],
+    triceps: ['DB Overhead Triceps Extension', 'Arm Block - DB Overhead Triceps Ext', 'Single-Arm Floor Press', 'Push-up Bars Progression', 'Diamond Push-Up', 'Single-Arm Seated OHP', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Weighted Deficit Push-Up', 'Elevated Pike Push-Up', 'Pike Progression', 'Push-Up Volume (Day 5)'],
+    biceps: ['Single-Arm Curl', 'Single-Arm Hammer Curl', 'Arm Block - Single-Arm Curl', 'Chin-Up', 'Chin-Up Progression', 'Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'One-Arm DB Row', 'TRX Row', 'Seated Band Row'],
+    forearms: ['Dead Hang', 'Towel Hang', 'Suitcase Carry', 'One-Arm DB Row', 'TRX Row', 'Chin-Up', 'Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'Single-Arm Hammer Curl', 'Seated Band Row'],
+    lats: ['Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'Chin-Up', 'Chin-Up Progression', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row', 'Scapular Pull-up'],
+    traps: ['TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'Scapular Pull-up', 'One-Arm DB Row', 'Seated Band Row', 'Wall Slides', 'Deep Mobility Protocol', 'Band Neck Flexion & Extension'],
+    quads: ['Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Bodyweight Squat', 'High Knees', 'Brisk Walking', 'VO2 Max Norwegian 4x4', 'Relaxed Walking', 'Wall Sit'],
+    hamstrings: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'Nordic Curl Progression', 'Glute Bridge', 'DB Glute Bridge', 'Single-Leg Glute Bridge'],
+    glutes: ['DB Glute Bridge', 'Glute Bridge', 'Goblet Bulgarian Split Squat', 'Heels-Elevated Goblet Squat', 'Single-Leg RDL', 'Bodyweight Squat', 'Goblet Romanian Deadlift', 'Nordic Curl Progression', 'Single-Leg Glute Bridge', 'Wall Sit'],
+    calves: ['Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4', 'Relaxed Walking', 'Wall Sit'],
+    core: ['Dead Bug', 'Hollow Body Hold', 'Tuck L-Sit', 'One-Leg Extended L-Sit', 'Full L-Sit', 'Suitcase Carry', 'Pallof Press Progression', 'High Knees', 'Deficit Push-Up', 'Heels-Elevated Goblet Squat', 'Micro Mobility Protocol', 'Push-Up Volume (Day 5)', 'Push-up Bars Progression', 'Scapular Push-up', 'Wall Handstand', 'Wall Walk (Full)', 'Wall Walk (Partial)', 'Weighted Deficit Push-Up', 'Single-Leg Glute Bridge'],
+    obliques: ['Suitcase Carry', 'Pallof Press Progression', 'Dead Bug', 'Single-Arm Floor Press', 'Single-Arm Seated OHP', 'Tuck L-Sit', 'One-Leg Extended L-Sit', 'Full L-Sit', 'Hollow Body Hold'],
+    lowerBack: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'DB Glute Bridge', 'Suitcase Carry'],
+    neck: ['Band Neck Flexion & Extension', 'Deep Mobility Protocol', 'Micro Mobility Protocol', 'TRX Face Pull', 'Wall Slides', 'Band Pull-Apart'],
+    heart: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression'],
+    lungs: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression']
+  };
+
+  /**
+   * Helper to retrieve all muscles targeted by an exercise name
+   */
+  function getMusclesForExercise(exerciseName) {
+    if (!exerciseName) return [];
+    const clean = (exerciseName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const matches = [];
+    for (const [mKey, exList] of Object.entries(muscleExerciseMap)) {
+      if (exList.some(e => {
+        const c = e.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return c === clean || c.includes(clean) || clean.includes(c);
+      })) {
+        matches.push(mKey);
+      }
+    }
+    return matches;
+  }
+
   /**
    * Show detailed modal when a muscle group is clicked
    */
   async function showMuscleDetails(muscleKey, muscleName, pct) {
-    const muscleExerciseMap = {
-      chest: ['Single-Arm Floor Press', 'Push-up Bars Progression', 'Push-Up Volume (Day 5)', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Weighted Deficit Push-Up', 'Diamond Push-Up', 'Scapular Push-up'],
-      shoulders: ['Single-Arm Seated OHP', 'Pike Progression', 'Elevated Pike Push-Up', 'Wall Walk (Partial)', 'Wall Walk (Full)', 'Wall Handstand', 'Single-Arm Lateral Raise', 'Arm Block - Single-Arm Lateral Raise', 'TRX Y-T-W', 'TRX Face Pull', 'Scapular Push-up', 'Arm Circles', 'Wall Slides', 'Band Pull-Apart', 'Feet-Elevated Push-Up', 'Band Neck Flexion & Extension'],
-      triceps: ['DB Overhead Triceps Extension', 'Arm Block - DB Overhead Triceps Ext', 'Single-Arm Floor Press', 'Push-up Bars Progression', 'Diamond Push-Up', 'Single-Arm Seated OHP', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Weighted Deficit Push-Up', 'Elevated Pike Push-Up', 'Pike Progression', 'Push-Up Volume (Day 5)'],
-      biceps: ['Single-Arm Curl', 'Single-Arm Hammer Curl', 'Arm Block - Single-Arm Curl', 'Chin-Up', 'Chin-Up Progression', 'Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'One-Arm DB Row', 'TRX Row', 'Seated Band Row'],
-      forearms: ['Dead Hang', 'Towel Hang', 'Suitcase Carry', 'One-Arm DB Row', 'TRX Row', 'Chin-Up', 'Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'Single-Arm Hammer Curl', 'Seated Band Row'],
-      lats: ['Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'Chin-Up', 'Chin-Up Progression', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row', 'Scapular Pull-up'],
-      traps: ['TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'Scapular Pull-up', 'One-Arm DB Row', 'Seated Band Row', 'Wall Slides', 'Deep Mobility Protocol', 'Band Neck Flexion & Extension'],
-      quads: ['Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Bodyweight Squat', 'High Knees', 'Brisk Walking', 'VO2 Max Norwegian 4x4', 'Relaxed Walking', 'Wall Sit'],
-      hamstrings: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'Nordic Curl Progression', 'Glute Bridge', 'DB Glute Bridge', 'Single-Leg Glute Bridge'],
-      glutes: ['DB Glute Bridge', 'Glute Bridge', 'Goblet Bulgarian Split Squat', 'Heels-Elevated Goblet Squat', 'Single-Leg RDL', 'Bodyweight Squat', 'Goblet Romanian Deadlift', 'Nordic Curl Progression', 'Single-Leg Glute Bridge'],
-      calves: ['Standing Single-Leg Calf Raise', 'Seated Single-Leg Calf Raise', 'Brisk Walking', 'VO2 Max Norwegian 4x4', 'Relaxed Walking'],
-      core: ['Dead Bug', 'Hollow Body Hold', 'Tuck L-Sit', 'One-Leg Extended L-Sit', 'Full L-Sit', 'Suitcase Carry', 'Pallof Press Progression', 'High Knees', 'Deficit Push-Up', 'Heels-Elevated Goblet Squat', 'Micro Mobility Protocol', 'Push-Up Volume (Day 5)', 'Push-up Bars Progression', 'Scapular Push-up', 'Wall Handstand', 'Wall Walk (Full)', 'Wall Walk (Partial)', 'Weighted Deficit Push-Up'],
-      obliques: ['Suitcase Carry', 'Pallof Press Progression', 'Dead Bug', 'Single-Arm Floor Press', 'Single-Arm Seated OHP', 'Tuck L-Sit', 'One-Leg Extended L-Sit', 'Full L-Sit', 'Hollow Body Hold'],
-      lowerBack: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'DB Glute Bridge', 'Suitcase Carry'],
-      neck: ['Band Neck Flexion & Extension', 'Deep Mobility Protocol', 'Micro Mobility Protocol', 'TRX Face Pull', 'Wall Slides', 'Band Pull-Apart'],
-      heart: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression'],
-      lungs: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression']
-    };
-
     const exerciseNames = muscleExerciseMap[muscleKey] || [I18n.t('anatomy_only_exercises')];
 
     let trackingMap = {};
@@ -684,7 +702,13 @@ const AnatomyMap = (() => {
         <ul style="list-style: none; padding: 0; margin: 0 0 18px 0; display: flex; flex-direction: column; gap: 8px;">
           ${exercises.map(ex => {
             const nameLower = (ex.name || '').toLowerCase();
-            const isWeighted = !nameLower.includes('bodyweight') && !nameLower.includes('band') && !nameLower.includes('walking') && !nameLower.includes('mobility') && !nameLower.includes('dead bug') && !nameLower.includes('hollow') && !nameLower.includes('pull-up') && !nameLower.includes('push-up');
+            const isBW = nameLower.includes('bodyweight') || nameLower.includes('band') || nameLower.includes('walking') || 
+                         nameLower.includes('mobility') || nameLower.includes('dead bug') || nameLower.includes('hollow') || 
+                         nameLower.includes('pull-up') || nameLower.includes('push-up') || nameLower.includes('wall sit') || 
+                         nameLower.includes('single-leg glute bridge') || nameLower.includes('nordic') || nameLower.includes('hang') || 
+                         nameLower.includes('l-sit') || nameLower.includes('wall walk') || nameLower.includes('handstand') || 
+                         nameLower.includes('high knees') || nameLower.includes('wrist rocks');
+            const isWeighted = !isBW;
             const isGrpB = nameLower.includes('lateral raise') || (nameLower.includes('curl') && !nameLower.includes('nordic')) || nameLower.includes('triceps') || nameLower.includes('calf');
             const cadenceBadge = isWeighted
               ? (isGrpB
@@ -756,7 +780,8 @@ const AnatomyMap = (() => {
     setView,
     cycleJoint,
     resetInjuries,
-    openJointsModal
+    openJointsModal,
+    getMusclesForExercise
   };
 })();
 

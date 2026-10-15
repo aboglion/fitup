@@ -482,7 +482,9 @@ const StatsPage = (() => {
     'walking-lunge': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.6 }],
     'pistol-squat-to-chair': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'core', w: 0.4 }],
     'wall-sit': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.4 }, { m: 'calves', w: 0.3 }],
+    'wall-sit-1': [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.4 }, { m: 'calves', w: 0.3 }],
     'single-leg-glute-bridge': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.6 }, { m: 'core', w: 0.3 }],
+    'glute-2': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.6 }, { m: 'core', w: 0.3 }],
 
     'db-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.6 }],
     'goblet-romanian-deadlift': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.6 }],
@@ -492,6 +494,7 @@ const StatsPage = (() => {
     // v15.7.1: Nordic Curl Progression — hamstring eccentric, bodyweight only, NO axial spinal loading
     // (deliberately no lowerBack contribution).
     'nordic-curl-progression': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.3 }],
+    'nordic-1': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.3 }],
     'db-glute-bridge': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }],
     'glute-bridge': [{ m: 'glutes', w: 1.0 }, { m: 'hamstrings', w: 0.5 }],
 
@@ -578,11 +581,17 @@ const StatsPage = (() => {
     if (name.includes('face pull') || name.includes('y-t-w') || name.includes('pull-apart')) {
       return [{ m: 'traps', w: 1.0 }, { m: 'shoulders', w: 0.6 }];
     }
+    if (name.includes('nordic')) {
+      return [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.3 }];
+    }
     if (name.includes('curl')) {
       return [{ m: 'biceps', w: 1.0 }];
     }
     if (name.includes('triceps') || name.includes('diamond')) {
       return [{ m: 'triceps', w: 1.0 }];
+    }
+    if (name.includes('wall sit')) {
+      return [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.4 }, { m: 'calves', w: 0.3 }];
     }
     if (name.includes('squat') || name.includes('lunge')) {
       return [{ m: 'quads', w: 1.0 }, { m: 'glutes', w: 0.5 }];
@@ -612,18 +621,20 @@ const StatsPage = (() => {
     'overhead-triceps-ext': 'triceps', 'db-overhead-triceps-extension': 'triceps', 'single-arm-overhead-triceps-ext': 'triceps', 'diamond-push-up': 'triceps',
     'pull-up': 'lats', 'pull-up-progression': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'seated-band-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
     'db-curl': 'biceps', 'single-arm-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-hammer-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
-    'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'heels-elevated-goblet-squat': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads', 'wall-sit': 'quads',
-    'db-rdl': 'hamstrings', 'goblet-romanian-deadlift': 'hamstrings', 'goblet-rdl': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'nordic-curl-progression': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'single-leg-glute-bridge': 'glutes',
+    'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'heels-elevated-goblet-squat': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads', 'wall-sit': 'quads', 'wall-sit-1': 'quads',
+    'db-rdl': 'hamstrings', 'goblet-romanian-deadlift': 'hamstrings', 'goblet-rdl': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'nordic-curl-progression': 'hamstrings', 'nordic-1': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'single-leg-glute-bridge': 'glutes', 'glute-2': 'glutes',
     'single-leg-calf-raise': 'calves', 'standing-single-leg-calf-raise': 'calves', 'seated-single-leg-calf-raise': 'calves', 'double-leg-calf-raise': 'calves', 'seated-calf-raise': 'calves',
     'dead-bug': 'core', 'hollow-body-hold': 'core', 'pallof-press-band': 'core', 'pallof-press-progression': 'core', 'l-sit-tuck-hold': 'core', 'tuck-l-sit': 'core', 'one-leg-extended-l-sit': 'core', 'full-l-sit': 'core', 'l-sit-progression': 'core', 'suitcase-carry': 'obliques', 'dead-hang': 'forearms', 'towel-hang': 'forearms', 'pistol-squat': 'quads', 'bulgarian-split-squat': 'quads', 'push-up-progression': 'chest', 'db-oh-triceps-extension': 'triceps', 'arm-block-lateral-raise': 'shoulders', 'arm-block-triceps-ext': 'triceps', 'chin-up-progression': 'lats', 'push-up-volume': 'chest', 'arm-block-biceps-curl': 'biceps', 'high-knees': 'quads', 'arm-circles': 'shoulders', 'wall-slides': 'shoulders', 'brisk-walking': 'calves', 'relaxed-walking': 'calves', 'vo2-max-norwegian-4x4': 'calves', 'micro-mobility-protocol': 'neck', 'deep-mobility-protocol': 'neck', 'band-neck-flexion': 'neck', 'single-arm-floor-press': 'chest', 'weighted-deficit-push-up': 'chest', 'weighted-diamond-push-up': 'triceps', 'wall-walk-partial': 'shoulders', 'wall-walk-full': 'shoulders', 'wall-handstand': 'shoulders', 'elevated-pike-push-up': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'pull-up-overhand': 'lats', 'weighted-chin-up': 'lats', 'walking-lunge-goblet': 'quads', 'wrist-rocks': 'forearms'
   };
 
   function getMuscleForExercise(ex) {
     if (!ex) return null;
+    const nameSlug = (ex.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    if (ex.isInjuredSubstitute && EXERCISE_MUSCLE_MAP[nameSlug]) return EXERCISE_MUSCLE_MAP[nameSlug];
     if (ex.id && EXERCISE_MUSCLE_MAP[ex.id]) return EXERCISE_MUSCLE_MAP[ex.id];
     if (ex.exerciseId && EXERCISE_MUSCLE_MAP[ex.exerciseId]) return EXERCISE_MUSCLE_MAP[ex.exerciseId];
 
-    const slug = (ex.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const slug = nameSlug;
     for (const [key, muscle] of Object.entries(EXERCISE_MUSCLE_MAP)) {
       if (slug.includes(key) || key.includes(slug)) return muscle;
     }
@@ -633,10 +644,12 @@ const StatsPage = (() => {
     if (name.includes('ohp') || name.includes('overhead press') || name.includes('raise') || name.includes('shoulder') || name.includes('pike') || name.includes('face pull')) return 'shoulders';
     if (name.includes('press') || name.includes('push-up') || name.includes('chest')) return 'chest';
     if (name.includes('pull-up') || name.includes('row') || name.includes('chin-up') || name.includes('lat')) return 'lats';
+    if (name.includes('nordic')) return 'hamstrings';
     if (name.includes('curl')) return 'biceps';
     if (name.includes('triceps') || name.includes('diamond')) return 'triceps';
-    if (name.includes('squat') || name.includes('lunge')) return 'quads';
-    if (name.includes('rdl') || name.includes('bridge') || name.includes('thrust') || name.includes('glute') || name.includes('deadlift') || name.includes('romanian')) return 'hamstrings';
+    if (name.includes('wall sit') || name.includes('squat') || name.includes('lunge')) return 'quads';
+    if (name.includes('rdl') || name.includes('hinge') || name.includes('deadlift') || name.includes('romanian')) return 'hamstrings';
+    if (name.includes('bridge') || name.includes('thrust') || name.includes('glute')) return 'glutes';
     if (name.includes('calf') || name.includes('calves')) return 'calves';
     if (name.includes('bug') || name.includes('hollow') || name.includes('l-sit') || name.includes('hold') || name.includes('core')) return 'core';
     if (name.includes('hang')) return 'forearms';

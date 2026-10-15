@@ -899,9 +899,12 @@ const InjuryEngine = (() => {
         }
 
         activeNames.push(ad.substituteName);
+        const subId = ad.substituteId || ad.substituteName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         const cloned = {
           ...ex,
+          id: subId,
           name: ad.substituteName,
+          originalId: ex.id,
           originalName: ex.name,
           injuryAdaptation: ad,
           isInjuredSubstitute: true
