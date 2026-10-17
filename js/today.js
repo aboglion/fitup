@@ -6255,8 +6255,9 @@ const TodayPage = (() => {
 
     evaluatedTargets.forEach(({ day: targetDay, evaluation }) => {
       const typeInfo = UI.getDayTypeInfo(targetDay.dayType);
-      const tier = evaluation.tier;
-      const badgeKey = tier === 'best' ? 'swap_rec_best' : (tier === 'caution' ? 'swap_rec_caution' : 'swap_rec_viable');
+      const dayName = (window.UI && typeof window.UI.getDayOfWeekName === 'function')
+        ? window.UI.getDayOfWeekName(targetDay)
+        : (targetDay.dayOfWeek || targetDay['Day of Week'] || `Day ${targetDay.dayNum || (targetDay.dayIndex + 1)}`);
 
       const reasonsHtml = evaluation.reasons.map(r => {
         const text = I18n.t(r.key);
@@ -6268,7 +6269,7 @@ const TodayPage = (() => {
         <button type="button" class="swap-rec-card swap-rec-${tier}" onclick="TodayPage.performSwap(${targetDay.dayIndex})">
           <div class="swap-rec-header">
             <div class="swap-rec-day-title">
-              <span class="swap-rec-dayname">${targetDay.dayOfWeek}</span>
+              <span class="swap-rec-dayname">${dayName}</span>
               <span class="swap-rec-separator">·</span>
               <span class="swap-rec-daytype">${typeInfo.label}</span>
             </div>
@@ -7671,7 +7672,9 @@ const TodayPage = (() => {
     const isAr = effectiveLang === 'ar';
 
     const dayNum = day.dayNum || (currentDayIndex + 1);
-    const dayOfWeek = day.dayOfWeek || '';
+    const dayOfWeek = (window.UI && typeof window.UI.getDayOfWeekName === 'function')
+      ? window.UI.getDayOfWeekName(day)
+      : (day.dayOfWeek || day['Day of Week'] || '');
     const dateStr = day.date || '';
     const weekStr = day.week || '';
     const dayType = day.dayType || '';
