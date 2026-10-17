@@ -6272,6 +6272,11 @@ const TodayPage = (() => {
         ? window.UI.getDayOfWeekName(targetDay)
         : (targetDay.dayOfWeek || targetDay['Day of Week'] || `Day ${targetDay.dayNum || (targetDay.dayIndex + 1)}`);
 
+      const tier = evaluation.tier || 'viable';
+      const badgeKey = tier === 'best'
+        ? 'swap_rec_best'
+        : (tier === 'caution' ? 'swap_rec_caution' : 'swap_rec_viable');
+
       const reasonsHtml = evaluation.reasons.map(r => {
         const text = I18n.t(r.key);
         const icon = r.type === 'positive' ? '✨' : (r.type === 'warning' ? '⚠️' : 'ℹ️');

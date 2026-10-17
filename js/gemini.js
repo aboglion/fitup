@@ -477,6 +477,7 @@ Return ONLY a valid JSON object matching this schema (NO Markdown formatting, NO
       he: "החזר תשובה בעברית בלבד בתור 2 משפטים קצרים, מקצועיים ומעודדים.",
       ar: "قدم الرد باللغة العربية فقط في جملتين قصيرتين ومشجعتين."
     };
+    const langPrompt = langInstructions[currentLang] || langInstructions.en;
     const cyclingInfo = goals.cyclingMode ? ` [Carb/Calorie Cycling Mode: ${goals.cyclingMode}]` : '';
     const carbsText = goals.carbs ? `, ${totals.carbs || 0}/${goals.carbs}g Carbs` : '';
 
