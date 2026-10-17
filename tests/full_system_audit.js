@@ -169,18 +169,37 @@ if (missingFromAnatomyModal.length > 0) {
   missingFromAnatomyModal.forEach(name => warnings.push(`  - '${name}'`));
 }
 
+// Names in muscleExerciseMap may also be legitimate skill-tree / library catalog
+// exercises (browsable in the Exercise Directory) that are simply not scheduled in
+// the 560-day program. Only flag names absent from BOTH the program AND the catalog.
+// SKILL_TREES and EXERCISE_WEIGHT_PROGRESSION are closure-private inside the
+// ExercisesPage IIFE, so they are extracted from the source text rather than the vm sandbox.
+const catalogExerciseNames = new Set();
+const ewpKeyRe = /'([A-Za-z0-9 &()\-+.,/'"]+)'\s*:\s*\[\{/g;
+let ewpM;
+while ((ewpM = ewpKeyRe.exec(exercisesContent)) !== null) {
+  catalogExerciseNames.add(ewpM[1]);
+}
+const stNameRe = /\{ name: '([^']+)'/g;
+let stM;
+while ((stM = stNameRe.exec(exercisesContent)) !== null) {
+  catalogExerciseNames.add(stM[1]);
+}
+
 const legacyInAnatomyModal = [];
 Object.entries(muscleExerciseMap).forEach(([mKey, list]) => {
   list.forEach(exName => {
-    if (!allDistinctExercises.has(exName)) {
+    if (!allDistinctExercises.has(exName) && !catalogExerciseNames.has(exName)) {
       legacyInAnatomyModal.push({ muscle: mKey, name: exName });
     }
   });
 });
 
 if (legacyInAnatomyModal.length > 0) {
-  warnings.push(`anatomy.js modal lists contain ${legacyInAnatomyModal.length} legacy/outdated exercise names not used in program:`);
+  warnings.push(`anatomy.js modal lists contain ${legacyInAnatomyModal.length} legacy/outdated exercise names not used in program or catalog:`);
   legacyInAnatomyModal.forEach(item => warnings.push(`  - [${item.muscle}] '${item.name}'`));
+} else {
+  info.push("Every anatomy.js modal exercise is either an active program exercise or a valid skill-tree/library catalog exercise.");
 }
 
 // 9. Program Balance Calculations (Push, Pull, Legs, Core, Neck)

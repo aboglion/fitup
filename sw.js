@@ -1,8 +1,11 @@
-const CACHE_NAME = 'fitup-v205-swap-forward-days-fix';
+const CACHE_NAME = 'fitup-v206-perfection-audit';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
   './index.html',
+  './about.html',
+  './privacy.html',
+  './terms.html',
   './manifest.json',
   './images/icon-192.png',
   './images/icon-512.png',
@@ -14,6 +17,7 @@ const ASSETS = [
   './js/config.js',
   './js/crypto.js',
   './js/data.js',
+  './js/program-guide-content.js',
   './js/combat-scheduler.js',
   './js/db.js',
   './js/progression.js',
@@ -66,7 +70,7 @@ self.addEventListener('activate', (event) => {
             await mediaCache.delete(req);
           }
         }
-      } catch (_) {}
+      } catch (_) { }
 
       const cacheNames = await caches.keys();
       for (const cacheName of cacheNames) {
@@ -130,7 +134,7 @@ self.addEventListener('fetch', (event) => {
             const decMatch = await mediaCache.match(decoded, { ignoreSearch: true });
             if (decMatch) return decMatch;
           }
-        } catch (_) {}
+        } catch (_) { }
 
         return fetch(event.request)
           .then((networkResponse) => {
@@ -143,7 +147,7 @@ self.addEventListener('fetch', (event) => {
                   if (dec !== event.request.url) {
                     cache.put(dec, responseToCache.clone()).catch(() => { });
                   }
-                } catch (_) {}
+                } catch (_) { }
               }).catch(() => { });
             }
             return networkResponse;

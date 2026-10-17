@@ -61,7 +61,7 @@
         document.documentElement.dir = 'ltr';
         document.documentElement.style.setProperty('--font-family-active', "'Inter', sans-serif");
       }
-    } catch (e) {}
+    } catch (e) { }
     if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
       if ('caches' in window) {
         // Clear app shell caches to load fresh code changes, but preserve heavy media cache
@@ -258,8 +258,7 @@
               </button>
               <button id="export-workout-txt-btn" class="day-summary-action-btn export-ai-action-btn"
                 onclick="if(window.TodayPage && window.TodayPage.openAiExportModal){window.TodayPage.openAiExportModal();}else if(window.TodayPage && window.TodayPage.exportWorkoutToAiTxt){window.TodayPage.exportWorkoutToAiTxt();}"
-                data-i18n-title="export_ai_modal_title"
-                title="ייצוא ל-AI (ChatGPT / Gemini)">
+                data-i18n-title="export_ai_modal_title" title="ייצוא ל-AI (ChatGPT / Gemini)">
                 <span>📋</span> <span data-i18n="export_workout_txt_btn">יצוא ל-AI</span>
               </button>
             </div>
@@ -346,9 +345,12 @@
 
       <!-- Stats Page -->
       <section id="page-stats" class="page">
-        <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+        <div class="page-header"
+          style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
           <h1 class="page-title" data-i18n="progress_title" style="margin: 0;">Progress & Stats</h1>
-          <div id="stats-dashboard-live-badge" class="stats-live-badge" onclick="refreshDashboardData()" data-i18n-title="dashboard_live_tooltip" title="Live Dashboard — automatically updates after each workout via cloud or between open tabs">
+          <div id="stats-dashboard-live-badge" class="stats-live-badge" onclick="refreshDashboardData()"
+            data-i18n-title="dashboard_live_tooltip"
+            title="Live Dashboard — automatically updates after each workout via cloud or between open tabs">
             <span class="live-pulse-dot"></span>
             <span id="stats-live-status-text" data-i18n="dashboard_live_active">Live Dashboard</span>
           </div>
@@ -406,7 +408,8 @@
                 </div>
                 <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
                   <span style="font-size: 13px; flex-shrink: 0;">3️⃣</span>
-                  <span>Copy key and paste below. <b style="color: var(--accent-primary, #3b82f6); font-weight: 800;">100% Free!</b></span>
+                  <span>Copy key and paste below. <b
+                      style="color: var(--accent-primary, #3b82f6); font-weight: 800;">100% Free!</b></span>
                 </div>
               </div>
             </div>
@@ -703,27 +706,35 @@
           <div class="settings-card" style="border: 2px solid var(--accent-primary); background: var(--bg-card);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
               <h3 data-i18n="hr_settings_card_title" style="margin: 0;">🫀 Heart Rate & Cardio Profile</h3>
-              <button type="button" class="btn-secondary" style="font-size: 11px; padding: 3px 10px; border-radius: 6px;" onclick="UI.showHeartRateModal();">
+              <button type="button" class="btn-secondary"
+                style="font-size: 11px; padding: 3px 10px; border-radius: 6px;" onclick="UI.showHeartRateModal();">
                 🫀 <span data-i18n="hr_calc_btn">מחשבון דופק</span>
               </button>
             </div>
-            <p data-i18n="hr_settings_card_desc" style="margin-top: 6px;">Configure your age or known Max Heart Rate (HRmax) to automatically calculate exact BPM targets for Zone 2 and Norwegian 4×4.</p>
+            <p data-i18n="hr_settings_card_desc" style="margin-top: 6px;">Configure your age or known Max Heart Rate
+              (HRmax) to automatically calculate exact BPM targets for Zone 2 and Norwegian 4×4.</p>
             <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-top: 12px;">
               <div>
-                <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;" data-i18n="hr_age_label">גיל (שנים)</label>
+                <label
+                  style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;"
+                  data-i18n="hr_age_label">גיל (שנים)</label>
                 <input type="number" id="settings-user-age" min="15" max="100" value="43"
                   style="width: 85px; padding: 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 16px; font-weight: 800; text-align: center;"
                   dir="ltr">
               </div>
               <div>
-                <label style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;" data-i18n="hr_custom_max_label">דופק מרבי ידוע (BPM)</label>
+                <label
+                  style="display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 4px;"
+                  data-i18n="hr_custom_max_label">דופק מרבי ידוע (BPM)</label>
                 <input type="number" id="settings-custom-hrmax" min="100" max="230" placeholder="אופציונלי"
                   style="width: 125px; padding: 10px; border-radius: 8px; background: var(--bg-input); border: 1px solid var(--border-light); color: var(--text-primary); font-size: 16px; font-weight: 800; text-align: center;"
                   dir="ltr">
               </div>
-              <button id="save-hr-settings-btn" class="btn-primary" style="padding: 10px 18px; font-weight: 700;">💾</button>
+              <button id="save-hr-settings-btn" class="btn-primary"
+                style="padding: 10px 18px; font-weight: 700;">💾</button>
             </div>
-            <div id="settings-hr-preview-badges" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; font-size: 12px;">
+            <div id="settings-hr-preview-badges"
+              style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; font-size: 12px;">
               <!-- Live preview badges rendered by JS -->
             </div>
           </div>
@@ -967,7 +978,8 @@
                     </div>
                     <div style="display: flex; align-items: flex-start; gap: 8px; line-height: 1.4;">
                       <span style="font-size: 13px; flex-shrink: 0;">3️⃣</span>
-                      <span>Copy key and paste below. <b style="color: var(--accent-primary, #3b82f6); font-weight: 800;">100% Free!</b></span>
+                      <span>Copy key and paste below. <b
+                          style="color: var(--accent-primary, #3b82f6); font-weight: 800;">100% Free!</b></span>
                     </div>
                   </div>
                 </div>
@@ -1120,7 +1132,7 @@
           </div>
           <div class="settings-card about-card">
             <h3 data-i18n="about_card">ℹ️ About FitUp</h3>
-            <p data-i18n="about_desc">FitUp Pro v15.7 Accelerated - AI Workout & Nutrition Tracker</p>
+            <p data-i18n="about_desc">FitUp Pro v15.9 Accelerated - AI Workout & Nutrition Tracker</p>
             <p data-i18n="about_sub">80-Week Training Program • 560 Days</p>
             <p class="muted" data-i18n="about_note">All data stored locally in your browser and personal Google Drive.
             </p>

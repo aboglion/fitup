@@ -980,7 +980,7 @@ const StatsPage = (() => {
           </div>
           <div style="display: flex; align-items: center; gap: 6px;">
             ${deloadBadgeHTML}
-            <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">Active v15.7</span>
+            <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;">Active v15.9</span>
           </div>
         </div>
 

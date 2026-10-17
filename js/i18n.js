@@ -441,7 +441,7 @@ const I18n = (() => {
       appearance_desc: "Toggle between light and dark mode.",
       toggle_theme_btn: "Toggle Theme",
       about_card: "ℹ️ About FitUp",
-      about_desc: "FitUp Pro v15.7 Accelerated - AI Workout & Nutrition Tracker",
+      about_desc: "FitUp Pro v15.9 Accelerated - AI Workout & Nutrition Tracker",
       about_sub: "80-Week Training Program • 560 Days",
       about_note: "All data stored locally in your browser and personal Google Drive.",
 
@@ -1335,8 +1335,8 @@ const I18n = (() => {
       meal_logged_success: "Meal logged successfully.",
       ai_meal_name: "AI Meal",
 
-      // FitUp v15.7 Accelerated Program
-      lean_program_title: "v15.7 Accelerated Program",
+      // FitUp v15.9 Accelerated Program
+      lean_program_title: "v15.9 Accelerated Program",
       myo_reps_title: "Myo-Reps Cluster",
       tempo_loss_warning: "⚠️ Stop Rule: 2 Tempo Losses Reached!",
       arm_block_limit_warning: "⚠️ Arm Block limit reached for this week (Max 2)",
@@ -2055,7 +2055,7 @@ const I18n = (() => {
       appearance_desc: "החלף בין מצב תצוגה בהיר לכהה",
       toggle_theme_btn: "החלף מצב תצוגה",
       about_card: "ℹ️ אודות",
-      about_desc: "FitUp Pro v15.7 Accelerated - אפליקציית מעקב אימונים ותזונה AI",
+      about_desc: "FitUp Pro v15.9 Accelerated - אפליקציית מעקב אימונים ותזונה AI",
       about_sub: "תוכנית 80 שבועות • 560 ימים",
       about_note: "כל הנתונים נשמרים מקומית בדפדפן ובדרייב האישי שלך",
 
@@ -2901,8 +2901,8 @@ const I18n = (() => {
       meal_logged_success: "הארוחה הוקלדה בהצלחה.",
       ai_meal_name: "ארוחת AI",
 
-      // FitUp v15.7 Accelerated Program
-      lean_program_title: "תוכנית v15.7 Accelerated",
+      // FitUp v15.9 Accelerated Program
+      lean_program_title: "תוכנית v15.9 Accelerated",
       myo_reps_title: "סט מיו-רפס (Myo-Reps)",
       tempo_loss_warning: "⚠️ חוק עצירה: הגעת ל-2 אובדני קצב!",
       arm_block_limit_warning: "⚠️ הגעת למגבלת בלוק זרועות לשבוע זה (מקסימום 2)",
@@ -3825,7 +3825,7 @@ const I18n = (() => {
       appearance_desc: "التبديل بين الوضع الفاتح والداكن",
       toggle_theme_btn: "تغيير المظهر",
       about_card: "ℹ️ حول التطبيق",
-      about_desc: "FitUp Pro v15.7 Accelerated - تطبيق تتبع التمارين والتغذية بالذكاء الاصطناعي",
+      about_desc: "FitUp Pro v15.9 Accelerated - تطبيق تتبع التمارين والتغذية بالذكاء الاصطناعي",
       about_sub: "برنامج 80 أسبوعاً • 560 يوماً",
       about_note: "يتم حفظ جميع البيانات محلياً في متصفحك وحساب Google Drive الخاص بك",
 
@@ -4285,8 +4285,8 @@ const I18n = (() => {
       tempo_kmh: "{speed} كم/س",
       tempo_kmh_effort_rest: "{effort} كم/س جهد / {rest} كم/س راحة",
 
-      // FitUp v15.7 Accelerated Program
-      lean_program_title: "برنامج v15.7 Accelerated",
+      // FitUp v15.9 Accelerated Program
+      lean_program_title: "برنامج v15.9 Accelerated",
       myo_reps_title: "مجموعة Myo-Reps",
       tempo_loss_warning: "⚠️ قاعدة التوقف: تم الوصول إلى فقدان الإيقاع مرتين!",
       arm_block_limit_warning: "⚠️ تم الوصول إلى الحد الأقصى لحظر الذراع هذا الأسبوع (الحد الأقصى 2)",

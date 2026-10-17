@@ -141,7 +141,7 @@ const TodayPage = (() => {
     const deloadEvery = window.TRAINING_DATA?.progressionSettings?.deloadEveryWeeks || 12;
     const baseIsDeload = weekNum % deloadEvery === 0;
 
-    // Deload Overrides & Postponement (v15.7.2)
+    // Deload Overrides & Postponement (v15.7.1)
     let deloadOverrides = {};
     try {
       if (window.DB && window.DB.getSetting) {
@@ -1105,7 +1105,7 @@ const TodayPage = (() => {
             openBtn.onclick = async (e) => {
               e.preventDefault();
               if (window._deloadBannerClosed) delete window._deloadBannerClosed[currentWeekNum];
-              try { sessionStorage.removeItem('deload_closed_' + currentWeekNum); } catch (err) {}
+              try { sessionStorage.removeItem('deload_closed_' + currentWeekNum); } catch (err) { }
               await render();
             };
           }
@@ -1189,7 +1189,7 @@ const TodayPage = (() => {
               e.preventDefault();
               window._deloadBannerClosed = window._deloadBannerClosed || {};
               window._deloadBannerClosed[currentWeekNum] = true;
-              try { sessionStorage.setItem('deload_closed_' + currentWeekNum, '1'); } catch (err) {}
+              try { sessionStorage.setItem('deload_closed_' + currentWeekNum, '1'); } catch (err) { }
               await render();
             };
           }
@@ -1215,7 +1215,7 @@ const TodayPage = (() => {
             openBtn.onclick = async (e) => {
               e.preventDefault();
               if (window._deloadBannerClosed) delete window._deloadBannerClosed[currentWeekNum];
-              try { sessionStorage.removeItem('deload_closed_' + currentWeekNum); } catch (err) {}
+              try { sessionStorage.removeItem('deload_closed_' + currentWeekNum); } catch (err) { }
               await render();
             };
           }
@@ -1257,7 +1257,7 @@ const TodayPage = (() => {
               e.preventDefault();
               window._deloadBannerClosed = window._deloadBannerClosed || {};
               window._deloadBannerClosed[currentWeekNum] = true;
-              try { sessionStorage.setItem('deload_closed_' + currentWeekNum, '1'); } catch (err) {}
+              try { sessionStorage.setItem('deload_closed_' + currentWeekNum, '1'); } catch (err) { }
               await render();
             };
           }
@@ -1283,7 +1283,7 @@ const TodayPage = (() => {
             openBtn.onclick = async (e) => {
               e.preventDefault();
               if (window._deloadBannerClosed) delete window._deloadBannerClosed[currentWeekNum];
-              try { sessionStorage.removeItem('deload_closed_' + currentWeekNum); } catch (err) {}
+              try { sessionStorage.removeItem('deload_closed_' + currentWeekNum); } catch (err) { }
               await render();
             };
           }
@@ -1325,7 +1325,7 @@ const TodayPage = (() => {
               e.preventDefault();
               window._deloadBannerClosed = window._deloadBannerClosed || {};
               window._deloadBannerClosed[currentWeekNum] = true;
-              try { sessionStorage.setItem('deload_closed_' + currentWeekNum, '1'); } catch (err) {}
+              try { sessionStorage.setItem('deload_closed_' + currentWeekNum, '1'); } catch (err) { }
               await render();
             };
           }
@@ -1749,7 +1749,7 @@ const TodayPage = (() => {
               isCombatActive = true;
             }
           }
-        } catch (_) {}
+        } catch (_) { }
       }
       if (!isCombatActive && currentTracking && currentTracking.combat && currentTracking.combat.done && queryDateStr === todayStr) {
         isCombatActive = true;
@@ -2340,8 +2340,8 @@ const TodayPage = (() => {
           const prevStageName = prevEx ? (prevEx.currentStageName || resolveExerciseStage(prevEx, prevExDay, statesMap)) : null;
           const isStageChanged = prevEx && prevStageName && curStageName && (prevStageName !== curStageName);
           const isAngleChanged = isStageChanged && (
-            curStageName.toLowerCase().startsWith('angle') || 
-            prevStageName.toLowerCase().startsWith('angle') || 
+            curStageName.toLowerCase().startsWith('angle') ||
+            prevStageName.toLowerCase().startsWith('angle') ||
             curStageName.includes('°') ||
             prevStageName.includes('°') ||
             curStageName.includes('זווית') ||
@@ -4331,8 +4331,8 @@ const TodayPage = (() => {
       const prevStageName = prevEx ? (prevEx.currentStageName || resolveExerciseStage(prevEx, prevExDay, statesMapCache)) : null;
       const isStageChanged = prevEx && prevStageName && curStageName && (prevStageName !== curStageName);
       const isAngleChanged = isStageChanged && (
-        curStageName.toLowerCase().startsWith('angle') || 
-        prevStageName.toLowerCase().startsWith('angle') || 
+        curStageName.toLowerCase().startsWith('angle') ||
+        prevStageName.toLowerCase().startsWith('angle') ||
         (ex.name || '').toLowerCase().includes('trx')
       );
 
@@ -4669,10 +4669,10 @@ const TodayPage = (() => {
             <!-- Live insight message -->
             <div style="font-size: 11.5px; line-height: 1.4; margin-bottom: 12px; padding: 6px 10px; border-radius: 8px; background: ${isDisplayDone ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.08)'}; border: 1px solid ${isDisplayDone ? 'rgba(16, 185, 129, 0.25)' : 'rgba(59, 130, 246, 0.2)'}; color: ${isDisplayDone ? '#10b981' : 'var(--text-primary)'};">
               ${isPastDayAuto
-                ? `💡 <b>${I18n.t('past_day_steps_auto_completed_desc')}</b>`
-                : (isDisplayDone 
-                    ? `🎉 <b>${I18n.t('steps_goal_reached_title')}</b> ${I18n.t('steps_goal_reached_desc')}`
-                    : `💡 <b>${I18n.t('steps_goal_pending_title')}:</b> ${I18n.t('steps_goal_pending_desc', '', { remaining: remainingSteps.toLocaleString() })}`)}
+            ? `💡 <b>${I18n.t('past_day_steps_auto_completed_desc')}</b>`
+            : (isDisplayDone
+              ? `🎉 <b>${I18n.t('steps_goal_reached_title')}</b> ${I18n.t('steps_goal_reached_desc')}`
+              : `💡 <b>${I18n.t('steps_goal_pending_title')}:</b> ${I18n.t('steps_goal_pending_desc', '', { remaining: remainingSteps.toLocaleString() })}`)}
             </div>
 
             <!-- Quick action buttons -->
@@ -4767,8 +4767,8 @@ const TodayPage = (() => {
         const isAngle = curStageName.toLowerCase().startsWith('angle') || curStageName.includes('°') || curStageName.includes('זווית') || curStageName.includes('زاوية') || (ex.name || '').toLowerCase().includes('trx');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(curStageName) !== curStageName) ? I18n.t(curStageName) : curStageName;
         const icon = isAngle ? '📐' : '🎯';
-        const badgeBg = isAngleChanged 
-          ? 'background: rgba(239, 68, 68, 0.9); border: 2px solid #ef4444; box-shadow: 0 0 14px rgba(239, 68, 68, 0.8);' 
+        const badgeBg = isAngleChanged
+          ? 'background: rgba(239, 68, 68, 0.9); border: 2px solid #ef4444; box-shadow: 0 0 14px rgba(239, 68, 68, 0.8);'
           : 'background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 4px 12px rgba(0,0,0,0.35);';
         const angleMiniSvg = (isAngle && typeof UI !== 'undefined' && typeof UI.getTrxAngleSvg === 'function')
           ? UI.getTrxAngleSvg(curStageName, { width: 34, height: 22 })
@@ -4811,13 +4811,13 @@ const TodayPage = (() => {
                   ${isInjuredSwap ? `<span class="injury-name-badge" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #f87171; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>` : ''}
                   ${isSensitiveROM ? `<span class="injury-name-badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" onclick="event.stopPropagation(); AnatomyMap.openJointsModal();">${I18n.t(injuryAdaptation.badgeKey)}</span>` : ''}
                   ${ex.currentStageName ? (() => {
-                    const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || ex.currentStageName.includes('°') || ex.currentStageName.includes('זווית') || ex.currentStageName.includes('زاوية') || (ex.name || '').toLowerCase().includes('trx');
-                    const isIncline = ex.currentStageName.toLowerCase().includes('incline');
-                    const stageLabel = (typeof I18n !== 'undefined' && I18n.t(ex.currentStageName) !== ex.currentStageName) ? I18n.t(ex.currentStageName) : ex.currentStageName;
-                    const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
-                    const tagTitle = isAngle ? (I18n.t('angle_tag') || 'זווית') : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('progression_stage_title') || 'שלב התקדמות'));
-                    return `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${tagTitle}">${icon} ${stageLabel}</span>`;
-                  })() : ''}
+          const isAngle = ex.currentStageName.toLowerCase().startsWith('angle') || ex.currentStageName.includes('°') || ex.currentStageName.includes('זווית') || ex.currentStageName.includes('زاوية') || (ex.name || '').toLowerCase().includes('trx');
+          const isIncline = ex.currentStageName.toLowerCase().includes('incline');
+          const stageLabel = (typeof I18n !== 'undefined' && I18n.t(ex.currentStageName) !== ex.currentStageName) ? I18n.t(ex.currentStageName) : ex.currentStageName;
+          const icon = isAngle ? '📐' : (isIncline ? '📈' : '🎯');
+          const tagTitle = isAngle ? (I18n.t('angle_tag') || 'זווית') : (isIncline ? (I18n.t('incline_tag') || 'שיפוע') : (I18n.t('progression_stage_title') || 'שלב התקדמות'));
+          return `<span style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${tagTitle}">${icon} ${stageLabel}</span>`;
+        })() : ''}
                   <button type="button" class="form-rule-info-btn" onclick="event.stopPropagation(); TodayPage.showFormRuleModal('${ex.name.replace(/'/g, "\\'")}')" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-primary); border-radius: 50%; width: 22px; height: 22px; font-size: 12px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; margin-left: 2px;" title="${I18n.t('form_rules_title') || 'חוקי טכניקה'}">ℹ️</button>
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
                   ${!isExUnlocked ? `<span class="locked-badge">🔒 ${I18n.t('exercise_locked')}</span>` : ''}
@@ -6835,16 +6835,16 @@ const TodayPage = (() => {
       const isRow = (exName || '').toLowerCase().includes('row');
       const tiers = isRow
         ? [
-            { key: '75', label: I18n.t('Angle 1') },
-            { key: '45', label: I18n.t('Angle 2 (45°)') },
-            { key: '30', label: I18n.t('Angle 3') },
-            { key: '180', label: I18n.t('Feet-Elevated (180°)') }
-          ]
+          { key: '75', label: I18n.t('Angle 1') },
+          { key: '45', label: I18n.t('Angle 2 (45°)') },
+          { key: '30', label: I18n.t('Angle 3') },
+          { key: '180', label: I18n.t('Feet-Elevated (180°)') }
+        ]
         : [
-            { key: '75', label: I18n.t('Angle 1') },
-            { key: '45', label: I18n.t('Angle 2 (45°)') },
-            { key: '30', label: I18n.t('Angle 3') }
-          ];
+          { key: '75', label: I18n.t('Angle 1') },
+          { key: '45', label: I18n.t('Angle 2 (45°)') },
+          { key: '30', label: I18n.t('Angle 3') }
+        ];
 
       trxAngleOverviewHTML = `
         <div style="background: rgba(15, 23, 42, 0.45); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px;">
@@ -7384,13 +7384,13 @@ const TodayPage = (() => {
     const id = (ex.id || '').toLowerCase();
     const name = (ex.name || '').toLowerCase();
     const orig = (ex.originalName || '').toLowerCase();
-    return id === 'relaxed-walking' || 
-           name.includes('relaxed walking') || 
-           orig.includes('relaxed walking') || 
-           name.includes('active recovery walk') || 
-           orig.includes('active recovery walk') ||
-           name.includes('הליכה רגועה') ||
-           name.includes('مشي مريح');
+    return id === 'relaxed-walking' ||
+      name.includes('relaxed walking') ||
+      orig.includes('relaxed walking') ||
+      name.includes('active recovery walk') ||
+      orig.includes('active recovery walk') ||
+      name.includes('הליכה רגועה') ||
+      name.includes('مشي مريح');
   }
 
   function getDayIsoDate(day) {

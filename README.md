@@ -1,12 +1,12 @@
-# 🏋️‍♂️ FitUp Pro v15.7 Accelerated
+# 🏋️‍♂️ FitUp Pro v15.9 Accelerated
 
-> **A 80-Week (560-Day) Prescriptive FitUp v15.7 Accelerated Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Performance-Based Unlocks, Gradual Myo-Reps Arm Block Clusters (from Week 3), Biceps 4-Week Microcycle (3:1), Auto-Regulated Deloads, Dual-Cadence Progression Engine, Cervical Health Protocol, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
+> **An 80-Week (560-Day) Prescriptive FitUp v15.9 Accelerated Training & AI Nutrition System featuring "Zero Decisions" 3-Button Set Outcome Tracking, Performance-Based Unlocks, Gradual Myo-Reps Arm Block Clusters (from Week 3), Biceps 4-Week Microcycle (3:1), Auto-Regulated Deloads, Dual-Cadence Progression Engine, Cervical Health Protocol, Adaptive Intra-Workout Rest Timers, Dynamic Muscle Anatomy Tracking, and Google Fit & Drive Sync.**
 
 ---
 
 ## 🌟 Overview
 
-**FitUp Pro v15.7 Accelerated** is an advanced, offline-first Web Application designed for long-term physical progression, hypertrophic gains, cardiovascular conditioning, and precision workout tracking.
+**FitUp Pro v15.9 Accelerated** is an advanced, offline-first Web Application designed for long-term physical progression, hypertrophic gains, cardiovascular conditioning, and precision workout tracking.
 
 Built on a strict **"Zero Decisions" Philosophy**, every single workout day across the 80-week (560-day) period is fully prescribed—down to exact exercise ordering, target rep ranges, weight progressions, legal dumbbell increments, tempo control, rest intervals, structural tags, and micro-mobility integration.
 
@@ -17,7 +17,7 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 ## ✨ Key Features
 
 ### 🏋️‍♂️ Prescriptive 80-Week Accelerated Training Engine
-- **v15.7 Accelerated Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
+- **v15.9 Accelerated Architecture**: Protected heavy compounds in straight sets, non-competing & antagonist Lean Pairs, Core Circuit, Calf Block, and Weekly Toggles.
 - **Phase 0 Anatomical Foundation (Weeks 1–4) & Performance-Based Graduation**: Reduced initial volume (5–6 anchor exercises per session, 20m light walks) protecting connective tissue and lumbar spine. From Week 3, locked movements unlock as soon as performance criteria are met (Calendar Ceiling Rule — performance can only accelerate, never delay). VO2 Max 4x4 launches in Week 4, followed by the automatic Week 5 Graduation Event unlocking remaining full volume (BSS, OHP/Pike, Towel Hang, and L-Sits).
 - **Zero Decisions 3-Button Outcome Selector & Minimum Weight Protection Engine**: Objective set classification with physical floor protection (6 kg empty handle / 8 kg loaded for dumbbells; 5 kg for vest) preventing invalid 0 kg displays under any fallback.
 - **Objective Myo-Reps & Arm Block Protocol**: Micro-dosing begins progressively from **Week 3 onwards** (W3: 1+1×4, W4–5: 1+2×4, W6+: 1+3×5 full cluster). Objective stop rule (`two_consecutive_tempo_losses`) with a weekly exposure limit of 1 per muscle area (Lateral Shoulder, Triceps, Biceps).
@@ -74,7 +74,7 @@ Set completion operates under an objective **3-Button Outcome Classifier** (🚀
 
 ## 📸 Application Interface & Feature Walkthrough
 
-FitUp Pro v15.7 Accelerated combines advanced athletic periodization with a high-tech Sci-Fi aesthetic. Below is a detailed visual walkthrough of the primary modules and features:
+FitUp Pro v15.9 Accelerated combines advanced athletic periodization with a high-tech Sci-Fi aesthetic. Below is a detailed visual walkthrough of the primary modules and features:
 
 ### 1. Progress & Stats Dashboard & Interactive Muscle Map
 <img src="PICS/Pasted%20image.png" alt="Progress Dashboard, Google Fit Sync & Interactive Muscle Map" width="380" />
@@ -146,20 +146,20 @@ FitUp Pro v15.7 Accelerated combines advanced athletic periodization with a high
 
 ## 📋 Training Program Deep Dive
 
-The **FitUp Pro v15.7 Accelerated** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 80 weeks (560 days).
+The **FitUp Pro v15.9 Accelerated** program is engineered specifically for home-gym training with high-volume, high-efficiency hypertrophy and cardiovascular optimization over 80 weeks (560 days).
 
 ### 🗓️ Weekly Microcycle Architecture (7 Days)
 Each week follows a strictly optimized 7-day routine designed to balance muscular stimulus, joint recovery, and metabolic conditioning:
 
 | Day | Workout Type | Focus / Key Movements | Target Duration |
 | :--- | :--- | :--- | :--- |
-| **Day 1 (Mon)** | **Legs + Core + Carry** | Goblet RDL (W1–17) / Contralateral Hand-Supported Single-Leg RDL (W18+), Nordic Curl Progression (W10+), Heels-Elevated Goblet Squat, Goblet BSS, DB Glute Bridge, Suitcase Carry, Core Circuit | 60–65 min |
-| **Day 2 (Tue)** | **Zone 2 Cardio** | Treadmill Walking (60–70% HRmax / Zone 2 target, 4% incline @ 5.5 km/h base), Daily Micro-Mobility | 45 min |
-| **Day 3 (Wed)** | **Push + Shoulders + Skill + Calves** | Single-Arm Seated OHP (A1) → Overhead Skill Tree (A2) → Single-Arm Floor Press (A3) → **Chin-Up (A4, 2×4–8, antagonistic vertical pull)** → Push-Up Tree (A5) → DB Overhead Triceps Ext (A6) → TRX Row ↔ Single-Arm Lateral Raise pair (A7/A8) → Rear Delt Toggle (A9) → **Calf Block (A10/A11 — moved from Day 5 to spare Achilles)** → Arm Block (W3+ Gradual Ramp) | 60–65 min |
-| **Day 4 (Thu)** | **Active Recovery & Joint Health** | Band Neck Flexion & Extension protocol (A1), Light Treadmill Recovery Walk (A2), 10-min Deep Mobility sequence (A3) | 30 min |
-| **Day 5 (Fri)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression (A1), One-Arm DB Row (A2), TRX Face Pull ↔ Single-Arm Lateral Raise pair, Push-Up Volume ↔ Single-Arm Curl pair, Single-Arm Hammer Curl, Towel Hang ↔ L-Sit pair, Arm Block (W3+ Gradual Ramp) | 55–60 min |
-| **Day 6 (Sat)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 85–95% HRmax target; Walking: 5.8–6.8 km/h @ 4–6% incline | Running: ≥7.5 km/h @ 1–2% incline to spare Achilles tendon; 3 min recovery @ 60–70% HRmax) | 35 min |
-| **Day 7 (Sun)** | **Complete Rest** | System Regeneration, Hydration & Passive Recovery | — |
+| **Day 1 (Sun)** | **Legs + Core + Carry** | Goblet RDL (W1–17) / Contralateral Hand-Supported Single-Leg RDL (W18+), Nordic Curl Progression (W10+), Heels-Elevated Goblet Squat, Goblet BSS, DB Glute Bridge, Suitcase Carry, Core Circuit | 60–65 min |
+| **Day 2 (Mon)** | **Zone 2 Cardio** | Treadmill Walking (60–70% HRmax / Zone 2 target, 4% incline @ 5.5 km/h base), Daily Micro-Mobility | 45 min |
+| **Day 3 (Tue)** | **Push + Shoulders + Skill + Calves** | Single-Arm Seated OHP (A1) → Overhead Skill Tree (A2) → Single-Arm Floor Press (A3) → **Chin-Up (A4, 2×4–8, antagonistic vertical pull)** → Push-Up Tree (A5) → DB Overhead Triceps Ext (A6) → TRX Row ↔ Single-Arm Lateral Raise pair (A7/A8) → Rear Delt Toggle (A9) → **Calf Block (A10/A11 — moved from Day 5 to spare Achilles)** → Arm Block (W3+ Gradual Ramp) | 60–65 min |
+| **Day 4 (Wed)** | **Active Recovery & Joint Health** | Band Neck Flexion & Extension protocol (A1), Light Treadmill Recovery Walk (A2), 10-min Deep Mobility sequence (A3) | 30 min |
+| **Day 5 (Thu)** | **Pull + Grip + Core + Chest Vol** | Pull-Up Progression (A1), One-Arm DB Row (A2), TRX Face Pull ↔ Single-Arm Lateral Raise pair, Push-Up Volume ↔ Single-Arm Curl pair, Single-Arm Hammer Curl, Towel Hang ↔ L-Sit pair, Arm Block (W3+ Gradual Ramp) | 55–60 min |
+| **Day 6 (Fri)** | **Cardio VO2 Max** | Norwegian 4x4 Interval Protocol (4×4 min @ 85–95% HRmax target; Walking: 5.8–6.8 km/h @ 4–6% incline | Running: ≥7.5 km/h @ 1–2% incline to spare Achilles tendon; 3 min recovery @ 60–70% HRmax) | 35 min |
+| **Day 7 (Sat)** | **Complete Rest** | System Regeneration, Hydration & Passive Recovery | — |
 
 ---
 
