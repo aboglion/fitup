@@ -116,8 +116,8 @@ test('Swap Recommendation Engine - Translations exist symmetrically across all 3
   }
 });
 
-test('Swap Targets Filter - Days in the past (before real today) are excluded from swap candidates', () => {
-  // If real today is Wednesday (idx 3), Sunday (0), Monday (1), Tuesday (2) must be excluded.
+test('Swap Targets Filter - Strictly upcoming days in the week (no backward swaps to earlier days)', () => {
+  // When on Wednesday (idx 3 in week 1, or idx 66 in week 10), Sunday (0), Monday (1), Tuesday (2) must be excluded.
   const weekDays = [
     { dayIndex: 0, dayOfWeek: 'ראשון', dayType: 'Legs + Core', week: 1 },
     { dayIndex: 1, dayOfWeek: 'שני', dayType: 'Zone 2 Cardio', week: 1 },
@@ -128,16 +128,38 @@ test('Swap Targets Filter - Days in the past (before real today) are excluded fr
     { dayIndex: 6, dayOfWeek: 'שבת', dayType: 'VO2 Max', week: 1 }
   ];
 
-  const realTodayIndex = 3; // Wednesday
-  const currentDayIndex = 3;
+  const currentDayIndex = 3; // Wednesday
+  const realTodayIndex = 0; // Even if previewing with realToday in the past
 
   const validTargets = weekDays.filter(day => {
-    if (day.dayIndex === currentDayIndex) return false;
+    // Strictly forward in time
+    if (day.dayIndex <= currentDayIndex) return false;
     if (realTodayIndex >= 0 && day.dayIndex < realTodayIndex) return false;
     return true;
   });
 
   assert.equal(validTargets.length, 3, 'Only Thursday, Friday, Saturday should be valid swap targets');
-  assert.deepEqual(validTargets.map(d => d.dayIndex), [4, 5, 6], 'Target indices must be future only');
+  assert.deepEqual(validTargets.map(d => d.dayIndex), [4, 5, 6], 'Target indices must be strictly upcoming');
 });
+
+test('Swap Recommendation Engine - Postponement reason only applies forward (targetIdx === currIdx + 1), never backward', () => {
+  const planDays = [
+    { dayIndex: 0, dayOfWeek: 'ראשון', dayType: 'Legs + Core', week: 1 },
+    { dayIndex: 1, dayOfWeek: 'שני', dayType: 'Zone 2 Cardio', week: 1 },
+    { dayIndex: 2, dayOfWeek: 'שלישי', dayType: 'Push + Skill', week: 1 },
+    { dayIndex: 3, dayOfWeek: 'רביעי', dayType: 'Active Recovery', week: 1 },
+    { dayIndex: 4, dayOfWeek: 'חמישי', dayType: 'Pull + Grip', week: 1 },
+    { dayIndex: 5, dayOfWeek: 'שישי', dayType: 'Zone 2 Cardio', week: 1 },
+    { dayIndex: 6, dayOfWeek: 'שבת', dayType: 'Rest', week: 1 }
+  ];
+
+  // Moving Wednesday (idx 3) to Thursday (idx 4) is a 1-day postponement
+  const evalForward = TodayPage.evaluateSwapCandidate(3, 4, planDays);
+  assert.ok(evalForward.reasons.some(r => r.key === 'swap_reason_minimal_shift'), 'Next day must have minimal shift reason');
+
+  // Moving Wednesday (idx 3) backwards to Tuesday (idx 2) is NOT a postponement
+  const evalBackward = TodayPage.evaluateSwapCandidate(3, 2, planDays);
+  assert.ok(!evalBackward.reasons.some(r => r.key === 'swap_reason_minimal_shift'), 'Backward day must NEVER have minimal shift reason');
+});
+
 

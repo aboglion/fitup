@@ -6169,8 +6169,8 @@ const TodayPage = (() => {
       reasons.push({ key: 'swap_reason_clean_rest_shift', type: 'positive' });
     }
 
-    // 6. Proximity / Minimal Disruption
-    if (Math.abs(targetIdx - currIdx) === 1) {
+    // 6. Proximity / Minimal Disruption (1-day postponement forward)
+    if (targetIdx === currIdx + 1) {
       score += 10;
       reasons.push({ key: 'swap_reason_minimal_shift', type: 'positive' });
     }
@@ -6204,7 +6204,7 @@ const TodayPage = (() => {
     const currentDay = allPlanDays[currentDayIndex];
     const currentTypeInfo = UI.getDayTypeInfo(currentDay.dayType);
 
-    // Find all other days in the same week
+    // Find all future candidate days in the same week
     const weekDays = allPlanDays.filter(d => d.week === currentDay.week);
     const realTodayIndex = (window.UI && typeof window.UI.findTodayIndex === 'function')
       ? UI.findTodayIndex(allPlanDays)
@@ -6212,7 +6212,8 @@ const TodayPage = (() => {
 
     const validSwapTargets = [];
     for (const day of weekDays) {
-      if (day.dayIndex === currentDayIndex) continue;
+      // Swapping is strictly forward in time: only upcoming days in the current week
+      if (day.dayIndex <= currentDayIndex) continue;
 
       // You cannot swap with days that have already passed in real calendar time!
       if (typeof realTodayIndex === 'number' && realTodayIndex >= 0 && day.dayIndex < realTodayIndex) {
@@ -6248,8 +6249,8 @@ const TodayPage = (() => {
       return { day: targetDay, evaluation };
     });
 
-    // Sort by recommendation score descending (highest recommendation first)
-    evaluatedTargets.sort((a, b) => b.evaluation.score - a.evaluation.score);
+    // Sort by recommendation score descending; if equal, maintain chronological order (earlier upcoming day first)
+    evaluatedTargets.sort((a, b) => b.evaluation.score - a.evaluation.score || a.day.dayIndex - b.day.dayIndex);
 
     let html = `
       <div class="swap-modal-header-advisory">

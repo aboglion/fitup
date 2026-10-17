@@ -1677,32 +1677,45 @@ const UI = (() => {
       ? [I18n.t('sun'), I18n.t('mon'), I18n.t('tue'), I18n.t('wed'), I18n.t('thu'), I18n.t('fri'), I18n.t('sat')]
       : ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-    if (day.date && typeof day.date === 'string' && day.date.includes('/')) {
-      const parts = day.date.split('/');
-      const [dd, mm, yyyy] = parts.map(Number);
-      if (yyyy && mm && dd) {
-        const d = new Date(yyyy, mm - 1, dd);
-        if (!isNaN(d.getTime())) {
-          return dayNames[d.getDay()];
-        }
+    const enDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const heDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
+    const arDays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+
+    // 1. Explicit named day of week has highest priority
+    const rawDow = (typeof day.dayOfWeek === 'string' && day.dayOfWeek) || (typeof day['Day of Week'] === 'string' && day['Day of Week']);
+    if (rawDow) {
+      const clean = rawDow.replace(/^(יום|يوم)\s+/i, '').trim();
+      const lower = clean.toLowerCase();
+      let idx = enDays.indexOf(lower);
+      if (idx === -1) idx = heDays.indexOf(clean);
+      if (idx === -1) idx = arDays.indexOf(clean);
+      if (idx !== -1) return dayNames[idx];
+    }
+
+    // 2. Real calendar date
+    if (day.date && typeof day.date === 'string') {
+      let d = null;
+      if (day.date.includes('/')) {
+        const parts = day.date.split('/');
+        const [dd, mm, yyyy] = parts.map(Number);
+        if (yyyy && mm && dd) d = new Date(yyyy, mm - 1, dd);
+      } else if (day.date.includes('-')) {
+        const parts = day.date.split('-');
+        const [yyyy, mm, dd] = parts.map(Number);
+        if (yyyy && mm && dd) d = new Date(yyyy, mm - 1, dd);
+      }
+      if (d && !isNaN(d.getTime())) {
+        return dayNames[d.getDay()];
       }
     }
+
+    // 3. Fallback to dayIndex modulo 7 (Sunday = 0 in Sunday-start Israeli microcycle)
     if (typeof day.dayIndex === 'number') {
       const dow = ((day.dayIndex % 7) + 7) % 7;
       return dayNames[dow];
     }
-    const enDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const heDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
-    const arDays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-    const rawDow = (typeof day.dayOfWeek === 'string' && day.dayOfWeek) || (typeof day['Day of Week'] === 'string' && day['Day of Week']);
-    if (rawDow) {
-      const lower = rawDow.toLowerCase().trim();
-      let idx = enDays.indexOf(lower);
-      if (idx === -1) idx = heDays.indexOf(rawDow.trim());
-      if (idx === -1) idx = arDays.indexOf(rawDow.trim());
-      if (idx !== -1) return dayNames[idx];
-    }
-    return day.dayOfWeek || day['Day of Week'] || '';
+
+    return rawDow || '';
   }
 
   /**

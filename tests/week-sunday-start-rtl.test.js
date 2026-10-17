@@ -86,6 +86,10 @@ test('UI.getDayOfWeekName correctly translates existing English strings like "Mo
   assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'Monday', dayIndex: 1 }), 'שני');
   assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'Sunday', dayIndex: 0 }), 'ראשון');
   assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'Saturday', dayIndex: 6 }), 'שבת');
+  // Explicit dayOfWeek overrides differing dayIndex
+  assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'Thursday', dayIndex: 1 }), 'חמישי');
+  assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'יום רביעי' }), 'רביעי');
+  assert.equal(UI.getDayOfWeekName({ date: '2026-09-10' }), 'חמישי');
 });
 
 test('UI.getDayOfWeekName correctly translates existing English strings like "Monday" when language is Arabic', () => {
@@ -93,6 +97,10 @@ test('UI.getDayOfWeekName correctly translates existing English strings like "Mo
   assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'Monday', dayIndex: 1 }), 'الاثنين');
   assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'Sunday', dayIndex: 0 }), 'الأحد');
   assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'Saturday', dayIndex: 6 }), 'السبت');
+  // Explicit dayOfWeek overrides differing dayIndex
+  assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'Thursday', dayIndex: 1 }), 'الخميس');
+  assert.equal(UI.getDayOfWeekName({ dayOfWeek: 'יום רביעי' }), 'الأربعاء');
+  assert.equal(UI.getDayOfWeekName({ date: '2026-09-10' }), 'الخميس');
 });
 
 test('Every week in the calendar starts on Sunday (Day 1 of week) across Hebrew, Arabic, and English', () => {

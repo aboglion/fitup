@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v204-swap-recommendations';
+const CACHE_NAME = 'fitup-v205-swap-forward-days-fix';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
