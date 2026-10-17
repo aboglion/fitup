@@ -1507,7 +1507,7 @@ const TodayPage = (() => {
 
     const swapWorkoutBtn = document.getElementById('swap-workout-btn');
     if (swapWorkoutBtn) {
-      if (!currentTracking.completed) {
+      if (!currentTracking.completed && !isPastDay) {
         swapWorkoutBtn.style.display = 'flex';
       } else {
         swapWorkoutBtn.style.display = 'none';
@@ -6206,10 +6206,18 @@ const TodayPage = (() => {
 
     // Find all other days in the same week
     const weekDays = allPlanDays.filter(d => d.week === currentDay.week);
+    const realTodayIndex = (window.UI && typeof window.UI.findTodayIndex === 'function')
+      ? UI.findTodayIndex(allPlanDays)
+      : currentDayIndex;
 
     const validSwapTargets = [];
     for (const day of weekDays) {
       if (day.dayIndex === currentDayIndex) continue;
+
+      // You cannot swap with days that have already passed in real calendar time!
+      if (typeof realTodayIndex === 'number' && realTodayIndex >= 0 && day.dayIndex < realTodayIndex) {
+        continue;
+      }
 
       // Check if it's already completed
       const track = await DB.getDayTracking(day.dayIndex);

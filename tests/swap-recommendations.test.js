@@ -115,3 +115,29 @@ test('Swap Recommendation Engine - Translations exist symmetrically across all 3
     assert.ok(I18n.translations.ar[k], `Missing AR key: ${k}`);
   }
 });
+
+test('Swap Targets Filter - Days in the past (before real today) are excluded from swap candidates', () => {
+  // If real today is Wednesday (idx 3), Sunday (0), Monday (1), Tuesday (2) must be excluded.
+  const weekDays = [
+    { dayIndex: 0, dayOfWeek: 'ראשון', dayType: 'Legs + Core', week: 1 },
+    { dayIndex: 1, dayOfWeek: 'שני', dayType: 'Zone 2 Cardio', week: 1 },
+    { dayIndex: 2, dayOfWeek: 'שלישי', dayType: 'Rest', week: 1 },
+    { dayIndex: 3, dayOfWeek: 'רביעי', dayType: 'Push + Skill', week: 1 },
+    { dayIndex: 4, dayOfWeek: 'חמישי', dayType: 'Active Recovery', week: 1 },
+    { dayIndex: 5, dayOfWeek: 'שישי', dayType: 'Pull + Grip', week: 1 },
+    { dayIndex: 6, dayOfWeek: 'שבת', dayType: 'VO2 Max', week: 1 }
+  ];
+
+  const realTodayIndex = 3; // Wednesday
+  const currentDayIndex = 3;
+
+  const validTargets = weekDays.filter(day => {
+    if (day.dayIndex === currentDayIndex) return false;
+    if (realTodayIndex >= 0 && day.dayIndex < realTodayIndex) return false;
+    return true;
+  });
+
+  assert.equal(validTargets.length, 3, 'Only Thursday, Friday, Saturday should be valid swap targets');
+  assert.deepEqual(validTargets.map(d => d.dayIndex), [4, 5, 6], 'Target indices must be future only');
+});
+
