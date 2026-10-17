@@ -1689,14 +1689,15 @@ const UI = (() => {
     const enDays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     const heDays = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי', 'שבת'];
     const arDays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-    if (typeof day.dayOfWeek === 'string') {
-      const lower = day.dayOfWeek.toLowerCase().trim();
+    const rawDow = (typeof day.dayOfWeek === 'string' && day.dayOfWeek) || (typeof day['Day of Week'] === 'string' && day['Day of Week']);
+    if (rawDow) {
+      const lower = rawDow.toLowerCase().trim();
       let idx = enDays.indexOf(lower);
-      if (idx === -1) idx = heDays.indexOf(day.dayOfWeek.trim());
-      if (idx === -1) idx = arDays.indexOf(day.dayOfWeek.trim());
+      if (idx === -1) idx = heDays.indexOf(rawDow.trim());
+      if (idx === -1) idx = arDays.indexOf(rawDow.trim());
       if (idx !== -1) return dayNames[idx];
     }
-    return day.dayOfWeek || '';
+    return day.dayOfWeek || day['Day of Week'] || '';
   }
 
   /**

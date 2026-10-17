@@ -117,7 +117,9 @@ const NotificationService = (() => {
                 }
               }
             } catch (e) { /* combat suffix is optional */ }
-            await showNotification(`💪 זמן לאימון ${todayPlan.dayType}!`, {
+            const dayTypeLabel = (todayPlan && todayPlan.dayType) ? (window.UI && UI.getDayTypeInfo ? UI.getDayTypeInfo(todayPlan.dayType).label : todayPlan.dayType) : '';
+            const notifTitle = dayTypeLabel ? `💪 זמן לאימון ${dayTypeLabel}!` : '💪 זמן לאימון!';
+            await showNotification(notifTitle, {
               body: `האימון של היום ממתין לך: ${todayPlan.title || 'לחץ לפתיחה ולסימון הישגים'}${combatSuffix}`,
               tag: 'workout-reminder'
             });

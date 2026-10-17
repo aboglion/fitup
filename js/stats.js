@@ -853,7 +853,8 @@ const StatsPage = (() => {
       }
 
       const displayDate = formatCellDate(rawDate);
-      const tooltip = `Day ${dIdx + 1} (${day.dayType}) ${displayDate ? '[' + displayDate + '] ' : ''}- ${isCompleted ? '✓' : I18n.t('heat_skipped')}`;
+      const typeLabel = (window.UI && window.UI.getDayTypeInfo) ? UI.getDayTypeInfo(day.dayType).label : (day.dayType || '');
+      const tooltip = `Day ${dIdx + 1}${typeLabel ? ` (${typeLabel})` : ''} ${displayDate ? '[' + displayDate + '] ' : ''}- ${isCompleted ? '✓' : I18n.t('heat_skipped')}`;
       return `<div class="heat-cell ${colorClass}" title="${tooltip}">${displayDate}</div>`;
     }).join('');
 

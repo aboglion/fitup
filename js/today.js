@@ -685,9 +685,10 @@ const TodayPage = (() => {
         }
       });
 
+      const dayNum = day.dayNum || day.day || (currentDayIndex + 1);
       const todayContext = {
-        title: day.title || `Day ${day.day || (currentDayIndex + 1)}`,
-        dayNum: day.day || (currentDayIndex + 1),
+        title: day.title || `Day ${dayNum}`,
+        dayNum: dayNum,
         dayType: day.dayType || 'Strength',
         muscles: day.targetMuscles || 'Full Body',
         exerciseCount: (day.exercises || []).length,
@@ -1384,8 +1385,10 @@ const TodayPage = (() => {
     }
 
     // Update summary card
-    document.getElementById('day-number').textContent = '#' + day.dayNum;
-    document.getElementById('today-date-badge').textContent = (window.UI && window.UI.getDayOfWeekName) ? window.UI.getDayOfWeekName(day) : day.dayOfWeek;
+    const dayNum = day.dayNum || (currentDayIndex + 1);
+    const dayOfWeekName = (window.UI && window.UI.getDayOfWeekName) ? window.UI.getDayOfWeekName(day) : (day.dayOfWeek || day['Day of Week'] || '');
+    document.getElementById('day-number').textContent = '#' + dayNum;
+    document.getElementById('today-date-badge').textContent = dayOfWeekName;
     document.getElementById('day-week').textContent = day.week ? day.week.replace('Week', I18n.t('week_label_full')) : '';
 
     const realTodayIndex = UI.findTodayIndex(allPlanDays);
@@ -1412,7 +1415,7 @@ const TodayPage = (() => {
             <div style="display: flex; align-items: center; gap: 10px;">
               <span style="font-size: 18px;">🕒</span>
               <div style="font-size: 13px; color: #c084fc; font-weight: 700;">
-                ${I18n.t('retroactive_entry_badge')} (#${day.dayNum})
+                ${I18n.t('retroactive_entry_badge')} (#${dayNum})
               </div>
             </div>
             <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; font-weight: 700; white-space: nowrap; border-radius: 8px; cursor: pointer;" onclick="TodayPage.goToToday()">
@@ -2623,7 +2626,7 @@ const TodayPage = (() => {
       // Found tracking data for this exercise
       return {
         dayIndex: i,
-        dayNum: pastDay.dayNum,
+        dayNum: pastDay.dayNum || (i + 1),
         setData: tracking.setData[exIdx],
         completed: tracking.exerciseStatus && tracking.exerciseStatus[exIdx]
       };
@@ -2698,7 +2701,7 @@ const TodayPage = (() => {
       if (hasValidData && (maxWeight > 0 || maxReps > 0)) {
         rawHistory.push({
           dayIndex: i,
-          dayNum: pastDay.dayNum,
+          dayNum: pastDay.dayNum || (i + 1),
           date: tracking.date || tracking.lastUpdated || pastDay.date,
           maxWeight,
           maxReps,
@@ -3655,11 +3658,13 @@ const TodayPage = (() => {
         const best = c.best
           ? `<span style="background:rgba(16,185,129,0.15); color:#34d399; font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; margin-left:6px;">★ ${I18n.t('combat_move_best')}</span>`
           : '';
+        const cTypeInfo = (window.UI && window.UI.getDayTypeInfo) ? UI.getDayTypeInfo(c.dayType) : null;
+        const cTypeLabel = cTypeInfo ? cTypeInfo.label : (c.dayType || '');
         return `
         <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px; border:1px solid var(--border-light); border-radius:10px; margin-top:6px; background:var(--bg-elevated);">
           <div style="display:flex; flex-direction:column; min-width:0;">
             <div style="font-size:12px; font-weight:700; color:var(--text-primary);">${combatFmtIsoToDisplay(c.date)}${best}</div>
-            <div style="font-size:11px; color:var(--text-muted);">${c.dayType}</div>
+            <div style="font-size:11px; color:var(--text-muted);">${cTypeLabel}</div>
             ${reasons ? `<div style="font-size:10px; color:${meta.color};">⚠️ ${reasons}</div>` : ''}
           </div>
           <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
@@ -5312,11 +5317,11 @@ const TodayPage = (() => {
         <div class="celebration-confetti">🎊</div>
         <div style="font-size: 64px; margin-bottom: 16px; animation: bounceIn 0.6s ease;">💪</div>
         <h3 style="font-size: 22px; margin-bottom: 8px; color: var(--text-primary);">${I18n.t('celebration_subtitle')}</h3>
-        <p style="color: var(--text-secondary); margin-bottom: 20px;">${typeInfo.label} — Day #${day.dayNum}</p>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">${typeInfo.label} — Day #${day.dayNum || (currentDayIndex + 1)}</p>
         
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
           <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px;">
-            <div style="font-size: 28px; font-weight: 800; color: var(--success);">${day.exercises.length}</div>
+            <div style="font-size: 28px; font-weight: 800; color: var(--success);">${(day.exercises || []).length}</div>
             <div style="font-size: 12px; color: var(--text-secondary);">${I18n.t('celebration_exercises')}</div>
           </div>
           <div style="background: var(--bg-elevated); padding: 16px; border-radius: 12px;">
@@ -7688,7 +7693,7 @@ const TodayPage = (() => {
       lines.push(`🏷️ Week: ${weekStr}`);
       lines.push(`🎯 Workout Type: ${dayType}`);
       lines.push(`🔥 Target Intensity (RPE): ${rpe}`);
-      lines.push(`📊 Total Exercises: ${day.exercises.length}`);
+      lines.push(`📊 Total Exercises: ${(day.exercises || []).length}`);
       lines.push('==================================================');
       lines.push('');
       lines.push("TODAY'S EXERCISES:");
@@ -7700,7 +7705,7 @@ const TodayPage = (() => {
       lines.push(`🏷️ الأسبوع: ${weekStr}`);
       lines.push(`🎯 نوع التمرين: ${dayType}`);
       lines.push(`🔥 الشدة المخططة (RPE): ${rpe}`);
-      lines.push(`📊 إجمالي التمارين: ${day.exercises.length}`);
+      lines.push(`📊 إجمالي التمارين: ${(day.exercises || []).length}`);
       lines.push('==================================================');
       lines.push('');
       lines.push('قائمة التمارين اليومية:');
@@ -7712,7 +7717,7 @@ const TodayPage = (() => {
       lines.push(`🏷️ שבוע: ${weekStr}`);
       lines.push(`🎯 סוג אימון: ${dayType}`);
       lines.push(`🔥 עצימות מתוכננת (RPE): ${rpe}`);
-      lines.push(`📊 סה"כ תרגילים: ${day.exercises.length}`);
+      lines.push(`📊 סה"כ תרגילים: ${(day.exercises || []).length}`);
       lines.push('==================================================');
       lines.push('');
       lines.push('רשימת תרגילי האימון להיום:');

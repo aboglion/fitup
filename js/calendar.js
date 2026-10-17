@@ -171,14 +171,15 @@ const CalendarPage = (() => {
         const isSelected = (day.dayIndex === currentViewedIndex);
         const isDeload = (typeInfo.isDeload || (day.dayType && day.dayType.includes('Deload'))) && !day.deloadCancelled && !day.deloadPostponed;
         const combatBadge = combatBadgeFor(day);
+        const dayNum = day.dayNum || (typeof day.dayIndex === 'number' ? day.dayIndex + 1 : idx + 1);
 
         return `
           <div class="calendar-day ${isSelected ? 'selected' : ''} ${isToday ? 'today' : ''} ${isCompleted ? 'completed' : ''} ${isDeload ? 'deload-day' : ''}"
                onclick="CalendarPage.selectDay(${day.dayIndex})"
-               title="${localizedDayName} - #${day.dayNum}">
+               title="${localizedDayName} - #${dayNum}">
             <div class="calendar-day-name">${localizedDayName}${combatBadge}</div>
             ${isToday ? `<span class="calendar-today-badge">${I18n.t('nav_today')}</span>` : ''}
-            <div class="calendar-day-date" dir="ltr">#${day.dayNum}</div>
+            <div class="calendar-day-date" dir="ltr">#${dayNum}</div>
             <span class="calendar-day-type ${typeInfo.class}">${typeInfo.label}</span>
           </div>
         `;

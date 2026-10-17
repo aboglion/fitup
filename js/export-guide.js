@@ -523,8 +523,17 @@ window.ExporterGuide = (() => {
     const combatSchedule = await DB.getSetting('combatSchedule').catch(() => null);
     const combatExceptions = await DB.getCombatExceptions().catch(() => ({ items: [] }));
     const renderDayBlock = (day) => {
-      const dayOfWeekEn = DAY_NAME_MAP_EN[day.dayOfWeek] || day.dayOfWeek;
-      const dayTypeEn = DAY_TYPE_MAP_EN[day.dayType] || day.dayType;
+      const rawDow = (day && (day.dayOfWeek || day['Day of Week'])) || '';
+      const dayOfWeekEn = DAY_NAME_MAP_EN[rawDow]
+        || DAY_NAME_MAP_EN[day.dayOfWeek]
+        || DAY_NAME_MAP_EN[day['Day of Week']]
+        || day.dayOfWeek
+        || day['Day of Week']
+        || (typeof day.dayIndex === 'number' ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][((day.dayIndex % 7) + 7) % 7] : '');
+      const dayTypeEn = DAY_TYPE_MAP_EN[day.dayType] || day.dayType || '';
+      const rpeStr = (day.plannedRPE !== undefined && day.plannedRPE !== null && day.plannedRPE !== '—')
+        ? ` <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span>`
+        : '';
       let combatTag = '';
       if (window.CombatScheduler && combatSchedule && combatSchedule.enabled) {
         const raw = (day && day.date) || '';
@@ -551,7 +560,7 @@ window.ExporterGuide = (() => {
         }
       }
       let html = `<div class="day-block">
-        <h4 class="day-title">${dayOfWeekEn} <span class="${getBadgeClass(day.dayType)}">${dayTypeEn}</span> ${combatTag} <span style="font-size: 0.8em; color: var(--text-muted);">(RPE: ${day.plannedRPE})</span></h4>`;
+        <h4 class="day-title">${dayOfWeekEn} <span class="${getBadgeClass(day.dayType)}">${dayTypeEn}</span> ${combatTag}${rpeStr}</h4>`;
       if (day.exercises && day.exercises.length > 0) {
         html += `<table>
           <tr>
