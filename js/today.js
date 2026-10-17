@@ -1026,6 +1026,16 @@ const TodayPage = (() => {
       completed: false
     };
 
+    // Auto-complete Rest Day immediately when opened
+    const isFullRestDay = (day.dayType === 'Rest') || (!day.exercises || day.exercises.length === 0);
+    if (isFullRestDay && !currentTracking.completed && !currentTracking.manuallyUncompleted) {
+      currentTracking.completed = true;
+      currentTracking.autoCompleted = true;
+      currentTracking.date = currentTracking.date || day.date || (typeof UI !== 'undefined' ? UI.getLocalDateString().split('-').reverse().join('/') : '');
+      currentTracking.lastUpdated = new Date().toISOString();
+      await DB.saveDayTracking(currentDayIndex, currentTracking);
+    }
+
     // Cache all tracking data for performance history lookups
     allTrackingCache = await DB.getAllTracking();
 
@@ -4608,28 +4618,31 @@ const TodayPage = (() => {
       } else if (isRelaxedWalkingExercise(ex)) {
         const recordedSteps = (currentTracking && typeof currentTracking.dailySteps === 'number') ? currentTracking.dailySteps : 0;
         const targetSteps = 8000;
-        const stepPct = Math.min(100, Math.round((recordedSteps / targetSteps) * 100));
         const isGoalReached = recordedSteps >= targetSteps;
+        const isPastDayAuto = Boolean(currentTracking && currentTracking.stepsAutoCompleted && isDayInPast(day) && recordedSteps === 0);
+        const isExerciseDone = Boolean(currentTracking && currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx]);
+        const isDisplayDone = isGoalReached || isPastDayAuto || isExerciseDone;
+        const stepPct = isDisplayDone ? 100 : Math.min(100, Math.round((recordedSteps / targetSteps) * 100));
         const remainingSteps = Math.max(0, targetSteps - recordedSteps);
 
         protocolBannerHTML = `
-          <div class="relaxed-walk-steps-widget" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08)); border: 1px solid ${isGoalReached ? 'rgba(16, 185, 129, 0.45)' : 'rgba(59, 130, 246, 0.3)'}; border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; position: relative; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.12);">
+          <div class="relaxed-walk-steps-widget" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08)); border: 1px solid ${isDisplayDone ? 'rgba(16, 185, 129, 0.45)' : 'rgba(59, 130, 246, 0.3)'}; border-radius: 14px; padding: 14px 16px; margin-bottom: 14px; position: relative; overflow: hidden; box-shadow: 0 4px 14px rgba(0,0,0,0.12);">
             <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 22px;">👟</span>
                 <div>
-                  <div style="font-weight: 800; color: ${isGoalReached ? '#10b981' : '#60a5fa'}; font-size: 14px; display: flex; align-items: center; gap: 6px;">
+                  <div style="font-weight: 800; color: ${isDisplayDone ? '#10b981' : '#60a5fa'}; font-size: 14px; display: flex; align-items: center; gap: 6px;">
                     <span>${I18n.t('walking_step_tracker_title')}</span>
-                    ${isGoalReached ? `<span style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 800;">✓ ${I18n.t('steps_completed_badge') || 'הושלם'}</span>` : ''}
+                    ${isDisplayDone ? `<span style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 800;">✓ ${isPastDayAuto ? (I18n.t('past_day_steps_completed_badge') || 'הושלם (יום שעבר)') : (I18n.t('steps_completed_badge') || 'הושלם')}</span>` : ''}
                   </div>
                   <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 2px;">
                     ${I18n.t('walking_step_tracker_desc')}
                   </div>
                 </div>
               </div>
-              <div style="background: ${isGoalReached ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.15)'}; border: 1px solid ${isGoalReached ? 'rgba(16, 185, 129, 0.4)' : 'rgba(59, 130, 246, 0.3)'}; border-radius: 10px; padding: 4px 10px; text-align: center;">
+              <div style="background: ${isDisplayDone ? 'rgba(16, 185, 129, 0.2)' : 'rgba(59, 130, 246, 0.15)'}; border: 1px solid ${isDisplayDone ? 'rgba(16, 185, 129, 0.4)' : 'rgba(59, 130, 246, 0.3)'}; border-radius: 10px; padding: 4px 10px; text-align: center;">
                 <div style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">${I18n.t('target_label') || 'יעד נדרש'}</div>
-                <div style="font-size: 13px; font-weight: 900; color: ${isGoalReached ? '#10b981' : 'var(--accent-primary)'};">8,000 ${I18n.t('steps_unit')}</div>
+                <div style="font-size: 13px; font-weight: 900; color: ${isDisplayDone ? '#10b981' : 'var(--accent-primary)'};">8,000 ${I18n.t('steps_unit')}</div>
               </div>
             </div>
 
@@ -4637,30 +4650,32 @@ const TodayPage = (() => {
             <div style="background: rgba(0, 0, 0, 0.25); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px;">
                 <span style="color: var(--text-secondary); font-weight: 600;">
-                  ${I18n.t('steps_achieved')}: <strong style="color: ${isGoalReached ? '#10b981' : 'var(--text-primary)'}; font-size: 14px;">${recordedSteps.toLocaleString()}</strong> / 8,000
+                  ${I18n.t('steps_achieved')}: <strong style="color: ${isDisplayDone ? '#10b981' : 'var(--text-primary)'}; font-size: 14px;">${recordedSteps.toLocaleString()}</strong> / 8,000
                 </span>
-                <span style="font-weight: 900; color: ${isGoalReached ? '#10b981' : '#f59e0b'}; font-size: 13px;">
+                <span style="font-weight: 900; color: ${isDisplayDone ? '#10b981' : '#f59e0b'}; font-size: 13px;">
                   ${stepPct}%
                 </span>
               </div>
               <div style="width: 100%; height: 10px; background: rgba(255, 255, 255, 0.08); border-radius: 5px; overflow: hidden; position: relative;">
-                <div class="steps-progress-bar-fill" style="height: 100%; width: ${stepPct}%; background: ${isGoalReached ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #3b82f6, #06b6d4)'}; border-radius: 5px; transition: width 0.4s ease; box-shadow: ${isGoalReached ? '0 0 10px rgba(16, 185, 129, 0.5)' : 'none'};"></div>
+                <div class="steps-progress-bar-fill" style="height: 100%; width: ${stepPct}%; background: ${isDisplayDone ? 'linear-gradient(90deg, #10b981, #059669)' : 'linear-gradient(90deg, #3b82f6, #06b6d4)'}; border-radius: 5px; transition: width 0.4s ease; box-shadow: ${isDisplayDone ? '0 0 10px rgba(16, 185, 129, 0.5)' : 'none'};"></div>
               </div>
             </div>
 
             <!-- Live insight message -->
-            <div style="font-size: 11.5px; line-height: 1.4; margin-bottom: 12px; padding: 6px 10px; border-radius: 8px; background: ${isGoalReached ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.08)'}; border: 1px solid ${isGoalReached ? 'rgba(16, 185, 129, 0.25)' : 'rgba(59, 130, 246, 0.2)'}; color: ${isGoalReached ? '#10b981' : 'var(--text-primary)'};">
-              ${isGoalReached 
-                ? `🎉 <b>${I18n.t('steps_goal_reached_title')}</b> ${I18n.t('steps_goal_reached_desc')}`
-                : `💡 <b>${I18n.t('steps_goal_pending_title')}:</b> ${I18n.t('steps_goal_pending_desc', '', { remaining: remainingSteps.toLocaleString() })}`}
+            <div style="font-size: 11.5px; line-height: 1.4; margin-bottom: 12px; padding: 6px 10px; border-radius: 8px; background: ${isDisplayDone ? 'rgba(16, 185, 129, 0.12)' : 'rgba(59, 130, 246, 0.08)'}; border: 1px solid ${isDisplayDone ? 'rgba(16, 185, 129, 0.25)' : 'rgba(59, 130, 246, 0.2)'}; color: ${isDisplayDone ? '#10b981' : 'var(--text-primary)'};">
+              ${isPastDayAuto
+                ? `💡 <b>${I18n.t('past_day_steps_auto_completed_desc')}</b>`
+                : (isDisplayDone 
+                    ? `🎉 <b>${I18n.t('steps_goal_reached_title')}</b> ${I18n.t('steps_goal_reached_desc')}`
+                    : `💡 <b>${I18n.t('steps_goal_pending_title')}:</b> ${I18n.t('steps_goal_pending_desc', '', { remaining: remainingSteps.toLocaleString() })}`)}
             </div>
 
             <!-- Quick action buttons -->
             <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
               <button type="button" class="btn-primary steps-quick-complete-btn" 
-                      style="font-size: 12px; padding: 6px 14px; font-weight: 700; background: ${isCompleted ? 'rgba(16, 185, 129, 0.25)' : 'linear-gradient(135deg, #10b981, #059669)'}; border: 1px solid ${isCompleted ? '#10b981' : 'transparent'}; color: white; display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer;"
+                      style="font-size: 12px; padding: 6px 14px; font-weight: 700; background: ${isDisplayDone ? 'rgba(16, 185, 129, 0.25)' : 'linear-gradient(135deg, #10b981, #059669)'}; border: 1px solid ${isDisplayDone ? '#10b981' : 'transparent'}; color: white; display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; cursor: pointer;"
                       onclick="event.stopPropagation(); TodayPage.toggleRelaxedWalkBySteps(${idx});">
-                ${isCompleted ? '↩️ ' + I18n.t('unmark_exercise') : '✓ ' + I18n.t('mark_complete_by_steps')}
+                ${isDisplayDone ? '↩️ ' + I18n.t('unmark_exercise') : '✓ ' + I18n.t('mark_complete_by_steps')}
               </button>
               <div style="display: flex; gap: 6px; align-items: center;">
                 <button type="button" class="btn-secondary" 
@@ -5924,6 +5939,7 @@ const TodayPage = (() => {
     if (!checkIsTodayOrWarn()) return;
 
     currentTracking.completed = !currentTracking.completed;
+    currentTracking.manuallyUncompleted = !currentTracking.completed;
     currentTracking.lastUpdated = new Date().toISOString();
     currentTracking.date = currentTracking.date || UI.getLocalDateString();
 
@@ -5968,8 +5984,11 @@ const TodayPage = (() => {
 
     await DB.saveDayTracking(currentDayIndex, currentTracking);
 
-    // --- Auto-complete passed Rest days ---
+    // --- Auto-complete passed Rest days & past Relaxed Walks ---
     await DB.syncRestDays(allPlanDays);
+    if (typeof DB.syncPastRelaxedWalks === 'function') {
+      await DB.syncPastRelaxedWalks(allPlanDays);
+    }
 
     // --- Update the active plan index based on sequential progress ---
     let newActiveIndex = 0;
@@ -6027,6 +6046,155 @@ const TodayPage = (() => {
     UI.showModal(name, `<img src="${src}" loading="eager" decoding="async" style="width:100%; border-radius:8px;">`);
   }
 
+  /**
+   * Evaluates a candidate day for swapping with currentDayIndex.
+   * Returns: { score: number, tier: 'best'|'viable'|'caution', reasons: Array<{ key: string, type: string }> }
+   */
+  function evaluateSwapCandidate(currIdx, targetIdx, planDays, options) {
+    if (!planDays || !planDays[currIdx] || !planDays[targetIdx]) {
+      return { score: 50, tier: 'viable', reasons: [] };
+    }
+
+    const currentDay = planDays[currIdx];
+    const targetDay = planDays[targetIdx];
+
+    function getSimulatedDayType(idx) {
+      if (idx === currIdx) return targetDay.dayType;
+      if (idx === targetIdx) return currentDay.dayType;
+      if (idx >= 0 && idx < planDays.length) return planDays[idx].dayType;
+      return null;
+    }
+
+    function isStrength(type) {
+      if (!type) return false;
+      const t = type.toLowerCase();
+      return t.includes('leg') || t.includes('push') || t.includes('pull');
+    }
+    function isPush(type) {
+      if (!type) return false;
+      return type.toLowerCase().includes('push');
+    }
+    function isLegs(type) {
+      if (!type) return false;
+      return type.toLowerCase().includes('leg');
+    }
+    function isVo2(type) {
+      if (!type) return false;
+      return type.toLowerCase().includes('vo2');
+    }
+    function isRestOrRecovery(type) {
+      if (!type) return false;
+      const t = type.toLowerCase();
+      return t.includes('rest') || t.includes('recovery');
+    }
+
+    let score = 70;
+    const reasons = [];
+
+    // 1. Consecutive Strength Days around targetIdx
+    if (isStrength(getSimulatedDayType(targetIdx))) {
+      let bStreak = 0;
+      let c = targetIdx - 1;
+      while (c >= 0 && isStrength(getSimulatedDayType(c))) { bStreak++; c--; }
+      let aStreak = 0;
+      c = targetIdx + 1;
+      while (c < planDays.length && isStrength(getSimulatedDayType(c))) { aStreak++; c++; }
+      const totalStrengthRun = 1 + bStreak + aStreak;
+
+      if (totalStrengthRun >= 3) {
+        score -= 35;
+        reasons.push({ key: 'swap_reason_consecutive_3', type: 'warning' });
+      } else if (totalStrengthRun === 2) {
+        score -= 10;
+        reasons.push({ key: 'swap_reason_consecutive_2', type: 'info' });
+      } else {
+        score += 20;
+        reasons.push({ key: 'swap_reason_ideal_spacing', type: 'positive' });
+      }
+    }
+
+    // 2. Check if currIdx itself becomes part of a 3+ strength streak
+    if (isStrength(getSimulatedDayType(currIdx))) {
+      let bStreak = 0;
+      let c = currIdx - 1;
+      while (c >= 0 && isStrength(getSimulatedDayType(c))) { bStreak++; c--; }
+      let aStreak = 0;
+      c = currIdx + 1;
+      while (c < planDays.length && isStrength(getSimulatedDayType(c))) { aStreak++; c++; }
+      if (1 + bStreak + aStreak >= 3 && !reasons.some(r => r.key === 'swap_reason_consecutive_3')) {
+        score -= 35;
+        reasons.push({ key: 'swap_reason_consecutive_3', type: 'warning' });
+      }
+    }
+
+    // 3. Achilles Tendon & Calf Block Collision: Push right before VO2 Max
+    const indicesToCheck = [currIdx - 1, currIdx, targetIdx - 1, targetIdx];
+    let hasAchillesRisk = false;
+    for (const idx of indicesToCheck) {
+      if (idx >= 0 && idx < planDays.length - 1) {
+        if (isPush(getSimulatedDayType(idx)) && isVo2(getSimulatedDayType(idx + 1))) {
+          hasAchillesRisk = true;
+          break;
+        }
+      }
+    }
+    if (hasAchillesRisk) {
+      score -= 25;
+      reasons.push({ key: 'swap_reason_achilles_risk', type: 'warning' });
+    }
+
+    // 4. Heavy Legs right after VO2 Max
+    let hasLegsAfterVo2 = false;
+    for (const idx of indicesToCheck) {
+      if (idx >= 0 && idx < planDays.length - 1) {
+        if (isVo2(getSimulatedDayType(idx)) && isLegs(getSimulatedDayType(idx + 1))) {
+          hasLegsAfterVo2 = true;
+          break;
+        }
+      }
+    }
+    if (hasLegsAfterVo2) {
+      score -= 10;
+      reasons.push({ key: 'swap_reason_legs_after_vo2', type: 'info' });
+    }
+
+    // 5. Clean swap into Rest / Active Recovery Day
+    if (isStrength(currentDay.dayType) && isRestOrRecovery(targetDay.dayType)) {
+      score += 15;
+      reasons.push({ key: 'swap_reason_clean_rest_shift', type: 'positive' });
+    }
+
+    // 6. Proximity / Minimal Disruption
+    if (Math.abs(targetIdx - currIdx) === 1) {
+      score += 10;
+      reasons.push({ key: 'swap_reason_minimal_shift', type: 'positive' });
+    }
+
+    // 7. Combat check
+    const combatSchedule = options && options.combatSchedule;
+    const exceptions = options && options.exceptions;
+    if (typeof window !== 'undefined' && window.CombatScheduler && combatSchedule && combatSchedule.enabled) {
+      if (isStrength(currentDay.dayType)) {
+        const iso = (typeof combatDateISO === 'function') ? combatDateISO(targetDay) : (targetDay.date || '');
+        const items = exceptions ? exceptions.items : [];
+        if (window.CombatScheduler.isDateOccupied(combatSchedule, items, planDays, iso)) {
+          score -= 30;
+          reasons.push({ key: 'swap_reason_combat_clash', type: 'warning' });
+        }
+      }
+    }
+
+    score = Math.max(10, Math.min(100, score));
+    let tier = 'viable';
+    if (score >= 80) {
+      tier = 'best';
+    } else if (score < 55) {
+      tier = 'caution';
+    }
+
+    return { score, tier, reasons };
+  }
+
   async function showSwapModal() {
     const currentDay = allPlanDays[currentDayIndex];
     const currentTypeInfo = UI.getDayTypeInfo(currentDay.dayType);
@@ -6050,19 +6218,66 @@ const TodayPage = (() => {
       return;
     }
 
-    let html = `<p style="margin-bottom: 12px; font-size: 14px; color: var(--text-secondary); line-height: 1.4;">
-      ${I18n.t('swap_instructions', '', { dayType: `<b style="color: var(--text-primary);">${currentTypeInfo.label}</b>` })}
-    </p>`;
+    let combatSchedule = null;
+    let combatExceptions = null;
+    try {
+      if (typeof getCombatSchedule === 'function') combatSchedule = await getCombatSchedule();
+      if (typeof getCombatExceptions === 'function') combatExceptions = await getCombatExceptions();
+    } catch (e) {
+      console.warn('Combat schedule fetch in swap skipped:', e);
+    }
 
-    html += `<div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">`;
+    const evaluatedTargets = validSwapTargets.map(targetDay => {
+      const evaluation = evaluateSwapCandidate(currentDayIndex, targetDay.dayIndex, allPlanDays, {
+        combatSchedule,
+        exceptions: combatExceptions
+      });
+      return { day: targetDay, evaluation };
+    });
 
-    validSwapTargets.forEach(targetDay => {
+    // Sort by recommendation score descending (highest recommendation first)
+    evaluatedTargets.sort((a, b) => b.evaluation.score - a.evaluation.score);
+
+    let html = `
+      <div class="swap-modal-header-advisory">
+        <span class="swap-advisory-icon">🧠</span>
+        <div class="swap-advisory-text">
+          <strong class="swap-advisory-title">${I18n.t('swap_modal_subtitle')}</strong>
+          <span class="swap-advisory-desc">${I18n.t('swap_instructions', '', { dayType: `<b style="color: var(--text-primary);">${currentTypeInfo.label}</b>` })}</span>
+        </div>
+      </div>
+    `;
+
+    html += `<div class="swap-cards-container">`;
+
+    const isRtl = (typeof I18n !== 'undefined' && typeof I18n.isRTL === 'function') ? I18n.isRTL() : true;
+    const arrowChar = isRtl ? '←' : '→';
+
+    evaluatedTargets.forEach(({ day: targetDay, evaluation }) => {
       const typeInfo = UI.getDayTypeInfo(targetDay.dayType);
+      const tier = evaluation.tier;
+      const badgeKey = tier === 'best' ? 'swap_rec_best' : (tier === 'caution' ? 'swap_rec_caution' : 'swap_rec_viable');
+
+      const reasonsHtml = evaluation.reasons.map(r => {
+        const text = I18n.t(r.key);
+        const icon = r.type === 'positive' ? '✨' : (r.type === 'warning' ? '⚠️' : 'ℹ️');
+        return `<span class="swap-reason-pill reason-${r.type}">${icon} ${text}</span>`;
+      }).join('');
+
       html += `
-        <button class="btn-secondary" style="justify-content: flex-start; padding: 12px; background: var(--bg-elevated); border: 1px solid var(--border-light);" onclick="TodayPage.performSwap(${targetDay.dayIndex})">
-          <div style="display: flex; flex-direction: column; align-items: flex-start;">
-            <span style="font-weight: bold; color: var(--text-primary); margin-bottom: 4px;">${targetDay.dayOfWeek} - ${typeInfo.label}</span>
-            <span style="font-size: 11px; color: var(--text-secondary);">${I18n.t('swap_with')} ${typeInfo.label}</span>
+        <button type="button" class="swap-rec-card swap-rec-${tier}" onclick="TodayPage.performSwap(${targetDay.dayIndex})">
+          <div class="swap-rec-header">
+            <div class="swap-rec-day-title">
+              <span class="swap-rec-dayname">${targetDay.dayOfWeek}</span>
+              <span class="swap-rec-separator">·</span>
+              <span class="swap-rec-daytype">${typeInfo.label}</span>
+            </div>
+            <span class="swap-badge-pill badge-${tier}">${I18n.t(badgeKey)}</span>
+          </div>
+          ${reasonsHtml ? `<div class="swap-rec-reasons">${reasonsHtml}</div>` : ''}
+          <div class="swap-rec-action-hint">
+            <span>${I18n.t('swap_with')} <b>${typeInfo.label}</b></span>
+            <span class="swap-action-arrow">${arrowChar}</span>
           </div>
         </button>
       `;
@@ -7175,6 +7390,22 @@ const TodayPage = (() => {
     return null;
   }
 
+  function isDayInPast(day) {
+    if (!day) return false;
+    const todayIso = (typeof UI !== 'undefined' && UI.getLocalDateString)
+      ? UI.getLocalDateString()
+      : new Date().toISOString().split('T')[0];
+    const dayIso = getDayIsoDate(day);
+    if (dayIso && dayIso < todayIso) return true;
+    const realTodayIndex = (typeof UI !== 'undefined' && UI.findTodayIndex && Array.isArray(allPlanDays))
+      ? UI.findTodayIndex(allPlanDays)
+      : -1;
+    if (realTodayIndex > -1 && typeof day.dayIndex === 'number' && day.dayIndex < realTodayIndex) {
+      return true;
+    }
+    return false;
+  }
+
   async function syncRelaxedWalkingSteps(day, exIdx, isUserTriggered = false) {
     if (!day || !day.exercises || exIdx < 0 || !day.exercises[exIdx]) return;
     const ex = day.exercises[exIdx];
@@ -7218,15 +7449,22 @@ const TodayPage = (() => {
 
     const steps = (currentTracking && typeof currentTracking.dailySteps === 'number') ? currentTracking.dailySteps : 0;
     const isGoalReached = steps >= 8000;
+    const isPast = isDayInPast(day);
+    const isStepsUnrecorded = steps === 0 || !currentTracking.dailySteps;
+    const isUnmarked = !currentTracking.exerciseStatus || !currentTracking.exerciseStatus[exIdx];
 
-    if (isGoalReached && (!currentTracking.exerciseStatus || !currentTracking.exerciseStatus[exIdx])) {
+    const shouldAutoComplete = (isGoalReached && isUnmarked) || (isPast && isStepsUnrecorded && isUnmarked);
+
+    if (shouldAutoComplete) {
       if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
       currentTracking.exerciseStatus[exIdx] = true;
       if (!currentTracking.setData) currentTracking.setData = {};
       if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
       currentTracking.setData[exIdx]['set_0_done'] = true;
       currentTracking.setData[exIdx]['set_0_result'] = 'in_window';
-      currentTracking.setData[exIdx]['set_0_reps'] = `${steps.toLocaleString()} ${I18n.t('steps_unit') || 'צעדים'}`;
+      currentTracking.setData[exIdx]['set_0_reps'] = isGoalReached
+        ? `${steps.toLocaleString()} ${I18n.t('steps_unit') || 'צעדים'}`
+        : (I18n.t('past_day_auto_completed_steps') || '8,000 צעדים (הושלם אוטומטית)');
       currentTracking.stepsAutoCompleted = true;
 
       updateProgress(day);
@@ -7239,7 +7477,7 @@ const TodayPage = (() => {
 
       await autoSave();
 
-      if (window.UI && window.UI.toast) {
+      if (window.UI && window.UI.toast && isGoalReached) {
         UI.toast(I18n.t('steps_auto_completed_toast', '', { steps: steps.toLocaleString() }), 'success');
       }
     } else if (isUserTriggered) {
@@ -7911,6 +8149,8 @@ const TodayPage = (() => {
     updateExerciseNote,
     showExerciseImage,
     performSwap,
+    showSwapModal,
+    evaluateSwapCandidate,
     startIntervalTimer,
     showFormRuleModal,
     toggleDeepMobilitySubStep,
@@ -7929,6 +8169,7 @@ const TodayPage = (() => {
     isRelaxedWalkingExercise,
     syncRelaxedWalkingSteps,
     getDayIsoDate,
+    isDayInPast,
     getCurrentDayIndex: () => currentDayIndex,
     resolveExerciseStage,
     getActiveExerciseName,

@@ -5931,3 +5931,219 @@ html.light-theme .login-prompt-banner {
 .steps-progress-bar-fill {
   transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* ==========================================================================
+   Swap Modal & Recommendation Cards (Intelligent Day Optimizer)
+   ========================================================================== */
+
+.swap-modal-header-advisory {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.swap-advisory-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.swap-advisory-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.swap-advisory-title {
+  color: #a5b4fc;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.swap-advisory-desc {
+  font-size: 12px;
+  color: var(--text-secondary, #94a3b8);
+  line-height: 1.4;
+}
+
+.swap-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.swap-rec-card {
+  width: 100%;
+  border-radius: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: start;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  outline: none;
+  font-family: inherit;
+}
+
+.swap-rec-card:focus-visible {
+  outline: 2px solid var(--accent, #6366f1);
+  outline-offset: 2px;
+}
+
+/* ⭐ Best match - Highly Recommended */
+.swap-rec-card.swap-rec-best {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(6, 78, 59, 0.18) 100%);
+  border: 1.5px solid rgba(16, 185, 129, 0.65);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+.swap-rec-card.swap-rec-best:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(6, 78, 59, 0.25) 100%);
+  border-color: #10b981;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25);
+}
+
+/* 👍 Viable */
+.swap-rec-card.swap-rec-viable {
+  background: var(--bg-elevated, #1e293b);
+  border: 1px solid var(--border-light, rgba(255, 255, 255, 0.1));
+}
+
+.swap-rec-card.swap-rec-viable:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+/* ⚠️ Caution - Less Recommended */
+.swap-rec-card.swap-rec-caution {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(180, 83, 9, 0.1) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.swap-rec-card.swap-rec-caution:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14) 0%, rgba(180, 83, 9, 0.16) 100%);
+  border-color: #f59e0b;
+}
+
+.swap-rec-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.swap-rec-day-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.swap-rec-dayname {
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--text-primary, #f8fafc);
+}
+
+.swap-rec-separator {
+  color: var(--text-secondary, #94a3b8);
+  font-weight: bold;
+}
+
+.swap-rec-daytype {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary, #cbd5e1);
+}
+
+.swap-badge-pill {
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 3px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.badge-best {
+  background: rgba(16, 185, 129, 0.22);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.badge-viable {
+  background: rgba(99, 102, 241, 0.18);
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+}
+
+.badge-caution {
+  background: rgba(245, 158, 11, 0.18);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.swap-rec-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 2px 0;
+}
+
+.swap-reason-pill {
+  font-size: 12px;
+  line-height: 1.35;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reason-positive {
+  color: #34d399;
+  font-weight: 500;
+}
+
+.reason-info {
+  color: var(--text-secondary, #94a3b8);
+}
+
+.reason-warning {
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.swap-rec-action-hint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-secondary, #94a3b8);
+  padding-top: 6px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.swap-action-arrow {
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+
+.swap-rec-card:hover .swap-action-arrow {
+  transform: translateX(-4px);
+}
+[dir="ltr"] .swap-rec-card:hover .swap-action-arrow {
+  transform: translateX(4px);
+}

@@ -23,7 +23,12 @@ function createSandbox() {
         },
         appendChild: () => {},
         remove: () => {},
-        style: {},
+        setAttribute: () => {},
+        getAttribute: () => null,
+        removeAttribute: () => {},
+        querySelector: () => null,
+        querySelectorAll: () => [],
+        style: { setProperty: () => {} },
         dataset: {},
         value: ''
       };
@@ -88,9 +93,12 @@ function createSandbox() {
     setSetting: async () => {},
     getDayTracking: async () => null,
     saveDayTracking: async () => {},
-    getAllTracking: async () => ({}),
+    getAllTracking: async () => [],
     getAllPlan: async () => [],
-    syncRestDays: async () => {}
+    getExerciseGuide: async () => ({}),
+    getCombatExceptions: async () => ({ rev: 0, items: [] }),
+    syncRestDays: async () => {},
+    syncPastRelaxedWalks: async () => {}
   };
 
   // Load CloudSync mock
@@ -212,7 +220,10 @@ test('Walking Step Progress - i18n keys for steps tracking exist across EN, HE, 
     'enter_steps_manual_btn',
     'steps_auto_completed_toast',
     'steps_goal_achieved_toast',
-    'steps_synced_toast'
+    'steps_synced_toast',
+    'past_day_steps_completed_badge',
+    'past_day_steps_auto_completed_desc',
+    'past_day_auto_completed_steps'
   ];
 
   ['en', 'he', 'ar'].forEach(lang => {
@@ -221,5 +232,89 @@ test('Walking Step Progress - i18n keys for steps tracking exist across EN, HE, 
       assert.ok(I18n.translations[lang][k].length > 0, `Empty key "${k}" in language "${lang}"`);
     });
   });
+});
+
+test('Walking Step Progress - isDayInPast accurately detects past vs current/future days', () => {
+  const sb = createSandbox();
+  const TodayPage = sb.TodayPage;
+  // UI mock returns '2026-10-15' as today
+  assert.equal(TodayPage.isDayInPast({ date: '14/10/2026', dayIndex: 1 }), true);
+  assert.equal(TodayPage.isDayInPast({ date: '2026-10-14', dayIndex: 1 }), true);
+  assert.equal(TodayPage.isDayInPast({ date: '15/10/2026', dayIndex: 0 }), false);
+  assert.equal(TodayPage.isDayInPast({ date: '16/10/2026', dayIndex: 2 }), false);
+});
+
+test('Walking Step Progress - auto-completes relaxed walking on past day when steps are 0', async () => {
+  const sb = createSandbox();
+  const TodayPage = sb.TodayPage;
+
+  let savedTracking = null;
+  sb.DB.saveDayTracking = async (idx, tr) => {
+    savedTracking = tr;
+  };
+
+  // CloudSync logged out or 0 steps
+  sb.CloudSync.isLoggedIn = async () => false;
+
+  const pastDay = {
+    dayIndex: 1,
+    date: '10/10/2026', // strictly in the past (today is 2026-10-15)
+    exercises: [
+      { id: 'relaxed-walking', name: 'Relaxed Walking', sets: '20 mins' }
+    ]
+  };
+
+  await TodayPage.syncRelaxedWalkingSteps(pastDay, 0, false);
+  // It should be auto-completed and saved
+  assert.ok(savedTracking, 'Tracking should be saved to DB');
+  assert.ok(savedTracking.exerciseStatus[0], 'Relaxed walking on past day should be marked complete');
+  assert.equal(savedTracking.completed, true, 'Single-exercise day should be completed');
+  assert.equal(savedTracking.stepsAutoCompleted, true);
+});
+
+test('Walking Step Progress - does NOT auto-complete relaxed walking on current day when steps are 0', async () => {
+  const sb = createSandbox();
+  const TodayPage = sb.TodayPage;
+
+  let savedTracking = null;
+  sb.DB.saveDayTracking = async (idx, tr) => {
+    savedTracking = tr;
+  };
+
+  sb.CloudSync.isLoggedIn = async () => false;
+
+  const currentDay = {
+    dayIndex: 0,
+    date: '15/10/2026', // Today
+    exercises: [
+      { id: 'relaxed-walking', name: 'Relaxed Walking', sets: '20 mins' }
+    ]
+  };
+
+  await TodayPage.syncRelaxedWalkingSteps(currentDay, 0, false);
+  assert.equal(savedTracking, null, 'Current day walking should not auto-save completion with 0 steps');
+});
+
+test('Rest Day - auto-completes immediately when rendered', async () => {
+  const sb = createSandbox();
+  let savedTracking = null;
+  sb.DB.saveDayTracking = async (idx, tr) => {
+    savedTracking = tr;
+  };
+  sb.DB.getDayTracking = async () => null;
+
+  const restDay = {
+    dayIndex: 6,
+    dayType: 'Rest',
+    date: '12/10/2026',
+    exercises: []
+  };
+
+  sb.window.allPlanDays = [restDay];
+  await sb.TodayPage.init([restDay]);
+
+  assert.ok(savedTracking, 'Tracking should be saved to DB');
+  assert.equal(savedTracking.completed, true, 'Rest Day should be marked complete on open');
+  assert.equal(savedTracking.autoCompleted, true);
 });
 

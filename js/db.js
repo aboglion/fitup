@@ -959,89 +959,163 @@ const DB = (() => {
   }
 
   /**
-   * Automatically complete any Rest days that are in the past relative to the last completed workout date.
+   * Automatically complete any Rest days that are in the past or today.
    */
   async function syncRestDays(allPlanDays) {
+    if (!Array.isArray(allPlanDays) || allPlanDays.length === 0) return false;
     const allTracking = await getAllTracking();
+    const todayIso = (typeof UI !== 'undefined' && UI.getLocalDateString)
+      ? UI.getLocalDateString()
+      : new Date().toISOString().split('T')[0];
+    const realTodayIndex = (typeof UI !== 'undefined' && UI.findTodayIndex)
+      ? UI.findTodayIndex(allPlanDays)
+      : -1;
 
-    // Find the last completed workout day
-    let lastWorkoutIndex = -1;
-    let lastWorkoutDate = null;
+    let updated = false;
 
     for (let i = 0; i < allPlanDays.length; i++) {
       const day = allPlanDays[i];
-      if (day.dayType !== 'Rest') {
+      const isRest = day && (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0);
+      if (!isRest) continue;
+
+      let isPassedOrToday = false;
+      const rawDate = day.date || '';
+      let dayIso = null;
+      if (rawDate.includes('/')) {
+        const parts = rawDate.split('/');
+        if (parts.length === 3) {
+          dayIso = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+        dayIso = rawDate;
+      }
+
+      if (dayIso && dayIso <= todayIso) {
+        isPassedOrToday = true;
+      } else if (realTodayIndex >= 0 && i <= realTodayIndex) {
+        isPassedOrToday = true;
+      }
+
+      if (isPassedOrToday) {
         const track = allTracking.find(t => t.dayIndex === i);
-        if (track && track.completed) {
-          lastWorkoutIndex = i;
-          if (track.date) {
-            let parsedDate = null;
-            if (track.date.includes('/')) {
-              const [d, m, y] = track.date.split('/');
-              parsedDate = new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
-            } else {
-              parsedDate = new Date(track.date);
-            }
-            if (parsedDate && !isNaN(parsedDate.getTime())) {
-              lastWorkoutDate = parsedDate;
-            }
-          }
+        if (!track || (!track.completed && !track.manuallyUncompleted)) {
+          const trackDateStr = day.date || rawDate || (typeof UI !== 'undefined' ? UI.getLocalDateString().split('-').reverse().join('/') : '');
+          const newTrack = {
+            ...(track || {}),
+            dayIndex: i,
+            completed: true,
+            autoCompleted: true,
+            date: trackDateStr,
+            lastUpdated: new Date().toISOString()
+          };
+          await saveDayTracking(i, newTrack);
+          updated = true;
         }
       }
     }
 
-    if (lastWorkoutIndex !== -1 && lastWorkoutDate) {
-      const today = new Date();
-      const d1 = new Date(lastWorkoutDate);
-      d1.setHours(12, 0, 0, 0);
-      const d2 = new Date(today);
-      d2.setHours(12, 0, 0, 0);
-      const diffTime = d2.getTime() - d1.getTime();
-      const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return updated;
+  }
 
-      if (daysPassed > 0) {
-        // Find first incomplete workout after the last completed workout
-        let firstIncompleteWorkoutIndex = allPlanDays.length;
-        for (let i = lastWorkoutIndex + 1; i < allPlanDays.length; i++) {
-          if (allPlanDays[i].dayType !== 'Rest') {
-            const track = allTracking.find(t => t.dayIndex === i);
-            if (!track || !track.completed) {
-              firstIncompleteWorkoutIndex = i;
-              break;
-            }
+  /**
+   * Automatically complete Relaxed Walking on any past days where steps are 0 (unrecorded) and not yet marked.
+   */
+  async function syncPastRelaxedWalks(allPlanDays) {
+    if (!Array.isArray(allPlanDays) || allPlanDays.length === 0) return false;
+    const allTracking = await getAllTracking();
+    const todayIso = (typeof UI !== 'undefined' && UI.getLocalDateString)
+      ? UI.getLocalDateString()
+      : new Date().toISOString().split('T')[0];
+    const realTodayIndex = (typeof UI !== 'undefined' && UI.findTodayIndex)
+      ? UI.findTodayIndex(allPlanDays)
+      : -1;
+
+    let updated = false;
+
+    for (let i = 0; i < allPlanDays.length; i++) {
+      const day = allPlanDays[i];
+      if (!day || !day.exercises || day.exercises.length === 0) continue;
+
+      let isPast = false;
+      const rawDate = day.date || '';
+      let dayIso = null;
+      if (rawDate.includes('/')) {
+        const parts = rawDate.split('/');
+        if (parts.length === 3) {
+          dayIso = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+      } else if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+        dayIso = rawDate;
+      }
+
+      if (dayIso && dayIso < todayIso) {
+        isPast = true;
+      } else if (realTodayIndex >= 0 && i < realTodayIndex) {
+        isPast = true;
+      }
+
+      if (!isPast) continue;
+
+      const walkIdx = day.exercises.findIndex(ex => {
+        if (!ex) return false;
+        const id = (ex.id || '').toLowerCase();
+        const name = (ex.name || '').toLowerCase();
+        const orig = (ex.originalName || '').toLowerCase();
+        return id === 'relaxed-walking' || 
+               name.includes('relaxed walking') || 
+               orig.includes('relaxed walking') || 
+               name.includes('active recovery walk') || 
+               orig.includes('active recovery walk') ||
+               name.includes('הליכה רגועה') ||
+               name.includes('مشي مريح');
+      });
+
+      if (walkIdx === -1) continue;
+
+      let track = allTracking.find(t => t.dayIndex === i);
+      const steps = (track && typeof track.dailySteps === 'number') ? track.dailySteps : 0;
+      const isWalkMarked = Boolean(track && track.exerciseStatus && track.exerciseStatus[walkIdx]);
+
+      if (!isWalkMarked && steps === 0) {
+        if (!track) {
+          track = {
+            dayIndex: i,
+            exerciseStatus: {},
+            setData: {},
+            dailySteps: 0,
+            date: day.date || (dayIso ? dayIso.split('-').reverse().join('/') : ''),
+            completed: false
+          };
+        }
+        if (!track.exerciseStatus) track.exerciseStatus = {};
+        if (!track.setData) track.setData = {};
+        if (!track.setData[walkIdx]) track.setData[walkIdx] = {};
+
+        track.exerciseStatus[walkIdx] = true;
+        track.setData[walkIdx]['set_0_done'] = true;
+        track.setData[walkIdx]['set_0_result'] = 'in_window';
+        track.setData[walkIdx]['set_0_reps'] = (typeof I18n !== 'undefined' && I18n.t)
+          ? (I18n.t('past_day_auto_completed_steps') || '8,000 צעדים (הושלם אוטומטית)')
+          : '8,000 צעדים (הושלם אוטומטית)';
+        track.stepsAutoCompleted = true;
+        track.lastUpdated = new Date().toISOString();
+
+        // Check if all exercises on this day are completed
+        let allDone = true;
+        for (let e = 0; e < day.exercises.length; e++) {
+          if (!track.exerciseStatus[e]) {
+            allDone = false;
+            break;
           }
         }
+        track.completed = allDone;
 
-        // Complete any Rest days that are in the past
-        let updated = false;
-        for (let i = lastWorkoutIndex + 1; i < firstIncompleteWorkoutIndex; i++) {
-          const day = allPlanDays[i];
-          const dayOffset = day.dayIndex - lastWorkoutIndex;
-          if (dayOffset < daysPassed) {
-            const track = allTracking.find(t => t.dayIndex === i);
-            if (!track || !track.completed) {
-              const restDate = new Date(lastWorkoutDate.getTime() + dayOffset * 24 * 60 * 60 * 1000);
-              const yyyy = restDate.getFullYear();
-              const mm = String(restDate.getMonth() + 1).padStart(2, '0');
-              const dd = String(restDate.getDate()).padStart(2, '0');
-              const trackDateStr = `${dd}/${mm}/${yyyy}`;
-
-              const newTrack = {
-                dayIndex: i,
-                completed: true,
-                autoCompleted: true,
-                date: trackDateStr,
-                lastUpdated: new Date().toISOString()
-              };
-              await saveDayTracking(i, newTrack);
-              updated = true;
-            }
-          }
-        }
-        return updated;
+        await saveDayTracking(i, track);
+        updated = true;
       }
     }
-    return false;
+
+    return updated;
   }
 
   async function getNutrition(dateStr) {
@@ -1244,6 +1318,7 @@ const DB = (() => {
     getAllTracking,
     clearTracking,
     syncRestDays,
+    syncPastRelaxedWalks,
     getAllPlan,
     getExerciseGuide,
     getWeekData,

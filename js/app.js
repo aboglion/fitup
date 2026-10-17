@@ -401,8 +401,9 @@ const App = (() => {
       allPlanDays = await DB.getAllPlan();
       allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
 
-      // --- Auto-complete passed Rest days ---
+      // --- Auto-complete passed Rest days & past Relaxed Walks ---
       await DB.syncRestDays(allPlanDays);
+      await DB.syncPastRelaxedWalks(allPlanDays);
 
       // --- Sequential Progress-Based Alignment ---
       // Find the active plan index (first incomplete or completed today)
