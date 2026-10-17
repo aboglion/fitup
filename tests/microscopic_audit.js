@@ -87,10 +87,13 @@ jsFiles.forEach(file => {
   let match;
   while ((match = i18nRegex.exec(content)) !== null) {
     const key = match[1];
-    // Check key in HE, EN, AR
+    if (key.endsWith('_')) continue; // Dynamic prefix key (e.g. 'joint_' + id, 'muscle_' + id)
+    // Check key in HE, EN, AR dictionaries
     ['he', 'en', 'ar'].forEach(lang => {
-      const val = I18n.t(key, lang);
-      if (val === key && !key.includes('${') && !key.includes('+')) {
+      const dict = I18n.translations ? I18n.translations[lang] : null;
+      const cfg = I18n.AVAILABLE_LANGUAGES ? I18n.AVAILABLE_LANGUAGES[lang] : null;
+      const exists = (dict && key in dict) || (cfg && key in cfg);
+      if (!exists && !key.includes('${') && !key.includes('+')) {
         missingI18nKeys.add(`${key} (in ${lang}) [from ${file}]`);
       }
     });
