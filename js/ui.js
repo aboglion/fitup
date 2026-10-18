@@ -1260,7 +1260,7 @@ const UI = (() => {
       if (repText) {
         const repLabel = isWeightedEx ? I18n.t('label_current_target', 'יעד נוכחי:') : I18n.t('label_rep_window', 'חלון חזרות:');
         const repVal = isWeightedEx && setsCount && targetRepWindow
-          ? `<bdi dir="ltr">${setsCount} ${I18n.t('unit_sets', 'סטים')} × ${targetRepWindow} ${I18n.t('unit_reps', 'חזרות')}</bdi>`
+          ? `<span style="font-weight: 700;">${setsCount} ${I18n.t('unit_sets', 'סטים')}</span><div style="margin-top: 2px; color: var(--accent-primary, #60a5fa); font-weight: 800;"><bdi dir="ltr">${targetRepWindow}</bdi> ${I18n.t('unit_reps', 'חזרות')}</div>`
           : enrichHeartRateText(repText);
         chips.push({ icon: '🎯', label: repLabel, val: repVal });
       }
