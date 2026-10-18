@@ -151,7 +151,20 @@ test('Weighted Exercises Stage Discrepancy Prevention Test', () => {
   );
   assert.ok(
     gluteBridgeModalContent.includes('10 ק״ג') || gluteBridgeModalContent.includes('10 kg'),
-    'DB Glute Bridge must show 10 kg as next target load'
+    'DB Glute Bridge must show 10 kg in the ladder track'
+  );
+  assert.ok(
+    !gluteBridgeModalContent.includes('progression-next-target-weight') &&
+    !gluteBridgeModalContent.includes('יעד סטים וחזרות:'),
+    'DB Glute Bridge must NOT render the duplicate middle metric boxes'
+  );
+  assert.ok(
+    !gluteBridgeModalContent.includes('הבא 🎯'),
+    'Next weight must NOT be aggressively highlighted in ladder'
+  );
+  assert.ok(
+    gluteBridgeModalContent.includes('יעד נוכחי:') || gluteBridgeModalContent.includes('Current Target:'),
+    'Bottom chips must show current target for reps/sets'
   );
 });
 

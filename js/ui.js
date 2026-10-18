@@ -1095,7 +1095,7 @@ const UI = (() => {
       if (exData?.windowMin && exData?.windowMax) {
         repText = `${exData.windowMin}-${exData.windowMax} ${repsLabel}`;
       } else {
-        const rawTarget = planEx?.sets || planEx?.repWindow || exData?.repWindow;
+        const rawTarget = planEx?.sets || planEx?.repWindow || exData?.repWindow || targetRepWindow;
         if (rawTarget) {
           let str = String(rawTarget);
           if (str.includes('forward') && str.includes('backward')) {
@@ -1205,7 +1205,6 @@ const UI = (() => {
               ${ladderTiers.map((tw, idx) => {
                 const isPassed = tw < curLoadNum;
                 const isCurrent = tw === curLoadNum;
-                const isNext = tw === nextW && curLoadNum < maxW;
                 const isMax = tw === maxW;
 
                 let borderStyle = '1px solid var(--border-color)';
@@ -1218,11 +1217,6 @@ const UI = (() => {
                   bgStyle = 'background: rgba(59, 130, 246, 0.22);';
                   textColor = '#60a5fa';
                   tagBadge = `<span style="font-size: 9px; background: #3b82f6; color: white; padding: 1px 4px; border-radius: 4px; font-weight: 800; white-space: nowrap;">${I18n.t('progression_current_badge', 'נוכחי 📍')}</span>`;
-                } else if (isNext) {
-                  borderStyle = '1px solid #10b981';
-                  bgStyle = 'background: rgba(16, 185, 129, 0.15);';
-                  textColor = '#34d399';
-                  tagBadge = `<span style="font-size: 9px; background: #10b981; color: white; padding: 1px 4px; border-radius: 4px; font-weight: 800; white-space: nowrap;">${I18n.t('progression_next_badge', 'הבא 🎯')}</span>`;
                 } else if (isPassed) {
                   borderStyle = '1px solid rgba(16, 185, 129, 0.3)';
                   bgStyle = 'background: rgba(16, 185, 129, 0.08);';
@@ -1263,7 +1257,13 @@ const UI = (() => {
       }
 
       const chips = [];
-      if (repText) chips.push({ icon: '🎯', label: I18n.t('label_rep_window', 'יעד חזרות:'), val: enrichHeartRateText(repText) });
+      if (repText) {
+        const repLabel = isWeightedEx ? I18n.t('label_current_target', 'יעד נוכחי:') : I18n.t('label_rep_window', 'חלון חזרות:');
+        const repVal = isWeightedEx && setsCount && targetRepWindow
+          ? `<bdi dir="ltr">${setsCount} ${I18n.t('unit_sets', 'סטים')} × ${targetRepWindow} ${I18n.t('unit_reps', 'חזרות')}</bdi>`
+          : enrichHeartRateText(repText);
+        chips.push({ icon: '🎯', label: repLabel, val: repVal });
+      }
       if (restText) chips.push({ icon: '⏳', label: I18n.t('label_rest', 'מנוחה:'), val: enrichHeartRateText(restText) });
       if (tempoText) chips.push({ icon: '⏱️', label: I18n.t('label_tempo', 'טמפו:'), val: enrichHeartRateText(tempoText) });
       if (structureText) chips.push({ icon: '🏗️', label: I18n.t('label_structure', 'מבנה:'), val: enrichHeartRateText(structureText) });
@@ -1287,23 +1287,6 @@ const UI = (() => {
 
             ${isWeightedEx ? `
               <div class="zero-decisions-progression-card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.65), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; font-size: 12px;">
-                  <div style="background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 8px;">
-                    <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">🏋️ ${I18n.t('progression_current_load', 'משקל עבודה נוכחי:')}</div>
-                    <div style="font-size: 15px; font-weight: 900; color: var(--accent-primary);"><bdi dir="ltr">${curLoadNum} ${kgLabel}</bdi> <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">(${loadTypeLabel})</span></div>
-                  </div>
-                  <div style="background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 8px;">
-                    <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">🎯 ${I18n.t('progression_target_reps_sets', 'יעד סטים וחזרות:')}</div>
-                    <div style="font-size: 15px; font-weight: 900; color: #10b981;"><bdi dir="ltr">${setsCount} × ${targetRepWindow}</bdi></div>
-                  </div>
-                  <div style="background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 8px;">
-                    <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">🚀 ${I18n.t('progression_next_target_weight', 'משקל היעד הבא:')}</div>
-                    <div style="font-size: 15px; font-weight: 900; color: ${curLoadNum < maxW ? '#f59e0b' : '#10b981'};">
-                      <bdi dir="ltr">${curLoadNum < maxW ? `${nextW} ${kgLabel} (+${inc})` : `${maxW} ${kgLabel} (${I18n.t('progression_max_ceiling', 'תקרה')})`}</bdi>
-                    </div>
-                  </div>
-                </div>
-
                 ${ladderHTML}
 
                 <div style="font-size: 11px; line-height: 1.4; color: var(--text-secondary); background: rgba(0, 0, 0, 0.2); border-radius: 6px; padding: 6px 8px; border-inline-start: 3px solid var(--accent-primary);">
@@ -1480,15 +1463,6 @@ const UI = (() => {
               <span style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
                 🎯 ${setsCount} ${I18n.t('unit_sets', 'סטים')} × ${targetRepWindow} ${I18n.t('unit_reps', 'חזרות')}
               </span>
-              ${curLoadNum < maxW ? `
-                <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
-                  🚀 ${I18n.t('progression_next_badge', 'הבא:')} ${nextW} ${kgLabel}
-                </span>
-              ` : `
-                <span style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
-                  🏆 ${I18n.t('progression_max_ceiling', 'תקרת מקסימום')}
-                </span>
-              `}
             </div>
           </div>
         `;
@@ -1554,15 +1528,6 @@ const UI = (() => {
               <span style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
                 🎯 ${setsCount} ${I18n.t('unit_sets', 'סטים')} × ${targetRepWindow} ${I18n.t('unit_reps', 'חזרות')}
               </span>
-              ${curLoadNum < maxW ? `
-                <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
-                  🚀 ${I18n.t('progression_next_badge', 'הבא:')} ${nextW} ${kgLabel}
-                </span>
-              ` : `
-                <span style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
-                  🏆 ${I18n.t('progression_max_ceiling', 'תקרת מקסימום')}
-                </span>
-              `}
             </div>
           </div>
         `;

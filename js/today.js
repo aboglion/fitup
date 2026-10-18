@@ -4475,18 +4475,9 @@ const TodayPage = (() => {
                 ${tSteps > 1 ? `<span style="font-size: 10.5px; color: #60a5fa; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); padding: 1px 6px; border-radius: 5px; font-weight: 700;">${I18n.t('stage_tag', 'שלב')} ${cStep}/${tSteps}</span>` : ''}
               </div>
               <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;">
-                <span style="color: #10b981; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1px 6px; border-radius: 5px;">
+                <span style="color: #10b981; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 7px; border-radius: 5px;">
                   🎯 ${ex.sets}
                 </span>
-                ${curW < maxVal ? `
-                  <span style="color: #60a5fa; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); padding: 1px 6px; border-radius: 5px;">
-                    🚀 ${I18n.t('progression_next_badge', 'הבא:')} ${nextWVal} kg
-                  </span>
-                ` : `
-                  <span style="color: #f59e0b; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); padding: 1px 6px; border-radius: 5px;">
-                    🏆 ${I18n.t('progression_max_ceiling', 'תקרה')}
-                  </span>
-                `}
               </div>
             </div>
           `;
