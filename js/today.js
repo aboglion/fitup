@@ -501,7 +501,7 @@ const TodayPage = (() => {
         const stageName = exDef.stages[stageIdx] || exDef.stages[0];
         ex.currentStageIndex = stageIdx;
         ex.currentStageName = stageName;
-      } else if (!ex.isWarmup && !(ex.slot && ex.slot.startsWith('W'))) {
+      } else if (!ex.isWarmup && !(ex.slot && ex.slot.startsWith('W')) && (!exDef || exDef.type !== 'weighted')) {
         const stageResolved = resolveExerciseStage(ex, day, statesMap);
         if (stageResolved) {
           ex.currentStageName = stageResolved;
@@ -522,6 +522,12 @@ const TodayPage = (() => {
     const effectiveMap = statesMap || statesMapCache;
     const state = effectiveMap ? (effectiveMap[exId] || effectiveMap[exercise.name]) : null;
 
+    // Weighted dumbbell/barbell exercises do NOT have discrete stage names (their overload is tracked by weight in kg).
+    // Stages/angles are strictly for bodyweight, angle, incline, band, or variation trees.
+    if (exDef && exDef.type === 'weighted' && (!exDef.stages || exDef.stages.length === 0)) {
+      return null;
+    }
+
     if (exDef && exDef.stages && exDef.stages.length > 0) {
       if (state && state.currentStageIndex != null) {
         return exDef.stages[state.currentStageIndex] || exDef.stages[0];
@@ -540,6 +546,8 @@ const TodayPage = (() => {
       return exDef.stages[0];
     }
 
+    // If exercise has no explicit stages, check if it has variation tiers (angles, inclines, bands, bodyweight hold stages)
+    // Tiers that represent plain dumbbell loads (e.g. "8 kg", "18 kg", "8 kg total") must not be treated as stage names.
     const weekNum = dayData && dayData.week ? parseInt(dayData.week.replace(/\D/g, '')) || 1 : 1;
     const progTiers = (window.ExercisesPage && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION)
       ? window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[exercise.name]
@@ -549,7 +557,11 @@ const TodayPage = (() => {
       for (const t of progTiers) {
         if (weekNum >= t.fromWeek) activeTier = t;
       }
-      return activeTier.weight;
+      const tierVal = activeTier?.weight || '';
+      // Exclude standard dumbbell weight patterns like "8 kg", "18 kg", "8 kg total", "8 kg each", "8 kg in hand", "8 kg on knee"
+      if (!/^\d+(?:\.\d+)?\s*kg(?:\s*(?:total|each|in hand|on knee))?$/i.test(tierVal.trim())) {
+        return tierVal;
+      }
     }
     return null;
   }
