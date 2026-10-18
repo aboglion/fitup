@@ -1654,9 +1654,14 @@ const UI = (() => {
       }
     }
 
+    const muscleMapHTML = (typeof MuscleMap !== 'undefined' && typeof MuscleMap.renderModalSection === 'function')
+      ? MuscleMap.renderModalSection({ id: exId, name: effectiveTitle })
+      : '';
+
     showModal(modalTitleHTML, `
       <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
         ${mediaHTML}
+        ${muscleMapHTML}
         ${metadataHTML}
         ${biomechanicalHTML}
         ${extraNote}
@@ -1665,7 +1670,7 @@ const UI = (() => {
   }
 
   function showAnatomyPreview(pngPath, title) {
-    if (!pngPath) return;
+    if (!pngPath && !title) return;
     const muscleMapText = (typeof I18n !== 'undefined' && I18n.t) ? I18n.t('anatomy_muscle_map') : 'מפת שרירים';
     const backBtnText = (typeof I18n !== 'undefined' && I18n.t) ? (I18n.t('back_to_exercise') || 'חזור לתרגיל') : 'חזור לתרגיל';
     const modalTitle = `
@@ -1678,15 +1683,23 @@ const UI = (() => {
           <span style="font-size: 14px;">↩️</span>
           <span>${backBtnText}</span>
         </button>
-        <span style="font-size: 15px; font-weight: 800; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</span>
+        <span style="font-size: 15px; font-weight: 800; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title || ''}</span>
         <span style="font-size: 11.5px; font-weight: 700; color: var(--accent-primary, #3b82f6); white-space: nowrap;">(${muscleMapText})</span>
       </div>
     `;
+
+    const vectorMapHTML = (typeof MuscleMap !== 'undefined' && typeof MuscleMap.renderModalSection === 'function')
+      ? MuscleMap.renderModalSection(title)
+      : '';
+
     const modalBody = `
       <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px; background: #ffffff; border-radius: 14px; border: 1px solid var(--border-color); box-shadow: 0 4px 16px rgba(0,0,0,0.25);">
-          <img src="${pngPath}" style="width: 100%; max-height: 55vh; object-fit: contain; mix-blend-mode: multiply; border-radius: 8px;" alt="${title} Anatomy" loading="eager">
-        </div>
+        ${vectorMapHTML}
+        ${pngPath ? `
+          <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px; background: #ffffff; border-radius: 14px; border: 1px solid var(--border-color); box-shadow: 0 4px 16px rgba(0,0,0,0.25);">
+            <img src="${pngPath}" style="width: 100%; max-height: 45vh; object-fit: contain; mix-blend-mode: multiply; border-radius: 8px;" alt="${title} Anatomy" loading="eager">
+          </div>
+        ` : ''}
         <button type="button" class="btn-primary" onclick="UI.hideModal()" 
                 style="width: 100%; padding: 11px 16px; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border: none; border-radius: 10px; cursor: pointer; color: #ffffff; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3); transition: transform 0.15s ease;"
                 onmouseover="this.style.transform='translateY(-1px)';"

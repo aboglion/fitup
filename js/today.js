@@ -5121,12 +5121,27 @@ const TodayPage = (() => {
           ? UI.getTrxAngleSvg(curStageName, { width: 34, height: 22 })
           : '';
         heroAngleBadgeHTML = `
-          <div class="exercise-hero-angle-badge" style="position: absolute; top: 12px; left: 12px; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); ${badgeBg} color: #ffffff; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; display: inline-flex; align-items: center; gap: 6px; z-index: 10;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
+          <div class="exercise-hero-angle-badge" style="position: relative; top: 0; left: 0; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); ${badgeBg} color: #ffffff; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;" title="${I18n.t('progression_stage_title') || 'שלב התקדמות'}">
             ${angleMiniSvg ? `<span style="display: inline-flex; align-items: center;">${angleMiniSvg}</span>` : `<span style="color: ${isAngleChanged ? '#ffffff' : '#60a5fa'}; font-weight: 900;">${icon}</span>`}
             <span><bdi dir="ltr">${stageLabel}</bdi></span>
           </div>
         `;
       }
+
+      const heroMuscleBadgeHTML = (typeof MuscleMap !== 'undefined' && typeof MuscleMap.renderThumbnailBadge === 'function')
+        ? MuscleMap.renderThumbnailBadge(ex, {
+            standalone: false,
+            size: 34,
+            onClick: `TodayPage.handleImageClick(event, ${idx}, '${activeName.replace(/'/g, "\\'")}', '${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/'/g, "\\'")}')`
+          })
+        : '';
+
+      const heroTopLeftHTML = `
+        <div class="exercise-hero-left-badges" style="position: absolute; top: 12px; left: 12px; display: inline-flex; align-items: center; gap: 6px; z-index: 10; direction: ltr;">
+          ${heroMuscleBadgeHTML}
+          ${heroAngleBadgeHTML}
+        </div>
+      `;
       const isCardAlert = isNewExercise || isAngleChanged || isWeightChanged || isEquipmentChanged;
 
       return `
@@ -5138,7 +5153,7 @@ const TodayPage = (() => {
             <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-weight: 800; font-family: 'Inter', sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid rgba(255,255,255,0.1);">
               #${idx + 1}
             </div>
-            ${heroAngleBadgeHTML}
+            ${heroTopLeftHTML}
             <img src="${UI.getImageUrl(activeName, currentDayIndex)}" 
                  class="exercise-hero-image skeleton-img"
                  data-fallback-exname="${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/"/g, '&quot;')}"
