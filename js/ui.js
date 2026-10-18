@@ -1000,11 +1000,78 @@ const UI = (() => {
     const isMobility = !!(lowerTitle.includes('mobility') || lowerTitle.includes('מוביליות'));
     const isBodyweight = !exData?.startingWeight && !planEx?.weight;
 
+    const exId = (exData?.id || planEx?.id || searchTitle).toLowerCase();
+    const statesMap = (window.TodayPage && typeof window.TodayPage.getStatesMap === 'function' ? window.TodayPage.getStatesMap() : null) || 
+                      ((typeof Storage !== 'undefined' && Storage.getAllExerciseStates) ? Storage.getAllExerciseStates() : {});
+    const exState = statesMap ? (statesMap[exId] || statesMap[effectiveTitle]) : null;
+
+    const progTiers = (window.ExercisesPage && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION)
+      ? (window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[effectiveTitle] || (exData && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[exData.name]))
+      : null;
+    const hasNumericProgression = Array.isArray(progTiers) && progTiers.some(t => /^\d+(?:\.\d+)?\s*kg/i.test(String(t.weight || '').trim()));
+
+    const isWeightedEx = !isWarmup && !isCardio && !isMobility && Boolean(
+      exData?.type === 'weighted' || 
+      exData?.startingWeight != null || 
+      hasNumericProgression ||
+      (planEx?.weight && (/\d+\s*kg/i.test(String(planEx.weight)) || typeof planEx.weight === 'number')) ||
+      (planEx?.targetWeightKg != null && planEx.targetWeightKg > 0)
+    );
+
+    let curLoadNum = null;
+    if (isWeightedEx) {
+      if (exState && exState.currentWeightKg != null && exState.currentWeightKg > 0) {
+        curLoadNum = exState.currentWeightKg;
+      } else if (planEx?.targetWeightKg != null && planEx.targetWeightKg > 0) {
+        curLoadNum = planEx.targetWeightKg;
+      } else if (planEx?.weight && /\d+/.test(String(planEx.weight))) {
+        curLoadNum = parseFloat(String(planEx.weight).replace(/[^\d.]/g, ''));
+      } else if (exData?.startingWeight != null) {
+        curLoadNum = exData.startingWeight;
+      } else if (hasNumericProgression && progTiers && progTiers[0]?.weight) {
+        curLoadNum = parseFloat(String(progTiers[0].weight).replace(/[^\d.]/g, '')) || 8;
+      } else {
+        curLoadNum = 8;
+      }
+    }
+
+    const minW = exData?.minWeight || (curLoadNum ? Math.min(curLoadNum, 8) : 8);
+    const maxW = exData?.maxWeight || 32;
+    const inc = exData?.increment || 2;
+    const nextW = isWeightedEx ? Math.min(maxW, (curLoadNum || minW) + inc) : null;
+    const loadType = exData?.loadType || (planEx?.weight && /total/i.test(String(planEx.weight)) ? 'total' : 'each');
+    const kgLabel = typeof I18n !== 'undefined' ? I18n.t('unit_kg', 'ק״ג') : 'ק״ג';
+    const loadTypeLabel = loadType === 'total' ? (typeof I18n !== 'undefined' ? I18n.t('load_type_total', 'סה״כ / Total') : 'סה״כ') : (typeof I18n !== 'undefined' ? I18n.t('per_side', 'לכל צד') : 'לכל צד');
+
+    let totalSteps = 1;
+    let currentStep = 1;
+    let ladderTiers = [];
+
+    if (isWeightedEx) {
+      if (Array.isArray(progTiers) && progTiers.length > 0 && hasNumericProgression) {
+        ladderTiers = progTiers.map(t => parseFloat(String(t.weight).replace(/[^\d.]/g, ''))).filter(n => !isNaN(n));
+      }
+
+      if (ladderTiers.length === 0) {
+        for (let w = minW; w <= maxW; w += inc) {
+          ladderTiers.push(w);
+        }
+      }
+
+      totalSteps = ladderTiers.length;
+      const foundIdx = ladderTiers.findIndex(w => w === curLoadNum);
+      currentStep = foundIdx !== -1 ? (foundIdx + 1) : Math.min(totalSteps, Math.max(1, Math.round(((curLoadNum - minW) / inc) + 1)));
+    }
+
+    const setsCount = (planEx?.sets ? UI.parseSetsCount(planEx.sets) : null) || exData?.sets || 3;
+    const targetRepWindow = exData?.windowMin && exData?.windowMax
+      ? `${exData.windowMin}-${exData.windowMax}`
+      : (planEx?.repWindow || (planEx?.sets ? UI.parseReps(planEx.sets) : '10-15'));
+
     let metadataHTML = '';
-    if (exData || planEx || isWarmup || isMobility || isCardio) {
+    if (exData || planEx || isWeightedEx || isWarmup || isMobility || isCardio) {
       const secLabel = I18n.t('unit_seconds', 'שניות');
       const repsLabel = I18n.t('unit_reps', 'חזרות');
-      const kgLabel = I18n.t('unit_kg', 'ק״ג');
       const perSideLabel = I18n.t('per_side', 'לכל צד');
       const minLbl = I18n.t('min_label', 'מינ׳');
       const maxLbl = I18n.t('max_label', 'מקס׳');
@@ -1056,7 +1123,9 @@ const UI = (() => {
 
       // 3. Weight / Resistance formatting
       let weightText = null;
-      if (exData?.startingWeight != null) {
+      if (isWeightedEx && curLoadNum != null) {
+        weightText = `${curLoadNum} ${kgLabel} (${loadTypeLabel}) [${minLbl} ${minW}${kgLabel} | ${maxLbl} ${maxW}${kgLabel}]`;
+      } else if (exData?.startingWeight != null) {
         weightText = `${exData.startingWeight} ${kgLabel} (${exData.loadType || perSideLabel}) [${minLbl} ${exData.minWeight || 3}${kgLabel} | ${maxLbl} ${exData.maxWeight || 32}${kgLabel}]`;
       } else if (planEx?.weight) {
         let w = String(planEx.weight);
@@ -1108,7 +1177,6 @@ const UI = (() => {
 
       // 6. Muscle focus
       let muscleFocusText = null;
-      const exId = (exData?.id || planEx?.id || searchTitle).toLowerCase();
       if (typeof StatsPage !== 'undefined' && typeof StatsPage.getMuscleForExercise === 'function') {
         const mKey = StatsPage.getMuscleForExercise({ id: exId, name: effectiveTitle });
         if (mKey) {
@@ -1128,20 +1196,122 @@ const UI = (() => {
         ruleText = enrichHeartRateText(ruleText);
       }
 
+      // 8. Visual Horizontal Ladder
+      let ladderHTML = '';
+      if (isWeightedEx && ladderTiers.length > 0) {
+        ladderHTML = `
+          <div class="progression-ladder-track-container" style="margin-top: 4px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch;">
+            <div style="display: flex; align-items: center; gap: 6px; min-width: max-content;">
+              ${ladderTiers.map((tw, idx) => {
+                const isPassed = tw < curLoadNum;
+                const isCurrent = tw === curLoadNum;
+                const isNext = tw === nextW && curLoadNum < maxW;
+                const isMax = tw === maxW;
+
+                let borderStyle = '1px solid var(--border-color)';
+                let bgStyle = 'background: rgba(0, 0, 0, 0.25);';
+                let textColor = 'var(--text-muted)';
+                let tagBadge = '';
+
+                if (isCurrent) {
+                  borderStyle = '2px solid var(--accent-primary, #3b82f6)';
+                  bgStyle = 'background: rgba(59, 130, 246, 0.22);';
+                  textColor = '#60a5fa';
+                  tagBadge = `<span style="font-size: 9px; background: #3b82f6; color: white; padding: 1px 4px; border-radius: 4px; font-weight: 800; white-space: nowrap;">${I18n.t('progression_current_badge', 'נוכחי 📍')}</span>`;
+                } else if (isNext) {
+                  borderStyle = '1px solid #10b981';
+                  bgStyle = 'background: rgba(16, 185, 129, 0.15);';
+                  textColor = '#34d399';
+                  tagBadge = `<span style="font-size: 9px; background: #10b981; color: white; padding: 1px 4px; border-radius: 4px; font-weight: 800; white-space: nowrap;">${I18n.t('progression_next_badge', 'הבא 🎯')}</span>`;
+                } else if (isPassed) {
+                  borderStyle = '1px solid rgba(16, 185, 129, 0.3)';
+                  bgStyle = 'background: rgba(16, 185, 129, 0.08);';
+                  textColor = '#6ee7b7';
+                  tagBadge = `<span style="font-size: 9px; color: #10b981;">✓</span>`;
+                } else if (isMax) {
+                  tagBadge = `<span style="font-size: 9px; color: #f59e0b;">🏆</span>`;
+                }
+
+                return `
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="${bgStyle} border: ${borderStyle}; border-radius: 8px; padding: 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 52px; text-align: center;">
+                      <span style="font-size: 11.5px; font-weight: 800; color: ${textColor};"><bdi dir="ltr">${tw} ${kgLabel}</bdi></span>
+                      ${tagBadge}
+                    </div>
+                    ${idx < ladderTiers.length - 1 ? `<span style="color: var(--text-muted); font-size: 10px;">➔</span>` : ''}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // Progression Rule Explanation
+      let progressionRuleText = '';
+      if (isWeightedEx) {
+        const isGrpA = (window.ProgressionEngine && typeof window.ProgressionEngine.isGroupA === 'function') 
+          ? window.ProgressionEngine.isGroupA(exData || { id: exId }) 
+          : true;
+        const targetSessions = isGrpA ? 3 : 4;
+        const nextTargetStr = curLoadNum < maxW ? `${nextW} ${kgLabel}` : `${maxW} ${kgLabel} (${I18n.t('progression_max_ceiling', 'תקרה')})`;
+        progressionRuleText = I18n.t('progression_rule_weighted_desc', '', {
+          targetSessions,
+          repWindow: `${targetRepWindow} ${I18n.t('unit_reps', 'חזרות')}`,
+          nextWeight: nextTargetStr
+        });
+      }
+
       const chips = [];
       if (repText) chips.push({ icon: '🎯', label: I18n.t('label_rep_window', 'יעד חזרות:'), val: enrichHeartRateText(repText) });
       if (restText) chips.push({ icon: '⏳', label: I18n.t('label_rest', 'מנוחה:'), val: enrichHeartRateText(restText) });
       if (tempoText) chips.push({ icon: '⏱️', label: I18n.t('label_tempo', 'טמפו:'), val: enrichHeartRateText(tempoText) });
       if (structureText) chips.push({ icon: '🏗️', label: I18n.t('label_structure', 'מבנה:'), val: enrichHeartRateText(structureText) });
       if (muscleFocusText) chips.push({ icon: '💪', label: I18n.t('label_target_muscle', 'מיקוד שרירי:'), val: muscleFocusText });
-      if (weightText) chips.push({ icon: '⚖️', label: I18n.t('label_starting_weight', 'משקל / התנגדות:'), val: enrichHeartRateText(weightText), fullWidth: true });
+      if (weightText) {
+        const weightChipLabel = isWeightedEx ? (I18n.t('label_current_weight', 'משקל עבודה נוכחי:') || I18n.t('label_starting_weight', 'משקל / התנגדות:')) : I18n.t('label_starting_weight', 'משקל / התנגדות:');
+        chips.push({ icon: '⚖️', label: weightChipLabel, val: enrichHeartRateText(weightText), fullWidth: true });
+      }
 
-      if (chips.length > 0 || ruleText) {
+      if (chips.length > 0 || ruleText || isWeightedEx) {
         metadataHTML = `
-          <div style="background: var(--bg-card); padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 6px;">
-            <div style="font-size: 13px; font-weight: 800; color: var(--accent-primary, #3b82f6); display: flex; align-items: center; gap: 6px;">
-              <span>📋</span> <span>${I18n.t('zero_decisions_spec', 'מפרט ופרוטוקול ביצוע ("Zero Decisions")')}</span>
+          <div style="background: var(--bg-card); padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 8px;">
+            <div style="font-size: 13px; font-weight: 800; color: var(--accent-primary, #3b82f6); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+              <span style="display: flex; align-items: center; gap: 6px;">📋 <span>${I18n.t('zero_decisions_spec', 'מפרט ופרוטוקול ביצוע ("Zero Decisions")')}</span></span>
+              ${isWeightedEx ? `
+                <span style="font-size: 11px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #60a5fa; padding: 2px 8px; border-radius: 6px; font-weight: 700;">
+                  🪜 ${I18n.t('progression_ladder_step', '', { current: currentStep, total: totalSteps })}
+                </span>
+              ` : ''}
             </div>
+
+            ${isWeightedEx ? `
+              <div class="zero-decisions-progression-card" style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.65), rgba(15, 23, 42, 0.8)); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; font-size: 12px;">
+                  <div style="background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 8px;">
+                    <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">🏋️ ${I18n.t('progression_current_load', 'משקל עבודה נוכחי:')}</div>
+                    <div style="font-size: 15px; font-weight: 900; color: var(--accent-primary);"><bdi dir="ltr">${curLoadNum} ${kgLabel}</bdi> <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">(${loadTypeLabel})</span></div>
+                  </div>
+                  <div style="background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 8px;">
+                    <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">🎯 ${I18n.t('progression_target_reps_sets', 'יעד סטים וחזרות:')}</div>
+                    <div style="font-size: 15px; font-weight: 900; color: #10b981;"><bdi dir="ltr">${setsCount} × ${targetRepWindow}</bdi></div>
+                  </div>
+                  <div style="background: var(--bg-elevated); border: 1px solid var(--border-color); border-radius: 8px; padding: 6px 8px;">
+                    <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px;">🚀 ${I18n.t('progression_next_target_weight', 'משקל היעד הבא:')}</div>
+                    <div style="font-size: 15px; font-weight: 900; color: ${curLoadNum < maxW ? '#f59e0b' : '#10b981'};">
+                      <bdi dir="ltr">${curLoadNum < maxW ? `${nextW} ${kgLabel} (+${inc})` : `${maxW} ${kgLabel} (${I18n.t('progression_max_ceiling', 'תקרה')})`}</bdi>
+                    </div>
+                  </div>
+                </div>
+
+                ${ladderHTML}
+
+                <div style="font-size: 11px; line-height: 1.4; color: var(--text-secondary); background: rgba(0, 0, 0, 0.2); border-radius: 6px; padding: 6px 8px; border-inline-start: 3px solid var(--accent-primary);">
+                  💡 <b>${I18n.t('progression_rule_how_to_advance', 'איך עולים לשלב הבא?')}:</b> ${progressionRuleText}
+                </div>
+              </div>
+            ` : ''}
+
             ${chips.length > 0 ? `
               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; font-size: 12px;">
                 ${chips.map(chip => `
@@ -1151,6 +1321,7 @@ const UI = (() => {
                 `).join('')}
               </div>
             ` : ''}
+
             ${ruleText ? `
               <div style="margin-top: 2px; padding: 6px 8px; background: rgba(245, 158, 11, 0.12); border-right: 3px solid #f59e0b; border-radius: 6px; font-size: 11.5px; color: var(--text-primary); line-height: 1.4;">
                 <b>⚠️ ${I18n.t('mechanical_stop_rule', 'כלל טכניקה / Mechanical Stop:')}</b> ${ruleText}
@@ -1290,11 +1461,38 @@ const UI = (() => {
       `;
     } else if (gifExists) {
       let stageHeaderHTML = '';
-      const resolvedStageName = planEx?.currentStageName || 
-        (window.TodayPage && typeof window.TodayPage.resolveExerciseStage === 'function' ? window.TodayPage.resolveExerciseStage(planEx, null) : null) ||
-        (window.ExercisesPage?.EXERCISE_WEIGHT_PROGRESSION?.[effectiveTitle]?.[0]?.weight);
+      const rawFallbackStage = window.ExercisesPage?.EXERCISE_WEIGHT_PROGRESSION?.[effectiveTitle]?.[0]?.weight;
+      const isNumericWeight = rawFallbackStage && (/^\d+(?:\.\d+)?\s*kg/i.test(String(rawFallbackStage).trim()) || typeof rawFallbackStage === 'number');
+      const validStageFallback = !isNumericWeight ? rawFallbackStage : null;
 
-      if (resolvedStageName) {
+      const resolvedStageName = planEx?.currentStageName || 
+        (window.TodayPage && typeof window.TodayPage.resolveExerciseStage === 'function' ? window.TodayPage.resolveExerciseStage(planEx || { name: effectiveTitle }, null) : null) ||
+        validStageFallback;
+
+      if (isWeightedEx && curLoadNum != null) {
+        stageHeaderHTML = `
+          <div class="gif-modal-weighted-header" style="display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(37, 99, 235, 0.08)); border: 1px solid rgba(59, 130, 246, 0.35); padding: 7px 12px; border-radius: 10px; margin-bottom: 8px; gap: 8px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; color: var(--text-primary); min-width: 0;">
+              <span style="font-size: 16px;">🏋️</span>
+              <span>${I18n.t('progression_current_load', 'משקל עבודה נוכחי:')} <b style="color: var(--accent-primary); font-size: 14px;"><bdi dir="ltr">${curLoadNum} ${kgLabel}</bdi></b> <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">(${loadTypeLabel})</span></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700;">
+              <span style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
+                🎯 ${setsCount} ${I18n.t('unit_sets', 'סטים')} × ${targetRepWindow} ${I18n.t('unit_reps', 'חזרות')}
+              </span>
+              ${curLoadNum < maxW ? `
+                <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
+                  🚀 ${I18n.t('progression_next_badge', 'הבא:')} ${nextW} ${kgLabel}
+                </span>
+              ` : `
+                <span style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
+                  🏆 ${I18n.t('progression_max_ceiling', 'תקרת מקסימום')}
+                </span>
+              `}
+            </div>
+          </div>
+        `;
+      } else if (resolvedStageName) {
         const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || resolvedStageName.includes('°') || resolvedStageName.includes('זווית') || resolvedStageName.includes('زاوية') || (effectiveTitle || '').toLowerCase().includes('trx');
         const isIncline = resolvedStageName.toLowerCase().includes('incline');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(resolvedStageName) !== resolvedStageName) ? I18n.t(resolvedStageName) : resolvedStageName;
@@ -1337,11 +1535,38 @@ const UI = (() => {
       `;
     } else {
       let stageHeaderHTML = '';
-      const resolvedStageName = planEx?.currentStageName || 
-        (window.TodayPage && typeof window.TodayPage.resolveExerciseStage === 'function' ? window.TodayPage.resolveExerciseStage(planEx, null) : null) ||
-        (window.ExercisesPage?.EXERCISE_WEIGHT_PROGRESSION?.[effectiveTitle]?.[0]?.weight);
+      const rawFallbackStage = window.ExercisesPage?.EXERCISE_WEIGHT_PROGRESSION?.[effectiveTitle]?.[0]?.weight;
+      const isNumericWeight = rawFallbackStage && (/^\d+(?:\.\d+)?\s*kg/i.test(String(rawFallbackStage).trim()) || typeof rawFallbackStage === 'number');
+      const validStageFallback = !isNumericWeight ? rawFallbackStage : null;
 
-      if (resolvedStageName) {
+      const resolvedStageName = planEx?.currentStageName || 
+        (window.TodayPage && typeof window.TodayPage.resolveExerciseStage === 'function' ? window.TodayPage.resolveExerciseStage(planEx || { name: effectiveTitle }, null) : null) ||
+        validStageFallback;
+
+      if (isWeightedEx && curLoadNum != null) {
+        stageHeaderHTML = `
+          <div class="gif-modal-weighted-header" style="display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, rgba(59, 130, 246, 0.14), rgba(37, 99, 235, 0.08)); border: 1px solid rgba(59, 130, 246, 0.35); padding: 7px 12px; border-radius: 10px; margin-bottom: 8px; gap: 8px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 13px; color: var(--text-primary); min-width: 0;">
+              <span style="font-size: 16px;">🏋️</span>
+              <span>${I18n.t('progression_current_load', 'משקל עבודה נוכחי:')} <b style="color: var(--accent-primary); font-size: 14px;"><bdi dir="ltr">${curLoadNum} ${kgLabel}</bdi></b> <span style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">(${loadTypeLabel})</span></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 11.5px; font-weight: 700;">
+              <span style="background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: var(--accent-primary); padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
+                🎯 ${setsCount} ${I18n.t('unit_sets', 'סטים')} × ${targetRepWindow} ${I18n.t('unit_reps', 'חזרות')}
+              </span>
+              ${curLoadNum < maxW ? `
+                <span style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #10b981; padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
+                  🚀 ${I18n.t('progression_next_badge', 'הבא:')} ${nextW} ${kgLabel}
+                </span>
+              ` : `
+                <span style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 2px 7px; border-radius: 6px; white-space: nowrap;">
+                  🏆 ${I18n.t('progression_max_ceiling', 'תקרת מקסימום')}
+                </span>
+              `}
+            </div>
+          </div>
+        `;
+      } else if (resolvedStageName) {
         const isAngle = resolvedStageName.toLowerCase().startsWith('angle') || resolvedStageName.includes('°') || resolvedStageName.includes('זווית') || resolvedStageName.includes('زاوية') || (effectiveTitle || '').toLowerCase().includes('trx');
         const isIncline = resolvedStageName.toLowerCase().includes('incline');
         const stageLabel = (typeof I18n !== 'undefined' && I18n.t(resolvedStageName) !== resolvedStageName) ? I18n.t(resolvedStageName) : resolvedStageName;

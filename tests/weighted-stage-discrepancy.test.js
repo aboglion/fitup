@@ -124,4 +124,34 @@ test('Weighted Exercises Stage Discrepancy Prevention Test', () => {
   assert.equal(mockWindow.TodayPage.resolveExerciseStage(trxRow, { week: 'Week 1' }), 'Angle 1');
   assert.equal(mockWindow.TodayPage.resolveExerciseStage(briskWalk, { week: 'Week 3' }), 'Incline 4%');
   assert.equal(mockWindow.TodayPage.resolveExerciseStage(hollowBody, { week: 'Week 3' }), 'Tuck Hold');
+
+  // 3. Verify UI.showImageModal renders clear weighted progression card & header for DB Glute Bridge
+  mockWindow.UI.showImageModal('DB Glute Bridge');
+  const gluteBridgeModalContent = elements['modal-body']?.innerHTML || '';
+
+  assert.ok(
+    !gluteBridgeModalContent.includes('gif-modal-stage-header'),
+    'DB Glute Bridge must NOT render gif-modal-stage-header'
+  );
+  assert.ok(
+    gluteBridgeModalContent.includes('gif-modal-weighted-header'),
+    'DB Glute Bridge must render gif-modal-weighted-header'
+  );
+  assert.ok(
+    gluteBridgeModalContent.includes('zero-decisions-progression-card'),
+    'DB Glute Bridge must render zero-decisions-progression-card'
+  );
+  assert.ok(
+    gluteBridgeModalContent.includes('progression-ladder-track-container'),
+    'DB Glute Bridge must render progression-ladder-track-container'
+  );
+  assert.ok(
+    gluteBridgeModalContent.includes('8 ק״ג') || gluteBridgeModalContent.includes('8 kg'),
+    'DB Glute Bridge must show 8 kg as current load'
+  );
+  assert.ok(
+    gluteBridgeModalContent.includes('10 ק״ג') || gluteBridgeModalContent.includes('10 kg'),
+    'DB Glute Bridge must show 10 kg as next target load'
+  );
 });
+

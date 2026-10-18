@@ -4380,6 +4380,7 @@ const TodayPage = (() => {
 
       // Check if exercise has weight data
       const hasWeight = isWeighted(ex);
+      const exDef = window.ProgressionEngine ? (window.ProgressionEngine.getExercise(ex.id) || (window.ProgressionEngine.findExerciseIdByName ? window.ProgressionEngine.getExercise(window.ProgressionEngine.findExerciseIdByName(ex.name)) : null)) : null;
 
       // Determine if this is a time-based exercise
       const isTime = ex.sets && (ex.sets.includes('mins') || ex.sets.includes('secs'));
@@ -4444,7 +4445,54 @@ const TodayPage = (() => {
 
         const isExBilateral = !(/\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(ex.sets || '') || /\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(ex.repWindow || ''));
 
-        setsHTML = prevPerfHTML + '<div class="set-tracker">';
+        let progressionBarHTML = '';
+        if (hasWeight) {
+          const weightInfo = parseWeightDetails(ex.weight, ex.name);
+          const curW = (weightInfo && parseFloat(weightInfo.cleanWeight)) || ex.targetWeightKg || 8;
+          const exProgTiers = (window.ExercisesPage && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION)
+            ? (window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[ex.name] || (exDef && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[exDef.name]))
+            : null;
+          let cStep = 1;
+          let tSteps = 1;
+          if (Array.isArray(exProgTiers) && exProgTiers.length > 0) {
+            tSteps = exProgTiers.length;
+            const sIdx = exProgTiers.findIndex(t => parseFloat(String(t.weight).replace(/[^\d.]/g, '')) === curW);
+            cStep = sIdx !== -1 ? (sIdx + 1) : Math.min(tSteps, Math.max(1, Math.round(((curW - (exDef?.minWeight || 8)) / (exDef?.increment || 2)) + 1)));
+          } else if (exDef?.maxWeight && exDef?.minWeight && exDef?.increment) {
+            tSteps = Math.max(1, Math.round((exDef.maxWeight - exDef.minWeight) / exDef.increment) + 1);
+            cStep = Math.min(tSteps, Math.max(1, Math.round(((curW - exDef.minWeight) / exDef.increment) + 1)));
+          }
+
+          const incVal = exDef?.increment || 2;
+          const maxVal = exDef?.maxWeight || 32;
+          const nextWVal = Math.min(maxVal, curW + incVal);
+
+          progressionBarHTML = `
+            <div class="exercise-progression-status-bar" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(37, 99, 235, 0.04)); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 8px; padding: 6px 10px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; font-size: 11.5px;">
+              <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; color: var(--text-primary);">
+                <span>🏋️</span>
+                <span>${I18n.t('progression_current_load', 'משקל עבודה נוכחי:')} <b style="color: var(--accent-primary);"><bdi dir="ltr">${curW} kg</bdi></b></span>
+                ${tSteps > 1 ? `<span style="font-size: 10.5px; color: #60a5fa; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); padding: 1px 6px; border-radius: 5px; font-weight: 700;">${I18n.t('stage_tag', 'שלב')} ${cStep}/${tSteps}</span>` : ''}
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;">
+                <span style="color: #10b981; background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1px 6px; border-radius: 5px;">
+                  🎯 ${ex.sets}
+                </span>
+                ${curW < maxVal ? `
+                  <span style="color: #60a5fa; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); padding: 1px 6px; border-radius: 5px;">
+                    🚀 ${I18n.t('progression_next_badge', 'הבא:')} ${nextWVal} kg
+                  </span>
+                ` : `
+                  <span style="color: #f59e0b; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); padding: 1px 6px; border-radius: 5px;">
+                    🏆 ${I18n.t('progression_max_ceiling', 'תקרה')}
+                  </span>
+                `}
+              </div>
+            </div>
+          `;
+        }
+
+        setsHTML = prevPerfHTML + progressionBarHTML + '<div class="set-tracker">';
         for (let s = 0; s < setsCount; s++) {
           const setDone = setData[`set_${s}_done`] || false;
           let setReps = setData[`set_${s}_reps`] || '';
@@ -4668,6 +4716,23 @@ const TodayPage = (() => {
           detailParts.push(`<span class="max-weight-overload-badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('max_weight_overload_desc')}">⭐ ${I18n.t('max_weight_overload_badge')}</span>`);
         } else if (ex.name && ex.name.toLowerCase().includes('bulgarian') && numericWeight >= 20) {
           detailParts.push(`<span class="suitcase-grip-badge" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); color: var(--accent-primary, #3b82f6); padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;" title="${I18n.t('suitcase_grip_desc')}">👜 ${I18n.t('suitcase_grip_badge')}</span>`);
+        }
+
+        const exProgTiers = (window.ExercisesPage && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION)
+          ? (window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[ex.name] || (exDef && window.ExercisesPage.EXERCISE_WEIGHT_PROGRESSION[exDef.name]))
+          : null;
+        let cStep = 1;
+        let tSteps = 1;
+        if (Array.isArray(exProgTiers) && exProgTiers.length > 0) {
+          tSteps = exProgTiers.length;
+          const sIdx = exProgTiers.findIndex(t => parseFloat(String(t.weight).replace(/[^\d.]/g, '')) === numericWeight);
+          cStep = sIdx !== -1 ? (sIdx + 1) : Math.min(tSteps, Math.max(1, Math.round(((numericWeight - (exDef?.minWeight || 8)) / (exDef?.increment || 2)) + 1)));
+        } else if (exDef?.maxWeight && exDef?.minWeight && exDef?.increment) {
+          tSteps = Math.max(1, Math.round((exDef.maxWeight - exDef.minWeight) / exDef.increment) + 1);
+          cStep = Math.min(tSteps, Math.max(1, Math.round(((numericWeight - exDef.minWeight) / exDef.increment) + 1)));
+        }
+        if (tSteps > 1) {
+          detailParts.push(`<span class="progression-step-pill" style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 2px 7px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap;" title="${I18n.t('progression_step_label', 'שלב בסולם המשקלים')}">🪜 ${I18n.t('stage_tag', 'שלב')} ${cStep}/${tSteps}</span>`);
         }
       } else if (curStageName) {
         const isAngle = curStageName.toLowerCase().startsWith('angle') || curStageName.includes('°') || curStageName.includes('זווית') || curStageName.includes('زاوية') || (ex.name || '').toLowerCase().includes('trx');
@@ -8733,6 +8798,7 @@ const TodayPage = (() => {
     getDayIsoDate,
     isDayInPast,
     getCurrentDayIndex: () => currentDayIndex,
+    getStatesMap: () => statesMapCache,
     resolveExerciseStage,
     getActiveExerciseName,
     openAiExportModal,
