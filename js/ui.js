@@ -1264,9 +1264,7 @@ const UI = (() => {
           : enrichHeartRateText(repText);
         chips.push({ icon: '🎯', label: repLabel, val: repVal });
       }
-      if (restText) chips.push({ icon: '⏳', label: I18n.t('label_rest', 'מנוחה:'), val: enrichHeartRateText(restText) });
       if (tempoText) chips.push({ icon: '⏱️', label: I18n.t('label_tempo', 'טמפו:'), val: enrichHeartRateText(tempoText) });
-      if (structureText) chips.push({ icon: '🏗️', label: I18n.t('label_structure', 'מבנה:'), val: enrichHeartRateText(structureText) });
       if (muscleFocusText) chips.push({ icon: '💪', label: I18n.t('label_target_muscle', 'מיקוד שרירי:'), val: muscleFocusText });
       if (weightText) {
         const weightChipLabel = isWeightedEx ? (I18n.t('label_current_weight', 'משקל עבודה נוכחי:') || I18n.t('label_starting_weight', 'משקל / התנגדות:')) : I18n.t('label_starting_weight', 'משקל / התנגדות:');
