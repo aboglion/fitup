@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v206-perfection-audit';
+const CACHE_NAME = 'fitup-v207-muscle-map';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
@@ -28,6 +28,7 @@ const ASSETS = [
   './js/preloader.js',
   './js/injury-engine.js',
   './js/i18n.js',
+  './js/muscle-map.js',
   './js/ui.js',
   './js/gemini.js',
   './js/today.js',
