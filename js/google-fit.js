@@ -11,7 +11,15 @@ const GoogleFitService = (() => {
    * Fetch daily metrics (steps, calories, avg/max heart rate) for a given date or today
    */
   async function fetchDailyFitData(dateStr = null) {
-    const token = await CloudSync.getAccessToken();
+    let token = null;
+    if (typeof CloudSync !== 'undefined') {
+      if (typeof CloudSync.ensureValidToken === 'function') {
+        token = await CloudSync.ensureValidToken();
+      }
+      if (!token && typeof CloudSync.getAccessToken === 'function') {
+        token = await CloudSync.getAccessToken();
+      }
+    }
     if (!token) return null;
 
     let targetDate = new Date();
@@ -23,7 +31,8 @@ const GoogleFitService = (() => {
     }
 
     const startOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0, 0);
-    const endOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 23, 59, 59, 999);
+    // Use start of next day for exact 86400000 ms interval to match 24-hour bucketByTime duration
+    const endOfDay = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate() + 1, 0, 0, 0, 0);
 
     const makeAggregateRequest = async (types) => {
       const requestBody = {
@@ -64,6 +73,9 @@ const GoogleFitService = (() => {
 
       if (!response.ok) {
         console.warn('Google Fit API error:', response.status);
+        if (response.status === 401 && typeof CloudSync !== 'undefined' && typeof CloudSync.handleTokenExpired === 'function') {
+          CloudSync.handleTokenExpired();
+        }
         return null;
       }
 
@@ -87,32 +99,34 @@ const GoogleFitService = (() => {
     let hrCount = 0;
     let hrSum = 0;
 
-    if (data && data.bucket && data.bucket.length > 0) {
-      const dataset = data.bucket[0].dataset || [];
-      dataset.forEach(ds => {
-        const typeName = ds.dataTypeName || '';
-        const streamId = ds.dataSourceId || '';
-        const isStep = typeName.includes('step_count') || streamId.includes('step_count');
-        const isCal = typeName.includes('calories') || streamId.includes('calories');
-        const isHR = typeName.includes('heart_rate') || streamId.includes('heart_rate');
-        const isHP = typeName.includes('heart_minutes') || streamId.includes('heart_minutes');
-        const point = ds.point || [];
+    if (data && Array.isArray(data.bucket) && data.bucket.length > 0) {
+      data.bucket.forEach(b => {
+        const dataset = b.dataset || [];
+        dataset.forEach(ds => {
+          const typeName = ds.dataTypeName || '';
+          const streamId = ds.dataSourceId || '';
+          const isStep = typeName.includes('step_count') || streamId.includes('step_count');
+          const isCal = typeName.includes('calories') || streamId.includes('calories');
+          const isHR = typeName.includes('heart_rate') || streamId.includes('heart_rate');
+          const isHP = typeName.includes('heart_minutes') || streamId.includes('heart_minutes');
+          const point = ds.point || [];
 
-        point.forEach(pt => {
-          const value = pt.value || [];
-          value.forEach(val => {
-            const num = val.intVal != null ? val.intVal : (val.fpVal != null ? Math.round(val.fpVal) : 0);
-            if (isStep) {
-              steps += num;
-            } else if (isCal) {
-              calories += num;
-            } else if (isHR && num > 0) {
-              hrSum += num;
-              hrCount++;
-              if (num > maxHeartRate) maxHeartRate = num;
-            } else if (isHP) {
-              heartPoints += num;
-            }
+          point.forEach(pt => {
+            const value = pt.value || [];
+            value.forEach(val => {
+              const num = val.intVal != null ? val.intVal : (val.fpVal != null ? Math.round(val.fpVal) : 0);
+              if (isStep) {
+                steps += num;
+              } else if (isCal) {
+                calories += num;
+              } else if (isHR && num > 0) {
+                hrSum += num;
+                hrCount++;
+                if (num > maxHeartRate) maxHeartRate = num;
+              } else if (isHP) {
+                heartPoints += num;
+              }
+            });
           });
         });
       });

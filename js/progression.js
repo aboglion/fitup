@@ -1008,13 +1008,28 @@
           const pastDay = planDays[i];
           if (!pastDay || !pastDay.exercises) continue;
 
-          const exIdx = pastDay.exercises.findIndex(e => e.id === exerciseId || e.name === exerciseId);
+          // Progression Engine evaluates main working sets only, never warmups
+          let exIdx = pastDay.exercises.findIndex(e => (e.id === exerciseId || e.name === exerciseId) && !e.isWarmup && !(e.slot && e.slot.startsWith('W')));
+          if (exIdx === -1) {
+            exIdx = pastDay.exercises.findIndex(e => e.id === exerciseId || e.name === exerciseId);
+          }
           if (exIdx === -1) continue;
 
           const tracking = allTracking.find(t => t.dayIndex === i);
-          if (!tracking || !tracking.setData || !tracking.setData[exIdx]) continue;
+          if (!tracking || !tracking.setData) continue;
 
-          const setData = tracking.setData[exIdx];
+          let setData = null;
+          for (const key of Object.keys(tracking.setData)) {
+            const entry = tracking.setData[key];
+            if (entry && (entry.exerciseId === exerciseId || entry.exerciseName === exerciseId) && !entry.isWarmup) {
+              setData = entry;
+              break;
+            }
+          }
+          if (!setData) {
+            setData = tracking.setData[exIdx];
+          }
+          if (!setData) continue;
           const sets = [];
           for (let s = 0; s < 10; s++) {
             if (setData[`set_${s}_done`] || setData[`set_${s}_result`]) {

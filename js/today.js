@@ -362,7 +362,8 @@ const TodayPage = (() => {
           const pastDay = allPlanDays[i];
           if (!pastDay || !pastDay.exercises) continue;
 
-          const pastExIdx = pastDay.exercises.findIndex(e => (e.id && exId && e.id === exId) || e.name === ex.name);
+          const isCurWarmup = Boolean(ex.isWarmup || (ex.slot && ex.slot.startsWith('W')));
+          const pastExIdx = pastDay.exercises.findIndex(e => ((e.id && exId && e.id === exId) || e.name === ex.name) && Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W'))) === isCurWarmup);
           if (pastExIdx === -1) continue;
 
           const pastTrack = allTrackingCache.find(t => t.dayIndex === i);
@@ -479,7 +480,7 @@ const TodayPage = (() => {
       }
 
       // 2. Handle Variation / Stage Exercises
-      if (exDef && exDef.stages && exDef.stages.length > 0) {
+      if (!ex.isWarmup && !(ex.slot && ex.slot.startsWith('W')) && exDef && exDef.stages && exDef.stages.length > 0) {
         let stageIdx = (state && state.currentStageIndex != null) ? state.currentStageIndex : null;
         if (stageIdx == null) {
           const weekNum = day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1;
@@ -500,7 +501,7 @@ const TodayPage = (() => {
         const stageName = exDef.stages[stageIdx] || exDef.stages[0];
         ex.currentStageIndex = stageIdx;
         ex.currentStageName = stageName;
-      } else {
+      } else if (!ex.isWarmup && !(ex.slot && ex.slot.startsWith('W'))) {
         const stageResolved = resolveExerciseStage(ex, day, statesMap);
         if (stageResolved) {
           ex.currentStageName = stageResolved;
@@ -1004,6 +1005,7 @@ const TodayPage = (() => {
    * Render the today page
    */
   async function render() {
+    dismissExerciseChangePopup(true);
     const day = allPlanDays[currentDayIndex];
     if (!day) return;
     if (!day.exercises) day.exercises = [];
@@ -2323,8 +2325,9 @@ const TodayPage = (() => {
           let prevExDay = null;
           for (let i = currentDayIndex - 1; i >= 0; i--) {
             const pastDay = allPlanDays[i];
+            const isCurWarmup = Boolean(ex.isWarmup || (ex.slot && ex.slot.startsWith('W')));
             if (pastDay && pastDay.exercises) {
-              const found = pastDay.exercises.find(e => (e.id && ex.id && e.id === ex.id) || e.name === ex.name);
+              const found = pastDay.exercises.find(e => ((e.id && ex.id && e.id === ex.id) || e.name === ex.name) && Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W'))) === isCurWarmup);
               if (found) {
                 prevEx = found;
                 prevExDay = pastDay;
@@ -2602,34 +2605,161 @@ const TodayPage = (() => {
   }
 
   /**
-   * Find previous tracking performance for a given exercise name
-   * Looks back through plan days to find the last time this exercise was done with tracking data
+   * Find previous tracking performance for a given exercise
+   * Looks back through plan days to find the last time this exercise was done with tracking data.
+   * Isolates warmups from main workout exercises and validates biomechanics to prevent cross-exercise index shifts.
    */
-  function findPrevPerformance(exerciseName, beforeDayIndex) {
-    if (!allTrackingCache || !exerciseName) return null;
+  function findPrevPerformance(exerciseOrName, beforeDayIndex, explicitIsWarmup = undefined) {
+    if (!allTrackingCache || !exerciseOrName) return null;
+
+    let targetName = '';
+    let targetId = '';
+    let isWarmup = false;
+    let isBilateral = true;
+
+    if (typeof exerciseOrName === 'object' && exerciseOrName !== null) {
+      targetName = exerciseOrName.name || '';
+      targetId = exerciseOrName.id || '';
+      isWarmup = explicitIsWarmup !== undefined ? Boolean(explicitIsWarmup) : Boolean(exerciseOrName.isWarmup || (exerciseOrName.slot && exerciseOrName.slot.startsWith('W')));
+      const setsStr = (exerciseOrName.sets || '').toLowerCase();
+      const repWinStr = (exerciseOrName.repWindow || '').toLowerCase();
+      isBilateral = !(/\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(setsStr) || /\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(repWinStr));
+    } else {
+      targetName = String(exerciseOrName);
+      targetId = targetName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      isWarmup = Boolean(explicitIsWarmup);
+      isBilateral = !(/\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(targetName));
+    }
 
     // Build tracking map for quick lookup
     const trackingMap = {};
-    allTrackingCache.forEach(t => { trackingMap[t.dayIndex] = t; });
+    allTrackingCache.forEach(t => { if (t && t.dayIndex != null) trackingMap[t.dayIndex] = t; });
+
+    // Helper: Validate whether a setData block biomechanically fits the target exercise
+    function isValidSetDataForExercise(sData) {
+      if (!sData || typeof sData !== 'object') return false;
+      let hasAnySet = false;
+      let hasUnilateralMarker = false;
+
+      for (let s = 0; s < 10; s++) {
+        const r = sData[`set_${s}_reps`];
+        const done = sData[`set_${s}_done`];
+        const res = sData[`set_${s}_result`];
+        if (r || done || res) hasAnySet = true;
+        if (r && /\b(side|each side|\/side|leg|\/leg|each leg)\b/i.test(String(r))) {
+          hasUnilateralMarker = true;
+        }
+      }
+
+      if (!hasAnySet) return false;
+
+      // If target exercise is strictly bilateral (e.g. DB Glute Bridge), it CANNOT have /side or /leg
+      if (isBilateral && hasUnilateralMarker) {
+        return false;
+      }
+
+      return true;
+    }
 
     // Search backwards from the day before current
     for (let i = beforeDayIndex - 1; i >= 0; i--) {
+      const tracking = trackingMap[i];
+      if (!tracking || !tracking.setData) continue;
+
       const pastDay = allPlanDays[i];
       if (!pastDay || !pastDay.exercises) continue;
 
-      const exIdx = pastDay.exercises.findIndex(e => e.name === exerciseName);
-      if (exIdx === -1) continue;
+      // STEP 1: Direct match by stamped metadata in tracking.setData
+      if (tracking.setData) {
+        let directMatchData = null;
+        for (const key of Object.keys(tracking.setData)) {
+          const entry = tracking.setData[key];
+          if (entry && typeof entry === 'object') {
+            const entryName = entry.exerciseName || '';
+            const entryId = entry.exerciseId || '';
+            const entryWarmup = entry.isWarmup !== undefined ? Boolean(entry.isWarmup) : (entry.slot ? entry.slot.startsWith('W') : undefined);
 
-      const tracking = trackingMap[i];
-      if (!tracking || !tracking.setData || !tracking.setData[exIdx]) continue;
+            const isNameMatch = (entryName && entryName.toLowerCase() === targetName.toLowerCase()) ||
+                                (entryId && targetId && entryId.toLowerCase() === targetId.toLowerCase());
 
-      // Found tracking data for this exercise
-      return {
-        dayIndex: i,
-        dayNum: pastDay.dayNum || (i + 1),
-        setData: tracking.setData[exIdx],
-        completed: tracking.exerciseStatus && tracking.exerciseStatus[exIdx]
-      };
+            if (isNameMatch) {
+              if (entryWarmup === undefined || entryWarmup === isWarmup) {
+                if (isValidSetDataForExercise(entry)) {
+                  directMatchData = entry;
+                  break;
+                }
+              }
+            }
+          }
+        }
+        if (directMatchData) {
+          return {
+            dayIndex: i,
+            dayNum: pastDay.dayNum || (i + 1),
+            setData: directMatchData,
+            completed: tracking.completed
+          };
+        }
+      }
+
+      // STEP 2: Match by tracking.exerciseMap if present
+      if (Array.isArray(tracking.exerciseMap)) {
+        const mapEntry = tracking.exerciseMap.find(m =>
+          (m.name?.toLowerCase() === targetName.toLowerCase() || (targetId && m.id === targetId)) &&
+          Boolean(m.isWarmup) === isWarmup
+        );
+        if (mapEntry && tracking.setData[mapEntry.idx]) {
+          const candData = tracking.setData[mapEntry.idx];
+          if (isValidSetDataForExercise(candData)) {
+            return {
+              dayIndex: i,
+              dayNum: pastDay.dayNum || (i + 1),
+              setData: candData,
+              completed: tracking.exerciseStatus && tracking.exerciseStatus[mapEntry.idx]
+            };
+          }
+        }
+      }
+
+      // STEP 3: Legacy fallback — resolve candidate exercise index in pastDay
+      let adaptedExercises = null;
+      if (typeof InjuryEngine !== 'undefined' && InjuryEngine.adaptDayExercises) {
+        try {
+          adaptedExercises = InjuryEngine.adaptDayExercises(JSON.parse(JSON.stringify(pastDay.exercises)));
+        } catch (_) {}
+      }
+
+      const candidateIndices = [];
+
+      if (adaptedExercises && Array.isArray(adaptedExercises)) {
+        adaptedExercises.forEach((e, idx) => {
+          const eWarmup = Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W')));
+          if (((e.id && targetId && e.id === targetId) || e.name === targetName) && eWarmup === isWarmup) {
+            candidateIndices.push(idx);
+          }
+        });
+      }
+
+      pastDay.exercises.forEach((e, idx) => {
+        const eWarmup = Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W')));
+        if (((e.id && targetId && e.id === targetId) || e.name === targetName) && eWarmup === isWarmup) {
+          if (!candidateIndices.includes(idx)) {
+            candidateIndices.push(idx);
+          }
+        }
+      });
+
+      for (const candIdx of candidateIndices) {
+        const candData = tracking.setData[candIdx];
+        if (candData && isValidSetDataForExercise(candData)) {
+          return {
+            dayIndex: i,
+            dayNum: pastDay.dayNum || (i + 1),
+            setData: candData,
+            completed: tracking.exerciseStatus && tracking.exerciseStatus[candIdx]
+          };
+        }
+      }
     }
     return null;
   }
@@ -2653,11 +2783,30 @@ const TodayPage = (() => {
    * Returns array of up to `limit` entries sorted oldest to newest:
    * [{ dayIndex, dayNum, date, value, unit }]
    */
-  function getExerciseTrendHistory(exerciseName, beforeDayIndex, limit = 5) {
-    if (!allTrackingCache || !exerciseName || beforeDayIndex <= 0) return [];
+  function getExerciseTrendHistory(exerciseOrName, beforeDayIndex, limit = 5) {
+    if (!allTrackingCache || !exerciseOrName || beforeDayIndex <= 0) return [];
+
+    let targetName = '';
+    let targetId = '';
+    let isWarmup = false;
+    let isBilateral = true;
+
+    if (typeof exerciseOrName === 'object' && exerciseOrName !== null) {
+      targetName = exerciseOrName.name || '';
+      targetId = exerciseOrName.id || '';
+      isWarmup = Boolean(exerciseOrName.isWarmup || (exerciseOrName.slot && exerciseOrName.slot.startsWith('W')));
+      const setsStr = (exerciseOrName.sets || '').toLowerCase();
+      const repWinStr = (exerciseOrName.repWindow || '').toLowerCase();
+      isBilateral = !(/\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(setsStr) || /\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(repWinStr));
+    } else {
+      targetName = String(exerciseOrName);
+      targetId = targetName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      isWarmup = false;
+      isBilateral = !(/\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(targetName));
+    }
 
     const trackingMap = {};
-    allTrackingCache.forEach(t => { trackingMap[t.dayIndex] = t; });
+    allTrackingCache.forEach(t => { if (t && t.dayIndex != null) trackingMap[t.dayIndex] = t; });
 
     const rawHistory = [];
 
@@ -2666,14 +2815,51 @@ const TodayPage = (() => {
       const pastDay = allPlanDays[i];
       if (!pastDay || !pastDay.exercises) continue;
 
-      const exIdx = pastDay.exercises.findIndex(e => e.name === exerciseName);
-      if (exIdx === -1) continue;
-
       const tracking = trackingMap[i];
       if (!tracking || !tracking.setData) continue;
 
-      const sData = tracking.setData[exIdx] || tracking.setData[`ex_${exIdx}`];
+      let sData = null;
+
+      // Stamped metadata lookup
+      for (const key of Object.keys(tracking.setData)) {
+        const entry = tracking.setData[key];
+        if (entry && typeof entry === 'object') {
+          const entryName = entry.exerciseName || '';
+          const entryId = entry.exerciseId || '';
+          const entryWarmup = entry.isWarmup !== undefined ? Boolean(entry.isWarmup) : (entry.slot ? entry.slot.startsWith('W') : undefined);
+          if (((entryName && entryName.toLowerCase() === targetName.toLowerCase()) || (entryId && targetId && entryId.toLowerCase() === targetId.toLowerCase())) &&
+              (entryWarmup === undefined || entryWarmup === isWarmup)) {
+            sData = entry;
+            break;
+          }
+        }
+      }
+
+      if (!sData) {
+        let candIdx = pastDay.exercises.findIndex(e => ((e.id && targetId && e.id === targetId) || e.name === targetName) && Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W'))) === isWarmup);
+        if (candIdx === -1 && typeof InjuryEngine !== 'undefined' && InjuryEngine.adaptDayExercises) {
+          try {
+            const adapted = InjuryEngine.adaptDayExercises(JSON.parse(JSON.stringify(pastDay.exercises)));
+            candIdx = adapted.findIndex(e => ((e.id && targetId && e.id === targetId) || e.name === targetName) && Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W'))) === isWarmup);
+          } catch (_) {}
+        }
+        if (candIdx !== -1) {
+          sData = tracking.setData[candIdx] || tracking.setData[`ex_${candIdx}`];
+        }
+      }
+
       if (!sData) continue;
+
+      // Bilateral check: do not let unilateral sets count for bilateral exercises
+      let hasUnilateral = false;
+      for (let s = 0; s < 10; s++) {
+        const r = sData[`set_${s}_reps`];
+        if (r && /\b(side|each side|\/side|leg|\/leg|each leg)\b/i.test(String(r))) {
+          hasUnilateral = true;
+          break;
+        }
+      }
+      if (isBilateral && hasUnilateral) continue;
 
       let maxWeight = 0;
       let maxReps = 0;
@@ -2721,27 +2907,87 @@ const TodayPage = (() => {
    * Find historical all-time peak estimated 1RM for an exercise across past sessions
    * Uses Epley formula: 1RM = Weight * (1 + Reps / 30)
    */
-  function getExercisePeak1RM(exerciseName, beforeDayIndex) {
-    if (!allTrackingCache || !exerciseName) return { peak1RM: 0, weight: 0, reps: 0, details: '' };
+  function getExercisePeak1RM(exerciseOrName, beforeDayIndex) {
+    if (!allTrackingCache || !exerciseOrName) return { peak1RM: 0, weight: 0, reps: 0, details: '' };
+
+    let targetName = '';
+    let targetId = '';
+    let isWarmup = false;
+    let isBilateral = true;
+
+    if (typeof exerciseOrName === 'object' && exerciseOrName !== null) {
+      targetName = exerciseOrName.name || '';
+      targetId = exerciseOrName.id || '';
+      isWarmup = Boolean(exerciseOrName.isWarmup || (exerciseOrName.slot && exerciseOrName.slot.startsWith('W')));
+      const setsStr = (exerciseOrName.sets || '').toLowerCase();
+      const repWinStr = (exerciseOrName.repWindow || '').toLowerCase();
+      isBilateral = !(/\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(setsStr) || /\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(repWinStr));
+    } else {
+      targetName = String(exerciseOrName);
+      targetId = targetName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      isWarmup = false;
+      isBilateral = !(/\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(targetName));
+    }
+
     let peak1RM = 0;
     let bestWeight = 0;
     let bestReps = 0;
     let bestDayNum = 0;
 
     const trackingMap = {};
-    allTrackingCache.forEach(t => { trackingMap[t.dayIndex] = t; });
+    allTrackingCache.forEach(t => { if (t && t.dayIndex != null) trackingMap[t.dayIndex] = t; });
 
     // Look across all past plan days up to beforeDayIndex
     const maxDayIdx = (beforeDayIndex !== undefined && beforeDayIndex !== null) ? beforeDayIndex : allPlanDays.length;
     for (let i = 0; i < maxDayIdx; i++) {
       const pastDay = allPlanDays[i];
       if (!pastDay || !pastDay.exercises) continue;
-      const exIdx = pastDay.exercises.findIndex(e => e.name === exerciseName);
-      if (exIdx === -1) continue;
+
       const tracking = trackingMap[i];
       if (!tracking || !tracking.setData) continue;
-      const sData = tracking.setData[exIdx] || tracking.setData[`ex_${exIdx}`];
+
+      let sData = null;
+
+      // Stamped metadata lookup
+      for (const key of Object.keys(tracking.setData)) {
+        const entry = tracking.setData[key];
+        if (entry && typeof entry === 'object') {
+          const entryName = entry.exerciseName || '';
+          const entryId = entry.exerciseId || '';
+          const entryWarmup = entry.isWarmup !== undefined ? Boolean(entry.isWarmup) : (entry.slot ? entry.slot.startsWith('W') : undefined);
+          if (((entryName && entryName.toLowerCase() === targetName.toLowerCase()) || (entryId && targetId && entryId.toLowerCase() === targetId.toLowerCase())) &&
+              (entryWarmup === undefined || entryWarmup === isWarmup)) {
+            sData = entry;
+            break;
+          }
+        }
+      }
+
+      if (!sData) {
+        let candIdx = pastDay.exercises.findIndex(e => ((e.id && targetId && e.id === targetId) || e.name === targetName) && Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W'))) === isWarmup);
+        if (candIdx === -1 && typeof InjuryEngine !== 'undefined' && InjuryEngine.adaptDayExercises) {
+          try {
+            const adapted = InjuryEngine.adaptDayExercises(JSON.parse(JSON.stringify(pastDay.exercises)));
+            candIdx = adapted.findIndex(e => ((e.id && targetId && e.id === targetId) || e.name === targetName) && Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W'))) === isWarmup);
+          } catch (_) {}
+        }
+        if (candIdx !== -1) {
+          sData = tracking.setData[candIdx] || tracking.setData[`ex_${candIdx}`];
+        }
+      }
+
       if (!sData) continue;
+
+      // Bilateral check
+      let hasUnilateral = false;
+      for (let s = 0; s < 10; s++) {
+        const r = sData[`set_${s}_reps`];
+        if (r && /\b(side|each side|\/side|leg|\/leg|each leg)\b/i.test(String(r))) {
+          hasUnilateral = true;
+          break;
+        }
+      }
+      if (isBilateral && hasUnilateral) continue;
 
       for (let s = 0; s < 10; s++) {
         const w = parseFloat(sData[`set_${s}_weight`]);
@@ -3867,8 +4113,8 @@ const TodayPage = (() => {
 
     const exNameLower = (ex.name || '').toLowerCase();
     const isCardio = (ex.category || '').toLowerCase() === 'cardio' || /walk|vo2|running|cardio/i.test(exNameLower) || /walk|vo2/i.test(ex.id || '');
-    const isTime = rawSets.includes('sec') || rawSets.includes('s') || rawSets.includes('min') || rawSets.includes('שנ') || isCardio || (ex.type === 'timebased') || (ex.type === 'interval');
-    const isMins = rawSets.includes('min') || rawSets.includes('דק') || isCardio || (ex.type === 'timebased' && parseInt(rawSets) >= 5);
+    const isMins = /\b\d+\s*(?:min|mins|minutes)\b/i.test(rawSets) || /\b(?:דק|דקות)\b/.test(rawSets) || isCardio || (ex.type === 'timebased' && parseInt(rawSets, 10) >= 5);
+    const isTime = /\b\d+\s*(?:s|sec|secs|seconds|min|mins|minutes)\b/i.test(rawSets) || /\b(?:שנ|שניות|דק|דקות)\b/.test(rawSets) || isCardio || (ex.type === 'timebased') || (ex.type === 'interval');
     const unitStr = isTime ? (isMins ? (I18n.t('unit_minutes') || 'דקות') : (I18n.t('unit_seconds') || 'שניות')) : (I18n.t('unit_reps') || 'חזרות');
 
     const isTimeHold = isTime && !isCardio;
@@ -4127,7 +4373,7 @@ const TodayPage = (() => {
       const isTime = ex.sets && (ex.sets.includes('mins') || ex.sets.includes('secs'));
 
       // Find previous tracking data for this exercise
-      const prevPerf = findPrevPerformance(ex.name, currentDayIndex);
+      const prevPerf = findPrevPerformance(ex, currentDayIndex);
 
       let setsHTML = '';
       if (setsCount > 0 && !isMobilityProtocol) {
@@ -4145,9 +4391,9 @@ const TodayPage = (() => {
             }
           }
           if (prevSets.length > 0) {
-            const trendHistory = getExerciseTrendHistory(ex.name, currentDayIndex, 5);
+            const trendHistory = getExerciseTrendHistory(ex, currentDayIndex, 5);
             const sparklineHTML = renderSparklineHTML(trendHistory, hasWeight, idx);
-            const peak1RMInfo = getExercisePeak1RM(ex.name, currentDayIndex);
+            const peak1RMInfo = getExercisePeak1RM(ex, currentDayIndex);
             const firstSetSuggestedWeight = getSuggestedWeightForSet(ex, 0, setsCount, prevPerf);
 
             let peak1RMButtonHTML = '';
@@ -4176,17 +4422,43 @@ const TodayPage = (() => {
           }
         }
 
+        // Stamp metadata into current session setData entry
+        if (setData) {
+          setData.exerciseName = ex.name;
+          setData.exerciseId = ex.id || '';
+          setData.slot = ex.slot || '';
+          setData.isWarmup = Boolean(ex.isWarmup || (ex.slot && ex.slot.startsWith('W')));
+        }
+
+        const isExBilateral = !(/\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(ex.sets || '') || /\b(side|each side|\/side|leg|\/leg|each leg|hand|arm)\b/i.test(ex.repWindow || ''));
+
         setsHTML = prevPerfHTML + '<div class="set-tracker">';
         for (let s = 0; s < setsCount; s++) {
           const setDone = setData[`set_${s}_done`] || false;
-          const setReps = setData[`set_${s}_reps`] || '';
+          let setReps = setData[`set_${s}_reps`] || '';
           const setWeight = setData[`set_${s}_weight`] || '';
+
+          // Auto-heal past index-shifted data in active session
+          if (isExBilateral && setReps && /\b(side|each side|\/side|leg|\/leg|each leg)\b/i.test(setReps)) {
+            const cleanR = setReps.replace(/\s*(\/side|\/leg|each side|each leg)/gi, '').trim();
+            const rm = cleanR.match(/^(\d+)\s*[-–]\s*(\d+)$/);
+            setReps = rm ? rm[2] : (cleanR.match(/^\d+$/) ? cleanR : String(parseRepsSmart(ex.sets) || 15));
+            setData[`set_${s}_reps`] = setReps;
+          } else if (!ex.isWarmup && ex.name === 'Dead Bug' && setReps === '6 each side') {
+            setReps = '';
+            delete setData[`set_${s}_reps`];
+          }
 
           const isSetRowUnlocked = isEditable && isSetUnlocked(idx, s);
           const setDisabledAttr = isSetRowUnlocked ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"';
 
-          // Use previous performance as placeholder hint
-          const prevReps = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_reps`]) || reps;
+          // Use previous performance as placeholder hint, ensuring bilateral exercises never inherit /side
+          let prevReps = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${s}_reps`]) || reps;
+          if (isExBilateral && prevReps && /\b(side|each side|\/side|leg|\/leg|each leg)\b/i.test(String(prevReps))) {
+            prevReps = reps;
+          } else if (!ex.isWarmup && ex.name === 'Dead Bug' && String(prevReps).includes('6 each side')) {
+            prevReps = reps;
+          }
           const suggestedWeightNum = getSuggestedWeightForSet(ex, s, setsCount, prevPerf);
 
           // Dynamic unit label for time vs reps
@@ -4311,10 +4583,11 @@ const TodayPage = (() => {
       // Find previous occurrence
       let prevEx = null;
       let prevExDay = null;
+      const isCurWarmup = Boolean(ex.isWarmup || (ex.slot && ex.slot.startsWith('W')));
       for (let i = currentDayIndex - 1; i >= 0; i--) {
         const pastDay = allPlanDays[i];
         if (pastDay && pastDay.exercises) {
-          const found = pastDay.exercises.find(e => (e.id && ex.id && e.id === ex.id) || e.name === ex.name);
+          const found = pastDay.exercises.find(e => ((e.id && ex.id && e.id === ex.id) || e.name === ex.name) && Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W'))) === isCurWarmup);
           if (found) {
             prevEx = found;
             prevExDay = pastDay;
@@ -4335,6 +4608,12 @@ const TodayPage = (() => {
         prevStageName.toLowerCase().startsWith('angle') ||
         (ex.name || '').toLowerCase().includes('trx')
       );
+
+      const curEquipsList = (UI.getEquipments ? UI.getEquipments(activeName) : [UI.getEquipment(activeName)]).filter(Boolean);
+      const prevEquipsList = prevEx ? (UI.getEquipments ? UI.getEquipments(prevEx.name) : [UI.getEquipment(prevEx.name)]).filter(Boolean) : [];
+      const curEqKey = curEquipsList.map(e => (e && (e.key || e.label)) || '').filter(Boolean).sort().join(',');
+      const prevEqKey = prevEquipsList.map(e => (e && (e.key || e.label)) || '').filter(Boolean).sort().join(',');
+      const isEquipmentChanged = Boolean(prevEx && curEqKey && prevEqKey && curEqKey !== prevEqKey);
 
       let newBadgeHTML = '';
       if (isNewExercise) {
@@ -4780,7 +5059,7 @@ const TodayPage = (() => {
           </div>
         `;
       }
-      const isCardAlert = isNewExercise || isAngleChanged;
+      const isCardAlert = isNewExercise || isAngleChanged || isWeightChanged || isEquipmentChanged;
 
       return `
         <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isSkippedTemp ? 'skipped-temp' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isCardAlert ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};" onpointerenter="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${activeName.replace(/'/g, "\\'")}')" ontouchstart="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${activeName.replace(/'/g, "\\'")}')">
@@ -4822,7 +5101,7 @@ const TodayPage = (() => {
                   ${ex.isWarmup ? `<span style="background: linear-gradient(135deg, #f59e0b22, #f9731622); border: 1px solid #f59e0b44; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; color: #f59e0b; display: inline-flex; align-items: center; gap: 4px;">🔥 Warmup</span>` : ''}
                   ${!isExUnlocked ? `<span class="locked-badge">🔒 ${I18n.t('exercise_locked')}</span>` : ''}
                   ${isSkippedTemp ? `<span class="skipped-temp-badge" style="background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #f59e0b; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">⏭️ ${I18n.t('skipped_temp_badge')}</span>` : ''}
-                  ${equip ? `<span style="background: var(--bg-hover, rgba(255,255,255,0.05)); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: normal; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px;">${equip.icon} ${equip.label}</span>` : ''}
+                  ${equip ? (isEquipmentChanged ? `<span class="alert-pulse-text" title="${I18n.t('equipment_changed_title')}">${equip.icon} ${equip.label}</span>` : `<span style="background: var(--bg-hover, rgba(255,255,255,0.05)); border: 1px solid var(--border-color); padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: normal; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px;">${equip.icon} ${equip.label}</span>`) : ''}
                 </div>
                 ${getLeanBadgesHTML(ex, day.week ? parseInt(day.week.replace(/\D/g, '')) || 1 : 1)}
                 <div class="exercise-card-detail">
@@ -4863,11 +5142,227 @@ const TodayPage = (() => {
     }
   }
 
+  let _changePopupTimer = null;
+
+  /**
+   * Inspect changes for exercise idx compared to its previous occurrence
+   */
+  function getExerciseChangeDetails(idx) {
+    if (currentDayIndex < 0 || !allPlanDays || !allPlanDays[currentDayIndex]) return null;
+    const day = allPlanDays[currentDayIndex];
+    if (!day || !day.exercises || !day.exercises[idx]) return null;
+    const ex = day.exercises[idx];
+
+    const statesMap = statesMapCache || ((typeof Storage !== 'undefined' && Storage.getAllExerciseStates) ? Storage.getAllExerciseStates() : {});
+
+    // Check injury adaptation
+    const injuryAdaptation = ex.injuryAdaptation || ((typeof InjuryEngine !== 'undefined') ? InjuryEngine.getExerciseAdaptation(ex.originalName || ex.name) : null);
+    const isInjuredSwap = !!(injuryAdaptation && injuryAdaptation.type === 'injured' && injuryAdaptation.substituteName);
+    const activeName = isInjuredSwap ? injuryAdaptation.substituteName : getActiveExerciseName(ex);
+
+    let prevEx = null;
+    let prevExDay = null;
+    const isCurWarmup = Boolean(ex.isWarmup || (ex.slot && ex.slot.startsWith('W')));
+    for (let i = currentDayIndex - 1; i >= 0; i--) {
+      const pastDay = allPlanDays[i];
+      if (pastDay && pastDay.exercises) {
+        const found = pastDay.exercises.find(e => ((e.id && ex.id && e.id === ex.id) || e.name === ex.name) && Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W'))) === isCurWarmup);
+        if (found) {
+          prevEx = found;
+          prevExDay = pastDay;
+          break;
+        }
+      }
+    }
+
+    const changes = [];
+
+    // 1. New Exercise
+    const isNewExercise = !prevEx && currentDayIndex > 0 && day.dayType !== 'Rest';
+    if (isNewExercise) {
+      changes.push({
+        type: 'new_exercise',
+        icon: '🆕',
+        label: I18n.t('new_exercise_badge') || 'תרגיל חדש!',
+        description: I18n.t('new_exercise_popup_desc') || 'תרגיל חדש בסבב זה — שים לב להנחיות'
+      });
+    }
+
+    // 2. Weight Change
+    const isW = isWeighted(ex);
+    if (prevEx && isW && ex.weight !== prevEx.weight) {
+      const curW = parseWeightDetails(ex.weight, ex.name);
+      const prevW = parseWeightDetails(prevEx.weight, prevEx.name);
+      const curWStr = curW ? `${curW.cleanWeight} ${I18n.t('unit_kg') || 'ק״ג'}${curW.isPerHand ? ` (${I18n.t('per_hand_tag') || 'כל יד'})` : ''}` : String(ex.weight);
+      const prevWStr = prevW ? `${prevW.cleanWeight} ${I18n.t('unit_kg') || 'ק״ג'}${prevW.isPerHand ? ` (${I18n.t('per_hand_tag') || 'כל יד'})` : ''}` : String(prevEx.weight);
+
+      let directionIcon = '⚖️';
+      let weightLabel = I18n.t('weight_updated_title') || 'משקל עודכן!';
+      if (curW && prevW) {
+        const curVal = parseFloat(curW.cleanWeight);
+        const prevVal = parseFloat(prevW.cleanWeight);
+        if (!isNaN(curVal) && !isNaN(prevVal)) {
+          if (curVal > prevVal) {
+            directionIcon = '📈';
+            weightLabel = I18n.t('weight_increased_title') || 'עלייה במשקל עבודה!';
+          } else if (curVal < prevVal) {
+            directionIcon = '📉';
+            weightLabel = I18n.t('weight_adjusted_title') || 'התאמת משקל עבודה';
+          }
+        }
+      }
+
+      changes.push({
+        type: 'weight',
+        icon: directionIcon,
+        label: weightLabel,
+        description: `${curWStr} (${I18n.t('weight_prev_was') || 'במקום'} ${prevWStr})`
+      });
+    }
+
+    // 3. Equipment Change
+    const curEquipsList = (UI.getEquipments ? UI.getEquipments(activeName) : [UI.getEquipment(activeName)]).filter(Boolean);
+    const prevEquipsList = prevEx ? (UI.getEquipments ? UI.getEquipments(prevEx.name) : [UI.getEquipment(prevEx.name)]).filter(Boolean) : [];
+    const curEqKey = curEquipsList.map(e => (e && (e.key || e.label)) || '').filter(Boolean).sort().join(',');
+    const prevEqKey = prevEquipsList.map(e => (e && (e.key || e.label)) || '').filter(Boolean).sort().join(',');
+    if (prevEx && curEqKey && prevEqKey && curEqKey !== prevEqKey) {
+      const curEqLabel = curEquipsList.map(e => e && e.label).filter(Boolean).join(', ');
+      const prevEqLabel = prevEquipsList.map(e => e && e.label).filter(Boolean).join(', ');
+      changes.push({
+        type: 'equipment',
+        icon: '🎒',
+        label: I18n.t('equipment_changed_title') || 'כלי / ציוד חדש!',
+        description: `${curEqLabel} (${I18n.t('weight_prev_was') || 'במקום'} ${prevEqLabel})`
+      });
+    }
+
+    // 4. Progression Stage / Angle Change
+    const curStageName = ex.currentStageName || resolveExerciseStage(ex, day, statesMap);
+    const prevStageName = prevEx ? (prevEx.currentStageName || resolveExerciseStage(prevEx, prevExDay, statesMap)) : null;
+    const isStageChanged = prevEx && prevStageName && curStageName && (prevStageName !== curStageName);
+    if (isStageChanged) {
+      const isAngle = curStageName.toLowerCase().startsWith('angle') || curStageName.includes('°') || curStageName.includes('זווית') || (ex.name || '').toLowerCase().includes('trx');
+      const curLabel = (typeof I18n !== 'undefined' && I18n.t(curStageName) !== curStageName) ? I18n.t(curStageName) : curStageName;
+      const prevLabel = (typeof I18n !== 'undefined' && I18n.t(prevStageName) !== prevStageName) ? I18n.t(prevStageName) : prevStageName;
+      changes.push({
+        type: isAngle ? 'angle' : 'stage',
+        icon: isAngle ? '📐' : '🎯',
+        label: isAngle ? (I18n.t('new_angle_badge') || 'זווית חדשה!') : (I18n.t('new_stage_badge') || 'שלב חדש!'),
+        description: `${curLabel} (${I18n.t('weight_prev_was') || 'במקום'} ${prevLabel})`
+      });
+    }
+
+    // 5. Sets Change
+    if (prevEx && ex.sets && prevEx.sets && ex.sets !== prevEx.sets) {
+      changes.push({
+        type: 'sets',
+        icon: '⚡',
+        label: I18n.t('sets_changed_title') || 'שינוי במספר הסטים!',
+        description: `${ex.sets} (${I18n.t('weight_prev_was') || 'במקום'} ${prevEx.sets})`
+      });
+    }
+
+    // 6. Injury Swap
+    if (isInjuredSwap && injuryAdaptation) {
+      changes.push({
+        type: 'injury_swap',
+        icon: '🛡️',
+        label: I18n.t(injuryAdaptation.badgeKey) || 'תרגיל מותאם לפציעה!',
+        description: `${injuryAdaptation.substituteName} (${I18n.t('cond_replace_orig') || 'הוחלף מ'}: ${ex.name})`
+      });
+    }
+
+    if (changes.length === 0) return null;
+
+    return {
+      exerciseIndex: idx,
+      exerciseNumber: idx + 1,
+      exerciseName: isInjuredSwap ? injuryAdaptation.substituteName : ex.name,
+      changes: changes
+    };
+  }
+
+  /**
+   * Show unobtrusive popup for 3 seconds on accordion expand
+   */
+  function triggerExerciseChangePopup(idx) {
+    dismissExerciseChangePopup(true);
+
+    const details = getExerciseChangeDetails(idx);
+    if (!details || !details.changes || details.changes.length === 0) {
+      return;
+    }
+
+    const popup = document.createElement('div');
+    popup.id = 'exercise-change-popup';
+    popup.className = 'exercise-change-popup';
+    popup.setAttribute('role', 'status');
+    popup.setAttribute('aria-live', 'polite');
+
+    popup.onclick = (e) => {
+      e.stopPropagation();
+      dismissExerciseChangePopup();
+    };
+
+    const changesHTML = details.changes.map(c => `
+      <div class="exercise-change-item">
+        <span class="exercise-change-icon">${c.icon}</span>
+        <div class="exercise-change-text">
+          <span class="exercise-change-label">${c.label}</span>
+          <span class="exercise-change-desc">${c.description}</span>
+        </div>
+      </div>
+    `).join('');
+
+    popup.innerHTML = `
+      <div class="exercise-change-popup-header">
+        <div class="exercise-change-popup-title-wrap">
+          <span class="exercise-change-popup-bell">🔔</span>
+          <span class="exercise-change-popup-badge">#${details.exerciseNumber}</span>
+          <span class="exercise-change-popup-name">${details.exerciseName}</span>
+        </div>
+        <button type="button" class="exercise-change-popup-close" aria-label="${I18n.t('close_btn') || 'סגור'}" onclick="event.stopPropagation(); TodayPage.dismissExerciseChangePopup();">✕</button>
+      </div>
+      <div class="exercise-change-popup-body">
+        ${changesHTML}
+      </div>
+      <div class="exercise-change-popup-progress"></div>
+    `;
+
+    document.body.appendChild(popup);
+
+    _changePopupTimer = setTimeout(() => {
+      dismissExerciseChangePopup();
+    }, 3000);
+  }
+
+  /**
+   * Dismiss the change popup with optional smooth fade animation
+   */
+  function dismissExerciseChangePopup(immediate = false) {
+    if (_changePopupTimer) {
+      clearTimeout(_changePopupTimer);
+      _changePopupTimer = null;
+    }
+    const existing = document.getElementById('exercise-change-popup');
+    if (!existing) return;
+
+    if (immediate) {
+      existing.remove();
+    } else {
+      existing.classList.add('removing');
+      setTimeout(() => {
+        existing.remove();
+      }, 300);
+    }
+  }
+
   /**
    * Toggle exercise card expand
    */
   function toggleExpand(idx) {
     const card = document.getElementById(`ex-card-${idx}`);
+    if (!card) return;
     const isExpanding = !card.classList.contains('expanded');
 
     // First, close all other cards and remove focus
@@ -4881,14 +5376,18 @@ const TodayPage = (() => {
     if (isExpanding) {
       card.classList.add('expanded');
       card.classList.add('focused');
-      listContainer.classList.add('has-focus');
+      if (listContainer) listContainer.classList.add('has-focus');
 
       // Small delay before scrolling to allow expansion animation to start
       setTimeout(() => {
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 50);
+
+      // Trigger exercise change popup (shows for 3 seconds only on accordion expand)
+      triggerExerciseChangePopup(idx);
     } else {
-      listContainer.classList.remove('has-focus');
+      if (listContainer) listContainer.classList.remove('has-focus');
+      dismissExerciseChangePopup();
     }
   }
 
@@ -5523,15 +6022,22 @@ const TodayPage = (() => {
     const exData = currentTracking.setData[exIdx];
 
     // Auto-fill reps & weight if left empty
-    const prevPerf = findPrevPerformance(ex.name, currentDayIndex);
+    const prevPerf = findPrevPerformance(ex, currentDayIndex);
     const repsTarget = UI.parseReps(ex.sets);
     const prevReps = (prevPerf && prevPerf.setData && prevPerf.setData[`set_${setIdx}_reps`]) || repsTarget;
     const setsCount = UI.parseSetsCount(ex.sets);
     const suggestedWeightNum = getSuggestedWeightForSet(ex, setIdx, setsCount, prevPerf);
 
+    if (ex) {
+      exData.exerciseName = ex.name;
+      exData.exerciseId = ex.id || '';
+      exData.slot = ex.slot || '';
+      exData.isWarmup = Boolean(ex.isWarmup || (ex.slot && ex.slot.startsWith('W')));
+    }
+
     if (!exData[`set_${setIdx}_reps`]) {
       if (prevReps) {
-        const cleanReps = prevReps.toString().replace(/\s*(secs?|mins?|seconds?|minutes?|reps?)/gi, '').trim();
+        const cleanReps = prevReps.toString().replace(/\s*(\/side|\/leg|each side|each leg|secs?|mins?|seconds?|minutes?|reps?)/gi, '').trim();
         const rm = cleanReps.match(/^(\d+)\s*[-–]\s*(\d+)$/);
         exData[`set_${setIdx}_reps`] = rm ? rm[2] : cleanReps;
       }
@@ -5904,6 +6410,14 @@ const TodayPage = (() => {
     if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
+    const day = allPlanDays[currentDayIndex];
+    const ex = day && day.exercises ? day.exercises[exIdx] : null;
+    if (ex) {
+      currentTracking.setData[exIdx].exerciseName = ex.name;
+      currentTracking.setData[exIdx].exerciseId = ex.id || '';
+      currentTracking.setData[exIdx].slot = ex.slot || '';
+      currentTracking.setData[exIdx].isWarmup = Boolean(ex.isWarmup || (ex.slot && ex.slot.startsWith('W')));
+    }
     currentTracking.setData[exIdx][`set_${setIdx}_${field}`] = value;
     await autoSave();
   }
@@ -5973,6 +6487,17 @@ const TodayPage = (() => {
     currentTracking.notes = notes;
     currentTracking.lastUpdated = new Date().toISOString();
     currentTracking.date = currentTracking.date || UI.getLocalDateString();
+
+    const saveDay = allPlanDays[currentDayIndex];
+    if (saveDay && Array.isArray(saveDay.exercises)) {
+      currentTracking.exerciseMap = saveDay.exercises.map((e, eIdx) => ({
+        idx: eIdx,
+        name: e.name,
+        id: e.id,
+        slot: e.slot,
+        isWarmup: Boolean(e.isWarmup || (e.slot && e.slot.startsWith('W')))
+      }));
+    }
 
     if (weight) {
       const parsedW = parseFloat(weight);
@@ -8157,6 +8682,9 @@ const TodayPage = (() => {
     goToDay,
     goToToday,
     toggleExpand,
+    triggerExerciseChangePopup,
+    dismissExerciseChangePopup,
+    getExerciseChangeDetails,
     handleImageClick,
     toggleExercise,
     openExerciseOutcomeModal,
@@ -8226,6 +8754,8 @@ const TodayPage = (() => {
     saveCalibratedWeight,
     getCyclingTargetsForDay,
     getExercisePeak1RM,
+    findPrevPerformance,
+    getExerciseTrendHistory,
     markCombatDone,
     skipCombatPractice,
     saveCombatRPE,
