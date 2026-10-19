@@ -384,10 +384,8 @@
         urlSet.add(`images/exercises/${pngName}`);
       });
 
-      // 3. All WebP animations and GIFs on disk (lightweight WebP prioritized)
+      // 3. All GIFs on disk (ordered with heavy assets last)
       ALL_GIFS_ON_DISK.forEach(gifName => {
-        const webpName = gifName.replace(/\.gif$/i, '.webp');
-        urlSet.add(`images/gifs/${webpName}`);
         urlSet.add(`images/gifs/${gifName}`);
       });
 
@@ -465,8 +463,8 @@
                 this.cachedUrls.add(targetUrl);
                 this.cachedUrls.add(url);
 
-                // Warm browser's decoded bitmap memory cache
-                if (typeof Image !== 'undefined') {
+                // Warm browser's decoded bitmap memory cache for static PNGs only (never heavy animations)
+                if (typeof Image !== 'undefined' && targetUrl.endsWith('.png')) {
                   const img = new Image();
                   img.src = targetUrl;
                 }
@@ -531,7 +529,8 @@
         const gifQueue = [];
 
         urls.forEach(u => {
-          if (u.toLowerCase().endsWith('.gif')) {
+          const lower = u.toLowerCase();
+          if (lower.endsWith('.gif') || lower.endsWith('.webp') || lower.includes('/gifs/')) {
             gifQueue.push(u);
           } else {
             pngQueue.push(u);
@@ -571,8 +570,8 @@
           console.log('[Preloader] Metered/SaveData connection detected. Deferring non-essential background GIFs to on-demand.');
           this.completed = this.total;
         } else {
-          // Concurrency 1 with gentle 150ms idle spacing so browsing and user actions remain completely unblocked
-          await runQueue(gifQueue, 1, 150);
+          // Concurrency 1 with gentle 350ms idle spacing so browsing and user actions remain completely unblocked
+          await runQueue(gifQueue, 1, 350);
         }
 
         console.log(`[Preloader] Background preloading complete! (${this.completed}/${this.total} assets cached)`);

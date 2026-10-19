@@ -39,10 +39,14 @@ const UI = (() => {
     if (!imgEl) return;
     imgEl.classList.add('loaded');
     imgEl.style.opacity = '1';
-    const container = imgEl.closest('.skeleton-loading');
+    imgEl.style.filter = 'blur(0)';
+    imgEl.style.transform = 'scale(1)';
+    const container = imgEl.closest('.skeleton-loading') || imgEl.parentElement;
     if (container) {
       container.classList.remove('skeleton-loading');
       container.classList.add('skeleton-loaded');
+      const placeholder = container.querySelector('.skeleton-placeholder');
+      if (placeholder) placeholder.style.display = 'none';
     }
   }
 
@@ -67,13 +71,16 @@ const UI = (() => {
     document.getElementById('modal-body').innerHTML = current.bodyHTML;
     document.getElementById('modal-overlay').classList.remove('hidden');
 
-    setTimeout(() => {
+    const checkImages = () => {
       document.querySelectorAll('#modal-body .skeleton-img, #modal-header .skeleton-img').forEach(img => {
-        if (img.complete && img.naturalWidth > 0) {
+        if (img.complete) {
           handleImageLoaded(img);
         }
       });
-    }, 15);
+    };
+    checkImages();
+    setTimeout(checkImages, 40);
+    setTimeout(checkImages, 250);
   }
 
   /**

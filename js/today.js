@@ -5215,7 +5215,7 @@ const TodayPage = (() => {
     if (typeof requestAnimationFrame !== 'undefined') {
       requestAnimationFrame(() => {
         container.querySelectorAll('.skeleton-img').forEach(img => {
-          if (img.complete && img.naturalWidth > 0) {
+          if (img.complete) {
             if (typeof UI !== 'undefined' && UI.handleImageLoaded) {
               UI.handleImageLoaded(img);
             }

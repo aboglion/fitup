@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v208-media-optimizations';
+const CACHE_NAME = 'fitup-v209-no-spinners-fast-blur';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
