@@ -1,12 +1,15 @@
 {
-  "name": "FitUp - Personal Fitness Tracker",
+  "id": "./",
+  "name": "FitUp - Workout & AI Nutrition Tracking",
   "short_name": "FitUp",
   "description": "Professional AI Workout & Nutrition Tracker",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0f",
   "theme_color": "#3b82f6",
+  "categories": ["health", "fitness", "sports"],
   "icons": [
     {
       "src": "images/icon-192.png",

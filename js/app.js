@@ -115,10 +115,17 @@ const App = (() => {
 
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
       window.navigator.standalone === true ||
-      document.referrer.includes('android-app://');
+      document.referrer.includes('android-app://') ||
+      window.location.search.includes('mode=pwa');
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isInAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line|Snapchat|Telegram|Bytedance|TikTok|Twitter|MicroMessenger/i.test(navigator.userAgent);
     let isBannerDismissed = localStorage.getItem('pwaBannerDismissed') === 'true';
+
+    // Synchronize with early captured prompt from head
+    if (!deferredInstallPrompt && window.deferredInstallPrompt) {
+      deferredInstallPrompt = window.deferredInstallPrompt;
+    }
 
     function updatePwaUI() {
       // 1. Settings Card Elements
@@ -127,7 +134,7 @@ const App = (() => {
         if (installedBadge) installedBadge.style.display = 'flex';
         if (iosGuide) iosGuide.style.display = 'none';
       } else if (isIOS) {
-        if (installBtn) installBtn.style.display = 'none';
+        if (installBtn) installBtn.style.display = 'flex';
         if (installedBadge) installedBadge.style.display = 'none';
         if (iosGuide) iosGuide.style.display = 'block';
       } else {
@@ -149,11 +156,12 @@ const App = (() => {
         return;
       }
 
+      const hasPrompt = deferredInstallPrompt || window.deferredInstallPrompt;
       if (isIOS) {
         if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
         if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_ios_sub');
         pwaBanner.classList.remove('hidden');
-      } else if (deferredInstallPrompt) {
+      } else if (hasPrompt) {
         if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
         if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_sub');
         pwaBanner.classList.remove('hidden');
@@ -169,49 +177,164 @@ const App = (() => {
       }
     }
 
+    function showInstallGuideModal() {
+      if (!window.UI || !window.UI.showModal) return;
+
+      const title = I18n.t('pwa_card_title') || '📱 התקנת האפליקציה';
+      let content = '';
+
+      if (isInAppBrowser) {
+        content = `
+          <div style="text-align: start; padding: 6px 0;">
+            <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+              <div style="font-weight: 700; color: #f59e0b; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                <span>⚠️</span> <span>${I18n.t('pwa_in_app_warning')}</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: var(--accent-primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">1</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_in_app_step1')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: var(--accent-primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">2</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_in_app_step2')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: var(--accent-primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">3</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary); font-weight: 600;">${I18n.t('pwa_in_app_step3')}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (isIOS) {
+        content = `
+          <div style="text-align: start; padding: 6px 0;">
+            <p style="font-size: 14px; margin-bottom: 14px; color: var(--text-secondary); line-height: 1.6;">
+              ${I18n.t('pwa_card_desc')}
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #3b82f6; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">1</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_ios_step1')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #3b82f6; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">2</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_ios_step2')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #3b82f6; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">3</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_ios_step3')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #10b981; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">4</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary); font-weight: 600;">${I18n.t('pwa_ios_step4')}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        content = `
+          <div style="text-align: start; padding: 6px 0;">
+            <p style="font-size: 14px; margin-bottom: 14px; color: var(--text-primary); font-weight: 600; line-height: 1.5;">
+              ${I18n.t('pwa_android_instructions_title')}
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #3b82f6; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">1</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_android_step_fallback1')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #3b82f6; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">2</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_android_step_fallback2')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #10b981; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">3</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary); font-weight: 600;">${I18n.t('pwa_android_step_fallback3')}</span>
+              </div>
+            </div>
+            <div style="margin-top: 14px; font-size: 12px; color: var(--text-secondary); line-height: 1.6; background: rgba(59, 130, 246, 0.08); padding: 10px; border-radius: 8px;">
+              💡 <span>${I18n.t('pwa_android_step1')}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      window.UI.showModal(title, content);
+    }
+
     const triggerInstall = async () => {
+      // 1. Sync with early captured prompt
+      if (!deferredInstallPrompt && window.deferredInstallPrompt) {
+        deferredInstallPrompt = window.deferredInstallPrompt;
+      }
+
+      // 2. Already standalone
+      if (isStandalone) {
+        if (window.UI && window.UI.toast) {
+          UI.toast(I18n.t('pwa_already_installed_toast') || 'האפליקציה כבר מותקנת בטלפון שלך! 📱', 'info');
+        }
+        return;
+      }
+
+      // 3. Native install prompt available -> trigger immediately!
       if (deferredInstallPrompt) {
-        deferredInstallPrompt.prompt();
-        const choice = await deferredInstallPrompt.userChoice;
-        if (choice && choice.outcome === 'accepted') {
-          if (window.UI && window.UI.toast) {
-            UI.toast(I18n.t('pwa_installed_toast'), 'success');
+        try {
+          deferredInstallPrompt.prompt();
+          const choice = await deferredInstallPrompt.userChoice;
+          console.log('[PWA] User install choice:', choice);
+          if (choice && choice.outcome === 'accepted') {
+            if (window.UI && window.UI.toast) {
+              UI.toast(I18n.t('pwa_installed_toast'), 'success');
+            }
+            if (pwaBanner) pwaBanner.classList.add('hidden');
           }
-          if (pwaBanner) pwaBanner.classList.add('hidden');
+        } catch (err) {
+          console.warn('[PWA] Error calling prompt():', err);
         }
         deferredInstallPrompt = null;
+        window.deferredInstallPrompt = null;
         updatePwaUI();
-      } else if (isIOS) {
-        if (window.UI && window.UI.showModal) {
-          window.UI.showModal(
-            I18n.t('pwa_card_title'),
-            `<div style="text-align: start; padding: 10px 0;">
-               <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5;">${I18n.t('pwa_banner_ios_sub')}</p>
-               <ol style="margin: 0; padding-inline-start: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
-                 <li>1️⃣ ${I18n.t('pwa_ios_instructions')}</li>
-               </ol>
-             </div>`
-          );
-        } else if (window.UI && window.UI.toast) {
-          UI.toast(I18n.t('pwa_ios_instructions'), 'info');
-        }
-      } else {
-        if (window.UI && window.UI.showModal) {
-          window.UI.showModal(
-            I18n.t('pwa_card_title'),
-            `<div style="text-align: start; padding: 10px 0;">
-               <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5; font-weight: 700;">${I18n.t('pwa_android_instructions_title')}</p>
-               <ol style="margin: 0; padding-inline-start: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
-                 <li style="margin-bottom: 6px;">1️⃣ ${I18n.t('pwa_android_step1')}</li>
-                 <li style="margin-bottom: 6px;">2️⃣ ${I18n.t('pwa_android_step2')}</li>
-                 <li style="margin-bottom: 6px;">3️⃣ ${I18n.t('pwa_android_step3')}</li>
-               </ol>
-             </div>`
-          );
-        } else if (window.UI && window.UI.toast) {
-          UI.toast(I18n.t('pwa_card_desc'), 'info');
+        return;
+      }
+
+      // 4. If not iOS and not in-app browser, wait briefly (up to 1.2s) in case beforeinstallprompt is about to arrive
+      if (!isIOS && !isInAppBrowser) {
+        const promptPromise = new Promise(resolve => {
+          const timer = setTimeout(() => resolve(null), 1200);
+          const onPrompt = (e) => {
+            clearTimeout(timer);
+            window.removeEventListener('beforeinstallprompt', onPrompt);
+            resolve(e);
+          };
+          window.addEventListener('beforeinstallprompt', onPrompt);
+        });
+
+        const incoming = await promptPromise;
+        if (incoming) {
+          deferredInstallPrompt = incoming;
+          window.deferredInstallPrompt = incoming;
+          try {
+            deferredInstallPrompt.prompt();
+            const choice = await deferredInstallPrompt.userChoice;
+            if (choice && choice.outcome === 'accepted') {
+              if (window.UI && window.UI.toast) {
+                UI.toast(I18n.t('pwa_installed_toast'), 'success');
+              }
+              if (pwaBanner) pwaBanner.classList.add('hidden');
+            }
+          } catch (err) {
+            console.warn('[PWA] prompt error:', err);
+          }
+          deferredInstallPrompt = null;
+          window.deferredInstallPrompt = null;
+          updatePwaUI();
+          return;
         }
       }
+
+      // 5. Fallback guide modal
+      showInstallGuideModal();
     };
 
     if (installBtn) installBtn.onclick = triggerInstall;
@@ -229,12 +352,14 @@ const App = (() => {
       console.log('PWA beforeinstallprompt event captured!');
       e.preventDefault();
       deferredInstallPrompt = e;
+      window.deferredInstallPrompt = e;
       updatePwaUI();
     });
 
     window.addEventListener('appinstalled', () => {
       console.log('PWA appinstalled event!');
       deferredInstallPrompt = null;
+      window.deferredInstallPrompt = null;
       if (window.UI && window.UI.toast) {
         UI.toast(I18n.t('pwa_installed_toast'), 'success');
       }
@@ -269,25 +394,25 @@ const App = (() => {
         }
       }, 2500);
 
-      if ('serviceWorker' in navigator && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
-        navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
-        if ('caches' in window) caches.keys().then(keys => keys.filter(k => k !== 'fitup-media-cache-v1').forEach(k => caches.delete(k)));
-      }
+      // Clean up stale white-background exercise images from media cache if present
       if ('caches' in window) {
         caches.open('fitup-media-cache-v1').then(cache => {
           ['images/exercises/DB GLUTE BRIDGE.png', 'images/exercises/DB%20GLUTE%20BRIDGE.png', 'images/exercises/DB HIP THRUST.png', 'images/exercises/DB%20HIP%20THRUST.png', 'images/exercises/WRIST ROCKS.png', 'images/exercises/WRIST%20ROCKS.png'].forEach(p => {
             cache.delete(p, { ignoreSearch: true }).catch(() => {});
           });
         }).catch(() => {});
-      } else if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      }
+
+      // Register Service Worker unconditionally for PWA installation & offline functionality
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
         navigator.serviceWorker.register('./sw.js')
           .then(reg => {
-            console.log('SW registered!', reg);
+            console.log('[PWA] Service Worker registered in App.init!', reg.scope);
             reg.update();
           })
-          .catch(err => console.error('SW failed', err));
+          .catch(err => console.error('[PWA] SW registration failed in App.init:', err));
       } else if (!location.protocol.startsWith('http')) {
-        console.info('SW skipped: running from file:// — serve via local server (e.g. python3 -m http.server) to enable PWA offline mode.');
+        console.info('[PWA] SW skipped: running from file:// — serve via local server or HTTPS to enable PWA installation.');
       }
 
       // Setup PWA install prompt

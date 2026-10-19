@@ -72,6 +72,44 @@
         }));
       }
     }
+
+    // Early capture of PWA beforeinstallprompt to ensure it is never missed by late-loading scripts
+    window.deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', function (e) {
+      console.log('[PWA] Captured beforeinstallprompt event early in head!');
+      e.preventDefault();
+      window.deferredInstallPrompt = e;
+      if (window.updatePwaBannerUI) {
+        window.updatePwaBannerUI();
+      }
+    });
+
+    window.addEventListener('appinstalled', function () {
+      console.log('[PWA] App installed event captured!');
+      window.deferredInstallPrompt = null;
+      if (window.UI && window.UI.toast) {
+        UI.toast((window.I18n && window.I18n.t('pwa_installed_toast')) || 'FitUp הותקנה בהצלחה כהאפליקציה בטלפון! 📱', 'success');
+      }
+      var banner = document.getElementById('pwa-install-banner');
+      if (banner) banner.classList.add('hidden');
+      if (window.updatePwaBannerUI) {
+        window.updatePwaBannerUI();
+      }
+    });
+
+    // Register Service Worker early on page load
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('./sw.js')
+          .then(function (reg) {
+            console.log('[PWA] Service Worker registered early with scope:', reg.scope);
+            reg.update();
+          })
+          .catch(function (err) {
+            console.warn('[PWA] SW early registration failed:', err);
+          });
+      });
+    }
   </script>
 </head>
 
