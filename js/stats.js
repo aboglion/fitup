@@ -808,7 +808,7 @@ const StatsPage = (() => {
     // Progression Heatmap: Show ONLY days that have actually passed or been completed
     let maxCompletedIdx = -1;
     Object.values(trackingMap).forEach(t => {
-      if (t && t.completed && t.dayIndex != null) {
+      if (t && t.completed && !t.autoCompleted && t.dayIndex != null) {
         if (t.dayIndex > maxCompletedIdx) maxCompletedIdx = t.dayIndex;
       }
     });
@@ -845,16 +845,22 @@ const StatsPage = (() => {
         else if (day.dayType === 'Rest') colorClass = 'heat-rest';
       }
 
-      let rawDate = (tracking && (tracking.date || tracking.lastUpdated)) || day.date;
-      if (!rawDate && planStartDateStr) {
-        const startDateObj = new Date(planStartDateStr + 'T00:00:00');
-        startDateObj.setDate(startDateObj.getDate() + dIdx);
-        rawDate = UI.getLocalDateString(startDateObj);
+      // Scheduled calendar date for this cell (always strictly chronological)
+      let scheduledDateStr = '';
+      if (planStartDateStr) {
+        const dObj = new Date(planStartDateStr + 'T00:00:00');
+        dObj.setDate(dObj.getDate() + dIdx);
+        scheduledDateStr = UI.getLocalDateString(dObj);
+      } else {
+        scheduledDateStr = day.date || '';
       }
 
-      const displayDate = formatCellDate(rawDate);
+      const displayDate = formatCellDate(scheduledDateStr);
       const typeLabel = (window.UI && window.UI.getDayTypeInfo) ? UI.getDayTypeInfo(day.dayType).label : (day.dayType || '');
-      const tooltip = `Day ${dIdx + 1}${typeLabel ? ` (${typeLabel})` : ''} ${displayDate ? '[' + displayDate + '] ' : ''}- ${isCompleted ? '✓' : I18n.t('heat_skipped')}`;
+      const completionSuffix = isCompleted
+        ? (tracking && tracking.date ? `✓ (${formatCellDate(tracking.date)})` : '✓')
+        : I18n.t('heat_skipped');
+      const tooltip = `Day ${dIdx + 1}${typeLabel ? ` (${typeLabel})` : ''} ${displayDate ? '[' + displayDate + '] ' : ''}- ${completionSuffix}`;
       return `<div class="heat-cell ${colorClass}" title="${tooltip}">${displayDate}</div>`;
     }).join('');
 

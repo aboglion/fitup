@@ -6522,18 +6522,26 @@ const TodayPage = (() => {
     let startDate = await DB.getSetting('planStartDate');
     if (!startDate) {
       const allTracking = await DB.getAllTracking();
-      let earliestDate = null;
+      let earliestTime = Infinity;
       if (Array.isArray(allTracking) && allTracking.length > 0) {
         for (const t of allTracking) {
-          if (t && t.date) {
-            if (!earliestDate || t.date < earliestDate) earliestDate = t.date;
+          // ONLY count actual user-completed workouts, never auto-completed rest/walks
+          if (t && t.completed && !t.autoCompleted) {
+            const raw = t.date || (t.lastUpdated ? t.lastUpdated.split('T')[0] : null);
+            const p = (typeof UI !== 'undefined' && UI.parseDate) ? UI.parseDate(raw) : (raw ? new Date(raw) : null);
+            if (p && !isNaN(p.getTime()) && p.getTime() < earliestTime) {
+              earliestTime = p.getTime();
+            }
           }
         }
       }
-      const baseDate = earliestDate ? new Date(earliestDate + 'T12:00:00') : new Date();
+      const baseDate = earliestTime < Infinity ? new Date(earliestTime) : new Date();
+      baseDate.setHours(12, 0, 0, 0);
       // Anchor to Sunday of the week (Sunday = Day 1 in all languages)
       baseDate.setDate(baseDate.getDate() - baseDate.getDay());
-      startDate = UI.getLocalDateString(baseDate);
+      startDate = (typeof UI !== 'undefined' && UI.getLocalDateString)
+        ? UI.getLocalDateString(baseDate)
+        : baseDate.toISOString().split('T')[0];
       await DB.setSetting('planStartDate', startDate);
       await DB.loadTrainingPlan();
       UI.toast(I18n.t('program_started'), 'success');
