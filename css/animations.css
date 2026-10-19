@@ -130,6 +130,11 @@
   opacity: 1 !important;
   filter: none !important;
   transform: none !important;
+  will-change: auto !important;
+}
+
+.exercise-hero-image.loaded {
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55)) !important;
 }
 
 .skeleton-loaded .skeleton-placeholder,

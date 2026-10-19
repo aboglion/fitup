@@ -5156,7 +5156,7 @@ const TodayPage = (() => {
               <img src="${UI.getImageUrl(activeName, currentDayIndex)}" 
                    class="exercise-hero-image skeleton-img"
                    data-fallback-exname="${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/"/g, '&quot;')}"
-                   loading="${idx === 0 ? 'eager' : 'lazy'}" decoding="async"
+                   loading="eager" decoding="async"
                    alt="${activeName}" 
                    onload="UI.handleImageLoaded(this)"
                    onerror="UI.handleImageFallback(this, 'png')"
@@ -5212,17 +5212,20 @@ const TodayPage = (() => {
     }).join('');
 
     // Immediate check for images already cached in browser/SW to clear skeleton spinners without delay
-    if (typeof requestAnimationFrame !== 'undefined') {
-      requestAnimationFrame(() => {
-        container.querySelectorAll('.skeleton-img').forEach(img => {
-          if (img.complete) {
-            if (typeof UI !== 'undefined' && UI.handleImageLoaded) {
-              UI.handleImageLoaded(img);
-            }
+    const markCompleteImages = () => {
+      container.querySelectorAll('.skeleton-img').forEach(img => {
+        if (img.complete && (img.naturalWidth > 0 || img.width > 0)) {
+          if (typeof UI !== 'undefined' && UI.handleImageLoaded) {
+            UI.handleImageLoaded(img);
           }
-        });
+        }
       });
+    };
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(markCompleteImages);
     }
+    setTimeout(markCompleteImages, 50);
+    setTimeout(markCompleteImages, 250);
   }
 
   let _changePopupTimer = null;
