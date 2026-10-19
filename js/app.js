@@ -470,60 +470,76 @@ const App = (() => {
    */
   async function loadAppCore() {
     try {
-      const currentDataVersion = '15.7.0'; // FitUp v15.7 Accelerated — plan re-seed (deload cadence, arm block week, biceps 3:1, performance unlocks)
+      const currentDataVersion = '15.7.1'; // FitUp v15.7.1 — start date anchoring, streak & heatmap sync
       const savedDataVersion = await DB.getSetting('dataVersion');
 
       let planStartDate = await DB.getSetting('planStartDate');
       let needReseed = false;
 
-      // --- Self-Healing: Repair corrupted planStartDate & purge phantom pre-start records ---
+      // --- Self-Healing: Repair corrupted planStartDate & re-align tracking records by calendar date ---
       try {
         const allTrackingEarly = await DB.getAllTracking();
-        const realWorkouts = allTrackingEarly.filter(t =>
-          t && t.completed && !t.autoCompleted && !t.stepsAutoCompleted &&
-          (t.actualRPE || (t.exerciseWeights && Object.values(t.exerciseWeights).some(w => w)) || (t.date && (t.date.includes('/10/') || t.date.startsWith('2026-10'))))
-        );
+        const octWorkouts = allTrackingEarly.filter(t => {
+          if (!t) return false;
+          const raw = t.date || (t.lastUpdated ? t.lastUpdated.split('T')[0] : '');
+          return raw.includes('/10/2026') || raw.includes('/10/26') || raw.startsWith('2026-10');
+        });
 
-        if (realWorkouts.length > 0) {
-          let earliestTime = Infinity;
-          for (const t of realWorkouts) {
-            const raw = t.date || (t.lastUpdated ? t.lastUpdated.split('T')[0] : null);
-            const parsed = (typeof UI !== 'undefined' && UI.parseDate) ? UI.parseDate(raw) : (raw ? new Date(raw) : null);
-            if (parsed && !isNaN(parsed.getTime()) && parsed.getTime() < earliestTime) {
-              earliestTime = parsed.getTime();
+        // The user's active cycle started on Sunday 2026-10-11
+        if (octWorkouts.length > 0) {
+          const targetStart = '2026-10-11';
+          if (!planStartDate || planStartDate !== targetStart) {
+            console.log(`[Heal] Normalizing planStartDate to Israeli Sunday cycle start: ${planStartDate} -> ${targetStart}`);
+            planStartDate = targetStart;
+            await DB.setSetting('planStartDate', planStartDate);
+            needReseed = true;
+          }
+        }
+
+        if (planStartDate) {
+          const s = new Date(planStartDate + 'T12:00:00');
+          if (s.getDay() !== 0) {
+            // In Israel, Saturday (day 6) is the eve of Sunday (day 0) of the new week cycle. Advance to Sunday (+1), never retreat (-6)!
+            if (s.getDay() === 6) {
+              s.setDate(s.getDate() + 1);
+            } else {
+              s.setDate(s.getDate() - s.getDay());
+            }
+            planStartDate = UI.getLocalDateString(s);
+            await DB.setSetting('planStartDate', planStartDate);
+            needReseed = true;
+          }
+
+          const startObj = new Date(planStartDate + 'T12:00:00');
+          const todayIso = (typeof UI !== 'undefined' && UI.getLocalDateString)
+            ? UI.getLocalDateString()
+            : new Date().toISOString().split('T')[0];
+          const todayObj = new Date(todayIso + 'T12:00:00');
+          const realTodayIndex = Math.round((todayObj.getTime() - startObj.getTime()) / (1000 * 60 * 60 * 24));
+
+          // Purge phantom records with dayIndex in the future (> realTodayIndex) or stray records from old plans (> 8)
+          for (const t of allTrackingEarly) {
+            if (t && t.dayIndex > Math.max(8, realTodayIndex)) {
+              if (DB.deleteDayTracking) await DB.deleteDayTracking(t.dayIndex);
             }
           }
 
-          if (earliestTime < Infinity) {
-            const firstDate = new Date(earliestTime);
-            firstDate.setHours(12, 0, 0, 0);
-            const correctSunday = new Date(firstDate);
-            correctSunday.setDate(firstDate.getDate() - firstDate.getDay());
-            const correctSundayStr = (typeof UI !== 'undefined' && UI.getLocalDateString)
-              ? UI.getLocalDateString(correctSunday)
-              : correctSunday.toISOString().split('T')[0];
-
-            // If stored planStartDate is before the real start week (e.g. August when first workout was October)
-            if (!planStartDate || planStartDate < correctSundayStr) {
-              console.log(`[Heal] Fixing corrupted planStartDate: ${planStartDate} -> ${correctSundayStr}`);
-              planStartDate = correctSundayStr;
-              await DB.setSetting('planStartDate', planStartDate);
-              needReseed = true;
-
-              // Purge phantom auto-completed records before the real start date
-              for (const t of allTrackingEarly) {
-                if (t.autoCompleted || t.stepsAutoCompleted || !t.completed) {
-                  const raw = t.date || (t.lastUpdated ? t.lastUpdated.split('T')[0] : null);
-                  const p = (typeof UI !== 'undefined' && UI.parseDate) ? UI.parseDate(raw) : null;
-                  if (!p || UI.getLocalDateString(p) < correctSundayStr) {
-                    if (DB.deleteDayTracking) await DB.deleteDayTracking(t.dayIndex);
-                  }
-                }
+          // Remap completed records by calendar date if they were shifted
+          for (const t of allTrackingEarly) {
+            if (!t || !t.completed || t.autoCompleted || t.stepsAutoCompleted) continue;
+            const raw = t.date || (t.lastUpdated ? t.lastUpdated.split('T')[0] : null);
+            const p = (typeof UI !== 'undefined' && UI.parseDate) ? UI.parseDate(raw) : null;
+            if (p && !isNaN(p.getTime())) {
+              p.setHours(12, 0, 0, 0);
+              const targetIdx = Math.round((p.getTime() - startObj.getTime()) / (1000 * 60 * 60 * 24));
+              if (targetIdx >= 0 && targetIdx <= realTodayIndex && targetIdx !== t.dayIndex) {
+                console.log(`[Heal] Re-aligning tracking record from dayIndex ${t.dayIndex} -> ${targetIdx} (${raw})`);
+                await DB.saveDayTracking(targetIdx, { ...t, dayIndex: targetIdx });
               }
             }
           }
-        } else if (!realWorkouts.length && planStartDate && planStartDate < '2026-10-01') {
-          // Phantom start date with zero user workouts — reset cleanly to current week Sunday
+        } else {
+          // Zero workouts and no start date
           const now = new Date();
           const sun = new Date(now);
           sun.setDate(now.getDate() - now.getDay());
@@ -531,21 +547,10 @@ const App = (() => {
             ? UI.getLocalDateString(sun)
             : sun.toISOString().split('T')[0];
           await DB.setSetting('planStartDate', planStartDate);
-          await DB.clearTracking();
           needReseed = true;
         }
       } catch (healErr) {
         console.warn('[Heal] Plan date healing notice:', healErr);
-      }
-
-      if (planStartDate) {
-        const s = new Date(planStartDate + 'T12:00:00');
-        if (s.getDay() !== 0) {
-          s.setDate(s.getDate() - s.getDay());
-          planStartDate = UI.getLocalDateString(s);
-          await DB.setSetting('planStartDate', planStartDate);
-          needReseed = true;
-        }
       }
 
       const planCount = await DB.count(DB.STORES.PLAN);

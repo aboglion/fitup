@@ -1113,6 +1113,19 @@ const DB = (() => {
 
           await saveDayTracking(i, track);
           updated = true;
+        } else if (track && !track.completed && isWalkMarked) {
+          let allDone = true;
+          for (let e = 0; e < day.exercises.length; e++) {
+            if (!track.exerciseStatus[e]) {
+              allDone = false;
+              break;
+            }
+          }
+          if (allDone) {
+            track.completed = true;
+            await saveDayTracking(i, track);
+            updated = true;
+          }
         }
       }
     }

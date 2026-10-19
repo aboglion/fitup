@@ -177,14 +177,25 @@ const StatsPage = (() => {
   function calculateStreak(trackingMap) {
     let streak = 0;
     const todayIdx = UI.findTodayIndex(allPlanDays);
+    if (typeof todayIdx !== 'number' || todayIdx < 0) return 0;
 
-    // Count backwards from today
-    for (let i = todayIdx; i >= 0; i--) {
+    // Check if today is completed or is a scheduled Rest day
+    const todayTrack = trackingMap[todayIdx];
+    const todayCompleted = (todayTrack && todayTrack.completed) ||
+      (allPlanDays[todayIdx] && (allPlanDays[todayIdx].dayType === 'Rest' || !allPlanDays[todayIdx].exercises || allPlanDays[todayIdx].exercises.length === 0));
+
+    // If today is completed/rest, evaluate streak including today.
+    // If today is still in progress, evaluate streak starting from yesterday so ongoing streak is preserved!
+    const startIdx = todayCompleted ? todayIdx : (todayIdx - 1);
+
+    // Count backwards
+    for (let i = startIdx; i >= 0; i--) {
       const day = allPlanDays[i];
+      if (!day) break;
       const tracking = trackingMap[i];
 
-      if (day.dayType === 'Rest') {
-        // Rest days don't break streak
+      // Rest days don't break streak
+      if (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0) {
         streak++;
         continue;
       }
@@ -816,14 +827,21 @@ const StatsPage = (() => {
     let daysPassedIdx = -1;
     if (planStartDateStr) {
       const startDateObj = new Date(planStartDateStr + 'T00:00:00');
+      // Always normalize startDateObj to Sunday (start of cycle)
+      if (startDateObj.getDay() !== 0) {
+        startDateObj.setDate(startDateObj.getDate() - startDateObj.getDay());
+      }
       const todayObj = new Date(UI.getLocalDateString() + 'T00:00:00');
       const diffTime = Math.max(0, todayObj - startDateObj);
       daysPassedIdx = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     }
 
-    const activePlanIdx = window.appCurrentPlanIndex != null ? window.appCurrentPlanIndex : 0;
-
-    let endIdx = Math.max(maxCompletedIdx, daysPassedIdx, activePlanIdx);
+    // Progression heatmap shows "Days Passed" (ימים שעברו) plus any actually completed days.
+    // It must NEVER show uncompleted future days, even if UI navigated to a future day!
+    let endIdx = daysPassedIdx >= 0 ? daysPassedIdx : 0;
+    if (maxCompletedIdx > endIdx) {
+      endIdx = maxCompletedIdx;
+    }
     if (!planStartDateStr && maxCompletedIdx < 0) {
       endIdx = 0; // Program hasn't started yet: show Day 1 only
     } else {
@@ -839,16 +857,27 @@ const StatsPage = (() => {
       let colorClass = 'heat-empty';
 
       if (isCompleted) {
-        if (day.dayType && day.dayType.includes('Deload')) colorClass = 'heat-deload';
-        else if (isStrengthDay(day.dayType)) colorClass = 'heat-strength';
-        else if (day.dayType === 'Active Recovery') colorClass = 'heat-walk';
-        else if (day.dayType === 'Rest') colorClass = 'heat-rest';
+        const dType = String(day.dayType || '').toLowerCase();
+        if (dType.includes('deload')) {
+          colorClass = 'heat-deload';
+        } else if (isStrengthDay(day.dayType)) {
+          colorClass = 'heat-strength';
+        } else if (dType.includes('recovery') || dType.includes('walk') || dType.includes('cardio') || dType.includes('aerobic') || dType.includes('אירובי') || dType.includes('הליכה')) {
+          colorClass = 'heat-walk';
+        } else if (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0) {
+          colorClass = 'heat-rest';
+        } else {
+          colorClass = 'heat-strength';
+        }
       }
 
-      // Scheduled calendar date for this cell (always strictly chronological)
+      // Scheduled calendar date for this cell (always strictly chronological from normalized Sunday)
       let scheduledDateStr = '';
       if (planStartDateStr) {
         const dObj = new Date(planStartDateStr + 'T00:00:00');
+        if (dObj.getDay() !== 0) {
+          dObj.setDate(dObj.getDate() - dObj.getDay());
+        }
         dObj.setDate(dObj.getDate() + dIdx);
         scheduledDateStr = UI.getLocalDateString(dObj);
       } else {
