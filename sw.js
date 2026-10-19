@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v213-fix-heatmap-plan-start';
+const CACHE_NAME = 'fitup-v214-manifest-clean';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
