@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v217-translucent-deload';
+const CACHE_NAME = 'fitup-v218-mobile-pwa-install';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

@@ -97,18 +97,16 @@
       }
     });
 
-    // Register Service Worker early on page load
+    // Register Service Worker immediately on script execution for rapid PWA readiness
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      window.addEventListener('load', function () {
-        navigator.serviceWorker.register('./sw.js')
-          .then(function (reg) {
-            console.log('[PWA] Service Worker registered early with scope:', reg.scope);
-            reg.update();
-          })
-          .catch(function (err) {
-            console.warn('[PWA] SW early registration failed:', err);
-          });
-      });
+      navigator.serviceWorker.register('./sw.js')
+        .then(function (reg) {
+          console.log('[PWA] Service Worker registered early with scope:', reg.scope);
+          reg.update();
+        })
+        .catch(function (err) {
+          console.warn('[PWA] SW early registration failed:', err);
+        });
     }
   </script>
 </head>
@@ -1350,7 +1348,7 @@
   <script src="js/data.js?v=147"></script>
   <script src="js/program-guide-content.js?v=156"></script>
   <script src="js/preloader.js?v=151"></script>
-  <script src="js/i18n.js?v=159"></script>
+  <script src="js/i18n.js?v=160"></script>
   <script src="js/muscle-map.js?v=159"></script>
   <script src="js/effects3d.js?v=147"></script>
   <script src="js/ui.js?v=159"></script>
@@ -1373,7 +1371,7 @@
   <script src="js/anatomy.js?v=148"></script>
   <script src="js/stats.js?v=150"></script>
   <script src="js/export-guide.js?v=147"></script>
-  <script src="js/app.js?v=157"></script>
+  <script src="js/app.js?v=158"></script>
 </body>
 
 </html>
