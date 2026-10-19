@@ -841,16 +841,16 @@ const StatsPage = (() => {
 
       if (isCompleted) {
         const dType = String(day.dayType || '').toLowerCase();
-        if (dType.includes('deload')) {
-          colorClass = 'heat-deload';
-        } else if (isStrengthDay(day.dayType)) {
-          colorClass = 'heat-strength';
+        const isDeload = dType.includes('deload') || Boolean(day.isDeload || day.autoDeload);
+
+        if (isStrengthDay(day.dayType)) {
+          colorClass = isDeload ? 'heat-strength heat-deload' : 'heat-strength';
         } else if (dType.includes('recovery') || dType.includes('walk') || dType.includes('cardio') || dType.includes('aerobic') || dType.includes('אירובי') || dType.includes('הליכה')) {
-          colorClass = 'heat-walk';
+          colorClass = isDeload ? 'heat-walk heat-deload' : 'heat-walk';
         } else if (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0) {
           colorClass = 'heat-rest';
         } else {
-          colorClass = 'heat-strength';
+          colorClass = isDeload ? 'heat-strength heat-deload' : 'heat-strength';
         }
       }
 
@@ -882,9 +882,9 @@ const StatsPage = (() => {
           <span>${I18n.t('heatmap_title')} (${heatmapDays.length})</span>
           <div style="display: flex; gap: 12px; font-size: 11px; font-weight: normal; flex-wrap: wrap;">
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_strength')}</div>
-             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-deload" style="width: 12px; height: 12px; border-radius: 3px; background: #14b8a6;"></div> ${I18n.t('heat_deload')}</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-walk" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_walk')}</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-rest" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_rest')}</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength heat-deload" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_deload')}</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-empty" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_skipped')}</div>
           </div>
         </div>
