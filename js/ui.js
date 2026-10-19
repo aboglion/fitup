@@ -55,6 +55,8 @@ const UI = (() => {
       document.getElementById('modal-overlay').classList.add('hidden');
       const modalEl = document.getElementById('modal');
       if (modalEl) modalEl.classList.remove('modal-exercise');
+      const bodyEl = document.getElementById('modal-body');
+      if (bodyEl) bodyEl.innerHTML = '';
       return;
     }
     const current = modalStack[modalStack.length - 1];
