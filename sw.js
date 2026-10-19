@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v211-pwa-install-fix';
+const CACHE_NAME = 'fitup-v212-pwa-banner-sync';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

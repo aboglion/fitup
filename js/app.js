@@ -120,7 +120,10 @@ const App = (() => {
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isInAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line|Snapchat|Telegram|Bytedance|TikTok|Twitter|MicroMessenger/i.test(navigator.userAgent);
-    let isBannerDismissed = localStorage.getItem('pwaBannerDismissed') === 'true';
+    let isBannerDismissed = sessionStorage.getItem('pwaBannerDismissed') === 'true';
+    try {
+      localStorage.removeItem('pwaBannerDismissed');
+    } catch (e) {}
 
     // Synchronize with early captured prompt from head
     if (!deferredInstallPrompt && window.deferredInstallPrompt) {
@@ -343,7 +346,7 @@ const App = (() => {
     if (pwaBannerClose) {
       pwaBannerClose.onclick = () => {
         if (pwaBanner) pwaBanner.classList.add('hidden');
-        localStorage.setItem('pwaBannerDismissed', 'true');
+        sessionStorage.setItem('pwaBannerDismissed', 'true');
         isBannerDismissed = true;
       };
     }
@@ -391,6 +394,9 @@ const App = (() => {
           console.warn("Safety timeout: hiding splash screen to allow offline view.");
           splash.classList.add('hidden');
           app.classList.remove('hidden');
+          if (window.updatePwaBannerUI) {
+            window.updatePwaBannerUI();
+          }
         }
       }, 2500);
 
@@ -676,6 +682,9 @@ const App = (() => {
       document.getElementById('app').classList.remove('hidden');
       checkPhotoReminder();
       setupAuthPromptBanner();
+      if (window.updatePwaBannerUI) {
+        window.updatePwaBannerUI();
+      }
       isAppInitialized = true;
 
     } catch (error) {
@@ -977,6 +986,10 @@ const App = (() => {
         // Request wake lock so that leaving the dashboard open keeps screen on
         requestWakeLock();
         break;
+    }
+
+    if (window.updatePwaBannerUI) {
+      window.updatePwaBannerUI();
     }
   }
 
