@@ -1041,9 +1041,10 @@ const TodayPage = (() => {
       completed: false
     };
 
-    // Auto-complete Rest Day immediately when opened
+    // Auto-complete Rest Day immediately when opened (ONLY for today or past days, NEVER future days!)
     const isFullRestDay = (day.dayType === 'Rest') || (!day.exercises || day.exercises.length === 0);
-    if (isFullRestDay && !currentTracking.completed && !currentTracking.manuallyUncompleted) {
+    const realTodayIndex = (typeof UI !== 'undefined' && UI.findTodayIndex) ? UI.findTodayIndex(allPlanDays) : 0;
+    if (isFullRestDay && currentDayIndex <= realTodayIndex && !currentTracking.completed && !currentTracking.manuallyUncompleted) {
       currentTracking.completed = true;
       currentTracking.autoCompleted = true;
       currentTracking.date = currentTracking.date || day.date || (typeof UI !== 'undefined' ? UI.getLocalDateString().split('-').reverse().join('/') : '');
@@ -1405,7 +1406,6 @@ const TodayPage = (() => {
     document.getElementById('today-date-badge').textContent = dayOfWeekName;
     document.getElementById('day-week').textContent = day.week ? day.week.replace('Week', I18n.t('week_label_full')) : '';
 
-    const realTodayIndex = UI.findTodayIndex(allPlanDays);
     const isToday = currentDayIndex === realTodayIndex;
     const isPastDay = currentDayIndex < realTodayIndex;
     const isFutureDay = currentDayIndex > realTodayIndex;

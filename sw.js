@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v215-streak-heatmap-sync';
+const CACHE_NAME = 'fitup-v216-clean-days-passed';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

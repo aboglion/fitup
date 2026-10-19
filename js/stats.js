@@ -816,15 +816,8 @@ const StatsPage = (() => {
     const container = document.getElementById('stats-charts');
     const weekNum = currentWeekNum || 1;
 
-    // Progression Heatmap: Show ONLY days that have actually passed or been completed
-    let maxCompletedIdx = -1;
-    Object.values(trackingMap).forEach(t => {
-      if (t && t.completed && !t.autoCompleted && t.dayIndex != null) {
-        if (t.dayIndex > maxCompletedIdx) maxCompletedIdx = t.dayIndex;
-      }
-    });
-
-    let daysPassedIdx = -1;
+    // Progression Heatmap: Show strictly the days that have actually passed up to today ("ימים שעברו")
+    let daysPassedIdx = 0;
     if (planStartDateStr) {
       const startDateObj = new Date(planStartDateStr + 'T00:00:00');
       // Always normalize startDateObj to Sunday (start of cycle)
@@ -836,19 +829,9 @@ const StatsPage = (() => {
       daysPassedIdx = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     }
 
-    // Progression heatmap shows "Days Passed" (ימים שעברו) plus any actually completed days.
-    // It must NEVER show uncompleted future days, even if UI navigated to a future day!
-    let endIdx = daysPassedIdx >= 0 ? daysPassedIdx : 0;
-    if (maxCompletedIdx > endIdx) {
-      endIdx = maxCompletedIdx;
-    }
-    if (!planStartDateStr && maxCompletedIdx < 0) {
-      endIdx = 0; // Program hasn't started yet: show Day 1 only
-    } else {
-      endIdx = Math.min(endIdx, allPlanDays.length - 1);
-    }
-
-    const heatmapDays = allPlanDays.slice(0, Math.max(1, endIdx + 1));
+    // Strictly days passed up to today — never show future days in advance!
+    const endIdx = Math.max(0, Math.min(daysPassedIdx, allPlanDays.length - 1));
+    const heatmapDays = allPlanDays.slice(0, endIdx + 1);
 
     const heatmapCells = heatmapDays.map((day, index) => {
       const dIdx = day.dayIndex != null ? day.dayIndex : index;

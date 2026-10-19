@@ -470,7 +470,7 @@ const App = (() => {
    */
   async function loadAppCore() {
     try {
-      const currentDataVersion = '15.7.1'; // FitUp v15.7.1 — start date anchoring, streak & heatmap sync
+      const currentDataVersion = '15.7.2'; // FitUp v15.7.2 — purge future phantom completions & strict days passed
       const savedDataVersion = await DB.getSetting('dataVersion');
 
       let planStartDate = await DB.getSetting('planStartDate');
@@ -517,9 +517,9 @@ const App = (() => {
           const todayObj = new Date(todayIso + 'T12:00:00');
           const realTodayIndex = Math.round((todayObj.getTime() - startObj.getTime()) / (1000 * 60 * 60 * 24));
 
-          // Purge phantom records with dayIndex in the future (> realTodayIndex) or stray records from old plans (> 8)
+          // Purge phantom records with dayIndex in the future (> realTodayIndex)
           for (const t of allTrackingEarly) {
-            if (t && t.dayIndex > Math.max(8, realTodayIndex)) {
+            if (t && t.dayIndex > realTodayIndex) {
               if (DB.deleteDayTracking) await DB.deleteDayTracking(t.dayIndex);
             }
           }

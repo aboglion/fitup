@@ -991,6 +991,9 @@ const DB = (() => {
       ? UI.getLocalDateString()
       : new Date().toISOString().split('T')[0];
     const startDateObj = new Date(planStartDateStr + 'T00:00:00');
+    if (startDateObj.getDay() !== 0) {
+      startDateObj.setDate(startDateObj.getDate() - startDateObj.getDay());
+    }
     const todayObj = new Date(todayIso + 'T00:00:00');
     const realTodayIndex = Math.floor((todayObj - startDateObj) / (1000 * 60 * 60 * 24));
     if (realTodayIndex < 0) return false;
@@ -1000,9 +1003,9 @@ const DB = (() => {
     for (let i = 0; i < allPlanDays.length; i++) {
       const day = allPlanDays[i];
       const isRest = day && (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0);
-      if (!isRest) continue;
 
       if (i <= realTodayIndex) {
+        if (!isRest) continue;
         const track = allTracking.find(t => t.dayIndex === i);
         if (!track || (!track.completed && !track.manuallyUncompleted)) {
           const curDate = new Date(startDateObj);
@@ -1019,6 +1022,13 @@ const DB = (() => {
             lastUpdated: new Date().toISOString()
           };
           await saveDayTracking(i, newTrack);
+          updated = true;
+        }
+      } else {
+        // Future day: Purge any phantom autoCompleted rest/walk records
+        const track = allTracking.find(t => t.dayIndex === i);
+        if (track && (track.autoCompleted || track.stepsAutoCompleted)) {
+          await deleteDayTracking(i);
           updated = true;
         }
       }
@@ -1040,6 +1050,9 @@ const DB = (() => {
       ? UI.getLocalDateString()
       : new Date().toISOString().split('T')[0];
     const startDateObj = new Date(planStartDateStr + 'T00:00:00');
+    if (startDateObj.getDay() !== 0) {
+      startDateObj.setDate(startDateObj.getDate() - startDateObj.getDay());
+    }
     const todayObj = new Date(todayIso + 'T00:00:00');
     const realTodayIndex = Math.floor((todayObj - startDateObj) / (1000 * 60 * 60 * 24));
     if (realTodayIndex <= 0) return false;
@@ -1062,7 +1075,7 @@ const DB = (() => {
                  name.includes('active recovery walk') || 
                  orig.includes('active recovery walk') ||
                  name.includes('הליכה רגועה') ||
-                 name.includes('مشي מريح');
+                 name.includes('مשי מريح');
         });
 
         if (walkIdx === -1) continue;
@@ -1126,6 +1139,13 @@ const DB = (() => {
             await saveDayTracking(i, track);
             updated = true;
           }
+        }
+      } else if (i > realTodayIndex) {
+        // Future day: Purge any phantom autoCompleted walk records
+        const track = allTracking.find(t => t.dayIndex === i);
+        if (track && (track.stepsAutoCompleted || track.autoCompleted)) {
+          await deleteDayTracking(i);
+          updated = true;
         }
       }
     }
