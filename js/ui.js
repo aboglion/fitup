@@ -1348,17 +1348,17 @@ const UI = (() => {
       <div class="skeleton-loading exercise-header-thumb-box" 
            title="${I18n.t('anatomy_muscle_map', 'מפת שרירים')}"
            onclick="event.stopPropagation(); UI.showAnatomyPreview('${pngPath}', '${effectiveTitle.replace(/'/g, "\\'")}')">
-        <div class="skeleton-placeholder" style="gap: 2px;">
-          <div class="skeleton-spinner" style="width: 16px; height: 16px; border-width: 2px;"></div>
-        </div>
-        <img src="${pngPath}" 
-             class="modal-title-img skeleton-img exercise-header-thumb-img"
-             ${fallbackAttr}
-             alt="${effectiveTitle}" 
-             loading="eager" 
-             decoding="async" 
-             onload="UI.handleImageLoaded(this)"
-             onerror="UI.handleImageFallback(this, 'png')">
+        <picture style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          <source srcset="${pngPath.replace(/\.png(\?.*)?$/i, '.webp$1')}" type="image/webp">
+          <img src="${pngPath}" 
+               class="modal-title-img skeleton-img exercise-header-thumb-img"
+               ${fallbackAttr}
+               alt="${effectiveTitle}" 
+               loading="eager" 
+               decoding="async" 
+               onload="UI.handleImageLoaded(this)"
+               onerror="UI.handleImageFallback(this, 'png')">
+        </picture>
       </div>
     `;
 
@@ -1567,18 +1567,18 @@ const UI = (() => {
       mediaHTML = `
         ${stageHeaderHTML}
         <div class="skeleton-loading" style="position: relative; width: 100%; min-height: 180px; max-height: clamp(190px, 28vh, 230px); border-radius: 12px; overflow: hidden; background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border-color); padding: 4px; display: flex; align-items: center; justify-content: center;">
-          <div class="skeleton-placeholder">
-            <div class="skeleton-spinner"></div>
-          </div>
-          <img src="${pngPath}" 
-               class="skeleton-img"
-               ${fallbackAttr}
-               style="width: 100%; height: 100%; border-radius: 8px; object-fit: contain; max-height: clamp(180px, 28vh, 220px); display: block; margin: 0 auto;" 
-               alt="${effectiveTitle}" 
-               loading="eager" 
-               decoding="async" 
-               onload="UI.handleImageLoaded(this)"
-               onerror="UI.handleImageFallback(this, 'png')">
+          <picture style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+            <source srcset="${pngPath.replace(/\.png(\?.*)?$/i, '.webp$1')}" type="image/webp">
+            <img src="${pngPath}" 
+                 class="skeleton-img"
+                 ${fallbackAttr}
+                 style="width: 100%; height: 100%; border-radius: 8px; object-fit: contain; max-height: clamp(180px, 28vh, 220px); display: block; margin: 0 auto;" 
+                 alt="${effectiveTitle}" 
+                 loading="eager" 
+                 decoding="async" 
+                 onload="UI.handleImageLoaded(this)"
+                 onerror="UI.handleImageFallback(this, 'png')">
+          </picture>
         </div>
       `;
     }

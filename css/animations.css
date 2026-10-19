@@ -78,14 +78,15 @@
 .skeleton-loading {
   position: relative !important;
   overflow: hidden !important;
-  background: var(--bg-elevated, rgba(255, 255, 255, 0.05)) !important;
+  background-color: var(--bg-elevated, #161e2e) !important;
+  background-image: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.14) 0%, rgba(30, 41, 59, 0.06) 60%, transparent 100%) !important;
   min-height: 140px;
-  animation: skeletonPulse 2s ease-in-out infinite;
+  animation: skeletonPulse 1.8s ease-in-out infinite;
 }
 
 @keyframes skeletonPulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.75; }
+  50% { opacity: 0.65; }
 }
 
 .skeleton-loading::before {
@@ -98,12 +99,12 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.06) 30%,
-    rgba(59, 130, 246, 0.22) 50%,
-    rgba(255, 255, 255, 0.06) 70%,
+    rgba(255, 255, 255, 0.04) 30%,
+    rgba(59, 130, 246, 0.16) 50%,
+    rgba(255, 255, 255, 0.04) 70%,
     transparent 100%
   );
-  animation: skeletonShimmer 1.5s infinite ease-in-out;
+  animation: skeletonShimmer 1.4s infinite ease-in-out;
   z-index: 1;
   pointer-events: none;
 }
@@ -116,19 +117,19 @@
 
 .skeleton-img {
   opacity: 0;
-  filter: blur(10px);
+  filter: blur(8px);
   transform: scale(1.02);
-  transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              filter 0.5s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.2s ease-out,
+              filter 0.25s ease-out,
+              transform 0.25s ease-out;
   will-change: opacity, filter, transform;
 }
 
 .skeleton-loaded .skeleton-img,
 .skeleton-img.loaded {
   opacity: 1 !important;
-  filter: blur(0) !important;
-  transform: scale(1) !important;
+  filter: none !important;
+  transform: none !important;
 }
 
 .skeleton-loaded .skeleton-placeholder,

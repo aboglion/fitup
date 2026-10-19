@@ -317,11 +317,19 @@
           const decodeSafe = (u) => (window.UI && typeof window.UI.safeDecodeURIComponent === 'function' ? window.UI.safeDecodeURIComponent(u) : decodeURIComponent(u));
           if (typeof window.UI.getImageUrl === 'function') {
             const p = window.UI.getImageUrl(name);
-            if (p) priorityUrls.add(decodeSafe(p.split('?')[0]));
+            if (p) {
+              const cleanP = decodeSafe(p.split('?')[0]);
+              priorityUrls.add(cleanP);
+              priorityUrls.add(cleanP.replace(/\.png$/i, '.webp'));
+            }
           }
           if (typeof window.UI.getGifUrl === 'function') {
             const g = window.UI.getGifUrl(name);
-            if (g) priorityUrls.add(decodeSafe(g.split('?')[0]));
+            if (g) {
+              const cleanG = decodeSafe(g.split('?')[0]);
+              priorityUrls.add(cleanG);
+              priorityUrls.add(cleanG.replace(/\.gif$/i, '.webp'));
+            }
           }
         }
       });
@@ -340,11 +348,19 @@
       const decodeSafe = (u) => (window.UI && typeof window.UI.safeDecodeURIComponent === 'function' ? window.UI.safeDecodeURIComponent(u) : decodeURIComponent(u));
       if (typeof window.UI.getImageUrl === 'function') {
         const p = window.UI.getImageUrl(exerciseName);
-        if (p) this.preloadSingleUrl(decodeSafe(p.split('?')[0]), 'high');
+        if (p) {
+          const cleanP = decodeSafe(p.split('?')[0]);
+          this.preloadSingleUrl(cleanP, 'high');
+          this.preloadSingleUrl(cleanP.replace(/\.png$/i, '.webp'), 'high');
+        }
       }
       if (typeof window.UI.getGifUrl === 'function') {
         const g = window.UI.getGifUrl(exerciseName);
-        if (g) this.preloadSingleUrl(decodeSafe(g.split('?')[0]), 'high');
+        if (g) {
+          const cleanG = decodeSafe(g.split('?')[0]);
+          this.preloadSingleUrl(cleanG, 'high');
+          this.preloadSingleUrl(cleanG.replace(/\.gif$/i, '.webp'), 'high');
+        }
       }
     },
 

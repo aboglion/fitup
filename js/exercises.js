@@ -1203,10 +1203,10 @@ const ExercisesPage = (() => {
     return `
       <div class="guide-card" style="cursor: pointer;" onclick="UI.showImageModal('${ex.name.replace(/'/g, "\\'")}')" onpointerenter="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${ex.name.replace(/'/g, "\\'")}')" ontouchstart="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${ex.name.replace(/'/g, "\\'")}')">
         <div class="guide-card-image-container diff-${diffClass} skeleton-loading">
-          <div class="skeleton-placeholder" style="gap: 4px;">
-            <div class="skeleton-spinner" style="width: 18px; height: 18px; border-width: 2px;"></div>
-          </div>
-          <img src="${UI.getImageUrl(ex.name)}" class="exercise-image skeleton-img" alt="${ex.name}" ${loadingAttr} decoding="async" onload="UI.handleImageLoaded(this)" onerror="UI.handleImageFallback(this, 'png')">
+          <picture style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+            <source srcset="${UI.getImageUrl(ex.name).replace(/\.png(\?.*)?$/i, '.webp$1')}" type="image/webp">
+            <img src="${UI.getImageUrl(ex.name)}" class="exercise-image skeleton-img" alt="${ex.name}" ${loadingAttr} decoding="async" onload="UI.handleImageLoaded(this)" onerror="UI.handleImageFallback(this, 'png')">
+          </picture>
         </div>
         <div class="guide-card-content">
           <div class="guide-card-title">

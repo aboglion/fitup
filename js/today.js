@@ -5147,21 +5147,21 @@ const TodayPage = (() => {
       return `
         <div class="exercise-card ${isCompleted ? 'completed' : ''} ${isSkippedTemp ? 'skipped-temp' : ''} ${!isExUnlocked ? 'locked' : ''} ${isExpanded ? 'expanded' : ''} ${isCardAlert ? 'alert-pulse-card' : ''}" id="${cardId}" style="--glow-color: ${color};" onpointerenter="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${activeName.replace(/'/g, "\\'")}')" ontouchstart="window.Preloader && window.Preloader.preloadExercise && window.Preloader.preloadExercise('${activeName.replace(/'/g, "\\'")}')">
           <div class="exercise-hero-container skeleton-loading" style="position: relative;">
-            <div class="skeleton-placeholder" style="gap: 4px;">
-              <div class="skeleton-spinner" style="width: 22px; height: 22px; border-width: 2px;"></div>
-            </div>
             <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-weight: 800; font-family: 'Inter', sans-serif; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid rgba(255,255,255,0.1);">
               #${idx + 1}
             </div>
             ${heroTopLeftHTML}
-            <img src="${UI.getImageUrl(activeName, currentDayIndex)}" 
-                 class="exercise-hero-image skeleton-img"
-                 data-fallback-exname="${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/"/g, '&quot;')}"
-                 loading="eager" decoding="async"
-                 alt="${activeName}" 
-                 onload="UI.handleImageLoaded(this)"
-                 onerror="UI.handleImageFallback(this, 'png')"
-                 onclick="TodayPage.handleImageClick(event, ${idx}, '${activeName.replace(/'/g, "\\'")}', '${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/'/g, "\\'")}')">
+            <picture style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+              <source srcset="${UI.getImageUrl(activeName, currentDayIndex).replace(/\.png(\?.*)?$/i, '.webp$1')}" type="image/webp">
+              <img src="${UI.getImageUrl(activeName, currentDayIndex)}" 
+                   class="exercise-hero-image skeleton-img"
+                   data-fallback-exname="${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/"/g, '&quot;')}"
+                   loading="${idx === 0 ? 'eager' : 'lazy'}" decoding="async"
+                   alt="${activeName}" 
+                   onload="UI.handleImageLoaded(this)"
+                   onerror="UI.handleImageFallback(this, 'png')"
+                   onclick="TodayPage.handleImageClick(event, ${idx}, '${activeName.replace(/'/g, "\\'")}', '${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/'/g, "\\'")}')">
+            </picture>
             ${newBadgeHTML}
           </div>
           <div class="exercise-card-header" onclick="TodayPage.toggleExpand(${idx})">
