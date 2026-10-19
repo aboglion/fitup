@@ -384,8 +384,10 @@
         urlSet.add(`images/exercises/${pngName}`);
       });
 
-      // 3. All GIFs on disk (ordered with heavy assets last)
+      // 3. All WebP animations and GIFs on disk (lightweight WebP prioritized)
       ALL_GIFS_ON_DISK.forEach(gifName => {
+        const webpName = gifName.replace(/\.gif$/i, '.webp');
+        urlSet.add(`images/gifs/${webpName}`);
         urlSet.add(`images/gifs/${gifName}`);
       });
 

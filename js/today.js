@@ -7685,11 +7685,15 @@ const TodayPage = (() => {
           </div>
           <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 10px 0; line-height: 1.4;">${subDesc}</p>
           <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 220px; background: #ffffff; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);">
-            <img src="${gifUrl}" 
-                 style="width: 100%; max-height: 48vh; object-fit: contain; border-radius: 8px; mix-blend-mode: multiply;" 
-                 alt="${subTitle} GIF"
-                 onload="UI.handleImageLoaded(this)"
-                 onerror="UI.handleImageFallback(this, 'gif')">
+            <picture style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+              <source srcset="${gifUrl.replace(/\.gif(\?.*)?$/i, '.webp$1')}" type="image/webp">
+              <img src="${gifUrl}" 
+                   class="skeleton-img"
+                   style="width: 100%; max-height: 48vh; object-fit: contain; border-radius: 8px; mix-blend-mode: multiply;" 
+                   alt="${subTitle} GIF"
+                   onload="UI.handleImageLoaded(this)"
+                   onerror="UI.handleImageFallback(this, 'gif')">
+            </picture>
           </div>
         </div>
 
@@ -7934,11 +7938,15 @@ const TodayPage = (() => {
           </div>
           <p style="font-size: 13px; color: var(--text-secondary); margin: 0 0 10px 0; line-height: 1.4;">${subDesc}</p>
           <div class="gif-container skeleton-loading" style="position: relative; width: 100%; min-height: 220px; background: #ffffff; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color);">
-            <img src="${gifUrl}" 
-                 style="width: 100%; max-height: 48vh; object-fit: contain; border-radius: 8px; mix-blend-mode: multiply;" 
-                 alt="${subTitle} GIF"
-                 onload="UI.handleImageLoaded(this)"
-                 onerror="UI.handleImageFallback(this, 'gif')">
+            <picture style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+              <source srcset="${gifUrl.replace(/\.gif(\?.*)?$/i, '.webp$1')}" type="image/webp">
+              <img src="${gifUrl}" 
+                   class="skeleton-img"
+                   style="width: 100%; max-height: 48vh; object-fit: contain; border-radius: 8px; mix-blend-mode: multiply;" 
+                   alt="${subTitle} GIF"
+                   onload="UI.handleImageLoaded(this)"
+                   onerror="UI.handleImageFallback(this, 'gif')">
+            </picture>
           </div>
         </div>
 

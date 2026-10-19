@@ -1509,14 +1509,17 @@ const ExercisesPage = (() => {
             <div class="skeleton-spinner"></div>
             <span class="skeleton-text">🎬 ${I18n.t('loading_gif')}</span>
           </div>
-          <img src="${gifPath}" 
-               class="skeleton-img"
-               style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" 
-               alt="${ex.name} GIF" 
-               loading="eager" 
-               decoding="async" 
-               onload="UI.handleImageLoaded(this)"
-               onerror="UI.handleImageFallback(this, 'gif')">
+          <picture style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+            <source srcset="${gifPath.replace(/\.gif(\?.*)?$/i, '.webp$1')}" type="image/webp">
+            <img src="${gifPath}" 
+                 class="skeleton-img"
+                 style="width:100%; border-radius:8px; object-fit: contain; max-height: 40vh;" 
+                 alt="${ex.name} GIF" 
+                 loading="eager" 
+                 decoding="async" 
+                 onload="UI.handleImageLoaded(this)"
+                 onerror="UI.handleImageFallback(this, 'gif')">
+          </picture>
         </div>
         ` : ''}
       </div>

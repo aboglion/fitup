@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v207-muscle-map';
+const CACHE_NAME = 'fitup-v208-media-optimizations';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
