@@ -264,6 +264,29 @@ const App = (() => {
     }
 
     const triggerInstall = async () => {
+      // 0. Check if running from file:// protocol (browsers prohibit PWA on file://)
+      if (location.protocol === 'file:') {
+        if (window.UI && window.UI.showModal) {
+          window.UI.showModal(
+            '⚠️ התקנה מתוך קובץ מקומי אינה נתמכת',
+            `<div style="text-align: start; padding: 6px 0; font-size: 14px; line-height: 1.6;">
+              <p style="margin-bottom: 12px; color: var(--text-primary);">
+                דפדפנים אינם מאפשרים התקנת אפליקציות ווב (PWA) כאשר פותחים את הקובץ ישירות מהמחשב (כתובת <code>file:///</code>).
+              </p>
+              <div style="background: rgba(59, 130, 246, 0.12); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 12px; padding: 12px; margin-bottom: 14px;">
+                <p style="font-weight: 700; color: #3b82f6; margin-bottom: 6px;">💡 כדי להתקין את האפליקציה למסך הבית:</p>
+                <p style="margin-bottom: 8px; color: var(--text-secondary);">יש לפתוח את האתר בכתובת המאובטחת (HTTPS):</p>
+                <a href="https://aboglion.github.io/fitup/" target="_blank" style="color: #60a5fa; font-weight: 700; text-decoration: underline; word-break: break-all;">https://aboglion.github.io/fitup/</a>
+              </div>
+              <p style="font-size: 13px; color: var(--text-secondary);">
+                שם כפתור ההתקנה יפעיל את התקנת האפליקציה ישירות למסך הבית!
+              </p>
+            </div>`
+          );
+        }
+        return;
+      }
+
       // 1. Sync with early captured prompt
       if (!deferredInstallPrompt && window.deferredInstallPrompt) {
         deferredInstallPrompt = window.deferredInstallPrompt;
