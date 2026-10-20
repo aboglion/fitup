@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v220-mobile-pwa-install';
+const CACHE_NAME = 'fitup-v221-mobile-pwa-install';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
@@ -35,6 +35,7 @@ const ASSETS = [
   './js/calendar.js',
   './js/exercises.js',
   './js/stats.js',
+  './js/league.js',
   './js/anatomy.js',
   './js/export-guide.js',
   './js/cloud-sync.js',

@@ -72,6 +72,12 @@
         }));
       }
     }
+    // Record installed state immediately if running in standalone mode
+    if ((window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true || (window.location.search && window.location.search.includes('mode=pwa'))) {
+      try {
+        localStorage.setItem('fitup_app_installed', 'true');
+      } catch (_) {}
+    }
     // Early capture of PWA beforeinstallprompt to ensure it is never missed by late-loading scripts
     window.deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function (e) {
@@ -84,14 +90,17 @@
     });
 
     window.addEventListener('appinstalled', function () {
-      console.log('[PWA] App installed event captured!');
+      console.log('[PWA] App installed event captured in head!');
       window.deferredInstallPrompt = null;
-      if (window.UI && window.UI.toast) {
-        UI.toast((window.I18n && window.I18n.t('pwa_installed_toast')) || 'FitUp הותקנה בהצלחה כהאפליקציה בטלפון! 📱', 'success');
-      }
+      try {
+        localStorage.setItem('fitup_app_installed', 'true');
+        localStorage.setItem('fitup_app_installed_time', Date.now().toString());
+      } catch (_) {}
       var banner = document.getElementById('pwa-install-banner');
       if (banner) banner.classList.add('hidden');
-      if (window.updatePwaBannerUI) {
+      if (window.handlePwaInstalledSuccess) {
+        window.handlePwaInstalledSuccess();
+      } else if (window.updatePwaBannerUI) {
         window.updatePwaBannerUI();
       }
     });
@@ -132,9 +141,18 @@
           <span class="nav-icon">💪</span>
           <span class="nav-title">FitUp</span>
         </div>
-        <div id="cloud-status-indicator"
-          style="font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 8px; background: var(--bg-elevated); border: 1px solid var(--border-light); transition: all 0.2s;"
-          title="מצב סנכרון ענן">☁️</div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <div id="league-nav-btn"
+            onclick="if (typeof League !== 'undefined') League.showLeagueModal();"
+            style="font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 8px; background: rgba(0, 255, 102, 0.12); border: 1px solid rgba(0, 255, 102, 0.4); color: #00ff66; font-weight: 800; transition: all 0.2s; display: flex; align-items: center; gap: 4px;"
+            data-i18n-title="league_title"
+            title="הליגה הגלובלית">
+            <span>🏆</span>
+          </div>
+          <div id="cloud-status-indicator"
+            style="font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 8px; background: var(--bg-elevated); border: 1px solid var(--border-light); transition: all 0.2s;"
+            title="מצב סנכרון ענן">☁️</div>
+        </div>
       </div>
       <div class="nav-links">
         <button class="nav-link active" data-page="today" id="nav-today">
@@ -1110,8 +1128,13 @@
                 <span>📥</span> <span data-i18n="pwa_install_btn">Install App Now</span>
               </button>
               <div id="pwa-installed-badge"
-                style="display: none; align-items: center; justify-content: center; gap: 8px; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 10px; border-radius: 10px; font-weight: 700; font-size: 13px;">
-                <span>📱</span> <span data-i18n="pwa_installed_status">Installed & Running as App (PWA)</span>
+                style="display: none; flex-direction: column; gap: 8px;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 10px; border-radius: 10px; font-weight: 700; font-size: 13px;">
+                  <span>📱</span> <span data-i18n="pwa_installed_status">Installed & Running as App (PWA)</span>
+                </div>
+                <button id="pwa-open-app-btn" class="btn-primary" style="display: none; width: 100%; padding: 11px; font-weight: 700; font-size: 14px; border-radius: 10px; align-items: center; justify-content: center; gap: 8px;">
+                  <span>🚀</span> <span data-i18n="pwa_installed_open_now">Open App Now</span>
+                </button>
               </div>
               <div id="pwa-ios-guide"
                 style="display: none; font-size: 12px; color: var(--text-secondary); background: var(--bg-elevated); padding: 10px; border-radius: 8px; border: 1px solid var(--border-light); text-align: center; margin-top: 8px;"
@@ -1342,12 +1365,47 @@
     </div>
   </div>
 
+  <!-- Global League Modal (100% Serverless Leaderboard) -->
+  <div id="league-modal" class="league-modal-backdrop hidden" onclick="if (event.target === this) League.hideLeagueModal();">
+    <div class="league-modal-box">
+      <div class="league-header">
+        <div class="league-header-title">
+          <span style="font-size: 26px;">🏆</span>
+          <div>
+            <div data-i18n="league_title">Global League</div>
+            <div class="league-header-subtitle" data-i18n="league_subtitle">Real-time global fitness competition</div>
+          </div>
+        </div>
+        <button id="league-modal-close-btn" class="league-close-btn" onclick="League.hideLeagueModal()">✕</button>
+      </div>
+
+      <div class="league-tabs">
+        <button id="league-tab-xp" class="league-tab-btn active" onclick="document.querySelectorAll('.league-tab-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); League.renderLeaderboardView('xp');">
+          <span>⭐</span> <span data-i18n="league_tab_all_time">All-Time (XP)</span>
+        </button>
+        <button id="league-tab-streak" class="league-tab-btn" onclick="document.querySelectorAll('.league-tab-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); League.renderLeaderboardView('streak');">
+          <span>🔥</span> <span data-i18n="league_tab_streak">Streak 🔥</span>
+        </button>
+        <button id="league-tab-monthly" class="league-tab-btn" onclick="document.querySelectorAll('.league-tab-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); League.renderLeaderboardView('monthly');">
+          <span>🗓️</span> <span data-i18n="league_tab_monthly">This Month</span>
+        </button>
+      </div>
+
+      <div class="league-body">
+        <div id="league-podium-container"></div>
+        <div id="league-roster-list" class="league-roster-list"></div>
+      </div>
+
+      <div id="league-sticky-my-rank" class="league-sticky-my-rank" style="display: none;"></div>
+    </div>
+  </div>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="js/data.js?v=147"></script>
   <script src="js/program-guide-content.js?v=156"></script>
   <script src="js/preloader.js?v=151"></script>
-  <script src="js/i18n.js?v=160"></script>
+  <script src="js/i18n.js?v=161"></script>
   <script src="js/muscle-map.js?v=159"></script>
   <script src="js/effects3d.js?v=147"></script>
   <script src="js/ui.js?v=159"></script>
@@ -1369,8 +1427,9 @@
   <script src="js/exercises.js?v=152"></script>
   <script src="js/anatomy.js?v=148"></script>
   <script src="js/stats.js?v=150"></script>
+  <script src="js/league.js?v=1"></script>
   <script src="js/export-guide.js?v=147"></script>
-  <script src="js/app.js?v=160"></script>
+  <script src="js/app.js?v=161"></script>
 </body>
 
 </html>

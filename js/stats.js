@@ -273,6 +273,9 @@ const StatsPage = (() => {
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
+            <button id="league-open-btn" onclick="League.showLeagueModal()" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; display: flex; align-items: center; gap: 4px; border-radius: 20px; background: rgba(0, 255, 102, 0.12); border: 1px solid rgba(0, 255, 102, 0.4); color: #00ff66; font-weight: 800; cursor: pointer; transition: all 0.2s ease;">
+              <span>🏆</span> <span>${I18n.t('league_btn')}</span>
+            </button>
             <button onclick="StatsPage.shareProgressCard()" class="btn-secondary" style="padding: 6px 12px; font-size: 12px; display: flex; align-items: center; gap: 4px; border-radius: 20px;">
               <span>📤</span> <span>${I18n.t('share_btn')}</span>
             </button>

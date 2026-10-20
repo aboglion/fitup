@@ -122,7 +122,29 @@ const App = (() => {
       );
     };
 
+    const checkIsInstalled = () => {
+      if (checkIsStandalone()) {
+        try {
+          localStorage.setItem('fitup_app_installed', 'true');
+        } catch (_) {}
+        return true;
+      }
+      try {
+        if (localStorage.getItem('fitup_app_installed') === 'true') {
+          return true;
+        }
+      } catch (_) {}
+      return false;
+    };
+
     let isStandalone = checkIsStandalone();
+
+    // Allow reinstall testing if query param has ?install=1 or ?reinstall=1
+    if (window.location.search.includes('install=1') || window.location.search.includes('reinstall=1')) {
+      try {
+        localStorage.removeItem('fitup_app_installed');
+      } catch (_) {}
+    }
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isInAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line|Snapchat|Telegram|Bytedance|TikTok|Twitter|MicroMessenger/i.test(navigator.userAgent);
@@ -132,6 +154,18 @@ const App = (() => {
       localStorage.removeItem('pwaBannerDismissed');
     } catch (e) {}
 
+    // Check if PWA is already installed via getInstalledRelatedApps
+    if ('getInstalledRelatedApps' in navigator) {
+      navigator.getInstalledRelatedApps().then(apps => {
+        if (apps && apps.length > 0) {
+          try {
+            localStorage.setItem('fitup_app_installed', 'true');
+          } catch (_) {}
+          updatePwaUI();
+        }
+      }).catch(() => {});
+    }
+
     // Synchronize with early captured prompt from head
     if (!deferredInstallPrompt && window.deferredInstallPrompt) {
       deferredInstallPrompt = window.deferredInstallPrompt;
@@ -139,12 +173,35 @@ const App = (() => {
 
     function updatePwaUI() {
       isStandalone = checkIsStandalone();
+      const isInstalled = checkIsInstalled();
 
       // 1. Settings Card Elements
-      if (isStandalone) {
+      if (isInstalled || isStandalone) {
         if (installBtn) installBtn.style.display = 'none';
         if (installedBadge) installedBadge.style.display = 'flex';
         if (iosGuide) iosGuide.style.display = 'none';
+
+        const openAppBtn = document.getElementById('pwa-open-app-btn');
+        if (openAppBtn) {
+          if (!isStandalone) {
+            openAppBtn.style.display = 'flex';
+            openAppBtn.onclick = () => {
+              const pwaUrl = `${window.location.origin}${window.location.pathname}?mode=pwa`;
+              const chromeIntent = `intent://${location.host}${location.pathname}?mode=pwa#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;end`;
+              try {
+                if (/Android/i.test(navigator.userAgent)) {
+                  window.location.href = chromeIntent;
+                } else {
+                  window.location.href = pwaUrl;
+                }
+              } catch (_) {
+                window.location.href = pwaUrl;
+              }
+            };
+          } else {
+            openAppBtn.style.display = 'none';
+          }
+        }
       } else if (isIOS) {
         if (installBtn) installBtn.style.display = 'flex';
         if (installedBadge) installedBadge.style.display = 'none';
@@ -163,8 +220,8 @@ const App = (() => {
       const isIntroScreenActive = (loginScreen && !loginScreen.classList.contains('hidden')) ||
         (splashScreen && !splashScreen.classList.contains('hidden'));
 
-      // If running in standalone window, dismissed in current view, or splash screen is on top
-      if (isStandalone || isBannerDismissed || isIntroScreenActive) {
+      // If already installed, or in standalone mode, or dismissed, or splash screen is on top: hide banner!
+      if (isInstalled || isStandalone || isBannerDismissed || isIntroScreenActive) {
         pwaBanner.classList.add('hidden');
         return;
       }
@@ -180,7 +237,7 @@ const App = (() => {
           : ((window.I18n && window.I18n.t) ? I18n.t('pwa_banner_sub') : 'הוסף את FitUp למסך הבית לגישה מהירה ותמיכה מלאה באופליין!');
       }
 
-      // Always show banner when in browser!
+      // Always show banner when in browser and not yet installed!
       pwaBanner.classList.remove('hidden');
     }
 
@@ -365,12 +422,7 @@ const App = (() => {
           const choice = await promptObj.userChoice;
           console.log('[PWA] User install choice:', choice);
           if (choice && choice.outcome === 'accepted') {
-            if (window.UI && window.UI.toast) {
-              UI.toast(I18n.t('pwa_installed_toast'), 'success');
-            }
-            if (pwaBanner) pwaBanner.classList.add('hidden');
-            window.deferredInstallPrompt = null;
-            deferredInstallPrompt = null;
+            handleAppInstalledSuccess();
           }
         } catch (err) {
           console.warn('[PWA] Error calling prompt():', err);
@@ -429,12 +481,7 @@ const App = (() => {
           const choice = await incoming.userChoice;
           console.log('[PWA] Delayed prompt choice:', choice);
           if (choice && choice.outcome === 'accepted') {
-            if (window.UI && window.UI.toast) {
-              UI.toast(I18n.t('pwa_installed_toast'), 'success');
-            }
-            if (pwaBanner) pwaBanner.classList.add('hidden');
-            window.deferredInstallPrompt = null;
-            deferredInstallPrompt = null;
+            handleAppInstalledSuccess();
           }
         } catch (err) {
           console.warn('[PWA] Delayed prompt error:', err);
@@ -448,11 +495,14 @@ const App = (() => {
         try {
           const apps = await navigator.getInstalledRelatedApps();
           if (apps && apps.length > 0) {
+            try {
+              localStorage.setItem('fitup_app_installed', 'true');
+            } catch (_) {}
             if (window.UI && window.UI.toast) {
               UI.toast(I18n.t('pwa_already_installed_toast') || 'האפליקציה כבר מותקנת בטלפון שלך! 📱', 'info');
             }
-            isStandalone = true;
             updatePwaUI();
+            showPostInstallModal();
             return;
           }
         } catch (_) {}
@@ -461,6 +511,115 @@ const App = (() => {
       // 6. Fallback guide modal
       showInstallGuideModal();
     };
+
+    let hasHandledInstallSuccess = false;
+
+    function handleAppInstalledSuccess() {
+      if (hasHandledInstallSuccess) return;
+      hasHandledInstallSuccess = true;
+
+      try {
+        localStorage.setItem('fitup_app_installed', 'true');
+        localStorage.setItem('fitup_app_installed_time', Date.now().toString());
+      } catch (_) {}
+
+      deferredInstallPrompt = null;
+      window.deferredInstallPrompt = null;
+
+      if (pwaBanner) pwaBanner.classList.add('hidden');
+      updatePwaUI();
+
+      // Exactly ONE toast notification
+      if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('pwa_installed_toast'), 'success');
+      }
+
+      // Celebratory post-install modal taking user to the installed app
+      showPostInstallModal();
+    }
+    window.handlePwaInstalledSuccess = handleAppInstalledSuccess;
+
+    function showPostInstallModal() {
+      if (!window.UI || !window.UI.showModal) return;
+
+      const title = (window.I18n && window.I18n.t)
+        ? I18n.t('pwa_installed_modal_title')
+        : '🎉 האפליקציה הותקנה בהצלחה!';
+
+      const heading = (window.I18n && window.I18n.t)
+        ? I18n.t('pwa_installed_modal_heading')
+        : 'FitUp מוכנה לשימוש במסך הבית! 📲';
+
+      const desc = (window.I18n && window.I18n.t)
+        ? I18n.t('pwa_installed_modal_desc')
+        : 'האייקון של FitUp נוסף כעת למסך הבית ולרשימת האפליקציות במכשיר שלך. מעכשיו מומלץ תמיד לפתוח דרך האייקון לגישה מהירה, מסך מלא ועבודה ללא אינטרנט.';
+
+      const whereTitle = (window.I18n && window.I18n.t)
+        ? I18n.t('pwa_installed_where_icon_title')
+        : 'איפה מוצאים את האייקון?';
+
+      const whereDesc = (window.I18n && window.I18n.t)
+        ? I18n.t('pwa_installed_where_icon_desc')
+        : 'חזור למסך הראשי של הטלפון וחפש את סמל FitUp 💪. אם הוא לא מופיע במסך הראשי, החלק לפתיחת רשימת כל האפליקציות וחפש "FitUp".';
+
+      const openNow = (window.I18n && window.I18n.t)
+        ? I18n.t('pwa_installed_open_now')
+        : '🚀 פתח את האפליקציה עכשיו';
+
+      const closeText = (window.I18n && window.I18n.t)
+        ? I18n.t('pwa_installed_modal_close')
+        : 'הבנתי, המשך';
+
+      const content = `
+        <div style="text-align: center; padding: 6px 0;">
+          <div style="font-size: 48px; margin-bottom: 12px; line-height: 1;">📱</div>
+          <h3 style="font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">
+            ${heading}
+          </h3>
+          <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
+            ${desc}
+          </p>
+          <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 12px; margin-bottom: 16px; text-align: start; font-size: 12.5px; color: var(--text-primary); line-height: 1.6;">
+            💡 <strong>${whereTitle}</strong><br>
+            <span>${whereDesc}</span>
+          </div>
+          <button id="pwa-post-install-launch-btn" class="btn-primary" style="width: 100%; padding: 13px; font-weight: 800; font-size: 14.5px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);">
+            <span>🚀</span> <span>${openNow}</span>
+          </button>
+          <button id="pwa-post-install-close-btn" class="btn-secondary" style="width: 100%; margin-top: 8px; padding: 10px; font-weight: 600; font-size: 13px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <span>${closeText}</span>
+          </button>
+        </div>
+      `;
+
+      window.UI.showModal(title, content);
+
+      setTimeout(() => {
+        const launchBtn = document.getElementById('pwa-post-install-launch-btn');
+        if (launchBtn) {
+          launchBtn.onclick = () => {
+            if (window.UI && window.UI.closeModal) window.UI.closeModal();
+            const pwaUrl = `${window.location.origin}${window.location.pathname}?mode=pwa`;
+            const chromeIntent = `intent://${location.host}${location.pathname}?mode=pwa#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;end`;
+            try {
+              if (/Android/i.test(navigator.userAgent)) {
+                window.location.href = chromeIntent;
+              } else {
+                window.location.href = pwaUrl;
+              }
+            } catch (_) {
+              window.location.href = pwaUrl;
+            }
+          };
+        }
+        const closeBtn = document.getElementById('pwa-post-install-close-btn');
+        if (closeBtn) {
+          closeBtn.onclick = () => {
+            if (window.UI && window.UI.closeModal) window.UI.closeModal();
+          };
+        }
+      }, 100);
+    }
 
     if (installBtn) installBtn.onclick = triggerInstall;
     if (pwaBannerInstallBtn) pwaBannerInstallBtn.onclick = triggerInstall;
@@ -482,14 +641,7 @@ const App = (() => {
 
     window.addEventListener('appinstalled', () => {
       console.log('PWA appinstalled event!');
-      deferredInstallPrompt = null;
-      window.deferredInstallPrompt = null;
-      isStandalone = true;
-      if (window.UI && window.UI.toast) {
-        UI.toast(I18n.t('pwa_installed_toast'), 'success');
-      }
-      if (pwaBanner) pwaBanner.classList.add('hidden');
-      updatePwaUI();
+      handleAppInstalledSuccess();
     });
 
     updatePwaUI();

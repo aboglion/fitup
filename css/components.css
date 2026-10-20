@@ -6380,3 +6380,399 @@ html.light-theme .login-prompt-banner {
 [dir="ltr"] .swap-rec-card:hover .swap-action-arrow {
   transform: translateX(4px);
 }
+
+/* ===== Global League Leaderboard & Podium ===== */
+.league-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 29, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.league-modal-backdrop.hidden {
+  display: none !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.league-modal-box {
+  background: var(--bg-card, #111827);
+  border: 1.5px solid rgba(0, 255, 102, 0.3);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 255, 102, 0.1);
+  border-radius: 24px;
+  max-width: 580px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  animation: modalScaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalScaleUp {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.league-header {
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.league-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.league-header-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary, #94a3b8);
+  margin-top: 2px;
+}
+
+.league-close-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary, #94a3b8);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.league-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Filter Tabs */
+.league-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.league-tab-btn {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary, #94a3b8);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.league-tab-btn.active {
+  background: rgba(0, 255, 102, 0.15);
+  color: #00ff66;
+  border-color: rgba(0, 255, 102, 0.4);
+  box-shadow: 0 0 12px rgba(0, 255, 102, 0.2);
+}
+
+.league-body {
+  overflow-y: auto;
+  padding: 16px 20px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+}
+
+/* Podium Styles */
+.league-podium-wrapper {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 0 6px;
+  margin-bottom: 8px;
+}
+
+.podium-card {
+  flex: 1;
+  max-width: 140px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 18px 18px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px 0;
+  position: relative;
+  text-align: center;
+  border: 1.5px solid transparent;
+}
+
+.podium-gold {
+  order: 2;
+  border-color: rgba(250, 204, 21, 0.6);
+  background: linear-gradient(180deg, rgba(250, 204, 21, 0.12) 0%, rgba(17, 24, 39, 0.6) 100%);
+  transform: translateY(-8px);
+  box-shadow: 0 0 25px rgba(250, 204, 21, 0.25);
+}
+
+.podium-silver {
+  order: 1;
+  border-color: rgba(203, 213, 225, 0.4);
+  background: linear-gradient(180deg, rgba(203, 213, 225, 0.08) 0%, rgba(17, 24, 39, 0.6) 100%);
+}
+
+.podium-bronze {
+  order: 3;
+  border-color: rgba(251, 146, 60, 0.4);
+  background: linear-gradient(180deg, rgba(251, 146, 60, 0.08) 0%, rgba(17, 24, 39, 0.6) 100%);
+}
+
+.podium-crown {
+  font-size: 18px;
+  margin-bottom: 2px;
+}
+
+.podium-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.avatar-champion {
+  width: 52px;
+  height: 52px;
+  font-size: 26px;
+  border-color: #facc15;
+  box-shadow: 0 0 16px rgba(250, 204, 21, 0.5);
+}
+
+.podium-name {
+  font-size: 12px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.podium-score {
+  font-size: 11px;
+  font-weight: 800;
+  color: #38bdf8;
+  margin: 2px 0;
+}
+
+.gold-score {
+  color: #facc15;
+  font-size: 13px;
+}
+
+.podium-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.badge-gold {
+  background: rgba(250, 204, 21, 0.2);
+  color: #facc15;
+}
+
+.podium-stand {
+  width: 100%;
+  padding: 6px 0;
+  font-weight: 900;
+  font-size: 14px;
+  border-radius: 6px 6px 0 0;
+}
+
+.stand-1 {
+  background: linear-gradient(180deg, #facc15 0%, #ca8a04 100%);
+  color: #000;
+}
+
+.stand-2 {
+  background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+  color: #fff;
+}
+
+.stand-3 {
+  background: linear-gradient(180deg, #fb923c 0%, #c2410c 100%);
+  color: #fff;
+}
+
+/* Roster Rows */
+.league-roster-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.league-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  transition: all 0.2s ease;
+}
+
+.league-row:hover {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+.league-row-me {
+  background: rgba(0, 255, 102, 0.08) !important;
+  border-color: rgba(0, 255, 102, 0.35) !important;
+  box-shadow: inset 0 0 12px rgba(0, 255, 102, 0.05), 0 2px 10px rgba(0, 255, 102, 0.1);
+}
+
+.league-row-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.league-rank-num {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--text-secondary, #94a3b8);
+  min-width: 24px;
+  text-align: center;
+}
+
+.league-avatar-small {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.league-player-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.league-me-badge {
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1px 6px;
+  background: #00ff66;
+  color: #000;
+  border-radius: 4px;
+}
+
+.league-player-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.league-sub-pill {
+  font-size: 10px;
+  color: var(--text-secondary, #94a3b8);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.league-row-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.league-player-xp {
+  font-size: 14px;
+  font-weight: 900;
+  color: #00ff66;
+}
+
+.league-verified-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: #38bdf8;
+  opacity: 0.85;
+}
+
+/* Sticky Footer Rank */
+.league-sticky-my-rank {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(10, 15, 29, 0.98) 100%);
+  border-top: 1.5px solid rgba(0, 255, 102, 0.35);
+  padding: 12px 20px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+}
+
+.league-sticky-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.league-sticky-rank {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 255, 102, 0.15);
+  border: 1px solid #00ff66;
+  color: #00ff66;
+  font-size: 13px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -6617,6 +6617,11 @@ const TodayPage = (() => {
 
     await DB.saveDayTracking(currentDayIndex, currentTracking);
 
+    // Auto-sync global league score
+    if (typeof window !== 'undefined' && window.League && typeof window.League.syncMyScore === 'function') {
+      window.League.syncMyScore().catch(err => console.debug('[League] Auto-sync error:', err));
+    }
+
     // --- Auto-complete passed Rest days & past Relaxed Walks ---
     await DB.syncRestDays(allPlanDays);
     if (typeof DB.syncPastRelaxedWalks === 'function') {

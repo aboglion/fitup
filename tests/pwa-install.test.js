@@ -74,11 +74,42 @@ test('I18n PWA Translation Keys Symmetry', () => {
     'pwa_ios_step1',
     'pwa_ios_step2',
     'pwa_ios_step3',
-    'pwa_ios_safari_tip'
+    'pwa_ios_safari_tip',
+    'pwa_installed_toast',
+    'pwa_installed_modal_title',
+    'pwa_installed_modal_heading',
+    'pwa_installed_modal_desc',
+    'pwa_installed_where_icon_title',
+    'pwa_installed_where_icon_desc',
+    'pwa_installed_open_now',
+    'pwa_installed_modal_close'
   ];
 
   for (const key of requiredKeys) {
     const matches = (i18nContent.match(new RegExp(`\\b${key}:`, 'g')) || []).length;
     assert.strictEqual(matches, 3, `Key "${key}" must be defined in all 3 languages (en, he, ar)`);
   }
+});
+
+test('PWA Install Deduplication & Persistence', () => {
+  const root = path.join(__dirname, '..');
+  const appPath = path.join(root, 'js', 'app.js');
+  const appContent = fs.readFileSync(appPath, 'utf8');
+
+  // Verify deduplication guard exists
+  assert.ok(appContent.includes('hasHandledInstallSuccess'), 'app.js must have install deduplication guard');
+  assert.ok(appContent.includes('handleAppInstalledSuccess'), 'app.js must have centralized handleAppInstalledSuccess handler');
+
+  // Verify persistence check
+  assert.ok(appContent.includes("localStorage.getItem('fitup_app_installed')"), 'app.js must check fitup_app_installed in localStorage');
+  assert.ok(appContent.includes("localStorage.setItem('fitup_app_installed', 'true')"), 'app.js must persist fitup_app_installed to localStorage');
+
+  // Verify post-install guidance and launch modal
+  assert.ok(appContent.includes('showPostInstallModal'), 'app.js must display celebratory post-install modal');
+  assert.ok(appContent.includes('pwa-open-app-btn'), 'app.js must support direct open app button in settings');
+
+  // Verify index.html head persistence
+  const htmlPath = path.join(root, 'index.html');
+  const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+  assert.ok(htmlContent.includes("localStorage.setItem('fitup_app_installed', 'true')"), 'index.html must persist install status in head');
 });
