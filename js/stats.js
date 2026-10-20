@@ -10,6 +10,51 @@ const StatsPage = (() => {
     return true;
   };
 
+  const getDayXP = (day) => {
+    if (!day || !day.dayType) return 0;
+    const dt = String(day.dayType).toLowerCase();
+    if (isStrengthDay(day.dayType)) return 500;
+    if (dt.includes('vo2')) return 400;
+    if (dt.includes('cardio')) return 300;
+    if (dt.includes('active recovery') || dt.includes('recovery') || dt.includes('walk')) return 200;
+    if (day.dayType === 'Rest' || dt.includes('rest')) return 50;
+    return 200;
+  };
+
+  const calculateXPAndLevel = (planDays, trackingList) => {
+    const planMap = new Map();
+    (planDays || []).forEach(d => {
+      if (d && typeof d.dayIndex === 'number') planMap.set(d.dayIndex, d);
+    });
+
+    let totalXP = 0;
+    (trackingList || []).forEach(t => {
+      if (t && t.completed) {
+        const day = planMap.get(t.dayIndex) || (planDays ? planDays[t.dayIndex] : null);
+        if (day) {
+          totalXP += getDayXP(day);
+        }
+      }
+    });
+
+    const currentLevel = Math.floor(Math.sqrt(totalXP / 500)) + 1;
+    const xpForCurrentLevel = currentLevel === 1 ? 0 : Math.pow(currentLevel - 1, 2) * 500;
+    const xpForNextLevel = Math.pow(currentLevel, 2) * 500;
+    const xpNeededForLevel = Math.max(1, xpForNextLevel - xpForCurrentLevel);
+    const xpInCurrentLevel = Math.max(0, totalXP - xpForCurrentLevel);
+    const levelProgress = totalXP >= xpForNextLevel ? 100 : Math.min(100, Math.max(0, (xpInCurrentLevel / xpNeededForLevel) * 100));
+
+    return {
+      totalXP,
+      currentLevel,
+      xpForCurrentLevel,
+      xpForNextLevel,
+      xpInCurrentLevel,
+      xpNeededForLevel,
+      levelProgress
+    };
+  };
+
   const formatCellDate = (rawDateStr) => {
     if (!rawDateStr) return '';
     let day = null, month = null, year = null;
@@ -101,23 +146,9 @@ const StatsPage = (() => {
       date: t.date
     }));
 
-    // Calculate total XP
-    let totalXP = 0;
-    allTracking.forEach(t => {
-      if (t.completed) {
-        const day = trackingMap[t.dayIndex] ? allPlanDays[t.dayIndex] : null;
-        if (day) {
-          if (isStrengthDay(day.dayType)) totalXP += 500;
-          else if (day.dayType === 'Active Recovery') totalXP += 200;
-          else if (day.dayType === 'Rest') totalXP += 50;
-        }
-      }
-    });
-
-    const currentLevel = Math.floor(Math.sqrt(totalXP / 500)) + 1;
-    const xpForCurrentLevel = currentLevel === 1 ? 0 : Math.pow(currentLevel - 1, 2) * 500;
-    const xpForNextLevel = Math.pow(currentLevel, 2) * 500;
-    const levelProgress = totalXP >= xpForNextLevel ? 100 : ((totalXP - xpForCurrentLevel) / (xpForNextLevel - xpForCurrentLevel)) * 100;
+    // Calculate total XP and Level progression
+    const xpStats = calculateXPAndLevel(allPlanDays, allTracking);
+    const { totalXP, currentLevel, xpForNextLevel, xpInCurrentLevel, xpNeededForLevel, levelProgress } = xpStats;
 
     // Calculate weekly trend
     const todayIdx = UI.findTodayIndex(allPlanDays);
@@ -138,7 +169,7 @@ const StatsPage = (() => {
 
     // Render overview
     renderOverview(completedDays, totalDays, completedStrength, strengthDays.length,
-      completedWalk, walkDays.length, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct);
+      completedWalk, walkDays.length, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct, xpInCurrentLevel, xpNeededForLevel);
 
     // Metrics for compact cards at the bottom
     const metrics = {
@@ -214,7 +245,7 @@ const StatsPage = (() => {
    * Render overview stats
    */
   function renderOverview(completed, total, strength, totalStrength,
-    walk, totalWalk, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct) {
+    walk, totalWalk, avgRPE, streak, totalXP, currentLevel, xpForNextLevel, levelProgress, currentWeekNum, currPct, lastPct, monthPct, xpInCurrentLevel, xpNeededForLevel) {
     const container = document.getElementById('stats-overview');
 
     const streakHTML = streak > 0 ? `
@@ -227,6 +258,10 @@ const StatsPage = (() => {
       </div>
     ` : '';
 
+    const inLevelXP = typeof xpInCurrentLevel === 'number' ? xpInCurrentLevel : Math.max(0, totalXP - (currentLevel === 1 ? 0 : Math.pow(currentLevel - 1, 2) * 500));
+    const neededXP = typeof xpNeededForLevel === 'number' ? xpNeededForLevel : Math.max(1, xpForNextLevel - (currentLevel === 1 ? 0 : Math.pow(currentLevel - 1, 2) * 500));
+    const totalLabel = (typeof I18n !== 'undefined' && I18n.currentLang === 'en') ? 'total' : (typeof I18n !== 'undefined' && I18n.currentLang === 'ar' ? 'الإجمالي' : 'סה"כ');
+
     const xpHTML = `
       <div class="xp-container" style="grid-column: 1 / -1; background: var(--bg-card); padding: var(--space-lg); border-radius: var(--radius-lg); border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: var(--space-sm);">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -234,7 +269,7 @@ const StatsPage = (() => {
             <span style="font-size: 24px;">⭐</span>
             <div>
               <div style="font-weight: 800; font-size: 18px; color: var(--text-primary);">${I18n.t('level_label')} ${currentLevel}</div>
-              <div style="font-size: 12px; color: var(--text-secondary);">${totalXP} / ${xpForNextLevel} XP</div>
+              <div style="font-size: 12px; color: var(--text-secondary);">${inLevelXP.toLocaleString()} / ${neededXP.toLocaleString()} XP <span style="opacity: 0.75; font-size: 11px;">(${totalXP.toLocaleString()} XP ${totalLabel})</span></div>
             </div>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
@@ -1346,9 +1381,11 @@ const StatsPage = (() => {
     const userName = profile?.name || 'מתאמן FitUp';
     const allTracking = await DB.getAllTracking();
     const completedDays = allTracking.filter(t => t.completed).length;
-    let totalXP = 0;
-    allTracking.forEach(t => { if (t.completed) totalXP += 500; });
-    const currentLevel = Math.floor(Math.sqrt(totalXP / 500)) + 1;
+    if (!allPlanDays || allPlanDays.length === 0) {
+      allPlanDays = await DB.getAllPlan();
+      allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
+    }
+    const { totalXP, currentLevel } = calculateXPAndLevel(allPlanDays, allTracking);
 
     const canvas = document.createElement('canvas');
     canvas.width = 600;
@@ -1425,6 +1462,8 @@ const StatsPage = (() => {
     calculateMuscleProgressions,
     getExerciseContributions,
     getMuscleForExercise,
+    getDayXP,
+    calculateXPAndLevel,
     shareProgressCard
   };
 })();
