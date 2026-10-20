@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v223-league-perf';
+const CACHE_NAME = 'fitup-v224-chinup-progression-tree';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

@@ -714,7 +714,7 @@ const App = (() => {
    */
   async function loadAppCore() {
     try {
-      const currentDataVersion = '15.7.2'; // FitUp v15.7.2 — purge future phantom completions & strict days passed
+      const currentDataVersion = '15.7.3'; // FitUp v15.7.3 — align Day 3 Chin-Up with skill tree progression
       const savedDataVersion = await DB.getSetting('dataVersion');
 
       let planStartDate = await DB.getSetting('planStartDate');

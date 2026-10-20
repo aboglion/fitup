@@ -59,7 +59,7 @@ const ExercisesPage = (() => {
     'Push-up Bars Progression': [{ weight: 'Incline Push-Up', fromWeek: 1 }, { weight: 'Push-Up', fromWeek: 5 }],
     'TRX Y-T-W': [{ weight: 'Angle 1', fromWeek: 1 }, { weight: 'Angle 2', fromWeek: 18 }, { weight: 'Angle 3', fromWeek: 42 }],
     'Pull-Up Progression': [{ weight: 'Negative Pull-Up', fromWeek: 1 }, { weight: 'Pull-Up', fromWeek: 5 }],
-    'Chin-Up Progression': [{ weight: 'Negative Chin-Up', fromWeek: 5 }, { weight: 'Chin-Up', fromWeek: 10 }],
+    'Chin-Up Progression': [{ weight: 'Negative Chin-Up', fromWeek: 1 }, { weight: 'Chin-Up', fromWeek: 5 }],
     'TRX Face Pull': [{ weight: 'Angle 1', fromWeek: 1 }, { weight: 'Angle 2', fromWeek: 18 }, { weight: 'Angle 3', fromWeek: 42 }],
     'Towel Hang': [{ weight: 'Dead Hang', fromWeek: 3 }, { weight: 'Towel Hang', fromWeek: 10 }, { weight: 'Towel Hang + 5kg', fromWeek: 42 }],
     'L-Sit Progression': [{ weight: 'Tuck L-Sit', fromWeek: 3 }, { weight: 'One-Leg Extended', fromWeek: 18 }, { weight: 'Full L-Sit', fromWeek: 34 }],
@@ -251,7 +251,7 @@ const ExercisesPage = (() => {
       {
         title: 'pullup_tree', icon: '🧗', exercises: [
           { name: 'Pull-Up Progression', unlockWeek: 1, id: 'pull-1' },
-          { name: 'Chin-Up Progression', unlockWeek: 5, parentId: 'pull-1', id: 'pull-1b', relType: 'accessory' },
+          { name: 'Chin-Up Progression', unlockWeek: 1, parentId: 'pull-1', id: 'pull-1b', relType: 'accessory' },
           { name: 'Pull-Up (Overhand)', unlockWeek: 10, parentId: 'pull-1', id: 'pull-2a', relType: 'replace', weightTransfer: 'stepdown' },
           { name: 'Chin-Up', unlockWeek: 10, parentId: 'pull-1b', id: 'pull-2b', relType: 'replace', weightTransfer: 'stepdown' },
           { name: 'Weighted Pull-Up', unlockWeek: 62, parentId: 'pull-2a', id: 'pull-3a', relType: 'replace', weightTransfer: 'inherit' },

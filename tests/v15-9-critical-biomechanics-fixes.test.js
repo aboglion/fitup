@@ -106,11 +106,11 @@ test('v15.9 Fix 3: Achilles Tendon Collision Resolution (Calf Block on Day 3 & V
 test('v15.9 Fix 4: Day 3 Pressing Sequence Bottleneck (Antagonistic Chin-Up at #4)', () => {
   const d3 = data.daily.find(d => d.week === 'Week 5' && d.dayOfWeek === 'Wednesday');
   const mainExs = d3.exercises.filter(e => !e.isWarmup && e.id !== 'micro-mobility-protocol');
-  const chinIdx = mainExs.findIndex(e => e.id === 'chin-up');
+  const chinIdx = mainExs.findIndex(e => e.id === 'chin-up' || e.id === 'chin-up-progression');
   const floorIdx = mainExs.findIndex(e => e.id === 'single-arm-floor-press');
   const pushupIdx = mainExs.findIndex(e => e.id === 'push-up-progression' || e.id === 'push-up-bars-progression');
 
-  assert.ok(chinIdx > -1, 'Chin-Up must exist on Day 3');
+  assert.ok(chinIdx > -1, 'Chin-Up Tree must exist on Day 3');
   assert.ok(floorIdx > -1, 'Floor press must exist on Day 3');
   assert.ok(pushupIdx > -1, 'Push-up must exist on Day 3');
 

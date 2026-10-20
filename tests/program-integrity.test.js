@@ -315,11 +315,15 @@ test('Program Integrity - Balanced Push-Pull (Day 3 Chin-Up, Day 5 Calves, Week 
   assert.ok(!w1d1Ids.includes('standing-single-leg-calf-raise'), 'Day 1 must not include standing-single-leg-calf-raise');
   assert.ok(!w1d1Ids.includes('seated-single-leg-calf-raise'), 'Day 1 must not include seated-single-leg-calf-raise');
 
-  // 2. Day 3 Chin-Up replaced Diamond Push-Up, Triceps Extension is 3 sets
+  // 2. Day 3 Chin-Up Progression Tree replaced Diamond Push-Up, Triceps Extension is 3 sets
   const w1d3 = data.daily.find(d => d.week === 'Week 1' && d.dayOfWeek === 'Wednesday');
   const w1d3Ids = w1d3.exercises.map(e => e.id);
-  assert.ok(w1d3Ids.includes('chin-up'), 'Day 3 must include chin-up');
+  assert.ok(w1d3Ids.includes('chin-up-progression'), 'Day 3 Week 1 must include chin-up-progression');
   assert.ok(!w1d3Ids.includes('diamond-push-up'), 'Day 3 must not include diamond-push-up');
+
+  const w10d3 = data.daily.find(d => d.week === 'Week 10' && d.dayOfWeek === 'Wednesday');
+  const w10d3Ids = w10d3.exercises.map(e => e.id);
+  assert.ok(w10d3Ids.includes('chin-up'), 'Day 3 Week 10 must unlock full chin-up');
 
   const w5d3 = data.daily.find(d => d.week === 'Week 5' && d.dayOfWeek === 'Wednesday');
   const tricepsExt = w5d3.exercises.find(e => e.id === 'db-overhead-triceps-extension');

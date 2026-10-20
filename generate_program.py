@@ -479,6 +479,21 @@ EXERCISES_CATALOG = [
         }
     },
     {
+        "id": "chin-up-progression",
+        "name": "Chin-Up Progression",
+        "category": "Pull",
+        "type": "variation",
+        "restSeconds": 90,
+        "restRange": [75, 105],
+        "repWindow": "4-8",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 2,
+        "structure": "straight",
+        "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק; ירידה אטית מבוקרת (2-3 שניות)",
+        "stages": ["Negative Chin-Up", "Chin-Up", "Weighted Chin-Up (vest 5kg)"]
+    },
+    {
         "id": "chin-up",
         "name": "Chin-Up",
         "category": "Pull",
@@ -1163,9 +1178,13 @@ def generate_day_exercises(dow, week):
         # A3: Single-Arm Floor Press
         exs.append(make_ex_obj("A3", "single-arm-floor-press", "Single-Arm Floor Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="8 kg each", tempo="2s descent", rest=90, structure="straight"))
 
-        # A4: Chin-Up (v15.9: antagonistic vertical pulling break between Floor Press and Push-Up/Triceps —
-        # provides 4-5 min active recovery for triceps and anterior delts, preventing pre-fatigue breakdown)
-        exs.append(make_ex_obj("A4", "chin-up", "Chin-Up", "2×2" if is_deload else "2×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
+        # A4: Chin-Up Progression Tree (v15.9.1: follows the skill tree - Chin-Up Progression with Negative Chin-Up for Weeks 1-9, full Chin-Up for Weeks 10-65, Weighted Chin-Up for Weeks 66+)
+        if week < 10:
+            exs.append(make_ex_obj("A4", "chin-up-progression", "Chin-Up Progression", "2×2" if is_deload else "2×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
+        elif week < 66:
+            exs.append(make_ex_obj("A4", "chin-up", "Chin-Up", "2×2" if is_deload else "2×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
+        else:
+            exs.append(make_ex_obj("A4", "weighted-chin-up", "Weighted Chin-Up", "2×2" if is_deload else "2×4-8", rep_window="4-8", weight="5 kg vest", tempo="2s descent", rest=105, structure="straight"))
 
         # A5: Push-Up Tree
         if week < 10:
@@ -1507,7 +1526,7 @@ def generate_program():
             "protectedExercises": [
                 "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "heels-elevated-goblet-squat",
                 "db-glute-bridge", "suitcase-carry", "pike-progression", "single-arm-floor-press", "push-up-progression",
-                "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up", "chin-up", "pull-up-progression",
+                "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up", "chin-up", "chin-up-progression", "pull-up-progression",
                 "one-arm-db-row", "single-arm-curl", "single-arm-hammer-curl"
             ],
             "pairs": lean_mode_structures["pairs"],
