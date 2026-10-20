@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v226-biomechanics-fixes';
+const CACHE_NAME = 'fitup-v227-band-assisted-assets';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

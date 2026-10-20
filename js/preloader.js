@@ -133,12 +133,16 @@
     "WEIGHTED DEFICIT PUSH-UP.png",
     "WEIGHTED DIAMOND PUSH-UP.png",
     "WEIGHTED PULL-UP.png",
-    "WRIST ROCKS.png"
+    "WRIST ROCKS.png",
+    "BAND-ASSISTED CHIN-UP.png",
+    "BAND-ASSISTED PULL-UP.png"
   ];
 
-  // Comprehensive GIF list on disk (132 assets)
+  // Comprehensive GIF list on disk (134 assets)
   // Ordered so core exercise technique GIFs come first, and heavy files come last
   const ALL_GIFS_ON_DISK = [
+    "Band-Assisted Chin-Up.gif",
+    "Band-Assisted Pull-Up.gif",
     "Ankle Dorsiflexion Mobility.gif",
     "Arm Block - DB Curl.gif",
     "Arm Block - DB Lateral Raise.gif",
