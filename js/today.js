@@ -1041,9 +1041,10 @@ const TodayPage = (() => {
       completed: false
     };
 
-    // Auto-complete Rest Day immediately when opened
+    // Auto-complete Rest Day immediately when opened (ONLY for today or past days, NEVER future days!)
     const isFullRestDay = (day.dayType === 'Rest') || (!day.exercises || day.exercises.length === 0);
-    if (isFullRestDay && !currentTracking.completed && !currentTracking.manuallyUncompleted) {
+    const realTodayIndex = (typeof UI !== 'undefined' && UI.findTodayIndex) ? UI.findTodayIndex(allPlanDays) : 0;
+    if (isFullRestDay && currentDayIndex <= realTodayIndex && !currentTracking.completed && !currentTracking.manuallyUncompleted) {
       currentTracking.completed = true;
       currentTracking.autoCompleted = true;
       currentTracking.date = currentTracking.date || day.date || (typeof UI !== 'undefined' ? UI.getLocalDateString().split('-').reverse().join('/') : '');
@@ -1405,7 +1406,6 @@ const TodayPage = (() => {
     document.getElementById('today-date-badge').textContent = dayOfWeekName;
     document.getElementById('day-week').textContent = day.week ? day.week.replace('Week', I18n.t('week_label_full')) : '';
 
-    const realTodayIndex = UI.findTodayIndex(allPlanDays);
     const isToday = currentDayIndex === realTodayIndex;
     const isPastDay = currentDayIndex < realTodayIndex;
     const isFutureDay = currentDayIndex > realTodayIndex;
@@ -5156,7 +5156,7 @@ const TodayPage = (() => {
               <img src="${UI.getImageUrl(activeName, currentDayIndex)}" 
                    class="exercise-hero-image skeleton-img"
                    data-fallback-exname="${(isInjuredSwap ? injuryAdaptation.substituteName : ex.name).replace(/"/g, '&quot;')}"
-                   loading="${idx === 0 ? 'eager' : 'lazy'}" decoding="async"
+                   loading="eager" decoding="async"
                    alt="${activeName}" 
                    onload="UI.handleImageLoaded(this)"
                    onerror="UI.handleImageFallback(this, 'png')"
@@ -5212,17 +5212,20 @@ const TodayPage = (() => {
     }).join('');
 
     // Immediate check for images already cached in browser/SW to clear skeleton spinners without delay
-    if (typeof requestAnimationFrame !== 'undefined') {
-      requestAnimationFrame(() => {
-        container.querySelectorAll('.skeleton-img').forEach(img => {
-          if (img.complete) {
-            if (typeof UI !== 'undefined' && UI.handleImageLoaded) {
-              UI.handleImageLoaded(img);
-            }
+    const markCompleteImages = () => {
+      container.querySelectorAll('.skeleton-img').forEach(img => {
+        if (img.complete && (img.naturalWidth > 0 || img.width > 0)) {
+          if (typeof UI !== 'undefined' && UI.handleImageLoaded) {
+            UI.handleImageLoaded(img);
           }
-        });
+        }
       });
+    };
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(markCompleteImages);
     }
+    setTimeout(markCompleteImages, 50);
+    setTimeout(markCompleteImages, 250);
   }
 
   let _changePopupTimer = null;
@@ -6528,18 +6531,26 @@ const TodayPage = (() => {
     let startDate = await DB.getSetting('planStartDate');
     if (!startDate) {
       const allTracking = await DB.getAllTracking();
-      let earliestDate = null;
+      let earliestTime = Infinity;
       if (Array.isArray(allTracking) && allTracking.length > 0) {
         for (const t of allTracking) {
-          if (t && t.date) {
-            if (!earliestDate || t.date < earliestDate) earliestDate = t.date;
+          // ONLY count actual user-completed workouts, never auto-completed rest/walks
+          if (t && t.completed && !t.autoCompleted) {
+            const raw = t.date || (t.lastUpdated ? t.lastUpdated.split('T')[0] : null);
+            const p = (typeof UI !== 'undefined' && UI.parseDate) ? UI.parseDate(raw) : (raw ? new Date(raw) : null);
+            if (p && !isNaN(p.getTime()) && p.getTime() < earliestTime) {
+              earliestTime = p.getTime();
+            }
           }
         }
       }
-      const baseDate = earliestDate ? new Date(earliestDate + 'T12:00:00') : new Date();
+      const baseDate = earliestTime < Infinity ? new Date(earliestTime) : new Date();
+      baseDate.setHours(12, 0, 0, 0);
       // Anchor to Sunday of the week (Sunday = Day 1 in all languages)
       baseDate.setDate(baseDate.getDate() - baseDate.getDay());
-      startDate = UI.getLocalDateString(baseDate);
+      startDate = (typeof UI !== 'undefined' && UI.getLocalDateString)
+        ? UI.getLocalDateString(baseDate)
+        : baseDate.toISOString().split('T')[0];
       await DB.setSetting('planStartDate', startDate);
       await DB.loadTrainingPlan();
       UI.toast(I18n.t('program_started'), 'success');

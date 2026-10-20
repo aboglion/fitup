@@ -1,18 +1,55 @@
 {
-  "name": "FitUp - Personal Fitness Tracker",
+  "name": "FitUp - Workout & AI Nutrition Tracking",
   "short_name": "FitUp",
   "description": "Professional AI Workout & Nutrition Tracker",
   "start_url": "./",
-  "id": "./",
   "scope": "./",
+  "id": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0f",
   "theme_color": "#3b82f6",
+  "prefer_related_applications": false,
   "categories": [
     "health",
     "fitness",
     "lifestyle"
+  ],
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "shortcuts": [
+    {
+      "name": "Today Workout",
+      "short_name": "Today",
+      "description": "Quick access to your workout",
+      "url": "./#today",
+      "icons": [
+        {
+          "src": "images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Statistics",
+      "short_name": "Stats",
+      "description": "View workout stats & progress",
+      "url": "./#stats",
+      "icons": [
+        {
+          "src": "images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "manifest.json"
+    }
   ],
   "icons": [
     {
@@ -39,20 +76,5 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ],
-  "shortcuts": [
-    {
-      "name": "Today Workout",
-      "short_name": "Workout",
-      "description": "View today's workout plan",
-      "url": "./",
-      "icons": [
-        {
-          "src": "images/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    }
   ]
 }
-

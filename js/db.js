@@ -236,6 +236,26 @@ const DB = (() => {
   }
 
   /**
+   * Delete a single record from a store by key
+   */
+  async function deleteRecord(storeName, key) {
+    await getDb();
+    return new Promise((resolve, reject) => {
+      const store = transaction(storeName, 'readwrite');
+      const request = store.delete(key);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Delete tracking record for a specific day
+   */
+  async function deleteDayTracking(dayIndex) {
+    return deleteRecord(STORES.TRACKING, dayIndex);
+  }
+
+  /**
    * Delete entire database
    */
   function deleteDatabase() {
@@ -963,43 +983,36 @@ const DB = (() => {
    */
   async function syncRestDays(allPlanDays) {
     if (!Array.isArray(allPlanDays) || allPlanDays.length === 0) return false;
+    const planStartDateStr = await getSetting('planStartDate');
+    if (!planStartDateStr) return false; // Program hasn't started yet — never auto-complete pre-program days!
+
     const allTracking = await getAllTracking();
     const todayIso = (typeof UI !== 'undefined' && UI.getLocalDateString)
       ? UI.getLocalDateString()
       : new Date().toISOString().split('T')[0];
-    const realTodayIndex = (typeof UI !== 'undefined' && UI.findTodayIndex)
-      ? UI.findTodayIndex(allPlanDays)
-      : -1;
+    const startDateObj = new Date(planStartDateStr + 'T00:00:00');
+    if (startDateObj.getDay() !== 0) {
+      startDateObj.setDate(startDateObj.getDate() - startDateObj.getDay());
+    }
+    const todayObj = new Date(todayIso + 'T00:00:00');
+    const realTodayIndex = Math.floor((todayObj - startDateObj) / (1000 * 60 * 60 * 24));
+    if (realTodayIndex < 0) return false;
 
     let updated = false;
 
     for (let i = 0; i < allPlanDays.length; i++) {
       const day = allPlanDays[i];
       const isRest = day && (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0);
-      if (!isRest) continue;
 
-      let isPassedOrToday = false;
-      const rawDate = day.date || '';
-      let dayIso = null;
-      if (rawDate.includes('/')) {
-        const parts = rawDate.split('/');
-        if (parts.length === 3) {
-          dayIso = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-        }
-      } else if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
-        dayIso = rawDate;
-      }
-
-      if (dayIso && dayIso <= todayIso) {
-        isPassedOrToday = true;
-      } else if (realTodayIndex >= 0 && i <= realTodayIndex) {
-        isPassedOrToday = true;
-      }
-
-      if (isPassedOrToday) {
+      if (i <= realTodayIndex) {
+        if (!isRest) continue;
         const track = allTracking.find(t => t.dayIndex === i);
         if (!track || (!track.completed && !track.manuallyUncompleted)) {
-          const trackDateStr = day.date || rawDate || (typeof UI !== 'undefined' ? UI.getLocalDateString().split('-').reverse().join('/') : '');
+          const curDate = new Date(startDateObj);
+          curDate.setDate(curDate.getDate() + i);
+          const trackDateStr = (typeof UI !== 'undefined' && UI.getLocalDateString)
+            ? UI.getLocalDateString(curDate).split('-').reverse().join('/')
+            : day.date || '';
           const newTrack = {
             ...(track || {}),
             dayIndex: i,
@@ -1009,6 +1022,13 @@ const DB = (() => {
             lastUpdated: new Date().toISOString()
           };
           await saveDayTracking(i, newTrack);
+          updated = true;
+        }
+      } else {
+        // Future day: Purge any phantom autoCompleted rest/walk records
+        const track = allTracking.find(t => t.dayIndex === i);
+        if (track && (track.autoCompleted || track.stepsAutoCompleted)) {
+          await deleteDayTracking(i);
           updated = true;
         }
       }
@@ -1022,13 +1042,20 @@ const DB = (() => {
    */
   async function syncPastRelaxedWalks(allPlanDays) {
     if (!Array.isArray(allPlanDays) || allPlanDays.length === 0) return false;
+    const planStartDateStr = await getSetting('planStartDate');
+    if (!planStartDateStr) return false; // Program hasn't started yet — never auto-complete pre-program days!
+
     const allTracking = await getAllTracking();
     const todayIso = (typeof UI !== 'undefined' && UI.getLocalDateString)
       ? UI.getLocalDateString()
       : new Date().toISOString().split('T')[0];
-    const realTodayIndex = (typeof UI !== 'undefined' && UI.findTodayIndex)
-      ? UI.findTodayIndex(allPlanDays)
-      : -1;
+    const startDateObj = new Date(planStartDateStr + 'T00:00:00');
+    if (startDateObj.getDay() !== 0) {
+      startDateObj.setDate(startDateObj.getDate() - startDateObj.getDay());
+    }
+    const todayObj = new Date(todayIso + 'T00:00:00');
+    const realTodayIndex = Math.floor((todayObj - startDateObj) / (1000 * 60 * 60 * 24));
+    if (realTodayIndex <= 0) return false;
 
     let updated = false;
 
@@ -1036,82 +1063,90 @@ const DB = (() => {
       const day = allPlanDays[i];
       if (!day || !day.exercises || day.exercises.length === 0) continue;
 
-      let isPast = false;
-      const rawDate = day.date || '';
-      let dayIso = null;
-      if (rawDate.includes('/')) {
-        const parts = rawDate.split('/');
-        if (parts.length === 3) {
-          dayIso = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
-        }
-      } else if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
-        dayIso = rawDate;
-      }
+      if (i < realTodayIndex) {
+        const walkIdx = day.exercises.findIndex(ex => {
+          if (!ex) return false;
+          const id = (ex.id || '').toLowerCase();
+          const name = (ex.name || '').toLowerCase();
+          const orig = (ex.originalName || '').toLowerCase();
+          return id === 'relaxed-walking' || 
+                 name.includes('relaxed walking') || 
+                 orig.includes('relaxed walking') || 
+                 name.includes('active recovery walk') || 
+                 orig.includes('active recovery walk') ||
+                 name.includes('הליכה רגועה') ||
+                 name.includes('مשי מريح');
+        });
 
-      if (dayIso && dayIso < todayIso) {
-        isPast = true;
-      } else if (realTodayIndex >= 0 && i < realTodayIndex) {
-        isPast = true;
-      }
+        if (walkIdx === -1) continue;
 
-      if (!isPast) continue;
+        let track = allTracking.find(t => t.dayIndex === i);
+        const steps = (track && typeof track.dailySteps === 'number') ? track.dailySteps : 0;
+        const isWalkMarked = Boolean(track && track.exerciseStatus && track.exerciseStatus[walkIdx]);
 
-      const walkIdx = day.exercises.findIndex(ex => {
-        if (!ex) return false;
-        const id = (ex.id || '').toLowerCase();
-        const name = (ex.name || '').toLowerCase();
-        const orig = (ex.originalName || '').toLowerCase();
-        return id === 'relaxed-walking' || 
-               name.includes('relaxed walking') || 
-               orig.includes('relaxed walking') || 
-               name.includes('active recovery walk') || 
-               orig.includes('active recovery walk') ||
-               name.includes('הליכה רגועה') ||
-               name.includes('مشي مريح');
-      });
+        if (!isWalkMarked && steps === 0) {
+          const curDate = new Date(startDateObj);
+          curDate.setDate(curDate.getDate() + i);
+          const trackDateStr = (typeof UI !== 'undefined' && UI.getLocalDateString)
+            ? UI.getLocalDateString(curDate).split('-').reverse().join('/')
+            : day.date || '';
 
-      if (walkIdx === -1) continue;
+          if (!track) {
+            track = {
+              dayIndex: i,
+              exerciseStatus: {},
+              setData: {},
+              dailySteps: 0,
+              date: trackDateStr,
+              completed: false
+            };
+          }
+          if (!track.exerciseStatus) track.exerciseStatus = {};
+          if (!track.setData) track.setData = {};
+          if (!track.setData[walkIdx]) track.setData[walkIdx] = {};
 
-      let track = allTracking.find(t => t.dayIndex === i);
-      const steps = (track && typeof track.dailySteps === 'number') ? track.dailySteps : 0;
-      const isWalkMarked = Boolean(track && track.exerciseStatus && track.exerciseStatus[walkIdx]);
+          track.exerciseStatus[walkIdx] = true;
+          track.setData[walkIdx]['set_0_done'] = true;
+          track.setData[walkIdx]['set_0_result'] = 'in_window';
+          track.setData[walkIdx]['set_0_reps'] = (typeof I18n !== 'undefined' && I18n.t)
+            ? (I18n.t('past_day_auto_completed_steps') || '8,000 צעדים (הושלם אוטומטית)')
+            : '8,000 צעדים (הושלם אוטומטית)';
+          track.stepsAutoCompleted = true;
+          track.lastUpdated = new Date().toISOString();
 
-      if (!isWalkMarked && steps === 0) {
-        if (!track) {
-          track = {
-            dayIndex: i,
-            exerciseStatus: {},
-            setData: {},
-            dailySteps: 0,
-            date: day.date || (dayIso ? dayIso.split('-').reverse().join('/') : ''),
-            completed: false
-          };
-        }
-        if (!track.exerciseStatus) track.exerciseStatus = {};
-        if (!track.setData) track.setData = {};
-        if (!track.setData[walkIdx]) track.setData[walkIdx] = {};
+          // Check if all exercises on this day are completed
+          let allDone = true;
+          for (let e = 0; e < day.exercises.length; e++) {
+            if (!track.exerciseStatus[e]) {
+              allDone = false;
+              break;
+            }
+          }
+          track.completed = allDone;
 
-        track.exerciseStatus[walkIdx] = true;
-        track.setData[walkIdx]['set_0_done'] = true;
-        track.setData[walkIdx]['set_0_result'] = 'in_window';
-        track.setData[walkIdx]['set_0_reps'] = (typeof I18n !== 'undefined' && I18n.t)
-          ? (I18n.t('past_day_auto_completed_steps') || '8,000 צעדים (הושלם אוטומטית)')
-          : '8,000 צעדים (הושלם אוטומטית)';
-        track.stepsAutoCompleted = true;
-        track.lastUpdated = new Date().toISOString();
-
-        // Check if all exercises on this day are completed
-        let allDone = true;
-        for (let e = 0; e < day.exercises.length; e++) {
-          if (!track.exerciseStatus[e]) {
-            allDone = false;
-            break;
+          await saveDayTracking(i, track);
+          updated = true;
+        } else if (track && !track.completed && isWalkMarked) {
+          let allDone = true;
+          for (let e = 0; e < day.exercises.length; e++) {
+            if (!track.exerciseStatus[e]) {
+              allDone = false;
+              break;
+            }
+          }
+          if (allDone) {
+            track.completed = true;
+            await saveDayTracking(i, track);
+            updated = true;
           }
         }
-        track.completed = allDone;
-
-        await saveDayTracking(i, track);
-        updated = true;
+      } else if (i > realTodayIndex) {
+        // Future day: Purge any phantom autoCompleted walk records
+        const track = allTracking.find(t => t.dayIndex === i);
+        if (track && (track.stepsAutoCompleted || track.autoCompleted)) {
+          await deleteDayTracking(i);
+          updated = true;
+        }
       }
     }
 
@@ -1329,6 +1364,8 @@ const DB = (() => {
     savePhoto,
     getAllPhotos,
     deletePhoto,
+    deleteRecord,
+    deleteDayTracking,
     deleteDatabase,
     getNutrition,
     saveNutrition,

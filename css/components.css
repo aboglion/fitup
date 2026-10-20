@@ -1841,8 +1841,27 @@ html[dir="ltr"] .calendar-grid {
 }
 
 .heat-cell.heat-deload {
-  background: #14b8a6 !important;
-  box-shadow: 0 0 6px rgba(20, 184, 166, 0.4);
+  box-shadow: none !important;
+}
+
+.heat-cell.heat-strength.heat-deload {
+  background: rgba(249, 115, 22, 0.45) !important;
+  border: 1.5px dashed rgba(249, 115, 22, 0.8) !important;
+  box-shadow: none !important;
+}
+
+.heat-cell.heat-walk.heat-deload {
+  background: rgba(16, 185, 129, 0.45) !important;
+  border: 1.5px dashed rgba(16, 185, 129, 0.8) !important;
+  box-shadow: none !important;
+}
+
+.heat-cell.heat-strength.heat-deload:hover {
+  background: rgba(249, 115, 22, 0.7) !important;
+}
+
+.heat-cell.heat-walk.heat-deload:hover {
+  background: rgba(16, 185, 129, 0.7) !important;
 }
 
 .week-stats-card {

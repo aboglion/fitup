@@ -28,7 +28,7 @@
     href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/main.css?v=131">
-  <link rel="stylesheet" href="css/components.css?v=136">
+  <link rel="stylesheet" href="css/components.css?v=137">
   <link rel="stylesheet" href="css/animations.css?v=129">
   <link rel="manifest" href="manifest.json">
   <link rel="preload" as="image" href="images/anatomy-front.webp">
@@ -72,21 +72,40 @@
         }));
       }
     }
-    // Early PWA prompt capture & early Service Worker registration
+    // Early capture of PWA beforeinstallprompt to ensure it is never missed by late-loading scripts
+    window.deferredInstallPrompt = null;
     window.addEventListener('beforeinstallprompt', function (e) {
+      console.log('[PWA] Captured beforeinstallprompt event early in head!');
       e.preventDefault();
       window.deferredInstallPrompt = e;
-      console.log('[PWA] Early beforeinstallprompt captured!');
-      if (typeof window.updatePwaBannerUI === 'function') {
+      if (window.updatePwaBannerUI) {
         window.updatePwaBannerUI();
       }
     });
+
+    window.addEventListener('appinstalled', function () {
+      console.log('[PWA] App installed event captured!');
+      window.deferredInstallPrompt = null;
+      if (window.UI && window.UI.toast) {
+        UI.toast((window.I18n && window.I18n.t('pwa_installed_toast')) || 'FitUp הותקנה בהצלחה כהאפליקציה בטלפון! 📱', 'success');
+      }
+      var banner = document.getElementById('pwa-install-banner');
+      if (banner) banner.classList.add('hidden');
+      if (window.updatePwaBannerUI) {
+        window.updatePwaBannerUI();
+      }
+    });
+
+    // Register Service Worker immediately on script execution for rapid PWA readiness
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      navigator.serviceWorker.register('./sw.js').then(function (reg) {
-        console.log('[PWA] Service Worker registered early!', reg.scope);
-      }).catch(function (err) {
-        console.warn('[PWA] Early SW registration failed:', err);
-      });
+      navigator.serviceWorker.register('./sw.js')
+        .then(function (reg) {
+          console.log('[PWA] Service Worker registered early with scope:', reg.scope);
+          reg.update();
+        })
+        .catch(function (err) {
+          console.warn('[PWA] SW early registration failed:', err);
+        });
     }
   </script>
 </head>
@@ -1333,7 +1352,7 @@
   <script src="js/effects3d.js?v=147"></script>
   <script src="js/ui.js?v=159"></script>
   <script src="js/combat-scheduler.js?v=148"></script>
-  <script src="js/db.js?v=152"></script>
+  <script src="js/db.js?v=154"></script>
   <script src="js/progression.js?v=147"></script>
   <script src="js/crypto.js?v=147"></script>
   <script src="js/config.js?v=147"></script>
@@ -1345,13 +1364,13 @@
   <script src="js/rest-timer.js?v=147"></script>
   <script src="js/workout-summary.js?v=147"></script>
   <script src="js/injury-engine.js?v=151"></script>
-  <script src="js/today.js?v=159"></script>
+  <script src="js/today.js?v=160"></script>
   <script src="js/calendar.js?v=148"></script>
   <script src="js/exercises.js?v=152"></script>
   <script src="js/anatomy.js?v=148"></script>
-  <script src="js/stats.js?v=147"></script>
+  <script src="js/stats.js?v=150"></script>
   <script src="js/export-guide.js?v=147"></script>
-  <script src="js/app.js?v=156"></script>
+  <script src="js/app.js?v=159"></script>
 </body>
 
 </html>

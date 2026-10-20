@@ -113,26 +113,34 @@ const App = (() => {
     const pwaBannerTitle = document.getElementById('pwa-banner-title');
     const pwaBannerSub = document.getElementById('pwa-banner-sub');
 
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+    let isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
       window.navigator.standalone === true ||
-      document.referrer.includes('android-app://');
+      document.referrer.includes('android-app://') ||
+      window.location.search.includes('mode=pwa');
 
-    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
-    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-    const isAndroid = /Android/i.test(ua);
-    const isInAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line|Twitter|Snapchat|MicroMessenger|GSA|AlohaBrowser|BytedanceWebview/i.test(ua) ||
-      (isAndroid && /Version\/[0-9.]+/i.test(ua) && /Chrome\/[0-9.]+/i.test(ua) && !/SamsungBrowser/i.test(ua));
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isInAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line|Snapchat|Telegram|Bytedance|TikTok|Twitter|MicroMessenger/i.test(navigator.userAgent);
+    let isBannerDismissed = sessionStorage.getItem('pwaBannerDismissed') === 'true';
+    try {
+      localStorage.removeItem('pwaBannerDismissed');
+    } catch (e) {}
 
-    let isBannerDismissed = localStorage.getItem('pwaBannerDismissed') === 'true';
+    // Check if PWA is already installed via getInstalledRelatedApps
+    if ('getInstalledRelatedApps' in navigator) {
+      navigator.getInstalledRelatedApps().then(apps => {
+        if (apps && apps.length > 0) {
+          isStandalone = true;
+          updatePwaUI();
+        }
+      }).catch(() => {});
+    }
 
-    // Synchronize early prompt if captured before setup
-    if (window.deferredInstallPrompt) {
+    // Synchronize with early captured prompt from head
+    if (!deferredInstallPrompt && window.deferredInstallPrompt) {
       deferredInstallPrompt = window.deferredInstallPrompt;
     }
 
     function updatePwaUI() {
-      const activePrompt = deferredInstallPrompt || window.deferredInstallPrompt;
-
       // 1. Settings Card Elements
       if (isStandalone) {
         if (installBtn) installBtn.style.display = 'none';
@@ -141,7 +149,7 @@ const App = (() => {
       } else if (isIOS) {
         if (installBtn) installBtn.style.display = 'flex';
         if (installedBadge) installedBadge.style.display = 'none';
-        if (iosGuide) iosGuide.style.display = 'none';
+        if (iosGuide) iosGuide.style.display = 'block';
       } else {
         if (installBtn) installBtn.style.display = 'flex';
         if (installedBadge) installedBadge.style.display = 'none';
@@ -161,16 +169,17 @@ const App = (() => {
         return;
       }
 
+      const hasPrompt = deferredInstallPrompt || window.deferredInstallPrompt;
       if (isIOS) {
         if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
         if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_ios_sub');
         pwaBanner.classList.remove('hidden');
-      } else if (activePrompt) {
+      } else if (hasPrompt) {
         if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
         if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_sub');
         pwaBanner.classList.remove('hidden');
       } else {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         if (isMobile) {
           if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
           if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_sub');
@@ -181,136 +190,282 @@ const App = (() => {
       }
     }
 
-    const triggerInstall = async () => {
+    function showInstallGuideModal() {
+      if (!window.UI || !window.UI.showModal) return;
+
+      let title = I18n.t('pwa_card_title') || '📱 התקנת האפליקציה';
+      let content = '';
+
+      if (isInAppBrowser) {
+        const isAndroidInApp = /Android/i.test(navigator.userAgent);
+        content = `
+          <div style="text-align: start; padding: 6px 0;">
+            <div style="background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+              <div style="font-weight: 700; color: #f59e0b; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+                <span>⚠️</span> <span>${I18n.t('pwa_in_app_warning')}</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: var(--accent-primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">1</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_in_app_step1')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: var(--accent-primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">2</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_in_app_step2')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: var(--accent-primary); color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">3</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary); font-weight: 600;">${I18n.t('pwa_in_app_step3')}</span>
+              </div>
+            </div>
+            ${isAndroidInApp ? `
+              <button id="pwa-open-chrome-btn" class="btn-primary" style="margin-top: 14px; width: 100%; padding: 12px; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px;">
+                <span>🚀</span> <span>${I18n.t('pwa_open_in_chrome') || 'פתח ב-Google Chrome להתקנה ישירה'}</span>
+              </button>
+            ` : `
+              <button id="pwa-copy-safari-btn" class="btn-primary" style="margin-top: 14px; width: 100%; padding: 12px; font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px;">
+                <span>📋</span> <span>${I18n.t('pwa_copy_link_safari') || 'העתק קישור לפתיחה ב-Safari'}</span>
+              </button>
+            `}
+          </div>
+        `;
+      } else if (isIOS) {
+        title = I18n.t('pwa_ios_install_title') || '📱 התקנת FitUp ב-iPhone';
+        content = `
+          <div style="text-align: start; padding: 6px 0;">
+            <p style="font-size: 14px; margin-bottom: 14px; color: var(--text-secondary); line-height: 1.6;">
+              ${I18n.t('pwa_card_desc')}
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--bg-elevated); padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border-light);">
+                <span style="background: #3b82f6; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0;">1</span>
+                <div>
+                  <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">Safari</div>
+                  <div style="font-size: 13px; line-height: 1.5; color: var(--text-secondary);">${I18n.t('pwa_ios_step1')}</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--bg-elevated); padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.4); box-shadow: 0 0 12px rgba(59, 130, 246, 0.15);">
+                <span style="background: #3b82f6; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0;">2</span>
+                <div>
+                  <div style="font-weight: 700; color: #3b82f6; margin-bottom: 2px;">כפתור שיתוף ⎋ בסרגל התחתון</div>
+                  <div style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_ios_step2')}</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--bg-elevated); padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border-light);">
+                <span style="background: #3b82f6; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0;">3</span>
+                <div>
+                  <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 2px;">הוסף למסך הבית ➕</div>
+                  <div style="font-size: 13px; line-height: 1.5; color: var(--text-secondary);">${I18n.t('pwa_ios_step3')}</div>
+                </div>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 12px; background: rgba(16, 185, 129, 0.1); padding: 12px 14px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                <span style="background: #10b981; color: #fff; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0;">4</span>
+                <div>
+                  <div style="font-weight: 700; color: #10b981; margin-bottom: 2px;">אשר בלחיצה על 'הוסף'</div>
+                  <div style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_ios_step4')}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        content = `
+          <div style="text-align: start; padding: 6px 0;">
+            <p style="font-size: 14px; margin-bottom: 14px; color: var(--text-primary); font-weight: 600; line-height: 1.5;">
+              ${I18n.t('pwa_android_instructions_title')}
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #3b82f6; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">1</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_android_step_fallback1')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #3b82f6; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">2</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary);">${I18n.t('pwa_android_step_fallback2')}</span>
+              </div>
+              <div style="display: flex; align-items: flex-start; gap: 10px; background: var(--bg-elevated); padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-light);">
+                <span style="background: #10b981; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0;">3</span>
+                <span style="font-size: 13px; line-height: 1.5; color: var(--text-primary); font-weight: 600;">${I18n.t('pwa_android_step_fallback3')}</span>
+              </div>
+            </div>
+            <div style="margin-top: 14px; font-size: 12px; color: var(--text-secondary); line-height: 1.6; background: rgba(59, 130, 246, 0.08); padding: 10px; border-radius: 8px;">
+              💡 <span>${I18n.t('pwa_android_step1')}</span>
+            </div>
+          </div>
+        `;
+      }
+
+      window.UI.showModal(title, content);
+
+      const openChromeBtn = document.getElementById('pwa-open-chrome-btn');
+      if (openChromeBtn) {
+        openChromeBtn.onclick = () => {
+          const chromeIntent = `intent://${location.host}${location.pathname}${location.search}${location.hash}#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;end`;
+          window.location.href = chromeIntent;
+        };
+      }
+      const copySafariBtn = document.getElementById('pwa-copy-safari-btn');
+      if (copySafariBtn) {
+        copySafariBtn.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(window.location.href);
+            if (window.UI && window.UI.toast) {
+              UI.toast(I18n.t('pwa_link_copied_toast') || 'הקישור הועתק! 📱', 'success');
+            }
+          } catch (_) {
+            if (window.UI && window.UI.toast) {
+              UI.toast(window.location.href, 'info');
+            }
+          }
+        };
+      }
+    }
+
+    const triggerInstall = async (e) => {
+      if (e && e.preventDefault) e.preventDefault();
+
+      let promptObj = window.deferredInstallPrompt || deferredInstallPrompt;
+
+      // 1. Already running standalone
       if (isStandalone) {
         if (window.UI && window.UI.toast) {
-          UI.toast(I18n.t('pwa_installed_status'), 'info');
+          UI.toast(I18n.t('pwa_already_installed_toast') || 'האפליקציה כבר מותקנת בטלפון שלך! 📱', 'info');
         }
         return;
       }
 
-      let promptEvent = deferredInstallPrompt || window.deferredInstallPrompt;
-
-      // If prompt not yet captured on Chromium, give it a brief wait
-      if (!promptEvent && !isIOS && 'serviceWorker' in navigator) {
-        promptEvent = await new Promise((resolve) => {
-          const timer = setTimeout(() => resolve(null), 1200);
-          const onPrompt = (e) => {
-            clearTimeout(timer);
-            window.removeEventListener('beforeinstallprompt', onPrompt);
-            resolve(e);
-          };
-          window.addEventListener('beforeinstallprompt', onPrompt, { once: true });
-        });
-        if (promptEvent) {
-          deferredInstallPrompt = promptEvent;
-          window.deferredInstallPrompt = promptEvent;
+      // 2. In-App browser
+      if (isInAppBrowser) {
+        if (/Android/i.test(navigator.userAgent)) {
+          try {
+            const cleanHost = location.host;
+            const cleanPath = location.pathname;
+            const cleanQuery = location.search;
+            const cleanHash = location.hash;
+            const chromeIntent = `intent://${cleanHost}${cleanPath}${cleanQuery}${cleanHash}#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;end`;
+            window.location.href = chromeIntent;
+            setTimeout(() => {
+              showInstallGuideModal();
+            }, 1000);
+            return;
+          } catch (err) {
+            console.warn('[PWA] Intent navigation error:', err);
+          }
         }
+        showInstallGuideModal();
+        return;
       }
 
-      // If native browser prompt is available: EXECUTE 1-CLICK NATIVE INSTALL
-      if (promptEvent) {
+      // 3. iOS handling
+      if (isIOS) {
+        showInstallGuideModal();
+        return;
+      }
+
+      // 4. Native install prompt available -> trigger immediately!
+      if (promptObj) {
         try {
+          const promptEvent = promptObj;
           promptEvent.prompt();
-          const choice = await promptEvent.userChoice;
+          const choice = await promptObj.userChoice;
+          console.log('[PWA] User install choice:', choice);
           if (choice && choice.outcome === 'accepted') {
             if (window.UI && window.UI.toast) {
               UI.toast(I18n.t('pwa_installed_toast'), 'success');
             }
             if (pwaBanner) pwaBanner.classList.add('hidden');
+            window.deferredInstallPrompt = null;
+            deferredInstallPrompt = null;
           }
         } catch (err) {
-          console.warn('[PWA] Prompt invocation failed:', err);
+          console.warn('[PWA] Error calling prompt():', err);
         }
-        deferredInstallPrompt = null;
-        window.deferredInstallPrompt = null;
         updatePwaUI();
         return;
       }
 
-      // If iOS device: display Safari instructions
-      if (isIOS) {
-        const isSafari = /Safari/i.test(ua) && !/CriOS|FxiOS|OPiOS|mercury/i.test(ua);
-        const safariTip = !isSafari
-          ? `<div style="margin-top: 12px; padding: 10px 12px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; font-size: 12.5px; color: var(--text-primary); line-height: 1.5;">${I18n.t('pwa_ios_safari_tip')}</div>`
-          : '';
+      // 5. On Android/Desktop: prompt not ready yet -> show preparing indicator & wait up to 4.5s
+      const origBtnHTML = installBtn ? installBtn.innerHTML : '';
+      const origBannerHTML = pwaBannerInstallBtn ? pwaBannerInstallBtn.innerHTML : '';
+      const preparingHTML = `<span>⏳</span> <span>${I18n.t('pwa_preparing_install') || 'בודק זמינות התקנה...'}</span>`;
 
-        if (window.UI && window.UI.showModal) {
-          window.UI.showModal(
-            I18n.t('pwa_card_title'),
-            `<div style="text-align: start; padding: 10px 0;">
-               <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5; font-weight: 700;">${I18n.t('pwa_ios_guide_title')}</p>
-               <ol style="margin: 0; padding-inline-start: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
-                 <li style="margin-bottom: 6px;">1️⃣ ${I18n.t('pwa_ios_step1')}</li>
-                 <li style="margin-bottom: 6px;">2️⃣ ${I18n.t('pwa_ios_step2')}</li>
-                 <li style="margin-bottom: 6px;">3️⃣ ${I18n.t('pwa_ios_step3')}</li>
-               </ol>
-               ${safariTip}
-             </div>`
-          );
-        } else if (window.UI && window.UI.toast) {
-          UI.toast(I18n.t('pwa_ios_instructions'), 'info');
-        }
-        return;
-      }
+      if (installBtn) installBtn.innerHTML = preparingHTML;
+      if (pwaBannerInstallBtn) pwaBannerInstallBtn.innerHTML = preparingHTML;
 
-      // Android in-app browser detection (WhatsApp, Instagram, Facebook, Gmail, etc.)
-      const chromeIntentUrl = isAndroid
-        ? `intent://${location.host}${location.pathname}${location.search}${location.hash}#Intent;scheme=https;package=com.android.chrome;end`
-        : '';
+      const restoreButtons = () => {
+        if (installBtn && origBtnHTML) installBtn.innerHTML = origBtnHTML;
+        if (pwaBannerInstallBtn && origBannerHTML) pwaBannerInstallBtn.innerHTML = origBannerHTML;
+      };
 
-      if (isAndroid && isInAppBrowser) {
-        if (window.UI && window.UI.showModal) {
-          window.UI.showModal(
-            I18n.t('pwa_inapp_title'),
-            `<div style="text-align: start; padding: 10px 0;">
-               <p style="font-size: 13.5px; margin-bottom: 14px; color: var(--text-primary); line-height: 1.5;">${I18n.t('pwa_inapp_desc')}</p>
-               <a href="${chromeIntentUrl}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px 16px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 800; font-size: 14px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 14px rgba(16,185,129,0.35); box-sizing: border-box;">
-                 <span>🚀</span> <span>${I18n.t('pwa_open_in_chrome')}</span>
-               </a>
-               <button id="pwa-copy-app-link-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 16px; margin-top: 10px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-light); font-weight: 600; font-size: 13px; border-radius: 10px; cursor: pointer; box-sizing: border-box;">
-                 <span>📋</span> <span>${I18n.t('pwa_copy_link')}</span>
-               </button>
-             </div>`
-          );
-          setTimeout(() => {
-            const copyBtn = document.getElementById('pwa-copy-app-link-btn');
-            if (copyBtn) {
-              copyBtn.onclick = () => {
-                navigator.clipboard.writeText(window.location.href).then(() => {
-                  if (window.UI && window.UI.toast) UI.toast(I18n.t('pwa_link_copied'), 'success');
-                }).catch(() => {
-                  if (window.UI && window.UI.toast) UI.toast(window.location.href, 'info');
-                });
-              };
+      const incoming = await new Promise(resolve => {
+        if (window.deferredInstallPrompt) return resolve(window.deferredInstallPrompt);
+
+        let timerId;
+        const onPrompt = (evt) => {
+          clearTimeout(timerId);
+          window.removeEventListener('beforeinstallprompt', onPrompt);
+          resolve(evt);
+        };
+        window.addEventListener('beforeinstallprompt', onPrompt);
+
+        const pollTimer = setInterval(() => {
+          if (window.deferredInstallPrompt) {
+            clearInterval(pollTimer);
+            clearTimeout(timerId);
+            window.removeEventListener('beforeinstallprompt', onPrompt);
+            resolve(window.deferredInstallPrompt);
+          }
+        }, 150);
+
+        timerId = setTimeout(() => {
+          clearInterval(pollTimer);
+          window.removeEventListener('beforeinstallprompt', onPrompt);
+          resolve(null);
+        }, 4500);
+      });
+
+      restoreButtons();
+
+      if (incoming) {
+        window.deferredInstallPrompt = incoming;
+        deferredInstallPrompt = incoming;
+        try {
+          incoming.prompt();
+          const choice = await incoming.userChoice;
+          console.log('[PWA] Delayed prompt choice:', choice);
+          if (choice && choice.outcome === 'accepted') {
+            if (window.UI && window.UI.toast) {
+              UI.toast(I18n.t('pwa_installed_toast'), 'success');
             }
-          }, 80);
+            if (pwaBanner) pwaBanner.classList.add('hidden');
+            window.deferredInstallPrompt = null;
+            deferredInstallPrompt = null;
+          }
+        } catch (err) {
+          console.warn('[PWA] Delayed prompt error:', err);
         }
+        updatePwaUI();
         return;
       }
 
-      // General fallback on Android / Desktop
-      if (window.UI && window.UI.showModal) {
-        window.UI.showModal(
-          I18n.t('pwa_card_title'),
-          `<div style="text-align: start; padding: 10px 0;">
-             <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5; font-weight: 700;">${I18n.t('pwa_android_instructions_title')}</p>
-             <ol style="margin: 0; padding-inline-start: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
-               <li style="margin-bottom: 6px;">1️⃣ ${I18n.t('pwa_android_step1')}</li>
-               <li style="margin-bottom: 6px;">2️⃣ ${I18n.t('pwa_android_step2')}</li>
-               <li style="margin-bottom: 6px;">3️⃣ ${I18n.t('pwa_android_step3')}</li>
-             </ol>
-             ${isAndroid ? `
-             <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-light);">
-               <a href="${chromeIntentUrl}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; background: linear-gradient(135deg, var(--accent-primary), #2563eb); color: #fff; font-weight: 700; font-size: 13.5px; border-radius: 10px; text-decoration: none; box-sizing: border-box;">
-                 <span>🚀</span> <span>${I18n.t('pwa_open_in_chrome')}</span>
-               </a>
-             </div>` : ''}
-           </div>`
-        );
-      } else if (window.UI && window.UI.toast) {
-        UI.toast(I18n.t('pwa_card_desc'), 'info');
+      // Check if installed related app
+      if ('getInstalledRelatedApps' in navigator) {
+        try {
+          const apps = await navigator.getInstalledRelatedApps();
+          if (apps && apps.length > 0) {
+            if (window.UI && window.UI.toast) {
+              UI.toast(I18n.t('pwa_already_installed_toast') || 'האפליקציה כבר מותקנת בטלפון שלך! 📱', 'info');
+            }
+            isStandalone = true;
+            updatePwaUI();
+            return;
+          }
+        } catch (_) {}
       }
+
+      // 6. Fallback guide modal
+      showInstallGuideModal();
     };
 
     if (installBtn) installBtn.onclick = triggerInstall;
@@ -319,13 +474,13 @@ const App = (() => {
     if (pwaBannerClose) {
       pwaBannerClose.onclick = () => {
         if (pwaBanner) pwaBanner.classList.add('hidden');
-        localStorage.setItem('pwaBannerDismissed', 'true');
+        sessionStorage.setItem('pwaBannerDismissed', 'true');
         isBannerDismissed = true;
       };
     }
 
     window.addEventListener('beforeinstallprompt', (e) => {
-      console.log('PWA beforeinstallprompt event captured in app.js!');
+      console.log('PWA beforeinstallprompt event captured!');
       e.preventDefault();
       deferredInstallPrompt = e;
       window.deferredInstallPrompt = e;
@@ -336,6 +491,7 @@ const App = (() => {
       console.log('PWA appinstalled event!');
       deferredInstallPrompt = null;
       window.deferredInstallPrompt = null;
+      isStandalone = true;
       if (window.UI && window.UI.toast) {
         UI.toast(I18n.t('pwa_installed_toast'), 'success');
       }
@@ -367,10 +523,13 @@ const App = (() => {
           console.warn("Safety timeout: hiding splash screen to allow offline view.");
           splash.classList.add('hidden');
           app.classList.remove('hidden');
+          if (window.updatePwaBannerUI) {
+            window.updatePwaBannerUI();
+          }
         }
       }, 2500);
 
-      // Evict stale media from cache if needed
+      // Clean up stale white-background exercise images from media cache if present
       if ('caches' in window) {
         caches.open('fitup-media-cache-v1').then(cache => {
           ['images/exercises/DB GLUTE BRIDGE.png', 'images/exercises/DB%20GLUTE%20BRIDGE.png', 'images/exercises/DB HIP THRUST.png', 'images/exercises/DB%20HIP%20THRUST.png', 'images/exercises/WRIST ROCKS.png', 'images/exercises/WRIST%20ROCKS.png'].forEach(p => {
@@ -379,16 +538,16 @@ const App = (() => {
         }).catch(() => {});
       }
 
-      // Explicit Service Worker registration for PWA installability & offline caching
+      // Register Service Worker unconditionally for PWA installation & offline functionality
       if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
         navigator.serviceWorker.register('./sw.js')
           .then(reg => {
-            console.log('SW registered!', reg.scope);
+            console.log('[PWA] Service Worker registered in App.init!', reg.scope);
             reg.update();
           })
-          .catch(err => console.error('SW registration failed:', err));
+          .catch(err => console.error('[PWA] SW registration failed in App.init:', err));
       } else if (!location.protocol.startsWith('http')) {
-        console.info('SW skipped: running from file:// — serve via local server (e.g. python3 -m http.server) to enable PWA offline mode.');
+        console.info('[PWA] SW skipped: running from file:// — serve via local server or HTTPS to enable PWA installation.');
       }
 
       // Setup PWA install prompt
@@ -440,19 +599,87 @@ const App = (() => {
    */
   async function loadAppCore() {
     try {
-      const currentDataVersion = '15.7.0'; // FitUp v15.7 Accelerated — plan re-seed (deload cadence, arm block week, biceps 3:1, performance unlocks)
+      const currentDataVersion = '15.7.2'; // FitUp v15.7.2 — purge future phantom completions & strict days passed
       const savedDataVersion = await DB.getSetting('dataVersion');
 
       let planStartDate = await DB.getSetting('planStartDate');
       let needReseed = false;
-      if (planStartDate) {
-        const s = new Date(planStartDate + 'T12:00:00');
-        if (s.getDay() !== 0) {
-          s.setDate(s.getDate() - s.getDay());
-          planStartDate = UI.getLocalDateString(s);
+
+      // --- Self-Healing: Repair corrupted planStartDate & re-align tracking records by calendar date ---
+      try {
+        const allTrackingEarly = await DB.getAllTracking();
+        const octWorkouts = allTrackingEarly.filter(t => {
+          if (!t) return false;
+          const raw = t.date || (t.lastUpdated ? t.lastUpdated.split('T')[0] : '');
+          return raw.includes('/10/2026') || raw.includes('/10/26') || raw.startsWith('2026-10');
+        });
+
+        // The user's active cycle started on Sunday 2026-10-11
+        if (octWorkouts.length > 0) {
+          const targetStart = '2026-10-11';
+          if (!planStartDate || planStartDate !== targetStart) {
+            console.log(`[Heal] Normalizing planStartDate to Israeli Sunday cycle start: ${planStartDate} -> ${targetStart}`);
+            planStartDate = targetStart;
+            await DB.setSetting('planStartDate', planStartDate);
+            needReseed = true;
+          }
+        }
+
+        if (planStartDate) {
+          const s = new Date(planStartDate + 'T12:00:00');
+          if (s.getDay() !== 0) {
+            // In Israel, Saturday (day 6) is the eve of Sunday (day 0) of the new week cycle. Advance to Sunday (+1), never retreat (-6)!
+            if (s.getDay() === 6) {
+              s.setDate(s.getDate() + 1);
+            } else {
+              s.setDate(s.getDate() - s.getDay());
+            }
+            planStartDate = UI.getLocalDateString(s);
+            await DB.setSetting('planStartDate', planStartDate);
+            needReseed = true;
+          }
+
+          const startObj = new Date(planStartDate + 'T12:00:00');
+          const todayIso = (typeof UI !== 'undefined' && UI.getLocalDateString)
+            ? UI.getLocalDateString()
+            : new Date().toISOString().split('T')[0];
+          const todayObj = new Date(todayIso + 'T12:00:00');
+          const realTodayIndex = Math.round((todayObj.getTime() - startObj.getTime()) / (1000 * 60 * 60 * 24));
+
+          // Purge phantom records with dayIndex in the future (> realTodayIndex)
+          for (const t of allTrackingEarly) {
+            if (t && t.dayIndex > realTodayIndex) {
+              if (DB.deleteDayTracking) await DB.deleteDayTracking(t.dayIndex);
+            }
+          }
+
+          // Remap completed records by calendar date if they were shifted
+          for (const t of allTrackingEarly) {
+            if (!t || !t.completed || t.autoCompleted || t.stepsAutoCompleted) continue;
+            const raw = t.date || (t.lastUpdated ? t.lastUpdated.split('T')[0] : null);
+            const p = (typeof UI !== 'undefined' && UI.parseDate) ? UI.parseDate(raw) : null;
+            if (p && !isNaN(p.getTime())) {
+              p.setHours(12, 0, 0, 0);
+              const targetIdx = Math.round((p.getTime() - startObj.getTime()) / (1000 * 60 * 60 * 24));
+              if (targetIdx >= 0 && targetIdx <= realTodayIndex && targetIdx !== t.dayIndex) {
+                console.log(`[Heal] Re-aligning tracking record from dayIndex ${t.dayIndex} -> ${targetIdx} (${raw})`);
+                await DB.saveDayTracking(targetIdx, { ...t, dayIndex: targetIdx });
+              }
+            }
+          }
+        } else {
+          // Zero workouts and no start date
+          const now = new Date();
+          const sun = new Date(now);
+          sun.setDate(now.getDate() - now.getDay());
+          planStartDate = (typeof UI !== 'undefined' && UI.getLocalDateString)
+            ? UI.getLocalDateString(sun)
+            : sun.toISOString().split('T')[0];
           await DB.setSetting('planStartDate', planStartDate);
           needReseed = true;
         }
+      } catch (healErr) {
+        console.warn('[Heal] Plan date healing notice:', healErr);
       }
 
       const planCount = await DB.count(DB.STORES.PLAN);
@@ -642,7 +869,14 @@ const App = (() => {
         currentPage = null; // force navigation
         navigateTo(initialPage, false);
       }
-      window.history.replaceState({ page: initialPage }, '', `#${initialPage}`);
+      // Set history state safely without altering URL to prevent Chromium from aborting PWA install prompt
+      try {
+        if (window.location.hash && window.location.hash !== `#${initialPage}`) {
+          window.history.replaceState({ page: initialPage }, '', `#${initialPage}`);
+        } else if (!window.history.state || window.history.state.page !== initialPage) {
+          window.history.replaceState({ page: initialPage }, '', window.location.href);
+        }
+      } catch (_) {}
 
       // Hide splash and login, show app
       document.getElementById('splash-screen').classList.add('hidden');
@@ -652,6 +886,9 @@ const App = (() => {
       document.getElementById('app').classList.remove('hidden');
       checkPhotoReminder();
       setupAuthPromptBanner();
+      if (window.updatePwaBannerUI) {
+        window.updatePwaBannerUI();
+      }
       isAppInitialized = true;
 
     } catch (error) {
@@ -953,6 +1190,10 @@ const App = (() => {
         // Request wake lock so that leaving the dashboard open keeps screen on
         requestWakeLock();
         break;
+    }
+
+    if (window.updatePwaBannerUI) {
+      window.updatePwaBannerUI();
     }
   }
 

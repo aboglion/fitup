@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v212-pwa-engine';
+const CACHE_NAME = 'fitup-v219-mobile-pwa-install';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
@@ -48,13 +48,18 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      await Promise.allSettled(
-        ASSETS.map((asset) =>
-          cache.add(asset).catch((err) => {
-            console.warn('[SW] Could not precache:', asset, err);
-          })
-        )
-      );
+      try {
+        await cache.addAll(ASSETS);
+      } catch (err) {
+        console.warn('[SW] Pre-caching batch failed, attempting individual asset cache:', err);
+        await Promise.allSettled(
+          ASSETS.map((asset) =>
+            cache.add(asset).catch((e) => {
+              console.warn('[SW] Could not precache asset:', asset, e);
+            })
+          )
+        );
+      }
     })
   );
 });

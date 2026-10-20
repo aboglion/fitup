@@ -177,14 +177,25 @@ const StatsPage = (() => {
   function calculateStreak(trackingMap) {
     let streak = 0;
     const todayIdx = UI.findTodayIndex(allPlanDays);
+    if (typeof todayIdx !== 'number' || todayIdx < 0) return 0;
 
-    // Count backwards from today
-    for (let i = todayIdx; i >= 0; i--) {
+    // Check if today is completed or is a scheduled Rest day
+    const todayTrack = trackingMap[todayIdx];
+    const todayCompleted = (todayTrack && todayTrack.completed) ||
+      (allPlanDays[todayIdx] && (allPlanDays[todayIdx].dayType === 'Rest' || !allPlanDays[todayIdx].exercises || allPlanDays[todayIdx].exercises.length === 0));
+
+    // If today is completed/rest, evaluate streak including today.
+    // If today is still in progress, evaluate streak starting from yesterday so ongoing streak is preserved!
+    const startIdx = todayCompleted ? todayIdx : (todayIdx - 1);
+
+    // Count backwards
+    for (let i = startIdx; i >= 0; i--) {
       const day = allPlanDays[i];
+      if (!day) break;
       const tracking = trackingMap[i];
 
-      if (day.dayType === 'Rest') {
-        // Rest days don't break streak
+      // Rest days don't break streak
+      if (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0) {
         streak++;
         continue;
       }
@@ -805,32 +816,22 @@ const StatsPage = (() => {
     const container = document.getElementById('stats-charts');
     const weekNum = currentWeekNum || 1;
 
-    // Progression Heatmap: Show ONLY days that have actually passed or been completed
-    let maxCompletedIdx = -1;
-    Object.values(trackingMap).forEach(t => {
-      if (t && t.completed && t.dayIndex != null) {
-        if (t.dayIndex > maxCompletedIdx) maxCompletedIdx = t.dayIndex;
-      }
-    });
-
-    let daysPassedIdx = -1;
+    // Progression Heatmap: Show strictly the days that have actually passed up to today ("ימים שעברו")
+    let daysPassedIdx = 0;
     if (planStartDateStr) {
       const startDateObj = new Date(planStartDateStr + 'T00:00:00');
+      // Always normalize startDateObj to Sunday (start of cycle)
+      if (startDateObj.getDay() !== 0) {
+        startDateObj.setDate(startDateObj.getDate() - startDateObj.getDay());
+      }
       const todayObj = new Date(UI.getLocalDateString() + 'T00:00:00');
       const diffTime = Math.max(0, todayObj - startDateObj);
       daysPassedIdx = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     }
 
-    const activePlanIdx = window.appCurrentPlanIndex != null ? window.appCurrentPlanIndex : 0;
-
-    let endIdx = Math.max(maxCompletedIdx, daysPassedIdx, activePlanIdx);
-    if (!planStartDateStr && maxCompletedIdx < 0) {
-      endIdx = 0; // Program hasn't started yet: show Day 1 only
-    } else {
-      endIdx = Math.min(endIdx, allPlanDays.length - 1);
-    }
-
-    const heatmapDays = allPlanDays.slice(0, Math.max(1, endIdx + 1));
+    // Strictly days passed up to today — never show future days in advance!
+    const endIdx = Math.max(0, Math.min(daysPassedIdx, allPlanDays.length - 1));
+    const heatmapDays = allPlanDays.slice(0, endIdx + 1);
 
     const heatmapCells = heatmapDays.map((day, index) => {
       const dIdx = day.dayIndex != null ? day.dayIndex : index;
@@ -839,22 +840,39 @@ const StatsPage = (() => {
       let colorClass = 'heat-empty';
 
       if (isCompleted) {
-        if (day.dayType && day.dayType.includes('Deload')) colorClass = 'heat-deload';
-        else if (isStrengthDay(day.dayType)) colorClass = 'heat-strength';
-        else if (day.dayType === 'Active Recovery') colorClass = 'heat-walk';
-        else if (day.dayType === 'Rest') colorClass = 'heat-rest';
+        const dType = String(day.dayType || '').toLowerCase();
+        const isDeload = dType.includes('deload') || Boolean(day.isDeload || day.autoDeload);
+
+        if (isStrengthDay(day.dayType)) {
+          colorClass = isDeload ? 'heat-strength heat-deload' : 'heat-strength';
+        } else if (dType.includes('recovery') || dType.includes('walk') || dType.includes('cardio') || dType.includes('aerobic') || dType.includes('אירובי') || dType.includes('הליכה')) {
+          colorClass = isDeload ? 'heat-walk heat-deload' : 'heat-walk';
+        } else if (day.dayType === 'Rest' || !day.exercises || day.exercises.length === 0) {
+          colorClass = 'heat-rest';
+        } else {
+          colorClass = isDeload ? 'heat-strength heat-deload' : 'heat-strength';
+        }
       }
 
-      let rawDate = (tracking && (tracking.date || tracking.lastUpdated)) || day.date;
-      if (!rawDate && planStartDateStr) {
-        const startDateObj = new Date(planStartDateStr + 'T00:00:00');
-        startDateObj.setDate(startDateObj.getDate() + dIdx);
-        rawDate = UI.getLocalDateString(startDateObj);
+      // Scheduled calendar date for this cell (always strictly chronological from normalized Sunday)
+      let scheduledDateStr = '';
+      if (planStartDateStr) {
+        const dObj = new Date(planStartDateStr + 'T00:00:00');
+        if (dObj.getDay() !== 0) {
+          dObj.setDate(dObj.getDate() - dObj.getDay());
+        }
+        dObj.setDate(dObj.getDate() + dIdx);
+        scheduledDateStr = UI.getLocalDateString(dObj);
+      } else {
+        scheduledDateStr = day.date || '';
       }
 
-      const displayDate = formatCellDate(rawDate);
+      const displayDate = formatCellDate(scheduledDateStr);
       const typeLabel = (window.UI && window.UI.getDayTypeInfo) ? UI.getDayTypeInfo(day.dayType).label : (day.dayType || '');
-      const tooltip = `Day ${dIdx + 1}${typeLabel ? ` (${typeLabel})` : ''} ${displayDate ? '[' + displayDate + '] ' : ''}- ${isCompleted ? '✓' : I18n.t('heat_skipped')}`;
+      const completionSuffix = isCompleted
+        ? (tracking && tracking.date ? `✓ (${formatCellDate(tracking.date)})` : '✓')
+        : I18n.t('heat_skipped');
+      const tooltip = `Day ${dIdx + 1}${typeLabel ? ` (${typeLabel})` : ''} ${displayDate ? '[' + displayDate + '] ' : ''}- ${completionSuffix}`;
       return `<div class="heat-cell ${colorClass}" title="${tooltip}">${displayDate}</div>`;
     }).join('');
 
@@ -864,9 +882,9 @@ const StatsPage = (() => {
           <span>${I18n.t('heatmap_title')} (${heatmapDays.length})</span>
           <div style="display: flex; gap: 12px; font-size: 11px; font-weight: normal; flex-wrap: wrap;">
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_strength')}</div>
-             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-deload" style="width: 12px; height: 12px; border-radius: 3px; background: #14b8a6;"></div> ${I18n.t('heat_deload')}</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-walk" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_walk')}</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-rest" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_rest')}</div>
+             <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-strength heat-deload" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_deload')}</div>
              <div style="display: flex; align-items: center; gap: 4px;"><div class="heat-cell heat-empty" style="width: 12px; height: 12px; border-radius: 3px;"></div> ${I18n.t('heat_skipped')}</div>
           </div>
         </div>
