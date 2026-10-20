@@ -113,27 +113,24 @@ const App = (() => {
     const pwaBannerTitle = document.getElementById('pwa-banner-title');
     const pwaBannerSub = document.getElementById('pwa-banner-sub');
 
-    let isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-      window.navigator.standalone === true ||
-      document.referrer.includes('android-app://') ||
-      window.location.search.includes('mode=pwa');
+    const checkIsStandalone = () => {
+      return Boolean(
+        window.matchMedia('(display-mode: standalone)').matches ||
+        window.matchMedia('(display-mode: fullscreen)').matches ||
+        window.navigator.standalone === true ||
+        window.location.search.includes('mode=pwa')
+      );
+    };
+
+    let isStandalone = checkIsStandalone();
 
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isInAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line|Snapchat|Telegram|Bytedance|TikTok|Twitter|MicroMessenger/i.test(navigator.userAgent);
-    let isBannerDismissed = sessionStorage.getItem('pwaBannerDismissed') === 'true';
+    let isBannerDismissed = false;
     try {
+      sessionStorage.removeItem('pwaBannerDismissed');
       localStorage.removeItem('pwaBannerDismissed');
     } catch (e) {}
-
-    // Check if PWA is already installed via getInstalledRelatedApps
-    if ('getInstalledRelatedApps' in navigator) {
-      navigator.getInstalledRelatedApps().then(apps => {
-        if (apps && apps.length > 0) {
-          isStandalone = true;
-          updatePwaUI();
-        }
-      }).catch(() => {});
-    }
 
     // Synchronize with early captured prompt from head
     if (!deferredInstallPrompt && window.deferredInstallPrompt) {
@@ -141,6 +138,8 @@ const App = (() => {
     }
 
     function updatePwaUI() {
+      isStandalone = checkIsStandalone();
+
       // 1. Settings Card Elements
       if (isStandalone) {
         if (installBtn) installBtn.style.display = 'none';
@@ -164,30 +163,25 @@ const App = (() => {
       const isIntroScreenActive = (loginScreen && !loginScreen.classList.contains('hidden')) ||
         (splashScreen && !splashScreen.classList.contains('hidden'));
 
+      // If running in standalone window, dismissed in current view, or splash screen is on top
       if (isStandalone || isBannerDismissed || isIntroScreenActive) {
         pwaBanner.classList.add('hidden');
         return;
       }
 
-      const hasPrompt = deferredInstallPrompt || window.deferredInstallPrompt;
-      if (isIOS) {
-        if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
-        if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_ios_sub');
-        pwaBanner.classList.remove('hidden');
-      } else if (hasPrompt) {
-        if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
-        if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_sub');
-        pwaBanner.classList.remove('hidden');
-      } else {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        if (isMobile) {
-          if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
-          if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_sub');
-          pwaBanner.classList.remove('hidden');
-        } else {
-          pwaBanner.classList.add('hidden');
-        }
+      if (pwaBannerTitle) {
+        pwaBannerTitle.textContent = (window.I18n && window.I18n.t)
+          ? I18n.t('pwa_banner_title')
+          : 'התקנת אפליקציית FitUp 📱';
       }
+      if (pwaBannerSub) {
+        pwaBannerSub.textContent = isIOS
+          ? ((window.I18n && window.I18n.t) ? I18n.t('pwa_banner_ios_sub') : 'להתקנה ב-iPhone: לחץ על שיתוף ⎋ ובחר הוסף למסך הבית ➕')
+          : ((window.I18n && window.I18n.t) ? I18n.t('pwa_banner_sub') : 'הוסף את FitUp למסך הבית לגישה מהירה ותמיכה מלאה באופליין!');
+      }
+
+      // Always show banner when in browser!
+      pwaBanner.classList.remove('hidden');
     }
 
     function showInstallGuideModal() {
@@ -474,7 +468,6 @@ const App = (() => {
     if (pwaBannerClose) {
       pwaBannerClose.onclick = () => {
         if (pwaBanner) pwaBanner.classList.add('hidden');
-        sessionStorage.setItem('pwaBannerDismissed', 'true');
         isBannerDismissed = true;
       };
     }
@@ -500,8 +493,10 @@ const App = (() => {
     });
 
     updatePwaUI();
-    setTimeout(updatePwaUI, 800);
-    setTimeout(updatePwaUI, 2000);
+    setTimeout(updatePwaUI, 400);
+    setTimeout(updatePwaUI, 1200);
+    setTimeout(updatePwaUI, 2500);
+    setTimeout(updatePwaUI, 4000);
 
     window.updatePwaBannerUI = updatePwaUI;
   }
@@ -888,6 +883,8 @@ const App = (() => {
       setupAuthPromptBanner();
       if (window.updatePwaBannerUI) {
         window.updatePwaBannerUI();
+        setTimeout(window.updatePwaBannerUI, 200);
+        setTimeout(window.updatePwaBannerUI, 1000);
       }
       isAppInitialized = true;
 
