@@ -2539,14 +2539,14 @@ html.light-theme .modal-close:hover {
   padding: var(--space-lg);
 }
 
-/* Exercise Modal Optimizations - Sleek Single-Row Header & Space Efficiency */
+/* Exercise Modal Optimizations - Two-Row Header (Title & Equipment) & Space Efficiency */
 .modal.modal-exercise {
   max-height: 90vh;
 }
 
 .modal-exercise .modal-header {
   padding: 8px 14px;
-  min-height: 52px;
+  min-height: 58px;
   border-bottom: 1px solid var(--border-light);
   display: flex;
   align-items: center;
@@ -2556,7 +2556,7 @@ html.light-theme .modal-close:hover {
   font-size: 15px;
   font-weight: 800;
   width: 100%;
-  padding-inline-end: 42px;
+  padding-inline-end: 46px;
   margin: 0;
   display: flex;
   align-items: center;
@@ -2579,7 +2579,7 @@ html.light-theme .modal-close:hover {
   padding: 10px 14px 14px 14px;
 }
 
-/* Header single-row layout inside exercise modal */
+/* Header layout inside exercise modal - 2 lines: Title on row 1, Equipment badges on row 2 */
 .exercise-header-row {
   display: flex;
   align-items: center;
@@ -2624,11 +2624,14 @@ html.light-theme .modal-close:hover {
 
 .exercise-header-details {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3px;
   flex: 1;
   min-width: 0;
   overflow: hidden;
+  text-align: start;
 }
 
 .exercise-header-title {
@@ -2639,13 +2642,15 @@ html.light-theme .modal-close:hover {
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.25;
+  width: 100%;
 }
 
 .exercise-header-equipments {
   display: flex;
   align-items: center;
   gap: 6px;
-  flex-shrink: 0;
+  flex-wrap: wrap;
+  max-width: 100%;
 }
 
 .exercise-header-equip-tag {
@@ -2654,13 +2659,16 @@ html.light-theme .modal-close:hover {
   color: var(--text-secondary);
   background: var(--bg-elevated);
   border: 1px solid var(--border-light);
-  padding: 3px 8px;
+  padding: 2px 7px;
   border-radius: 6px;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   white-space: nowrap;
-  line-height: 1;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* GIF container optimization: balanced height so specs below are visible */
@@ -2683,15 +2691,22 @@ html.light-theme .modal-close:hover {
     min-width: 38px;
     max-width: 38px;
   }
+  .exercise-header-details {
+    gap: 2px;
+  }
   .exercise-header-title {
     font-size: 14px;
   }
   .exercise-header-equip-tag {
     font-size: 10.5px;
-    padding: 2px 6px;
+    padding: 1.5px 6px;
+  }
+  .modal-exercise .modal-header {
+    padding: 6px 12px;
+    min-height: 54px;
   }
   .modal-exercise .modal-header h2 {
-    padding-inline-end: 38px;
+    padding-inline-end: 42px;
   }
   .modal-exercise .modal-close {
     width: 30px;
