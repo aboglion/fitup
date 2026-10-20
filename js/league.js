@@ -25,10 +25,40 @@ const League = (() => {
     return Math.abs(hash).toString(16);
   }
 
+  let inMemoryCompetitors = null;
+
   /**
-   * Initial realistic community competitors with mathematically valid proof chains
+   * Get registered community competitors (real trainees stored in localStorage/memory)
    */
-  function getMockCommunity() {
+  function getCommunityCompetitors() {
+    if (inMemoryCompetitors) return inMemoryCompetitors;
+    try {
+      if (typeof localStorage !== 'undefined') {
+        const stored = localStorage.getItem('fitup_league_competitors');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) return parsed;
+        }
+      }
+    } catch (_) {}
+    return [];
+  }
+
+  function setCompetitors(list) {
+    if (Array.isArray(list)) {
+      inMemoryCompetitors = list;
+      try {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('fitup_league_competitors', JSON.stringify(list));
+        }
+      } catch (_) {}
+    }
+  }
+
+  /**
+   * Sample community competitors strictly for testing & verification engines
+   */
+  function getSampleCommunity() {
     return [
       {
         userId: 'usr_com_01',
@@ -103,6 +133,10 @@ const League = (() => {
         proofChain: generateSyntheticProof(3, 1100)
       }
     ];
+  }
+
+  function getMockCommunity() {
+    return getSampleCommunity();
   }
 
   /**
@@ -278,7 +312,7 @@ const League = (() => {
    */
   async function fetchLeaderboard(filter = 'xp') {
     activeFilter = filter;
-    const community = getMockCommunity();
+    const community = getCommunityCompetitors();
     let myCard = null;
 
     try {
@@ -451,14 +485,33 @@ const League = (() => {
         </div>
       `;
     });
+
+    const isEn = typeof I18n !== 'undefined' && I18n.currentLang === 'en';
+    const isAr = typeof I18n !== 'undefined' && I18n.currentLang === 'ar';
+
+    if (roster.length <= 1) {
+      rosterHTML += `
+        <div class="league-empty-banner" style="text-align: center; padding: 22px 14px; margin-top: 16px; background: rgba(59, 130, 246, 0.08); border: 1px dashed rgba(59, 130, 246, 0.3); border-radius: 16px;">
+          <div style="font-size: 28px; margin-bottom: 6px;">👑</div>
+          <div style="font-weight: 800; font-size: 14.5px; color: var(--text-primary); margin-bottom: 6px;">
+            ${isEn ? "You're #1 in the Global League!" : (isAr ? "أنت بالمركز الأول في الدوري العالمي!" : "אתה במקום הראשון בליגה העולמית!")}
+          </div>
+          <p style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 14px; max-width: 380px; margin-left: auto; margin-right: auto;">
+            ${isEn ? "No other competitors registered on your device yet. As workout partners sync or connect, their verified scores will appear here automatically." : (isAr ? "لا يوجد متدربون آخرون مسجلون على جهازك بعد. عند مزامنة الزملاء ستظهر درجاتهم الموثقة هنا تلقائيًا." : "אין עדיין מתאמנים נוספים רשומים במכשיר שלך. ככל שמתאמנים נוספים יסנכרנו או יתחברו, תוצאותיהם המאומתות יופיעו כאן אוטומטית.")}
+          </p>
+          <button onclick="League.shareMyCard()" class="btn-primary" style="padding: 7px 16px; font-size: 12.5px; font-weight: 800; border-radius: 10px; display: inline-flex; align-items: center; gap: 6px; margin: 0 auto; cursor: pointer;">
+            <span>📤</span> <span>${isEn ? "Share League Card" : (isAr ? "مشاركة بطاقة الدوري" : "שתף כרטיס ליגה")}</span>
+          </button>
+        </div>
+      `;
+    }
+
     listContainer.innerHTML = rosterHTML;
 
     // 3. Render Sticky Footer (My rank status)
     if (stickyContainer && myEntry) {
       const nextPlayer = roster.find(r => r.rank === myEntry.rank - 1);
       const xpDiff = nextPlayer ? (nextPlayer.totalXP - myEntry.totalXP + 1) : 0;
-      const isEn = typeof I18n !== 'undefined' && I18n.currentLang === 'en';
-      const isAr = typeof I18n !== 'undefined' && I18n.currentLang === 'ar';
 
       let subtitle = '';
       if (myEntry.rank === 1) {
@@ -468,7 +521,7 @@ const League = (() => {
       } else {
         subtitle = isEn
           ? `${xpDiff.toLocaleString()} XP to rank #${myEntry.rank - 1} (${nextPlayer?.displayName || ''})`
-          : (isAr ? `متبقي ${xpDiff.toLocaleString()} نقطة للمركز #${myEntry.rank - 1} (${nextPlayer?.displayName || ''})` : `עוד ${xpDiff.toLocaleString()} XP למקום #${myEntry.rank - 1} (${nextPlayer?.displayName || ''})`);
+          : (isAr ? `متبقي ${xpDiff.toLocaleString()} نقطة للمركז #${myEntry.rank - 1} (${nextPlayer?.displayName || ''})` : `עוד ${xpDiff.toLocaleString()} XP למקום #${myEntry.rank - 1} (${nextPlayer?.displayName || ''})`);
       }
 
       stickyContainer.innerHTML = `
@@ -486,6 +539,30 @@ const League = (() => {
         </div>
       `;
       stickyContainer.style.display = 'block';
+    }
+  }
+
+  /**
+   * Share user's verified league card via Web Share API or Clipboard
+   */
+  async function shareMyCard() {
+    try {
+      const card = await generateMyLeagueCard();
+      const text = `🏆 FitUp League: ${card.displayName} - Level ${card.currentLevel} (${card.totalXP.toLocaleString()} XP, 🔥 ${card.streak} Streak)!`;
+      if (typeof navigator !== 'undefined' && navigator.share) {
+        await navigator.share({
+          title: 'FitUp Global League',
+          text,
+          url: window.location.href
+        });
+      } else if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+        if (typeof UI !== 'undefined' && UI.toast) {
+          UI.toast('כרטיס הליגה הועתק ללוח! 📋', 'success');
+        }
+      }
+    } catch (e) {
+      console.warn('[League] shareMyCard error:', e);
     }
   }
 
@@ -520,7 +597,11 @@ const League = (() => {
     hideLeagueModal,
     renderLeaderboardView,
     syncMyScore,
-    getMockCommunity
+    getMockCommunity,
+    getSampleCommunity,
+    getCommunityCompetitors,
+    setCompetitors,
+    shareMyCard
   };
 })();
 

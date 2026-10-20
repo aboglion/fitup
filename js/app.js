@@ -186,17 +186,7 @@ const App = (() => {
           if (!isStandalone) {
             openAppBtn.style.display = 'flex';
             openAppBtn.onclick = () => {
-              const pwaUrl = `${window.location.origin}${window.location.pathname}?mode=pwa`;
-              const chromeIntent = `intent://${location.host}${location.pathname}?mode=pwa#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;end`;
-              try {
-                if (/Android/i.test(navigator.userAgent)) {
-                  window.location.href = chromeIntent;
-                } else {
-                  window.location.href = pwaUrl;
-                }
-              } catch (_) {
-                window.location.href = pwaUrl;
-              }
+              showPostInstallModal();
             };
           } else {
             openAppBtn.style.display = 'none';
@@ -552,42 +542,37 @@ const App = (() => {
 
       const desc = (window.I18n && window.I18n.t)
         ? I18n.t('pwa_installed_modal_desc')
-        : 'האייקון של FitUp נוסף כעת למסך הבית ולרשימת האפליקציות במכשיר שלך. מעכשיו מומלץ תמיד לפתוח דרך האייקון לגישה מהירה, מסך מלא ועבודה ללא אינטרנט.';
+        : 'האייקון של FitUp נוסף כעת למסך הבית ולרשימת האפליקציות במכשיר שלך.';
 
       const whereTitle = (window.I18n && window.I18n.t)
         ? I18n.t('pwa_installed_where_icon_title')
-        : 'איפה מוצאים את האייקון?';
+        : 'איך פותחים אותה כאפליקציה?';
 
       const whereDesc = (window.I18n && window.I18n.t)
         ? I18n.t('pwa_installed_where_icon_desc')
-        : 'חזור למסך הראשי של הטלפון וחפש את סמל FitUp 💪. אם הוא לא מופיע במסך הראשי, החלק לפתיחת רשימת כל האפליקציות וחפש "FitUp".';
+        : '1. צא מהדפדפן (לחץ על כפתור הבית 🏠 של הטלפון)<br>2. חפש את סמל FitUp 💪 במסך הבית או ברשימת האפליקציות<br>3. לחץ על הסמל – והאפליקציה תיפתח במסך מלא ללא סרגלי דפדפן!';
 
       const openNow = (window.I18n && window.I18n.t)
         ? I18n.t('pwa_installed_open_now')
-        : '🚀 פתח את האפליקציה עכשיו';
-
-      const closeText = (window.I18n && window.I18n.t)
-        ? I18n.t('pwa_installed_modal_close')
-        : 'הבנתי, המשך';
+        : '👍 הבנתי, אפתח ממסך הבית';
 
       const content = `
         <div style="text-align: center; padding: 6px 0;">
-          <div style="font-size: 48px; margin-bottom: 12px; line-height: 1;">📱</div>
-          <h3 style="font-size: 17px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">
+          <div style="font-size: 48px; margin-bottom: 12px; line-height: 1;">📲</div>
+          <h3 style="font-size: 17.5px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">
             ${heading}
           </h3>
           <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px;">
             ${desc}
           </p>
-          <div style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 12px; padding: 12px; margin-bottom: 16px; text-align: start; font-size: 12.5px; color: var(--text-primary); line-height: 1.6;">
-            💡 <strong>${whereTitle}</strong><br>
-            <span>${whereDesc}</span>
+          <div style="background: var(--bg-elevated); border: 1.5px solid rgba(59, 130, 246, 0.35); border-radius: 14px; padding: 14px; margin-bottom: 16px; text-align: start; line-height: 1.7; font-size: 13px; color: var(--text-primary);">
+            <div style="font-size: 13.5px; font-weight: 800; color: #3b82f6; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+              <span>💡</span> <span>${whereTitle}</span>
+            </div>
+            <div>${whereDesc}</div>
           </div>
-          <button id="pwa-post-install-launch-btn" class="btn-primary" style="width: 100%; padding: 13px; font-weight: 800; font-size: 14.5px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);">
-            <span>🚀</span> <span>${openNow}</span>
-          </button>
-          <button id="pwa-post-install-close-btn" class="btn-secondary" style="width: 100%; margin-top: 8px; padding: 10px; font-weight: 600; font-size: 13px; border-radius: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            <span>${closeText}</span>
+          <button id="pwa-post-install-close-btn" class="btn-primary" style="width: 100%; padding: 13px; font-weight: 800; font-size: 15px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);">
+            <span>${openNow}</span>
           </button>
         </div>
       `;
@@ -595,23 +580,6 @@ const App = (() => {
       window.UI.showModal(title, content);
 
       setTimeout(() => {
-        const launchBtn = document.getElementById('pwa-post-install-launch-btn');
-        if (launchBtn) {
-          launchBtn.onclick = () => {
-            if (window.UI && window.UI.closeModal) window.UI.closeModal();
-            const pwaUrl = `${window.location.origin}${window.location.pathname}?mode=pwa`;
-            const chromeIntent = `intent://${location.host}${location.pathname}?mode=pwa#Intent;scheme=https;package=com.android.chrome;action=android.intent.action.VIEW;end`;
-            try {
-              if (/Android/i.test(navigator.userAgent)) {
-                window.location.href = chromeIntent;
-              } else {
-                window.location.href = pwaUrl;
-              }
-            } catch (_) {
-              window.location.href = pwaUrl;
-            }
-          };
-        }
         const closeBtn = document.getElementById('pwa-post-install-close-btn');
         if (closeBtn) {
           closeBtn.onclick = () => {

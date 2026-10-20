@@ -151,6 +151,10 @@ test('League Leaderboard - All mock community players pass verification and sort
     assert.strictEqual(check.valid, true, `Player ${player.displayName} failed verification: ${check.reason}`);
   });
 
+  if (League.setCompetitors) {
+    League.setCompetitors(community);
+  }
+
   const roster = await League.fetchLeaderboard('xp');
   assert.ok(roster.length >= 6);
 
