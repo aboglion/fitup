@@ -3,10 +3,17 @@
   "short_name": "FitUp",
   "description": "Professional AI Workout & Nutrition Tracker",
   "start_url": "./",
+  "id": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0f",
   "theme_color": "#3b82f6",
+  "categories": [
+    "health",
+    "fitness",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "images/icon-192.png",
@@ -32,5 +39,20 @@
       "type": "image/png",
       "purpose": "maskable"
     }
+  ],
+  "shortcuts": [
+    {
+      "name": "Today Workout",
+      "short_name": "Workout",
+      "description": "View today's workout plan",
+      "url": "./",
+      "icons": [
+        {
+          "src": "images/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }
+

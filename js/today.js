@@ -5226,6 +5226,7 @@ const TodayPage = (() => {
   }
 
   let _changePopupTimer = null;
+  let _changePopupDismissTimer = null;
 
   /**
    * Inspect changes for exercise idx compared to its previous occurrence
@@ -5366,7 +5367,7 @@ const TodayPage = (() => {
   }
 
   /**
-   * Show unobtrusive popup for 3 seconds on accordion expand
+   * Show unobtrusive popup for 10 seconds on accordion expand
    */
   function triggerExerciseChangePopup(idx) {
     dismissExerciseChangePopup(true);
@@ -5416,7 +5417,7 @@ const TodayPage = (() => {
 
     _changePopupTimer = setTimeout(() => {
       dismissExerciseChangePopup();
-    }, 3000);
+    }, 10000);
   }
 
   /**
@@ -5427,6 +5428,10 @@ const TodayPage = (() => {
       clearTimeout(_changePopupTimer);
       _changePopupTimer = null;
     }
+    if (_changePopupDismissTimer) {
+      clearTimeout(_changePopupDismissTimer);
+      _changePopupDismissTimer = null;
+    }
     const existing = document.getElementById('exercise-change-popup');
     if (!existing) return;
 
@@ -5434,8 +5439,12 @@ const TodayPage = (() => {
       existing.remove();
     } else {
       existing.classList.add('removing');
-      setTimeout(() => {
-        existing.remove();
+      _changePopupDismissTimer = setTimeout(() => {
+        const el = document.getElementById('exercise-change-popup');
+        if (el && el.classList.contains('removing')) {
+          el.remove();
+        }
+        _changePopupDismissTimer = null;
       }, 300);
     }
   }
@@ -5466,7 +5475,7 @@ const TodayPage = (() => {
         card.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 50);
 
-      // Trigger exercise change popup (shows for 3 seconds only on accordion expand)
+      // Trigger exercise change popup (shows for 10 seconds on accordion expand)
       triggerExerciseChangePopup(idx);
     } else {
       if (listContainer) listContainer.classList.remove('has-focus');

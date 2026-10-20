@@ -72,6 +72,22 @@
         }));
       }
     }
+    // Early PWA prompt capture & early Service Worker registration
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault();
+      window.deferredInstallPrompt = e;
+      console.log('[PWA] Early beforeinstallprompt captured!');
+      if (typeof window.updatePwaBannerUI === 'function') {
+        window.updatePwaBannerUI();
+      }
+    });
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      navigator.serviceWorker.register('./sw.js').then(function (reg) {
+        console.log('[PWA] Service Worker registered early!', reg.scope);
+      }).catch(function (err) {
+        console.warn('[PWA] Early SW registration failed:', err);
+      });
+    }
   </script>
 </head>
 
@@ -1312,7 +1328,7 @@
   <script src="js/data.js?v=147"></script>
   <script src="js/program-guide-content.js?v=156"></script>
   <script src="js/preloader.js?v=151"></script>
-  <script src="js/i18n.js?v=159"></script>
+  <script src="js/i18n.js?v=160"></script>
   <script src="js/muscle-map.js?v=159"></script>
   <script src="js/effects3d.js?v=147"></script>
   <script src="js/ui.js?v=159"></script>
@@ -1335,7 +1351,7 @@
   <script src="js/anatomy.js?v=148"></script>
   <script src="js/stats.js?v=147"></script>
   <script src="js/export-guide.js?v=147"></script>
-  <script src="js/app.js?v=155"></script>
+  <script src="js/app.js?v=156"></script>
 </body>
 
 </html>

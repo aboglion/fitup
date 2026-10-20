@@ -17,9 +17,9 @@ test('Exercise Change Popup - CSS styling and unobtrusive floating layout', () =
   assert.ok(cssCode.includes('z-index: 10005;'), 'exercise-change-popup has high z-index');
   assert.ok(cssCode.includes('animation: exercisePopupJumpIn'), 'exercise-change-popup has jump-in animation');
 
-  // Verify 3s progress bar and countdown
+  // Verify 10s progress bar and countdown
   assert.ok(cssCode.includes('.exercise-change-popup-progress {'), 'defines progress bar');
-  assert.ok(cssCode.includes('popupProgressCountdown 3s linear forwards'), 'progress bar animates over 3 seconds');
+  assert.ok(cssCode.includes('popupProgressCountdown 10s linear forwards'), 'progress bar animates over 10 seconds');
 
   // Verify card alert neon red border pulse
   assert.ok(cssCode.includes('.exercise-card.alert-pulse-card {'), 'defines alert-pulse-card');
@@ -42,8 +42,8 @@ test('Exercise Change Popup - JS logic in today.js', () => {
   assert.ok(todayCode.includes('triggerExerciseChangePopup(idx);'), 'toggleExpand calls triggerExerciseChangePopup on expansion');
   assert.ok(todayCode.includes('dismissExerciseChangePopup();'), 'toggleExpand dismisses popup on accordion collapse');
 
-  // Verify 3000ms auto-dismiss timer
-  assert.ok(todayCode.includes('setTimeout(() => {\n      dismissExerciseChangePopup();\n    }, 3000);') || todayCode.includes('dismissExerciseChangePopup();\n    }, 3000);'), 'auto-dismisses after exactly 3 seconds');
+  // Verify 10000ms auto-dismiss timer (10 seconds)
+  assert.ok(todayCode.includes('setTimeout(() => {\n      dismissExerciseChangePopup();\n    }, 10000);') || todayCode.includes('dismissExerciseChangePopup();\n    }, 10000);'), 'auto-dismisses after exactly 10 seconds');
 
   // Verify card alert pulse includes weight and equipment changes
   assert.ok(todayCode.includes('const isCardAlert = isNewExercise || isAngleChanged || isWeightChanged || isEquipmentChanged;'), 'isCardAlert checks new exercise, angle, weight, and equipment changes');

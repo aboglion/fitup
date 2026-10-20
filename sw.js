@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v210-webp-exercise-engine';
+const CACHE_NAME = 'fitup-v212-pwa-engine';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
@@ -47,7 +47,15 @@ const ASSETS = [
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+    caches.open(CACHE_NAME).then(async (cache) => {
+      await Promise.allSettled(
+        ASSETS.map((asset) =>
+          cache.add(asset).catch((err) => {
+            console.warn('[SW] Could not precache:', asset, err);
+          })
+        )
+      );
+    })
   );
 });
 

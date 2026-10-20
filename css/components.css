@@ -4768,7 +4768,7 @@ html.light-theme .exercise-change-desc {
   height: 3px;
   background: linear-gradient(90deg, #ef4444, #f97316);
   transform-origin: left;
-  animation: popupProgressCountdown 3s linear forwards;
+  animation: popupProgressCountdown 10s linear forwards;
 }
 
 html[dir="rtl"] .exercise-change-popup-progress {

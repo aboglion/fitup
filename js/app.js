@@ -117,19 +117,31 @@ const App = (() => {
       window.navigator.standalone === true ||
       document.referrer.includes('android-app://');
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isAndroid = /Android/i.test(ua);
+    const isInAppBrowser = /FBAN|FBAV|Instagram|WhatsApp|Line|Twitter|Snapchat|MicroMessenger|GSA|AlohaBrowser|BytedanceWebview/i.test(ua) ||
+      (isAndroid && /Version\/[0-9.]+/i.test(ua) && /Chrome\/[0-9.]+/i.test(ua) && !/SamsungBrowser/i.test(ua));
+
     let isBannerDismissed = localStorage.getItem('pwaBannerDismissed') === 'true';
 
+    // Synchronize early prompt if captured before setup
+    if (window.deferredInstallPrompt) {
+      deferredInstallPrompt = window.deferredInstallPrompt;
+    }
+
     function updatePwaUI() {
+      const activePrompt = deferredInstallPrompt || window.deferredInstallPrompt;
+
       // 1. Settings Card Elements
       if (isStandalone) {
         if (installBtn) installBtn.style.display = 'none';
         if (installedBadge) installedBadge.style.display = 'flex';
         if (iosGuide) iosGuide.style.display = 'none';
       } else if (isIOS) {
-        if (installBtn) installBtn.style.display = 'none';
+        if (installBtn) installBtn.style.display = 'flex';
         if (installedBadge) installedBadge.style.display = 'none';
-        if (iosGuide) iosGuide.style.display = 'block';
+        if (iosGuide) iosGuide.style.display = 'none';
       } else {
         if (installBtn) installBtn.style.display = 'flex';
         if (installedBadge) installedBadge.style.display = 'none';
@@ -153,12 +165,12 @@ const App = (() => {
         if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
         if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_ios_sub');
         pwaBanner.classList.remove('hidden');
-      } else if (deferredInstallPrompt) {
+      } else if (activePrompt) {
         if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
         if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_sub');
         pwaBanner.classList.remove('hidden');
       } else {
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
         if (isMobile) {
           if (pwaBannerTitle) pwaBannerTitle.textContent = I18n.t('pwa_banner_title');
           if (pwaBannerSub) pwaBannerSub.textContent = I18n.t('pwa_banner_sub');
@@ -170,47 +182,134 @@ const App = (() => {
     }
 
     const triggerInstall = async () => {
-      if (deferredInstallPrompt) {
-        deferredInstallPrompt.prompt();
-        const choice = await deferredInstallPrompt.userChoice;
-        if (choice && choice.outcome === 'accepted') {
-          if (window.UI && window.UI.toast) {
-            UI.toast(I18n.t('pwa_installed_toast'), 'success');
+      if (isStandalone) {
+        if (window.UI && window.UI.toast) {
+          UI.toast(I18n.t('pwa_installed_status'), 'info');
+        }
+        return;
+      }
+
+      let promptEvent = deferredInstallPrompt || window.deferredInstallPrompt;
+
+      // If prompt not yet captured on Chromium, give it a brief wait
+      if (!promptEvent && !isIOS && 'serviceWorker' in navigator) {
+        promptEvent = await new Promise((resolve) => {
+          const timer = setTimeout(() => resolve(null), 1200);
+          const onPrompt = (e) => {
+            clearTimeout(timer);
+            window.removeEventListener('beforeinstallprompt', onPrompt);
+            resolve(e);
+          };
+          window.addEventListener('beforeinstallprompt', onPrompt, { once: true });
+        });
+        if (promptEvent) {
+          deferredInstallPrompt = promptEvent;
+          window.deferredInstallPrompt = promptEvent;
+        }
+      }
+
+      // If native browser prompt is available: EXECUTE 1-CLICK NATIVE INSTALL
+      if (promptEvent) {
+        try {
+          promptEvent.prompt();
+          const choice = await promptEvent.userChoice;
+          if (choice && choice.outcome === 'accepted') {
+            if (window.UI && window.UI.toast) {
+              UI.toast(I18n.t('pwa_installed_toast'), 'success');
+            }
+            if (pwaBanner) pwaBanner.classList.add('hidden');
           }
-          if (pwaBanner) pwaBanner.classList.add('hidden');
+        } catch (err) {
+          console.warn('[PWA] Prompt invocation failed:', err);
         }
         deferredInstallPrompt = null;
+        window.deferredInstallPrompt = null;
         updatePwaUI();
-      } else if (isIOS) {
+        return;
+      }
+
+      // If iOS device: display Safari instructions
+      if (isIOS) {
+        const isSafari = /Safari/i.test(ua) && !/CriOS|FxiOS|OPiOS|mercury/i.test(ua);
+        const safariTip = !isSafari
+          ? `<div style="margin-top: 12px; padding: 10px 12px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; font-size: 12.5px; color: var(--text-primary); line-height: 1.5;">${I18n.t('pwa_ios_safari_tip')}</div>`
+          : '';
+
         if (window.UI && window.UI.showModal) {
           window.UI.showModal(
             I18n.t('pwa_card_title'),
             `<div style="text-align: start; padding: 10px 0;">
-               <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5;">${I18n.t('pwa_banner_ios_sub')}</p>
+               <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5; font-weight: 700;">${I18n.t('pwa_ios_guide_title')}</p>
                <ol style="margin: 0; padding-inline-start: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
-                 <li>1️⃣ ${I18n.t('pwa_ios_instructions')}</li>
+                 <li style="margin-bottom: 6px;">1️⃣ ${I18n.t('pwa_ios_step1')}</li>
+                 <li style="margin-bottom: 6px;">2️⃣ ${I18n.t('pwa_ios_step2')}</li>
+                 <li style="margin-bottom: 6px;">3️⃣ ${I18n.t('pwa_ios_step3')}</li>
                </ol>
+               ${safariTip}
              </div>`
           );
         } else if (window.UI && window.UI.toast) {
           UI.toast(I18n.t('pwa_ios_instructions'), 'info');
         }
-      } else {
+        return;
+      }
+
+      // Android in-app browser detection (WhatsApp, Instagram, Facebook, Gmail, etc.)
+      const chromeIntentUrl = isAndroid
+        ? `intent://${location.host}${location.pathname}${location.search}${location.hash}#Intent;scheme=https;package=com.android.chrome;end`
+        : '';
+
+      if (isAndroid && isInAppBrowser) {
         if (window.UI && window.UI.showModal) {
           window.UI.showModal(
-            I18n.t('pwa_card_title'),
+            I18n.t('pwa_inapp_title'),
             `<div style="text-align: start; padding: 10px 0;">
-               <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5; font-weight: 700;">${I18n.t('pwa_android_instructions_title')}</p>
-               <ol style="margin: 0; padding-inline-start: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
-                 <li style="margin-bottom: 6px;">1️⃣ ${I18n.t('pwa_android_step1')}</li>
-                 <li style="margin-bottom: 6px;">2️⃣ ${I18n.t('pwa_android_step2')}</li>
-                 <li style="margin-bottom: 6px;">3️⃣ ${I18n.t('pwa_android_step3')}</li>
-               </ol>
+               <p style="font-size: 13.5px; margin-bottom: 14px; color: var(--text-primary); line-height: 1.5;">${I18n.t('pwa_inapp_desc')}</p>
+               <a href="${chromeIntentUrl}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px 16px; background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 800; font-size: 14px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 14px rgba(16,185,129,0.35); box-sizing: border-box;">
+                 <span>🚀</span> <span>${I18n.t('pwa_open_in_chrome')}</span>
+               </a>
+               <button id="pwa-copy-app-link-btn" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 10px 16px; margin-top: 10px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border-light); font-weight: 600; font-size: 13px; border-radius: 10px; cursor: pointer; box-sizing: border-box;">
+                 <span>📋</span> <span>${I18n.t('pwa_copy_link')}</span>
+               </button>
              </div>`
           );
-        } else if (window.UI && window.UI.toast) {
-          UI.toast(I18n.t('pwa_card_desc'), 'info');
+          setTimeout(() => {
+            const copyBtn = document.getElementById('pwa-copy-app-link-btn');
+            if (copyBtn) {
+              copyBtn.onclick = () => {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                  if (window.UI && window.UI.toast) UI.toast(I18n.t('pwa_link_copied'), 'success');
+                }).catch(() => {
+                  if (window.UI && window.UI.toast) UI.toast(window.location.href, 'info');
+                });
+              };
+            }
+          }, 80);
         }
+        return;
+      }
+
+      // General fallback on Android / Desktop
+      if (window.UI && window.UI.showModal) {
+        window.UI.showModal(
+          I18n.t('pwa_card_title'),
+          `<div style="text-align: start; padding: 10px 0;">
+             <p style="font-size: 14px; margin-bottom: 12px; color: var(--text-primary); line-height: 1.5; font-weight: 700;">${I18n.t('pwa_android_instructions_title')}</p>
+             <ol style="margin: 0; padding-inline-start: 20px; font-size: 13px; color: var(--text-secondary); line-height: 1.8;">
+               <li style="margin-bottom: 6px;">1️⃣ ${I18n.t('pwa_android_step1')}</li>
+               <li style="margin-bottom: 6px;">2️⃣ ${I18n.t('pwa_android_step2')}</li>
+               <li style="margin-bottom: 6px;">3️⃣ ${I18n.t('pwa_android_step3')}</li>
+             </ol>
+             ${isAndroid ? `
+             <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-light);">
+               <a href="${chromeIntentUrl}" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px; background: linear-gradient(135deg, var(--accent-primary), #2563eb); color: #fff; font-weight: 700; font-size: 13.5px; border-radius: 10px; text-decoration: none; box-sizing: border-box;">
+                 <span>🚀</span> <span>${I18n.t('pwa_open_in_chrome')}</span>
+               </a>
+             </div>` : ''}
+           </div>`
+        );
+      } else if (window.UI && window.UI.toast) {
+        UI.toast(I18n.t('pwa_card_desc'), 'info');
       }
     };
 
@@ -226,15 +325,17 @@ const App = (() => {
     }
 
     window.addEventListener('beforeinstallprompt', (e) => {
-      console.log('PWA beforeinstallprompt event captured!');
+      console.log('PWA beforeinstallprompt event captured in app.js!');
       e.preventDefault();
       deferredInstallPrompt = e;
+      window.deferredInstallPrompt = e;
       updatePwaUI();
     });
 
     window.addEventListener('appinstalled', () => {
       console.log('PWA appinstalled event!');
       deferredInstallPrompt = null;
+      window.deferredInstallPrompt = null;
       if (window.UI && window.UI.toast) {
         UI.toast(I18n.t('pwa_installed_toast'), 'success');
       }
@@ -269,23 +370,23 @@ const App = (() => {
         }
       }, 2500);
 
-      if ('serviceWorker' in navigator && (location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
-        navigator.serviceWorker.getRegistrations().then(regs => regs.forEach(r => r.unregister()));
-        if ('caches' in window) caches.keys().then(keys => keys.filter(k => k !== 'fitup-media-cache-v1').forEach(k => caches.delete(k)));
-      }
+      // Evict stale media from cache if needed
       if ('caches' in window) {
         caches.open('fitup-media-cache-v1').then(cache => {
           ['images/exercises/DB GLUTE BRIDGE.png', 'images/exercises/DB%20GLUTE%20BRIDGE.png', 'images/exercises/DB HIP THRUST.png', 'images/exercises/DB%20HIP%20THRUST.png', 'images/exercises/WRIST ROCKS.png', 'images/exercises/WRIST%20ROCKS.png'].forEach(p => {
             cache.delete(p, { ignoreSearch: true }).catch(() => {});
           });
         }).catch(() => {});
-      } else if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      }
+
+      // Explicit Service Worker registration for PWA installability & offline caching
+      if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
         navigator.serviceWorker.register('./sw.js')
           .then(reg => {
-            console.log('SW registered!', reg);
+            console.log('SW registered!', reg.scope);
             reg.update();
           })
-          .catch(err => console.error('SW failed', err));
+          .catch(err => console.error('SW registration failed:', err));
       } else if (!location.protocol.startsWith('http')) {
         console.info('SW skipped: running from file:// — serve via local server (e.g. python3 -m http.server) to enable PWA offline mode.');
       }
