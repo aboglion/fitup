@@ -275,6 +275,9 @@ const I18n = (() => {
       'Wall Walk (Partial)': 'Wall Walk (Partial)',
       'Weighted Deficit Push-Up': 'Weighted Deficit Push-Up',
       'Weighted Pull-Up': 'Weighted Pull-Up',
+      'Weighted Chin-Up': 'Weighted Chin-Up',
+      'Band-Assisted Chin-Up': 'Band-Assisted Chin-Up',
+      'Band-Assisted Pull-Up': 'Band-Assisted Pull-Up',
 
       // App & Nav
       app_title: "FitUp - Workout & AI Nutrition Tracking",
@@ -1964,6 +1967,9 @@ const I18n = (() => {
       'Wall Walk (Partial)': 'טיפוס קיר חלקי',
       'Weighted Deficit Push-Up': 'שכיבות שמיכה בגרעון עם ווסט משקל',
       'Weighted Pull-Up': 'עליות מתח עם ווסט משקל',
+      'Weighted Chin-Up': 'מתח בסופינציה עם ווסט משקל',
+      'Band-Assisted Chin-Up': 'מתח בסופינציה עם גומייה (סיוע)',
+      'Band-Assisted Pull-Up': 'עליות מתח עם גומייה (סיוע)',
 
       // App & Nav
       app_title: "FitUp - מעקב אימונים ותזונה",
@@ -3856,6 +3862,9 @@ const I18n = (() => {
       'Wall Walk (Partial)': 'مشي الجدار جزئي',
       'Weighted Deficit Push-Up': 'ضغط عجز مع سترة أثقال',
       'Weighted Pull-Up': 'عقلة مع سترة أثقال',
+      'Weighted Chin-Up': 'عقلة معكوسة مع سترة أثقال',
+      'Band-Assisted Chin-Up': 'العقلة المعكوسة بمساعدة شريط المقاومة',
+      'Band-Assisted Pull-Up': 'عقلة قبضة علوية بمساعدة شريط المقاومة',
 
       // App & Nav
       app_title: "FitUp - تتبع التمارين والتغذية بالذكاء الاصطناعي",

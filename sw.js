@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v225-workout-celebration-guard';
+const CACHE_NAME = 'fitup-v226-biomechanics-fixes';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',

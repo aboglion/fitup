@@ -33,7 +33,7 @@ test('v15.7.1 - Nordic Curl Progression unlocks at Week 10 (never earlier)', () 
     assert.equal(nordic.earliestWeek, 10, 'connective-tissue floor = Week 10');
     assert.equal(nordic.type, 'variation', 'bodyweight stage-based exercise (no external load)');
     assert.equal(nordic.sets, 2);
-    assert.equal(nordic.repWindow, '6-10');
+    assert.equal(nordic.repWindow, '4-6');
     assert.equal(nordic.restSeconds, 90);
     assert.equal(nordic.tempo, '3-1-1');
     assert.equal(nordic.compound, false);
@@ -70,9 +70,9 @@ test('v15.7.1 - Nordic Curl Day 1 placement (after RDL toggle, before Heels-Elev
     const d12 = dayOf(12, 'Monday');
     const nordic12 = d12.exercises.find(e => e.id === 'nordic-curl-progression');
     assert.ok(nordic12, 'Nordic present on deload week 12 Day 1');
-    assert.equal(nordic12.sets, '1×6-10', 'Deload = 1 set only');
+    assert.equal(nordic12.sets, '1×4-6', 'Deload = 1 set only');
     assert.equal(nordic12.rest, 90);
-    assert.equal(nordic12.weight, 'Bodyweight');
+    assert.equal(nordic12.weight, 'Hands-Assisted (Partial ROM)');
 });
 
 // ---------------------------------------------------------------------------
@@ -254,7 +254,7 @@ test('v15.7.1 - Rep windows frozen (only new Nordic entry added)', () => {
         assert.equal(ex.repWindow, rw, `repWindow of ${id} must stay ${rw}`);
     }
     const nordic = data.exercises.find(e => e.id === 'nordic-curl-progression');
-    assert.equal(nordic.repWindow, '6-10');
+    assert.equal(nordic.repWindow, '4-6');
     // v15.9: Both Day 3 and Day 5 lateral instances use the 10-18 range to prevent ping-pong stall
     const d5lat = dayOf(10, 'Friday').exercises.find(e => e.id === 'single-arm-lateral-raise');
     assert.equal(d5lat.repWindow, '10-18');

@@ -182,7 +182,10 @@ The program is deliberately designed around a home gym environment with modular 
    - **Weeks 1–17 (Bilateral Foundation)**: `Goblet Romanian Deadlift` starts at 8 kg and progresses via Group A (+2 kg every 3 clean workouts) up to ~18–20 kg.
    - **Week 18+ (Unilateral Overload & Reset)**: Goblet RDL is replaced by `Single-Leg RDL` (executed with 3s descent and Contralateral Hand-Supported on wall/rack — mandatory pelvic anti-rotation for L4–S1 safety). Critically, Single-Leg RDL starting load is safely derived as **50% of the achieved Goblet RDL weight** (rounded to the nearest even kg, minimum 8 kg: $\text{StartWeight} = \max(8, \text{roundToEven}(0.5 \times \text{GobletRDL\_Weight}))$; does NOT inherit 100% of bilateral load) to build unilateral pelvis stability, safeguard the L4–S1 disc bulge, eliminate severe mechanical cliff drops, and open a brand-new **36-week linear overload runway** up to 32 kg.
 2. **Bodyweight Eccentric Hamstring Tension (Nordic Curl Progression)**:
-   - Introduced in **Week 10**, the `Nordic Curl Progression` adds a dedicated eccentric hamstring overload vector that is completely independent of dumbbell weights, featuring infinite progressive resistance through lever angle and band assistance.
+   - Introduced in **Week 10**, the `Nordic Curl Progression` adds a dedicated eccentric hamstring overload vector with strictly graded stages for tendon and joint safety:
+     - **Weeks 10–17**: `Hands-Assisted Nordic (Partial ROM)` (30°–45° descent with hand braking), 2×4–6 reps.
+     - **Weeks 18–33**: `Hands-Assisted Nordic (Full ROM)`, 2×4–6 reps.
+     - **Weeks 34+**: `Nordic Curl (Eccentric Only)` (3–4s slow eccentric descent), 2×4–6 reps.
 3. **Dual-Leverage Quad Architecture (Paused Squats + Bulgarian Split Squat)**:
    - **Heels-Elevated Goblet Squat**: Utilizes heel elevation (increasing knee extensor moment arm) combined with a strict 3s eccentric descent and a **1–2s isometric pause at bottom stretch**, eliminating stretch-shortening elastic rebound and maximizing active mechanical tension at the lengthened position.
    - **Goblet Bulgarian Split Squat (Unlocked W3–W5)**: Provides the primary unilateral quad/glute driver up to 32 kg per working leg.
@@ -261,9 +264,9 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **Legs + Core Foundation** | Warmup (High Knees, BW Squat, Dead Bug, Glute Bridge) + Goblet RDL + Heels-Elevated Goblet Squat + DB Glute Bridge + Dead Bug + Micro Mobility B (5 anchor exercises) | 30 min |
 | **Day 2** | **Zone 2 / Active Recovery Walk** | Weeks 1–2: Relaxed Walking 20 min (0% incline, 4.5 km/h); Weeks 3+: Brisk Walking Zone 2 at 60–70% HRmax (baseline 4% incline, 5.5 km/h, conversational pace) + Micro Mobility B | 20–45 min |
-| **Day 3** | **Push + Upper Foundation** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) + Single-Arm Floor Press + Push-Up Bars + Chin-Up Progression (2×4–8, supinated grip; starts with Negative Chin-Up) + TRX Row + TRX Y-T-W + Micro Mobility A (5 anchor exercises) | 30 min |
+| **Day 3** | **Push + Upper Foundation** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) + Single-Arm Floor Press + Push-Up Bars + Band-Assisted Chin-Up (Weeks 1–8, 2×4–8, 30kg band assistance, 2s descent; Chin-Up from Week 9+) + TRX Row + TRX Y-T-W + Micro Mobility A (5 anchor exercises) | 30 min |
 | **Day 4** | **Active Recovery + Neck** | Cervical Protocol (Band Neck Flexion & Extension 2x15-20) + 20 min Relaxed Walking + Micro Mobility B | 25 min |
-| **Day 5** | **Pull + Core Foundation** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) + Pull-Up Progression + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + Micro Mobility A (5 anchor exercises) | 30 min |
+| **Day 5** | **Pull + Core Foundation** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) + Band-Assisted Pull-Up (Weeks 1–8, 3×4–8, 30kg band assistance, 2s descent; Pull-Up from Week 9+) + One-Arm DB Row + TRX Face Pull + Single-Arm Curl + Micro Mobility A (5 anchor exercises) | 30 min |
 | **Day 6** | **Cardio (VO2 from Week 4)** | Weeks 1–3: Relaxed Walking 20 min (0% incline, 4.5 km/h); Week 4+: VO2 Max 4x4 at 85–95% HRmax (baseline 6.5+ km/h @ phase incline, adjust to HR) | 20–35 min |
 | **Day 7** | **Complete Rest** | Passive recovery, hydration & CNS regeneration | — |
 
@@ -273,9 +276,9 @@ To protect connective tissue, adapt the lumbar spine, and prevent Achilles & sho
 | :--- | :--- | :--- | :--- |
 | **Day 1** | **Legs + Core + Carry** | Warmup (High Knees, BW Squat, Dead Bug, Glute Bridge) → Goblet Romanian Deadlift (W1–17) / Single-Leg RDL (W18+) → Nordic Curl Progression (from W10) → Heels-Elevated Goblet Squat → Goblet Bulgarian Split Squat → DB Glute Bridge → Suitcase Carry → Core Circuit (Pallof from W6, Dead Bug, Hollow Body) → Micro Mobility B | 55–60 min |
 | **Day 2** | **Zone 2 + Daily Mobility** | Aerobic base building: treadmill brisk walking 45 min at Zone 2 HR 60–70% (baseline 4% incline, 5.5 km/h, conversational test) & daily Micro Mobility B (hip flexor + deep squat) | 45 min |
-| **Day 3** | **Push + Shoulders + Skill** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) → Overhead Skill Tree (Pike / Wall Walk, A1 — executed fresh) → Chin-Up Tree (Chin-Up Progression W1–9 with Negative Chin-Up, Chin-Up W10–65, Weighted Chin-Up W66+, A2/A4, 2×4–8, vertical pull & shoulder decompression) → Single-Arm Seated OHP (A3) → Single-Arm Floor Press (A4) → Push-Up Tree (A5) → DB Overhead Triceps Ext (A6, 3 sets) → Lean Pair (TRX Row ↔ Single-Arm Lateral Raise, A7/A8) → Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart, A9) → **Calf Block (Standing & Seated, A10/A11 — moved from Day 5 to spare Achilles before Day 6 VO2 Max)** → Arm Block (W3+ Gradual Ramp, A12) → Micro Mobility A (A13) | 55–60 min |
+| **Day 3** | **Push + Shoulders + Skill** | Warmup (Arm Circles, Wall Slides, Scapular Push-up, Band Pull-Apart) → Overhead Skill Tree (Pike / Wall Walk, A1 — executed fresh) → Chin-Up Tree (Band-Assisted Chin-Up W1–8, Chin-Up W9–65, Weighted Chin-Up W66+, A2/A4, 2×4–8, vertical pull & shoulder decompression) → Single-Arm Seated OHP (A3) → Single-Arm Floor Press (A4) → Push-Up Tree (A5) → DB Overhead Triceps Ext (A6, 3 sets) → Lean Pair (TRX Row ↔ Single-Arm Lateral Raise, A7/A8) → Rear Delt Toggle (TRX Y-T-W / Band Pull-Apart, A9) → **Calf Block (Standing & Seated, A10/A11 — Weeks 5–8: Bodyweight 0kg, 3×12–20 / 3×15–25; Week 9+: 4kg → 6kg → 8kg...)** → Arm Block (Week 6+ Gradual Ramp, A12) → Micro Mobility A (A13) | 55–60 min |
 | **Day 4** | **Active Recovery + Joint Health** | Band Neck Flexion & Extension protocol (A1, 2×15–20), light treadmill recovery walk (A2, 25 min @ 0% 4.5 km/h) & 10-min Deep Mobility sequence (A3) | 30 min |
-| **Day 5** | **Pull + Back + Biceps** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) → Pull-Up Tree (A1) → One-Arm DB Row (A2) → Lean Pair (TRX Face Pull ↔ Single-Arm Lateral Raise, A3/A4) → Lean Pair (Push-Up Volume ↔ Single-Arm Curl, A5/A6) → Single-Arm Hammer Curl (A7) → Lean Pair (Towel Hang ↔ L-Sit Tree, A8/A9) → Arm Block (W3+ Gradual Ramp, active on heavy weeks 1-3, A10) → Micro Mobility A (A11) | 45–50 min |
+| **Day 5** | **Pull + Back + Biceps** | Warmup (Arm Circles, Wall Slides, Scapular Pull-up, Dead Hang, Seated Band Row) → Pull-Up Tree (Band-Assisted Pull-Up W1–8, Pull-Up W9–61, Weighted Pull-Up W62+, A1) → One-Arm DB Row (A2) → Lean Pair (TRX Face Pull ↔ Single-Arm Lateral Raise, A3/A4) → Lean Pair (Push-Up Volume ↔ Single-Arm Curl, A5/A6) → Single-Arm Hammer Curl (A7) → Lean Pair (Towel Hang ↔ L-Sit Tree, A8/A9) → Arm Block (W3+ Gradual Ramp, active on heavy weeks 1-3, A10) → Micro Mobility A (A11) | 45–50 min |
 | **Day 6** | **Cardio VO2 Max 4x4** | Norwegian 4x4 interval protocol: 10m warmup @ 4.5 km/h, 4×(4m effort @ 85–95% HRmax [Walking: 5.8–6.8 km/h @ 4–6% incline | Running: ≥7.5 km/h @ 1–2% incline to spare Achilles tendon], 3m recovery @ 60–70% HRmax [4.5 km/h]), 5m cooldown (replaced with 30 min Zone 2 walk during Deload) | 35 min |
 | **Day 7** | **Complete Rest** | Complete passive recovery, protein repair, hydration & CNS regeneration | — |
 
@@ -373,7 +376,7 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 - **Load Reduction**: Loads reduced by 2 kg (rounded to nearest legal increment [6..32] kg; minimum 6 kg empty handle / 8 kg loaded; vest min 5 kg).
 - **Structure**: All pairs, circuits, and blocks dissolve into straight sets with dedicated rest.
 - **Toggles**: Toggles remain active according to week parity.
-- **Nordic Curl on Deload**: 1 set of 6–10 reps only, hands-assisted, progression frozen.
+- **Nordic Curl on Deload**: 1 set of 4–6 reps only, hands-assisted, progression frozen.
 - **Biceps Microcycle on Deload**: 1 set of Single-Arm Hammer Curl only.
 - **Arm Block**: Omitted during Deload weeks to ensure complete central and peripheral recovery.
 - **Cardio**: VO2 Max interval omitted; replaced with light 30 min Zone 2 treadmill walk (2% incline, 5.0 km/h).
@@ -424,7 +427,7 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
 
 ### Phase 0 Unlock Interaction & Connective Tissue Priming
 - **Biceps (Day 5)**: `Single-Arm Curl` is unlocked from Day 1. Therefore, `arm-block-biceps-curl` initiates directly on Week 3 without any prerequisite blocker.
-- **Side Delts & Triceps (Day 3)**: While the full straight-set volume of `Single-Arm Lateral Raise` and `DB Overhead Triceps Extension` officially unlocks at Week 5 (or early in Weeks 3–4 if performance criteria are met: Push-Up Progression $\ge 10$ reps for Triceps Extension), their Arm Block entries (`arm-block-lateral-raise` and `arm-block-triceps-ext`) initiate micro-dosing starting from Week 3 (`startingWeek: 3`). In the software, these micro-doses (1 activation set + 1 mini-set in W3; 1 activation set + 2 mini-sets in W4) function as controlled, low-volume introductory stimulus at the end of the session, providing safe connective-tissue adaptation before full straight-set volume unlocks at Week 5.
+- **Side Delts & Triceps (Day 3)**: The straight-set volume of `Single-Arm Lateral Raise` and `DB Overhead Triceps Extension` officially unlocks at Week 5. To ensure fundamental motor patterns and joint structures are fully conditioned first, their Day 3 Arm Block entries (`arm-block-lateral-raise` and `arm-block-triceps-ext`) initiate strictly from **Week 6+** (`startingWeek: 6`). Day 3 Arm Blocks are omitted in Weeks 1–5, preventing myo-reps cluster volume before primary exercises are solidified.
 
 ### Myo-Reps Cluster Mechanics
 1. **Activation Set**: Executed to target reps (12 reps; 15 reps on lateral raise full cluster) at assigned load. Rest 15 seconds.
@@ -466,6 +469,7 @@ Deload occurs automatically on **Weeks 12, 24, 36, 48, 60, 72** (every 12 weeks;
     - Group B: 2 sets (Sessions 1–2) $\to$ 3 sets (Session 3) before promoting to **12 kg** @ base **2 sets** (milder volume stepping than 8 $\to$ 10 or 6 $\to$ 8).
     - Group A: Standard 3 sets across cadence.
   - **At 12 kg+ ($\le 16.7\%$)**: Standard cadence at base sets.
+  - **Unilateral Volume Ceiling (3 Sets Cap)**: For unilateral exercises (`loadType: 'each'`, `'single_hand'`, `'on_knee'`, or `isUnilateral: true`), prescribed sets are hard-capped at **3 sets per side** (`targetSets = Math.min(3, targetSets)`). This prevents excessive total session volume (e.g. 4+4 = 8 total sets) and avoids connective tissue exhaustion on single-limb movements.
 
   Resetting sets back to base sets upon weight promotion ensures smooth volume transitions and complete joint safety.
 - **Unlock Precedence Rule**: The Phase 0 graduation gates (Part 3.0) and `ProgressionEngine.checkUnlockCriteria()` unlock logic are authoritative over any exercise-dictionary note, appendix note, or day-card description. An exercise is never unlocked later than its calendar gate, and never earlier than its `earliestWeek` connective-tissue floor or its performance criteria. Notes are descriptive; the engine decides.
@@ -557,13 +561,13 @@ This is the authoritative specification of all **61 unique exercises** appearing
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Goblet Romanian Deadlift** | `goblet-rdl` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 6-12 | 3s descent (neutral spine) | 90s | Week 1 Anchor (Weeks 1–17) |
 | **Single-Leg RDL** | `single-leg-rdl` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 2 | 8-10 | 3s descent (Contralateral Hand-Supported on wall/rack — mandatory pelvic anti-rotation for L4–S1 safety) | 75s | Calendar Gate Week 18+ (Starts at 50% Goblet RDL, min 8kg; safe reset protects spine) |
-| **Nordic Curl Progression** | `nordic-curl-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 6-10 | 3-1-1 (lengthened pause) | 90s | Calendar Gate Week 10+ (Deload 1 set) |
+| **Nordic Curl Progression** | `nordic-curl-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 4-6 | 3-1-1 (lengthened pause) | 90s | Calendar Gate Week 10+ (W10–17: Hands-Assisted Partial ROM 30°–45°; W18–33: Hands-Assisted Full ROM; W34+: Eccentric Only 3–4s; Deload 1 set) |
 | **Heels-Elevated Goblet Squat** | `heels-elevated-goblet-squat` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 2 | 8-12 | 3s descent, 1-2s pause, 1s up | 75s | Week 1 Continuous Quad Anchor |
 | **Goblet Bulgarian Split Squat** | `goblet-bulgarian-split-squat` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 6-12 | 2s descent | 82s | W5 (early W3 if Squat ≥ 10kg; Suitcase grip at ≥20kg) |
 | **DB Glute Bridge** | `db-glute-bridge` | weighted | Group A (3rd) | 8 kg | 8 kg | 32 kg | 2 kg | total | 3 | 10-15 | 1s pause at top squeeze | 75s | Week 1 Anchor (75s post W5, 60s W1-4) |
 | **Suitcase Carry** | `suitcase-carry` | weighted | Group A (3rd) | 12 kg | 8 kg | 32 kg | 2 kg | total | 3 | 25-40m | controlled walk | 60s | W5 (early W4 if RDL ≥ 10kg) |
-| **Standing Single-Leg Calf Raise** | `standing-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | single_hand | 3 | 12-20 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Day 3 Calf Block #1 |
-| **Seated Single-Leg Calf Raise** | `seated-single-leg-calf-raise` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | on_knee | 2 | 15-25 | 2s descent, 1s pause, 1s squeeze | 45s | W5 (early W3); Day 3 Calf Block #2 |
+| **Standing Single-Leg Calf Raise** | `standing-single-leg-calf-raise` | weighted | Group B (4th) | Bodyweight (W5–8) / 4 kg (W9+) | 0 kg | 32 kg | 2 kg | single_hand | 3 | 12-20 | 2s descent, 1s pause, 1s squeeze | 45s | W5+ (W5–8: Bodyweight 3×12–20; W9+: 4kg → 6kg → 8kg...); Day 3 Calf Block #1 |
+| **Seated Single-Leg Calf Raise** | `seated-single-leg-calf-raise` | weighted | Group B (4th) | Bodyweight (W5–8) / 4 kg (W9+) | 0 kg | 32 kg | 2 kg | on_knee | 2 | 15-25 | 2s descent, 1s pause, 1s squeeze | 45s | W5+ (W5–8: Bodyweight 3×15–25; W9+: 4kg → 6kg → 8kg...); Day 3 Calf Block #2 |
 | **Pallof Press Progression** | `pallof-press-progression` | variation | BW / Stage | Band | — | — | — | — | 2 | 10-12 | 1s pause at extension | 30s | W6+ (unlock: Dead Bug stage 2); Core Circuit #1 |
 | **Dead Bug** | `dead-bug` | variation | BW / Stage | BW | — | — | — | — | 3 | 12-20 | slow controlled | 30s | Core Circuit #2 |
 | **Hollow Body Hold** | `hollow-body-hold` | timebased | BW / Stage | BW | — | — | — | — | 2 | 20-30s | static hollow hold | 30s | W5 (early W3 if Dead Bug ≥ 16 reps); Core Circuit #3 |
@@ -579,28 +583,28 @@ This is the authoritative specification of all **61 unique exercises** appearing
 | **Feet-Elevated Push-Up** | `feet-elevated-push-up` | variation | BW / Stage | BW | — | — | — | — | 3 | 8-12 | 2s descent | 75s | Push Tree W18–61 |
 | **Weighted Deficit Push-Up** | `weighted-deficit-push-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 6-12 | 2s descent | 90s | Push Tree W62+ (weighted vest) |
 | **DB Overhead Triceps Extension** | `db-overhead-triceps-extension` | weighted | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 3 | 10-15 | 2-1-2 (stretch pause) | 45s | W5 (early W3 if Push-Up ≥ 10); 2kg increments |
-| **Chin-Up Progression** | `chin-up-progression` | variation | BW / Stage | BW | — | — | — | — | 2 | 4-8 | 2s descent (rings/loops OK) | 90s | Day 3 Vertical Pull W1–9 (starts with Negative Chin-Up) |
-| **Chin-Up** | `chin-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 4-8 | 2s descent (rings/loops OK) | 90s | Day 3 Vertical Pull W10–65 (2×/week V-Taper & elbow relief) |
+| **Band-Assisted Chin-Up** | `band-assisted-chin-up` | variation | BW / Stage | Band 30kg | — | — | — | — | 2 | 4-8 | 2s descent (30kg band assistance under knees/feet) | 90s | Day 3 Vertical Pull W1–8 (Foundation Phase) |
+| **Chin-Up** | `chin-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 4-8 | 2s descent (rings/loops OK) | 90s | Day 3 Vertical Pull W9–65 (Full Bodyweight unlocked Week 9+; 2×/week V-Taper & elbow relief) |
 | **Weighted Chin-Up** | `weighted-chin-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 2 | 4-8 | 2s descent | 105s | Day 3 Vertical Pull W66+ (weighted vest) |
 | **Diamond Push-Up** | `diamond-push-up` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 45s | Skill Tree Accessory (Replaced by Chin-Up Tree on Day 3) |
 | **TRX Row** | `trx-row` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | Lean Pair #1 with Lateral Raise; W1–17: 75° (מתונה) \| W18–41: 45° (בינונית) \| W42–59: 30° (עמוקה) \| W60+: רגליים מוגבהות (180°) |
 | **Single-Arm Lateral Raise** | `single-arm-lateral-raise` | weighted | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 2 | 10-18 | 2-1-2 (lengthened pause) | 75s | W5 (early W3); 2kg increments; Max 12kg |
 | **TRX Y-T-W** | `trx-ytw` | variation | BW / Stage | BW | — | — | — | — | 2 | 8-12 | 1s pause at peak | 45s | Rear Delt Toggle (Odd Weeks); W1–17: 75° (מתונה) \| W18–41: 45° (בינונית) \| W42+: 30° (עמוקה) |
 | **Band Pull-Apart** | `band-pull-apart` | variation | BW / Stage | Band | — | — | — | — | 3 | 15-20 | 1s squeeze | 45s | Rear Delt Toggle (Even Weeks) |
-| **Pull-Up Progression** | `pull-up-progression` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W1–9 |
-| **Pull-Up (Overhand)** | `pull-up-overhand` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W10–61 |
+| **Band-Assisted Pull-Up** | `band-assisted-pull-up` | variation | BW / Stage | Band 30kg | — | — | — | — | 3 | 4-8 | 2s descent (30kg band assistance under knees/feet) | 90s | Day 5 Vertical Pull W1–8 (Foundation Phase) |
+| **Pull-Up (Overhand)** | `pull-up-overhand` | variation | BW / Stage | BW | — | — | — | — | 3 | 4-8 | 2s descent (rings/loops OK) | 90s | Pull Tree W9–61 (Full Bodyweight unlocked Week 9+) |
 | **Weighted Pull-Up** | `weighted-pull-up` | weighted | Group A (3rd) | 5 kg | 5 kg | 20 kg | 1 kg | total | 3 | 4-8 | 2s descent | 105–120s | Pull Tree W62+ (weighted vest) |
 | **One-Arm DB Row** | `one-arm-db-row` | weighted | Group A (3rd) | 8 kg | 6 kg | 32 kg | 2 kg | each | 3 | 6-12 | 2s descent | 75s | Day 5 Primary Horizontal Pull Anchor |
 | **TRX Face Pull** | `trx-face-pull` | variation | BW / Stage | BW | — | — | — | — | 2 | 12-20 | 2s descent | 75s / 45s | Lean Pair with Day 5 Lateral Raise (W5+); W1–17: 75° (מתונה) \| W18–41: 45° (בינונית) \| W42+: 30° (עמוקה) |
 | **Push-Up Volume (Day 5)** | `push-up-volume` | variation | BW / Stage | BW | — | — | — | — | 2 | 10-15 | 2s descent | 75s | W5 (early W3); Lean Pair with Curl |
 | **Single-Arm Curl** | `single-arm-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-15 | 2-1-2 (lengthened pause) | 45s | Biceps Microcycle Heavy W1–3; 2kg increments |
-| **Single-Arm Hammer Curl** | `single-arm-hammer-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-12 | 2s descent | 45s | W5 (early W3 if Curl ≥ 12); Light W4 = 2 sets |
+| **Single-Arm Hammer Curl** | `single-arm-hammer-curl` | weighted | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 2-3 | 10-12 | 2s descent | 45s | W5 (early W3 if Curl ≥ 12); Light W4 = 2 sets (fallback: 2 light sets of Single-Arm Curl 6kg) |
 | **Towel Hang** | `towel-hang` | timebased | BW / Stage | BW | — | — | — | — | 2 | 15-45s | static grip hold | 45s | W5 (early W3); Lean Pair with L-Sit |
 | **Tuck L-Sit** | `tuck-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | W5 (early W3 if Dead Bug ≥ 16); L-Sit W1–17 |
 | **One-Leg Extended L-Sit** | `one-leg-extended-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 18–33 |
 | **Full L-Sit** | `full-l-sit` | timebased | BW / Stage | BW | — | — | — | — | 2 | 8-20s | static hold on bars | 45s | Calendar Gate Week 34+ |
-| **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12/15 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
-| **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 3 End (Stop: 2 tempo losses) |
+| **Arm Block - Single-Arm Lateral Raise** | `arm-block-lateral-raise` | myo-reps | Group B (4th) | 6 kg | 6 kg | 12 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12/15 + mini-sets | 2s descent | 15s | Week 6+ (W6: 1×4, W7-8: 2×4, W9+: 3×5) Day 3 End (Stop: 2 tempo losses; omitted W1–5) |
+| **Arm Block - DB Overhead Triceps Ext** | `arm-block-triceps-ext` | myo-reps | Group B (4th) | 8 kg | 6 kg | 32 kg | 2 kg | total | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 6+ (W6: 1×4, W7-8: 2×4, W9+: 3×5) Day 3 End (Stop: 2 tempo losses; omitted W1–5) |
 | **Arm Block - Single-Arm Curl** | `arm-block-biceps-curl` | myo-reps | Group B (4th) | 8 kg | 8 kg | 20 kg | 2 kg | each | 1+1 / 1+2 / 1+3 | 12 + mini-sets | 2s descent | 15s | Week 3+ (W3: 1×4, W4-5: 2×4, W6+: 3×5) Day 5 End (Stop: 2 tempo losses) |
 | **Band Neck Flexion & Extension** | `band-neck-flexion` | variation | — | Band | — | — | — | — | 2 | 15-20 | 3-1-3 slow | 45s | Day 4 Cervical Protocol (Chin-tuck focus) |
 | **Brisk Walking** | `brisk-walking` | timebased | — | BW | — | — | — | — | 1 | 30-45m | 60-70% HRmax (107-125 BPM for age 43, 4% @ 5.5 km/h base) | 0s | Day 2 Zone 2 Cardio (Weeks 3+) |
@@ -608,8 +612,8 @@ This is the authoritative specification of all **61 unique exercises** appearing
 | **VO2 Max Norwegian 4x4** | `vo2-max-norwegian-4x4` | interval | — | BW | — | — | — | — | 4×4m | 16m effort | 85-95% HRmax (151-169 BPM for age 43; Power Walk: 4-6% incline \| Jog/Run $\ge$7.5 km/h: 1-2% incline) | 0s | Day 6 Cardio (Weeks 4+) |
 | **Micro Mobility Protocol** | `micro-mobility-protocol` | timebased | — | BW | — | — | — | — | 1 | 5m | slow controlled | 0s | Post-workout 90s: Variant A (Upper) / B (Lower) |
 | **Deep Mobility Protocol** | `deep-mobility-protocol` | timebased | — | BW | — | — | — | — | 1 | 10m | slow deep stretch | 0s | Day 4 Joint & Spinal Health Protocol |
-| **Wall Sit** | `wall-sit` | timebased | Clinical Fallback | BW | — | — | — | — | 2 | 30-45s | isometric hold at 60°–70° | 60s | Injury Engine Secondary Fallback (Knee 🔴 Squat Substitute) |
-| **Single-Leg Glute Bridge** | `single-leg-glute-bridge` | variation | Clinical Fallback | BW | — | — | — | — | 2 | 10-15 each | 2-1-1 | 60s | Injury Engine Secondary Fallback (Knee 🔴 BSS Substitute) |
+| **Wall Sit** | `wall-sit` | timebased | Clinical Fallback / Rehab | BW | — | — | — | — | 2 | 30-45s | isometric hold at 60°–70° | 60s | Injury Engine Secondary Fallback (Knee 🔴 Squat Substitute) |
+| **Single-Leg Glute Bridge** | `single-leg-glute-bridge` | variation | Clinical Fallback / Rehab | BW | — | — | — | — | 2 | 10-15 each | 2-1-1 | 60s | Injury Engine Secondary Fallback (Knee 🔴 BSS Substitute) |
 
 ### D.2 Warm-up & Activation Protocols (by Strength Day)
 - **Day 1 Warm-up (Legs & Core)**:

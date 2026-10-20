@@ -496,9 +496,9 @@ const AnatomyMap = (() => {
     chest: ['Single-Arm Floor Press', 'Push-up Bars Progression', 'Push-Up Volume (Day 5)', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Weighted Deficit Push-Up', 'Diamond Push-Up', 'Scapular Push-up'],
     shoulders: ['Single-Arm Seated OHP', 'Pike Progression', 'Elevated Pike Push-Up', 'Wall Walk (Partial)', 'Wall Walk (Full)', 'Wall Handstand', 'Single-Arm Lateral Raise', 'Arm Block - Single-Arm Lateral Raise', 'TRX Y-T-W', 'TRX Face Pull', 'Scapular Push-up', 'Arm Circles', 'Wall Slides', 'Band Pull-Apart', 'Feet-Elevated Push-Up', 'Band Neck Flexion & Extension'],
     triceps: ['DB Overhead Triceps Extension', 'Arm Block - DB Overhead Triceps Ext', 'Single-Arm Floor Press', 'Push-up Bars Progression', 'Diamond Push-Up', 'Single-Arm Seated OHP', 'Deficit Push-Up', 'Feet-Elevated Push-Up', 'Weighted Deficit Push-Up', 'Elevated Pike Push-Up', 'Pike Progression', 'Push-Up Volume (Day 5)'],
-    biceps: ['Single-Arm Curl', 'Single-Arm Hammer Curl', 'Arm Block - Single-Arm Curl', 'Chin-Up', 'Chin-Up Progression', 'Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'One-Arm DB Row', 'TRX Row', 'Seated Band Row'],
-    forearms: ['Dead Hang', 'Towel Hang', 'Suitcase Carry', 'One-Arm DB Row', 'TRX Row', 'Chin-Up', 'Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'Single-Arm Hammer Curl', 'Seated Band Row'],
-    lats: ['Pull-Up Progression', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'Chin-Up', 'Chin-Up Progression', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row', 'Scapular Pull-up'],
+    biceps: ['Single-Arm Curl', 'Single-Arm Hammer Curl', 'Arm Block - Single-Arm Curl', 'Chin-Up', 'Band-Assisted Chin-Up', 'Weighted Chin-Up', 'Chin-Up Progression', 'Pull-Up Progression', 'Band-Assisted Pull-Up', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'One-Arm DB Row', 'TRX Row', 'Seated Band Row'],
+    forearms: ['Dead Hang', 'Towel Hang', 'Suitcase Carry', 'One-Arm DB Row', 'TRX Row', 'Chin-Up', 'Band-Assisted Chin-Up', 'Weighted Chin-Up', 'Pull-Up Progression', 'Band-Assisted Pull-Up', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'Single-Arm Hammer Curl', 'Seated Band Row'],
+    lats: ['Pull-Up Progression', 'Band-Assisted Pull-Up', 'Pull-Up (Overhand)', 'Weighted Pull-Up', 'Chin-Up', 'Band-Assisted Chin-Up', 'Weighted Chin-Up', 'Chin-Up Progression', 'One-Arm DB Row', 'Seated Band Row', 'TRX Row', 'Scapular Pull-up'],
     traps: ['TRX Face Pull', 'TRX Y-T-W', 'Band Pull-Apart', 'Scapular Pull-up', 'One-Arm DB Row', 'Seated Band Row', 'Wall Slides', 'Deep Mobility Protocol', 'Band Neck Flexion & Extension'],
     quads: ['Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Bodyweight Squat', 'High Knees', 'Brisk Walking', 'VO2 Max Norwegian 4x4', 'Relaxed Walking', 'Wall Sit'],
     hamstrings: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'Nordic Curl Progression', 'Glute Bridge', 'DB Glute Bridge', 'Single-Leg Glute Bridge'],
@@ -508,8 +508,8 @@ const AnatomyMap = (() => {
     obliques: ['Suitcase Carry', 'Pallof Press Progression', 'Dead Bug', 'Single-Arm Floor Press', 'Single-Arm Seated OHP', 'Tuck L-Sit', 'One-Leg Extended L-Sit', 'Full L-Sit', 'Hollow Body Hold'],
     lowerBack: ['Goblet Romanian Deadlift', 'Single-Leg RDL', 'DB Glute Bridge', 'Suitcase Carry'],
     neck: ['Band Neck Flexion & Extension', 'Deep Mobility Protocol', 'Micro Mobility Protocol', 'TRX Face Pull', 'Wall Slides', 'Band Pull-Apart'],
-    heart: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression'],
-    lungs: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression']
+    heart: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression', 'Band-Assisted Pull-Up', 'Band-Assisted Chin-Up'],
+    lungs: ['VO2 Max Norwegian 4x4', 'Brisk Walking', 'Relaxed Walking', 'High Knees', 'Heels-Elevated Goblet Squat', 'Goblet Bulgarian Split Squat', 'Push-Up Volume (Day 5)', 'Pull-Up Progression', 'Band-Assisted Pull-Up', 'Band-Assisted Chin-Up']
   };
 
   /**

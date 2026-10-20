@@ -501,6 +501,8 @@ const StatsPage = (() => {
 
     'pull-up': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.4 }],
     'pull-up-progression': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.4 }],
+    'band-assisted-pull-up': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.4 }],
+    'band-assisted-chin-up': [{ m: 'lats', w: 0.8 }, { m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.4 }],
     'chin-up': [{ m: 'lats', w: 0.8 }, { m: 'biceps', w: 1.0 }, { m: 'forearms', w: 0.4 }],
     'weighted-pull-up': [{ m: 'lats', w: 1.0 }, { m: 'biceps', w: 0.6 }, { m: 'forearms', w: 0.5 }],
     'one-arm-db-row': [{ m: 'lats', w: 1.0 }, { m: 'traps', w: 0.5 }, { m: 'biceps', w: 0.5 }, { m: 'forearms', w: 0.4 }],
@@ -668,7 +670,7 @@ const StatsPage = (() => {
     'db-floor-press': 'chest', 'single-arm-floor-press': 'chest', 'db-single-arm-floor-press': 'chest', 'push-up': 'chest', 'deficit-push-up': 'chest', 'incline-push-up': 'chest', 'feet-elevated-push-up': 'chest', 'weighted-push-up': 'chest', 'push-up-bars-progression': 'chest', 'push-up-volume-day5': 'chest', 'push-up-volume-day-5': 'chest', 'scapular-push-up': 'chest',
     'seated-db-ohp': 'shoulders', 'single-arm-seated-ohp': 'shoulders', 'seated-db-overhead-press': 'shoulders', 'seated-single-arm-ohp': 'shoulders', 'db-lateral-raise': 'shoulders', 'single-arm-lateral-raise': 'shoulders', 'pike-push-up': 'shoulders', 'pike-progression': 'shoulders', 'trx-face-pull': 'shoulders', 'wall-walk': 'shoulders', 'wall-handstand-hold': 'shoulders', 'band-pull-apart': 'shoulders', 'trx-ytw': 'traps', 'trx-y-t-w': 'traps',
     'overhead-triceps-ext': 'triceps', 'db-overhead-triceps-extension': 'triceps', 'single-arm-overhead-triceps-ext': 'triceps', 'diamond-push-up': 'triceps',
-    'pull-up': 'lats', 'pull-up-progression': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'seated-band-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
+    'pull-up': 'lats', 'pull-up-progression': 'lats', 'band-assisted-pull-up': 'lats', 'band-assisted-chin-up': 'lats', 'chin-up': 'lats', 'weighted-pull-up': 'lats', 'one-arm-db-row': 'lats', 'trx-row': 'lats', 'seated-band-row': 'lats', 'scapular-pull-up': 'lats', 'inverted-row': 'lats',
     'db-curl': 'biceps', 'single-arm-curl': 'biceps', 'hammer-curl': 'biceps', 'single-arm-hammer-curl': 'biceps', 'biceps-curl-ladder': 'biceps',
     'db-bulgarian-split-squat': 'quads', 'db-bss': 'quads', 'db-bss-goblet': 'quads', 'goblet-bulgarian-split-squat': 'quads', 'goblet-squat': 'quads', 'bodyweight-squat': 'quads', 'reverse-lunge': 'quads', 'heels-elevated-goblet-squat': 'quads', 'reverse-lunge-pistol-squat': 'quads', 'walking-lunge': 'quads', 'pistol-squat-to-chair': 'quads', 'wall-sit': 'quads', 'wall-sit-1': 'quads',
     'db-rdl': 'hamstrings', 'goblet-romanian-deadlift': 'hamstrings', 'goblet-rdl': 'hamstrings', 'db-romanian-deadlift': 'hamstrings', 'single-leg-db-rdl': 'hamstrings', 'single-leg-rdl': 'hamstrings', 'nordic-curl-progression': 'hamstrings', 'nordic-1': 'hamstrings', 'db-glute-bridge': 'glutes', 'glute-bridge': 'glutes', 'single-leg-glute-bridge': 'glutes', 'glute-2': 'glutes',

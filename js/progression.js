@@ -127,53 +127,72 @@
       const increment = exercise.increment || 2;
       const maxW = exercise.maxWeight || 32;
 
+      let targetSets = base;
+
       // If already at maximum weight, no jump occurs -> keep base sets
-      if (curW >= maxW) return base;
+      if (curW >= maxW) {
+        targetSets = base;
+      } else {
+        // Percentage increase of the upcoming weight jump: (increment / currentWeight) * 100
+        const pctJump = (increment / curW) * 100;
+        const sessions = Math.max(0, sessionsAtWeight || 0);
 
-      // Percentage increase of the upcoming weight jump: (increment / currentWeight) * 100
-      const pctJump = (increment / curW) * 100;
-      const sessions = Math.max(0, sessionsAtWeight || 0);
-
-      // 1. Tier 1: Highest Jump >= 30% (e.g. 6 kg -> 8 kg is +33.3% jump - "הכי הרבה זה")
-      // Requires volume bridge (up to +2 sets peak for Group B, +1 set for Group A, hard-capped at 4 sets max)
-      if (pctJump >= 30) {
-        if (isGrpA) {
-          // Compound: 3 -> 4 sets on 2nd+ session (capped at 4 sets max)
-          return sessions >= 1 ? Math.min(4, base + 1) : base;
+        // 1. Tier 1: Highest Jump >= 30% (e.g. 6 kg -> 8 kg is +33.3% jump - "הכי הרבה זה")
+        // Requires volume bridge (up to +2 sets peak for Group B, +1 set for Group A, hard-capped at 4 sets max)
+        if (pctJump >= 30) {
+          if (isGrpA) {
+            // Compound: 3 -> 4 sets on 2nd+ session (capped at 4 sets max)
+            targetSets = sessions >= 1 ? Math.min(4, base + 1) : base;
+          } else {
+            // Isolation (e.g. Lateral Raise): 2 sets -> 3 sets -> 4 sets before advancing to 8 kg!
+            if (sessions === 0) targetSets = base;       // Session 1: 2 sets
+            else if (sessions === 1) targetSets = Math.min(4, base + 1);   // Session 2: 3 sets
+            else targetSets = Math.min(4, base + 2);                       // Session 3+: 4 sets (peak volume bridge)
+          }
+        } else if (pctJump >= 23) {
+          // 2. Tier 2: Moderate-High Jump 23% - 29% (e.g. 8 kg -> 10 kg is +25.0% jump)
+          // Stepping bridge (+1 set for Group B and Group A, capped at 4 sets max)
+          if (isGrpA) {
+            targetSets = sessions >= 1 ? Math.min(4, base + 1) : base;
+          } else {
+            // Isolation: 2 sets for first 2 sessions -> 3 sets on session 3+ before advancing to 10 kg
+            if (sessions <= 1) targetSets = base;
+            else targetSets = Math.min(4, base + 1); // 3 sets
+          }
+        } else if (pctJump >= 18) {
+          // 3. Tier 3: Moderate Jump 18% - 22% (e.g. 10 kg -> 12 kg is +20.0% jump)
+          // Less volume ramp than 8->10 or 6->8 ("מ 10 ל 12 פחות מ 8 ל 10 או 6 ל 8")
+          if (isGrpA) {
+            targetSets = base; // Compounds handle 20% comfortably at 3 sets
+          } else {
+            // Isolation: brief stepping bridge on session 3 only
+            targetSets = sessions >= 2 ? Math.min(4, base + 1) : base;
+          }
         } else {
-          // Isolation (e.g. Lateral Raise): 2 sets -> 3 sets -> 4 sets before advancing to 8 kg!
-          if (sessions === 0) return base;       // Session 1: 2 sets
-          if (sessions === 1) return Math.min(4, base + 1);   // Session 2: 3 sets
-          return Math.min(4, base + 2);                       // Session 3+: 4 sets (peak volume bridge)
+          // 4. Tier 4: Low Jump < 18% (e.g. 12 kg -> 14 kg is +16.7%, 14 -> 16 is +14.3%)
+          // Jumps are manageable without set expansion
+          targetSets = base;
         }
       }
 
-      // 2. Tier 2: Moderate-High Jump 23% - 29% (e.g. 8 kg -> 10 kg is +25.0% jump)
-      // Stepping bridge (+1 set for Group B and Group A, capped at 4 sets max)
-      if (pctJump >= 23) {
-        if (isGrpA) {
-          return sessions >= 1 ? Math.min(4, base + 1) : base;
-        } else {
-          // Isolation: 2 sets for first 2 sessions -> 3 sets on session 3+ before advancing to 10 kg
-          if (sessions <= 1) return base;
-          return Math.min(4, base + 1); // 3 sets
-        }
+      // Check unilateral cap to prevent marathon sets (e.g. 4+4 = 8 sets)
+      const isUnilateral = exercise.loadType === 'each' || 
+                           exercise.loadType === 'single_hand' || 
+                           exercise.loadType === 'on_knee' ||
+                           exercise.isUnilateral === true;
+
+      if (isUnilateral && targetSets > 3) {
+        targetSets = 3; // תקרת 3 סטים לכל צד (מונע 8 סטים כוללים)
       }
 
-      // 3. Tier 3: Moderate Jump 18% - 22% (e.g. 10 kg -> 12 kg is +20.0% jump)
-      // Less volume ramp than 8->10 or 6->8 ("מ 10 ל 12 פחות מ 8 ל 10 או 6 ל 8")
-      if (pctJump >= 18) {
-        if (isGrpA) {
-          return base; // Compounds handle 20% comfortably at 3 sets
-        } else {
-          // Isolation: brief stepping bridge on session 3 only
-          return sessions >= 2 ? Math.min(4, base + 1) : base;
-        }
-      }
+      return targetSets;
+    }
 
-      // 4. Tier 4: Low Jump < 18% (e.g. 12 kg -> 14 kg is +16.7%, 14 -> 16 is +14.3%)
-      // Jumps are manageable without set expansion
-      return base;
+    /**
+     * Volume Stepping calculation alias
+     */
+    calculateVolumeStepping(exercise, currentWeightKg, sessionsAtWeight = 0, baseSets = null) {
+      return this.calculatePrescribedSets(exercise, currentWeightKg, sessionsAtWeight, baseSets);
     }
 
     calculateWeightedDecision(exercise, state, setResults, weekNumber, previousSessionData, isDeloadOverride = undefined) {

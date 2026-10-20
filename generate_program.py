@@ -72,7 +72,7 @@ EXERCISES_CATALOG = [
         "category": "Legs",
         "type": "variation",
         "restSeconds": 90,
-        "repWindow": "6-10",
+        "repWindow": "4-6",
         "tempo": "3-1-1",
         "compound": False,
         "sets": 2,
@@ -175,8 +175,8 @@ EXERCISES_CATALOG = [
         "name": "Standing Single-Leg Calf Raise",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 8,
-        "minWeight": 6,
+        "startingWeight": 0,
+        "minWeight": 0,
         "maxWeight": 32,
         "increment": 2,
         "loadType": "single_hand",
@@ -199,8 +199,8 @@ EXERCISES_CATALOG = [
         "name": "Seated Single-Leg Calf Raise",
         "category": "Legs",
         "type": "weighted",
-        "startingWeight": 8,
-        "minWeight": 6,
+        "startingWeight": 0,
+        "minWeight": 0,
         "maxWeight": 32,
         "increment": 2,
         "loadType": "on_knee",
@@ -458,6 +458,21 @@ EXERCISES_CATALOG = [
         }
     },
     {
+        "id": "band-assisted-pull-up",
+        "name": "Band-Assisted Pull-Up",
+        "category": "Pull",
+        "type": "variation",
+        "restSeconds": 90,
+        "restRange": [75, 105],
+        "repWindow": "4-8",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 3,
+        "structure": "straight",
+        "rule": "גומיית 30 ק\"ג מתחת לברכיים/רגליים, טווח 4–8 חזרות, ירידה מבוקרת של 2 שניות; מוט מתח או טבעות/לולאת חבל",
+        "stages": ["Band 30kg", "Band 40kg", "Band 50kg"]
+    },
+    {
         "id": "pull-up-overhand",
         "name": "Pull-Up (Overhand)",
         "category": "Pull",
@@ -470,13 +485,28 @@ EXERCISES_CATALOG = [
         "structure": "straight",
         "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק",
         "unlocked": False,
-        "startingWeek": 10,
-        "earliestWeek": 10,
-        "fallbackId": "pull-up-progression",
+        "startingWeek": 9,
+        "earliestWeek": 9,
+        "fallbackId": "band-assisted-pull-up",
         "unlockCriteria": {
-            "exercise": "pull-up-progression",
+            "exercise": "band-assisted-pull-up",
             "targetReps": 6
         }
+    },
+    {
+        "id": "band-assisted-chin-up",
+        "name": "Band-Assisted Chin-Up",
+        "category": "Pull",
+        "type": "variation",
+        "restSeconds": 90,
+        "restRange": [75, 105],
+        "repWindow": "4-8",
+        "tempo": "2s descent",
+        "compound": True,
+        "sets": 2,
+        "structure": "straight",
+        "rule": "גומיית 30 ק\"ג מתחת לברכיים/רגליים, טווח 4–8 חזרות, ירידה מבוקרת של 2 שניות; מוט מתח או טבעות/לולאת חבל",
+        "stages": ["Band 30kg", "Band 40kg", "Band 50kg"]
     },
     {
         "id": "chin-up-progression",
@@ -491,7 +521,7 @@ EXERCISES_CATALOG = [
         "sets": 2,
         "structure": "straight",
         "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק; ירידה אטית מבוקרת (2-3 שניות)",
-        "stages": ["Negative Chin-Up", "Chin-Up", "Weighted Chin-Up (vest 5kg)"]
+        "stages": ["Band-Assisted Chin-Up", "Chin-Up", "Weighted Chin-Up (vest 5kg)"]
     },
     {
         "id": "chin-up",
@@ -505,7 +535,11 @@ EXERCISES_CATALOG = [
         "sets": 2,
         "structure": "straight",
         "rule": "מוט מתח או טבעות/לולאת חבל לרוטציה חופשית ומניעת עומס במרפק",
-        "stages": ["Negative Chin-Up", "Chin-Up", "Weighted Chin-Up (vest 5kg)"]
+        "unlocked": False,
+        "startingWeek": 9,
+        "earliestWeek": 9,
+        "fallbackId": "band-assisted-chin-up",
+        "stages": ["Band-Assisted Chin-Up", "Chin-Up", "Weighted Chin-Up (vest 5kg)"]
     },
     {
         "id": "weighted-pull-up",
@@ -687,7 +721,7 @@ EXERCISES_CATALOG = [
         "structure": "straight",
         "rule": "מוט מתח או טבעות/לולאת חבל (מומלץ להגנה על המרפקים ורוטציה חופשית); ללא תנופה",
         "stages": [
-            "Negative Pull-Up", "Chin-Up", "Pull-Up",
+            "Band-Assisted Pull-Up", "Pull-Up (Overhand)", "Weighted Pull-Up",
             "Pull-Up + vest 2kg", "+ vest 4kg", "+ vest 5kg"
         ]
     },
@@ -1126,10 +1160,21 @@ def generate_day_exercises(dow, week):
         else:
             exs.append(make_ex_obj("A1", "single-leg-rdl", "Single-Leg RDL", "2×8/leg" if is_deload else "2×8-10/leg", rep_window="8-10", weight="8 kg total", tempo="3s descent", rest=75, structure="straight"))
 
-        # A2: Nordic Curl Progression (v15.7.1: safe hamstring eccentric alternative, bodyweight only,
-        # calendar gate Week 10; deload = 1 set only, hands-assisted, no progression)
+        # A2: Nordic Curl Progression (graded stages: Hands-Assisted Partial W10-17, Full W18-33, Eccentric Only W34+)
         if week >= 10:
-            exs.append(make_ex_obj("A2", "nordic-curl-progression", "Nordic Curl Progression", "1×6-10" if is_deload else "2×6-10", rep_window="6-10", weight="Bodyweight", tempo="3-1-1", rest=90, structure="straight"))
+            if week < 18:
+                nordic_stage = "Hands-Assisted (Partial ROM)"
+                nordic_sets = "1×4-6" if is_deload else "2×4-6"
+                nordic_tempo = "3-1-1"
+            elif week < 34:
+                nordic_stage = "Hands-Assisted (Full ROM)"
+                nordic_sets = "1×4-6" if is_deload else "2×4-6"
+                nordic_tempo = "3-1-1"
+            else:
+                nordic_stage = "Eccentric Only (3-4s)"
+                nordic_sets = "1×4-6" if is_deload else "2×4-6"
+                nordic_tempo = "3-4s descent"
+            exs.append(make_ex_obj("A2", "nordic-curl-progression", "Nordic Curl Progression", nordic_sets, rep_window="4-6", weight=nordic_stage, tempo=nordic_tempo, rest=90, structure="straight"))
 
         # A3: Heels-Elevated Goblet Squat
         exs.append(make_ex_obj("A3", "heels-elevated-goblet-squat", "Heels-Elevated Goblet Squat", "2×8" if is_deload else "2×8-12", rep_window="8-12", weight="8 kg total", tempo="3s descent, 1s pause at bottom, 1s ascent", rest=75, structure="straight"))
@@ -1178,9 +1223,9 @@ def generate_day_exercises(dow, week):
         # A3: Single-Arm Floor Press
         exs.append(make_ex_obj("A3", "single-arm-floor-press", "Single-Arm Floor Press", "2×8" if is_deload else "3×6-12", rep_window="6-12", weight="8 kg each", tempo="2s descent", rest=90, structure="straight"))
 
-        # A4: Chin-Up Progression Tree (v15.9.1: follows the skill tree - Chin-Up Progression with Negative Chin-Up for Weeks 1-9, full Chin-Up for Weeks 10-65, Weighted Chin-Up for Weeks 66+)
-        if week < 10:
-            exs.append(make_ex_obj("A4", "chin-up-progression", "Chin-Up Progression", "2×2" if is_deload else "2×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
+        # A4: Chin-Up Progression Tree (Band-Assisted Weeks 1-8, Bodyweight Chin-Up Weeks 9-65, Weighted Weeks 66+)
+        if week < 9:
+            exs.append(make_ex_obj("A4", "band-assisted-chin-up", "Band-Assisted Chin-Up", "2×2" if is_deload else "2×4-8", rep_window="4-8", weight="Band 30kg", tempo="2s descent", rest=90, structure="straight"))
         elif week < 66:
             exs.append(make_ex_obj("A4", "chin-up", "Chin-Up", "2×2" if is_deload else "2×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
         else:
@@ -1210,27 +1255,31 @@ def generate_day_exercises(dow, week):
         else:
             exs.append(make_ex_obj("A9", "band-pull-apart", "Band Pull-Apart", "2×15" if is_deload else "3×15-20", rep_window="15-20", weight="Band 30kg", tempo="1s squeeze", rest=45, structure="straight", toggle_group="rear-delt", toggle_active_on="even"))
 
-        # Calf Block (v15.9: relocated to Day 3 to guarantee 72h complete recovery before Day 6 VO2 Max intervals on Achilles tendon)
+        # Calf Block (v15.9.2: Bodyweight for Weeks 5-8, graded dumbbells 4kg -> 6kg -> 8kg from Week 9+)
+        if week < 9:
+            standing_calf_weight = "Bodyweight"
+            seated_calf_weight = "Bodyweight"
+        elif week < 13:
+            standing_calf_weight = "4 kg in hand"
+            seated_calf_weight = "4 kg on knee"
+        elif week < 17:
+            standing_calf_weight = "6 kg in hand"
+            seated_calf_weight = "6 kg on knee"
+        else:
+            standing_calf_weight = "8 kg in hand"
+            seated_calf_weight = "8 kg on knee"
+
         calf_standing_sets = "2×15/leg" if is_deload else "3×12-20/leg"
         calf_seated_sets = "2×15/leg" if is_deload else "2×15-25/leg"
-        exs.append(make_ex_obj("A10", "standing-single-leg-calf-raise", "Standing Single-Leg Calf Raise", calf_standing_sets, rep_window="12-20", weight="8 kg in hand", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d3-calf-block", block_order=1))
-        exs.append(make_ex_obj("A11", "seated-single-leg-calf-raise", "Seated Single-Leg Calf Raise", calf_seated_sets, rep_window="15-25", weight="8 kg on knee", tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d3-calf-block", block_order=2))
+        exs.append(make_ex_obj("A10", "standing-single-leg-calf-raise", "Standing Single-Leg Calf Raise", calf_standing_sets, rep_window="12-20", weight=standing_calf_weight, tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d3-calf-block", block_order=1))
+        exs.append(make_ex_obj("A11", "seated-single-leg-calf-raise", "Seated Single-Leg Calf Raise", calf_seated_sets, rep_window="15-25", weight=seated_calf_weight, tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d3-calf-block", block_order=2))
 
-        if week >= 3 and not is_deload:
-            if week == 3:
-                # Week 3: Micro-Dose 1 (1 Activation Set + 1 Mini-Set of 4 reps)
-                exs.append(make_ex_obj("A12", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "1+1 Myo-Mini", rep_window="12 + 1×4", weight="6 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 1, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
-                exs.append(make_ex_obj("A13", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "1+1 Myo-Mini", rep_window="12 + 1×4", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 1, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
-            elif week in (4, 5):
-                # Weeks 4-5: Micro-Dose 2 & Consolidation (1 Activation Set + 2 Mini-Sets of 4 reps)
-                exs.append(make_ex_obj("A12", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "1+2 Myo-Mini", rep_window="12 + 2×4", weight="6 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 2, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
-                exs.append(make_ex_obj("A13", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "1+2 Myo-Mini", rep_window="12 + 2×4", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 2, "miniReps": 4, "stopRule": "two_consecutive_tempo_losses"}))
-            else:
-                # Week 6+: Full Arm Block Cluster (1 Activation Set + 3 Mini-Sets of 5 reps)
-                exs.append(make_ex_obj("A12", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="6 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 15, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
-                exs.append(make_ex_obj("A13", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
+        # Arm Block Day 3: starts at Week 6+ (weeks 3-4 clusters deleted as per Program Guide)
+        if week >= 6 and not is_deload:
+            exs.append(make_ex_obj("A12", "arm-block-lateral-raise", "Arm Block - Single-Arm Lateral Raise", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="6 kg each", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 15, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
+            exs.append(make_ex_obj("A13", "arm-block-triceps-ext", "Arm Block - DB Overhead Triceps Ext", "Myo-Reps Cluster", rep_window="Myo-Reps Cluster", weight="8 kg total", tempo="2s descent", rest=15, structure="myo-reps", myo_config={"activationReps": 12, "miniSets": 3, "miniReps": 5, "stopRule": "two_consecutive_tempo_losses"}))
 
-        exs.append(make_ex_obj("A14" if (week >= 3 and not is_deload) else "A12", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
+        exs.append(make_ex_obj("A14" if (week >= 6 and not is_deload) else "A12", "micro-mobility-protocol", "Micro Mobility Protocol", "1×5 mins", weight="Bodyweight", tempo="slow", rest=0))
         return day_title, rpe, exs
 
     # ---------------- DOW 5: PULL + GRIP + BICEPS ----------------
@@ -1239,9 +1288,9 @@ def generate_day_exercises(dow, week):
         rpe = "5-6" if is_deload else "7-8"
         exs = get_pull_warmup()
 
-        # A1: Pull-Up Progression Tree
-        if week < 10:
-            exs.append(make_ex_obj("A1", "pull-up-progression", "Pull-Up Progression", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
+        # A1: Pull-Up Progression Tree (Band-Assisted Weeks 1-8, Bodyweight Pull-Up Weeks 9-61, Weighted Weeks 62+)
+        if week < 9:
+            exs.append(make_ex_obj("A1", "band-assisted-pull-up", "Band-Assisted Pull-Up", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Band 30kg", tempo="2s descent", rest=90, structure="straight"))
         elif week < 62:
             exs.append(make_ex_obj("A1", "pull-up-overhand", "Pull-Up (Overhand)", "2×2" if is_deload else "3×4-8", rep_window="4-8", weight="Bodyweight", tempo="2s descent", rest=90, structure="straight"))
         else:
@@ -1261,11 +1310,16 @@ def generate_day_exercises(dow, week):
         if not is_biceps_light and not is_deload:
             exs.append(make_ex_obj("A5", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="pair", pair_id="d5-pushup-curl", order_in_pair=1))
             exs.append(make_ex_obj("A6", "single-arm-curl", "Single-Arm Curl", "2×10-15", rep_window="10-15", weight="8 kg each", tempo="2-1-2", rest=45, structure="pair", pair_id="d5-pushup-curl", order_in_pair=2, microcycle="biceps-microcycle", active_weeks=[1, 2, 3]))
+        elif is_biceps_light and week < 5 and not is_deload:
+            # Week 4: Single-Arm Hammer Curl is still locked (unlocks Week 5). Provide 2 light sets of Single-Arm Curl (6 kg) so biceps stimulus is preserved.
+            exs.append(make_ex_obj("A5", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
+            exs.append(make_ex_obj("A6", "single-arm-curl", "Single-Arm Curl", "2×10-12", rep_window="10-12", weight="6 kg each", tempo="2-1-2", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[4]))
         else:
             exs.append(make_ex_obj("A5", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
 
         # A7: Secondary Biceps (Single-Arm Hammer Curl)
-        exs.append(make_ex_obj("A7", "single-arm-hammer-curl", "Single-Arm Hammer Curl", "1×10" if is_deload else "2×10-12", rep_window="10-12", weight="8 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[1, 2, 3, 4]))
+        if week >= 5 or not is_biceps_light:
+            exs.append(make_ex_obj("A7", "single-arm-hammer-curl", "Single-Arm Hammer Curl", "1×10" if is_deload else "2×10-12", rep_window="10-12", weight="8 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[1, 2, 3, 4]))
 
         # Pair: Towel Hang ↔ Tuck L-Sit (v15.7: performance unlock from Week 3, calendar gate Week 5)
         exs.append(make_ex_obj("A8", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=1))
@@ -1526,7 +1580,7 @@ def generate_program():
             "protectedExercises": [
                 "goblet-rdl", "single-leg-rdl", "goblet-bulgarian-split-squat", "heels-elevated-goblet-squat",
                 "db-glute-bridge", "suitcase-carry", "pike-progression", "single-arm-floor-press", "push-up-progression",
-                "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up", "chin-up", "chin-up-progression", "pull-up-progression",
+                "single-arm-seated-ohp", "db-overhead-triceps-extension", "diamond-push-up", "chin-up", "chin-up-progression", "band-assisted-chin-up", "pull-up-progression", "pull-up-overhand", "band-assisted-pull-up",
                 "one-arm-db-row", "single-arm-curl", "single-arm-hammer-curl"
             ],
             "pairs": lean_mode_structures["pairs"],

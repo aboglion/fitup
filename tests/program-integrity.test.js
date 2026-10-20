@@ -318,7 +318,7 @@ test('Program Integrity - Balanced Push-Pull (Day 3 Chin-Up, Day 5 Calves, Week 
   // 2. Day 3 Chin-Up Progression Tree replaced Diamond Push-Up, Triceps Extension is 3 sets
   const w1d3 = data.daily.find(d => d.week === 'Week 1' && d.dayOfWeek === 'Wednesday');
   const w1d3Ids = w1d3.exercises.map(e => e.id);
-  assert.ok(w1d3Ids.includes('chin-up-progression'), 'Day 3 Week 1 must include chin-up-progression');
+  assert.ok(w1d3Ids.includes('band-assisted-chin-up') || w1d3Ids.includes('chin-up-progression'), 'Day 3 Week 1 must include band-assisted-chin-up or chin-up-progression');
   assert.ok(!w1d3Ids.includes('diamond-push-up'), 'Day 3 must not include diamond-push-up');
 
   const w10d3 = data.daily.find(d => d.week === 'Week 10' && d.dayOfWeek === 'Wednesday');
