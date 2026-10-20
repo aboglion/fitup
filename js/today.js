@@ -1050,6 +1050,9 @@ const TodayPage = (() => {
       currentTracking.date = currentTracking.date || day.date || (typeof UI !== 'undefined' ? UI.getLocalDateString().split('-').reverse().join('/') : '');
       currentTracking.lastUpdated = new Date().toISOString();
       await DB.saveDayTracking(currentDayIndex, currentTracking);
+    } else if (day && Array.isArray(day.exercises) && day.exercises.length > 0) {
+      // Synchronize exercise statuses and day completion strictly from recorded sets
+      syncAllExerciseStatuses(day);
     }
 
     // Cache all tracking data for performance history lookups
@@ -2547,33 +2550,76 @@ const TodayPage = (() => {
 
 
   /**
+   * Determine if an exercise has all required sets or mobility sub-steps genuinely completed
+   */
+  function isExerciseFullyCompleted(ex, exIdx) {
+    if (!ex) return false;
+    const lowerExName = (ex.name || '').toLowerCase();
+    const isMobilityProtocol = lowerExName.includes('micro mobility') || lowerExName.includes('deep mobility');
+    const setData = (currentTracking && currentTracking.setData && currentTracking.setData[exIdx]) || {};
+
+    if (isMobilityProtocol) {
+      if (lowerExName.includes('micro mobility')) {
+        const subSteps = (currentTracking && currentTracking.microMobilitySteps) || {};
+        const dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
+        const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNum) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
+        if (!subExercises || subExercises.length === 0) return false;
+        return subExercises.every(sub => Boolean(subSteps[sub.id]));
+      } else if (lowerExName.includes('deep mobility')) {
+        const subSteps = (currentTracking && currentTracking.deepMobilitySteps) || {};
+        const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
+        if (!subExercises || subExercises.length === 0) return false;
+        return subExercises.every(sub => Boolean(subSteps[sub.id]));
+      }
+    }
+
+    const setsCount = UI.parseSetsCount(ex.sets);
+    if (setsCount <= 0) {
+      return Boolean(currentTracking && currentTracking.exerciseStatus && currentTracking.exerciseStatus[exIdx]);
+    }
+
+    for (let s = 0; s < setsCount; s++) {
+      if (!setData[`set_${s}_done`]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Synchronize all exercise statuses and overall workout completion strictly from recorded sets
+   */
+  function syncAllExerciseStatuses(day) {
+    if (!day || !Array.isArray(day.exercises)) return;
+    if (day.exercises.length === 0) return;
+    if (!currentTracking) currentTracking = {};
+    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+
+    let completedCount = 0;
+    day.exercises.forEach((ex, idx) => {
+      const isDone = isExerciseFullyCompleted(ex, idx);
+      currentTracking.exerciseStatus[idx] = isDone;
+      if (isDone) completedCount++;
+    });
+
+    const total = day.exercises.length;
+    currentTracking.completed = (total > 0) && (completedCount === total);
+  }
+
+  /**
    * Update progress ring
    */
   function updateProgress(day) {
-    const total = day.exercises.length;
-    if (total === 0) {
-      setProgressCircle(day.dayType === 'Rest' && currentTracking.completed ? 100 : 0);
+    if (!day || !day.exercises || day.exercises.length === 0) {
+      setProgressCircle(day && day.dayType === 'Rest' && currentTracking.completed ? 100 : 0);
       return;
     }
 
-    let completed = 0;
-    day.exercises.forEach((ex, idx) => {
-      const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
-      const setsCount = UI.parseSetsCount(ex.sets);
-      if (setsCount > 0) {
-        let allSetsDone = true;
-        for (let s = 0; s < setsCount; s++) {
-          if (!setData[`set_${s}_done`]) {
-            allSetsDone = false;
-            break;
-          }
-        }
-        if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
-        if (allSetsDone) {
-          currentTracking.exerciseStatus[idx] = true;
-        }
-      }
+    syncAllExerciseStatuses(day);
 
+    const total = day.exercises.length;
+    let completed = 0;
+    day.exercises.forEach((_, idx) => {
       if (currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx]) {
         completed++;
       }
@@ -4303,48 +4349,9 @@ const TodayPage = (() => {
       const setData = (currentTracking.setData && currentTracking.setData[idx]) || {};
 
       // Auto-evaluate exercise completion from sub-steps or set status:
-      if (isMobilityProtocol) {
-        if (lowerExName.includes('micro mobility')) {
-          const subSteps = (currentTracking && currentTracking.microMobilitySteps) || {};
-          const dayNum = ((currentDayIndex % 7) + 7) % 7 + 1;
-          const subExercises = UI.getMicroMobilitySubExercises ? UI.getMicroMobilitySubExercises(dayNum) : (UI.MICRO_MOBILITY_SUB_EXERCISES || []);
-          let doneCount = 0;
-          subExercises.forEach(sub => {
-            if (subSteps[sub.id]) doneCount++;
-          });
-          const isAllSubDone = subExercises.length > 0 && doneCount === subExercises.length;
-          if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
-          if (isAllSubDone) {
-            currentTracking.exerciseStatus[idx] = true;
-          }
-        } else if (lowerExName.includes('deep mobility')) {
-          const subSteps = (currentTracking && currentTracking.deepMobilitySteps) || {};
-          const subExercises = UI.DEEP_MOBILITY_SUB_EXERCISES || [];
-          let doneCount = 0;
-          subExercises.forEach(sub => {
-            if (subSteps[sub.id]) doneCount++;
-          });
-          const isAllSubDone = subExercises.length > 0 && doneCount === subExercises.length;
-          if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
-          if (isAllSubDone) {
-            currentTracking.exerciseStatus[idx] = true;
-          }
-        }
-      } else if (setsCount > 0) {
-        let allDone = true;
-        for (let s = 0; s < setsCount; s++) {
-          if (!setData[`set_${s}_done`]) {
-            allDone = false;
-            break;
-          }
-        }
-        if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
-        if (allDone) {
-          currentTracking.exerciseStatus[idx] = true;
-        }
-      }
-
-      const isCompleted = currentTracking.exerciseStatus && currentTracking.exerciseStatus[idx];
+      const isCompleted = isExerciseFullyCompleted(ex, idx);
+      if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
+      currentTracking.exerciseStatus[idx] = isCompleted;
       const isSkippedTemp = !!(currentTracking.skippedExercises && currentTracking.skippedExercises[idx]);
       const isExUnlocked = isEditable && isExerciseUnlocked(idx);
       const checkDisabledAttr = isExUnlocked ? '' : 'disabled style="opacity: 0.4; cursor: not-allowed;"';
@@ -5630,6 +5637,7 @@ const TodayPage = (() => {
   async function toggleExercise(idx, btn) {
     if (!checkExerciseUnlockedOrWarn(idx)) return;
 
+    const wasWorkoutCompleted = Boolean(currentTracking && currentTracking.completed);
     const day = allPlanDays[currentDayIndex];
     const ex = (day && day.exercises) ? day.exercises[idx] : null;
     const lowerExName = (ex?.name || '').toLowerCase();
@@ -5697,7 +5705,7 @@ const TodayPage = (() => {
           window.Effects3D.triggerExerciseEffect(ex.name);
         }
         await handleExerciseCompleted(idx, day);
-        if (currentTracking.completed) {
+        if (!wasWorkoutCompleted && currentTracking.completed) {
           showWorkoutCelebration(day);
         }
       }
@@ -5815,6 +5823,7 @@ const TodayPage = (() => {
   async function confirmExerciseOutcome(exIdx, outcome) {
     UI.hideModal();
     if (!checkExerciseUnlockedOrWarn(exIdx)) return;
+    const wasWorkoutCompleted = Boolean(currentTracking && currentTracking.completed);
     const day = allPlanDays[currentDayIndex];
     if (!day || !day.exercises) return;
     const ex = day.exercises[exIdx];
@@ -5848,12 +5857,13 @@ const TodayPage = (() => {
 
     renderExercises(day);
 
-    if (window.Effects3D) {
+    const isWarmup = Boolean(ex && (ex.isWarmup || (ex.slot && ex.slot.startsWith('W'))));
+    if (window.Effects3D && !isWarmup) {
       window.Effects3D.triggerExerciseEffect(ex.name);
     }
 
     await handleExerciseCompleted(exIdx, day);
-    if (currentTracking.completed) {
+    if (!wasWorkoutCompleted && currentTracking.completed) {
       showWorkoutCelebration(day);
     }
   }
@@ -5864,6 +5874,10 @@ const TodayPage = (() => {
    * Show celebration modal when workout is fully completed
    */
   async function showWorkoutCelebration(day) {
+    if (!day) return;
+    if (window._isCelebrationModalActive) return;
+    window._isCelebrationModalActive = true;
+
     if (window.UI && window.UI.stopTimer) {
       window.UI.stopTimer();
     }
@@ -5948,6 +5962,7 @@ const TodayPage = (() => {
     `);
 
     document.getElementById('celebration-continue-btn').onclick = async () => {
+      window._isCelebrationModalActive = false;
       UI.hideModal();
 
       if (typeof App !== 'undefined' && App.recalculatePlanIndex) {
@@ -6112,8 +6127,9 @@ const TodayPage = (() => {
   async function selectSetOutcome(exIdx, setIdx, outcome, triggerEl = null) {
     if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
 
+    const wasWorkoutCompleted = Boolean(currentTracking && currentTracking.completed);
     const day = allPlanDays[currentDayIndex];
-    const ex = day.exercises[exIdx];
+    const ex = day ? day.exercises[exIdx] : null;
 
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
@@ -6208,41 +6224,26 @@ const TodayPage = (() => {
       window.Effects3D.triggerSetEffect(triggerEl, outcome);
     }
 
-    let allSetsDone = true;
-    for (let s = 0; s < setsCount; s++) {
-      if (!exData[`set_${s}_done`]) {
-        allSetsDone = false;
-        break;
-      }
-    }
-
-    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
-    currentTracking.exerciseStatus[exIdx] = allSetsDone;
+    syncAllExerciseStatuses(day);
+    const allSetsDone = Boolean(currentTracking && currentTracking.exerciseStatus && currentTracking.exerciseStatus[exIdx]);
 
     // Clean up skipped state once exercise is completed
     if (allSetsDone && currentTracking.skippedExercises && currentTracking.skippedExercises[exIdx]) {
       delete currentTracking.skippedExercises[exIdx];
     }
 
-    // Update day completion status (check if ALL exercises are done)
-    const total = day.exercises.length;
-    let completedCount = 0;
-    day.exercises.forEach((_, i) => {
-      if (currentTracking.exerciseStatus[i]) completedCount++;
-    });
-    currentTracking.completed = completedCount === total;
-
     updateProgress(day);
     await autoSave();
     renderExercises(day);
 
+    const isWarmup = Boolean(ex && (ex.isWarmup || (ex.slot && ex.slot.startsWith('W'))));
     if (allSetsDone) {
-      // Trigger 3D Stage & Fanfare Effect for Exercise Completion
-      if (window.Effects3D && !wasAlreadyDone) {
+      // Trigger 3D Stage & Fanfare Effect for Exercise Completion (main exercises only, not warmups)
+      if (window.Effects3D && !wasAlreadyDone && !isWarmup) {
         window.Effects3D.triggerExerciseEffect(ex.name);
       }
       handleExerciseCompleted(exIdx, day);
-      if (currentTracking.completed && (wasAlreadyDone || isNoModalExercise(ex))) {
+      if (!wasWorkoutCompleted && currentTracking.completed && isNoModalExercise(ex)) {
         showWorkoutCelebration(day);
       }
     } else if (exData[`set_${setIdx}_done`] && !wasAlreadyDone) {
@@ -6390,10 +6391,12 @@ const TodayPage = (() => {
   }
 
   async function selectSetOutcomeFromModal(exIdx, setIdx, outcome) {
+    const wasWorkoutCompleted = Boolean(currentTracking && currentTracking.completed);
     UI.hideModal();
     await selectSetOutcome(exIdx, setIdx, outcome);
     const day = allPlanDays[currentDayIndex];
-    if (currentTracking.completed && day) {
+    const isExDone = isExerciseFullyCompleted(day?.exercises[exIdx], exIdx);
+    if (!wasWorkoutCompleted && currentTracking.completed && isExDone && day) {
       showWorkoutCelebration(day);
     }
   }
@@ -6434,6 +6437,7 @@ const TodayPage = (() => {
   async function toggleSet(exIdx, setIdx, btn) {
     if (!checkSetUnlockedOrWarn(exIdx, setIdx)) return;
 
+    const wasWorkoutCompleted = Boolean(currentTracking && currentTracking.completed);
     if (!currentTracking.setData) currentTracking.setData = {};
     if (!currentTracking.setData[exIdx]) currentTracking.setData[exIdx] = {};
 
@@ -6462,36 +6466,21 @@ const TodayPage = (() => {
 
     const day = allPlanDays[currentDayIndex];
     const ex = day.exercises[exIdx];
-    const setsCount = UI.parseSetsCount(ex.sets);
-    let allSetsDone = true;
-    for (let s = 0; s < setsCount; s++) {
-      if (!currentTracking.setData[exIdx][`set_${s}_done`]) {
-        allSetsDone = false;
-        break;
-      }
-    }
 
-    if (!currentTracking.exerciseStatus) currentTracking.exerciseStatus = {};
-    currentTracking.exerciseStatus[exIdx] = allSetsDone;
+    syncAllExerciseStatuses(day);
+    const allSetsDone = Boolean(currentTracking && currentTracking.exerciseStatus && currentTracking.exerciseStatus[exIdx]);
 
     updateProgress(day);
-
-    const total = day.exercises.length;
-    let completed = 0;
-    day.exercises.forEach((_, i) => {
-      if (currentTracking.exerciseStatus[i]) completed++;
-    });
-    currentTracking.completed = completed === total;
-
     await autoSave();
     renderExercises(day);
 
+    const isWarmup = Boolean(ex && (ex.isWarmup || (ex.slot && ex.slot.startsWith('W'))));
     if (allSetsDone) {
-      if (window.Effects3D) {
+      if (window.Effects3D && !isWarmup) {
         window.Effects3D.triggerExerciseEffect(ex.name);
       }
       await handleExerciseCompleted(exIdx, day);
-      if (currentTracking.completed) {
+      if (!wasWorkoutCompleted && currentTracking.completed) {
         showWorkoutCelebration(day);
       }
     } else if (isNowDone) {
@@ -7536,6 +7525,7 @@ const TodayPage = (() => {
    */
   async function toggleDeepMobilitySubStep(subId, exIdx) {
     if (!checkIsTodayOrWarn()) return;
+    const wasWorkoutCompleted = Boolean(currentTracking && currentTracking.completed);
     if (!currentTracking) currentTracking = {};
     if (!currentTracking.deepMobilitySteps) currentTracking.deepMobilitySteps = {};
 
@@ -7583,7 +7573,7 @@ const TodayPage = (() => {
       }
       try {
         await handleExerciseCompleted(exIdx, day);
-        if (currentTracking.completed) {
+        if (!wasWorkoutCompleted && currentTracking.completed) {
           showWorkoutCelebration(day);
         }
       } catch (e) {
@@ -7597,6 +7587,7 @@ const TodayPage = (() => {
    */
   async function toggleAllDeepMobilitySteps(exIdx) {
     if (!checkIsTodayOrWarn()) return;
+    const wasWorkoutCompleted = Boolean(currentTracking && currentTracking.completed);
     if (!currentTracking) currentTracking = {};
     if (!currentTracking.deepMobilitySteps) currentTracking.deepMobilitySteps = {};
 
@@ -7646,7 +7637,7 @@ const TodayPage = (() => {
       }
       try {
         await handleExerciseCompleted(exIdx, day);
-        if (currentTracking.completed) {
+        if (!wasWorkoutCompleted && currentTracking.completed) {
           showWorkoutCelebration(day);
         }
       } catch (e) {
@@ -7785,6 +7776,7 @@ const TodayPage = (() => {
    */
   async function toggleMicroMobilitySubStep(subId, exIdx) {
     if (!checkIsTodayOrWarn()) return;
+    const wasWorkoutCompleted = Boolean(currentTracking && currentTracking.completed);
     if (!currentTracking) currentTracking = {};
     if (!currentTracking.microMobilitySteps) currentTracking.microMobilitySteps = {};
 
@@ -7833,7 +7825,7 @@ const TodayPage = (() => {
       }
       try {
         await handleExerciseCompleted(exIdx, day);
-        if (currentTracking.completed) {
+        if (!wasWorkoutCompleted && currentTracking.completed) {
           showWorkoutCelebration(day);
         }
       } catch (e) {
@@ -7847,6 +7839,7 @@ const TodayPage = (() => {
    */
   async function toggleAllMicroMobilitySteps(exIdx) {
     if (!checkIsTodayOrWarn()) return;
+    const wasWorkoutCompleted = Boolean(currentTracking && currentTracking.completed);
     if (!currentTracking) currentTracking = {};
     if (!currentTracking.microMobilitySteps) currentTracking.microMobilitySteps = {};
 
@@ -7897,7 +7890,7 @@ const TodayPage = (() => {
       }
       try {
         await handleExerciseCompleted(exIdx, day);
-        if (currentTracking.completed) {
+        if (!wasWorkoutCompleted && currentTracking.completed) {
           showWorkoutCelebration(day);
         }
       } catch (e) {
@@ -8872,6 +8865,8 @@ const TodayPage = (() => {
     buildWeightBadgeHTML,
     toggleEqBanner,
     handleSetClick,
+    isExerciseFullyCompleted,
+    syncAllExerciseStatuses,
     toggleSkipExerciseTemp,
     unlockEarly,
     isDayEditable,
