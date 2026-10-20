@@ -162,17 +162,35 @@ const League = (() => {
     return list;
   }
 
+  let cachedPlanDays = null;
+
+  /**
+   * Invalidate cached plan days if plan changes
+   */
+  function invalidatePlanCache() {
+    cachedPlanDays = null;
+  }
+
   /**
    * Generate current user's verifiable League Card
    */
-  async function generateMyLeagueCard() {
+  async function generateMyLeagueCard(customPlanDays = null, customTracking = null) {
     let allPlanDays = [];
     let allTracking = [];
     if (typeof DB !== 'undefined') {
       try {
-        allPlanDays = await DB.getAllPlan();
-        allPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
-        allTracking = await DB.getAllTracking();
+        if (customPlanDays && Array.isArray(customPlanDays) && customPlanDays.length > 0) {
+          allPlanDays = customPlanDays;
+        } else if (cachedPlanDays && cachedPlanDays.length > 0) {
+          allPlanDays = cachedPlanDays;
+        } else {
+          cachedPlanDays = await DB.getAllPlan();
+          if (Array.isArray(cachedPlanDays)) {
+            cachedPlanDays.sort((a, b) => a.dayIndex - b.dayIndex);
+          }
+          allPlanDays = cachedPlanDays || [];
+        }
+        allTracking = (customTracking && Array.isArray(customTracking)) ? customTracking : (await DB.getAllTracking());
       } catch (e) {
         console.warn('[League] Error fetching plan/tracking from DB:', e);
       }
@@ -566,15 +584,31 @@ const League = (() => {
     }
   }
 
+  let leagueSyncTimer = null;
+  let isSyncing = false;
+
+  /**
+   * Debounced background league sync (never blocks UI or set logging)
+   */
+  function scheduleSync(delay = 3000) {
+    if (leagueSyncTimer) clearTimeout(leagueSyncTimer);
+    leagueSyncTimer = setTimeout(() => {
+      leagueSyncTimer = null;
+      syncMyScore().catch(err => console.debug('[League] Debounced sync error:', err));
+    }, delay);
+  }
+
   /**
    * Sync score to user's Google Drive (Public read permission)
    */
   async function syncMyScore() {
+    if (isSyncing) return { success: false, inProgress: true };
     try {
       if (typeof CloudSync === 'undefined' || !(await CloudSync.isLoggedIn())) {
         return { success: false, error: 'Not logged in' };
       }
 
+      isSyncing = true;
       const card = await generateMyLeagueCard();
       const token = await CloudSync.getAccessToken();
       if (!token) return { success: false, error: 'No token' };
@@ -586,6 +620,8 @@ const League = (() => {
     } catch (e) {
       console.warn('[League] syncMyScore error:', e);
       return { success: false, error: e.message };
+    } finally {
+      isSyncing = false;
     }
   }
 
@@ -597,6 +633,8 @@ const League = (() => {
     hideLeagueModal,
     renderLeaderboardView,
     syncMyScore,
+    scheduleSync,
+    invalidatePlanCache,
     getMockCommunity,
     getSampleCommunity,
     getCommunityCompetitors,

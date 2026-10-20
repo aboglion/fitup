@@ -5867,6 +5867,10 @@ const TodayPage = (() => {
     if (window.UI && window.UI.stopTimer) {
       window.UI.stopTimer();
     }
+    // Debounced background league sync on workout completion
+    if (typeof window !== 'undefined' && window.League && typeof window.League.scheduleSync === 'function') {
+      window.League.scheduleSync();
+    }
     // Count total sets done
     let totalSets = 0;
     let totalReps = 0;
@@ -6617,9 +6621,11 @@ const TodayPage = (() => {
 
     await DB.saveDayTracking(currentDayIndex, currentTracking);
 
-    // Auto-sync global league score
-    if (typeof window !== 'undefined' && window.League && typeof window.League.syncMyScore === 'function') {
-      window.League.syncMyScore().catch(err => console.debug('[League] Auto-sync error:', err));
+    // Auto-sync global league score only when day completion status changes / workout is completed (debounced in background, zero delay on set logging)
+    if (currentTracking && (currentTracking.completed || currentTracking.manuallyUncompleted)) {
+      if (typeof window !== 'undefined' && window.League && typeof window.League.scheduleSync === 'function') {
+        window.League.scheduleSync();
+      }
     }
 
     // --- Auto-complete passed Rest days & past Relaxed Walks ---
