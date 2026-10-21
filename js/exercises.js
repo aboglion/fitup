@@ -115,7 +115,8 @@ const ExercisesPage = (() => {
     'Deficit Push-Up': [{ weight: 'Bodyweight', fromWeek: 10 }],
     'Nordic Curl Progression': [{ weight: 'Hands-Assisted (Partial ROM)', reps: '4-6', fromWeek: 10 },
       { weight: 'Hands-Assisted (Full ROM)', reps: '4-8', fromWeek: 18 },
-      { weight: 'Eccentric Only (3-4s)', reps: '4-6', fromWeek: 34 }
+      { weight: 'Eccentric Only (3-4s)', reps: '4-6', fromWeek: 34 },
+      { weight: 'Full Nordic Curl', reps: '3-5', fromWeek: 50 }
     ],
     'Feet-Elevated Push-Up': [{ weight: 'Bodyweight', fromWeek: 18 }],
     'Wall Walk (Partial)': [{ weight: 'Bodyweight', fromWeek: 10 }],
@@ -1390,8 +1391,8 @@ const ExercisesPage = (() => {
         let stageTitle = stage;
         const exLower = (ex.name || '').toLowerCase();
         if (exLower.includes('trx row')) {
-          stageImgKey = 'TRX Row';
-          stageGifKey = 'TRX Row';
+          stageImgKey = `TRX Row (${stage})`;
+          stageGifKey = `TRX Row (${stage})`;
           stageTitle = `TRX Row (${stage})`;
         } else if (exLower.includes('trx y-t-w')) {
           stageImgKey = 'TRX Y-T-W';

@@ -108,7 +108,7 @@ test('TRX Row & TRX Y-T-W media resolution integrity', (t) => {
 
   // 4. Exercise stage variations of TRX Row and TRX Y-T-W
   assert.equal(UI.getGifUrl('TRX Row (Angle 1)'), 'images/gifs/TRX%20Row.gif');
-  assert.equal(UI.getGifUrl('TRX Row (Feet-Elevated)'), 'images/gifs/TRX%20Row.gif');
+  assert.equal(UI.getGifUrl('TRX Row (Feet-Elevated)'), 'images/gifs/TRX%20Row%20(Feet-Elevated).gif');
   assert.equal(UI.getGifUrl('TRX Y-T-W (Angle 1)'), 'images/gifs/TRX%20Y-T-W.gif');
 
   // 5. TRX Face Pull still resolves its own assets
@@ -279,4 +279,50 @@ test('New exercises tree presence & anatomy integrity (Wall Sit, Single-Leg Glut
   const nordicModalBody = sb.document.getElementById('modal-body').innerHTML;
   assert.ok(nordicModalBody.includes('Nordic%20Curl%20Progression.gif'), 'Modal should display Nordic Curl Progression GIF');
 });
+
+test('Progression stages distinct media verification (Nordic, Pallof, TRX, Weighted Chin-Up)', () => {
+  const sb = createSandbox();
+  const UI = sb.window.UI;
+
+  const stageChecks = [
+    // Nordic Curl stages
+    { name: 'Hands-Assisted Nordic (Partial ROM)', png: 'HANDS-ASSISTED NORDIC (PARTIAL ROM).png', gif: 'Hands-Assisted Nordic (Partial ROM).gif' },
+    { name: 'Hands-Assisted Nordic (Full ROM)', png: 'HANDS-ASSISTED NORDIC (FULL ROM).png', gif: 'Hands-Assisted Nordic (Full ROM).gif' },
+    { name: 'Nordic Curl (Eccentric Only)', png: 'NORDIC CURL (ECCENTRIC ONLY).png', gif: 'Nordic Curl (Eccentric Only).gif' },
+    { name: 'Full Nordic Curl', png: 'FULL NORDIC CURL.png', gif: 'Full Nordic Curl.gif' },
+    // Pallof Press stages
+    { name: 'Single-Arm Pallof Press', png: 'SINGLE-ARM PALLOF PRESS.png', gif: 'Single-Arm Pallof Press.gif' },
+    { name: 'Single-Arm Split Stance Pallof Press', png: 'SINGLE-ARM SPLIT STANCE PALLOF PRESS.png', gif: 'Single-Arm Split Stance Pallof Press.gif' },
+    { name: 'Single-Arm One Leg Pallof Press', png: 'SINGLE-ARM ONE LEG PALLOF PRESS.png', gif: 'Single-Arm One Leg Pallof Press.gif' },
+    // TRX Row stages
+    { name: 'TRX Row (Angle 3)', png: 'TRX ROW (ANGLE 3).png', gif: 'TRX Row (Angle 3).gif' },
+    { name: 'TRX Row (Feet-Elevated)', png: 'TRX ROW (FEET-ELEVATED).png', gif: 'TRX Row (Feet-Elevated).gif' },
+    // Weighted Chin-Up
+    { name: 'Weighted Chin-Up', png: 'WEIGHTED CHIN-UP.png', gif: 'Weighted Chin-Up.gif' }
+  ];
+
+  for (const s of stageChecks) {
+    // 1. Files exist on disk and are non-empty
+    const pPath = path.join(root, 'images/exercises', s.png);
+    const gPath = path.join(root, 'images/gifs', s.gif);
+    assert.ok(fs.existsSync(pPath), `${s.png} must exist`);
+    assert.ok(fs.statSync(pPath).size > 1000, `${s.png} must not be empty`);
+    assert.ok(fs.existsSync(gPath), `${s.gif} must exist`);
+    assert.ok(fs.statSync(gPath).size > 1000, `${s.gif} must not be empty`);
+
+    // 2. WebP equivalents exist
+    const pWebp = pPath.replace('.png', '.webp');
+    const gWebp = gPath.replace('.gif', '.webp');
+    assert.ok(fs.existsSync(pWebp), `${pWebp} must exist`);
+    assert.ok(fs.existsSync(gWebp), `${gWebp} must exist`);
+
+    // 3. UI resolution
+    const resolvedPng = UI.getImageUrl(s.name);
+    assert.ok(resolvedPng.includes(encodeURIComponent(s.png).replace(/%20/g, '%20')), `getImageUrl(${s.name}) must resolve to ${s.png}`);
+
+    const resolvedGif = UI.getGifUrl(s.name);
+    assert.ok(resolvedGif.includes(encodeURIComponent(s.gif).replace(/%20/g, '%20')), `getGifUrl(${s.name}) must resolve to ${s.gif}`);
+  }
+});
+
 
