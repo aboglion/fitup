@@ -251,6 +251,7 @@ const MALE_BACK = {
     'wrist-rocks': [{ m: 'forearms', w: 0.5 }],
     'band-neck-flexion': [{ m: 'neck', w: 1.0 }, { m: 'traps', w: 0.7 }, { m: 'shoulders', w: 0.3 }],
     'goblet-rdl': [{ m: 'hamstrings', w: 1.0 }, { m: 'glutes', w: 0.7 }, { m: 'lowerBack', w: 0.6 }],
+    'foot-supported-l-sit': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }],
     'tuck-l-sit': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }],
     'one-leg-extended-l-sit': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }],
     'full-l-sit': [{ m: 'core', w: 1.0 }, { m: 'obliques', w: 0.5 }]

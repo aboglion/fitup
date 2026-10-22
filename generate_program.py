@@ -469,7 +469,7 @@ EXERCISES_CATALOG = [
         "compound": True,
         "sets": 3,
         "structure": "straight",
-        "rule": "גומיית 30 ק\"ג מתחת לברכיים/רגליים, טווח 4–8 חזרות, ירידה מבוקרת של 2 שניות; מוט מתח או טבעות/לולאת חבל",
+        "rule": "דריכה עם כף רגל מלאה בלולאת גומיית 30 ק\"ג מתוך עמידה על שרפרף/כיסא לקבלת סיוע מקסימלי (30 ק\"ג), טווח 4–8 חזרות, ירידה מבוקרת של 2 שניות; מוט מתח או טבעות/לולאת חבל",
         "stages": ["Band 30kg", "Band 40kg", "Band 50kg"]
     },
     {
@@ -505,7 +505,7 @@ EXERCISES_CATALOG = [
         "compound": True,
         "sets": 2,
         "structure": "straight",
-        "rule": "גומיית 30 ק\"ג מתחת לברכיים/רגליים, טווח 4–8 חזרות, ירידה מבוקרת של 2 שניות; מוט מתח או טבעות/לולאת חבל",
+        "rule": "דריכה עם כף רגל מלאה בלולאת גומיית 30 ק\"ג מתוך עמידה על שרפרף/כיסא לקבלת סיוע מקסימלי (30 ק\"ג), טווח 4–8 חזרות, ירידה מבוקרת של 2 שניות; מוט מתח או טבעות/לולאת חבל",
         "stages": ["Band 30kg", "Band 40kg", "Band 50kg"]
     },
     {
@@ -648,6 +648,7 @@ EXERCISES_CATALOG = [
         "structure": "pair",
         "pairId": "d3-row-lateral",
         "orderInPair": 1,
+        "rule": "עמידה עם כפות רגליים צעד אחד לאחור מנקודת העיגון (זווית מתונה של 75°, ~35% משקל גוף), משיכת חזה בהובלת מרפקים וכיווץ שכמות",
         "stages": ["Angle 1", "Angle 2 (45°)", "Angle 3", "Feet-Elevated"]
     },
     {
@@ -754,6 +755,7 @@ EXERCISES_CATALOG = [
         "compound": False,
         "sets": 2,
         "structure": "straight",
+        "rule": "עמידה עם כפות רגליים צעד אחד לאחור מנקודת העיגון (זווית מתונה של 75°), משיכת ידיות לעיניים, מרפקים גבוהים וסיבוב חיצוני",
         "stages": ["Angle 1", "Angle 2", "Angle 3"]
     },
     {
@@ -782,8 +784,8 @@ EXERCISES_CATALOG = [
         "name": "Single-Arm Curl",
         "category": "Arms",
         "type": "weighted",
-        "startingWeight": 8,
-        "minWeight": 8,
+        "startingWeight": 6,
+        "minWeight": 6,
         "maxWeight": 20,
         "increment": 2,
         "loadType": "each",
@@ -844,6 +846,27 @@ EXERCISES_CATALOG = [
         "fallbackId": None
     },
     {
+        "id": "foot-supported-l-sit",
+        "name": "Foot-Supported L-Sit",
+        "category": "Core",
+        "type": "timebased",
+        "restSeconds": 45,
+        "repWindow": "10-15s",
+        "tempo": "static hold",
+        "compound": False,
+        "sets": 2,
+        "structure": "pair",
+        "pairId": "d5-grip-lsit",
+        "orderInPair": 2,
+        "stages": ["Foot-Supported L-Sit"],
+        "startingWeek": 5,
+        "unlocked": False,
+        "earliestWeek": 3,
+        "unlockCriteria": { "exercise": "dead-bug", "targetReps": 16 },
+        "fallbackId": None,
+        "rule": "על מקבילים כשהעקבים נתמכים קלות ברצפה להגנת בלט הדיסק L4-S1. כתפיים דחוסות מטה (depressed), חזה מורם"
+    },
+    {
         "id": "tuck-l-sit",
         "name": "Tuck L-Sit",
         "category": "Core",
@@ -861,7 +884,7 @@ EXERCISES_CATALOG = [
         "unlocked": False,
         "earliestWeek": 3,
         "unlockCriteria": { "exercise": "dead-bug", "targetReps": 16 },
-        "fallbackId": None
+        "fallbackId": "foot-supported-l-sit"
     },
     {
         "id": "one-leg-extended-l-sit",
@@ -1270,7 +1293,7 @@ def generate_day_exercises(dow, week):
             seated_calf_weight = "8 kg on knee"
 
         calf_standing_sets = "2×15/leg" if is_deload else "3×12-20/leg"
-        calf_seated_sets = "2×15/leg" if is_deload else "2×15-25/leg"
+        calf_seated_sets = "2×15/leg" if is_deload else ("3×15-25/leg" if week <= 8 else "2×15-25/leg")
         exs.append(make_ex_obj("A10", "standing-single-leg-calf-raise", "Standing Single-Leg Calf Raise", calf_standing_sets, rep_window="12-20", weight=standing_calf_weight, tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d3-calf-block", block_order=1))
         exs.append(make_ex_obj("A11", "seated-single-leg-calf-raise", "Seated Single-Leg Calf Raise", calf_seated_sets, rep_window="15-25", weight=seated_calf_weight, tempo="2s descent", rest=45, structure="straight" if is_deload else "block", block_id="d3-calf-block", block_order=2))
 
@@ -1308,12 +1331,15 @@ def generate_day_exercises(dow, week):
 
         # A5 & A6: Pair: Push-Up Volume ↔ Biceps Curl
         if not is_biceps_light and not is_deload:
+            curl_w = "6 kg each" if week < 5 else "8 kg each"
+            curl_rep_w = "8-12" if week < 5 else "10-15"
+            curl_sets = "2×8-12" if week < 5 else "2×10-15"
             exs.append(make_ex_obj("A5", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="pair", pair_id="d5-pushup-curl", order_in_pair=1))
-            exs.append(make_ex_obj("A6", "single-arm-curl", "Single-Arm Curl", "2×10-15", rep_window="10-15", weight="8 kg each", tempo="2-1-2", rest=45, structure="pair", pair_id="d5-pushup-curl", order_in_pair=2, microcycle="biceps-microcycle", active_weeks=[1, 2, 3]))
+            exs.append(make_ex_obj("A6", "single-arm-curl", "Single-Arm Curl", curl_sets, rep_window=curl_rep_w, weight=curl_w, tempo="2-1-2", rest=45, structure="pair", pair_id="d5-pushup-curl", order_in_pair=2, microcycle="biceps-microcycle", active_weeks=[1, 2, 3]))
         elif is_biceps_light and week < 5 and not is_deload:
             # Week 4: Single-Arm Hammer Curl is still locked (unlocks Week 5). Provide 2 light sets of Single-Arm Curl (6 kg) so biceps stimulus is preserved.
             exs.append(make_ex_obj("A5", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
-            exs.append(make_ex_obj("A6", "single-arm-curl", "Single-Arm Curl", "2×10-12", rep_window="10-12", weight="6 kg each", tempo="2-1-2", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[4]))
+            exs.append(make_ex_obj("A6", "single-arm-curl", "Single-Arm Curl", "2×8-12", rep_window="8-12", weight="6 kg each", tempo="2-1-2", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[4]))
         else:
             exs.append(make_ex_obj("A5", "push-up-volume", "Push-Up Volume (Day 5)", "2×10-15", rep_window="10-15", weight="Bodyweight", tempo="2s descent", rest=75, structure="straight"))
 
@@ -1321,9 +1347,11 @@ def generate_day_exercises(dow, week):
         if week >= 5 or not is_biceps_light:
             exs.append(make_ex_obj("A7", "single-arm-hammer-curl", "Single-Arm Hammer Curl", "1×10" if is_deload else "2×10-12", rep_window="10-12", weight="8 kg each", tempo="2s descent", rest=45, structure="straight", microcycle="biceps-microcycle", active_weeks=[1, 2, 3, 4]))
 
-        # Pair: Towel Hang ↔ Tuck L-Sit (v15.7: performance unlock from Week 3, calendar gate Week 5)
+        # Pair: Towel Hang ↔ L-Sit (v15.9.1: Foot-Supported L-Sit Weeks 5-8, Tuck L-Sit Weeks 9-17)
         exs.append(make_ex_obj("A8", "towel-hang", "Towel Hang", "2×15-45 secs", rep_window="15-45s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=1))
-        if week < 18:
+        if week < 9:
+            exs.append(make_ex_obj("A9", "foot-supported-l-sit", "Foot-Supported L-Sit", "2×10-15 secs", rep_window="10-15s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
+        elif week < 18:
             exs.append(make_ex_obj("A9", "tuck-l-sit", "Tuck L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
         elif week < 34:
             exs.append(make_ex_obj("A9", "one-leg-extended-l-sit", "One-Leg Extended L-Sit", "2×8-20 secs", rep_window="8-20s", weight="Bodyweight", tempo="static", rest=45, structure="straight" if is_deload else "pair", pair_id="d5-grip-lsit", order_in_pair=2))
@@ -1665,7 +1693,7 @@ if __name__ == "__main__":
         fallback = os.path.join(img_dir, "BODYWEIGHT SQUAT.png")
         # v15.7.1: Nordic Curl Progression & Incline Diamond ship dedicated assets
         # — do not generate a placeholder PNG from the bodyweight-squat fallback.
-        skip_placeholder = {"Nordic Curl Progression", "Incline Diamond", "Incline Diamond Push-Up"}
+        skip_placeholder = {"Nordic Curl Progression", "Incline Diamond", "Incline Diamond Push-Up", "Foot-Supported L-Sit"}
         for name in required:
             if name in skip_placeholder:
                 continue
