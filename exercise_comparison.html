@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitUp Pro — קטלוג תרגילים מלא ודוח השוואת תיקונים ביומכניים</title>
+  <title>FitUp Pro — קטלוג כל תרגילי התוכנית ומדריך ביומכני מלא</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #090d16;
-      --card-bg: rgba(18, 26, 43, 0.88);
+      --card-bg: rgba(18, 26, 43, 0.90);
       --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(56, 189, 248, 0.45);
       --text: #f1f5f9;
       --text-muted: #94a3b8;
       --text-dim: #64748b;
       --primary: #38bdf8;
+      --primary-glow: rgba(56, 189, 248, 0.22);
       --accent-green: #10b981;
-      --accent-green-glow: rgba(16, 185, 129, 0.25);
-      --accent-rose: #f43f5e;
-      --accent-rose-glow: rgba(244, 63, 94, 0.25);
+      --accent-green-glow: rgba(16, 185, 129, 0.20);
       --accent-amber: #f59e0b;
       --accent-indigo: #6366f1;
       --header-bg: rgba(9, 13, 22, 0.94);
@@ -50,20 +50,20 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(20px);
       background: var(--header-bg);
+      backdrop-filter: blur(16px);
       border-bottom: 1px solid var(--card-border);
       padding: 16px 24px;
     }
 
     .header-inner {
-      max-width: 1400px;
+      max-width: 1440px;
       margin: 0 auto;
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 20px;
+      flex-wrap: wrap;
     }
 
     .brand {
@@ -73,24 +73,22 @@
     }
 
     .logo-badge {
-      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
       color: #fff;
       font-family: 'Outfit', sans-serif;
       font-weight: 800;
-      font-size: 1.25rem;
-      padding: 6px 14px;
+      font-size: 1.15rem;
+      padding: 7px 15px;
       border-radius: var(--radius-sm);
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
       letter-spacing: 0.5px;
-      box-shadow: 0 4px 15px rgba(2, 132, 199, 0.35);
     }
 
     .title-group h1 {
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: 700;
       color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      letter-spacing: -0.3px;
     }
 
     .title-group p {
@@ -98,207 +96,188 @@
       color: var(--text-muted);
     }
 
-    .view-selector {
-      display: flex;
-      gap: 8px;
-      background: rgba(11, 17, 30, 0.8);
-      border: 1px solid var(--card-border);
-      padding: 4px;
-      border-radius: var(--radius-sm);
-    }
-
-    .view-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 8px 18px;
-      border-radius: 8px;
-      font-size: 0.92rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Rubik', sans-serif;
+    .stats-pill {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--card-border);
+      font-size: 0.85rem;
     }
 
-    .view-btn.active {
-      background: var(--primary);
-      color: #041226;
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-val {
+      font-weight: 700;
+      color: var(--primary);
     }
 
     .controls-bar {
-      max-width: 1400px;
-      margin: 24px auto;
+      max-width: 1440px;
+      margin: 20px auto 0;
       padding: 0 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
     }
 
     .top-controls {
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
       gap: 14px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      padding: 14px 20px;
       border-radius: var(--radius);
-      backdrop-filter: blur(10px);
+      padding: 16px 20px;
     }
 
-    .search-box {
-      flex: 1;
-      min-width: 280px;
-      position: relative;
+    .search-row {
+      display: flex;
+      gap: 12px;
     }
 
     .search-input {
-      width: 100%;
-      background: rgba(11, 17, 30, 0.7);
+      flex: 1;
+      background: rgba(0, 0, 0, 0.35);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-sm);
-      padding: 10px 16px;
+      padding: 11px 18px;
       color: #fff;
       font-family: 'Rubik', sans-serif;
       font-size: 0.95rem;
       outline: none;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
 
     .search-input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
     }
 
-    .toggle-group {
+    .search-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .tabs-nav {
       display: flex;
-      align-items: center;
-      background: rgba(11, 17, 30, 0.8);
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--card-border);
       border-radius: var(--radius-sm);
-      padding: 4px;
-      gap: 4px;
-    }
-
-    .toggle-btn {
-      background: transparent;
-      border: none;
+      padding: 8px 14px;
       color: var(--text-muted);
-      padding: 6px 14px;
-      border-radius: 6px;
+      font-family: 'Rubik', sans-serif;
       font-size: 0.85rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Rubik', sans-serif;
-    }
-
-    .toggle-btn.active {
-      background: rgba(255, 255, 255, 0.15);
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .day-filters {
+      white-space: nowrap;
+      transition: all 0.2s ease;
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      align-items: center;
+      gap: 6px;
     }
 
-    .day-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      padding: 8px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 0.88rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Rubik', sans-serif;
-    }
-
-    .day-btn:hover {
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
       color: #fff;
-      border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .day-btn.active {
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(99, 102, 241, 0.2));
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(99, 102, 241, 0.22));
       border-color: var(--primary);
       color: #fff;
       font-weight: 600;
     }
 
+    .tab-count {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+    }
+
     main {
-      max-width: 1400px;
-      margin: 0 auto;
+      max-width: 1440px;
+      margin: 24px auto 0;
       padding: 0 24px;
     }
 
-    .comparison-grid {
+    .catalog-grid {
       display: flex;
       flex-direction: column;
-      gap: 28px;
+      gap: 24px;
     }
 
     .card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: var(--radius);
-      padding: 24px;
-      backdrop-filter: blur(14px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      transition: border-color 0.2s, transform 0.2s;
+      padding: 22px;
+      transition: all 0.25s ease;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
     }
 
     .card:hover {
-      border-color: rgba(56, 189, 248, 0.3);
+      border-color: var(--card-hover-border);
+      box-shadow: 0 12px 32px rgba(56, 189, 248, 0.10);
     }
 
     .card-header {
       display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
       justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 20px;
-      border-bottom: 1px solid var(--card-border);
+      align-items: flex-start;
+      gap: 16px;
       padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .card-title-group {
+      flex: 1;
+      min-width: 260px;
     }
 
     .card-title-group h2 {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: #fff;
-      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .card-title-group .name-en {
+    .name-en {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       color: var(--primary);
-      font-weight: 600;
-      letter-spacing: 0.3px;
+      font-weight: 500;
+      margin-top: 3px;
     }
 
     .badge-group {
       display: flex;
-      flex-wrap: wrap;
       gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
     .badge {
-      font-size: 0.8rem;
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-weight: 500;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 4px 11px;
+      border-radius: 999px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .badge-day {
@@ -308,118 +287,111 @@
     }
 
     .badge-week {
+      background: rgba(56, 189, 248, 0.15);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .badge-equip {
       background: rgba(245, 158, 11, 0.15);
       color: #fcd34d;
       border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
-    .badge-status-ok {
+    .badge-category {
       background: rgba(16, 185, 129, 0.15);
       color: #6ee7b7;
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
-    .visual-comparison {
+    /* Side-by-Side Visuals Container */
+    .visuals-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 22px;
+      gap: 16px;
+      margin-bottom: 20px;
     }
 
-    @media (max-width: 900px) {
-      .visual-comparison {
+    @media (max-width: 820px) {
+      .visuals-row {
         grid-template-columns: 1fr;
       }
     }
 
-    .comparison-col {
-      background: rgba(11, 17, 30, 0.6);
+    .media-card {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: var(--radius-sm);
-      border: 1px solid var(--card-border);
-      padding: 16px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
+      transition: all 0.2s ease;
     }
 
-    .col-before {
-      border-top: 4px solid var(--accent-rose);
+    .media-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .col-after {
-      border-top: 4px solid var(--accent-green);
-    }
-
-    .col-header {
+    .media-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .col-title {
-      font-size: 1rem;
-      font-weight: 700;
-      display: flex;
       align-items: center;
-      gap: 8px;
+      padding: 9px 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.8rem;
+      font-weight: 600;
     }
 
-    .col-before .col-title { color: #fca5a5; }
-    .col-after .col-title { color: #86efac; }
+    .media-header.static-hdr {
+      color: #7dd3fc;
+    }
+
+    .media-header.gif-hdr {
+      color: #6ee7b7;
+    }
 
     .media-container {
       position: relative;
-      background: #000;
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      aspect-ratio: 4 / 3;
+      height: 310px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: #060911;
       cursor: zoom-in;
+      overflow: hidden;
     }
 
     .media-container img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
-      display: block;
-      transition: transform 0.2s;
+      transition: transform 0.3s ease;
     }
 
     .media-container:hover img {
-      transform: scale(1.02);
+      transform: scale(1.03);
     }
 
-    .media-tag {
+    .media-zoom-hint {
       position: absolute;
       bottom: 8px;
-      right: 8px;
-      background: rgba(0, 0, 0, 0.7);
-      color: #fff;
-      font-size: 0.7rem;
-      padding: 2px 8px;
-      border-radius: 4px;
-      backdrop-filter: blur(4px);
-    }
-
-    .col-desc {
-      font-size: 0.88rem;
+      left: 8px;
+      background: rgba(0, 0, 0, 0.65);
       color: var(--text-muted);
-      line-height: 1.5;
-      background: rgba(255, 255, 255, 0.02);
-      padding: 10px 12px;
-      border-radius: 8px;
-      flex: 1;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      pointer-events: none;
     }
 
+    /* Specs Grid */
     .specs-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 12px;
-      background: rgba(11, 17, 30, 0.4);
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: var(--radius-sm);
       padding: 16px;
       margin-bottom: 16px;
@@ -428,7 +400,7 @@
     .spec-item {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
     }
 
     .spec-label {
@@ -436,148 +408,98 @@
       color: var(--text-dim);
       font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
     }
 
     .spec-value {
-      font-size: 0.92rem;
+      font-size: 0.90rem;
+      color: #e2e8f0;
       font-weight: 600;
-      color: var(--text);
     }
 
+    /* Biomechanical Cues Box */
     .cues-box {
       background: rgba(56, 189, 248, 0.05);
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.20);
       border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      font-size: 0.88rem;
-      color: #bae6fd;
+      padding: 14px 18px;
       display: flex;
+      gap: 12px;
       align-items: flex-start;
-      gap: 10px;
+      font-size: 0.88rem;
+      line-height: 1.6;
     }
 
     .cues-icon {
-      font-size: 1.1rem;
+      font-size: 1.25rem;
       line-height: 1;
-      flex-shrink: 0;
       margin-top: 2px;
     }
 
-    .catalog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 20px;
-    }
-
-    .catalog-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius);
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      transition: all 0.2s;
-    }
-
-    .catalog-card:hover {
-      border-color: rgba(56, 189, 248, 0.4);
-      transform: translateY(-2px);
-    }
-
-    .catalog-media {
-      aspect-ratio: 4 / 3;
-      background: #000;
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: zoom-in;
-    }
-
-    .catalog-media img {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-
-    .catalog-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 2px;
-    }
-
-    .catalog-en {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.85rem;
+    .cues-content strong {
       color: var(--primary);
-      margin-bottom: 10px;
     }
 
-    .catalog-info {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 0.85rem;
-      margin-top: auto;
-      border-top: 1px solid var(--card-border);
-      padding-top: 10px;
-    }
-
-    .catalog-row {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .catalog-row .lbl {
-      color: var(--text-dim);
-    }
-
-    .catalog-row .val {
-      color: var(--text);
-      font-weight: 500;
-    }
-
+    /* Lightbox */
     .lightbox {
-      display: none;
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(12px);
       z-index: 1000;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: 30px;
-      backdrop-filter: blur(8px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      padding: 24px;
     }
 
     .lightbox.active {
-      display: flex;
+      opacity: 1;
+      pointer-events: auto;
     }
 
     .lightbox img {
       max-width: 90vw;
-      max-height: 85vh;
-      border-radius: var(--radius-sm);
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      max-height: 90vh;
+      border-radius: var(--radius);
+      box-shadow: 0 0 40px rgba(56, 189, 248, 0.25);
       object-fit: contain;
     }
 
     .lightbox-close {
       position: absolute;
-      top: 20px;
-      right: 25px;
-      color: #fff;
-      font-size: 2rem;
-      background: none;
+      top: 24px;
+      right: 28px;
+      background: rgba(255, 255, 255, 0.12);
       border: none;
+      color: #fff;
+      font-size: 1.8rem;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
       cursor: pointer;
-      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .lightbox-close:hover {
+      background: rgba(244, 63, 94, 0.8);
+      transform: scale(1.05);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-dim);
+      font-size: 1.1rem;
     }
   </style>
 </head>
@@ -588,50 +510,58 @@
       <div class="brand">
         <div class="logo-badge">FITUP PRO</div>
         <div class="title-group">
-          <h1>דוח השוואת תרגילים ולוח זמני פתיחה (Biomechanical Perfection Audit)</h1>
-          <p>השוואה חזותית מלאה: לפני (מה שהיה שגוי) מול אחרי (התיקון המדויק), מועדי פתיחה והנחיות ביומכניות</p>
+          <h1>קטלוג תרגילי התוכנית ומדריך ביומכני מלא</h1>
+          <p>תצוגה מקבילה: תמונה סטטית איורית + אנימציית GIF מונפשת, מועדי פתיחה ודגשי מניעת פציעות</p>
         </div>
       </div>
-      <div class="view-selector">
-        <button class="view-btn active" id="btn-view-audit" onclick="setViewMode('audit')">
-          🌟 השוואת תיקונים (לפני מול אחרי)
-        </button>
-        <button class="view-btn" id="btn-view-catalog" onclick="setViewMode('catalog')">
-          📋 כל תרגילי התוכנית (41)
-        </button>
+      <div class="stats-pill">
+        <div class="stat-item">
+          <span>סה״כ תרגילים:</span>
+          <span class="stat-val" id="stat-total">80</span>
+        </div>
+        <div class="stat-item">
+          <span>אימות קבצים:</span>
+          <span class="stat-val" style="color: #10b981;">100% תקין (0 שגיאות)</span>
+        </div>
       </div>
     </div>
   </header>
 
   <div class="controls-bar">
     <div class="top-controls">
-      <div class="search-box">
-        <input type="text" class="search-input" id="search-input" placeholder="חיפוש לפי שם תרגיל, שבוע, יום או מילת מפתח..." oninput="handleSearch()">
+      <div class="search-row">
+        <input type="text" class="search-input" id="search-input" placeholder="חיפוש לפי שם תרגיל (עברית/אנגלית), שבוע פתיחה, יום או שריר מטרה..." oninput="handleSearch()">
       </div>
-      
-      <div class="day-filters">
-        <button class="day-btn active" onclick="filterDay('all', this)">הכל</button>
-        <button class="day-btn" onclick="filterDay(1, this)">יום 1 (רגליים וליבה)</button>
-        <button class="day-btn" onclick="filterDay(2, this)">יום 2 (Zone 2)</button>
-        <button class="day-btn" onclick="filterDay(3, this)">יום 3 (דחיקה ועליון)</button>
-        <button class="day-btn" onclick="filterDay(4, this)">יום 4 (צוואר והתאוששות)</button>
-        <button class="day-btn" onclick="filterDay(5, this)">יום 5 (משיכה וידיים)</button>
-        <button class="day-btn" onclick="filterDay(6, this)">יום 6 (VO2 Max)</button>
-      </div>
-
-      <div class="toggle-group" id="media-toggle-group">
-        <button class="toggle-btn active" id="btn-show-gifs" onclick="setMediaType('gif')">אנימציות GIF</button>
-        <button class="toggle-btn" id="btn-show-static" onclick="setMediaType('static')">תמונות סטטיות</button>
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="filterTab('all', this)">
+          כל התרגילים <span class="tab-count" id="count-all">80</span>
+        </button>
+        <button class="tab-btn" onclick="filterTab('day1', this)">
+          יום 1 (רגליים וליבה) <span class="tab-count" id="count-day1">23</span>
+        </button>
+        <button class="tab-btn" onclick="filterTab('day2', this)">
+          יום 2 (אירובי בסיס) <span class="tab-count" id="count-day2">2</span>
+        </button>
+        <button class="tab-btn" onclick="filterTab('day3', this)">
+          יום 3 (דחיקה ועליון) <span class="tab-count" id="count-day3">31</span>
+        </button>
+        <button class="tab-btn" onclick="filterTab('day4', this)">
+          יום 4 (התאוששות וצוואר) <span class="tab-count" id="count-day4">5</span>
+        </button>
+        <button class="tab-btn" onclick="filterTab('day5', this)">
+          יום 5 (משיכה וידיים) <span class="tab-count" id="count-day5">18</span>
+        </button>
+        <button class="tab-btn" onclick="filterTab('day6', this)">
+          יום 6 (אירובי עצים) <span class="tab-count" id="count-day6">1</span>
+        </button>
       </div>
     </div>
   </div>
 
   <main>
-    <!-- View 1: Audit Comparison -->
-    <div class="comparison-grid" id="audit-container"></div>
-
-    <!-- View 2: Full Catalog -->
-    <div class="catalog-grid" id="catalog-container" style="display: none;"></div>
+    <div class="catalog-grid" id="exercises-container">
+      <!-- Dynamic Exercise Cards rendered via JavaScript -->
+    </div>
   </main>
 
   <div class="lightbox" id="lightbox" onclick="closeLightbox()">
@@ -640,611 +570,1388 @@
   </div>
 
   <script>
-    const AUDITED = [
+    const EXERCISES = [
   {
-    "id": "nordic-eccentric",
-    "nameEn": "Nordic Curl (Eccentric Only)",
-    "nameHe": "כפיפת ברכיים נורדית — שלב אקצנטרי בלבד",
-    "category": "Legs & Posterior Chain",
-    "day": "יום 1 (רגליים וליבה)",
+    "id": "goblet-rdl",
+    "nameEn": "Goblet Romanian Deadlift (RDL)",
+    "nameHe": "דדליפט רומני גובלט (Goblet RDL)",
     "dayNum": 1,
-    "unlockTiming": "שבוע 34+ (משבוע 34 ואילך)",
-    "unlockPrereq": "לאחר השלמת שבועות 18–33 ב-Full ROM ושבועות 10–17 ב-Partial ROM",
-    "setsReps": "2 סטים × 4–6 חזרות (1 סט בדילואוד)",
-    "tempo": "ירידה איטית של 3–4 שניות, ללא עלייה בכוח המסטרינגס",
-    "rest": "90 שניות",
-    "beforeImg": "images/comparison_before/NORDIC CURL (ECCENTRIC ONLY).png",
-    "beforeGif": "images/comparison_before/Nordic Curl (Eccentric Only).gif",
-    "afterImg": "images/exercises/NORDIC CURL (ECCENTRIC ONLY).png",
-    "afterGif": "images/gifs/Nordic Curl (Eccentric Only).gif",
-    "beforeFlaw": "בתמונה הסטטית הגוף צף באוויר ללא ברכיים על המזרן. ב-GIF המתאמן הניח ידיים על הרצפה ודחף במקום לבצע שלב אקצנטרי טהור.",
-    "afterFix": "הברכיים מעוגנות בכרית ייעודית, הקרסוליים מקובעים ברולר. הידיים מוחזקות מאחור/על האגן, והמתאמן בולם ירידה מלאה בקו ישר 3–4 שניות ללא מגע ידיים כלל ברצפה.",
-    "biomechanicalCues": "קו ישר מהברך דרך האגן ועד הכתפיים (ללא שבירה במפרק הירך). בלימה איטית כנגד כוח המשיכה. שמירה מחמירה על שרשרת אחורית ללא עומס מותני."
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "שרשרת אחורית והמסטרינגס",
+    "equipment": "משקולת יד (Dumbbell)",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית)",
+    "unlockPrereq": "תרגיל עוגן ראשי ליום 1; מתחלף שבוע-כן-שבוע-לא עם Single-Leg RDL משבוע 18",
+    "setsReps": "3 סטים × 8–12 חזרות",
+    "tempo": "3 שניות ירידה, 1 שניה עצירה במתיחה, 1 שניה עלייה (3-1-1)",
+    "rest": "75–90 שניות",
+    "cues": "תנועת ציר ירך (Hip Hinge) טהורה. דחיפת האגן לאחור, שמירה מחמירה על עמוד שדרה ניטרלי להגנה מוחלטת על חוליות L4-S1. ברכיים רכות ומשקולת צמודה לגוף.",
+    "img": "images/exercises/GOBLET ROMANIAN DEADLIFT.png",
+    "gif": "images/gifs/Dumbbell Romanian Deadlift (RDL).gif"
   },
   {
-    "id": "nordic-full",
-    "nameEn": "Full Nordic Curl (Unassisted)",
-    "nameHe": "כפיפת ברכיים נורדית מלאה (ללא סיוע)",
-    "category": "Legs & Posterior Chain",
-    "day": "יום 1 (רגליים וליבה)",
+    "id": "single-leg-rdl",
+    "nameEn": "Single-Leg RDL (Contralateral Hand-Supported)",
+    "nameHe": "דדליפט רומני על רגל אחת (עם תמיכת יד)",
     "dayNum": 1,
-    "unlockTiming": "שלב מיומנות שיא (Elite Hamstring Strength)",
-    "unlockPrereq": "שליטה מלאה בבלימה אקצנטרית של 4 שניות",
-    "setsReps": "2 סטים × 3–6 חזרות",
-    "tempo": "3 שניות ירידה, 0-1 שניות עצירה, 1-2 שניות עלייה בכוח בלבד",
-    "rest": "120 שניות",
-    "beforeImg": "images/comparison_before/FULL NORDIC CURL.png",
-    "beforeGif": "images/comparison_before/Full Nordic Curl.gif",
-    "afterImg": "images/exercises/FULL NORDIC CURL.png",
-    "afterGif": "images/gifs/Full Nordic Curl.gif",
-    "beforeFlaw": "הסרטון הקודם הציג מתאמן שמניח ידיים על הרצפה ודוחף חזרה, כלומר היה מדובר בתרגיל Hands-Assisted ולא ב-Full Nordic אמיתי.",
-    "afterFix": "ביצוע מלא ואותנטי ללא שום סיוע: ידיים שלובות מאחורי הגב, ירידה מבוקרת עד קו אופקי מלא ועלייה חזרה מעלה אך ורק באמצעות כיווץ ההמסטרינגס — אפס מגע ברצפה.",
-    "biomechanicalCues": "גיוס מקסימלי של Biceps Femoris ו-Semitendinosus. פשיטת ירך יציבה לאורך כל התנועה."
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "שרשרת אחורית ואסימטריה",
+    "equipment": "משקולת יד + קיר/עמוד לתמיכה",
+    "unlockTiming": "שבוע 18+ (מתחלף לסירוגין עם Goblet RDL)",
+    "unlockPrereq": "שליטה מלאה ב-Goblet RDL במשקל 10 ק\"ג ומעלה",
+    "setsReps": "3 סטים × 6–10 חזרות לכל רגל",
+    "tempo": "3 שניות ירידה איטית ומבוקרת (3-0-1)",
+    "rest": "60–90 שניות",
+    "cues": "משקולת ביד הנגדית לרגל העומדת (Contralateral). יד שנייה נשענת קלות על קיר או מעקה — תמיכה זו מנטרלת 100% רוטציה אגנית ומגנה הרמטית על דיסק L4-S1.",
+    "img": "images/exercises/SINGLE-LEG RDL.png",
+    "gif": "images/gifs/Single-Leg RDL.gif"
   },
   {
     "id": "nordic-partial",
     "nameEn": "Hands-Assisted Nordic (Partial ROM)",
-    "nameHe": "נורדיק בסיוע ידיים — טווח תנועה חלקי (30°–45°)",
-    "category": "Legs & Posterior Chain",
-    "day": "יום 1 (רגליים וליבה)",
+    "nameHe": "כפיפת ברכיים נורדית בסיוע ידיים — טווח חלקי (30°–45°)",
     "dayNum": 1,
-    "unlockTiming": "שבועות 10–17 (תחילת פרוגרשן נורדיק בתוכנית)",
-    "unlockPrereq": "שער שבוע 10 (לא מופיע לפני שבוע 10)",
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "המסטרינגס אקצנטרי",
+    "equipment": "משקל גוף + כרית ברכיים ומעגן קרסוליים",
+    "unlockTiming": "שבועות 10–17 (תחילת שרשרת נורדיק)",
+    "unlockPrereq": "שער שבוע 10; סיום מוצלח של שלב ההסתגלות המוקדם",
     "setsReps": "2 סטים × 4–6 חזרות (1 סט בדילואוד)",
-    "tempo": "3-1-1 (3 שניות ירידה, 1 שניה עצירה, 1 שניה חזרה בסיוע)",
+    "tempo": "3 שניות ירידה, בלימת ידיים רכה ב-35°, דחיפה מתונה מעלה",
     "rest": "90 שניות",
-    "beforeImg": "images/comparison_before/HANDS-ASSISTED NORDIC (PARTIAL ROM).png",
-    "beforeGif": "images/comparison_before/Hands-Assisted Nordic (Partial ROM).gif",
-    "afterImg": "images/exercises/HANDS-ASSISTED NORDIC (PARTIAL ROM).png",
-    "afterGif": "images/gifs/Hands-Assisted Nordic (Partial ROM).gif",
-    "beforeFlaw": "התמונה הייתה זהה לקובץ הראשי ולא הדגישה את הזווית המוגבלת. ה-GIF הכיל סימני מים וכיתובי יוטיוב זרים.",
-    "afterFix": "הסרת כל סימני המים והכיתובים, חיתוך מדויק לפריימים 0–35 שמציגים ירידה מתונה של 35 מעלות ובלימה רכה בידיים, וחזרה בלולאה חלקה.",
-    "biomechanicalCues": "הגנה מוחלטת על גיד ההמסטרינגס ובניית כוח גידים הדרגתי לפני מעבר לטווח מלא."
+    "cues": "קרסוליים נעולים ומקובעים היטב, ברכיים על כרית ייעודית. גו ישר כקורת עץ. ירידה מבוקרת של 30°–45° עם בלימה מתונה בידיים למניעת עומס פתאומי על הגיד.",
+    "img": "images/exercises/HANDS-ASSISTED NORDIC (PARTIAL ROM).png",
+    "gif": "images/gifs/Hands-Assisted Nordic (Partial ROM).gif"
   },
   {
     "id": "nordic-fullrom-assist",
     "nameEn": "Hands-Assisted Nordic (Full ROM)",
-    "nameHe": "נורדיק בסיוע ידיים — טווח תנועה מלא עם דחיפת ידיים",
-    "category": "Legs & Posterior Chain",
-    "day": "יום 1 (רגליים וליבה)",
+    "nameHe": "כפיפת ברכיים נורדית בסיוע ידיים — טווח מלא",
     "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "המסטרינגס אקצנטרי",
+    "equipment": "משקל גוף + מעגן קרסוליים ומזרן",
     "unlockTiming": "שבועות 18–33",
-    "unlockPrereq": "השלמת שבועות 10–17 ב-Partial ROM",
+    "unlockPrereq": "השלמת שבועות 10–17 ב-Partial ROM בשליטה מלאה",
     "setsReps": "2 סטים × 4–6 חזרות",
-    "tempo": "3-1-1",
+    "tempo": "3-1-1 (3 שניות בלימה עד הרצפה, דחיפה קלה בידיים לעלייה)",
     "rest": "90 שניות",
-    "beforeImg": "images/comparison_before/HANDS-ASSISTED NORDIC (FULL ROM).png",
-    "beforeGif": "images/comparison_before/Hands-Assisted Nordic (Full ROM).gif",
-    "afterImg": "images/exercises/HANDS-ASSISTED NORDIC (FULL ROM).png",
-    "afterGif": "images/gifs/Hands-Assisted Nordic (Full ROM).gif",
-    "beforeFlaw": "הכיל סימן מים מסחרי וכיתוב תחתון שלא התאימו לאפליקציה מקצועית.",
-    "afterFix": "נקי מסימני מים, מציג ירידה מלאה עד לרצפה עם דחיפה מבוקרת של הידיים לעלייה.",
-    "biomechanicalCues": "שליטה אקסצנטרית עמוקה תוך סיוע מינימלי של הידיים רק בשלב הקונצנטרי."
+    "cues": "ירידה מלאה עד נגיעת החזה ברצפה תוך בלימה מתמדת של ההמסטרינגס. סיוע מינימלי של הידיים בדחיפה מעלה בלבד לשמירה על אגן נעול וירכיים ישרות.",
+    "img": "images/exercises/HANDS-ASSISTED NORDIC (FULL ROM).png",
+    "gif": "images/gifs/Hands-Assisted Nordic (Full ROM).gif"
+  },
+  {
+    "id": "nordic-eccentric",
+    "nameEn": "Nordic Curl (Eccentric Only)",
+    "nameHe": "כפיפת ברכיים נורדית — שלב אקצנטרי בלבד (ללא סיוע)",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "המסטרינגס אקצנטרי טהור",
+    "equipment": "משקל גוף + מעגן קרסוליים",
+    "unlockTiming": "שבוע 34+",
+    "unlockPrereq": "השלמת שבועות 18–33 בטווח מלא",
+    "setsReps": "2 סטים × 4–6 חזרות",
+    "tempo": "3–4 שניות ירידה איטית ללא שום מגע ידיים כלל ברצפה",
+    "rest": "90–120 שניות",
+    "cues": "ידיים שלובות מאחורי הגב או על החזה. ירידה איטית ומבוקרת כנגד כוח המשיכה לאורך 3–4 שניות מלאות. אפס שבירה במפרק הירך (קו ישר רציף מברך עד כתף).",
+    "img": "images/exercises/NORDIC CURL (ECCENTRIC ONLY).png",
+    "gif": "images/gifs/Nordic Curl (Eccentric Only).gif"
+  },
+  {
+    "id": "nordic-full",
+    "nameEn": "Full Nordic Curl (Unassisted)",
+    "nameHe": "כפיפת ברכיים נורדית מלאה (ללא סיוע כלל)",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "המסטרינגס אקצנטרי + קונצנטרי שיא",
+    "equipment": "משקל גוף + מעגן קרסוליים",
+    "unlockTiming": "שלב מיומנות שיא (Elite Posterior Chain)",
+    "unlockPrereq": "שליטה מוכחת ב-Nordic Eccentric Only בבלימה של 4 שניות",
+    "setsReps": "2 סטים × 3–6 חזרות",
+    "tempo": "3 שניות ירידה, עצירה קלה, עלייה בכוח שרירי הירך בלבד",
+    "rest": "120 שניות",
+    "cues": "ירידה עד לקו אופקי מלא ועלייה חזרה מעלה אך ורק באמצעות כיווץ ההמסטרינגס — ללא שום מגע ידיים ברצפה או דחיפה. פסגת כוח השרשרת האחורית.",
+    "img": "images/exercises/FULL NORDIC CURL.png",
+    "gif": "images/gifs/Full Nordic Curl.gif"
+  },
+  {
+    "id": "heels-elevated-goblet-squat",
+    "nameEn": "Heels-Elevated Goblet Squat",
+    "nameHe": "סקוואט גובלט עם עקבים מוגבהים (Quad Dominant)",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "ארבע-ראשי וברכיים",
+    "equipment": "משקולת יד + טריז/פלטה להגבהת עקבים",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית)",
+    "unlockPrereq": "תרגיל דחיקה ראשי לפלג גוף תחתון",
+    "setsReps": "2 סטים × 8–12 חזרות",
+    "tempo": "3 שניות ירידה, 1-2 שניות עצירה עמוקה (Paused), 1 שניה עלייה",
+    "rest": "60–90 שניות",
+    "cues": "עקבים על הגבהה של 2–4 ס\"מ, משקולת צמודה לחזה בגובלט. גו זקוף מקסימלי שמבטל עומס גזירה על חוליות L4-S1 וממקד את כל העומס בארבע-ראשי (VMO).",
+    "img": "images/exercises/HEELS-ELEVATED GOBLET SQUAT.png",
+    "gif": "images/gifs/Heels-Elevated Goblet Squat.gif"
+  },
+  {
+    "id": "goblet-bulgarian-split-squat",
+    "nameEn": "Goblet Bulgarian Split Squat",
+    "nameHe": "ספליט סקוואט בולגרי עם משקולת גובלט",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "חד-צדדי, ארבע-ראשי ויציבות אגן",
+    "equipment": "משקולת יד + ספסל/כיסא יציב",
+    "unlockTiming": "שבוע 5+ (לאחר סיום Phase 0 והגעה ל-10 ק\"ג בסקוואט)",
+    "unlockPrereq": "שבוע 5 (סיום Phase 0)",
+    "setsReps": "3 סטים × 6–12 חזרות לכל רגל",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "75–90 שניות",
+    "cues": "רגל אחורית נשענת על ספסל, ירידה ישרה מטה. ברך קדמית מתיישרת בהתאמה מעל כף הרגל ללא קריסה פנימה (Valgus Collapse). יציבות מרבית באגן.",
+    "img": "images/exercises/GOBLET BULGARIAN SPLIT SQUAT.png",
+    "gif": "images/gifs/DB Bulgarian Split Squat.gif"
+  },
+  {
+    "id": "bodyweight-squat",
+    "nameEn": "Bodyweight Squat",
+    "nameHe": "סקוואט במשקל גוף (חימום דינמי)",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "חימום דינמי ומוביליות",
+    "equipment": "משקל גוף בלבד",
+    "unlockTiming": "שבוע 1 (חימום פותח יום 1)",
+    "unlockPrereq": "זמין תמיד כחימום בסיס",
+    "setsReps": "1–2 סטים × 10–15 חזרות",
+    "tempo": "קצב שוטף וזורם (2-0-1)",
+    "rest": "30 שניות",
+    "cues": "חימום שרירי הירך והברך, ירידה עד קו מקביל תוך שמירה על עמוד שדרה ניטרלי ומשקל מחולק שווה בכף הרגל.",
+    "img": "images/exercises/BODYWEIGHT SQUAT.png",
+    "gif": "images/gifs/Bodyweight Squat.gif"
+  },
+  {
+    "id": "wall-sit",
+    "nameEn": "Wall Sit (Isometric Quad & Patella Health)",
+    "nameHe": "ישיבת קיר איזומטרית (שיקום ברך וארבע-ראשי)",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "איזומטריה ושיקום גיד הפיקה",
+    "equipment": "קיר תומך",
+    "unlockTiming": "שבוע 1 (נתיב עזר ושיקום)",
+    "unlockPrereq": "מופיע כתרגיל עזר וחלופת שיקום עוקפת עומס מפרקי",
+    "setsReps": "2–3 סטים × 30–45 שניות",
+    "tempo": "החזקה סטטית רציפה ללא תנועה",
+    "rest": "60 שניות",
+    "cues": "גב צמוד במלואו לקיר, ירכיים בזווית 90 מעלות לקרקע. עומס איזומטרי טהור שמחזק את גיד הפיקה ללא שום שחיקת סחוס.",
+    "img": "images/exercises/WALL SIT.png",
+    "gif": "images/gifs/Wall Sit.gif"
+  },
+  {
+    "id": "glute-bridge-bw",
+    "nameEn": "Glute Bridge (Bodyweight Warmup)",
+    "nameHe": "גשר ישבן במשקל גוף (הפעלת עכוז בחימום)",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "חימום והפעלת עכוז",
+    "equipment": "מזרן / משקל גוף",
+    "unlockTiming": "שבוע 1 (חימום W2 יום 1)",
+    "unlockPrereq": "הכנה לגשר ישבן עם משקולת",
+    "setsReps": "1–2 סטים × 12–15 חזרות",
+    "tempo": "2 שניות כיווץ שיא מעלה",
+    "rest": "30 שניות",
+    "cues": "דחיפה דרך העקבים, נעילת אגן בכוח שרירי הישבן בלבד ללא פשיטת יתר בגב התחתון.",
+    "img": "images/exercises/GLUTE BRIDGE.png",
+    "gif": "images/gifs/Glute Bridge.gif"
+  },
+  {
+    "id": "db-glute-bridge",
+    "nameEn": "DB Glute Bridge",
+    "nameHe": "גשר ישבן עם משקולת על האגן",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "שרירי עכוז ושרשרת אחורית",
+    "equipment": "משקולת יד (Dumbbell) + מזרן",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית)",
+    "unlockPrereq": "תרגיל ראשי לעכוז ללא שום דחיסה מותנית",
+    "setsReps": "3 סטים × 10–15 חזרות",
+    "tempo": "1 שניה עצירה וכיווץ שיא למעלה (1s pause at top)",
+    "rest": "60–90 שניות",
+    "cues": "שכמות צמודות לרצפה, משקולת מוחזקת ביציבות מעל האגן. עלייה מתפרצת של האגן וכיווץ מקסימלי של הישבן. אפס עומס על חוליות L4-S1.",
+    "img": "images/exercises/DB GLUTE BRIDGE.png",
+    "gif": "images/gifs/DB Glute Bridge.gif"
+  },
+  {
+    "id": "single-leg-glute-bridge",
+    "nameEn": "Single-Leg Glute Bridge",
+    "nameHe": "גשר ישבן על רגל אחת (יציבות אגן חד-צדדית)",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "עכוז חד-צדדי וייצוב אגן",
+    "equipment": "משקל גוף / מזרן",
+    "unlockTiming": "שבוע 18+ (מתחלף עם DB Glute Bridge)",
+    "unlockPrereq": "שליטה מלאה ב-DB Glute Bridge במשקל 14 ק\"ג ומעלה",
+    "setsReps": "3 סטים × 8–12 חזרות לכל רגל",
+    "tempo": "2 שניות עלייה עם עצירה בשיא (2-1-1)",
+    "rest": "60 שניות",
+    "cues": "רגל אחת מורמת ומקופלת באוויר, דחיפה עוצמתית דרך עקב הרגל התומכת. שמירה על שני צדי האגן מקבילים לחלוטין לקרקע ללא צניחה.",
+    "img": "images/exercises/SINGLE-LEG GLUTE BRIDGE.png",
+    "gif": "images/gifs/Single-Leg Glute Bridge.gif"
+  },
+  {
+    "id": "standing-calf-raise",
+    "nameEn": "Standing Single-Leg Calf Raise (Gastrocnemius)",
+    "nameHe": "הרמת עקבים בעמידה על רגל אחת (גסטרוקנמיוס)",
+    "dayNum": 1,
+    "dayName": "יום 1 / יום 3 (בלוק תאומים)",
+    "category": "שוקיים וגיד אכילס",
+    "equipment": "מדרגה + משקולת יד (משבוע 9)",
+    "unlockTiming": "שבוע 5+ (משקל גוף שבועות 5–8; העמסה משבוע 9)",
+    "unlockPrereq": "שבוע 5 (סיום Phase 0)",
+    "setsReps": "3 סטים × 12–20 חזרות לכל רגל",
+    "tempo": "2 שניות ירידה למתיחה עמוקה, 1 שניה עצירה בתחתית, 1 שניה כיווץ שיא",
+    "rest": "45 שניות",
+    "cues": "ברך ישרה לחלוטין (נעולה ברכות) לבידוד שריר הגסטרוקנמיוס. עצירה חובה של 1 שניה במתיחה המלאה בתחתית המדרגה לביטול אלסטיות גיד אכילס.",
+    "img": "images/exercises/STANDING SINGLE-LEG CALF RAISE.png",
+    "gif": "images/gifs/Standing Single-Leg Calf Raise.gif"
+  },
+  {
+    "id": "seated-calf-raise",
+    "nameEn": "Seated Single-Leg Calf Raise (Soleus)",
+    "nameHe": "הרמת עקבים בישיבה על רגל אחת (סולאוס)",
+    "dayNum": 1,
+    "dayName": "יום 1 / יום 3 (בלוק תאומים)",
+    "category": "שוקיים עמוקות (סולאוס)",
+    "equipment": "כיסא + משקולת על הברך + בלוק/הגבהה לכף הרגל",
+    "unlockTiming": "שבוע 5+ (שבועות 5–8 משקל גוף, משבוע 9 תוספת משקולת)",
+    "unlockPrereq": "שבוע 5 (סיום Phase 0)",
+    "setsReps": "3 סטים × 15–25 חזרות לכל רגל",
+    "tempo": "2 שניות ירידה, 1 שניה עצירה, 1 שניה כיווץ (2-1-1)",
+    "rest": "45 שניות",
+    "cues": "ברך כפופה בדיוק ב-90 מעלות. זווית זו מכבה את הגסטרוקנמיוס ומבודדת 100% את שריר הסולאוס (Soleus), המגן העיקרי על גיד אכילס ומניעת נקעים.",
+    "img": "images/exercises/SEATED SINGLE-LEG CALF RAISE.png",
+    "gif": "images/gifs/Seated Single-Leg Calf Raise.gif"
+  },
+  {
+    "id": "suitcase-carry",
+    "nameEn": "Suitcase Carry",
+    "nameHe": "הליכת מזוודה (Suitcase Carry — אנטי-פלקציה לטרלית)",
+    "dayNum": 1,
+    "dayName": "יום 1 (רגליים וליבה)",
+    "category": "ליבה עמוקה ואנטי-לטרל פלקציה",
+    "equipment": "משקולת יד כבדה (12–32 ק\"ג)",
+    "unlockTiming": "שבוע 5+ (משבוע 5 בסיום בלוק יום 1)",
+    "unlockPrereq": "הגעה ל-10 ק\"ג ב-Goblet RDL",
+    "setsReps": "3 סטים × 25–40 מטר לכל צד",
+    "tempo": "הליכה איטית, מדודה ונשלטת",
+    "rest": "60 שניות",
+    "cues": "משקולת ביד אחת בלבד. גו זקוף ב-100% ללא שום נטייה הצידה. שרירי הליבה, ה-QL והאלכסונים בצד הנגדי דרוכים בבלימת כוח הכובד.",
+    "img": "images/exercises/SUITCASE CARRY.png",
+    "gif": "images/gifs/Suitcase Carry.gif"
+  },
+  {
+    "id": "dead-bug",
+    "nameEn": "Dead Bug",
+    "nameHe": "דד-באג (ייצוב ליבה בטוח לגב — McGill Approved)",
+    "dayNum": 1,
+    "dayName": "יום 1 (סבב ליבה)",
+    "category": "אנטי-אקסטנשן וייצוב מותני",
+    "equipment": "מזרן (ומשקולות יד קלות 1–3 ק\"ג בשלבים מתקדמים)",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית)",
+    "unlockPrereq": "שלב הבסיס לכל שרשרת הליבה באפליקציה",
+    "setsReps": "3 סטים × 12–20 חזרות",
+    "tempo": "תנועה איטית, נשימה סרעפתית מבוקרת",
+    "rest": "30 שניות",
+    "cues": "גב תחתון מודבק לרצפה בכל מהלך התנועה (Posterior Pelvic Tilt). תנועה מתואמת של יד ורגל נגדית ללא הקשתה בגב, המנטרלת לחץ על חוליות L4-S1.",
+    "img": "images/exercises/DEAD BUG.png",
+    "gif": "images/gifs/Dead Bug.gif"
+  },
+  {
+    "id": "hollow-body-hold",
+    "nameEn": "Hollow Body Hold",
+    "nameHe": "הולו בודי (Hollow Body Hold — דחיסת ליבה מתקדמת)",
+    "dayNum": 1,
+    "dayName": "יום 1 (סבב ליבה)",
+    "category": "ליבה התעמלותית ואנטי-אקסטנשן",
+    "equipment": "מזרן / משקל גוף",
+    "unlockTiming": "שבוע 5+ (שבועות 1–4 התבססו על Dead Bug)",
+    "unlockPrereq": "ביצוע 16 חזרות תקינות ב-Dead Bug",
+    "setsReps": "2 סטים × 20–30 שניות החזקה",
+    "tempo": "החזקה איזומטרית סטטית נעולה",
+    "rest": "30 שניות",
+    "cues": "שכמות מורמות באוויר, בטן שטוחה וקעורה כקערה, גב תחתון מודבק לרצפה. ירכיים צמודות וזרועות פשוטות לאחור.",
+    "img": "images/exercises/HOLLOW BODY HOLD.png",
+    "gif": "images/gifs/Hollow Body Hold.gif"
+  },
+  {
+    "id": "pallof-hold",
+    "nameEn": "Pallof Hold (2-Hand Band)",
+    "nameHe": "החזקת פאלוף בשתי ידיים (אנטי-רוטציה בסיסית)",
+    "dayNum": 1,
+    "dayName": "יום 1 (סבב ליבה)",
+    "category": "ליבה אנטי-רוטציה",
+    "equipment": "גומיית התנגדות מחוברת לעוגן יציב",
+    "unlockTiming": "שבוע 6+ (שלב 1 בפרוגרשן פאלוף)",
+    "unlockPrereq": "השלמת Dead Bug שלב 2",
+    "setsReps": "2 סטים × 20–30 שניות לכל צד",
+    "tempo": "החזקה סטטית יציבה במרכז החזה",
+    "rest": "30 שניות",
+    "cues": "עמידה בריבוע ברוחב כתפיים, גומייה מתוחה בגובה מפתח הלב. זרועות נעולות ישרות קדימה כנגד כוח הפיתול הרוטציוני. אפס תנועה בעמוד השדרה.",
+    "img": "images/exercises/PALLOF PRESS.png",
+    "gif": "images/gifs/Pallof Press (Band).gif"
+  },
+  {
+    "id": "single-arm-pallof",
+    "nameEn": "Single-Arm Pallof Press",
+    "nameHe": "לחיצת פאלוף ביד אחת (מומנט פיתול מוגבר)",
+    "dayNum": 1,
+    "dayName": "יום 1 (סבב ליבה)",
+    "category": "ליבה אנטי-רוטציה מתקדמת",
+    "equipment": "גומיית התנגדות (30–40 ק\"ג)",
+    "unlockTiming": "שבוע 18+ (שלב מתקדם בפרוגרשן פאלוף)",
+    "unlockPrereq": "שליטה מלאה בהחזקת פאלוף בשתי ידיים",
+    "setsReps": "2 סטים × 10–12 חזרות לכל צד",
+    "tempo": "לחיצה קדימה, 1 שניה עצירה בשיא הפשיטה, חזרה איטית",
+    "rest": "30–45 שניות",
+    "cues": "לחיצה קדימה ביד אחת יוצרת מומנט פיתול א-סימטרי חד. שמירה על כתפיים ואגן ישרים קדימה ללא שום סטייה.",
+    "img": "images/exercises/SINGLE-ARM PALLOF PRESS.png",
+    "gif": "images/gifs/Single-Arm Pallof Press.gif"
+  },
+  {
+    "id": "split-stance-pallof",
+    "nameEn": "Single-Arm Split Stance Pallof Press",
+    "nameHe": "לחיצת פאלוף ביד אחת בעמידת פסיעה (Split Stance)",
+    "dayNum": 1,
+    "dayName": "יום 1 (סבב ליבה)",
+    "category": "ליבה אנטי-רוטציה ויציבות אגן",
+    "equipment": "גומיית התנגדות (40 ק\"ג)",
+    "unlockTiming": "שבוע 34+",
+    "unlockPrereq": "השלמת Single-Arm Pallof בעמידה רגילה",
+    "setsReps": "2 סטים × 10–12 חזרות לכל צד",
+    "tempo": "לחיצה מבוקרת, 1 שניה עצירה, חזרה של 2 שניות",
+    "rest": "45 שניות",
+    "cues": "עמידת פסיעה (Split Stance) מאתגרת את בסיס התמיכה ומאלצת את שרירי האגן והליבה לפעול יחד לבלימת הפיתול.",
+    "img": "images/exercises/SINGLE-ARM SPLIT STANCE PALLOF PRESS.png",
+    "gif": "images/gifs/Single-Arm Split Stance Pallof Press.gif"
+  },
+  {
+    "id": "one-leg-pallof",
+    "nameEn": "Single-Arm One Leg Pallof Press",
+    "nameHe": "לחיצת פאלוף ביד אחת בעמידה על רגל אחת",
+    "dayNum": 1,
+    "dayName": "יום 1 (סבב ליבה)",
+    "category": "ליבה, פרופריוספציה ושיווי משקל שיא",
+    "equipment": "גומיית התנגדות (50 ק\"ג)",
+    "unlockTiming": "שבוע 50+ (דרגת שיא בפרוגרשן פאלוף)",
+    "unlockPrereq": "שליטה בעמידת פסיעה",
+    "setsReps": "2 סטים × 8–10 חזרות לכל צד",
+    "tempo": "ביצוע איטי, בלימה מדויקת",
+    "rest": "45–60 שניות",
+    "cues": "עמידה על רגל אחת בודדת כנגד מתח גומייה חזק. שילוב שיא של ייצוב קרסול, אגן, ושרירי הליבה האלכסוניים.",
+    "img": "images/exercises/SINGLE-ARM ONE LEG PALLOF PRESS.png",
+    "gif": "images/gifs/Single-Arm One Leg Pallof Press.gif"
+  },
+  {
+    "id": "high-knees",
+    "nameEn": "High Knees",
+    "nameHe": "הרמות ברכיים דינמיות (חימום אירובי ומפרקי)",
+    "dayNum": 1,
+    "dayName": "יום 1 (חימום W1)",
+    "category": "חימום דינמי והעלאת דופק",
+    "equipment": "משקל גוף בלבד",
+    "unlockTiming": "שבוע 1 (חימום פותח יום 1)",
+    "unlockPrereq": "זמין תמיד",
+    "setsReps": "1–2 סטים × 30–45 שניות",
+    "tempo": "קצב דינמי וקפיצי",
+    "rest": "30 שניות",
+    "cues": "נחיתה רכה על כריות כף הרגל, הרמת ברכיים לגובה המותן תוך הפעלת שרירי הבטן ושמירה על גו זקוף.",
+    "img": "images/exercises/HIGH KNEES.png",
+    "gif": "images/gifs/High Knees.gif"
+  },
+  {
+    "id": "brisk-walking",
+    "nameEn": "Brisk Walking (Zone 2 Cardio)",
+    "nameHe": "הליכה מהירה בשיפוע — Zone 2 (שיקום אירובי)",
+    "dayNum": 2,
+    "dayName": "יום 2 (אירובי בסיס)",
+    "category": "אירובי בסיס, שריפת שומן ושיקום",
+    "equipment": "הליכון משופע או מסלול הליכה בטבע",
+    "unlockTiming": "שבוע 1 (20 דק' שבועות 1–2; 45 דק' משבוע 3)",
+    "unlockPrereq": "פתיחת התוכנית",
+    "setsReps": "אימון רציף של 45 דקות",
+    "tempo": "מהירות 5.5 קמ\"ש בשיפוע 4% (דופק מטרה: 107–125 פעימות/דקה)",
+    "rest": "אימון אירובי רציף ללא הפסקות",
+    "cues": "שמירה על דופק Zone 2 מדויק לפי נוסחת Tanaka. מאפשר שיפור נפח פעימה, עיבוי צפיפות מיטוכונדריאלית ושיקום זרימת דם למפרקים ללא עומס אימפקט.",
+    "img": "images/exercises/BRISK WALKING.png",
+    "gif": "images/gifs/Brisk Walking.gif"
+  },
+  {
+    "id": "relaxed-walking",
+    "nameEn": "Relaxed Walking (Active Recovery)",
+    "nameHe": "הליכה מתונה והתאוששות אקטיבית",
+    "dayNum": 2,
+    "dayName": "יום 2 / יום שבת (התאוששות)",
+    "category": "התאוששות אקטיבית וצבירת צעדים",
+    "equipment": "ללא ציוד (נעלי הליכה נוחות)",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית)",
+    "unlockPrereq": "זמין תמיד",
+    "setsReps": "30–60 דקות (חלק מיעד 8,000–12,000 צעדים יומי)",
+    "tempo": "קצב שיחתי מתון ונינוח",
+    "rest": "רציף",
+    "cues": "הליכה זקופה, נשימות עמוקות וסרעפתיות, פינוי חומצות חלב ועידוד זרימת דם משקמת לכל רקמות הגוף.",
+    "img": "images/exercises/RELAXED WALKING.png",
+    "gif": "images/gifs/Relaxed Walking.gif"
+  },
+  {
+    "id": "arm-circles",
+    "nameEn": "Arm Circles",
+    "nameHe": "סיבובי זרועות דינמיים (חימום חגורת כתפיים)",
+    "dayNum": 3,
+    "dayName": "יום 3 (חימום W1)",
+    "category": "חימום מפרקי כתף",
+    "equipment": "משקל גוף",
+    "unlockTiming": "שבוע 1 (חימום קבוע)",
+    "unlockPrereq": "זמין תמיד",
+    "setsReps": "1–2 סטים × 10 סיבובים לכל כיוון",
+    "tempo": "קצב שוטף ומבוקר",
+    "rest": "15 שניות",
+    "cues": "מעגלים הדרגתיים מקטן לגדול, הפעלת מעטפת הרוטטור קאף והזרמת נוזל סינוביאלי למפרק הכתף.",
+    "img": "images/exercises/ARM CIRCLES.png",
+    "gif": "images/gifs/Arm Circles.gif"
+  },
+  {
+    "id": "wall-slides",
+    "nameEn": "Wall Slides",
+    "nameHe": "החלקות ידיים על הקיר (Wall Slides — הפעלת Serratus)",
+    "dayNum": 3,
+    "dayName": "יום 3 / יום 5 (חימום כתפיים)",
+    "category": "מוביליות שכמות ו-Serratus Anterior",
+    "equipment": "קיר",
+    "unlockTiming": "שבוע 1 (חימום W2 יום 3 ויום 5)",
+    "unlockPrereq": "זמין תמיד",
+    "setsReps": "2 סטים × 10–12 חזרות",
+    "tempo": "2 שניות עלייה, 1 שניה כיווץ שכמות, 2 שניות ירידה",
+    "rest": "30 שניות",
+    "cues": "עקבים, גב תחתון, מרפקים וגב כפות הידיים צמודים לקיר. החלקת הזרועות מעלה ב-W ל-Y תוך שמירה על מגע מלא בקיר.",
+    "img": "images/exercises/WALL SLIDES.png",
+    "gif": "images/gifs/Wall Slides.gif"
+  },
+  {
+    "id": "scapular-push-up",
+    "nameEn": "Scapular Push-up",
+    "nameHe": "שכיבות סמיכה סקפולריות (Scapular Push-up)",
+    "dayNum": 3,
+    "dayName": "יום 3 (חימום W3)",
+    "category": "שליטת שכמות וחיזוק Serratus",
+    "equipment": "משקל גוף / מזרן",
+    "unlockTiming": "שבוע 1 (חימום W3 יום 3)",
+    "unlockPrereq": "זמין תמיד",
+    "setsReps": "2 סטים × 10–12 חזרות",
+    "tempo": "תנועה ממוקדת של השכמות בלבד",
+    "rest": "30 שניות",
+    "cues": "מרפקים נעולים ישרים ב-100% לכל אורך התרגיל. התנועה מתבצעת אך ורק בין השכמות: הרחקת שכמות מלאה (Protraction) וקירוב מבוקר (Retraction).",
+    "img": "images/exercises/SCAPULAR PUSH-UP.png",
+    "gif": "images/gifs/Scapular Push-up.gif"
+  },
+  {
+    "id": "band-pull-apart",
+    "nameEn": "Band Pull-Apart",
+    "nameHe": "משיכת גומייה לצדדים (Rear Delt & Scapular Retraction)",
+    "dayNum": 3,
+    "dayName": "יום 3 (חימום ואביזר דלתואיד אחורי)",
+    "category": "דלתואיד אחורי ומייצבי שכמה",
+    "equipment": "גומיית התנגדות קלה (30–40 ק\"ג)",
+    "unlockTiming": "שבוע 1 (חימום W4; אביזר שבוע-כן-שבוע-לא עם TRX Y-T-W)",
+    "unlockPrereq": "זמין תמיד",
+    "setsReps": "3 סטים × 15–20 חזרות",
+    "tempo": "1 שניה כיווץ שיא בשכמות (1s squeeze at full retraction)",
+    "rest": "45 שניות",
+    "cues": "אחיזה ברוחב כתפיים, זרועות ישרות בגובה החזה. משיכת הגומייה לצדדים עד שהיא נוגעת בעצם החזה, תוך סחיטה מלאה של השכמות לאחור.",
+    "img": "images/exercises/BAND PULL-APART.png",
+    "gif": "images/gifs/Band Pull-Apart.gif"
+  },
+  {
+    "id": "push-up-bars",
+    "nameEn": "Push-up Bars Progression",
+    "nameHe": "שכיבות סמיכה בידיות ייעודיות (ניטרול עומס שורש כף יד)",
+    "dayNum": 3,
+    "dayName": "יום 3 (דחיקה ועליון)",
+    "category": "חזה, דלתואיד קדמי ויד אחורית",
+    "equipment": "ידיות שכיבות סמיכה (Push-up Bars / Parallettes)",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית)",
+    "unlockPrereq": "הבסיס האורתופדי לכל שרשרת הדחיקה",
+    "setsReps": "3 סטים × 8–15 חזרות",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "75–90 שניות",
+    "cues": "אחיזה ניטרלית בידיות המנטרלת לחלוטין דחיסה וכיפוף מוגזם בשורש כף היד. מרפקים בזווית 45 מעלות לגוף, ירידה עד עומק מלא ונעילת שכמות בדחיפה.",
+    "img": "images/exercises/PUSH-UP BARS PROGRESSION.png",
+    "gif": "images/gifs/Push-up Bars Progression.gif"
+  },
+  {
+    "id": "deficit-push-up",
+    "nameEn": "Deficit Push-Up",
+    "nameHe": "שכיבות סמיכה בגרעון (Deficit Push-Up)",
+    "dayNum": 3,
+    "dayName": "יום 3 (דחיקה ועליון)",
+    "category": "חזה בטווח תנועה מוגדל",
+    "equipment": "ידיות שכיבות סמיכה מוגבהות / מקבילי עץ",
+    "unlockTiming": "שבוע 10+ (שדרוג משכיבות סמיכה רגילות)",
+    "unlockPrereq": "השלמת 12–15 חזרות רצופות בשכיבות סמיכה בידיות",
+    "setsReps": "3 סטים × 8–15 חזרות",
+    "tempo": "2 שניות ירידה עמוקה (2-0-1)",
+    "rest": "75–90 שניות",
+    "cues": "ההגבהה מאפשרת לחזה לרדת נמוך יותר ממישור כפות הידיים. מתיחה אקסצנטרית עמוקה של שרירי החזה תוך יציבות מושלמת של הכתפיים.",
+    "img": "images/exercises/DEFICIT PUSH-UP.png",
+    "gif": "images/gifs/Deficit Push-Up.gif"
+  },
+  {
+    "id": "feet-elevated-push-up",
+    "nameEn": "Feet-Elevated Push-Up",
+    "nameHe": "שכיבות סמיכה עם רגליים מוגבהות (חזה עליון)",
+    "dayNum": 3,
+    "dayName": "יום 3 (דחיקה ועליון)",
+    "category": "חזה עליון ודלתואיד קדמי",
+    "equipment": "ספסל / מדרגה להגבהת רגליים + ידיות שכיבות סמיכה",
+    "unlockTiming": "שבוע 18+ (שדרוג מ-Deficit Push-Up)",
+    "unlockPrereq": "השלמת 12 חזרות ב-Deficit Push-Up",
+    "setsReps": "3 סטים × 8–12 חזרות",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "75–90 שניות",
+    "cues": "רגליים מורמות על מדרגה או ספסל, גוף בקו ישר לחלוטין ללא שקיעת אגן. העברת מרכז הכובד לפלג הגוף העליון והחזה העליון.",
+    "img": "images/exercises/FEET-ELEVATED PUSH-UP.png",
+    "gif": "images/gifs/Feet-Elevated Push-Up.gif"
+  },
+  {
+    "id": "weighted-deficit-push-up",
+    "nameEn": "Weighted Deficit Push-Up",
+    "nameHe": "שכיבות סמיכה בגרעון עם ווסט משקל 5 ק\"ג",
+    "dayNum": 3,
+    "dayName": "יום 3 (דחיקה ועליון)",
+    "category": "דחיקה מתקדמת בהעמסת משקל",
+    "equipment": "ווסט משקל ייעודי 5 ק\"ג + ידיות שכיבות סמיכה",
+    "unlockTiming": "שבוע 62+",
+    "unlockPrereq": "השלמת 12 חזרות ב-Feet-Elevated Push-Up",
+    "setsReps": "3 סטים × 6–12 חזרות",
+    "tempo": "2 שניות ירידה, 1 שניה עלייה מתפרצת",
+    "rest": "90 שניות",
+    "cues": "ווסט משקל צמוד לגו. שמירה על גו נעול וטווח תנועה עמוק ללא הקשתה בגב התחתון.",
+    "img": "images/exercises/WEIGHTED DEFICIT PUSH-UP.png",
+    "gif": "images/gifs/Weighted Deficit Push-Up.gif"
+  },
+  {
+    "id": "diamond-push-up",
+    "nameEn": "Diamond Push-Up / Incline Diamond",
+    "nameHe": "שכיבות סמיכה יהלום (מיקוד תלת-ראשי וחזה פנימי)",
+    "dayNum": 3,
+    "dayName": "יום 3 (נתיב יד אחורית)",
+    "category": "תלת-ראשי (Triceps) וחזה",
+    "equipment": "משקל גוף / משטח מוגבה",
+    "unlockTiming": "שלב מתקדם בפרוגרשן דחיקה",
+    "unlockPrereq": "שליטה בשכיבות סמיכה רגילות",
+    "setsReps": "2 סטים × 10–15 חזרות",
+    "tempo": "2 שניות ירידה מבוקרת",
+    "rest": "45 שניות",
+    "cues": "אגודלים ואצבעות מורות נוגעים ליצירת צורת יהלום. מרפקים צמודים לגוף ליצירת עומס מקסימלי על שריר היד האחורית (Triceps Brachii).",
+    "img": "images/exercises/DIAMOND PUSH-UP.png",
+    "gif": "images/gifs/Diamond Push-Up.gif"
+  },
+  {
+    "id": "push-up-volume-d5",
+    "nameEn": "Push-Up Volume (Day 5)",
+    "nameHe": "נפח שכיבות סמיכה מסייע (ביום 5)",
+    "dayNum": 5,
+    "dayName": "יום 5 (נפח שבועי תומך)",
+    "category": "נפח דחיקה משני",
+    "equipment": "ידיות שכיבות סמיכה",
+    "unlockTiming": "שבוע 5+ (ביום 5 בסיום האימון)",
+    "unlockPrereq": "שבוע 5 (סיום Phase 0)",
+    "setsReps": "2–3 סטים × 10–15 חזרות",
+    "tempo": "קצב שוטף ונשלט",
+    "rest": "60 שניות",
+    "cues": "שמירה על גירוי תדירות דחיקה שבועי גבוה (Frequency Dosing) ללא עומס מפרקי מוגזם.",
+    "img": "images/exercises/PUSH-UP.png",
+    "gif": "images/gifs/Push-Up Volume (Day 5).gif"
+  },
+  {
+    "id": "single-arm-floor-press",
+    "nameEn": "Single-Arm Floor Press",
+    "nameHe": "לחיצת חזה על הרצפה ביד אחת (Single-Arm Floor Press)",
+    "dayNum": 3,
+    "dayName": "יום 3 (דחיקה ועליון)",
+    "category": "חזה, יד אחורית והגנת כתף",
+    "equipment": "משקולת יד (Dumbbell) + מזרן",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית — תרגיל ראשי #2)",
+    "unlockPrereq": "התרגיל המרכזי לפיתוח כוח חזה בטוח",
+    "setsReps": "3 סטים × 6–12 חזרות לכל צד",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "75–105 שניות",
+    "cues": "שכיבה על הגב, רגליים כפופות. הרצפה בולמת פיזית את המרפק ב-90 מעלות, מונעת מתיחת יתר של הקפסולה הקדמית בכתף ומגנה על ה-Rotator Cuff. חימום ספציפי מעל 14 ק\"ג.",
+    "img": "images/exercises/SINGLE-ARM FLOOR PRESS.png",
+    "gif": "images/gifs/Single-Arm Floor Press.gif"
+  },
+  {
+    "id": "single-arm-seated-ohp",
+    "nameEn": "Single-Arm Seated OHP (Scaption Plane)",
+    "nameHe": "לחיצת כתפיים בישיבה ביד אחת (DB OHP במישור השכמה)",
+    "dayNum": 3,
+    "dayName": "יום 3 (דחיקה ועליון)",
+    "category": "כתפיים (דלתואיד קדמי ואמצעי)",
+    "equipment": "משקולת יד + ספסל עם משענת זקופה",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית — תרגיל ראשי #1)",
+    "unlockPrereq": "שבוע 1; חימום ספציפי מעל 14 ק\"ג",
+    "setsReps": "3 סטים × 6–12 חזרות לכל צד",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "60–90 שניות",
+    "cues": "ישיבה זקופה, מרפק בזווית 45 מעלות קדימה (מישור השכמה — Scaption Plane) ולא לצדדים! מונע צביטה תת-אקרומיאלית ומבטל פיתול מותני.",
+    "img": "images/exercises/SINGLE-ARM SEATED OHP.png",
+    "gif": "images/gifs/Single-Arm Seated OHP.gif"
+  },
+  {
+    "id": "pike-hold",
+    "nameEn": "Pike Hold",
+    "nameHe": "פייק הולד סטטי (Pike Hold — הכנה לעמידת ידיים)",
+    "dayNum": 3,
+    "dayName": "יום 3 (פרוגרשן כתפיים ועמידות ידיים)",
+    "category": "כתפיים, שכמות ועומס אנכי",
+    "equipment": "משקל גוף / מזרן",
+    "unlockTiming": "שבועות 1–8 (שלב 1 בפרוגרשן פייק)",
+    "unlockPrereq": "שלב בסיס",
+    "setsReps": "2 סטים × 15–30 שניות החזקה",
+    "tempo": "החזקה סטטית עם דחיפה חזקה של השכמות",
+    "rest": "60–75 שניות",
+    "cues": "אגן מורם למעלה בצורת V הפוך, זרועות נעולות ישרות, דחיפה דרך כפות הידיים והשכמות מעלה (Scapular Elevation). ראש עובר בין הזרועות.",
+    "img": "images/exercises/PIKE HOLD.png",
+    "gif": "images/gifs/Pike Hold.gif"
+  },
+  {
+    "id": "feet-elevated-pike-hold",
+    "nameEn": "Feet-Elevated Pike Hold",
+    "nameHe": "פייק הולד עם רגליים מוגבהות",
+    "dayNum": 3,
+    "dayName": "יום 3 (פרוגרשן פייק)",
+    "category": "כתפיים ועומס אנכי מתקדם",
+    "equipment": "קופסה / ספסל להגבהת רגליים",
+    "unlockTiming": "שבוע 5+",
+    "unlockPrereq": "השלמת 30 שניות החזקה ב-Pike Hold",
+    "setsReps": "2 סטים × 20–30 שניות החזקה",
+    "tempo": "החזקה איזומטרית סטטית",
+    "rest": "75 שניות",
+    "cues": "רגליים על ספסל/קופסה, אגן מעל קו הכתפיים בזווית אנכית כמעט מלאה. דחיפה עוצמתית דרך השכמות.",
+    "img": "images/exercises/FEET-ELEVATED PIKE HOLD.png",
+    "gif": "images/gifs/Feet-Elevated Pike Hold.gif"
+  },
+  {
+    "id": "pike-push-up",
+    "nameEn": "Pike Push-Up",
+    "nameHe": "שכיבות סמיכה בפייק (Pike Push-Up)",
+    "dayNum": 3,
+    "dayName": "יום 3 (פרוגרשן פייק)",
+    "category": "כוח דחיקה אנכי לכתפיים",
+    "equipment": "משקל גוף + מזרן / ידיות",
+    "unlockTiming": "שבוע 9+",
+    "unlockPrereq": "השלמת Feet-Elevated Pike Hold",
+    "setsReps": "2 סטים × 6–10 חזרות",
+    "tempo": "2 שניות ירידה קדימה (תנועת חצובה/טריפוד)",
+    "rest": "75–90 שניות",
+    "cues": "הראש יורד קדימה בין כפות הידיים ליצירת משולש שווה-צלעות (Tripod head position). דחיפה חזרה ואחורה למעלה.",
+    "img": "images/exercises/PIKE PUSH-UP.png",
+    "gif": "images/gifs/Pike Push-up.gif"
+  },
+  {
+    "id": "elevated-pike-push-up",
+    "nameEn": "Elevated Pike Push-Up",
+    "nameHe": "שכיבות סמיכה בפייק עם רגליים מוגבהות",
+    "dayNum": 3,
+    "dayName": "יום 3 (פרוגרשן פייק)",
+    "category": "כוח כתפיים עליון שיא",
+    "equipment": "ספסל / מדרגה להגבהת רגליים",
+    "unlockTiming": "שבוע 41+",
+    "unlockPrereq": "שליטה בעמידת ידיים מול קיר 45 שניות",
+    "setsReps": "2 סטים × 6–10 חזרות",
+    "tempo": "2 שניות ירידה, דחיפה עוצמתית",
+    "rest": "90 שניות",
+    "cues": "רגליים מורמות, גו אנכי לחלוטין. תרגיל הדחיקה האנכי המתקדם ביותר לפני Handstand Push-up מלא.",
+    "img": "images/exercises/ELEVATED PIKE PUSH-UP.png",
+    "gif": "images/gifs/Elevated Pike Push-Up.gif"
+  },
+  {
+    "id": "wall-walk-partial",
+    "nameEn": "Wall Walk (Partial)",
+    "nameHe": "הליכת קיר חלקית (Wall Walk — זווית 45°)",
+    "dayNum": 3,
+    "dayName": "יום 3 (פרוגרשן עמידות ידיים)",
+    "category": "כתפיים, ליבה ועמידות ידיים",
+    "equipment": "קיר חלק",
+    "unlockTiming": "שבוע 10+",
+    "unlockPrereq": "השלמת 10 חזרות ב-Pike Push-Up",
+    "setsReps": "2 סטים × 3–6 חזרות",
+    "tempo": "תנועה צעד-אחר-צעד בשליטה מוחלטת",
+    "rest": "75 שניות",
+    "cues": "טיפוס עם כפות הרגליים במעלה הקיר עד זווית של כ-45 מעלות. גו ישר, בטן נעולה (Hollow Body) ללא שום שקיעת גב תחתון.",
+    "img": "images/exercises/WALL WALK (PARTIAL).png",
+    "gif": "images/gifs/Wall Walk (Partial).gif"
+  },
+  {
+    "id": "wall-walk-full",
+    "nameEn": "Wall Walk (Full)",
+    "nameHe": "הליכת קיר מלאה (Wall Walk — עד מגע אף בקיר)",
+    "dayNum": 3,
+    "dayName": "יום 3 (פרוגרשן עמידות ידיים)",
+    "category": "כתפיים ועמידת ידיים אנכית",
+    "equipment": "קיר חלק",
+    "unlockTiming": "שבוע 18+",
+    "unlockPrereq": "השלמת 6 חזרות ב-Wall Walk Partial",
+    "setsReps": "2 סטים × 3–6 חזרות",
+    "tempo": "טיפוס מבוקר וירידה איטית",
+    "rest": "90 שניות",
+    "cues": "טיפוס מלא עד שהידיים מגיעות למרחק של כ-15–20 ס\"מ מהקיר, חזה ואף נוגעים קלות בקיר. דחיפה מרבית של השכמות מעלה.",
+    "img": "images/exercises/WALL WALK (FULL).png",
+    "gif": "images/gifs/Wall Walk (Full).gif"
+  },
+  {
+    "id": "wall-handstand",
+    "nameEn": "Wall Handstand",
+    "nameHe": "עמידת ידיים סטטית מול קיר (Wall Handstand)",
+    "dayNum": 3,
+    "dayName": "יום 3 (פרוגרשן עמידות ידיים)",
+    "category": "איזומטריה וייצוב כתפיים אנכי",
+    "equipment": "קיר חלק",
+    "unlockTiming": "שבוע 26+",
+    "unlockPrereq": "השלמת 6 חזרות מלאות ב-Wall Walk Full",
+    "setsReps": "2 סטים × 20–45 שניות החזקה",
+    "tempo": "החזקה סטטית מושלמת",
+    "rest": "90 שניות",
+    "cues": "גו ישר לחלוטין (קו אנכי מקרסול עד פרק כף יד). ליבה נעולה, שכמות דוחפות מעלה לתקרה.",
+    "img": "images/exercises/WALL HANDSTAND.png",
+    "gif": "images/gifs/Wall Handstand.gif"
+  },
+  {
+    "id": "band-assisted-chinup",
+    "nameEn": "Band-Assisted Chin-Up",
+    "nameHe": "מתח בסופינציה עם גומייה 30 ק\"ג (אנטגוניסט לדחיקה)",
+    "dayNum": 3,
+    "dayName": "יום 3 (תרגיל משיכה אנטגוניסטי)",
+    "category": "משיכה אנכית, רחב-גבי ובייספס",
+    "equipment": "מוט מתח/טבעות + גומיית 30 ק\"ג + שרפרף",
+    "unlockTiming": "שבועות 1–8 (תרגיל ראשי #3 ביום 3)",
+    "unlockPrereq": "פתיחת התוכנית; שלב חובה לשמירה על איזון שרירי",
+    "setsReps": "2 סטים × 4–8 חזרות",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "75–105 שניות",
+    "cues": "דריכה עם כף רגל מלאה בלולאת גומייה מתוך שרפרף לקבלת סיוע מלא של 30 ק\"ג. אחיזת סופינציה (כפות ידיים פונות אליך), משיכה עד מעבר הסנטר מעל המוט.",
+    "img": "images/exercises/BAND-ASSISTED CHIN-UP.png",
+    "gif": "images/gifs/Band-Assisted Chin-Up.gif"
+  },
+  {
+    "id": "chinup-bw",
+    "nameEn": "Chin-Up (Bodyweight)",
+    "nameHe": "מתח בסופינציה במשקל גוף מלא",
+    "dayNum": 3,
+    "dayName": "יום 3 (משיכה אנטגוניסטית)",
+    "category": "משיכה אנכית ובייספס",
+    "equipment": "מוט מתח / טבעות התעמלות",
+    "unlockTiming": "שבוע 9+ (שדרוג מ-Band-Assisted)",
+    "unlockPrereq": "השלמת 6 חזרות רצופות ב-Band-Assisted Chin-Up",
+    "setsReps": "2–3 סטים × 4–8 חזרות",
+    "tempo": "2 שניות ירידה מלאה לזרועות ישרות (2-0-1)",
+    "rest": "90 שניות",
+    "cues": "ללא שום תנופה (אפס קיפינג). משיכה חלקה מחזה לשכמות, סנטר עובר את המוט, ירידה איטית עד פשיטה מלאה במרפק.",
+    "img": "images/exercises/CHIN-UP.png",
+    "gif": "images/gifs/Chin-Up.gif"
+  },
+  {
+    "id": "weighted-chinup",
+    "nameEn": "Weighted Chin-Up (Vest 5kg)",
+    "nameHe": "מתח בסופינציה עם ווסט משקל 5 ק\"ג",
+    "dayNum": 3,
+    "dayName": "יום 3 (משיכה אנטגוניסטית מתקדמת)",
+    "category": "משיכה אנכית בהעמסה מתקדמת",
+    "equipment": "ווסט משקל 5 ק\"ג + מוט מתח/טבעות",
+    "unlockTiming": "שבוע 66+",
+    "unlockPrereq": "השלמת 8 חזרות נקיות במשקל גוף מלא",
+    "setsReps": "3 סטים × 4–8 חזרות",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "120 שניות",
+    "cues": "ווסט משקל מהודק לגוף, שמירה על טווח תנועה שלם ועצירה יציבה בתחתית ללא טלטול.",
+    "img": "images/exercises/WEIGHTED CHIN-UP.png",
+    "gif": "images/gifs/Weighted Chin-Up.gif"
+  },
+  {
+    "id": "trx-row-angle1",
+    "nameEn": "TRX Row (Angle 1 — 75° Gentle)",
+    "nameHe": "חתירת TRX — זווית 75° (מתונה / ~35% משקל גוף)",
+    "dayNum": 3,
+    "dayName": "יום 3 (משיכה אופקית)",
+    "category": "משיכה אופקית וקירוב שכמות",
+    "equipment": "רצועות TRX מחוברות לעוגן יציב",
+    "unlockTiming": "שבועות 1–17",
+    "unlockPrereq": "פתיחת התוכנית",
+    "setsReps": "2–3 סטים × 8–12 חזרות",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "75 שניות",
+    "cues": "כפות רגליים צעד אחד לאחור מנקודת העיגון (זווית 75° מתונה). משיכת החזה לידיות בהובלת המרפקים, כיווץ שכמות חזק בסוף התנועה.",
+    "img": "images/exercises/TRX ROW.png",
+    "gif": "images/gifs/TRX Row.gif"
+  },
+  {
+    "id": "trx-row-angle2",
+    "nameEn": "TRX Row (Angle 2 — 45° Moderate)",
+    "nameHe": "חתירת TRX — זווית 45° (בינונית / ~50% משקל גוף)",
+    "dayNum": 3,
+    "dayName": "יום 3 (משיכה אופקית)",
+    "category": "משיכה אופקית ושכמות",
+    "equipment": "רצועות TRX",
+    "unlockTiming": "שבועות 18–41",
+    "unlockPrereq": "השלמת שבועות 1–17 בזווית 75°",
+    "setsReps": "3 סטים × 8–12 חזרות",
+    "tempo": "2 שניות ירידה, 1 שניה כיווץ",
+    "rest": "75 שניות",
+    "cues": "כפות הרגליים מתקדמות קדימה לקו זווית של 45 מעלות. גו ישר כקרש, משיכה חלקה ללא שבירת אגן.",
+    "img": "images/exercises/TRX ROW.png",
+    "gif": "images/gifs/TRX Row.gif"
+  },
+  {
+    "id": "trx-row-angle3",
+    "nameEn": "TRX Row (Angle 3 — 30°–35° Steep)",
+    "nameHe": "חתירת TRX — זווית 35° (עמוקה / ~70% משקל גוף)",
+    "dayNum": 3,
+    "dayName": "יום 3 (משיכה אופקית)",
+    "category": "משיכה אופקית מתקדמת",
+    "equipment": "רצועות TRX",
+    "unlockTiming": "שבועות 42–59",
+    "unlockPrereq": "שליטה מלאה בזווית 45°",
+    "setsReps": "3 סטים × 8–12 חזרות",
+    "tempo": "2 שניות ירידה, 1 שניה עצירה בכיווץ",
+    "rest": "75–90 שניות",
+    "cues": "שיפוע עמוק וחד, משיכה כנגד רוב משקל הגוף תוך ייצוב ליבה מוחלט.",
+    "img": "images/exercises/TRX ROW (ANGLE 3).png",
+    "gif": "images/gifs/TRX Row (Angle 3).gif"
+  },
+  {
+    "id": "trx-row-elevated",
+    "nameEn": "TRX Row (Feet-Elevated / Horizontal 180°)",
+    "nameHe": "חתירת TRX עם רגליים מוגבהות (אופקי מלא 180°)",
+    "dayNum": 3,
+    "dayName": "יום 3 (משיכה אופקית שיא)",
+    "category": "משיכה אופקית בשיא עומס משקל גוף",
+    "equipment": "רצועות TRX + קופסה/ספסל להגבהת רגליים",
+    "unlockTiming": "שבוע 60+",
+    "unlockPrereq": "השלמת שבועות 42–59 בזווית 35°",
+    "setsReps": "3 סטים × 8–12 חזרות",
+    "tempo": "2 שניות ירידה, עצירה קלה, משיכה מתפרצת לחזה",
+    "rest": "90 שניות",
+    "cues": "גוף אופקי לחלוטין לקרקע (180°), רגליים מורמות על ספסל. משיכה עוצמתית של החזה לידיות כנגד 100% משקל הגוף התלוי באוויר.",
+    "img": "images/exercises/TRX ROW (FEET-ELEVATED).png",
+    "gif": "images/gifs/TRX Row (Feet-Elevated).gif"
+  },
+  {
+    "id": "db-overhead-triceps",
+    "nameEn": "DB Overhead Triceps Extension",
+    "nameHe": "פשיטת מרפקים מעל הראש עם משקולת (Triceps Long Head)",
+    "dayNum": 3,
+    "dayName": "יום 3 (יד אחורית)",
+    "category": "יד אחורית (הראש הארוך במתיחה)",
+    "equipment": "משקולת יד (Dumbbell) בישיבה",
+    "unlockTiming": "שבוע 5+ (בלוק זרועות יום 3)",
+    "unlockPrereq": "השלמת 10 חזרות בשכיבות סמיכה",
+    "setsReps": "3 סטים × 10–15 חזרות",
+    "tempo": "2-1-2 (2 שניות ירידה מאחורי הראש, 1 שניה מתיחה במצב מוארך, 2 שניות פשיטה)",
+    "rest": "45 שניות",
+    "cues": "ישיבה זקופה, מרפקים אסופים קדימה (ללא פתיחה לצדדים). ירידה איטית לעומק המתיחה מאחורי העורף לפיתוח מקסימלי של הראש הארוך של היד האחורית.",
+    "img": "images/exercises/DB OH TRICEPS EXT.png",
+    "gif": "images/gifs/DB Overhead Triceps Extension.gif"
+  },
+  {
+    "id": "single-arm-lateral-raise",
+    "nameEn": "Single-Arm Lateral Raise (Lengthened-Position)",
+    "nameHe": "הרחקה לצדדים ביד אחת (דלתואיד אמצעי בטווח מוארך)",
+    "dayNum": 3,
+    "dayName": "יום 3 (כתפיים)",
+    "category": "דלתואיד אמצעי (כתפיים רחבות)",
+    "equipment": "משקולת יד קלה (6–12 ק\"ג)",
+    "unlockTiming": "שבוע 5+ (שבועות 1–4 נשענו על לחיצות OHP)",
+    "unlockPrereq": "שבוע 5 (סיום Phase 0)",
+    "setsReps": "2–3 סטים × 10–18 חזרות לכל צד",
+    "tempo": "2-1-2 (2 שניות עלייה, 1 שניה עצירה בגובה כתף, 2 שניות ירידה)",
+    "rest": "60–75 שניות",
+    "cues": "נטייה קלה קדימה של הגו (15 מעלות). הרמה של המשקולת במישור השכמה עד לגובה הכתף בלבד. ללא שום תנופת גב או עזרה של הטרפזים.",
+    "img": "images/exercises/SINGLE-ARM LATERAL RAISE.png",
+    "gif": "images/gifs/DB Lateral Raise.gif"
+  },
+  {
+    "id": "arm-block-triceps",
+    "nameEn": "Arm Block - DB Overhead Triceps Ext",
+    "nameHe": "בלוק זרועות — פשיטת תלת-ראשי מעל הראש",
+    "dayNum": 3,
+    "dayName": "יום 3 (בלוק זרועות ייעודי)",
+    "category": "היפרטרופיה ליד אחורית",
+    "equipment": "משקולת יד",
+    "unlockTiming": "שבוע 6+ (שילוב כחלק מבלוק זרועות שבועי)",
+    "unlockPrereq": "השלמת 12 חזרות בפשיטה רגילה",
+    "setsReps": "3 סטים × 10–15 חזרות",
+    "tempo": "2-1-2 מבוקר",
+    "rest": "45 שניות",
+    "cues": "החזקה יציבה בשתי ידיים או יד אחת, דגש על מתיחה מלאה בתחתית התנועה.",
+    "img": "images/exercises/DB OH TRICEPS EXT.png",
+    "gif": "images/gifs/DB Overhead Triceps Extension.gif"
+  },
+  {
+    "id": "arm-block-lateral",
+    "nameEn": "Arm Block - Single-Arm Lateral Raise",
+    "nameHe": "בלוק זרועות — הרחקה לצדדים ביד אחת",
+    "dayNum": 3,
+    "dayName": "יום 3 (בלוק זרועות ייעודי)",
+    "category": "דלתואיד אמצעי",
+    "equipment": "משקולת יד",
+    "unlockTiming": "שבוע 6+ (שילוב כחלק מבלוק זרועות שבועי)",
+    "unlockPrereq": "השלמת 12 חזרות בהרחקה לצדדים",
+    "setsReps": "3 סטים × 10–18 חזרות",
+    "tempo": "2-1-2 מבוקר",
+    "rest": "60 שניות",
+    "cues": "בידוד מרבי ללא מומנטום גו, דגש על קו כתף נקי.",
+    "img": "images/exercises/ARM BLOCK - SINGLE-ARM LATERAL RAISE.png",
+    "gif": "images/gifs/Arm Block - DB Lateral Raise.gif"
+  },
+  {
+    "id": "trx-ytw",
+    "nameEn": "TRX Y-T-W",
+    "nameHe": "הרחקות כתף TRX Y-T-W (דלתואיד אחורי ורוטטור קאף)",
+    "dayNum": 3,
+    "dayName": "יום 3 (רוטציה שבוע-כן-שבוע-לא עם Band Pull-Apart)",
+    "category": "בריאות כתף ומייצבי שכמה",
+    "equipment": "רצועות TRX",
+    "unlockTiming": "שבוע 1 (שבועות אי-זוגיים)",
+    "unlockPrereq": "פתיחת התוכנית",
+    "setsReps": "2 סטים × 8–12 חזרות לכל אות (Y, T, W)",
+    "tempo": "1 שניה עצירה בשיא הפתיחה",
+    "rest": "45 שניות",
+    "cues": "פתיחה מדויקת לשלוש תצורות: Y למעלה, T לצדדים, ו-W במשיכת מרפקים ורוטציה חיצונית. מחזק את ה-Infraspinatus וה-Teres Minor.",
+    "img": "images/exercises/TRX Y-T-W.png",
+    "gif": "images/gifs/TRX Y-T-W.gif"
+  },
+  {
+    "id": "band-neck-flexion",
+    "nameEn": "Band Neck Flexion & Extension Protocol",
+    "nameHe": "פרוטוקול חיזוק צוואר בגומייה (4 כיוונים)",
+    "dayNum": 4,
+    "dayName": "יום 4 (התאוששות ובריאות צוואר)",
+    "category": "חיזוק צוואר עמוק ובריאות חוליות צוואריות",
+    "equipment": "גומיית התנגדות מתונה + עוגן",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית)",
+    "unlockPrereq": "זמין תמיד; קריטי למתאמני אומנויות לחימה",
+    "setsReps": "2 סטים × 15–20 חזרות לכל כיוון (פלקציה, אקסטנשן, ולטרל)",
+    "tempo": "תנועה איטית, מבוקרת ועדינה ביותר (2-1-2)",
+    "rest": "30 שניות",
+    "cues": "גומייה מתונה בלבד סביב המצח/עורף. תנועה קטנה, נשלטת ומדויקת המגנה על חוליות C1-C7 ומחזקת את השרירים העמוקים בצוואר.",
+    "img": "images/exercises/BAND NECK FLEXION.png",
+    "gif": "images/gifs/Band Neck Flexion & Extension.gif"
+  },
+  {
+    "id": "deep-mobility-protocol",
+    "nameEn": "Deep Mobility Protocol",
+    "nameHe": "פרוטוקול מוביליות עמוקה (Cat-Cow, 90/90, Thoracic, Couch, Sleeper, Prone YTW)",
+    "dayNum": 4,
+    "dayName": "יום 4 (התאוששות עמוקה)",
+    "category": "מוביליות מפרקים ודקומפרסיה",
+    "equipment": "מזרן יוגה",
+    "unlockTiming": "שבוע 3+ (20 דקות רצופות)",
+    "unlockPrereq": "שבוע 3",
+    "setsReps": "סבב מלא של 6 תרגילים (8–10 חזרות או 30–45 שנ' החזקה)",
+    "tempo": "נשימה סרעפתית רגועה ומתיחה הדרגתית",
+    "rest": "מעבר רציף",
+    "cues": "שחרור מפרקי ירך, סיבוב עמוד שדרה חזי, שחרור שרירי ה-Iliopsoas והגנה מוחלטת על הדיסק המותני L4-S1.",
+    "img": "images/exercises/DEEP MOBILITY PROTOCOL.png",
+    "gif": "images/gifs/Deep Mobility Protocol.gif"
+  },
+  {
+    "id": "micro-mobility-protocol",
+    "nameEn": "Micro Mobility Protocol",
+    "nameHe": "פרוטוקול מיקרו-מוביליות מהיר (Variant A & B)",
+    "dayNum": 4,
+    "dayName": "יום 1, 3, 5 (בסיום אימון)",
+    "category": "שחרור מהיר ממוקד מפרקים",
+    "equipment": "מזרן / משקוף דלת",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית)",
+    "unlockPrereq": "סגירת כל אימון כוח",
+    "setsReps": "2 תרגילים × 30 שניות לצד",
+    "tempo": "מתיחה סטטית מתונה",
+    "rest": "ללא מנוחה",
+    "cues": "Variant A (ימים 3 ו-5): מתיחת חזה במשקוף + World's Greatest Stretch. Variant B (ימים 1 ו-2): מתיחת כופפי ירך בכריעה + Deep Squat Hold.",
+    "img": "images/exercises/MICRO MOBILITY A.png",
+    "gif": "images/gifs/Deep Mobility Protocol.gif"
+  },
+  {
+    "id": "dead-hang",
+    "nameEn": "Dead Hang (Passive Decompression)",
+    "nameHe": "תלייה פסיבית על מוט מתח (דקומפרסיה לחוליות L4-S1)",
+    "dayNum": 4,
+    "dayName": "יום 4 / יום 5 (חימום ודקומפרסיה)",
+    "category": "דקומפרסיה מותנית ובריאות כתפיים",
+    "equipment": "מוט מתח / טבעות התעמלות",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית)",
+    "unlockPrereq": "זמין תמיד; חובה לשיקום עמוד שדרה",
+    "setsReps": "2–3 סטים × 30–45 שניות תלייה",
+    "tempo": "הרפיה מוחלטת של פלג הגוף התחתון",
+    "rest": "45–60 שניות",
+    "cues": "תלייה פסיבית לחלוטין. כוח הכובד פותח את המרווחים הבין-חולייתיים בעמוד השדרה ומאפשר ספיגת נוזלים בדיסק L4-S1, תוך פתיחת מפרקי הכתף.",
+    "img": "images/exercises/DEAD HANG.png",
+    "gif": "images/gifs/Dead Hang.gif"
+  },
+  {
+    "id": "wrist-rocks",
+    "nameEn": "Wrist Rocks",
+    "nameHe": "רוטציות וגמישות שורש כף יד (Wrist Rocks)",
+    "dayNum": 4,
+    "dayName": "יום 4 (בריאות מפרקים)",
+    "category": "מוביליות שורש כף יד וגידים",
+    "equipment": "מזרן",
+    "unlockTiming": "שבוע 53+ (בלוק מיומנות מתקדמת)",
+    "unlockPrereq": "שבוע 53",
+    "setsReps": "2 סטים × 10–12 חזרות לכל כיוון",
+    "tempo": "תנועה איטית ורכה",
+    "rest": "30 שניות",
+    "cues": "עמידת שש, העברת משקל מבוקרת קדימה ואחורה על שורשי כפות הידיים לחיזוק רצועות וגמישות גידים.",
+    "img": "images/exercises/WRIST ROCKS.png",
+    "gif": "images/gifs/Wrist Rocks.gif"
+  },
+  {
+    "id": "band-assisted-pullup",
+    "nameEn": "Band-Assisted Pull-Up",
+    "nameHe": "מתח באחיזה עילית עם גומייה 30 ק\"ג (Overhand Grip)",
+    "dayNum": 5,
+    "dayName": "יום 5 (משיכה, גב וידיים)",
+    "category": "משיכה אנכית ורחב-גבי (Latissimus Dorsi)",
+    "equipment": "מוט מתח/טבעות + גומיית 30 ק\"ג + שרפרף",
+    "unlockTiming": "שבועות 1–8 (תרגיל ראשי #1 ביום 5)",
+    "unlockPrereq": "פתיחת התוכנית",
+    "setsReps": "3 סטים × 4–8 חזרות",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "75–105 שניות",
+    "cues": "אחיזה עילית מעט רחבה מרוחב כתפיים. דריכה מלאה בלולאת הגומייה משרפרף. משיכה מובילת שכמות (Scapular Depression) עד שהסנטר עובר את המוט.",
+    "img": "images/exercises/BAND-ASSISTED PULL-UP.png",
+    "gif": "images/gifs/Band-Assisted Pull-Up.gif"
+  },
+  {
+    "id": "pullup-overhand",
+    "nameEn": "Pull-Up (Overhand Bodyweight)",
+    "nameHe": "מתח מלא באחיזה עילית במשקל גוף (ללא סיוע)",
+    "dayNum": 5,
+    "dayName": "יום 5 (משיכה אנכית)",
+    "category": "משיכה אנכית וכוח גב טהור",
+    "equipment": "מוט מתח / טבעות התעמלות",
+    "unlockTiming": "שבוע 9+ (שדרוג מ-Band-Assisted)",
+    "unlockPrereq": "השלמת 6 חזרות רצופות ב-Band-Assisted Pull-Up",
+    "setsReps": "3 סטים × 4–8 חזרות",
+    "tempo": "2 שניות ירידה מלאה לזרועות ישרות (2-0-1)",
+    "rest": "90–120 שניות",
+    "cues": "אחיזה יציבה, ירידה מבוקרת בכל חזרה לפשיטה שלמה של המרפקים, משיכה מתפרצת של החזה העליון אל המוט. אפס תנופה של הרגליים.",
+    "img": "images/exercises/PULL-UP (OVERHAND).png",
+    "gif": "images/gifs/Pull-Up (Overhand).gif"
+  },
+  {
+    "id": "weighted-pullup",
+    "nameEn": "Weighted Pull-Up (Vest 5kg)",
+    "nameHe": "מתח מלא באחיזה עילית עם ווסט משקל 5 ק\"ג",
+    "dayNum": 5,
+    "dayName": "יום 5 (משיכה אנכית מתקדמת)",
+    "category": "משיכה אנכית בהעמסה מתקדמת",
+    "equipment": "ווסט משקל 5 ק\"ג + מוט מתח/טבעות",
+    "unlockTiming": "שבוע 62+",
+    "unlockPrereq": "השלמת 8 חזרות נקיות במשקל גוף",
+    "setsReps": "3 סטים × 4–8 חזרות",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "120 שניות",
+    "cues": "ווסט משקל צמוד, שמירה על טווח תנועה מלא ללא קיפינג או נענוע גוף.",
+    "img": "images/exercises/WEIGHTED PULL-UP.png",
+    "gif": "images/gifs/Weighted Pull-Up.gif"
+  },
+  {
+    "id": "scapular-pullup",
+    "nameEn": "Scapular Pull-up",
+    "nameHe": "עליות מתח סקפולריות (Scapular Pull-up — הפעלת רחב-גבי)",
+    "dayNum": 5,
+    "dayName": "יום 5 (חימום W2)",
+    "category": "הפעלת שכמות ו-Lower Trapezius",
+    "equipment": "מוט מתח",
+    "unlockTiming": "שבוע 1 (חימום W2 יום 5)",
+    "unlockPrereq": "זמין תמיד",
+    "setsReps": "2 סטים × 8–10 חזרות",
+    "tempo": "1 שניה כיווץ שכמות למטה (1s hold at depression)",
+    "rest": "30 שניות",
+    "cues": "מרפקים נעולים ישרים לחלוטין. התנועה מבוצעת אך ורק דרך הורדת השכמות מטה (Scapular Depression) והרמת הגוף בכ-5–10 ס\"מ.",
+    "img": "images/exercises/SCAPULAR PULL-UP.png",
+    "gif": "images/gifs/Scapular Pull-up.gif"
+  },
+  {
+    "id": "seated-band-row",
+    "nameEn": "Seated Band Row",
+    "nameHe": "חתירה בישיבה עם גומייה (חימום משיכה אופקית)",
+    "dayNum": 5,
+    "dayName": "יום 5 (חימום W3)",
+    "category": "חימום גב ורחב-גבי",
+    "equipment": "גומיית התנגדות בישיבה",
+    "unlockTiming": "שבוע 1 (חימום W3 יום 5)",
+    "unlockPrereq": "זמין תמיד",
+    "setsReps": "2 סטים × 12–15 חזרות",
+    "tempo": "2 שניות חזרה מבוקרת",
+    "rest": "30 שניות",
+    "cues": "ישיבה זקופה, גומייה סביב כפות הרגליים, משיכה של הידיות לכיוון הטבור תוך כיווץ שכמות.",
+    "img": "images/exercises/SEATED BAND ROW.png",
+    "gif": "images/gifs/Seated Band Row.gif"
+  },
+  {
+    "id": "one-arm-db-row",
+    "nameEn": "One-Arm DB Row",
+    "nameHe": "חתירה עם משקולת ביד אחת (One-Arm DB Row)",
+    "dayNum": 5,
+    "dayName": "יום 5 (משיכה, גב וידיים)",
+    "category": "משיכה אופקית, רחב-גבי ורומבואידים",
+    "equipment": "משקולת יד (Dumbbell) + ספסל",
+    "unlockTiming": "שבוע 1 (מפתיחת התוכנית — תרגיל ראשי #2 ביום 5)",
+    "unlockPrereq": "תרגיל עוגן בסיס",
+    "setsReps": "3 סטים × 6–12 חזרות לכל צד",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "60–90 שניות",
+    "cues": "ברך ויד נשענות על ספסל לתמיכה מושלמת של עמוד השדרה. גב ישר מקביל לרצפה. משיכת המשקולת לכיוון המותן (ולא לחזה) לכיווץ מקסימלי של הרחב-גבי ללא סיבוב אגן.",
+    "img": "images/exercises/ONE-ARM DB ROW.png",
+    "gif": "images/gifs/One-Arm DB Row.gif"
+  },
+  {
+    "id": "trx-face-pull-1",
+    "nameEn": "TRX Face Pull (Angle 1 — 75° Gentle)",
+    "nameHe": "פייס-פול ב-TRX — זווית 75° (דלתואיד אחורי ורוטטור קאף)",
+    "dayNum": 5,
+    "dayName": "יום 5 (משיכה ושכמות)",
+    "category": "דלתואיד אחורי ובריאות רוטטור קאף",
+    "equipment": "רצועות TRX",
+    "unlockTiming": "שבועות 1–17",
+    "unlockPrereq": "פתיחת התוכנית",
+    "setsReps": "3 סטים × 12–15 חזרות",
+    "tempo": "1 שניה עצירה בכיווץ שיא (רוטציה חיצונית)",
+    "rest": "45–60 שניות",
+    "cues": "זווית מתונה של 75°. משיכת הידיות לכיוון המצח/רקות תוך הרמת מרפקים גבוהים וסיבוב חיצוני של כפות הידיים (W shape). מתקן יציבה כפופה.",
+    "img": "images/exercises/TRX FACE PULL (ANGLE 1).png",
+    "gif": "images/gifs/TRX Face Pull (Angle 1).gif"
+  },
+  {
+    "id": "trx-face-pull-2",
+    "nameEn": "TRX Face Pull (Angle 2 — 45° Moderate)",
+    "nameHe": "פייס-פול ב-TRX — זווית 45° (עומס בינוני)",
+    "dayNum": 5,
+    "dayName": "יום 5 (משיכה ושכמות)",
+    "category": "דלתואיד אחורי",
+    "equipment": "רצועות TRX",
+    "unlockTiming": "שבועות 18–41",
+    "unlockPrereq": "השלמת שבועות 1–17 בזווית 75°",
+    "setsReps": "3 סטים × 12–15 חזרות",
+    "tempo": "2 שניות ירידה, 1 שניה עצירה בכיווץ",
+    "rest": "60 שניות",
+    "cues": "שיפוע עמוק יותר של 45 מעלות. משיכה עוצמתית לכיוון העיניים עם סיבוב חיצוני מלא.",
+    "img": "images/exercises/TRX FACE PULL (ANGLE 2).png",
+    "gif": "images/gifs/TRX Face Pull (Angle 2).gif"
+  },
+  {
+    "id": "trx-face-pull-3",
+    "nameEn": "TRX Face Pull (Angle 3 — 30° Steep)",
+    "nameHe": "פייס-פול ב-TRX — זווית 30° (שיפוע חד ומתקדם)",
+    "dayNum": 5,
+    "dayName": "יום 5 (משיכה ושכמות)",
+    "category": "דלתואיד אחורי מתקדם",
+    "equipment": "רצועות TRX",
+    "unlockTiming": "שבוע 42+",
+    "unlockPrereq": "שליטה בזווית 45°",
+    "setsReps": "3 סטים × 12–15 חזרות",
+    "tempo": "2 שניות ירידה, 1 שניה כיווץ שיא",
+    "rest": "60–75 שניות",
+    "cues": "שיפוע חד של 30 מעלות ליצירת כוח עילאי בשכמות ובחגורת הכתפיים האחורית.",
+    "img": "images/exercises/TRX FACE PULL (ANGLE 3).png",
+    "gif": "images/gifs/TRX Face Pull (Angle 3).gif"
+  },
+  {
+    "id": "single-arm-curl",
+    "nameEn": "Single-Arm Curl (Dumbbell Biceps Curl)",
+    "nameHe": "כפיפת מרפק ביד אחת עם משקולת (בידוד דו-ראשי)",
+    "dayNum": 5,
+    "dayName": "יום 5 (בייספס וזרועות)",
+    "category": "דו-ראשי (Biceps Brachii)",
+    "equipment": "משקולת יד (Dumbbell 6–16 ק\"ג)",
+    "unlockTiming": "שבוע 1 (משקל פתיחה 6 ק\"ג)",
+    "unlockPrereq": "פתיחת התוכנית",
+    "setsReps": "3 סטים × 8–12 חזרות לכל צד",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "60 שניות",
+    "cues": "עמידה יציבה, מרפק צמוד למותן וללא תזוזה קדימה או אחורה. סופינציה מלאה של שורש כף היד בעלייה וכיווץ שיא של הבייספס ללא נדנוד גו.",
+    "img": "images/exercises/SINGLE-ARM CURL.png",
+    "gif": "images/gifs/Single-Arm Curl.gif"
+  },
+  {
+    "id": "single-arm-hammer-curl",
+    "nameEn": "Single-Arm Hammer Curl (Brachialis & Forearms)",
+    "nameHe": "כפיפת פטיש ביד אחת (ברכיאליס ואמות)",
+    "dayNum": 5,
+    "dayName": "יום 5 (בייספס ואמות)",
+    "category": "ברכיאליס ואמות (אחיזה ניטרלית)",
+    "equipment": "משקולת יד (Dumbbell)",
+    "unlockTiming": "שבוע 5+ (בלוק זרועות יום 5)",
+    "unlockPrereq": "השלמת 12 חזרות ב-Single-Arm Curl",
+    "setsReps": "3 סטים × 8–12 חזרות לכל צד",
+    "tempo": "2 שניות ירידה מבוקרת (2-0-1)",
+    "rest": "60 שניות",
+    "cues": "אחיזה ניטרלית (כף היד פונה פנימה כפטיש לכל אורך התנועה). מבודד את שריר ה-Brachialis שמעניק עובי ורוחב לזרוע ומחזק את ה-Brachioradialis באמה.",
+    "img": "images/exercises/SINGLE-ARM HAMMER CURL.png",
+    "gif": "images/gifs/DB Hammer Curl.gif"
+  },
+  {
+    "id": "arm-block-biceps",
+    "nameEn": "Arm Block - Single-Arm Curl",
+    "nameHe": "בלוק זרועות — כפיפת מרפק מבודדת ביד אחת",
+    "dayNum": 5,
+    "dayName": "יום 5 (בלוק זרועות ייעודי)",
+    "category": "היפרטרופיה לבייספס",
+    "equipment": "משקולת יד",
+    "unlockTiming": "שבוע 3+ (נפח זרועות שבועי מרוכז)",
+    "unlockPrereq": "השלמת 12 חזרות בבייספס",
+    "setsReps": "3 סטים × 8–12 חזרות",
+    "tempo": "2 שניות ירידה, כיווץ שיא מעלה",
+    "rest": "45 שניות",
+    "cues": "בידוד נקי של כל זרוע בנפרד למניעת חוסר איזון בין הצדדים.",
+    "img": "images/exercises/SINGLE-ARM CURL.png",
+    "gif": "images/gifs/Single-Arm Curl.gif"
+  },
+  {
+    "id": "towel-hang",
+    "nameEn": "Towel Hang (Grip Strength & Lumbar Decompression)",
+    "nameHe": "תלייה על מגבת כפולה (כוח אחיזה ואמות עוצמתי)",
+    "dayNum": 5,
+    "dayName": "יום 5 (זוג עוגן עם L-Sit)",
+    "category": "כוח אחיזה, אמות ודקומפרסיה",
+    "equipment": "שתי מגבות מגולגלות תלויות על מוט מתח",
+    "unlockTiming": "שבוע 5+ (זוג עוגן עם L-Sit ביום 5)",
+    "unlockPrereq": "שבוע 5 (סיום Phase 0)",
+    "setsReps": "2 סטים × 20–35 שניות החזקה (עד 45 שניות)",
+    "tempo": "אחיזה איזומטרית עוצמתית ללא הרפיה",
+    "rest": "45 שניות בתוך הזוג, 90 שניות בין סטים",
+    "cues": "שתי מגבות מגולגלות על מוט המתח. אחיזה חזקה בבד, תלייה מלאה המפתחת כוח אחיזה מוחץ של האמות תוך כדי דקומפרסיה של חוליות L4-S1.",
+    "img": "images/exercises/TOWEL HANG.png",
+    "gif": "images/gifs/Towel Hang.gif"
   },
   {
     "id": "foot-supported-lsit",
-    "nameEn": "Foot-Supported L-Sit",
+    "nameEn": "Foot-Supported L-Sit (Parallettes)",
     "nameHe": "אל-סיט עם תמיכת עקבים קלה (להגנת דיסק L4-S1)",
-    "category": "Core & Compression",
-    "day": "יום 5 (משיכה, גב ובייספס)",
     "dayNum": 5,
-    "unlockTiming": "שבועות 5–8 (יום 5, זוג 2 עם Towel Hang)",
+    "dayName": "יום 5 (זוג עוגן עם Towel Hang)",
+    "category": "ליבה דחיסתית (Core Compression) ושכמות",
+    "equipment": "מקבילי עץ (Parallettes) על מזרן",
+    "unlockTiming": "שבועות 5–8 (יום 5, זוג עוגן עם Towel Hang)",
     "unlockPrereq": "שבוע 5 (סיום Phase 0). בשבוע 9 משתדרג ל-Tuck L-Sit מלא באוויר",
     "setsReps": "2 סטים × 10–15 שניות החזקה סטטית",
     "tempo": "החזקה איזומטרית סטטית רציפה",
     "rest": "45 שניות בתוך הזוג, 90 שניות בין סטים",
-    "beforeImg": "images/comparison_before/FOOT-SUPPORTED L-SIT.png",
-    "beforeGif": "images/comparison_before/Foot-Supported L-Sit.gif",
-    "afterImg": "images/exercises/FOOT-SUPPORTED L-SIT.png",
-    "afterGif": "images/gifs/Foot-Supported L-Sit.gif",
-    "beforeFlaw": "בסרטון הקודם לא היו מקבילים (המתאמן ישב על הרצפה או על כיסא רגיל).",
-    "afterFix": "הדגמה מקצועית ומדויקת על מקבילי עץ (Parallettes): זרועות נעולות ישרות, שכמות דחוסות חזק מטה (Scapular Depression), אגן וירכיים מורמים באוויר, ועקבים נשענים קלות על המזרן.",
-    "biomechanicalCues": "תמיכת העקבים מפחיתה ב-60% את מנוף ה-Iliopsoas על הגב התחתון, שומרת על מרווח L4-S1 ומלמדת דחיסת שכמות נכונה."
+    "cues": "זרועות נעולות ישרות על מקבילים, שכמות דחוסות חזק מטה (Scapular Depression). אגן וירכיים מורמים באוויר, ועקבים נשענים קלות על המזרן (מפחית 60% מנוף מותני).",
+    "img": "images/exercises/FOOT-SUPPORTED L-SIT.png",
+    "gif": "images/gifs/Foot-Supported L-Sit.gif"
   },
   {
-    "id": "weighted-chin-up",
-    "nameEn": "Weighted Chin-Up (Vest 5kg)",
-    "nameHe": "מתח בסופינציה עם ווסט משקל 5 ק\"ג",
-    "category": "Upper Body Pull",
-    "day": "יום 3 או יום 5",
-    "dayNum": 3,
-    "unlockTiming": "שבוע 66+ (משבוע 66 ואילך בתוכנית)",
-    "unlockPrereq": "השלמת מתח חופשי במשקל גוף בנפח עבודה גבוה",
-    "setsReps": "3 סטים × 4–8 חזרות",
-    "tempo": "2 שניות ירידה מבוקרת (2s descent)",
+    "id": "tuck-hold-chair",
+    "nameEn": "Tuck Hold (Chair / Parallel Bars)",
+    "nameHe": "טוק הולד על כיסאות / מקבילים נמוכים",
+    "dayNum": 5,
+    "dayName": "יום 5 (פרוגרשן L-Sit שלב ביניים)",
+    "category": "ליבה דחיסתית",
+    "equipment": "כיסאות יציבים / מקבילים נמוכים",
+    "unlockTiming": "שלב ביניים בין Foot-Supported ל-Tuck באוויר",
+    "unlockPrereq": "השלמת 15 שניות ב-Foot-Supported L-Sit",
+    "setsReps": "2 סטים × 10–15 שניות החזקה",
+    "tempo": "החזקה סטטית עם ברכיים אסופות לחזה",
+    "rest": "60–75 שניות",
+    "cues": "דחיפת המקבילים מטה, שכמות אסופות, ברכיים כפופות לחזה, אגן באוויר.",
+    "img": "images/exercises/TUCK HOLD (CHAIR).png",
+    "gif": "images/gifs/Tuck Hold (Chair).gif"
+  },
+  {
+    "id": "tuck-lsit",
+    "nameEn": "Tuck L-Sit (Parallettes Full Air)",
+    "nameHe": "טוק אל-סיט מלא באוויר (Tuck L-Sit על מקבילים)",
+    "dayNum": 5,
+    "dayName": "יום 5 (זוג עוגן עם Towel Hang)",
+    "category": "ליבה דחיסתית מתקדמת",
+    "equipment": "מקבילי עץ (Parallettes)",
+    "unlockTiming": "שבועות 9–17 (שדרוג מ-Foot-Supported)",
+    "unlockPrereq": "השלמת 15 שניות ב-Foot-Supported L-Sit בשליטה מלאה",
+    "setsReps": "2 סטים × 10–20 שניות החזקה",
+    "tempo": "החזקה סטטית כשהרגליים אסופות באוויר",
     "rest": "90 שניות",
-    "beforeImg": "images/comparison_before/WEIGHTED CHIN-UP.png",
-    "beforeGif": "images/comparison_before/Weighted Chin-Up.gif",
-    "afterImg": "images/exercises/WEIGHTED CHIN-UP.png",
-    "afterGif": "images/gifs/Weighted Chin-Up.gif",
-    "beforeFlaw": "בסרטון הקודם לא נראה שום ווסט או משקל, והמתאמן ביצע מתח משקל גוף רגיל.",
-    "afterFix": "צילום סטודיו באיכות גבוהה על רקע לבן נקי: המתאמן לובש ווסט משקל ייעודי עם רצועות אבטחה, מבצע אחיזת סופינציה מושלמת (כפות ידיים פונות פנימה), עולה עד שסנטרו עובר את המוט ויורד לנעילה מבוקרת.",
-    "biomechanicalCues": "אחיזת סופינציה מעמיסה באופן אופטימלי את שריר ה-Biceps Brachii במקביל ל-Latissimus Dorsi. שמירה על גוף יציב ללא נדנוד."
+    "cues": "ברכיים מקופלות אסופות חזק אל החזה, כל הגוף כולל כפות הרגליים מרחף באוויר על גבי המקבילים. דחיפה מרבית של השכמות מטה.",
+    "img": "images/exercises/L-SIT TUCK (BARS).png",
+    "gif": "images/gifs/Tuck Hold (Bars).gif"
   },
   {
-    "id": "trx-row-feet-elevated",
-    "nameEn": "TRX Row (Feet-Elevated)",
-    "nameHe": "חתירת TRX עם רגליים מוגבהות (מנח אופקי מלא)",
-    "category": "Upper Body Pull & Horizontal Row",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlockTiming": "שבוע 60+ (שלב השיא של חתירות TRX)",
-    "unlockPrereq": "השלמת שבועות 1–17 (Angle 1), שבועות 18–41 (Angle 2), שבועות 42–59 (Angle 3)",
-    "setsReps": "3 סטים × 8–12 חזרות",
-    "tempo": "2 שניות ירידה, 1 שניה עצירה בחזה",
-    "rest": "75 שניות",
-    "beforeImg": "images/comparison_before/TRX ROW (FEET-ELEVATED).png",
-    "beforeGif": "images/comparison_before/TRX Row (Feet-Elevated).gif",
-    "afterImg": "images/exercises/TRX ROW (FEET-ELEVATED).png",
-    "afterGif": "images/gifs/TRX Row (Feet-Elevated).gif",
-    "beforeFlaw": "בסרטון הקודם רגלי המתאמן היו על הרצפה צמודות לקיר בשיפוע אלכסוני (לא מוגבהות).",
-    "afterFix": "צילום חדר כושר מודרני באיכות גבוהה: רגלי המתאמן מוגבהות על מדרגה/קופסה, הגוף אופקי לחלוטין (180 מעלות ביחס לקרקע), והחזה נמשך במלואו אל ידיות ה-TRX כנגד כמעט 100% ממשקל הגוף.",
-    "biomechanicalCues": "קירוב שכמות מקסימלי (Scapular Retraction & Depression), גוף ישר כקרש ללא שקיעת אגן."
-  },
-  {
-    "id": "single-arm-pallof",
-    "nameEn": "Single-Arm Pallof Press Variations",
-    "nameHe": "לחיצות פאלוף ביד אחת (Square, Split Stance, One-Leg)",
-    "category": "Core & Anti-Rotation",
-    "day": "יום 1 ויום 5",
-    "dayNum": 1,
-    "unlockTiming": "שבועות 6+ בסבב הליבה",
-    "unlockPrereq": "פתיחת שבוע 6 לאחר Dead Bug שלב 2",
-    "setsReps": "2 סטים × 10–12 חזרות לכל צד",
-    "tempo": "1 שניה עצירה מלאה בקצה הלחיצה",
-    "rest": "30 שניות",
-    "beforeImg": "images/comparison_before/SINGLE-ARM PALLOF PRESS.png",
-    "beforeGif": "images/comparison_before/Single-Arm Pallof Press.gif",
-    "afterImg": "images/exercises/SINGLE-ARM PALLOF PRESS.png",
-    "afterGif": "images/gifs/Single-Arm Pallof Press.gif",
-    "beforeFlaw": "במאגרים הגנריים קיימת רק לחיצה דו-ידנית בסיסית.",
-    "afterFix": "סרטוני הדגמה אמיתיים בחדר כושר המציגים לחיצה ביד אחת עם כבל/גומייה, בלימת פיתול גו, ועמידות מתקדמות (פסיעה ורגל אחת).",
-    "biomechanicalCues": "אפס תנועה וסיבוב בעמוד השדרה; שמירה על קו ישר של הזרוע כנגד מומנט הפיתול."
-  }
-];
-    const CATALOG = [
-  {
-    "nameEn": "Goblet Romanian Deadlift (RDL)",
-    "nameHe": "דדליפט רומני גובלט (RDL)",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "3 סטים × 8–12 חזרות",
-    "cues": "היפ-הינג מבוקר, שמירה על עמוד שדרה ניטרלי (הגנת L4-S1), ברכיים רכות.",
-    "img": "images/exercises/DUMBBELL ROMANIAN DEADLIFT (RDL).png"
-  },
-  {
-    "nameEn": "Single-Leg RDL (Contralateral)",
-    "nameHe": "דדליפט רומני על רגל אחת (עם תמיכת יד)",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 18+ (מתחלף שבוע-כן-שבוע-לא עם Goblet)",
-    "setsReps": "3 סטים × 6–10 חזרות/צד",
-    "cues": "תמיכת יד חובה בקיר/מעקה למניעת פיתול אגן ושמירה על L4-S1.",
-    "img": "images/exercises/SINGLE-LEG RDL.png"
-  },
-  {
-    "nameEn": "Hands-Assisted Nordic (Partial ROM)",
-    "nameHe": "נורדיק בסיוע ידיים — טווח חלקי",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבועות 10–17 (תחילת שרשרת נורדיק)",
-    "setsReps": "2 סטים × 4–6 חזרות",
-    "cues": "ירידה מבוקרת של 30°–45° עם בלימת ידיים רכה במזרן.",
-    "img": "images/exercises/HANDS-ASSISTED NORDIC (PARTIAL ROM).png"
-  },
-  {
-    "nameEn": "Hands-Assisted Nordic (Full ROM)",
-    "nameHe": "נורדיק בסיוע ידיים — טווח מלא",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבועות 18–33",
-    "setsReps": "2 סטים × 4–6 חזרות",
-    "cues": "ירידה מלאה לרצפה עם דחיפה מבוקרת של הידיים לעלייה.",
-    "img": "images/exercises/HANDS-ASSISTED NORDIC (FULL ROM).png"
-  },
-  {
-    "nameEn": "Nordic Curl (Eccentric Only)",
-    "nameHe": "נורדיק קרל — בלימה אקצנטרית בלבד",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 34+",
-    "setsReps": "2 סטים × 4–6 חזרות",
-    "cues": "ירידה איטית של 3–4 שניות כקורת עץ ישרה ללא מגע ידיים כלל ברצפה.",
-    "img": "images/exercises/NORDIC CURL (ECCENTRIC ONLY).png"
-  },
-  {
-    "nameEn": "Full Nordic Curl",
-    "nameHe": "נורדיק קרל מלא (ללא סיוע)",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שלב מיומנות שיא",
-    "setsReps": "2 סטים × 3–6 חזרות",
-    "cues": "ירידה ועלייה מלאות אך ורק בכוח ההמסטרינגס, ידיים מאחורי הגב.",
-    "img": "images/exercises/FULL NORDIC CURL.png"
-  },
-  {
-    "nameEn": "Heels-Elevated Goblet Squat",
-    "nameHe": "סקוואט גובלט עם עקבים מוגבהים",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "2 סטים × 8–12 חזרות",
-    "cues": "עקבים על טריז/פלטה, עומק מלא, דגש על ארבע-ראשי וברכיים יציבות.",
-    "img": "images/exercises/HEELS-ELEVATED GOBLET SQUAT.png"
-  },
-  {
-    "nameEn": "Goblet Bulgarian Split Squat",
-    "nameHe": "ספליט סקוואט בולגרי עם משקולת",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 5+ (לאחר סיום Phase 0 והגעה ל-10 ק\"ג)",
-    "setsReps": "3 סטים × 6–12 חזרות/צד",
-    "cues": "רגל אחורית על ספסל, ירידה ישרה, שמירה על ברך קדמית יציבה.",
-    "img": "images/exercises/DB BULGARIAN SPLIT SQUAT.png"
-  },
-  {
-    "nameEn": "DB Glute Bridge",
-    "nameHe": "גשר ישבן עם משקולת",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "3 סטים × 10–15 חזרות",
-    "cues": "כיווץ שיא בישבן, אפס עומס על חוליות הגב התחתון.",
-    "img": "images/exercises/DB GLUTE BRIDGE.png"
-  },
-  {
-    "nameEn": "Single-Leg Glute Bridge",
-    "nameHe": "גשר ישבן על רגל אחת",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 18+ (מתחלף עם DB Glute Bridge)",
-    "setsReps": "3 סטים × 8–12 חזרות/צד",
-    "cues": "ייצוב אגן אופקי מלא, עבודה ממוקדת על שרירי העכוז.",
-    "img": "images/exercises/SINGLE-LEG GLUTE BRIDGE.png"
-  },
-  {
-    "nameEn": "Suitcase Carry",
-    "nameHe": "הליכת מזוודה (Suitcase Carry)",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "2 סטים × 30–45 שניות/צד",
-    "cues": "גוף זקוף לחלוטין ללא נטייה הצידה, ליבה אנטי-לטרלית דרוכה.",
-    "img": "images/exercises/SUITCASE CARRY.png"
-  },
-  {
-    "nameEn": "Pallof Press Progression",
-    "nameHe": "לחיצת פאלוף בגומייה (פרוגרשן ליבה)",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 6+ (בסבב הליבה של יום 1)",
-    "setsReps": "2 סטים × 10–12 חזרות/צד",
-    "cues": "עצירה של 1 שניה בשיא הפשיטה, בלימת כל סיבוב בעמוד השדרה.",
-    "img": "images/exercises/PALLOF PRESS.png"
-  },
-  {
-    "nameEn": "Single-Arm Pallof Press",
-    "nameHe": "לחיצת פאלוף ביד אחת",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 6+ (שלב מתקדם)",
-    "setsReps": "2 סטים × 10–12 חזרות/צד",
-    "cues": "עמידה בריבוע, לחיצה קדימה ביד אחת כנגד מומנט פיתול מוגבר.",
-    "img": "images/exercises/SINGLE-ARM PALLOF PRESS.png"
-  },
-  {
-    "nameEn": "Single-Arm Split Stance Pallof Press",
-    "nameHe": "לחיצת פאלוף בעמידת פסיעה (Split Stance)",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 34+",
-    "setsReps": "2 סטים × 10–12 חזרות/צד",
-    "cues": "עמידת פסיעה, יציבות אגן מירבית ואנטי-רוטציה.",
-    "img": "images/exercises/SINGLE-ARM SPLIT STANCE PALLOF PRESS.png"
-  },
-  {
-    "nameEn": "Single-Arm One Leg Pallof Press",
-    "nameHe": "לחיצת פאלוף בעמידה על רגל אחת",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 50+",
-    "setsReps": "2 סטים × 8–10 חזרות/צד",
-    "cues": "אתגר שיווי משקל ופרופריוספציה שיא.",
-    "img": "images/exercises/SINGLE-ARM ONE LEG PALLOF PRESS.png"
-  },
-  {
-    "nameEn": "Dead Bug",
-    "nameHe": "דד-באג (ייצוב ליבה בטוח לגב)",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "2 סטים × 8–10 חזרות/צד",
-    "cues": "גב תחתון מודבק לרצפה (Posterior Pelvic Tilt), נשימה סרעפתית.",
-    "img": "images/exercises/DEAD BUG.png"
-  },
-  {
-    "nameEn": "Hollow Body Hold",
-    "nameHe": "הולו בודי (Hollow Body Hold)",
-    "day": "יום 1 (רגליים וליבה)",
-    "dayNum": 1,
-    "unlock": "שבוע 3+ (לאחר ביצועי Dead Bug תקינים)",
-    "setsReps": "2 סטים × 20–30 שניות",
-    "cues": "שכמות באוויר, ירכיים אסופות, בטן נעולה שטוחה.",
-    "img": "images/exercises/HOLLOW BODY HOLD.png"
-  },
-  {
-    "nameEn": "Zone 2 Incline Walking",
-    "nameHe": "הליכה מתונה בשיפוע — Zone 2",
-    "day": "יום 2 (אירובי בסיס)",
-    "dayNum": 2,
-    "unlock": "שבוע 1 (20 דק' שבוע 1–2; 45 דק' שבוע 3+)",
-    "setsReps": "45 דקות (דופק 107–125)",
-    "cues": "שיפוע 4%, מהירות 5.5 קמ\"ש, שמירה על דופק שריפת שומן ושיקום מפרקים.",
-    "img": "images/exercises/BRISK WALKING.png"
-  },
-  {
-    "nameEn": "Single-Arm Seated OHP",
-    "nameHe": "לחיצת כתפיים בישיבה ביד אחת (DB OHP)",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבוע 1 (מפתיחת התוכנית — תרגיל ראשי #1)",
-    "setsReps": "3 סטים × 6–10 חזרות/צד",
-    "cues": "ישיבה זקופה, מרפק ב-45 מעלות (מישור השכמה), ללא הקשתת יתר בגב.",
-    "img": "images/exercises/SINGLE-ARM SEATED OHP.png"
-  },
-  {
-    "nameEn": "Pike Hold / Push-Up Progression",
-    "nameHe": "פייק הולד / פייק פוש-אפ (פרוגרשן כתפיים)",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבוע 1 (Pike Hold) ← שבוע 9+ (Feet-Elevated / Push-up)",
-    "setsReps": "2-3 סטים × 6–10 חזרות",
-    "cues": "דחיפה דרך השכמות (Protraction), גו ישר, ראש נע בין הזרועות.",
-    "img": "images/exercises/PIKE PROGRESSION.png"
-  },
-  {
-    "nameEn": "Single-Arm Floor Press",
-    "nameHe": "לחיצת חזה על הרצפה ביד אחת",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "3 סטים × 8–12 חזרות/צד",
-    "cues": "הרצפה מגבילה את תנועת המרפק ל-90 מעלות ומגנה על הכתף הקדמית.",
-    "img": "images/exercises/SINGLE-ARM FLOOR PRESS.png"
-  },
-  {
-    "nameEn": "Band-Assisted Chin-Up",
-    "nameHe": "מתח בסופינציה עם גומייה 30 ק\"ג",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבועות 1–8 (שלב חובה למתח אנטגוניסטי)",
-    "setsReps": "2 סטים × 4–8 חזרות",
-    "cues": "דריכה עם רגל מלאה בלולאת גומייה מתוך שרפרף, אחיזת סופינציה.",
-    "img": "images/exercises/BAND-ASSISTED CHIN-UP.png"
-  },
-  {
-    "nameEn": "Chin-Up (Bodyweight)",
-    "nameHe": "מתח בסופינציה במשקל גוף מלא",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבוע 9+ (שדרוג מ-Band-Assisted)",
-    "setsReps": "2-3 סטים × 4–8 חזרות",
-    "cues": "כפות ידיים פונות פנימה, סנטר מעל המוט, ירידה מלאה לזרועות ישרות.",
-    "img": "images/exercises/CHIN-UP.png"
-  },
-  {
-    "nameEn": "Weighted Chin-Up",
-    "nameHe": "מתח בסופינציה עם ווסט משקל 5 ק\"ג",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבוע 66+ (שלב מתקדם)",
-    "setsReps": "3 סטים × 4–8 חזרות",
-    "cues": "ווסט משקל גלוי על הגוף, שמירה על טווח תנועה מלא ללא תנופה.",
-    "img": "images/exercises/WEIGHTED CHIN-UP.png"
-  },
-  {
-    "nameEn": "Feet-Elevated Push-Up",
-    "nameHe": "שכיבות סמיכה עם רגליים מוגבהות",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "3 סטים × 8–12 חזרות",
-    "cues": "עקבים על מדרגה, גוף בקו ישר, חזה נוגע ברצפה.",
-    "img": "images/exercises/FEET-ELEVATED PUSH-UP.png"
-  },
-  {
-    "nameEn": "TRX Row (Angle 1)",
-    "nameHe": "חתירת TRX — זווית 75 מעלות",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבועות 1–17",
-    "setsReps": "3 סטים × 8–12 חזרות",
-    "cues": "עמידה צעד אחד לאחור מנקודת העיגון, זווית מתונה של 75°, ~35% משקל גוף.",
-    "img": "images/exercises/TRX ROW.png"
-  },
-  {
-    "nameEn": "TRX Row (Angle 3)",
-    "nameHe": "חתירת TRX — זווית 35 מעלות",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבועות 42–59",
-    "setsReps": "3 סטים × 8–12 חזרות",
-    "cues": "שיפוע עמוק וחד, משיכה חזקה של החזה לידיות כנגד משקל גוף גבוה.",
-    "img": "images/exercises/TRX ROW (ANGLE 3).png"
-  },
-  {
-    "nameEn": "TRX Row (Feet-Elevated)",
-    "nameHe": "חתירת TRX עם רגליים מוגבהות (אופקי)",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבוע 60+",
-    "setsReps": "3 סטים × 8–12 חזרות",
-    "cues": "גוף אופקי לחלוטין (180°), רגליים מורמות על קופסה/מדרגה, משיכה של החזה לידיות.",
-    "img": "images/exercises/TRX ROW (FEET-ELEVATED).png"
-  },
-  {
-    "nameEn": "Standing Single-Leg Calf Raise",
-    "nameHe": "הרמת עקבים בעמידה על רגל אחת",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבוע 5+ (משקל גוף שבועות 5–8; העמסה משבוע 9)",
-    "setsReps": "3 סטים × 12–20 חזרות/צד",
-    "cues": "ברך ישרה, עצירה של 1 שניה במתיחה בתחתית ועצירה בשיא הכיווץ.",
-    "img": "images/exercises/STANDING SINGLE-LEG CALF RAISE.png"
-  },
-  {
-    "nameEn": "Seated Single-Leg Calf Raise",
-    "nameHe": "הרמת עקבים בישיבה על רגל אחת (סולאוס)",
-    "day": "יום 3 (דחיקה ופלג גוף עליון)",
-    "dayNum": 3,
-    "unlock": "שבוע 5+ (משקל גוף שבועות 5–8; העמסה משבוע 9)",
-    "setsReps": "3 סטים × 15–25 חזרות/צד",
-    "cues": "ברך כפופה ב-90 מעלות לבידוד שריר הסולאוס (Soleus) והגנת גיד האכילס.",
-    "img": "images/exercises/SEATED SINGLE-LEG CALF RAISE.png"
-  },
-  {
-    "nameEn": "Band Neck Flexion & Extension",
-    "nameHe": "פרוטוקול חיזוק צוואר בגומייה",
-    "day": "יום 4 (התאוששות ובריאות צוואר)",
-    "dayNum": 4,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "2 סטים × 15–20 חזרות",
-    "cues": "גומייה מתונה, תנועה מבוקרת ומדויקת לחיזוק שרירי הצוואר העמוקים.",
-    "img": "images/exercises/BAND NECK FLEXION.png"
-  },
-  {
-    "nameEn": "Deep Mobility Protocol & Passive Hang",
-    "nameHe": "מוביליות עמוקה ותלייה פסיבית לדקומפרסיה",
-    "day": "יום 4 (התאוששות ובריאות צוואר)",
-    "dayNum": 4,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "20 דקות מוביליות + 3×30 שניות תלייה",
-    "cues": "דקומפרסיה של חוליות L4-S1, שחרור מפרקי ירך ובית חזה.",
-    "img": "images/exercises/DEAD HANG.png"
-  },
-  {
-    "nameEn": "Band-Assisted Pull-Up",
-    "nameHe": "מתח באחיזה עילית עם גומייה 30 ק\"ג",
-    "day": "יום 5 (משיכה, גב ובייספס)",
+    "id": "one-leg-extended-lsit",
+    "nameEn": "One-Leg Extended L-Sit",
+    "nameHe": "אל-סיט עם רגל אחת ישרה קדימה",
     "dayNum": 5,
-    "unlock": "שבועות 1–8 (תרגיל ראשי #1)",
-    "setsReps": "3 סטים × 4–8 חזרות",
-    "cues": "אחיזה עילית רחבה, דריכה בלולאת גומייה משרפרף, ירידה של 2 שניות.",
-    "img": "images/exercises/BAND-ASSISTED PULL-UP.png"
+    "dayName": "יום 5 (זוג עוגן עם Towel Hang)",
+    "category": "ליבה דחיסתית מתקדמת",
+    "equipment": "מקבילי עץ (Parallettes)",
+    "unlockTiming": "שבועות 18–33",
+    "unlockPrereq": "השלמת 15–20 שניות ב-Tuck L-Sit",
+    "setsReps": "2 סטים × 10–15 שניות לכל רגל מושטת",
+    "tempo": "החזקה סטטית באוויר",
+    "rest": "90 שניות",
+    "cues": "רגל אחת ישרה קדימה מקבילה לרצפה, רגל שנייה מקופלת לחזה. מעבר הדרגתי שבונה כוח בארבע-ראשי ובשרירי הבטן לפני יישור שתי הרגליים.",
+    "img": "images/exercises/ONE-LEG EXTENDED L-SIT.png",
+    "gif": "images/gifs/One Leg Extended.gif"
   },
   {
-    "nameEn": "Pull-Up (Overhand)",
-    "nameHe": "מתח חופשי באחיזה עילית (משקל גוף)",
-    "day": "יום 5 (משיכה, גב ובייספס)",
+    "id": "full-lsit",
+    "nameEn": "Full L-Sit",
+    "nameHe": "אל-סיט מלא באוויר (Full L-Sit — שתי רגליים ישרות)",
     "dayNum": 5,
-    "unlock": "שבוע 9+ (שדרוג מ-Band-Assisted)",
-    "setsReps": "3 סטים × 4–8 חזרות",
-    "cues": "משיכה חלקה לחזה, סנטר מעל המוט, ללא קיפינג.",
-    "img": "images/exercises/PULL-UP (OVERHAND).png"
+    "dayName": "יום 5 (זוג עוגן שיא)",
+    "category": "פסגת כוח ליבה דחיסתי התעמלותי",
+    "equipment": "מקבילי עץ (Parallettes)",
+    "unlockTiming": "שבוע 34+ (שלב שיא מיומנות)",
+    "unlockPrereq": "השלמת 15 שניות ב-One-Leg Extended L-Sit לכל רגל",
+    "setsReps": "2 סטים × 10–20 שניות החזקה באוויר",
+    "tempo": "החזקה איזומטרית שלמה בצורת L",
+    "rest": "90–120 שניות",
+    "cues": "שתי הרגליים נעולות ישרות קדימה מקבילות במלואן לקרקע. זרועות נעולות ישרות, שכמות דחוסות מטה, כפות רגליים מתוחות קדימה (Pointed toes).",
+    "img": "images/exercises/FULL L-SIT.png",
+    "gif": "images/gifs/Full L-Sit.gif"
   },
   {
-    "nameEn": "Dumbbell One-Arm Row",
-    "nameHe": "חתירה עם משקולת ביד אחת",
-    "day": "יום 5 (משיכה, גב ובייספס)",
-    "dayNum": 5,
-    "unlock": "שבוע 1 (מפתיחת התוכנית)",
-    "setsReps": "3 סטים × 8–12 חזרות/צד",
-    "cues": "תמיכה על ספסל, גב שטוח, משיכה לכיוון המותן לכיווץ רחב-גבי.",
-    "img": "images/exercises/ONE-ARM DB ROW.png"
-  },
-  {
-    "nameEn": "Single-Arm Curl",
-    "nameHe": "כפיפת מרפקים ביד אחת עם משקולת",
-    "day": "יום 5 (משיכה, גב ובייספס)",
-    "dayNum": 5,
-    "unlock": "שבוע 1 (משקל פתיחה 6 ק\"ג)",
-    "setsReps": "3 סטים × 8–12 חזרות/צד",
-    "cues": "בידוד מלא, מרפק יציב צמוד לגוף ללא תנופת גו.",
-    "img": "images/exercises/SINGLE-ARM CURL.png"
-  },
-  {
-    "nameEn": "Towel Hang",
-    "nameHe": "תלייה על מגבת (אחיזה ואמות)",
-    "day": "יום 5 (משיכה, גב ובייספס)",
-    "dayNum": 5,
-    "unlock": "שבוע 1 (זוג עם L-Sit)",
-    "setsReps": "2 סטים × 20–30 שניות",
-    "cues": "שתי מגבות על המוט, אחיזה עוצמתית, דקומפרסיה מותנית תוך חיזוק אחיזה.",
-    "img": "images/exercises/TOWEL HANG.png"
-  },
-  {
-    "nameEn": "Foot-Supported L-Sit",
-    "nameHe": "אל-סיט עם תמיכת עקבים קלה (Parallettes)",
-    "day": "יום 5 (משיכה, גב ובייספס)",
-    "dayNum": 5,
-    "unlock": "שבועות 5–8 (יום 5, זוג עם Towel Hang)",
-    "setsReps": "2 סטים × 10–15 שניות",
-    "cues": "דחיסה מטה של מקבילים, אגן באוויר, עקבים נתמכים קלות להגנת L4-S1.",
-    "img": "images/exercises/FOOT-SUPPORTED L-SIT.png"
-  },
-  {
-    "nameEn": "Tuck L-Sit",
-    "nameHe": "טוק אל-סיט מלא באוויר (Tuck L-Sit)",
-    "day": "יום 5 (משיכה, גב ובייספס)",
-    "dayNum": 5,
-    "unlock": "שבוע 9+ (שדרוג מ-Foot-Supported)",
-    "setsReps": "2 סטים × 10–20 שניות",
-    "cues": "ברכיים מקופלות לחזה, גוף שלם באוויר על מקבילים.",
-    "img": "images/exercises/TUCK L-SIT.png"
-  },
-  {
-    "nameEn": "TRX Face Pull",
-    "nameHe": "פייס-פול ב-TRX (דלתואיד אחורי ורוטטור קאף)",
-    "day": "יום 5 (משיכה, גב ובייספס)",
-    "dayNum": 5,
-    "unlock": "שבוע 1 (זווית 75° שבועות 1–17; זווית 45° משבוע 18)",
-    "setsReps": "3 סטים × 12–15 חזרות",
-    "cues": "משיכה לכיוון המצח עם סיבוב חיצוני של הכתפיים, מרפקים גבוהים.",
-    "img": "images/exercises/TRX FACE PULL.png"
-  },
-  {
+    "id": "vo2-max-norwegian",
     "nameEn": "VO2 Max Norwegian 4x4",
-    "nameHe": "אינטרוולים נורווגיים 4×4 — VO2 Max",
-    "day": "יום 6 (אירובי עצים)",
+    "nameHe": "אינטרוולים נורווגיים 4×4 — VO2 Max (שיא קיבולת אירובית)",
     "dayNum": 6,
-    "unlock": "שבוע 4+ (שבועות 1–3: הליכה מתונה של 20 דק')",
-    "setsReps": "4 סטים × 4 דקות בדופק 85%–95%",
-    "cues": "התאוששות אקטיבית של 3 דק' בין אינטרוולים בדופק 70%. שיפור קיבולת אירובית שיא.",
-    "img": "images/exercises/VO2 MAX NORWEGIAN 4X4.png"
+    "dayName": "יום 6 (אירובי עצים)",
+    "category": "אירובי עצים, תפקוד לבבי וקיבולת VO2 Max",
+    "equipment": "הליכון משופע, מסלול ריצה או מכשיר חתירה",
+    "unlockTiming": "שבוע 4+ (שבועות 1–3: הליכה מתונה בלבד להסתגלות)",
+    "unlockPrereq": "השלמת 3 שבועות של Zone 2 ביום 2",
+    "setsReps": "4 אינטרוולים × 4 דקות בדופק גבוה",
+    "tempo": "4 דקות עבודה בדופק 85%–95% (151–169 BPM) + 3 דקות התאוששות אקטיבית בדופק 70% (125 BPM)",
+    "rest": "התאוששות אקטיבית בהליכה איטית (ללא עצירה מוחלטת)",
+    "cues": "פרוטוקול המחקר הנורווגי המוכח להעלאת ה-VO2 Max, הארכת תוחלת חיים בריאה, הגדלת נפח פעימת החדר השמאלי בלב והגברת כושר התאוששות.",
+    "img": "images/exercises/VO2 MAX NORWEGIAN 4X4.png",
+    "gif": "images/gifs/VO2 Max Norwegian.gif"
   }
 ];
+    let currentFilter = 'all';
 
-    let currentView = 'audit';
-    let currentMediaType = 'gif';
-    let currentDayFilter = 'all';
+    // Update tab count badges dynamically
+    document.getElementById('count-all').textContent = EXERCISES.length;
+    document.getElementById('count-day1').textContent = EXERCISES.filter(x => x.dayNum === 1).length;
+    document.getElementById('count-day2').textContent = EXERCISES.filter(x => x.dayNum === 2).length;
+    document.getElementById('count-day3').textContent = EXERCISES.filter(x => x.dayNum === 3).length;
+    document.getElementById('count-day4').textContent = EXERCISES.filter(x => x.dayNum === 4).length;
+    document.getElementById('count-day5').textContent = EXERCISES.filter(x => x.dayNum === 5).length;
+    document.getElementById('count-day6').textContent = EXERCISES.filter(x => x.dayNum === 6).length;
 
-    function setViewMode(mode) {
-      currentView = mode;
-      document.getElementById('btn-view-audit').classList.toggle('active', mode === 'audit');
-      document.getElementById('btn-view-catalog').classList.toggle('active', mode === 'catalog');
-      document.getElementById('audit-container').style.display = mode === 'audit' ? 'flex' : 'none';
-      document.getElementById('catalog-container').style.display = mode === 'catalog' ? 'grid' : 'none';
-      document.getElementById('media-toggle-group').style.display = mode === 'audit' ? 'flex' : 'none';
-      renderView();
-    }
-
-    function setMediaType(type) {
-      currentMediaType = type;
-      document.getElementById('btn-show-gifs').classList.toggle('active', type === 'gif');
-      document.getElementById('btn-show-static').classList.toggle('active', type === 'static');
-      renderView();
-    }
-
-    function filterDay(day, btn) {
-      currentDayFilter = day;
-      document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+    function filterTab(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      renderView();
+      renderCards();
     }
 
     function handleSearch() {
-      renderView();
+      renderCards();
     }
 
     function openLightbox(src) {
@@ -1258,82 +1965,88 @@
       document.getElementById('lightbox').classList.remove('active');
     }
 
-    function renderView() {
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    function renderCards() {
+      const container = document.getElementById('exercises-container');
       const query = document.getElementById('search-input').value.toLowerCase().trim();
 
-      if (currentView === 'audit') {
-        renderAudit(query);
-      } else {
-        renderCatalog(query);
-      }
-    }
+      const filtered = EXERCISES.filter(ex => {
+        // Tab filtering
+        if (currentFilter === 'day1' && ex.dayNum !== 1) return false;
+        if (currentFilter === 'day2' && ex.dayNum !== 2) return false;
+        if (currentFilter === 'day3' && ex.dayNum !== 3) return false;
+        if (currentFilter === 'day4' && ex.dayNum !== 4) return false;
+        if (currentFilter === 'day5' && ex.dayNum !== 5) return false;
+        if (currentFilter === 'day6' && ex.dayNum !== 6) return false;
 
-    function renderAudit(query) {
-      const container = document.getElementById('audit-container');
-      const filtered = AUDITED.filter(ex => {
-        if (currentDayFilter !== 'all' && ex.dayNum !== Number(currentDayFilter)) return false;
+        // Search query
         if (query) {
-          const hay = (ex.nameEn + ' ' + ex.nameHe + ' ' + ex.unlockTiming + ' ' + ex.category + ' ' + ex.day).toLowerCase();
+          const hay = (
+            ex.nameEn + ' ' + 
+            ex.nameHe + ' ' + 
+            ex.category + ' ' + 
+            ex.equipment + ' ' + 
+            ex.unlockTiming + ' ' + 
+            ex.dayName + ' ' + 
+            ex.cues
+          ).toLowerCase();
           if (!hay.includes(query)) return false;
         }
         return true;
       });
 
       if (filtered.length === 0) {
-        container.innerHTML = '<div style="text-align: center; color: var(--text-dim); padding: 40px; font-size: 1.1rem;">לא נמצאו תרגילים מתאימים לסינון.</div>';
+        container.innerHTML = '<div class="empty-state">לא נמצאו תרגילים התואמים לחיפוש שלך.</div>';
         return;
       }
 
       container.innerHTML = filtered.map(ex => {
-        const beforeSrc = currentMediaType === 'gif' ? ex.beforeGif : ex.beforeImg;
-        const afterSrc = currentMediaType === 'gif' ? ex.afterGif : ex.afterImg;
-
         return `
-          <div class="card" data-id="${ex.id}">
+          <div class="card" id="card-${ex.id}">
             <div class="card-header">
               <div class="card-title-group">
                 <h2>${ex.nameHe}</h2>
                 <div class="name-en">${ex.nameEn}</div>
               </div>
               <div class="badge-group">
-                <span class="badge badge-day">📅 ${ex.day}</span>
-                <span class="badge badge-week">🔓 מתי נפתח: ${ex.unlockTiming}</span>
-                <span class="badge badge-status-ok">✔ תוקן ואומת ביומכנית</span>
+                <span class="badge badge-day">📅 ${ex.dayName}</span>
+                <span class="badge badge-category">🏷️ ${ex.category}</span>
+                <span class="badge badge-equip">⚙️ ${ex.equipment}</span>
+                <span class="badge badge-week">🔓 ${ex.unlockTiming}</span>
               </div>
             </div>
 
-            <div class="visual-comparison">
-              <!-- Before Column -->
-              <div class="comparison-col col-before">
-                <div class="col-header">
-                  <div class="col-title">❌ התמונה / האנימציה שהייתה מקודם</div>
-                  <span class="badge" style="background: rgba(244,63,94,0.15); color: #fca5a5;">לפני</span>
+            <!-- Side-by-Side Visuals: Static Image AND Animated GIF -->
+            <div class="visuals-row">
+              <!-- Frame 1: Static Image -->
+              <div class="media-card">
+                <div class="media-header static-hdr">
+                  <span>🖼️ תמונה מציגה (איור אנטומי)</span>
+                  <span style="font-size: 0.72rem; opacity: 0.8;">תצוגה סטטית</span>
                 </div>
-                <div class="media-container" onclick="openLightbox('${beforeSrc}')">
-                  <img src="${beforeSrc}" alt="${ex.nameEn} Before" loading="lazy" onerror="this.src='${ex.beforeImg}'">
-                  <span class="media-tag">${currentMediaType === 'gif' ? 'GIF מונפש' : 'סטטי'} (הקודם)</span>
-                </div>
-                <div class="col-desc">
-                  <strong>הליקוי הקודם:</strong> ${ex.beforeFlaw}
+                <div class="media-container" onclick="openLightbox('${ex.img}')" title="לחץ להגדלה במסך מלא">
+                  <img src="${ex.img}" alt="${ex.nameEn} Static" loading="lazy">
+                  <span class="media-zoom-hint">🔍 לחץ להגדלה</span>
                 </div>
               </div>
 
-              <!-- After Column -->
-              <div class="comparison-col col-after">
-                <div class="col-header">
-                  <div class="col-title">✅ התמונה / האנימציה המתוקנת כעת</div>
-                  <span class="badge" style="background: rgba(16,185,129,0.15); color: #6ee7b7;">עכשיו באפליקציה</span>
+              <!-- Frame 2: Animated GIF -->
+              <div class="media-card">
+                <div class="media-header gif-hdr">
+                  <span>🎬 אנימציית תנועה (GIF מונפש)</span>
+                  <span style="font-size: 0.72rem; opacity: 0.8;">לולאת תנועה</span>
                 </div>
-                <div class="media-container" onclick="openLightbox('${afterSrc}')">
-                  <img src="${afterSrc}" alt="${ex.nameEn} After" loading="lazy" onerror="this.src='${ex.afterImg}'">
-                  <span class="media-tag">${currentMediaType === 'gif' ? 'GIF מונפש' : 'סטטי'} (המתוקן)</span>
-                </div>
-                <div class="col-desc">
-                  <strong>התיקון שהוטמע:</strong> ${ex.afterFix}
+                <div class="media-container" onclick="openLightbox('${ex.gif}')" title="לחץ להגדלה במסך מלא">
+                  <img src="${ex.gif}" alt="${ex.nameEn} GIF" loading="lazy">
+                  <span class="media-zoom-hint">🔍 לחץ להגדלה</span>
                 </div>
               </div>
             </div>
 
+            <!-- Specifications Grid -->
             <div class="specs-grid">
               <div class="spec-item">
                 <span class="spec-label">מועד ושלב פתיחה</span>
@@ -1344,7 +2057,7 @@
                 <span class="spec-value">${ex.unlockPrereq}</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">סטי עבודה וחזרות</span>
+                <span class="spec-label">סטי עבודה ויעד חזרות/זמן</span>
                 <span class="spec-value">${ex.setsReps}</span>
               </div>
               <div class="spec-item">
@@ -1352,15 +2065,17 @@
                 <span class="spec-value">${ex.tempo}</span>
               </div>
               <div class="spec-item">
-                <span class="spec-label">זמני מנוחה</span>
+                <span class="spec-label">זמן מנוחה בין סטים</span>
                 <span class="spec-value">${ex.rest}</span>
               </div>
             </div>
 
+            <!-- Biomechanical & Safety Cues -->
             <div class="cues-box">
               <span class="cues-icon">💡</span>
-              <div>
-                <strong>דגש ביומכני ומניעת פציעות:</strong> ${ex.biomechanicalCues}
+              <div class="cues-content">
+                <strong>דגש ביומכני, שמירה על עמוד שדרה (L4-S1) ומניעת פציעות:</strong>
+                ${ex.cues}
               </div>
             </div>
           </div>
@@ -1368,52 +2083,8 @@
       }).join('');
     }
 
-    function renderCatalog(query) {
-      const container = document.getElementById('catalog-container');
-      const filtered = CATALOG.filter(ex => {
-        if (currentDayFilter !== 'all' && ex.dayNum !== Number(currentDayFilter)) return false;
-        if (query) {
-          const hay = (ex.nameEn + ' ' + ex.nameHe + ' ' + ex.unlock + ' ' + ex.day + ' ' + ex.cues).toLowerCase();
-          if (!hay.includes(query)) return false;
-        }
-        return true;
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = '<div style="text-align: center; color: var(--text-dim); padding: 40px; font-size: 1.1rem; grid-column: 1/-1;">לא נמצאו תרגילים מתאימים לסינון.</div>';
-        return;
-      }
-
-      container.innerHTML = filtered.map(ex => `
-        <div class="catalog-card">
-          <div class="catalog-media" onclick="openLightbox('${ex.img}')">
-            <img src="${ex.img}" alt="${ex.nameEn}" loading="lazy" onerror="this.style.opacity=0.3">
-          </div>
-          <div class="catalog-title">${ex.nameHe}</div>
-          <div class="catalog-en">${ex.nameEn}</div>
-          <div class="catalog-info">
-            <div class="catalog-row">
-              <span class="lbl">יום אימון:</span>
-              <span class="val">${ex.day}</span>
-            </div>
-            <div class="catalog-row">
-              <span class="lbl">מתי נפתח:</span>
-              <span class="val" style="color: #fcd34d;">${ex.unlock}</span>
-            </div>
-            <div class="catalog-row">
-              <span class="lbl">נפח עבודה:</span>
-              <span class="val">${ex.setsReps}</span>
-            </div>
-            <div style="margin-top: 6px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
-              <strong>דגש:</strong> ${ex.cues}
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
     // Initial render
-    renderView();
+    renderCards();
   </script>
 </body>
 </html>
