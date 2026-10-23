@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v233-nordic-partial-fix';
+const CACHE_NAME = 'fitup-v234-nordic-gif-clean';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
