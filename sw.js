@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v234-nordic-gif-clean';
+const CACHE_NAME = 'fitup-v235-biomechanical-assets-perfected';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
