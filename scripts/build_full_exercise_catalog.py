@@ -2062,8 +2062,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                   <span>🖼️ תמונה מציגה (איור אנטומי)</span>
                   <span style="font-size: 0.72rem; opacity: 0.8;">תצוגה סטטית</span>
                 </div>
-                <div class="media-container" onclick="openLightbox('${ex.img}?v=20261023_v3')" title="לחץ להגדלה במסך מלא">
-                  <img src="${ex.img}?v=20261023_v3" alt="${ex.nameEn} Static" loading="lazy">
+                <div class="media-container" onclick="openLightbox('${ex.img}?v=20261023_v4')" title="לחץ להגדלה במסך מלא">
+                  <img src="${ex.img}?v=20261023_v4" alt="${ex.nameEn} Static" loading="lazy">
                   <span class="media-zoom-hint">🔍 לחץ להגדלה</span>
                 </div>
               </div>
@@ -2074,8 +2074,8 @@ HTML_TEMPLATE = """<!DOCTYPE html>
                   <span>🎬 אנימציית תנועה (GIF מונפש)</span>
                   <span style="font-size: 0.72rem; opacity: 0.8;">לולאת תנועה</span>
                 </div>
-                <div class="media-container" onclick="openLightbox('${ex.gif}?v=20261023_v3')" title="לחץ להגדלה במסך מלא">
-                  <img src="${ex.gif}?v=20261023_v3" alt="${ex.nameEn} GIF" loading="lazy">
+                <div class="media-container" onclick="openLightbox('${ex.gif}?v=20261023_v4')" title="לחץ להגדלה במסך מלא">
+                  <img src="${ex.gif}?v=20261023_v4" alt="${ex.nameEn} GIF" loading="lazy">
                   <span class="media-zoom-hint">🔍 לחץ להגדלה</span>
                 </div>
               </div>
