@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v232-authentic-ecorche-precision';
+const CACHE_NAME = 'fitup-v233-nordic-partial-fix';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
