@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fitup-v231-biomechanical-precision-patch';
+const CACHE_NAME = 'fitup-v232-authentic-ecorche-precision';
 const MEDIA_CACHE = 'fitup-media-cache-v1';
 const ASSETS = [
   './',
